@@ -1,0 +1,12 @@
+steps:
+- bash: echo "##vso[task.prependpath]$CONDA/bin"
+  displayName: Add conda to PATH
+- script: conda env create --quiet --file environment.yml
+  workingDirectory: '$(System.DefaultWorkingDirectory)/qdk'
+  displayName: Create Anaconda environment
+- bash: |
+    source activate qdk
+    pip install -e .
+    pytest
+  workingDirectory: '$(System.DefaultWorkingDirectory)/qdk'
+  displayName: Activate Anaconda environment and run pytest

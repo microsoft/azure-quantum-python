@@ -1,14 +1,52 @@
-# Project
+# QDK-Python
 
-> This repo has been populated by an initial template to help get you started. Please
-> make sure to update the content to build a great experience for community-building.
+## Introduction
 
-As the maintainer of this project, please make a few updates:
+QDK-Python is the repository for Python packages of the Quantum Development Kit (QDK). Currently, this consists of the following packages:
 
-- Improving this README.MD file to provide a great experience
-- Updating SUPPORT.MD with content about this project's support experience
-- Understanding the security reporting process in SECURITY.MD
-- Remove this section from the README
+- qdk
+
+Coming soom:
+
+- qsharp
+- azure-quantum
+
+## Installation and getting started
+
+To install the QDK package, we recommend installing the Anaconda Python distribution. For instructions on installing Conda on your system, please follow the [Conda user guide](https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html).
+
+Currently, the QDK Python package is not yet released. When it is, it will be available via the `qdk` conda channel and can be installed as follows:
+
+```bash
+conda install -c qdk qdk
+```
+
+To get started running examples, start a Jupyter notebook:
+
+```bash
+cd examples
+jupyter notebook
+```
+
+## Development
+
+To create a new Conda environment, run:
+
+```bash
+conda env create -f environment.yml
+```
+
+Then to activate the environment:
+
+```bash
+conda activate qdk
+```
+
+To install the QDK package in development mode:
+
+```bash
+pip install -e qdk
+```
 
 ## Contributing
 
