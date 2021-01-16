@@ -3,13 +3,13 @@ steps:
   displayName: Add conda to PATH
 - pwsh: ../build/build.ps1
   workingDirectory: '$(System.DefaultWorkingDirectory)/qdk'
-  displayName: Build
+  displayName: Build qdk
 - pwsh: ../build/test.ps1
   workingDirectory: '$(System.DefaultWorkingDirectory)/qdk'
-  displayName: Install and test
+  displayName: Install and test qdk
 - pwsh: ../build/build.ps1
   workingDirectory: '$(System.DefaultWorkingDirectory)/azure-quantum'
-  displayName: Build
+  displayName: Build azure-quantum
 - pwsh: ../build/test.ps1
   workingDirectory: '$(System.DefaultWorkingDirectory)/azure-quantum'
-  displayName: Install and test
+  displayName: Install and test azure-quantum
