@@ -117,7 +117,7 @@ class TestProblem(unittest.TestCase):
 
 
 def _init_ws_():
-    return  Workspace(
+    return Workspace(
         subscription_id="subs_id", 
         resource_group="rg",
         name="n",

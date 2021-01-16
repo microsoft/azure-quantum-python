@@ -82,7 +82,7 @@ class TokenCacheWrapper:
         open(self.cache_path, "w").write(self.token_cache.serialize())
 
 class MsalWrapper:
-    def __init__(self, subscription_id : str, refresh : bool):
+    def __init__(self, subscription_id: str, refresh: bool):
         self.subscription_id     = subscription_id
         self.refresh             = refresh
         self.client_id           = AAD_CLIENT_ID
@@ -127,7 +127,7 @@ class MsalWrapper:
                     token_cache = self.token_cache_wrapper.token_cache)
                 logger.debug (f"Created a new app with the authority: {authority}")
             except Exception as e:
-                 raise ValueError(f"Failed to create PublicClientApplication with tenant authority : {e}")
+                 raise ValueError(f"Failed to create PublicClientApplication with tenant authority: {e}")
         return _msal_apps[self.subscription_id]
 
     def clear_accounts(self):
@@ -261,12 +261,13 @@ class Workspace:
 
     def __init__(
         self,
-        subscription_id : Optional[str] = None,
-        resource_group : Optional[str] = None,
-        name : Optional[str] = None,
-        storage : Optional[str] = None,
-        resource_id : Optional[str] = None,
-        location : Optional[str] = None):
+        subscription_id: Optional[str] = None,
+        resource_group: Optional[str] = None,
+        name: Optional[str] = None,
+        storage: Optional[str] = None,
+        resource_id: Optional[str] = None,
+        location: Optional[str] = None
+    ):
 
         if resource_id is not None:
             # A valid resource ID looks like:
@@ -283,7 +284,7 @@ class Workspace:
                 resource_group = match.group(2)
                 name = match.group(3)
 
-        if subscription_id is not None or resource_group is not None or name is not None:
+        if not subscription_id or not resource_group or not name:
             raise ValueError(
                 "Azure Quantum workspace not fully specified. Please specify either a valid resource ID " +
                 "or a valid combination of subscription ID, resource group name, and workspace name.")
