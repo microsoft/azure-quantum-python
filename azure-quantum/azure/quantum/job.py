@@ -7,7 +7,7 @@ import time
 import io
 import json
 
-from typing import List
+from typing import List, TYPE_CHECKING
 from urllib.parse import urlparse
 
 from msrest.authentication import Authentication
@@ -19,8 +19,18 @@ __all__ = ['Job']
 
 logger = logging.getLogger(__name__)
 
+if TYPE_CHECKING:
+    from azure.quantum.workspace import Workspace
+
 class Job:
-    def __init__(self, workspace, job_details: JobDetails):
+    """Azure Quantum Job that is submitted to a given Workspace.
+
+    :param workspace: Workspace instance to submit job to
+    :type workspace: Workspace
+    :param job_details: Job details model, contains Job ID, name and other details
+    :type job_details: JobDetails
+    """
+    def __init__(self, workspace: "Workspace", job_details: JobDetails):
       self.workspace = workspace
       self.details = job_details
       self.id = job_details.id
@@ -43,18 +53,13 @@ class Job:
         """Keeps refreshing the Job's details until it reaches a finished status.
         """
         self.refresh()
-        w=False
         poll_wait = 0.2
         while not self.has_completed():
             logger.debug(f"Waiting for job {self.id}, it is in status '{self.details.status}'")
             print('.', end='', flush=True)
-            w=True
             time.sleep(poll_wait)
             self.refresh()
             poll_wait = max_poll_wait_secs if poll_wait >= max_poll_wait_secs else poll_wait * 1.5
-
-        if w:
-            print("")
 
     def get_results(self):
         if not self.results is None:

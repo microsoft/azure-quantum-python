@@ -97,18 +97,19 @@ class MsalWrapper:
             # This gnarly piece of code is how we get the guest tenant authority associated with the subscription.
             # We make a unauthenticated request to ARM and extract the tenant authority from the WWW-Authenticate header in the response.
             # The header is of the form - Bearer authoritization_uri=https://login.microsoftonline.com/tenantId, key1=value1 
-            authHeader = response.headers["WWW-Authenticate"]
-            logger.debug (f"got the following auth header from the management endpoint: {authHeader}")
+            auth_header = response.headers["WWW-Authenticate"]
+            logger.debug (f"got the following auth header from the management endpoint: {auth_header}")
 
-            trimmedAuthHeader = authHeader[len("Bearer "):]                                  # trim the leading 'Bearer '
-            trimmedAuthHeaderParts = trimmedAuthHeader.split(",")                            # get the various k=v parts
-            keyValuePairs = dict(map(lambda s: tuple(s.split("=")), trimmedAuthHeaderParts)) # make the parts into a dictionary
-            quotedTenantUri = keyValuePairs["authorization_uri"]                             # get the value of the 'authorization_uri' key
-            tenantUri = quotedTenantUri[1:-1]                                                # strip it of surrounding quotes
+            trimmed_auth_header = auth_header[len("Bearer "):]                                  # trim the leading 'Bearer '
+            trimmed_auth_header_parts = trimmed_auth_header.split(",")                            # get the various k=v parts
+            key_value_pairs = dict(map(lambda s: tuple(s.split("=")), trimmed_auth_header_parts)) # make the parts into a dictionary
+            quoted_tenant_uri = key_value_pairs["authorization_uri"]                             # get the value of the 'authorization_uri' key
+            tenant_uri = quoted_tenant_uri[1:-1]                                                # strip it of surrounding quotes
 
-            logger.debug (f"got the following tenantUri from the authHeader: {tenantUri}")
+            logger.debug (f"got the following tenant uri from the authentication header: {tenant_uri}")
 
-            return tenantUri
+            return tenant_uri
+
         except Exception as e:
             logger.debug(f"Failed to get tenant authority for subscription: {e}")
             return None
@@ -137,7 +138,7 @@ class MsalWrapper:
     def get_token_from_device_flow(self):
         # Clear accounts before doing device flow to make sure that we are left with a single account after the user completes the device flow.
         # We use that account is subsequent silent token acquisitions.
-        self.clear_accounts ()
+        self.clear_accounts()
 
         flow = self.get_app().initiate_device_flow(scopes=self.scopes)
         if "user_code" not in flow:
@@ -205,11 +206,11 @@ class MsalWrapper:
             self.clear_accounts()
         else:
             logger.debug("Trying to get token from cache...")
-            result = self.try_get_token_silently ()
+            result = self.try_get_token_silently()
 
         if not result:
             logger.debug("...and trying to get a token from the device flow...")
-            result = self.get_token_from_device_flow ()
+            result = self.get_token_from_device_flow()
             logger.debug(f"...device flow returned: {result}")
 
         # At this point, there should be an access token; raise otherwise:
@@ -217,7 +218,7 @@ class MsalWrapper:
             logger.debug(f"Token:\n{result['access_token']}")
 
             # Store token back in cache:
-            self.token_cache_wrapper.write_out_cache ()
+            self.token_cache_wrapper.write_out_cache()
             return result
         else:
             raise ValueError("Failed to acquire AAD token.")
@@ -227,8 +228,9 @@ class Workspace:
 
     When creating a Workspace object, callers have two options for identifying
     the Azure Quantum workspace:
-    (1) specify a valid resource ID, or
-    (2) specify a valid subscription ID, resource group, and workspace name.
+    1. specify a valid resource ID, or
+    2. specify a valid subscription ID, resource group, and workspace name.
+    
     If the Azure Quantum workspace does not have linked storage, the caller
     must also pass a valid Azure storage account connection string.
 
@@ -266,7 +268,7 @@ class Workspace:
         resource_id : Optional[str] = None,
         location : Optional[str] = None):
 
-        if resource_id:
+        if resource_id is not None:
             # A valid resource ID looks like:
             # /subscriptions/f846b2bd-d0e2-4a1d-8141-4c6944a9d387/resourceGroups/RESOURCE_GROUP_NAME/providers/Microsoft.Quantum/Workspaces/WORKSPACE_NAME
             regex = r'^/subscriptions/([a-fA-F0-9-]*)/resourceGroups/([^\s/]*)/providers/Microsoft\.Quantum/Workspaces/([^\s/]*)$'
@@ -281,7 +283,7 @@ class Workspace:
                 resource_group = match.group(2)
                 name = match.group(3)
 
-        if not subscription_id or not resource_group or not name:
+        if subscription_id is not None or resource_group is not None or name is not None:
             raise ValueError(
                 "Azure Quantum workspace not fully specified. Please specify either a valid resource ID " +
                 "or a valid combination of subscription ID, resource group name, and workspace name.")
@@ -311,9 +313,9 @@ class Workspace:
         return client
 
     def _custom_headers(self):
-        headers = {}
-        headers['x-ms-azurequantum-sdk-version'] = __version__
-        return headers
+        return {
+            'x-ms-azurequantum-sdk-version' = __version__
+        }
 
     def _get_linked_storage_sas_uri(self, container_name: str, blob_name: str=None) -> str:
         """
@@ -374,7 +376,7 @@ class Workspace:
         """
         if refresh or (self.credentials is None):
             self.credentials = None
-            msal_wrapper = MsalWrapper (self.subscription_id, refresh=refresh)
+            msal_wrapper = MsalWrapper(self.subscription_id, refresh=refresh)
             auth_token = msal_wrapper.acquire_auth_token()
             return BasicTokenAuthentication(auth_token)
 

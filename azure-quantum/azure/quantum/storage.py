@@ -53,7 +53,14 @@ def get_container_uri(connection_string: str, container_name: str) -> str:
     return uri
 
 
-def upload_blob(container: ContainerClient, blob_name: str, content_type:str, content_encoding:str, data: Any, returnSasToken: bool=True) -> str:
+def upload_blob(
+    container: ContainerClient,
+    blob_name: str,
+    content_type:str,
+    content_encoding:str,
+    data: Any,
+    return_sas_token: bool=True
+) -> str:
     """
     Uploads the given data to a blob record. If a blob with the given name already exist, it throws an error.
 
@@ -67,14 +74,14 @@ def upload_blob(container: ContainerClient, blob_name: str, content_type:str, co
     blob.upload_blob(data, content_settings=content_settings)
     logger.debug(f"  - blob '{blob_name}' uploaded. generating sas token.")
 
-    if returnSasToken:
+    if return_sas_token:
         sas_token = generate_blob_sas(
             blob.account_name,
             blob.container_name,
             blob.blob_name,
             account_key=blob.credential.account_key,
             permission=BlobSasPermissions(read=True),
-            expiry= datetime.utcnow() + timedelta(days=14)
+            expiry=datetime.utcnow() + timedelta(days=14)
         )
 
         uri = blob.url + "?" + sas_token

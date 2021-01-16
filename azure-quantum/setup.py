@@ -57,7 +57,7 @@ setuptools.setup(
     description="Python client for Azure Quantum",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/microsoft/iqsharp",
+    url="https://github.com/microsoft/qdk-python",
     packages=setuptools.find_namespace_packages(include=["azure.*"]),
     classifiers=[
         "Programming Language :: Python :: 3",

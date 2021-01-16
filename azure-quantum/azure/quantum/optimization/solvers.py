@@ -122,12 +122,11 @@ class ParallelTempering(Solver):
     def __init__(
         self,
         workspace: Workspace,
-        sweeps: Optional[int]=None,
-        replicas: Optional[int]=None,
-        all_betas: Optional[List[int]]=None,
-        timeout: Optional[int]=None,
-        seed: Optional[int]=None
-        ):
+        sweeps: Optional[int] = None,
+        replicas: Optional[int] = None,
+        all_betas: Optional[List[int]] = None,
+        timeout: Optional[int] = None,
+        seed: Optional[int] = None):
         """The constructor of a Parallel Tempering solver.
 
         Multi-core Parallel Tempering solver for binary optimization problems with k-local interactions on an all-to-all 
@@ -271,7 +270,7 @@ class Tabu(Solver):
             tabu_tenure is None 
         )
         
-        target = "microsoft.tabu-parameterfree.cpu" if param_free  else "microsoft.tabu.cpu"
+        target = "microsoft.tabu-parameterfree.cpu" if param_free else "microsoft.tabu.cpu"
         
         super().__init__(
             workspace=workspace, 

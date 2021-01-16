@@ -19,71 +19,71 @@ from azure.quantum.optimization.solvers import ParallelTempering, SimulatedAnnea
 
 class TestProblem(unittest.TestCase):
     def test_add_terms(self):
-        problem = Problem(name = "test")
+        problem = Problem(name="test")
         count = 4
 
         for i in range(count):
-            problem.add_term(c = i, indices = [i, i+1])
+            problem.add_term(c=i, indices=[i, i+1])
         self.assertEqual(ProblemType.ising, problem.problem_type)
         self.assertEqual(count, len(problem.terms))
-        self.assertEqual(Term(w = 1, indices = [1, 2]), problem.terms[1])
+        self.assertEqual(Term(w=1, indices=[1, 2]), problem.terms[1])
 
         more = []
         for i in range(count + 1):
-            more.append(Term(w = i, indices = [i, i-1]))
+            more.append(Term(w=i, indices=[i, i-1]))
         problem.add_terms(more)
         self.assertEqual((count * 2) + 1, len(problem.terms))
-        self.assertEqual(Term(w = count, indices = [count, count - 1]), problem.terms[count * 2])
+        self.assertEqual(Term(w=count, indices=[count, count - 1]), problem.terms[count * 2])
 
 
     def test_provide_terms(self):
         count = 4
         terms = []
         for i in range(count):
-            terms.append(Term(w = i, indices = [i, i+1]))
-        problem = Problem(name = "test", terms=terms, problem_type=ProblemType.pubo)
+            terms.append(Term(w=i, indices=[i, i+1]))
+        problem = Problem(name="test", terms=terms, problem_type=ProblemType.pubo)
 
         self.assertEqual(ProblemType.pubo, problem.problem_type)
         self.assertEqual(count, len(problem.terms))
-        self.assertEqual(Term(c = 1, indices = [1, 2]), problem.terms[1])
+        self.assertEqual(Term(c=1, indices=[1, 2]), problem.terms[1])
 
 
     def test_add_terms_cterms(self):
-        problem = Problem(name = "test")
+        problem = Problem(name="test")
         count = 4
 
         for i in range(count):
-            problem.add_term(c = i, indices = [i, i+1])
+            problem.add_term(c=i, indices=[i, i+1])
         self.assertEqual(ProblemType.ising, problem.problem_type)
         self.assertEqual(count, len(problem.terms))
-        self.assertEqual(Term(c = 1, indices = [1, 2]), problem.terms[1])
+        self.assertEqual(Term(c=1, indices=[1, 2]), problem.terms[1])
 
         more = []
         for i in range(count + 1):
-            more.append(Term(c = i, indices = [i, i-1]))
+            more.append(Term(c=i, indices=[i, i-1]))
         problem.add_terms(more)
         self.assertEqual((count * 2) + 1, len(problem.terms))
-        self.assertEqual(Term(c= count, indices = [count, count - 1]), problem.terms[count * 2])
+        self.assertEqual(Term(c=count, indices=[count, count - 1]), problem.terms[count * 2])
 
 
     def test_provide_cterms(self):
         count = 4
         terms = []
         for i in range(count):
-            terms.append(Term(c = i, indices = [i, i+1]))
-        problem = Problem(name = "test", terms=terms, problem_type=ProblemType.pubo)
+            terms.append(Term(c=i, indices=[i, i+1]))
+        problem = Problem(name="test", terms=terms, problem_type=ProblemType.pubo)
 
         self.assertEqual(ProblemType.pubo, problem.problem_type)
         self.assertEqual(count, len(problem.terms))
-        self.assertEqual(Term(c = 1, indices = [1, 2]), problem.terms[1])
+        self.assertEqual(Term(c=1, indices=[1, 2]), problem.terms[1])
 
         
     def test_serialization_cterms(self):
         count = 2
         terms = []
         for i in range(count):
-            terms.append(Term(c = i, indices = [i, i+1]))
-        problem = Problem(name = "test", terms=terms)
+            terms.append(Term(c=i, indices=[i, i+1]))
+        problem = Problem(name="test", terms=terms)
 
         expected = json.dumps({
             "cost_function": {
@@ -100,9 +100,9 @@ class TestProblem(unittest.TestCase):
         count = 2
         terms = []
         for i in range(count):
-            terms.append(Term(c = i, indices = [i, i+1]))
+            terms.append(Term(c=i, indices=[i, i+1]))
         init_config = {"0":-1 , "1": 1, "2": -1}
-        problem = Problem(name = "test", terms=terms, init_config=init_config)
+        problem = Problem(name="test", terms=terms, init_config=init_config)
 
         expected = json.dumps({
             "cost_function": {
