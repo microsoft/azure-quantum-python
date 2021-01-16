@@ -314,7 +314,7 @@ class Workspace:
 
     def _custom_headers(self):
         return {
-            'x-ms-azurequantum-sdk-version' = __version__
+            'x-ms-azurequantum-sdk-version': __version__
         }
 
     def _get_linked_storage_sas_uri(self, container_name: str, blob_name: str=None) -> str:
