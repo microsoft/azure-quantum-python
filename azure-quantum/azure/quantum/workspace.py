@@ -255,8 +255,6 @@ class Workspace:
         This may be specified as a region name such as \"East US\" or a location name such as \"eastus\".
         If no valid value is specified, defaults to \"westus\".
     """
-    # TODO: AB#1283
-    # TODO: AB#1284
     credentials = None
 
     def __init__(
@@ -329,13 +327,11 @@ class Workspace:
         return container_uri.sas_uri
 
     def submit_job(self, job: Job) -> Job:
-        # TODO: AB#1283
         client = self._create_jobs_client()
         details = client.create(job.details.id, job.details, custom_headers=self._custom_headers())
         return Job(self, details)
 
     def cancel_job(self, job: Job) -> Job:
-        # TODO: AB#1283
         client = self._create_jobs_client()
         client.cancel(job.details.id, custom_headers=self._custom_headers())
         details = client.get(job.id, custom_headers=self._custom_headers())
@@ -348,8 +344,6 @@ class Workspace:
         return Job(self, details)
 
     def list_jobs(self) -> List[Job]:
-        # TODO: AB#1282
-        # TODO: AB#1283
         client = self._create_jobs_client()
         jobs = client.list(custom_headers=self._custom_headers())
 

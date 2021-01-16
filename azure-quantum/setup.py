@@ -38,7 +38,6 @@ __version__ = "{version}"
 # PyPI page for this package. Thus, we'll generate the description by using the
 # same README.md file that we use in the GitHub repo.
 
-# TODO: #12331
 with open("./README.md", "r") as fh:
     long_description = fh.read()
 
@@ -48,8 +47,6 @@ with open("./requirements.txt", "r") as fh:
     requirements = fh.readlines()
 
 ## SETUPTOOLS INVOCATION ##
-
-# TODO: 12334
 setuptools.setup(
     name="azure-quantum",
     version=version,

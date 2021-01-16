@@ -151,7 +151,6 @@ class ParallelTempering(Solver):
             replicas is None and
             all_betas is None
         )
-        ## TODO: #13545
         platform = HardwarePlatform.CPU
         if platform == HardwarePlatform.FPGA:
             target = "microsoft.paralleltempering.fpga" 

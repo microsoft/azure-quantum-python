@@ -162,12 +162,6 @@ class TestSolvers(unittest.TestCase):
         self.assertEqual("microsoft.paralleltempering-parameterfree.cpu", good.target)
         self.assertEqual({ "seed": 20 }, good.params["params"])
 
-        ## TODO: #13545
-        # good = ParallelTempering(ws, platform=HardwarePlatform.FPGA, seed=20)
-        # self.assertIsNotNone(good)
-        # self.assertEqual("microsoft.paralleltempering.fpga", good.target)
-        # self.assertEqual({ "seed": 20 }, good.params["params"])
-
         good = ParallelTempering(ws, sweeps=20, replicas=3, all_betas=[3,5,9])
         self.assertIsNotNone(good)
         self.assertEqual("microsoft.paralleltempering.cpu", good.target)
@@ -178,12 +172,6 @@ class TestSolvers(unittest.TestCase):
         self.assertEqual("microsoft.paralleltempering.cpu", good.target)
         self.assertEqual({ "sweeps": 20, "replicas": 2, "all_betas":[3,9] }, good.params["params"])
         
-        ## TODO: #13545
-        # good = ParallelTempering(ws, sweeps=20, all_betas=[3,9], platform=HardwarePlatform.FPGA)
-        # self.assertIsNotNone(good)
-        # self.assertEqual("microsoft.paralleltempering.fpga", good.target)
-        # self.assertEqual({ "sweeps": 20, "replicas": 2, "all_betas":[3,9] }, good.params["params"])
-
         with self.assertRaises(ValueError):
             _ = ParallelTempering(ws, sweeps=20, replicas=3, all_betas=[1,3,5,7,9])
             
