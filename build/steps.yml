@@ -1,24 +1,15 @@
 steps:
-- pwsh: ./build.ps1
-  workingDirectory: '$(System.DefaultWorkingDirectory)/build'
-  displayName: Build
 - bash: echo "##vso[task.prependpath]$CONDA/bin"
   displayName: Add conda to PATH
-- script: conda env create --quiet --file environment.yml
+- pwsh: ../build/build.ps1
   workingDirectory: '$(System.DefaultWorkingDirectory)/qdk'
-  displayName: Create Anaconda environment for qdk
-- bash: |
-    source activate qdk
-    pip install -e .
-    pytest
+  displayName: Build
+- pwsh: ../build/test.ps1
   workingDirectory: '$(System.DefaultWorkingDirectory)/qdk'
-  displayName: Activate Anaconda environment and run pytest for qdk
-- script: conda env create --quiet --file environment.yml
+  displayName: Install and test
+- pwsh: ../build/build.ps1
   workingDirectory: '$(System.DefaultWorkingDirectory)/azure-quantum'
-  displayName: Create Anaconda environment for azure-quantum
-- bash: |
-    source activate azurequantum
-    pip install -e .
-    pytest
+  displayName: Build
+- pwsh: ../build/test.ps1
   workingDirectory: '$(System.DefaultWorkingDirectory)/azure-quantum'
-  displayName: Activate Anaconda environment and run pytest for azure-quantum
+  displayName: Install and test
