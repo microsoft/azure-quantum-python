@@ -9,7 +9,7 @@ steps:
     filePath: $(System.DefaultWorkingDirectory)/build/test.ps1
     arguments: >
        -envName "qdk" # env name defined in environment.yml
-  workingDirectory: '$(System.DefaultWorkingDirectory)/qdk'
+       -pkgDir "qdk"
   displayName: Install and test qdk
 - pwsh: ../build/build.ps1
   workingDirectory: '$(System.DefaultWorkingDirectory)/azure-quantum'
@@ -19,5 +19,5 @@ steps:
     filePath: $(System.DefaultWorkingDirectory)/build/test.ps1
     arguments: >
        -envName "azurequantum" # env name defined in environment.yml
-  workingDirectory: '$(System.DefaultWorkingDirectory)/azure-quantum'
+       -pkgDir "azure-quantum"
   displayName: Install and test azure-quantum
