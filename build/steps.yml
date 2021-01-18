@@ -1,13 +1,13 @@
 steps:
 - pwsh: build/build.ps1 qdk
   displayName: Build qdk
-- pwsh: build/pack.ps1 -envName qdk -pkgDir qdk
+- pwsh: build/pack.ps1 -envNames qdk -pkgDirs qdk
   displayName: Pack qdk
-- pwsh: build/test.ps1 -envName qdk -pkgDir qdk
+- pwsh: build/test.ps1 -envNames qdk -pkgDirs qdk
   displayName: Install and test qdk
 - pwsh: build/build.ps1 azure-quantum
   displayName: Build azure-quantum
-- pwsh: build/pack.ps1 -envName azurequantum -pkgDir azure-quantum
+- pwsh: build/pack.ps1 -envNames azurequantum -pkgDirs azure-quantum
   displayName: Pack azure-quantum
-- pwsh: build/test.ps1 -envName azurequantum -pkgDir azure-quantum
+- pwsh: build/test.ps1 -envNames azurequantum -pkgDirs azure-quantum
   displayName: Install and test azure-quantum
