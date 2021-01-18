@@ -19,13 +19,13 @@ if ($pythonOutDir -eq "") {
 
 function PackWheel() {
     param(
-        [string] $condaEnv,
+        [string] $PenvName,
         [string] $Path,
         [string] $PoutDir
     );
 
     Push-Location $Path
-        sh $PSScriptRoot/pack.sh $condaEnv
+        sh $PSScriptRoot/pack.sh $PenvName
 
         if  ($LastExitCode -ne 0) {
             Write-Host "##vso[task.logissue type=error;]Failed to build $Path."
@@ -47,5 +47,5 @@ if ($Env:ENABLE_PYTHON -eq "false") {
     $parentPath = Split-Path -parent $PSScriptRoot
     $AbsPkgDir = Join-Path $parentPath $pkgDir
     Write-Host "##[info]Packing Python wheel in env '$envName' for '$AbsPkgDir' to '$outDir'..."
-    PackWheel -condaEnv $envName -Path $AbsPkgDir -PoutDir $outDir
+    PackWheel -PenvName $envName -Path $AbsPkgDir -PoutDir $outDir
 }
