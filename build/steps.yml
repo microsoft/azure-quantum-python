@@ -1,6 +1,4 @@
 steps:
-- bash: echo "##vso[task.prependpath]$CONDA/bin"
-  displayName: Add conda to PATH
 - pwsh: ../build/build.ps1
   workingDirectory: '$(System.DefaultWorkingDirectory)/qdk'
   displayName: Build qdk
