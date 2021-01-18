@@ -7,7 +7,10 @@ if ($pkgDir -eq $null) {
   $pkgDir = "qdk"
 }
 
-Write-Host "##[info]Build '$pkgDir' Conda environment"
 
 # Create conda environment
-conda env create --quiet --file $pkgDir/environment.yml
+$parentPath = Split-Path -parent $PSScriptRoot
+$envPath = Join-Path $parentPath $pkgDir environment.yml
+
+Write-Host "##[info]Build '$envPath' Conda environment"
+conda env create --quiet --file $envPath
