@@ -11,5 +11,8 @@ if ($pkgDir -eq $null) {
   $pkgDir = $envName
 }
 
-Write-Host "##[info]Install package $pkgDir in development mode and run tests for env $envName"
-sh $PSScriptRoot/test.sh $envName $pkgDir
+$parentPath = Split-Path -parent $PSScriptRoot
+$AbsPkgDir = Join-Path $parentPath $pkgDir
+
+Write-Host "##[info]Install package $AbsPkgDir in development mode and run tests for env $envName"
+sh $PSScriptRoot/test.sh $envName $AbsPkgDir
