@@ -1,13 +1,9 @@
 steps:
-- pwsh: ./build.ps1 qdk
+- pwsh: build/build.ps1 qdk
   displayName: Build qdk
-  workingDirectory: '$(System.DefaultWorkingDirectory)/build'
-- pwsh: ./test.ps1 -envName qdk -pkgDir qdk
+- pwsh: build/test.ps1 -envName qdk -pkgDir qdk
   displayName: Install and test qdk
-  workingDirectory: '$(System.DefaultWorkingDirectory)/build'
-- pwsh: ./build.ps1 azure-quantum
+- pwsh: build/build.ps1 azure-quantum
   displayName: Build azure-quantum
-  workingDirectory: '$(System.DefaultWorkingDirectory)/build'
-- pwsh: ./test.ps1 -envName azurequantum -pkgDir azure-quantum
+- pwsh: build/test.ps1 -envName azurequantum -pkgDir azure-quantum
   displayName: Install and test azure-quantum
-  workingDirectory: '$(System.DefaultWorkingDirectory)/build'
