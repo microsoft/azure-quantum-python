@@ -22,10 +22,6 @@ function CreateEnv() {
   conda env create --quiet --file $envPath
 }
 
-# foreach ($pkgDir in $pkgDirs) {
-#   CreateEnv -pkgDir $pkgDir
-# }
-
-(& conda "shell.powershell" "hook") | Out-String | Invoke-Expression
-conda activate qdk
-which python
+foreach ($pkgDir in $pkgDirs) {
+  CreateEnv -pkgDir $pkgDir
+}

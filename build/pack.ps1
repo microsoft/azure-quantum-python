@@ -30,7 +30,14 @@ function PackWheel() {
   );
 
   Push-Location $Path
-    sh $PSScriptRoot/pack.sh $envName
+    # Set environment vars to be able to run conda activate
+    (& conda "shell.powershell" "hook") | Out-String | Invoke-Expression
+    Write-Host "##[info]Pack wheel for env '$envName'"
+    # Activate env
+    conda activate $envName
+    which python
+    # Create package distribution
+    python setup.py bdist_wheel sdist --formats=gztar
 
     if  ($LastExitCode -ne 0) {
       Write-Host "##vso[task.logissue type=error;]Failed to build $Path."

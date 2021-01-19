@@ -24,10 +24,19 @@ function RunTests() {
   )
   $parentPath = Split-Path -parent $PSScriptRoot
   $AbsPkgDir = Join-Path $parentPath $pkgDir
-
-
   Write-Host "##[info]Install package $AbsPkgDir in development mode and run tests for env $envName"
-  sh $PSScriptRoot/test.sh $envName $AbsPkgDir
+  # Set environment vars to be able to run conda activate
+  (& conda "shell.powershell" "hook") | Out-String | Invoke-Expression
+  # Activate env
+  conda activate $envName
+  which python
+  # Install testing deps
+  python -m pip install --upgrade pip
+  pip install pytest pytest-azurepipelines
+  # Install package
+  pip install -e $AbsPkgDir
+  # Run tests
+  pytest $AbsPkgDir
 }
 
 for ($i=0; $i -le $pkgDirs.length-1; $i++) {
