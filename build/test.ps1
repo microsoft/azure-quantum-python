@@ -6,7 +6,8 @@ param (
 )
 
 if ($null -eq $pkgDirs) {
-  $pkgDirs = Get-ChildItem -Path $path -Recurse -Filter "environment.yml" | Select-Object -ExpandProperty Directory | Split-Path -Leaf
+  $parentPath = Split-Path -parent $PSScriptRoot
+  $pkgDirs = Get-ChildItem -Path $parentPath -Recurse -Filter "environment.yml" | Select-Object -ExpandProperty Directory | Split-Path -Leaf
   Write-Host "##[info]No pkgDir. Setting to default '$pkgDirs'"
 }
 
