@@ -331,7 +331,6 @@ def in_temp_path(cleanup: bool = True, suffix: bool = True):
             func(path)
 
         shutil.rmtree(temp_path.name, onerror=remove_readonly)
-        temp_path.cleanup()
 
     # Change back to original directory
     os.chdir(cur_dir)
