@@ -13,12 +13,26 @@ You can also try our [Quantum Computing Fundamentals](https://aka.ms/learnqc) le
 
 ### Installation and getting started
 
-We recommend installing [Anaconda](https://www.anaconda.com/products/individual) or [Miniconda](https://docs.conda.io/en/latest/miniconda.html). Create a new environment using the following command:
+We recommend installing [Anaconda](https://www.anaconda.com/products/individual) or [Miniconda](https://docs.conda.io/en/latest/miniconda.html). 
+
+To install the `azure-quantum` package, run
+
+```bash
+pip install azure-quantum
+```
+
+#### Development
+
+To install the package in development mode, we recommend creating a new environment using the following command:
 
 ```bash
 # Create new conda environment
 conda env create -f azure-quantum/environment.yml
+```
 
+Then, the package can be installed after activating the environment:
+
+```bash
 # Activate conda environment
 conda activate azurequantum
 
@@ -32,12 +46,32 @@ Q# chemistry library's Python application layer, contains tools for creating 2D 
 
 ### Installation and getting started
 
-We recommend installing [Anaconda](https://www.anaconda.com/products/individual) or [Miniconda](https://docs.conda.io/en/latest/miniconda.html). Create a new environment using the following command:
+We recommend installing [Anaconda](https://www.anaconda.com/products/individual) or [Miniconda](https://docs.conda.io/en/latest/miniconda.html).
+
+First, install RDKit:
+
+```bash
+conda install -c rdkit rdkit
+```
+
+To install the `qdk` package, run
+
+```bash
+pip install qdk
+```
+
+#### Development
+
+To install the package in development mode, we recommend creating a new environment using the following command:
 
 ```bash
 # Create new conda environment
 conda env create -f qdk/environment.yml
+```
 
+Then, the package can be installed after activating the environment:
+
+```bash
 # Activate conda environment
 conda activate qdk
 
