@@ -10,6 +10,8 @@ param (
   [string] $OutDir
 )
 
+Import-Module (Join-Path $PSScriptRoot "conda-utils.psm1");
+
 if ($null -eq $PackageDirs) {
   $parentPath = Split-Path -parent $PSScriptRoot
   $PackageDirs = Get-ChildItem -Path $parentPath -Recurse -Filter "environment.yml" | Select-Object -ExpandProperty Directory | Split-Path -Leaf
@@ -40,11 +42,11 @@ function Create-Wheel() {
 
   Push-Location $Path
     # Set environment vars to be able to run conda activate
-    (& conda "shell.powershell" "hook") | Out-String | Invoke-Expression
+    Enable-Conda
     Write-Host "##[info]Pack wheel for env '$EnvName'"
     # Activate env
     conda activate $EnvName
-    Get-Command python | Write-Verbose
+    Get-PythonConfiguration | Write-Verbose
     # Create package distribution
     python setup.py bdist_wheel sdist --formats=gztar
 

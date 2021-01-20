@@ -9,6 +9,8 @@ param (
   [string[]] $EnvNames
 )
 
+Import-Module (Join-Path $PSScriptRoot "conda-utils.psm1");
+
 if ($null -eq $PackageDirs) {
   $ParentPath = Split-Path -parent $PSScriptRoot
   $PackageDirs = Get-ChildItem -Path $ParentPath -Recurse -Filter "environment.yml" | Select-Object -ExpandProperty Directory | Split-Path -Leaf
@@ -34,10 +36,10 @@ function Invoke-Tests() {
   $AbsPackageDir = Join-Path $ParentPath $PackageDir
   Write-Host "##[info]Test package $AbsPackageDir and run tests for env $EnvName"
   # Set environment vars to be able to run conda activate
-  (& conda "shell.powershell" "hook") | Out-String | Invoke-Expression
+  Enable-Conda
   # Activate env
   conda activate $EnvName
-  Get-Command python | Write-Verbose
+  Get-PythonConfiguration | Write-Verbose
   # Install testing deps
   python -m pip install --upgrade pip
   pip install pytest pytest-azurepipelines

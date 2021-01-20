@@ -9,6 +9,8 @@ param (
   [string[]] $EnvNames
 )
 
+Import-Module (Join-Path $PSScriptRoot "conda-utils.psm1");
+
 if ($null -eq $PackageDirs) {
   $ParentPath = Split-Path -parent $PSScriptRoot
   $PackageDirs = Get-ChildItem -Path $ParentPath -Recurse -Filter "environment.yml" | Select-Object -ExpandProperty Directory | Split-Path -Leaf
@@ -33,11 +35,11 @@ function Install-Package() {
   $ParentPath = Split-Path -parent $PSScriptRoot
   $AbsPackageDir = Join-Path $ParentPath $PackageDir
   Write-Host "##[info]Install package $AbsPackageDir in development mode for env $EnvName"
-  # Set environment vars to be able to run conda activate
-  (& conda "shell.powershell" "hook") | Out-String | Invoke-Expression
+  # Set environment vars to be able to run conda activate.
+  Enable-Conda
   # Activate env
   conda activate $EnvName
-  Get-Command python | Write-Verbose
+  Get-PythonConfiguration | Write-Verbose
   # Install package
   pip install -e $AbsPackageDir
 }
