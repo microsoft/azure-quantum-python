@@ -1,4 +1,4 @@
-namespace QDK.Chemistry.Trotterization {
+namespace Microsoft.Quantum.Chemistry.Trotterization {
     open Microsoft.Quantum.Core;
     open Microsoft.Quantum.Intrinsic;
     open Microsoft.Quantum.Canon;
