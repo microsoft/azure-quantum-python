@@ -36,10 +36,10 @@ function Invoke-Tests() {
   $AbsPackageDir = Join-Path $ParentPath $PackageDir
   Write-Host "##[info]Test package $AbsPackageDir and run tests for env $EnvName"
   # Set environment vars to be able to run conda activate
-  Enable-Conda
+  if (Enable-Conda) { Write-Host "##[info]Conda is enabled." }
   # Activate env
   conda activate $EnvName
-  Get-PythonConfiguration | Write-Verbose
+  Write-Host "##[info]Python config: $(Get-PythonConfiguration | Out-String)"
   # Install testing deps
   python -m pip install --upgrade pip
   pip install pytest pytest-azurepipelines

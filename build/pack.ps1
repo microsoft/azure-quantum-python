@@ -42,11 +42,11 @@ function Create-Wheel() {
 
   Push-Location $Path
     # Set environment vars to be able to run conda activate
-    Enable-Conda
+    if (Enable-Conda) { Write-Host "##[info]Conda is enabled." }
     Write-Host "##[info]Pack wheel for env '$EnvName'"
     # Activate env
     conda activate $EnvName
-    Get-PythonConfiguration | Write-Verbose
+    Write-Host "##[info]Python config: $(Get-PythonConfiguration | Out-String)"
     # Create package distribution
     python setup.py bdist_wheel sdist --formats=gztar
 
