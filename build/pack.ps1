@@ -1,28 +1,76 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
-function PackWheel() {
-    param(
-        [string] $Path
-    );
 
-    Push-Location (Join-Path $PSScriptRoot $Path)
-        source activate qdk
-        python setup.py bdist_wheel sdist --formats=gztar
+##
+# Pack: create wheels for given packages in given environments, output to directory
+##
+param (
+  [string[]] $PackageDirs,
+  [string[]] $EnvNames,
+  [string] $OutDir
+)
 
-        if  ($LastExitCode -ne 0) {
-            Write-Host "##vso[task.logissue type=error;]Failed to build $Path."
-            $script:all_ok = $False
-        } else {
-            Copy-Item "dist/*.whl" $Env:PYTHON_OUTDIR
-            Copy-Item "dist/*.tar.gz" $Env:PYTHON_OUTDIR
-        }
-    Pop-Location
+if ($null -eq $PackageDirs) {
+  $parentPath = Split-Path -parent $PSScriptRoot
+  $PackageDirs = Get-ChildItem -Path $parentPath -Recurse -Filter "environment.yml" | Select-Object -ExpandProperty Directory | Split-Path -Leaf
+  Write-Host "##[info]No PackageDir. Setting to default '$PackageDirs'"
+}
+
+if ($null -eq $EnvNames) {
+  $EnvNames = $PackageDirs | ForEach-Object {$_.replace("-", "")}
+  Write-Host "##[info]No EnvNames. Setting to default '$EnvNames'"
+}
+
+if ($OutDir -eq "") {
+  Write-Host "##[info]No OutDir. Setting to env var $Env:PYTHON_OUTDIR"
+  $OutDir = $Env:PYTHON_OUTDIR
+}
+
+# Check that input is valid
+if ($EnvNames.length -ne $PackageDirs.length) {
+  throw "Cannot run build script: '$EnvNames' and '$PackageDirs' lengths don't match"
+}
+
+function Create-Wheel() {
+  param(
+    [string] $EnvName,
+    [string] $Path,
+    [string] $OutDir
+  );
+
+  Push-Location $Path
+    # Set environment vars to be able to run conda activate
+    (& conda "shell.powershell" "hook") | Out-String | Invoke-Expression
+    Write-Host "##[info]Pack wheel for env '$EnvName'"
+    # Activate env
+    conda activate $EnvName
+    which python
+    # Create package distribution
+    python setup.py bdist_wheel sdist --formats=gztar
+
+    if  ($LastExitCode -ne 0) {
+      Write-Host "##vso[task.logissue type=error;]Failed to build $Path."
+      $script:all_ok = $False
+    } else {
+      $script:all_ok = $True
+      if ($OutDir -ne "") { 
+        Write-Host "##[info]Copying wheel to '$OutDir'"
+        Copy-Item "dist/*.whl" $OutDir/
+        Copy-Item "dist/*.tar.gz" $OutDir/
+      }
+    }
+  Pop-Location
 }
 
 if ($Env:ENABLE_PYTHON -eq "false") {
     Write-Host "##vso[task.logissue type=warning;]Skipping Creating Python packages. Env:ENABLE_PYTHON was set to 'false'."
 } else {
-    Write-Host "##[info]Packing Python wheel..."
     python --version
-    # PackWheel '../qdk'
+    $parentPath = Split-Path -parent $PSScriptRoot
+
+    for ($i=0; $i -le $PackageDirs.length-1; $i++) {
+      $PackageDir = Join-Path $parentPath $PackageDirs[$i]
+      Write-Host "##[info]Packing Python wheel in env '$EnvNames[$i]' for '$PackageDir' to '$OutDir'..."
+      Create-Wheel -EnvName $EnvNames[$i] -Path $PackageDir -OutDir $OutDir
+    }
 }
