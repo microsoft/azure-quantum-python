@@ -9,7 +9,7 @@ import azure.quantum
 from typing import List, Union, Any, Optional
 from enum import Enum
 from azure.quantum import Workspace, Job
-from azure.quantum.client.models import JobDetails
+from azure.quantum._client.models import JobDetails
 from azure.quantum.optimization import Problem
 from azure.quantum.storage import ContainerClient, create_container_using_client
 

@@ -11,7 +11,7 @@ from typing import List, TYPE_CHECKING
 from urllib.parse import urlparse
 
 from msrest.authentication import Authentication
-from azure.quantum.client.models import JobDetails
+from azure.quantum._client.models import JobDetails
 from azure.quantum.storage import download_blob
 from azure.storage.blob import BlobServiceClient, ContainerClient, BlobClient, BlobSasPermissions, generate_blob_sas, generate_container_sas
 

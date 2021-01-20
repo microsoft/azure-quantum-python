@@ -11,6 +11,7 @@
 
 import setuptools
 import os
+import distutils
 
 ## VERSION INFORMATION ##
 # Our build process sets the PYTHON_VERSION environment variable to a version
@@ -52,20 +53,21 @@ src = os.path.join(
     "azure-sdk-for-python",
     "sdk",
     "quantum",
-    "azure-quantum",
+    "azure-quantum-client",
     "azure",
     "quantum",
     "client"
 )
 
-if not os.path.exists(src):
+if not os.path.isdir(src):
     raise IOError("Cannot find auto-generated REST client: please run git submodule init && git submodule update")
 
 dst = os.path.join(
     "azure",
     "quantum",
-    "client"
+    "_client"
 )
+
 distutils.dir_util.copy_tree(src, dst)
 
 ## SETUPTOOLS INVOCATION ##
