@@ -322,6 +322,17 @@ def in_temp_path(cleanup: bool = True, suffix: bool = True):
     yield temp_path
     # Cleanup
     if cleanup:
+        # Workaround for issue with tempfile on Windows (see https://bugs.python.org/issue26660)
+        import os, stat
+        import shutil
+
+        def remove_readonly(func, path, _):
+            "Clear the readonly bit and reattempt the removal"
+            os.chmod(path, stat.S_IWRITE)
+            func(path)
+
+        shutil.rmtree(directory, onerror=remove_readonly)
         temp_path.cleanup()
+
     # Change back to original directory
     os.chdir(cur_dir)
