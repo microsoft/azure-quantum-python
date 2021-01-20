@@ -44,6 +44,8 @@ pip install -e azure-quantum
 
 Q# chemistry library's Python application layer, contains tools for creating 2D molecular diagrams and calculating their 3D geometry using RDKit.
 
+<img src="caffeine.png" width=300 alt="Caffeine molecule">
+
 ### Installation and getting started
 
 We recommend installing [Anaconda](https://www.anaconda.com/products/individual) or [Miniconda](https://docs.conda.io/en/latest/miniconda.html).
@@ -59,6 +61,8 @@ To install the `qdk` package, run
 ```bash
 pip install qdk
 ```
+
+To get started, try out the [example notebook](../examples/chemistry/Molecule.ipynb) in the examples/chemistry folder.
 
 #### Development
 
