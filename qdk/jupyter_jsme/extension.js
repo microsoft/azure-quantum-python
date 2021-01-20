@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT License.
+
 function jsmeOnLoad() {
     jsmeApp_ = new JSApplet.JSME("JSApp_", "400px", "350px", {
         "options" : "query,hydrogens",

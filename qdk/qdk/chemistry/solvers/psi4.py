@@ -1,3 +1,6 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 import enum
 from typing import Union, TYPE_CHECKING
 
