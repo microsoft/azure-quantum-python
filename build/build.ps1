@@ -40,8 +40,6 @@ function Install-Package() {
   $ParentPath = Split-Path -parent $PSScriptRoot
   $AbsPackageDir = Join-Path $ParentPath $PackageDir
   Write-Host "##[info]Install package $AbsPackageDir in development mode for env $EnvName"
-  # Set environment vars to be able to run conda activate.
-  if (Enable-Conda) { Write-Host "##[info]Conda is enabled." }
   # Activate env
   conda activate $EnvName
   Write-Host "##[info]Python config: $(Get-PythonConfiguration | Out-String)"
@@ -49,6 +47,9 @@ function Install-Package() {
   pip install -e $AbsPackageDir
 }
 
+
+# Set environment vars to be able to run conda activate.
+Enable-Conda
 
 for ($i=0; $i -le $PackageDirs.length-1; $i++) {
   Install-Package -EnvName $EnvNames[$i] -PackageDir $PackageDirs[$i]

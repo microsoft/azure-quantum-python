@@ -35,14 +35,19 @@ function Enable-Conda {
             so that this cmdlet is idempotent.
     #>
 
-    if (Test-CondaEnabled) { return $true; }
+    if (Test-CondaEnabled) {
+        Write-Host "##[info]Conda is enabled."
+        return $true;
+    }
 
-    if ("$Env:CONDA" -ne "") {
+    if ($null -ne $Env:CONDA || "" -ne $Env:CONDA) {
         # Try and run the shell hook from the path nominated
         # by CONDA.
-        (& ("$Env:CONDA") shell.powershell hook) | Out-String | Invoke-Expression;
-    } else {
-        (conda shell.powershell hook) | Out-String | Invoke-Expression;
+        Write-Host "##[info]Enabling conda powershell hook using conda command: $Env:CONDA"
+        (& ($Env:CONDA) "shell.powershell" "hook") | Out-String | Invoke-Expression;
+        } else {
+        Write-Host "##[info]Enabling conda powershell hook"
+        (& conda "shell.powershell" "hook") | Out-String | Invoke-Expression;
     }
 }
 
@@ -65,7 +70,7 @@ function Get-PythonConfiguration {
 
     # If the CONDA environment variable is set, allow that to override
     # the local PATH.
-    if ("$Env:CONDA" -ne "") {
+    if ($Env:CONDA -ne "") {
         $conda = Get-Command $Env:CONDA -ErrorAction SilentlyContinue;
     } else {
         $conda = Get-Command conda -ErrorAction SilentlyContinue;
