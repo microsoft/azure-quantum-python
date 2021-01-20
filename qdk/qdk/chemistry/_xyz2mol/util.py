@@ -17,6 +17,7 @@ import itertools
 import sys
 import tempfile
 import os
+import uuid
 
 from contextlib import contextmanager
 
