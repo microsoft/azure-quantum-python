@@ -1,9 +1,12 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-##
-# Build: Install given packages in given environments
-##
+<#
+    .SYNOPSIS
+        Build: Install given packages in given environments
+#>
+
+
 param (
   [string[]] $PackageDirs,
   [string[]] $EnvNames

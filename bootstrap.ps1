@@ -1,9 +1,10 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-##
-# Bootstrap: set up a Python environment using Anaconda
-##
+<#
+    .SYNOPSIS
+        Bootstrap: set up a Python environment using Anaconda
+#>
 
 param(
   [string[]] $PackageDirs

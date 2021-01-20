@@ -1,9 +1,11 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-##
-# Test: Run unit tests for given packages/environments
-##
+<#
+    .SYNOPSIS
+        Test: Run unit tests for given packages/environments
+#>
+
 param (
   [string[]] $PackageDirs,
   [string[]] $EnvNames

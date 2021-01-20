@@ -1,9 +1,11 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-##
-# Pack: create wheels for given packages in given environments, output to directory
-##
+<#
+    .SYNOPSIS
+        Pack: create wheels for given packages in given environments, output to directory
+#>
+
 param (
   [string[]] $PackageDirs,
   [string[]] $EnvNames,
