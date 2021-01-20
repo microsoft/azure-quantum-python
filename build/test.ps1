@@ -5,8 +5,8 @@
 # Test: Run unit tests for given packages/environments
 ##
 param (
-  [string[]] $EnvNames,
-  [string[]] $PackageDirs
+  [string[]] $PackageDirs,
+  [string[]] $EnvNames
 )
 
 if ($null -eq $PackageDirs) {
@@ -25,10 +25,10 @@ if ($EnvNames.length -ne $PackageDirs.length) {
   throw "Cannot run build script: '$EnvNames' and '$PackageDirs' lengths don't match"
 }
 
-function RunTests() {
+function Invoke-Tests() {
   param(
-    [string] $EnvName,
-    [string] $PackageDir
+    [string] $PackageDir,
+    [string] $EnvName
   )
   $ParentPath = Split-Path -parent $PSScriptRoot
   $AbsPackageDir = Join-Path $ParentPath $PackageDir
@@ -46,5 +46,5 @@ function RunTests() {
 }
 
 for ($i=0; $i -le $PackageDirs.length-1; $i++) {
-  RunTests -EnvName $EnvNames[$i] -PackageDir $PackageDirs[$i]
+  Invoke-Tests -PackageDir $PackageDirs[$i] -EnvName $EnvNames[$i]
 }

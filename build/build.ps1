@@ -5,8 +5,8 @@
 # Build: Install given packages in given environments
 ##
 param (
-  [string[]] $EnvNames,
-  [string[]] $PackageDirs
+  [string[]] $PackageDirs,
+  [string[]] $EnvNames
 )
 
 if ($null -eq $PackageDirs) {
@@ -45,4 +45,4 @@ function Install-Package() {
 
 for ($i=0; $i -le $PackageDirs.length-1; $i++) {
   Install-Package -EnvName $EnvNames[$i] -PackageDir $PackageDirs[$i]
-}   
+}

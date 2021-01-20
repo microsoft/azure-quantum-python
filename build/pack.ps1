@@ -5,8 +5,8 @@
 # Pack: create wheels for given packages in given environments, output to directory
 ##
 param (
-  [string[]] $EnvNames,
   [string[]] $PackageDirs,
+  [string[]] $EnvNames,
   [string] $OutDir
 )
 
@@ -31,7 +31,7 @@ if ($EnvNames.length -ne $PackageDirs.length) {
   throw "Cannot run build script: '$EnvNames' and '$PackageDirs' lengths don't match"
 }
 
-function PackWheel() {
+function Create-Wheel() {
   param(
     [string] $EnvName,
     [string] $Path,
@@ -71,6 +71,6 @@ if ($Env:ENABLE_PYTHON -eq "false") {
     for ($i=0; $i -le $PackageDirs.length-1; $i++) {
       $PackageDir = Join-Path $parentPath $PackageDirs[$i]
       Write-Host "##[info]Packing Python wheel in env '$EnvNames[$i]' for '$PackageDir' to '$OutDir'..."
-      PackWheel -EnvName $EnvNames[$i] -Path $PackageDir -OutDir $OutDir
+      Create-Wheel -EnvName $EnvNames[$i] -Path $PackageDir -OutDir $OutDir
     }
 }
