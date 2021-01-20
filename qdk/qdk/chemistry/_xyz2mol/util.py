@@ -301,17 +301,20 @@ def read_xyz_file(filename, look_for_charge=True):
 
 
 @contextmanager
-def in_temp_path(cleanup: bool = True):
+def in_temp_path(cleanup: bool = True, suffix: bool = True):
     """Contextmanager to run function in a temporary path
     This is useful for functions that generate unused output files
 
     :param cleanup: Cleanup the output, defaults to True
     :type cleanup: bool, optional
+    :param suffix: Optional: Add random suffix to temporary path
+    :type suffix: bool, optional
     """
     # Get current directory
     cur_dir = os.getcwd()
     # Create temporary path
-    temp_path = tempfile.TemporaryDirectory(".")
+    uid = str(uuid.uuid1()).split("-")[0] if suffix else ""
+    temp_path = tempfile.TemporaryDirectory(suffix=uid)
     # Change into the temporary directory
     os.chdir(temp_path.name)
     # Run code, yield generated output path

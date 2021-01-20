@@ -14,7 +14,6 @@ from qdk.chemistry._xyz2mol.util import (
 
 from qdk.chemistry._xyz2mol.xyz2mol import xyz2mol
 from qdk.chemistry._xyz2mol.ac import AC2mol
-from qdk.chemistry._xyz2mol.util import in_temp_path
 
 __TEST_SMILES__ = [
     'C[C-](c1ccccc1)C',
