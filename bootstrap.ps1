@@ -24,6 +24,6 @@ foreach ($PackageDir in $PackageDirs) {
         Write-Host "##[info]Skipping creating $EnvName; env already exists."
     } else {
         # if it doese not exist, create env
-        pwsh (Join-Path $PSScriptRoot build create-env.ps1) -PackageDirs $PackageDir
+        & (Join-Path $PSScriptRoot build create-env.ps1) -PackageDirs $PackageDir
     }
 }

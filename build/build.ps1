@@ -37,7 +37,7 @@ function Install-Package() {
   (& conda "shell.powershell" "hook") | Out-String | Invoke-Expression
   # Activate env
   conda activate $EnvName
-  which python
+  Get-Command python | Write-Verbose
   # Install package
   pip install -e $AbsPackageDir
 }

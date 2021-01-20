@@ -44,7 +44,7 @@ function Create-Wheel() {
     Write-Host "##[info]Pack wheel for env '$EnvName'"
     # Activate env
     conda activate $EnvName
-    which python
+    Get-Command python | Write-Verbose
     # Create package distribution
     python setup.py bdist_wheel sdist --formats=gztar
 
