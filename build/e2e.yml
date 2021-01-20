@@ -1,0 +1,34 @@
+  
+name: $(Build.Major).$(Build.Minor).$(date:yyMM).$(BuildId)
+
+parameters:
+- name: validation_level
+  displayName: Validation Level
+  type: string
+  default: normal
+  values:
+  - minimal
+  - normal
+  - full
+
+trigger: none
+
+pr:
+- main
+- feature/*
+- features/*
+- release/*
+
+resources:
+  repositories:
+  - repository: qdk
+    type: github
+    endpoint: github
+    name: microsoft/qdk
+    ref: refs/heads/feature/qdk-python
+
+extends:
+  template: build/qdk-module-e2e.yml@qdk
+  parameters:
+    module: qdk-python
+    validation_level: ${{ parameters.validation_level }}
