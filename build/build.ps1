@@ -12,6 +12,8 @@ param (
   [string[]] $EnvNames
 )
 
+& (Join-Path $PSScriptRoot "set-env.ps1");
+
 Import-Module (Join-Path $PSScriptRoot "conda-utils.psm1");
 
 if ($null -eq $PackageDirs) {
