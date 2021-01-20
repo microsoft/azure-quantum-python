@@ -6,7 +6,6 @@ import pytest
 import ruamel.yaml as yaml
 
 from qdk.chemistry.solvers.nwchem import create_input_deck, parse_nwchem_output
-from qdk.chemistry.solvers.nwchem_to_yaml import to_broombridge
 
 
 @pytest.fixture()
@@ -91,12 +90,3 @@ def test_parse_nwchem_output(caffeine_nw, caffeine_output):
         'CCSD correlation energy': -0.002197738334726,
         'geometry snapshot': []
     }
-
-
-def test_save_broombridge(caffeine_output):
-    data = to_broombridge(caffeine_output)
-    broombridge = yaml.load(data)
-    assert "$schema" in broombridge
-    assert "bibliography" in broombridge
-    assert "generator" in broombridge
-    assert "integral_sets" in broombridge
