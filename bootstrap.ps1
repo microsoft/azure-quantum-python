@@ -27,3 +27,7 @@ foreach ($PackageDir in $PackageDirs) {
         pwsh (Join-Path $PSScriptRoot build create-env.ps1) -PackageDirs $PackageDir
     }
 }
+
+Write-Host "##[info]Initializing and updating submodule."
+git submodule init
+git submodule update

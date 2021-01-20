@@ -16,8 +16,8 @@ from pathlib import Path
 from typing import List, Optional
 
 from msrest.authentication import Authentication, BasicTokenAuthentication
-from azure.quantum.client import QuantumClient
-from azure.quantum.client.operations import JobsOperations, StorageOperations
+from azure.quantum._client import QuantumClient
+from azure.quantum._client.operations import JobsOperations, StorageOperations
 from azure.quantum import Job
 try:
     from .version import __version__
