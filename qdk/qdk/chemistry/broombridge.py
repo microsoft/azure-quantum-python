@@ -1,3 +1,9 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
+##
+# Module for loading and encoding Broombridge data
+##
 import logging
 from qsharp.chemistry import load_broombridge, load_input_state, encode
 from typing import List, Tuple

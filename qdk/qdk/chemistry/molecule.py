@@ -1,5 +1,9 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
+
+##
+# Module for the Molecule class for defining and visualizing molecules
+##
 import enum
 import logging
 import os
