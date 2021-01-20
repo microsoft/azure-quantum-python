@@ -18,6 +18,8 @@ import sys
 import tempfile
 import os
 import uuid
+import stat
+import shutil
 
 from contextlib import contextmanager
 
@@ -323,9 +325,6 @@ def in_temp_path(cleanup: bool = True, suffix: bool = True):
     # Cleanup
     if cleanup:
         # Workaround for issue with tempfile on Windows (see https://bugs.python.org/issue26660)
-        import os, stat
-        import shutil
-
         def remove_readonly(func, path, _):
             "Clear the readonly bit and reattempt the removal"
             os.chmod(path, stat.S_IWRITE)
