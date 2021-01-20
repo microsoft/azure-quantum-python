@@ -1,45 +1,62 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
+
+##
+# Pack: create wheels for given packages in given environments, output to directory
+##
 param (
-  [string[]] $envNames,
-  [string[]] $pkgDirs,
-  [string] $outDir
+  [string[]] $PackageDirs,
+  [string[]] $EnvNames,
+  [string] $OutDir
 )
 
-if ($null -eq $pkgDirs) {
+if ($null -eq $PackageDirs) {
   $parentPath = Split-Path -parent $PSScriptRoot
-  $pkgDirs = Get-ChildItem -Path $parentPath -Recurse -Filter "environment.yml" | Select-Object -ExpandProperty Directory | Split-Path -Leaf
-  Write-Host "##[info]No pkgDir. Setting to default '$pkgDirs'"
+  $PackageDirs = Get-ChildItem -Path $parentPath -Recurse -Filter "environment.yml" | Select-Object -ExpandProperty Directory | Split-Path -Leaf
+  Write-Host "##[info]No PackageDir. Setting to default '$PackageDirs'"
 }
 
-if ($null -eq $envNames) {
-  $envNames = $pkgDirs | ForEach-Object {$_.replace("-","")}
-  Write-Host "##[info]No envNames. Setting to default '$envNames'"
+if ($null -eq $EnvNames) {
+  $EnvNames = $PackageDirs | ForEach-Object {$_.replace("-", "")}
+  Write-Host "##[info]No EnvNames. Setting to default '$EnvNames'"
 }
 
-if ($outDir -eq "") {
-  Write-Host "##[info]No outDir. Setting to env var $Env:PYTHON_OUTDIR"
-  $outDir = $Env:PYTHON_OUTDIR
+if ($OutDir -eq "") {
+  Write-Host "##[info]No OutDir. Setting to env var $Env:PYTHON_OUTDIR"
+  $OutDir = $Env:PYTHON_OUTDIR
 }
 
-function PackWheel() {
+# Check that input is valid
+if ($EnvNames.length -ne $PackageDirs.length) {
+  throw "Cannot run build script: '$EnvNames' and '$PackageDirs' lengths don't match"
+}
+
+function Create-Wheel() {
   param(
-    [string] $envName,
+    [string] $EnvName,
     [string] $Path,
-    [string] $outDir
+    [string] $OutDir
   );
 
   Push-Location $Path
-    sh $PSScriptRoot/pack.sh $envName
+    # Set environment vars to be able to run conda activate
+    (& conda "shell.powershell" "hook") | Out-String | Invoke-Expression
+    Write-Host "##[info]Pack wheel for env '$EnvName'"
+    # Activate env
+    conda activate $EnvName
+    which python
+    # Create package distribution
+    python setup.py bdist_wheel sdist --formats=gztar
 
     if  ($LastExitCode -ne 0) {
       Write-Host "##vso[task.logissue type=error;]Failed to build $Path."
       $script:all_ok = $False
     } else {
-      if ($outDir -ne "") { 
-        Write-Host "##[info]Copying wheel to '$outDir'"
-        Copy-Item "dist/*.whl" $outDir/
-        Copy-Item "dist/*.tar.gz" $outDir/
+      $script:all_ok = $True
+      if ($OutDir -ne "") { 
+        Write-Host "##[info]Copying wheel to '$OutDir'"
+        Copy-Item "dist/*.whl" $OutDir/
+        Copy-Item "dist/*.tar.gz" $OutDir/
       }
     }
   Pop-Location
@@ -51,9 +68,9 @@ if ($Env:ENABLE_PYTHON -eq "false") {
     python --version
     $parentPath = Split-Path -parent $PSScriptRoot
 
-    for ($i=0; $i -le $pkgDirs.length-1; $i++) {
-      $AbsPkgDir = Join-Path $parentPath $pkgDirs[$i]
-      Write-Host "##[info]Packing Python wheel in env '$envNames[$i]' for '$AbsPkgDir' to '$outDir'..."
-      PackWheel -envName $envNames[$i] -Path $AbsPkgDir -outDir $outDir
+    for ($i=0; $i -le $PackageDirs.length-1; $i++) {
+      $PackageDir = Join-Path $parentPath $PackageDirs[$i]
+      Write-Host "##[info]Packing Python wheel in env '$EnvNames[$i]' for '$PackageDir' to '$OutDir'..."
+      Create-Wheel -EnvName $EnvNames[$i] -Path $PackageDir -OutDir $OutDir
     }
 }

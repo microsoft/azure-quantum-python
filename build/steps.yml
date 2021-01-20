@@ -1,13 +1,17 @@
 steps:
+- pwsh: ./bootstrap.ps1 qdk
+  displayName: Create qdk conda environment
 - pwsh: build/build.ps1 qdk
-  displayName: Build qdk
-- pwsh: build/pack.ps1 -envNames qdk -pkgDirs qdk
+  displayName: Install qdk package in env
+- pwsh: build/pack.ps1 qdk
   displayName: Pack qdk
-- pwsh: build/test.ps1 -envNames qdk -pkgDirs qdk
-  displayName: Install and test qdk
+- pwsh: build/test.ps1 qdk
+  displayName: Test qdk
+- pwsh: ./bootstrap.ps1 azure-quantum
+  displayName: Create azure-quantum conda environment
 - pwsh: build/build.ps1 azure-quantum
-  displayName: Build azure-quantum
-- pwsh: build/pack.ps1 -envNames azurequantum -pkgDirs azure-quantum
+  displayName: Install azure-quantum package in env
+- pwsh: build/pack.ps1 azure-quantum
   displayName: Pack azure-quantum
-- pwsh: build/test.ps1 -envNames azurequantum -pkgDirs azure-quantum
-  displayName: Install and test azure-quantum
+- pwsh: build/test.ps1 azure-quantum
+  displayName: Test azure-quantum
