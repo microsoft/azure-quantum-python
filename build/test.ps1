@@ -50,6 +50,10 @@ function Invoke-Tests() {
   pytest $AbsPackageDir
 }
 
-for ($i=0; $i -le $PackageDirs.length-1; $i++) {
-  Invoke-Tests -PackageDir $PackageDirs[$i] -EnvName $EnvNames[$i]
+if ($Env:ENABLE_PYTHON -eq "false") {
+  Write-Host "##vso[task.logissue type=warning;]Skipping testing Python packages. Env:ENABLE_PYTHON was set to 'false'."
+} else {
+  for ($i=0; $i -le $PackageDirs.length-1; $i++) {
+    Invoke-Tests -PackageDir $PackageDirs[$i] -EnvName $EnvNames[$i]
+  }
 }

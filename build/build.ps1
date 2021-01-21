@@ -50,6 +50,10 @@ function Install-Package() {
 # Set environment vars to be able to run conda activate.
 Enable-Conda
 
-for ($i=0; $i -le $PackageDirs.length-1; $i++) {
-  Install-Package -EnvName $EnvNames[$i] -PackageDir $PackageDirs[$i]
+if ($Env:ENABLE_PYTHON -eq "false") {
+  Write-Host "##vso[task.logissue type=warning;]Skipping installing Python packages. Env:ENABLE_PYTHON was set to 'false'."
+} else {
+  for ($i=0; $i -le $PackageDirs.length-1; $i++) {
+    Install-Package -EnvName $EnvNames[$i] -PackageDir $PackageDirs[$i]
+  }
 }

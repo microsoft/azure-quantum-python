@@ -37,6 +37,8 @@ if ($EnvNames.length -ne $PackageDirs.length) {
   throw "Cannot run build script: '$EnvNames' and '$PackageDirs' lengths don't match"
 }
 
+$script:all_ok = $True
+
 function Create-Wheel() {
   param(
     [string] $EnvName,
@@ -57,7 +59,6 @@ function Create-Wheel() {
       Write-Host "##vso[task.logissue type=error;]Failed to build $Path."
       $script:all_ok = $False
     } else {
-      $script:all_ok = $True
       if ($OutDir -ne "") { 
         Write-Host "##[info]Copying wheel to '$OutDir'"
         Copy-Item "dist/*.whl" $OutDir/
