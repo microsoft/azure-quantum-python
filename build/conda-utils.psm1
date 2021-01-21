@@ -30,27 +30,51 @@ function Enable-Conda {
             Attempts to enable conda for shell usage, first using
             the CONDA environment variable for the path, falling back
             to PATH, and then failing.
-
             If conda is already enabled, this cmdlet does nothing,
             so that this cmdlet is idempotent.
     #>
 
-    if (Test-CondaEnabled) {
-        Write-Host "##[info]Conda is enabled."
-        return $true;
-    }
+    if (Test-CondaEnabled) { return $true; }
 
-    Write-Host "##[info]Enabling conda powershell hook"
-    $condahook = (& conda "shell.powershell" "hook") | Out-String
-    Write-Host "##[info]Running: $condahook"
-    $condahook | Invoke-Expression;
+    if ("$Env:CONDA" -ne "") {
+        # Try and run the shell hook from the path nominated
+        # by CONDA.
+
+        # On Windows, this is $Env:CONDA/Scripts/conda.exe, while on
+        # Linux and macOS, this is $Env:CONDA/bin/conda.
+
+        if ($IsWindows) {
+            $condaBin = Join-Path $Env:CONDA "Scripts" "conda.exe";
+        } else {
+            $condaBin = Join-Path $Env:CONDA "bin" "conda";
+        }
+
+        if ($null -eq (Get-Command $condaBin -ErrorAction SilentlyContinue)) {
+            Write-Error "##[error] conda binary was expected at $condaBin (CONDA = $Env:CONDA), but was not found.";
+            throw;
+        }
+
+        (& $condaBin shell.powershell hook) | Out-String | Invoke-Expression;
+    } else {
+        (conda shell.powershell hook) | Out-String | Invoke-Expression;
+    }
 }
 
-function ActivateCondaEnv {
+function Use-CondaEnv {
     param (
         [string] $EnvName
     )
-    & conda activate $EnvName
+    <#
+        .SYNOPSIS
+            Activates a conda environment, reporting the new configuration
+            after having done so. If conda has not already been enabled, this
+            cmdlet will enable it before activating.
+    #>
+
+    Enable-Conda
+    # NB: We use the PowerShell cmdlet created by the conda shell hook here
+    #     to avoid accidentally using the conda binary.
+    Enter-CondaEnvironment $EnvName
     Write-Host "##[info]Activated Conda env: $(Get-PythonConfiguration | Out-String)"
 }
 

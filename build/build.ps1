@@ -41,14 +41,10 @@ function Install-Package() {
   $AbsPackageDir = Join-Path $ParentPath $PackageDir
   Write-Host "##[info]Install package $AbsPackageDir in development mode for env $EnvName"
   # Activate env
-  ActivateCondaEnv $EnvName
+  Use-CondaEnv $EnvName
   # Install package
   pip install -e $AbsPackageDir
 }
-
-
-# Set environment vars to be able to run conda activate.
-Enable-Conda
 
 if ($Env:ENABLE_PYTHON -eq "false") {
   Write-Host "##vso[task.logissue type=warning;]Skipping installing Python packages. Env:ENABLE_PYTHON was set to 'false'."
