@@ -1,13 +1,20 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-##
-# Build: Install given packages in given environments
-##
+<#
+    .SYNOPSIS
+        Build: Install given packages in given environments
+#>
+
+
 param (
   [string[]] $PackageDirs,
   [string[]] $EnvNames
 )
+
+& (Join-Path $PSScriptRoot "set-env.ps1");
+
+Import-Module (Join-Path $PSScriptRoot "conda-utils.psm1");
 
 if ($null -eq $PackageDirs) {
   $ParentPath = Split-Path -parent $PSScriptRoot
@@ -33,16 +40,16 @@ function Install-Package() {
   $ParentPath = Split-Path -parent $PSScriptRoot
   $AbsPackageDir = Join-Path $ParentPath $PackageDir
   Write-Host "##[info]Install package $AbsPackageDir in development mode for env $EnvName"
-  # Set environment vars to be able to run conda activate
-  (& conda "shell.powershell" "hook") | Out-String | Invoke-Expression
   # Activate env
-  conda activate $EnvName
-  which python
+  Use-CondaEnv $EnvName
   # Install package
   pip install -e $AbsPackageDir
 }
 
-
-for ($i=0; $i -le $PackageDirs.length-1; $i++) {
-  Install-Package -EnvName $EnvNames[$i] -PackageDir $PackageDirs[$i]
+if ($Env:ENABLE_PYTHON -eq "false") {
+  Write-Host "##vso[task.logissue type=warning;]Skipping installing Python packages. Env:ENABLE_PYTHON was set to 'false'."
+} else {
+  for ($i=0; $i -le $PackageDirs.length-1; $i++) {
+    Install-Package -EnvName $EnvNames[$i] -PackageDir $PackageDirs[$i]
+  }
 }

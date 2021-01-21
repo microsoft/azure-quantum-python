@@ -1,14 +1,20 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-##
-# Pack: create wheels for given packages in given environments, output to directory
-##
+<#
+    .SYNOPSIS
+        Pack: create wheels for given packages in given environments, output to directory
+#>
+
 param (
   [string[]] $PackageDirs,
   [string[]] $EnvNames,
   [string] $OutDir
 )
+
+& (Join-Path $PSScriptRoot "set-env.ps1");
+
+Import-Module (Join-Path $PSScriptRoot "conda-utils.psm1");
 
 if ($null -eq $PackageDirs) {
   $parentPath = Split-Path -parent $PSScriptRoot
@@ -31,6 +37,8 @@ if ($EnvNames.length -ne $PackageDirs.length) {
   throw "Cannot run build script: '$EnvNames' and '$PackageDirs' lengths don't match"
 }
 
+$script:all_ok = $True
+
 function Create-Wheel() {
   param(
     [string] $EnvName,
@@ -40,11 +48,9 @@ function Create-Wheel() {
 
   Push-Location $Path
     # Set environment vars to be able to run conda activate
-    (& conda "shell.powershell" "hook") | Out-String | Invoke-Expression
     Write-Host "##[info]Pack wheel for env '$EnvName'"
     # Activate env
-    conda activate $EnvName
-    which python
+    Use-CondaEnv $EnvName
     # Create package distribution
     python setup.py bdist_wheel sdist --formats=gztar
 
@@ -52,7 +58,6 @@ function Create-Wheel() {
       Write-Host "##vso[task.logissue type=error;]Failed to build $Path."
       $script:all_ok = $False
     } else {
-      $script:all_ok = $True
       if ($OutDir -ne "") { 
         Write-Host "##[info]Copying wheel to '$OutDir'"
         Copy-Item "dist/*.whl" $OutDir/

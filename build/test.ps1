@@ -1,13 +1,19 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-##
-# Test: Run unit tests for given packages/environments
-##
+<#
+    .SYNOPSIS
+        Test: Run unit tests for given packages/environments
+#>
+
 param (
   [string[]] $PackageDirs,
   [string[]] $EnvNames
 )
+
+& (Join-Path $PSScriptRoot "set-env.ps1");
+
+Import-Module (Join-Path $PSScriptRoot "conda-utils.psm1");
 
 if ($null -eq $PackageDirs) {
   $ParentPath = Split-Path -parent $PSScriptRoot
@@ -33,11 +39,8 @@ function Invoke-Tests() {
   $ParentPath = Split-Path -parent $PSScriptRoot
   $AbsPackageDir = Join-Path $ParentPath $PackageDir
   Write-Host "##[info]Test package $AbsPackageDir and run tests for env $EnvName"
-  # Set environment vars to be able to run conda activate
-  (& conda "shell.powershell" "hook") | Out-String | Invoke-Expression
   # Activate env
-  conda activate $EnvName
-  which python
+  Use-CondaEnv $EnvName
   # Install testing deps
   python -m pip install --upgrade pip
   pip install pytest pytest-azurepipelines
@@ -45,6 +48,10 @@ function Invoke-Tests() {
   pytest $AbsPackageDir
 }
 
-for ($i=0; $i -le $PackageDirs.length-1; $i++) {
-  Invoke-Tests -PackageDir $PackageDirs[$i] -EnvName $EnvNames[$i]
+if ($Env:ENABLE_PYTHON -eq "false") {
+  Write-Host "##vso[task.logissue type=warning;]Skipping testing Python packages. Env:ENABLE_PYTHON was set to 'false'."
+} else {
+  for ($i=0; $i -le $PackageDirs.length-1; $i++) {
+    Invoke-Tests -PackageDir $PackageDirs[$i] -EnvName $EnvNames[$i]
+  }
 }

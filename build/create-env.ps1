@@ -1,9 +1,11 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-##
-# Create Conda environment(s) for given package directories
-##
+<#
+    .SYNOPSIS
+        Create Conda environment(s) for given package directories
+#>
+
 param(
   [string[]] $PackageDirs
 )
