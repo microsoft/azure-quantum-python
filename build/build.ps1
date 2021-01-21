@@ -41,8 +41,7 @@ function Install-Package() {
   $AbsPackageDir = Join-Path $ParentPath $PackageDir
   Write-Host "##[info]Install package $AbsPackageDir in development mode for env $EnvName"
   # Activate env
-  conda activate $EnvName
-  Write-Host "##[info]Python config: $(Get-PythonConfiguration | Out-String)"
+  ActivateCondaEnv $EnvName
   # Install package
   pip install -e $AbsPackageDir
 }
