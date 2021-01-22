@@ -14,6 +14,9 @@ param(
 
 Import-Module (Join-Path $PSScriptRoot "build" "conda-utils.psm1");
 
+# Enable conda hook
+Enable-Conda
+
 # Get default value for PackageDirs by searching for environment.yml files
 if ($null -eq $PackageDirs) {
   $PackageDirs = Get-ChildItem -Path $PSScriptRoot -Recurse -Filter "environment.yml" | Select-Object -ExpandProperty Directory | Split-Path -Leaf
@@ -32,7 +35,3 @@ foreach ($PackageDir in $PackageDirs) {
         & (Join-Path $PSScriptRoot build create-env.ps1) -PackageDirs $PackageDir
     }
 }
-
-Write-Host "##[info]Initializing and updating submodule."
-git submodule init
-git submodule update
