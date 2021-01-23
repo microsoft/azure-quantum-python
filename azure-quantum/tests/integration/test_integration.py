@@ -138,7 +138,8 @@ if __name__ == "__main__":
     config = get_config()
     ionq_enabled = config["azure.quantum"].get("ionq_enabled", False)
 
-    if ionq_enabled is True:
+    if ionq_enabled.lower() == "true":
+        print("IonQ solver is enabled.")
         names += [
             "TabuSearch",
             "PticmSolver",
