@@ -8,7 +8,7 @@ To be able to run the tests, make sure to add a `config.ini` file to the package
 subscription_id=<enter subscription ID here>
 resource_group=<enter resource group here>
 workspace_name=<enter workspace name here>
-ionq_enabled=<optional, true or false>
+1qbit_enabled=<optional, true or false>
 ```
 
 To run the tests, run `python tests/integration/test_integration.py`.

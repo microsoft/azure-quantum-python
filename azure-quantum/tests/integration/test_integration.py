@@ -7,6 +7,7 @@
 
 import os
 import configparser
+import functools
 
 from azure.quantum import Workspace
 from azure.quantum.optimization import (
@@ -128,18 +129,18 @@ if __name__ == "__main__":
     ]
 
     solvers = [
-        lambda ws: SimulatedAnnealing(ws, beta_start=0),
-        lambda ws: ParallelTempering(ws, sweeps=100),
-        lambda ws: Tabu(ws, sweeps=100),
-        lambda ws: QuantumMonteCarlo(ws, trotter_number=1)
+        functools.partial(SimulatedAnnealing, beta_start=0),
+        functools.partial(ParallelTempering, sweeps=100),
+        functools.partial(Tabu, sweeps=100),
+        functools.partial(QuantumMonteCarlo, trotter_number=1)
     ]
 
-    # Check if IonQ solvers are enabled
+    # Check if 1QBit solvers are enabled
     config = get_config()
-    ionq_enabled = config["azure.quantum"].get("ionq_enabled", False)
+    one_qbit_enabled = config["azure.quantum"].get("1qbit_enabled", "false").lower()
 
-    if ionq_enabled.lower() == "true":
-        print("IonQ solver is enabled.")
+    if one_qbit_enabled == "true":
+        print("1QBit solver is enabled.")
         names += [
             "TabuSearch",
             "PticmSolver",
@@ -147,9 +148,9 @@ if __name__ == "__main__":
         ]
 
         solvers += [
-            lambda ws: TabuSearch(ws, improvement_cutoff=10),
-            lambda ws: PticmSolver(ws, num_sweeps_per_run=99),
-            lambda ws: PathRelinkingSolver(ws, distance_scale=0.44)
+            functools.partial(TabuSearch, improvement_cutoff=10),
+            functools.partial(PticmSolver, num_sweeps_per_run=99),
+            functools.partial(PathRelinkingSolver, distance_scale=0.44),
         ]
 
     # Create problems

@@ -34,13 +34,23 @@ def sdk_environment(name):
 
 ## Settings based on environment variables:
 BASE_URL_FROM_ENV = os.environ['AZURE_QUANTUM_BASEURL'] if 'AZURE_QUANTUM_BASEURL' in os.environ else None
+if  sdk_environment('dogfood'):
+    logger.info("Using DOGFOOD configuration.")
+    BASE_URL                = lambda location: BASE_URL_FROM_ENV or f"https://{location}.quantum-test.azure.com/"
+    ARM_BASE_URL            = "https://api-dogfood.resources.windows-int.net/"
+    AAD_CLIENT_ID           = "46a998aa-43d0-4281-9cbb-5709a507ac36" # Microsoft Quantum Development Kit
+    AAD_SCOPES              = [ "api://dogfood.azure-quantum/Jobs.ReadWrite" ]
 
-logger.debug("Using production configuration.")
-
-BASE_URL                = lambda location: BASE_URL_FROM_ENV or f"https://{location}.quantum.azure.com/"
-ARM_BASE_URL            = "https://management.azure.com/"
-AAD_CLIENT_ID           = "84ba0947-6c53-4dd2-9ca9-b3694761521b" # Microsoft Quantum Development Kit
-AAD_SCOPES              = [ "https://quantum.microsoft.com/Jobs.ReadWrite" ]
+else:
+    if sdk_environment('canary'):
+        logger.info("Using CANARY configuration.")
+        BASE_URL                = lambda location: BASE_URL_FROM_ENV or f"https://eastus2euap.quantum.azure.com/"
+    else:
+        logger.debug("Using production configuration.")
+        BASE_URL                = lambda location: BASE_URL_FROM_ENV or f"https://{location}.quantum.azure.com/"
+    ARM_BASE_URL            = "https://management.azure.com/"
+    AAD_CLIENT_ID           = "84ba0947-6c53-4dd2-9ca9-b3694761521b" # Microsoft Quantum Development Kit
+    AAD_SCOPES              = [ "https://quantum.microsoft.com/Jobs.ReadWrite" ]
 
 TOKEN_CACHE = os.environ['AZURE_QUANTUM_TOKEN_CACHE'] if 'AZURE_QUANTUM_TOKEN_CACHE' in os.environ else os.path.join(Path.home(), ".azure-quantum", "aad.bin")
 
