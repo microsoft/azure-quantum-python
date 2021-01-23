@@ -244,7 +244,14 @@ class SimulatedAnnealing(Solver):
 
 class Tabu(Solver):
     
-    def __init__(self, workspace:Workspace, sweeps:Optional[int]=None, tabu_tenure:Optional[int]=None, timeout:Optional[int]=None, seed:Optional[int]=None):
+    def __init__(
+        self,
+        workspace: Workspace,
+        sweeps: Optional[int]=None,
+        tabu_tenure: Optional[int]=None,
+        timeout: Optional[int]=None,
+        seed: Optional[int]=None
+    ):
         """The constructor of an Tabu Search solver.
         
         Multi-core Tabu Search solver for binary optimization problems 
@@ -286,14 +293,15 @@ class Tabu(Solver):
 class QuantumMonteCarlo(Solver):
     def __init__(
         self, 
-        workspace:Workspace, 
-        trotter_number:Optional[int]=None, 
-        seed:Optional[int]=None,  
-        transverse_field_start:Optional[float] = None,
-        transverse_field_stop:Optional[float] = None,
-        restarts:Optional[int] = None,
-        sweeps:Optional[int]=None,
-        beta_start:Optional[float]=None):
+        workspace: Workspace, 
+        trotter_number: Optional[int]=None, 
+        seed: Optional[int]=None,  
+        transverse_field_start: Optional[float] = None,
+        transverse_field_stop: Optional[float] = None,
+        restarts: Optional[int] = None,
+        sweeps: Optional[int]=None,
+        beta_start: Optional[float]=None
+    ):
         """The constructor of Simulated Qunatum Annelaing Search solver.
         
         Simulated Quantum Search solver for binary optimization problems 
