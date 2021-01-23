@@ -13,12 +13,18 @@ Coming soom:
 
 ## Installation and getting started
 
-To install the QDK package, we recommend installing the Anaconda Python distribution. For instructions on installing Conda on your system, please follow the [Conda user guide](https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html).
+To install the packages, we recommend installing the Anaconda Python distribution. For instructions on installing Conda on your system, please follow the [Conda user guide](https://docs.conda.io/projects/conda/en/latest/user-guide/install/index.html).
 
-Currently, the QDK Python package is not yet released. When it is, it will be available via the `qdk` conda channel and can be installed as follows:
+To install the QDK package, run
 
 ```bash
-conda install -c qdk qdk
+pip install qdk
+```
+
+To install the Azure Quantum package, run
+
+```bash
+pip install azure-quantum
 ```
 
 To get started running examples, start a Jupyter notebook:
@@ -36,17 +42,25 @@ To create a new Conda environment, run:
 conda env create -f environment.yml
 ```
 
+in the root directory of the given package (`qdk` or `azure-quantum`).
+
 Then to activate the environment:
 
 ```bash
-conda activate qdk
+conda activate <env name>
 ```
 
-To install the QDK package in development mode:
+where `<env name>` is the environment name (`qdk` or `azurequantum`).
+
+To install the package in development mode, run:
 
 ```bash
-pip install -e qdk
+pip install -e .
 ```
+
+### Integration tests
+
+For instructions on how to run integration tests for the Azure Quantum package, please refer to the [README](azure-quantum/tests/integration/README.md) file.
 
 ## Contributing
 
