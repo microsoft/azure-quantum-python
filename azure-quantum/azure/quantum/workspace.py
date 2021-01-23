@@ -18,6 +18,7 @@ from typing import List, Optional
 from msrest.authentication import Authentication, BasicTokenAuthentication
 from azure.quantum._client import QuantumClient
 from azure.quantum._client.operations import JobsOperations, StorageOperations
+from azure.quantum._client.models import BlobDetails
 from azure.quantum import Job
 try:
     from .version import __version__
@@ -321,7 +322,8 @@ class Workspace:
         Calls the service and returns a container sas url
         """
         client = self._create_workspace_storage_client()
-        container_uri = client.sas_uri(container_name, blob_name)
+        blob_details = BlobDetails(container_name=container_name, blob_name=blob_name)
+        container_uri = client.sas_uri(blob_details=blob_details)
 
         logger.debug(f"Container URI from service: {container_uri}")
         return container_uri.sas_uri
