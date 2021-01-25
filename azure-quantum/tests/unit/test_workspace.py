@@ -14,6 +14,18 @@ import pytest
 
 from azure.quantum import Workspace
 
+from workspace_init import create_workspace_mock_login
+
+def test_workspace_login():
+    subscription_id = "44ef49ad-64e4-44e5-a3ba-1ee87e19d3f4"
+    resource_group = "rg"
+    name = "n"
+
+    ws = init_ws_mock_login(
+        subscription_id=subscription_id,
+        resource_group=resource_group,
+        name=name)
+
 def test_create_workspace_instance_valid():
     subscription_id = "44ef49ad-64e4-44e5-a3ba-1ee87e19d3f4"
     resource_group = "rg"

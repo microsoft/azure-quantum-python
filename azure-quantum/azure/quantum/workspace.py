@@ -71,7 +71,8 @@ class TokenCacheWrapper:
 
         self.token_cache = msal.SerializableTokenCache()
         if os.path.exists(self.cache_path):
-            self.token_cache.deserialize(open(self.cache_path, "r").read())
+            with open(self.cache_path, "r") as cache:
+                self.token_cache.deserialize(cache.read())
 
     def write_out_cache(self):
         logger.debug(f"Updating AAD token cache at '{self.cache_path}'")
