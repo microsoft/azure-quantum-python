@@ -36,7 +36,6 @@ class Job:
       self.id = job_details.id
       self.results = None
 
-
     def refresh(self):
         """Refreshes the Job's details by querying the workspace.
         """
