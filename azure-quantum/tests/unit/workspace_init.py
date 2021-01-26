@@ -29,11 +29,12 @@ def get_config() -> configparser.ConfigParser:
     :return: Config parser for reading config file
     :rtype: configparser.ConfigParser
     """
-    config = configparser.ConfigParser()
+    config = None
     path = os.path.abspath(os.path.join(os.path.split(__file__)[0], "..", ".."))
-    config_path = os.path.join(path, "config.ini")
-    assert os.path.exists(config_path), "Cannot run integration tests: no config file found in azure-quantum folder."
-    config.read(config_path)
+    if os.path.exists(path):
+        config = configparser.ConfigParser()
+        config_path = os.path.join(path, "config.ini")
+        config.read(config_path)
 
     return config
 
@@ -45,12 +46,16 @@ def create_workspace() -> Workspace:
     :rtype: Workspace
     """
     config = get_config()
-    workspace = Workspace(
-        subscription_id=config["azure.quantum"]["subscription_id"],
-        resource_group=config["azure.quantum"]["resource_group"],
-        name=config["azure.quantum"]["workspace_name"],
-        storage="")
+    if config:
+        workspace = Workspace(
+            subscription_id=config["azure.quantum"]["subscription_id"],
+            resource_group=config["azure.quantum"]["resource_group"],
+            name=config["azure.quantum"]["workspace_name"],
+            storage="")
 
-    # try to login - this should trigger the device flow
-    workspace.login(False)
+        # try to login - this should trigger the device flow
+        workspace.login(False)
+    else:
+        workspace = create_workspace_mock_login()
+
     return workspace
