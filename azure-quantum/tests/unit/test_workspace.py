@@ -21,7 +21,7 @@ def test_workspace_login():
     resource_group = "rg"
     name = "n"
 
-    ws = init_ws_mock_login(
+    ws = create_workspace_mock_login(
         subscription_id=subscription_id,
         resource_group=resource_group,
         name=name)

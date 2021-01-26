@@ -26,7 +26,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 26 Jan 2021 00:07:15 GMT
+      - Tue, 26 Jan 2021 21:58:14 GMT
       expires:
       - '-1'
       pragma:
@@ -34,7 +34,7 @@ interactions:
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       www-authenticate:
-      - Bearer authorization_uri="https://login.windows.net/72f988bf-86f1-41af-91ab-2d7cd011db47",
+      - Bearer authorization_uri="https://login.windows.net/00000000-0000-0000-0000-000000000000",
         error="invalid_token", error_description="The authentication failed because
         of missing 'Authorization' header."
       x-content-type-options:
@@ -56,10 +56,10 @@ interactions:
       User-Agent:
       - python-requests/2.25.1
     method: GET
-    uri: https://login.microsoftonline.com/common/discovery/instance?authorization_endpoint=https%3A%2F%2Flogin.windows.net%2F72f988bf-86f1-41af-91ab-2d7cd011db47%2Foauth2%2Fv2.0%2Fauthorize&api-version=1.0
+    uri: https://login.microsoftonline.com/common/discovery/instance?authorization_endpoint=https%3A%2F%2Flogin.windows.net%2F00000000-0000-0000-0000-000000000000%2Foauth2%2Fv2.0%2Fauthorize&api-version=1.0
   response:
     body:
-      string: '{"tenant_discovery_endpoint":"https://login.windows.net/72f988bf-86f1-41af-91ab-2d7cd011db47/v2.0/.well-known/openid-configuration"}'
+      string: '{"tenant_discovery_endpoint":"https://login.windows.net/00000000-0000-0000-0000-000000000000/v2.0/.well-known/openid-configuration"}'
     headers:
       access-control-allow-methods:
       - GET, OPTIONS
@@ -72,13 +72,13 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 26 Jan 2021 00:07:16 GMT
+      - Tue, 26 Jan 2021 21:58:14 GMT
       p3p:
       - CP="DSP CUR OTPi IND OTRi ONL FIN"
       set-cookie:
-      - fpc=AvjmTtAxeaNOiOwNOCTEU-E; expires=Thu, 25-Feb-2021 00:07:16 GMT; path=/;
+      - fpc=Au5qPyuSNNpDly6VLHqRe70; expires=Thu, 25-Feb-2021 21:58:15 GMT; path=/;
         secure; HttpOnly; SameSite=None
-      - esctx=AQABAAAAAABeStGSRwwnTq2vHplZ9KL4ZTpOEkEKOhmrK46aLtxBTeNd78aW69aPo-jVp5f1-IaZmgtlc67GWk2LS7wkgq-FGMKVgChEyofQWEtmk5o5EomGSyWCv4jJvrysOU-aQVJxazJPBEHVcVI2XYqJY5OvhkMeADfwxIK_hnZWToUag7-Z3SJlJRn4QrL6sapl814gAA;
+      - esctx=AQABAAAAAABeStGSRwwnTq2vHplZ9KL4tYCYERfD-mLPQaqYXnp9vCcUm6E4a7qlFIoHMjp18mK4Tq-h0iev7j8gMCtUKA_SBakqmcAZ0uz7fq5_2wz7SxZ3y1bmi8ZWVhk7i8pSpfkYWkUNM1ZTHEsm1Ym-BHgi27elyxPmwro9pHdTNE2XQvOTYJx4pHszf6dkXGzpsssgAA;
         domain=.login.microsoftonline.com; path=/; secure; HttpOnly; SameSite=None
       - x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly
       - stsservicecookie=estsfd; path=/; secure; samesite=none; httponly
@@ -87,7 +87,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ests-server:
-      - 2.1.11419.13 - EUS ProdSlices
+      - 2.1.11419.13 - NCUS ProdSlices
     status:
       code: 200
       message: OK
@@ -103,11 +103,11 @@ interactions:
       User-Agent:
       - python-requests/2.25.1
     method: GET
-    uri: https://login.windows.net/72f988bf-86f1-41af-91ab-2d7cd011db47/v2.0/.well-known/openid-configuration
+    uri: https://login.windows.net/00000000-0000-0000-0000-000000000000/v2.0/.well-known/openid-configuration
   response:
     body:
-      string: '{"token_endpoint":"https://login.windows.net/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/v2.0/token","token_endpoint_auth_methods_supported":["client_secret_post","private_key_jwt","client_secret_basic"],"jwks_uri":"https://login.windows.net/72f988bf-86f1-41af-91ab-2d7cd011db47/discovery/v2.0/keys","response_modes_supported":["query","fragment","form_post"],"subject_types_supported":["pairwise"],"id_token_signing_alg_values_supported":["RS256"],"response_types_supported":["code","id_token","code
-        id_token","id_token token"],"scopes_supported":["openid","profile","email","offline_access"],"issuer":"https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/v2.0","request_uri_parameter_supported":false,"userinfo_endpoint":"https://graph.microsoft.com/oidc/userinfo","authorization_endpoint":"https://login.windows.net/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/v2.0/authorize","device_authorization_endpoint":"https://login.windows.net/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/v2.0/devicecode","http_logout_supported":true,"frontchannel_logout_supported":true,"end_session_endpoint":"https://login.windows.net/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/v2.0/logout","claims_supported":["sub","iss","cloud_instance_name","cloud_instance_host_name","cloud_graph_host_name","msgraph_host","aud","exp","iat","auth_time","acr","nonce","preferred_username","name","tid","ver","at_hash","c_hash","email"],"tenant_region_scope":"WW","cloud_instance_name":"microsoftonline.com","cloud_graph_host_name":"graph.windows.net","msgraph_host":"graph.microsoft.com","rbac_url":"https://pas.windows.net"}'
+      string: '{"token_endpoint":"https://login.windows.net/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token","token_endpoint_auth_methods_supported":["client_secret_post","private_key_jwt","client_secret_basic"],"jwks_uri":"https://login.windows.net/00000000-0000-0000-0000-000000000000/discovery/v2.0/keys","response_modes_supported":["query","fragment","form_post"],"subject_types_supported":["pairwise"],"id_token_signing_alg_values_supported":["RS256"],"response_types_supported":["code","id_token","code
+        id_token","id_token token"],"scopes_supported":["openid","profile","email","offline_access"],"issuer":"https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/v2.0","request_uri_parameter_supported":false,"userinfo_endpoint":"https://graph.microsoft.com/oidc/userinfo","authorization_endpoint":"https://login.windows.net/00000000-0000-0000-0000-000000000000/oauth2/v2.0/authorize","device_authorization_endpoint":"https://login.windows.net/00000000-0000-0000-0000-000000000000/oauth2/v2.0/devicecode","http_logout_supported":true,"frontchannel_logout_supported":true,"end_session_endpoint":"https://login.windows.net/00000000-0000-0000-0000-000000000000/oauth2/v2.0/logout","claims_supported":["sub","iss","cloud_instance_name","cloud_instance_host_name","cloud_graph_host_name","msgraph_host","aud","exp","iat","auth_time","acr","nonce","preferred_username","name","tid","ver","at_hash","c_hash","email"],"tenant_region_scope":"WW","cloud_instance_name":"microsoftonline.com","cloud_graph_host_name":"graph.windows.net","msgraph_host":"graph.microsoft.com","rbac_url":"https://pas.windows.net"}'
     headers:
       access-control-allow-methods:
       - GET, OPTIONS
@@ -120,13 +120,13 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 26 Jan 2021 00:07:16 GMT
+      - Tue, 26 Jan 2021 21:58:15 GMT
       p3p:
       - CP="DSP CUR OTPi IND OTRi ONL FIN"
       set-cookie:
-      - fpc=ArAEg1wX5JdAnbc6byTNSMU; expires=Thu, 25-Feb-2021 00:07:16 GMT; path=/;
+      - fpc=At1xfKxqgW5Mkg47a2-QCTM; expires=Thu, 25-Feb-2021 21:58:15 GMT; path=/;
         secure; HttpOnly; SameSite=None
-      - esctx=AQABAAAAAABeStGSRwwnTq2vHplZ9KL4DI-RlXiyE9Wt5ogTTJeVhd4luFO2wJJxru0Ibfi70jc5tVzAX4xn_ziaecPxkgGs7HwyPXkkGDhof72hcZKrASnDQ0SZNJsvW8SEnzDCi-9zDJCSIpPLnE8N-DpBIOtF4HkBWXdPAb_RAdYvAdIdknmBLEmnudOv45kyPVkbYOIgAA;
+      - esctx=AQABAAAAAAD--DLA3VO7QrddgJg7Wevr8CjxxMMaI-vuEojoG5U17_tJCjndoQXQwowm8H1NNvtlcBt4CkrC5KPrXsJ0WnXMxAIjMRqeepKMetLdNI0Cr9_ujMbohgQk8YLa7OUOTdsXdVm-W6qy0BpRJT3jBsWJLLo4Sgo_iMrDpfxjvfhWoaa9FydxNGaMDEwwcfcroRkgAA;
         domain=.login.windows.net; path=/; secure; HttpOnly; SameSite=None
       - x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly
       - stsservicecookie=estsfd; path=/; secure; samesite=none; httponly
@@ -135,71 +135,7 @@ interactions:
       x-content-type-options:
       - nosniff
       x-ms-ests-server:
-      - 2.1.11419.13 - EUS ProdSlices
-    status:
-      code: 200
-      message: OK
-- request:
-    body: client_id=84ba0947-6c53-4dd2-9ca9-b3694761521b&grant_type=refresh_token&client_info=1&refresh_token=0.ARoAv4j5cvGGr0GRqy180BHbR0cJuoRTbNJNnKmzaUdhUhsaAO8.AgABAAAAAABeStGSRwwnTq2vHplZ9KL4AQDs_wMA9P9oIetZuGLJddjLmBfSZUs_Lk9P6vuAWsTZoSzcTWza-cHu3xuxLSpyv_cyb_eZizZftw7c4SPAFSS7w0V0X5013Ya-Js9Bcm6h6yppidc9JzgTQUEqKE_k0A-6DmclTA-KdBWhV8-l65c32vs3w07VX3IcW4XVHzmzS9Ge7XwRdjeCsozyjocEU3owWRUQmWxTfarzADcw-Ba0_MZ7sGGZdX-lUjtu_3kF51RTCrSnYNrDC3nIq3krMjjgyB1q-l8_FliVVZ7hbaRJGig3ivwKakOLCgL2nAuWVH423BlC6Z_R0BXGwitjzVcpEoLfbUrRXR49hoodh8_1wEK7M5AUYPs1pex_PhY4i4tmchft6GGnJNNJ-gAKSw_uIGxw08g6bmUQeCCECfxazCn8SmYDNS06dgZBGugGc9oQNUQwG7XJeg6k3j9I4xR0FsAQWrLmu8UjDhBtYwAyg_cjA2PuihIDR4yWKVVBejSN65yDKlXxRQjMSSv_yh3MB4TAFzgMyAV_Umx64NfYkHTrYbmqRB3feyqRqqVtgUfxr70uMF5zuK4atWQCBXN3U8uRkE8zYo7k_SvrOTCGG8d3yCaPKsvwSkPsrTusurg58fiHQ9eMrZ4uve0xutrvF82H7t0J91_5PyqUOgPCrsp-K9JVzpUhPcPLJklNZZE8-O0pqtWVmRWuaOszul5uNZ7R2e3-y47ESL1EiANJsBBgcC0wrjd6ywzo_j6ZgWk7CD2LehPMNkbR-QZ5hHuuU1T5cPQHXpsH4XuVC98zr9f3g0OuaulKkYVqqOj0lJ_NT13nxOFVfJnaAeXyT218IVivFQXpCH_m5xYZvUHpQuraZ4-2sl5_y7SlzNhILJiHZ87Glr72n3hbXyq-ao9oHjDVZYS8zxyi8zDjqXjAwjiKL_josbh2ncjb580Ok1AevmzgLyfRHRr5vSyxdoiGjZVWT7I6NMoeP-LGzizKVXTIU5lTSqcoUFoPUOnL67zUpc6lRijmstcTX4JX9TkN2K-aMOA_TLeqI8N135tmzjAzmgVZuN1aQuIgon_oo67NsgAPjyOTZaWKjk4CXHbCp9lWRUSrPKBSPonWIVVVm8vP77SP1wHpSJjlQnc7AO5DSI5ilmb28DGHn39vhOETmVYOgumNl0q_fQNLdVRF&scope=https%3A%2F%2Fquantum.microsoft.com%2FJobs.ReadWrite+offline_access+openid+profile
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '1451'
-      Content-Type:
-      - application/x-www-form-urlencoded
-      Cookie:
-      - esctx=AQABAAAAAABeStGSRwwnTq2vHplZ9KL4DI-RlXiyE9Wt5ogTTJeVhd4luFO2wJJxru0Ibfi70jc5tVzAX4xn_ziaecPxkgGs7HwyPXkkGDhof72hcZKrASnDQ0SZNJsvW8SEnzDCi-9zDJCSIpPLnE8N-DpBIOtF4HkBWXdPAb_RAdYvAdIdknmBLEmnudOv45kyPVkbYOIgAA;
-        fpc=ArAEg1wX5JdAnbc6byTNSMU; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd
-      User-Agent:
-      - python-requests/2.25.1
-      x-client-cpu:
-      - x64
-      x-client-current-telemetry:
-      - 1|84,0|
-      x-client-os:
-      - win32
-      x-client-sku:
-      - MSAL.Python
-      x-client-ver:
-      - 1.8.0
-    method: POST
-    uri: https://login.windows.net/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/v2.0/token
-  response:
-    body:
-      string: '{"token_type":"Bearer","scope":"https://quantum.microsoft.com/Jobs.ReadWrite","expires_in":3599,"ext_expires_in":3599,"access_token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6Im5PbzNaRHJPRFhFSzFqS1doWHNsSFJfS1hFZyIsImtpZCI6Im5PbzNaRHJPRFhFSzFqS1doWHNsSFJfS1hFZyJ9.eyJhdWQiOiJodHRwczovL3F1YW50dW0ubWljcm9zb2Z0LmNvbSIsImlzcyI6Imh0dHBzOi8vc3RzLndpbmRvd3MubmV0LzcyZjk4OGJmLTg2ZjEtNDFhZi05MWFiLTJkN2NkMDExZGI0Ny8iLCJpYXQiOjE2MTE2MTkzMzYsIm5iZiI6MTYxMTYxOTMzNiwiZXhwIjoxNjExNjIzMjM2LCJfY2xhaW1fbmFtZXMiOnsiZ3JvdXBzIjoic3JjMSJ9LCJfY2xhaW1fc291cmNlcyI6eyJzcmMxIjp7ImVuZHBvaW50IjoiaHR0cHM6Ly9ncmFwaC53aW5kb3dzLm5ldC83MmY5ODhiZi04NmYxLTQxYWYtOTFhYi0yZDdjZDAxMWRiNDcvdXNlcnMvZTlhNGE5ZTEtODcxNS00Yjc1LTk2NWQtYzBkZDQxMTIzODY4L2dldE1lbWJlck9iamVjdHMifX0sImFjciI6IjEiLCJhaW8iOiJBVlFBcS84U0FBQUF1cDNZOWtxbjdKOUlhc0hycGN5TGhnVHYyK2l5d2pCSFRmVTR2ZzR6SzRtUHA0MWRqT0I3TU1XbkQvc0paeFpXL2ZJbjFOWmwxaVFNSmVjY0dzMEtvRVRBT0xvaXJFdjdocms4b2hkNFgydz0iLCJhbXIiOlsid2lhIiwibWZhIl0sImFwcGlkIjoiODRiYTA5NDctNmM1My00ZGQyLTljYTktYjM2OTQ3NjE1MjFiIiwiYXBwaWRhY3IiOiIwIiwiZmFtaWx5X25hbWUiOiJCcm93biIsImdpdmVuX25hbWUiOiJUb20iLCJpbl9jb3JwIjoidHJ1ZSIsImlwYWRkciI6IjczLjgzLjM5LjEwIiwibmFtZSI6IlRvbSBCcm93biIsIm9pZCI6ImU5YTRhOWUxLTg3MTUtNGI3NS05NjVkLWMwZGQ0MTEyMzg2OCIsIm9ucHJlbV9zaWQiOiJTLTEtNS0yMS0yMTI3NTIxMTg0LTE2MDQwMTI5MjAtMTg4NzkyNzUyNy0xNzc1MDU1MSIsInB1aWQiOiIxMDAzN0ZGRTkyREI4MzEyIiwicmgiOiIwLkFSb0F2NGo1Y3ZHR3IwR1JxeTE4MEJIYlIwY0p1b1JUYk5KTm5LbXphVWRoVWhzYUFPOC4iLCJzY3AiOiJKb2JzLlJlYWRXcml0ZSIsInN1YiI6IjNxVk1XZ3cxRWozYVRlTEdTenE0bmVsMms1UHFVS1BBY2ZVNDBSUl9JZ3MiLCJ0aWQiOiI3MmY5ODhiZi04NmYxLTQxYWYtOTFhYi0yZDdjZDAxMWRiNDciLCJ1bmlxdWVfbmFtZSI6InRoYnJvQG1pY3Jvc29mdC5jb20iLCJ1cG4iOiJ0aGJyb0BtaWNyb3NvZnQuY29tIiwidXRpIjoiV2FqN3ZYeGhEVTZ2MTVPYmxKUWFBUSIsInZlciI6IjEuMCIsIndpZHMiOlsiYjc5ZmJmNGQtM2VmOS00Njg5LTgxNDMtNzZiMTk0ZTg1NTA5Il19.UPWDXEmv4HgCkFRWPcyEPFSqQNCNcjiqkQQdpmGXaSKwzcYybhbgaqDs8DbY3TzcGskvuvR03xGjLV4ZHxZbLYMQHOrt0njTytYWQMOqO4ZOq-aSnLyuu0YgoSSagUZypZtjZ-fzFgsuEBa_pJNAGCuwzStDeKzDv4LD77OE6VO69EPT3XPcCJcXx4qxcYMUvelXicvADNiARzbXlmO8KNLH24bWfKE2mC66hqIVWugVxQqaX9VTXRBujBZSxeAT916BjoUj-Rv1_TWVIl2ax7HMxX4IMz4KGiB4OpSHEPcmvG6yJC3r3f1bAsYlPIB6_Rono2WPR5vSkr-ehLIM3Q","refresh_token":"0.ARoAv4j5cvGGr0GRqy180BHbR0cJuoRTbNJNnKmzaUdhUhsaAO8.AgABAAAAAABeStGSRwwnTq2vHplZ9KL4AQDs_wMA9P9_G8UHKWx4iezaOibpoBgrgR9n390sd9jr2mWEGIvWJVTKrJcb_1YCvh7gKW-n22WgMM-cWMcD0mP7MxqFt__LH9GbzI27YYWKkRmkaIdTR_Nnao0P14YoGzPlp0YqkBSWAKIwaXCK2Rl5Y8bg4iKmh5c6bILoLgxCwrqiODbuXKnjX3zGuh06_FkSuWecPXKigLT0lAqLvQWjx2OCpaLpZfZ_ntoPVu5lAYbzVp16AR17eFEOlM6Ad4nppaq1PqDqNWpNm1WeDzzS1T-j9JlfDunAA8h8hqawI2janMdSQG3ajSEVjxaSgXh7GjYsdYYu7bkvdAMWfejyPoIRzt0qPvYA53tL2V-Ov0G2YY761KTrADFiIFCz7muWmjZeHN_PXXq59j1CFHFw4382nrpnN36Mbx4o4rCNCdmB_d8wgihjOS0Z6Tl-pC_PrpJTfDuUw6sOiQhz6bkZeE2ZayuLlZ_e0muJ8ITyp1iIfZ1Cxj-GsAQYWY9ON48MfnKaUv06kh4BlpYJUlpSpf84aEc3Pm32qytT_ONhLhZKN7PYi0krcTVpKctRYuMd7WR2_0JZs2W2rFlE_WhUQp5IY8A9s1sKuCl9mcpk5gkPOEgY0h9j8d1EHIjL8Cp460wmLUMdAbnYW-OQht8bVbAj5uhrGrgSuRP5ivwoBZUiBzCcLmIJDvJh4kbAJQg60jb7Co6jehABL4VxgD7ebMfXsRREJw9DjKi43CW8qROfuXkE37Vqi0dGyKZiR9iCY7Ge2bHLr8S2adgGHOH3kfwIyZCRrXVP0Ec7w_sqeXmPN7Iv480pERcNhuenPmP9wJqC40w72-adk6d1RNZeDkdamjTyNXO6llLS4JTMWB5P3BTvZ0WdMTxZFeNWFLJygIFlJZiPxW-WJKbK0FfyjHt8vvDmabgto0bsBmHLQjb27BoYA5UKUHuBICI4EKuBHvyLuG-JtvZ6A8Azcu7yv5GihHT6MUJ5G4iEOrg5T5DCKkmkPU2gB5MDXjzv5-bFF9BLAPt4Z1f3nyIZCnMIPbUNtdS5NNJe6Lavp_X5t3W9vq5_yJieEnJrh-ba6X2ovS3-O02qP-rBzXjPXw8-VHC8oZUHFK510d8AzKdF07xbV4iImDvxz22EAI2qjZlu6If1_A5A7tQ9xbKB6CkQ","id_token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6Im5PbzNaRHJPRFhFSzFqS1doWHNsSFJfS1hFZyJ9.eyJhdWQiOiI4NGJhMDk0Ny02YzUzLTRkZDItOWNhOS1iMzY5NDc2MTUyMWIiLCJpc3MiOiJodHRwczovL2xvZ2luLm1pY3Jvc29mdG9ubGluZS5jb20vNzJmOTg4YmYtODZmMS00MWFmLTkxYWItMmQ3Y2QwMTFkYjQ3L3YyLjAiLCJpYXQiOjE2MTE2MTkzMzYsIm5iZiI6MTYxMTYxOTMzNiwiZXhwIjoxNjExNjIzMjM2LCJuYW1lIjoiVG9tIEJyb3duIiwib2lkIjoiZTlhNGE5ZTEtODcxNS00Yjc1LTk2NWQtYzBkZDQxMTIzODY4IiwicHJlZmVycmVkX3VzZXJuYW1lIjoidGhicm9AbWljcm9zb2Z0LmNvbSIsInJoIjoiMC5BUm9BdjRqNWN2R0dyMEdScXkxODBCSGJSMGNKdW9SVGJOSk5uS216YVVkaFVoc2FBTzguIiwic3ViIjoiWk1SSFVXVW92Tnh3UDZOSk03aHdWay05NlFyNV9yZGo2eGRHTlVKZEN2OCIsInRpZCI6IjcyZjk4OGJmLTg2ZjEtNDFhZi05MWFiLTJkN2NkMDExZGI0NyIsInV0aSI6Ildhajd2WHhoRFU2djE1T2JsSlFhQVEiLCJ2ZXIiOiIyLjAifQ.SK1Vp5qwSdeFylpd277yurtqjDKM_vi9EBUaTzgj0eaY4Bb5Nz8UbSp_cJ8tKXCpUP9zywGXYFgbQjszjinHtTo8psbfiSlFgzHTJr-e3mhldO_V2E5fmRQ4JeFCBRIavL3LmBLezS476PXmVUnNY_t2tEgAXBHijxXYB4jNvZYfVXmMAt5hRxuRJR4_1UAFPPYH7RE7wzl07gD_Me0s4xlpfA1VgmQLihMK3QockS-Nd3OcmC-5PrT5Gs0NsgGpH_wZjWUsXH9zyirPVnK3ETWddY38fgaxrkNnLiSE6oT9kCq6VRZ8SvrDPEj-PCjD7KZg-d7Pfjh_jgEmFgiWoQ","client_info":"eyJ1aWQiOiJlOWE0YTllMS04NzE1LTRiNzUtOTY1ZC1jMGRkNDExMjM4NjgiLCJ1dGlkIjoiNzJmOTg4YmYtODZmMS00MWFmLTkxYWItMmQ3Y2QwMTFkYjQ3In0"}'
-    headers:
-      cache-control:
-      - no-store, no-cache
-      content-length:
-      - '4665'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Tue, 26 Jan 2021 00:07:17 GMT
-      expires:
-      - '-1'
-      p3p:
-      - CP="DSP CUR OTPi IND OTRi ONL FIN"
-      pragma:
-      - no-cache
-      set-cookie:
-      - fpc=ArAEg1wX5JdAnbc6byTNSMXKAAPqAQAAADNUodcOAAAA; expires=Thu, 25-Feb-2021
-        00:07:17 GMT; path=/; secure; HttpOnly; SameSite=None
-      - x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly
-      - stsservicecookie=estsfd; path=/; secure; samesite=none; httponly
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      x-content-type-options:
-      - nosniff
-      x-ms-clitelem:
-      - 1,0,0,5157464.7786,
-      x-ms-ests-server:
-      - 2.1.11419.13 - NCUS ProdSlices
+      - 2.1.11444.8 - NCUS ProdSlices
     status:
       code: 200
       message: OK
@@ -225,14 +161,14 @@ interactions:
     uri: https://westus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/dummy-rg/providers/Microsoft.Quantum/workspaces/dummy-ws/storage/sasUri
   response:
     body:
-      string: '{"sasUri":"https://sasdkreview.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=2019-02-02&sig=FWHa%2BNW3YnQypeuteRUZ74ke0jvyNMx%2Bbj0TMfEJrQQ%3D&se=2021-01-27T12%3A07%3A19Z&srt=co&ss=b&sp=racw"}'
+      string: '{"sasUri":"https://sasdkreview.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=2019-02-02&sig=sanitized&se=2021-01-28T09%3A58%3A17Z&srt=co&ss=b&sp=racw"}'
     headers:
       content-length:
-      - '212'
+      - '208'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 26 Jan 2021 00:07:19 GMT
+      - Tue, 26 Jan 2021 21:58:16 GMT
       request-context:
       - appId=cid-v1:4d6ac272-7369-45c6-9036-63d733c8519f
       server:
@@ -263,22 +199,22 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.7.0 Python/3.9.1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 26 Jan 2021 00:07:19 GMT
+      - Tue, 26 Jan 2021 21:58:17 GMT
       x-ms-version:
       - '2020-04-08'
     method: GET
-    uri: https://sasdkreview.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?restype=container&sv=2019-02-02&sig=FWHa%2BNW3YnQypeuteRUZ74ke0jvyNMx%2Bbj0TMfEJrQQ%3D&se=2021-01-27T12%3A07%3A19Z&srt=co&ss=b&sp=racw
+    uri: https://sasdkreview.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?restype=container&sv=2019-02-02&sig=sanitized&se=2021-01-28T09%3A58%3A17Z&srt=co&ss=b&sp=racw
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerNotFound</Code><Message>The
-        specified container does not exist.\nRequestId:07418af9-e01e-008e-4c77-f38cd5000000\nTime:2021-01-26T00:07:19.8393593Z</Message></Error>"
+        specified container does not exist.\nRequestId:7d34ab4a-901e-0012-2b2e-f421b3000000\nTime:2021-01-26T21:58:17.6155793Z</Message></Error>"
     headers:
       content-length:
       - '225'
       content-type:
       - application/xml
       date:
-      - Tue, 26 Jan 2021 00:07:19 GMT
+      - Tue, 26 Jan 2021 21:58:16 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
@@ -302,11 +238,11 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.7.0 Python/3.9.1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 26 Jan 2021 00:07:19 GMT
+      - Tue, 26 Jan 2021 21:58:17 GMT
       x-ms-version:
       - '2020-04-08'
     method: PUT
-    uri: https://sasdkreview.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?restype=container&sv=2019-02-02&sig=FWHa%2BNW3YnQypeuteRUZ74ke0jvyNMx%2Bbj0TMfEJrQQ%3D&se=2021-01-27T12%3A07%3A19Z&srt=co&ss=b&sp=racw
+    uri: https://sasdkreview.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?restype=container&sv=2019-02-02&sig=sanitized&se=2021-01-28T09%3A58%3A17Z&srt=co&ss=b&sp=racw
   response:
     body:
       string: ''
@@ -314,11 +250,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 26 Jan 2021 00:07:19 GMT
+      - Tue, 26 Jan 2021 21:58:16 GMT
       etag:
-      - '"0x8D8C18E593911A0"'
+      - '"0x8D8C2457CE84EAD"'
       last-modified:
-      - Tue, 26 Jan 2021 00:07:19 GMT
+      - Tue, 26 Jan 2021 21:58:17 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -348,14 +284,14 @@ interactions:
     uri: https://westus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/dummy-rg/providers/Microsoft.Quantum/workspaces/dummy-ws/storage/sasUri
   response:
     body:
-      string: '{"sasUri":"https://sasdkreview.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=2019-02-02&sig=jatYa%2Fh8a0erXufFM2sk3ySMSv6t2dhSZvwE3Znbifk%3D&se=2021-01-27T12%3A07%3A20Z&srt=co&ss=b&sp=racw"}'
+      string: '{"sasUri":"https://sasdkreview.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=2019-02-02&sig=sanitized&se=2021-01-28T09%3A58%3A18Z&srt=co&ss=b&sp=racw"}'
     headers:
       content-length:
-      - '210'
+      - '208'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 26 Jan 2021 00:07:20 GMT
+      - Tue, 26 Jan 2021 21:58:17 GMT
       request-context:
       - appId=cid-v1:4d6ac272-7369-45c6-9036-63d733c8519f
       server:
@@ -386,11 +322,11 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.7.0 Python/3.9.1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 26 Jan 2021 00:07:20 GMT
+      - Tue, 26 Jan 2021 21:58:18 GMT
       x-ms-version:
       - '2020-04-08'
     method: GET
-    uri: https://sasdkreview.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?restype=container&sv=2019-02-02&sig=jatYa%2Fh8a0erXufFM2sk3ySMSv6t2dhSZvwE3Znbifk%3D&se=2021-01-27T12%3A07%3A20Z&srt=co&ss=b&sp=racw
+    uri: https://sasdkreview.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?restype=container&sv=2019-02-02&sig=sanitized&se=2021-01-28T09%3A58%3A18Z&srt=co&ss=b&sp=racw
   response:
     body:
       string: ''
@@ -398,11 +334,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 26 Jan 2021 00:07:20 GMT
+      - Tue, 26 Jan 2021 21:58:17 GMT
       etag:
-      - '"0x8D8C18E593911A0"'
+      - '"0x8D8C2457CE84EAD"'
       last-modified:
-      - Tue, 26 Jan 2021 00:07:19 GMT
+      - Tue, 26 Jan 2021 21:58:17 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-default-encryption-scope:
@@ -424,7 +360,7 @@ interactions:
       message: OK
 - request:
     body: !!binary |
-      H4sIADddD2AC/0WJMQ6AIBAEv0KuJgbEyq8YYoFoKAQDaGIIf/eE4qqdnSlgQsrrfnuTXfAwswKP
+      H4sIAHmQEGAC/0WJMQ6AIBAEv0KuJgbEyq8YYoFoKAQDaGIIf/eE4qqdnSlgQsrrfnuTXfAwswKP
       jakzyEEAZ5Dfy/7XJeePJmw8E5qlgMERqNzWBKLUlbMeJAXEkcJIAVFRUBQQJ111rR8sZwd5pQAA
       AA==
     headers:
@@ -449,13 +385,13 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-date:
-      - Tue, 26 Jan 2021 00:07:21 GMT
+      - Tue, 26 Jan 2021 21:58:18 GMT
       x-ms-encryption-algorithm:
       - AES256
       x-ms-version:
       - '2020-04-08'
     method: PUT
-    uri: https://sasdkreview.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=2019-02-02&sig=jatYa%2Fh8a0erXufFM2sk3ySMSv6t2dhSZvwE3Znbifk%3D&se=2021-01-27T12%3A07%3A20Z&srt=co&ss=b&sp=racw
+    uri: https://sasdkreview.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=2019-02-02&sig=sanitized&se=2021-01-28T09%3A58%3A18Z&srt=co&ss=b&sp=racw
   response:
     body:
       string: ''
@@ -463,17 +399,17 @@ interactions:
       content-length:
       - '0'
       content-md5:
-      - uQst4sHckEarFo+KSQCxFQ==
+      - fytvGEhigvcsK+831mCnNQ==
       date:
-      - Tue, 26 Jan 2021 00:07:20 GMT
+      - Tue, 26 Jan 2021 21:58:18 GMT
       etag:
-      - '"0x8D8C18E59F86A91"'
+      - '"0x8D8C2457D762997"'
       last-modified:
-      - Tue, 26 Jan 2021 00:07:21 GMT
+      - Tue, 26 Jan 2021 21:58:18 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-content-crc64:
-      - AaXkN1L5qyU=
+      - qBHqSRy8pX0=
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
@@ -510,14 +446,60 @@ interactions:
     uri: https://westus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/dummy-rg/providers/Microsoft.Quantum/workspaces/dummy-ws/jobs/00000000-0000-0000-0000-000000000000
   response:
     body:
-      string: '{"containerUri":"https://sasdkreview.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=2019-02-02&sr=c&sig=jvqpKD6sWDwrI28vYUModRr2JONSV2wH7ujg0fffjVM%3D&se=2021-01-27T12%3A07%3A22Z&sp=rcw","inputDataUri":"https://sasdkreview.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=2019-02-02&sr=b&sig=8rGVpxQopBbu6GFzsAWVBFZc0c794Tgf5iPfGqnPmWI%3D&se=2021-01-27T12%3A07%3A22Z&sp=rcw","inputDataFormat":"microsoft.qio.v2","inputParams":{"params":{}},"providerId":"microsoft","target":"microsoft.simulatedannealing-parameterfree.cpu","metadata":null,"name":"test","id": "00000000-0000-0000-0000-000000000000","status":"Waiting","outputDataFormat":"microsoft.qio-results.v2","outputDataUri":"https://sasdkreview.blob.core.windows.net:443/job-00000000-0000-0000-0000-000000000000/outputData?sv=2019-02-02&sr=c&sig=jvqpKD6sWDwrI28vYUModRr2JONSV2wH7ujg0fffjVM%3D&se=2021-01-27T12%3A07%3A22Z&sp=rcw","creationTime":"2021-01-26T00:07:22.6344153+00:00","beginExecutionTime":null,"endExecutionTime":null,"cancellationTime":null,"errorData":null}'
+      string: '{"containerUri":"https://sasdkreview.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=2019-02-02&sr=c&sig=sanitized&se=2021-01-28T09%3A58%3A19Z&sp=rcw","inputDataUri":"https://sasdkreview.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=2019-02-02&sr=b&sig=sanitized&se=2021-01-28T09%3A58%3A19Z&sp=rcw","inputDataFormat":"microsoft.qio.v2","inputParams":{"params":{}},"providerId":"microsoft","target":"microsoft.simulatedannealing-parameterfree.cpu","metadata":null,"name":"test","id": "00000000-0000-0000-0000-000000000000","status":"Waiting","outputDataFormat":"microsoft.qio-results.v2","outputDataUri":"https://sasdkreview.blob.core.windows.net:443/job-00000000-0000-0000-0000-000000000000/outputData?sv=2019-02-02&sr=c&sig=sanitized&se=2021-01-28T09%3A58%3A19Z&sp=rcw","creationTime":"2021-01-26T21:58:19.4136614+00:00","beginExecutionTime":null,"endExecutionTime":null,"cancellationTime":null,"errorData":null}'
+    headers:
+      content-length:
+      - '1081'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 26 Jan 2021 21:58:18 GMT
+      request-context:
+      - appId=cid-v1:4d6ac272-7369-45c6-9036-63d733c8519f
+      server:
+      - Microsoft-IIS/10.0
+      set-cookie:
+      - ARRAffinity=a80c7c3a42bc29f88c9055a7e2789984b224746994993027ab866c65455cca24;Path=/;HttpOnly;Secure;Domain=westus.quantum.azure.com
+      - ARRAffinitySameSite=a80c7c3a42bc29f88c9055a7e2789984b224746994993027ab866c65455cca24;Path=/;HttpOnly;SameSite=None;Secure;Domain=westus.quantum.azure.com
+      strict-transport-security:
+      - max-age=2592000
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-powered-by:
+      - ASP.NET
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.9.1 (Windows-10-10.0.19041-SP0) msrest/0.6.19 msrest_azure/0.6.4
+        quantumclient/2019-11-04-preview Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      x-ms-azurequantum-sdk-version:
+      - 0.0.0.1
+    method: GET
+    uri: https://westus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/dummy-rg/providers/Microsoft.Quantum/workspaces/dummy-ws/jobs/00000000-0000-0000-0000-000000000000
+  response:
+    body:
+      string: '{"containerUri":"https://sasdkreview.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=2019-02-02&sr=c&sig=sanitized&se=2021-01-28T09%3A58%3A19Z&sp=rcw","inputDataUri":"https://sasdkreview.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=2019-02-02&sr=b&sig=sanitized&se=2021-01-28T09%3A58%3A19Z&sp=r","inputDataFormat":"microsoft.qio.v2","inputParams":{"params":{}},"providerId":"microsoft","target":"microsoft.simulatedannealing-parameterfree.cpu","metadata":null,"name":"test","id": "00000000-0000-0000-0000-000000000000","status":"Waiting","outputDataFormat":"microsoft.qio-results.v2","outputDataUri":"https://sasdkreview.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/outputData?sv=2019-02-02&sr=b&sig=sanitized&se=2021-01-28T09%3A58%3A20Z&sp=r","creationTime":"2021-01-26T21:58:19.4136614+00:00","beginExecutionTime":null,"endExecutionTime":null,"cancellationTime":null,"errorData":null}'
     headers:
       content-length:
       - '1071'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 26 Jan 2021 00:07:22 GMT
+      - Tue, 26 Jan 2021 21:58:20 GMT
       request-context:
       - appId=cid-v1:4d6ac272-7369-45c6-9036-63d733c8519f
       server:
@@ -556,14 +538,14 @@ interactions:
     uri: https://westus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/dummy-rg/providers/Microsoft.Quantum/workspaces/dummy-ws/jobs/00000000-0000-0000-0000-000000000000
   response:
     body:
-      string: '{"containerUri":"https://sasdkreview.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=2019-02-02&sr=c&sig=jvqpKD6sWDwrI28vYUModRr2JONSV2wH7ujg0fffjVM%3D&se=2021-01-27T12%3A07%3A22Z&sp=rcw","inputDataUri":"https://sasdkreview.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=2019-02-02&sr=b&sig=iv09qGIVnfTdkq%2FnjWHvB%2BidGdPGWn6xahAAc0bwjPM%3D&se=2021-01-27T12%3A07%3A24Z&sp=r","inputDataFormat":"microsoft.qio.v2","inputParams":{"params":{}},"providerId":"microsoft","target":"microsoft.simulatedannealing-parameterfree.cpu","metadata":null,"name":"test","id": "00000000-0000-0000-0000-000000000000","status":"Waiting","outputDataFormat":"microsoft.qio-results.v2","outputDataUri":"https://sasdkreview.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/outputData?sv=2019-02-02&sr=b&sig=YOvHKVkbYrfnWNgSB1Wdigee3e%2Ba%2Fy37QZtww5FFumY%3D&se=2021-01-27T12%3A07%3A24Z&sp=r","creationTime":"2021-01-26T00:07:22.6344153+00:00","beginExecutionTime":null,"endExecutionTime":null,"cancellationTime":null,"errorData":null}'
+      string: '{"containerUri":"https://sasdkreview.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=2019-02-02&sr=c&sig=sanitized&se=2021-01-28T09%3A58%3A19Z&sp=rcw","inputDataUri":"https://sasdkreview.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=2019-02-02&sr=b&sig=sanitized&se=2021-01-28T09%3A58%3A20Z&sp=r","inputDataFormat":"microsoft.qio.v2","inputParams":{"params":{}},"providerId":"microsoft","target":"microsoft.simulatedannealing-parameterfree.cpu","metadata":null,"name":"test","id": "00000000-0000-0000-0000-000000000000","status":"Waiting","outputDataFormat":"microsoft.qio-results.v2","outputDataUri":"https://sasdkreview.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/outputData?sv=2019-02-02&sr=b&sig=sanitized&se=2021-01-28T09%3A58%3A20Z&sp=r","creationTime":"2021-01-26T21:58:19.4136614+00:00","beginExecutionTime":null,"endExecutionTime":null,"cancellationTime":null,"errorData":null}'
     headers:
       content-length:
-      - '1071'
+      - '1073'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 26 Jan 2021 00:07:23 GMT
+      - Tue, 26 Jan 2021 21:58:20 GMT
       request-context:
       - appId=cid-v1:4d6ac272-7369-45c6-9036-63d733c8519f
       server:
@@ -602,198 +584,60 @@ interactions:
     uri: https://westus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/dummy-rg/providers/Microsoft.Quantum/workspaces/dummy-ws/jobs/00000000-0000-0000-0000-000000000000
   response:
     body:
-      string: '{"containerUri":"https://sasdkreview.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=2019-02-02&sr=c&sig=jvqpKD6sWDwrI28vYUModRr2JONSV2wH7ujg0fffjVM%3D&se=2021-01-27T12%3A07%3A22Z&sp=rcw","inputDataUri":"https://sasdkreview.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=2019-02-02&sr=b&sig=xO46Kon%2FELXnIfMRB8UCVhD47dHwQe90MtgXkf82ojw%3D&se=2021-01-27T12%3A07%3A25Z&sp=r","inputDataFormat":"microsoft.qio.v2","inputParams":{"params":{}},"providerId":"microsoft","target":"microsoft.simulatedannealing-parameterfree.cpu","metadata":null,"name":"test","id": "00000000-0000-0000-0000-000000000000","status":"Waiting","outputDataFormat":"microsoft.qio-results.v2","outputDataUri":"https://sasdkreview.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/outputData?sv=2019-02-02&sr=b&sig=USGxlXOZlkqtKYqi2zE%2B1vJYrJTizHoWqjrWFzyuUSg%3D&se=2021-01-27T12%3A07%3A25Z&sp=r","creationTime":"2021-01-26T00:07:22.6344153+00:00","beginExecutionTime":null,"endExecutionTime":null,"cancellationTime":null,"errorData":null}'
-    headers:
-      content-length:
-      - '1067'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Tue, 26 Jan 2021 00:07:24 GMT
-      request-context:
-      - appId=cid-v1:4d6ac272-7369-45c6-9036-63d733c8519f
-      server:
-      - Microsoft-IIS/10.0
-      set-cookie:
-      - ARRAffinity=a80c7c3a42bc29f88c9055a7e2789984b224746994993027ab866c65455cca24;Path=/;HttpOnly;Secure;Domain=westus.quantum.azure.com
-      - ARRAffinitySameSite=a80c7c3a42bc29f88c9055a7e2789984b224746994993027ab866c65455cca24;Path=/;HttpOnly;SameSite=None;Secure;Domain=westus.quantum.azure.com
-      strict-transport-security:
-      - max-age=2592000
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-powered-by:
-      - ASP.NET
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.9.1 (Windows-10-10.0.19041-SP0) msrest/0.6.19 msrest_azure/0.6.4
-        quantumclient/2019-11-04-preview Azure-SDK-For-Python
-      accept-language:
-      - en-US
-      x-ms-azurequantum-sdk-version:
-      - 0.0.0.1
-    method: GET
-    uri: https://westus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/dummy-rg/providers/Microsoft.Quantum/workspaces/dummy-ws/jobs/00000000-0000-0000-0000-000000000000
-  response:
-    body:
-      string: '{"containerUri":"https://sasdkreview.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=2019-02-02&sr=c&sig=jvqpKD6sWDwrI28vYUModRr2JONSV2wH7ujg0fffjVM%3D&se=2021-01-27T12%3A07%3A22Z&sp=rcw","inputDataUri":"https://sasdkreview.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=2019-02-02&sr=b&sig=sx%2FcawKz3l%2FAsvsgj17ut2kcaJO71RPNih2pXpLHNZk%3D&se=2021-01-27T12%3A07%3A26Z&sp=r","inputDataFormat":"microsoft.qio.v2","inputParams":{"params":{}},"providerId":"microsoft","target":"microsoft.simulatedannealing-parameterfree.cpu","metadata":null,"name":"test","id": "00000000-0000-0000-0000-000000000000","status":"Waiting","outputDataFormat":"microsoft.qio-results.v2","outputDataUri":"https://sasdkreview.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/outputData?sv=2019-02-02&sr=b&sig=bWYrMwTMlXi7sulJXa4ZIfpThm%2FDYQ81TJa4nV3QS60%3D&se=2021-01-27T12%3A07%3A27Z&sp=r","creationTime":"2021-01-26T00:07:22.6344153+00:00","beginExecutionTime":null,"endExecutionTime":null,"cancellationTime":null,"errorData":null}'
-    headers:
-      content-length:
-      - '1069'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Tue, 26 Jan 2021 00:07:27 GMT
-      request-context:
-      - appId=cid-v1:4d6ac272-7369-45c6-9036-63d733c8519f
-      server:
-      - Microsoft-IIS/10.0
-      set-cookie:
-      - ARRAffinity=a80c7c3a42bc29f88c9055a7e2789984b224746994993027ab866c65455cca24;Path=/;HttpOnly;Secure;Domain=westus.quantum.azure.com
-      - ARRAffinitySameSite=a80c7c3a42bc29f88c9055a7e2789984b224746994993027ab866c65455cca24;Path=/;HttpOnly;SameSite=None;Secure;Domain=westus.quantum.azure.com
-      strict-transport-security:
-      - max-age=2592000
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-powered-by:
-      - ASP.NET
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.9.1 (Windows-10-10.0.19041-SP0) msrest/0.6.19 msrest_azure/0.6.4
-        quantumclient/2019-11-04-preview Azure-SDK-For-Python
-      accept-language:
-      - en-US
-      x-ms-azurequantum-sdk-version:
-      - 0.0.0.1
-    method: GET
-    uri: https://westus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/dummy-rg/providers/Microsoft.Quantum/workspaces/dummy-ws/jobs/00000000-0000-0000-0000-000000000000
-  response:
-    body:
-      string: '{"containerUri":"https://sasdkreview.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=2019-02-02&sr=c&sig=jvqpKD6sWDwrI28vYUModRr2JONSV2wH7ujg0fffjVM%3D&se=2021-01-27T12%3A07%3A22Z&sp=rcw","inputDataUri":"https://sasdkreview.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=2019-02-02&sr=b&sig=xMac9s1iTfaOY2RRjDVjdn9XmjP9QLeeoqgh5KSmSeE%3D&se=2021-01-27T12%3A07%3A28Z&sp=r","inputDataFormat":"microsoft.qio.v2","inputParams":{"params":{}},"providerId":"microsoft","target":"microsoft.simulatedannealing-parameterfree.cpu","metadata":null,"name":"test","id": "00000000-0000-0000-0000-000000000000","status":"Waiting","outputDataFormat":"microsoft.qio-results.v2","outputDataUri":"https://sasdkreview.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/outputData?sv=2019-02-02&sr=b&sig=4jvO%2FBy1E7v6cq%2Fm7UHnYxswND%2Bx2PNjStqpgLTwwpQ%3D&se=2021-01-27T12%3A07%3A28Z&sp=r","creationTime":"2021-01-26T00:07:22.6344153+00:00","beginExecutionTime":null,"endExecutionTime":null,"cancellationTime":null,"errorData":null}'
-    headers:
-      content-length:
-      - '1069'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Tue, 26 Jan 2021 00:07:28 GMT
-      request-context:
-      - appId=cid-v1:4d6ac272-7369-45c6-9036-63d733c8519f
-      server:
-      - Microsoft-IIS/10.0
-      set-cookie:
-      - ARRAffinity=a80c7c3a42bc29f88c9055a7e2789984b224746994993027ab866c65455cca24;Path=/;HttpOnly;Secure;Domain=westus.quantum.azure.com
-      - ARRAffinitySameSite=a80c7c3a42bc29f88c9055a7e2789984b224746994993027ab866c65455cca24;Path=/;HttpOnly;SameSite=None;Secure;Domain=westus.quantum.azure.com
-      strict-transport-security:
-      - max-age=2592000
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-powered-by:
-      - ASP.NET
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.9.1 (Windows-10-10.0.19041-SP0) msrest/0.6.19 msrest_azure/0.6.4
-        quantumclient/2019-11-04-preview Azure-SDK-For-Python
-      accept-language:
-      - en-US
-      x-ms-azurequantum-sdk-version:
-      - 0.0.0.1
-    method: GET
-    uri: https://westus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/dummy-rg/providers/Microsoft.Quantum/workspaces/dummy-ws/jobs/00000000-0000-0000-0000-000000000000
-  response:
-    body:
-      string: '{"containerUri":"https://sasdkreview.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=2019-02-02&sr=c&sig=jvqpKD6sWDwrI28vYUModRr2JONSV2wH7ujg0fffjVM%3D&se=2021-01-27T12%3A07%3A22Z&sp=rcw","inputDataUri":"https://sasdkreview.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=2019-02-02&sr=b&sig=OPwvQUNgsj5vtko1ezPcxIji7mEmor64ruaFsNE8hus%3D&se=2021-01-27T12%3A07%3A30Z&sp=r","inputDataFormat":"microsoft.qio.v2","inputParams":{"params":{}},"providerId":"microsoft","target":"microsoft.simulatedannealing-parameterfree.cpu","metadata":null,"name":"test","id": "00000000-0000-0000-0000-000000000000","status":"Executing","outputDataFormat":"microsoft.qio-results.v2","outputDataUri":"https://sasdkreview.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/outputData?sv=2019-02-02&sr=b&sig=J2Wam6ExuNbOzUJXO4sD78f0%2BezaSguXJ6XVqtNcOeo%3D&se=2021-01-27T12%3A07%3A30Z&sp=r","creationTime":"2021-01-26T00:07:22.6344153+00:00","beginExecutionTime":"2021-01-26T00:05:26.8771638Z","endExecutionTime":"2021-01-26T00:05:27.0344438Z","cancellationTime":null,"errorData":null}'
-    headers:
-      content-length:
-      - '1119'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Tue, 26 Jan 2021 00:07:30 GMT
-      request-context:
-      - appId=cid-v1:4d6ac272-7369-45c6-9036-63d733c8519f
-      server:
-      - Microsoft-IIS/10.0
-      set-cookie:
-      - ARRAffinity=a80c7c3a42bc29f88c9055a7e2789984b224746994993027ab866c65455cca24;Path=/;HttpOnly;Secure;Domain=westus.quantum.azure.com
-      - ARRAffinitySameSite=a80c7c3a42bc29f88c9055a7e2789984b224746994993027ab866c65455cca24;Path=/;HttpOnly;SameSite=None;Secure;Domain=westus.quantum.azure.com
-      strict-transport-security:
-      - max-age=2592000
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-powered-by:
-      - ASP.NET
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.9.1 (Windows-10-10.0.19041-SP0) msrest/0.6.19 msrest_azure/0.6.4
-        quantumclient/2019-11-04-preview Azure-SDK-For-Python
-      accept-language:
-      - en-US
-      x-ms-azurequantum-sdk-version:
-      - 0.0.0.1
-    method: GET
-    uri: https://westus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/dummy-rg/providers/Microsoft.Quantum/workspaces/dummy-ws/jobs/00000000-0000-0000-0000-000000000000
-  response:
-    body:
-      string: '{"containerUri":"https://sasdkreview.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=2019-02-02&sr=c&sig=jvqpKD6sWDwrI28vYUModRr2JONSV2wH7ujg0fffjVM%3D&se=2021-01-27T12%3A07%3A22Z&sp=rcw","inputDataUri":"https://sasdkreview.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=2019-02-02&sr=b&sig=SmZezMkN1%2FfMoVc83qoJajE12EoT8JXxryLmdsZx8Uc%3D&se=2021-01-27T12%3A07%3A32Z&sp=r","inputDataFormat":"microsoft.qio.v2","inputParams":{"params":{}},"providerId":"microsoft","target":"microsoft.simulatedannealing-parameterfree.cpu","metadata":null,"name":"test","id": "00000000-0000-0000-0000-000000000000","status":"Succeeded","outputDataFormat":"microsoft.qio-results.v2","outputDataUri":"https://sasdkreview.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=2019-02-02&sr=b&sig=9atsj93CRvtTpvYffouGQVkkT27rLmd443RU7BnFbIQ%3D&se=2021-01-27T12%3A07%3A32Z&sp=r","creationTime":"2021-01-26T00:07:22.6344153+00:00","beginExecutionTime":"2021-01-26T00:05:26.8771638Z","endExecutionTime":"2021-01-26T00:05:27.0344438Z","cancellationTime":null,"errorData":null}'
+      string: '{"containerUri":"https://sasdkreview.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=2019-02-02&sr=c&sig=sanitized&se=2021-01-28T09%3A58%3A19Z&sp=rcw","inputDataUri":"https://sasdkreview.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=2019-02-02&sr=b&sig=sanitized&se=2021-01-28T09%3A58%3A21Z&sp=r","inputDataFormat":"microsoft.qio.v2","inputParams":{"params":{}},"providerId":"microsoft","target":"microsoft.simulatedannealing-parameterfree.cpu","metadata":null,"name":"test","id": "00000000-0000-0000-0000-000000000000","status":"Finishing","outputDataFormat":"microsoft.qio-results.v2","outputDataUri":"https://sasdkreview.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=2019-02-02&sr=b&sig=sanitized&se=2021-01-28T09%3A58%3A21Z&sp=r","creationTime":"2021-01-26T21:58:19.4136614+00:00","beginExecutionTime":"2021-01-26T21:57:37.9746752Z","endExecutionTime":"2021-01-26T21:57:38.1833167Z","cancellationTime":null,"errorData":null}'
     headers:
       content-length:
       - '1122'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 26 Jan 2021 00:07:32 GMT
+      - Tue, 26 Jan 2021 21:58:21 GMT
+      request-context:
+      - appId=cid-v1:4d6ac272-7369-45c6-9036-63d733c8519f
+      server:
+      - Microsoft-IIS/10.0
+      set-cookie:
+      - ARRAffinity=a80c7c3a42bc29f88c9055a7e2789984b224746994993027ab866c65455cca24;Path=/;HttpOnly;Secure;Domain=westus.quantum.azure.com
+      - ARRAffinitySameSite=a80c7c3a42bc29f88c9055a7e2789984b224746994993027ab866c65455cca24;Path=/;HttpOnly;SameSite=None;Secure;Domain=westus.quantum.azure.com
+      strict-transport-security:
+      - max-age=2592000
+      transfer-encoding:
+      - chunked
+      vary:
+      - Accept-Encoding
+      x-powered-by:
+      - ASP.NET
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python/3.9.1 (Windows-10-10.0.19041-SP0) msrest/0.6.19 msrest_azure/0.6.4
+        quantumclient/2019-11-04-preview Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      x-ms-azurequantum-sdk-version:
+      - 0.0.0.1
+    method: GET
+    uri: https://westus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/dummy-rg/providers/Microsoft.Quantum/workspaces/dummy-ws/jobs/00000000-0000-0000-0000-000000000000
+  response:
+    body:
+      string: '{"containerUri":"https://sasdkreview.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=2019-02-02&sr=c&sig=sanitized&se=2021-01-28T09%3A58%3A19Z&sp=rcw","inputDataUri":"https://sasdkreview.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=2019-02-02&sr=b&sig=sanitized&se=2021-01-28T09%3A58%3A22Z&sp=r","inputDataFormat":"microsoft.qio.v2","inputParams":{"params":{}},"providerId":"microsoft","target":"microsoft.simulatedannealing-parameterfree.cpu","metadata":null,"name":"test","id": "00000000-0000-0000-0000-000000000000","status":"Succeeded","outputDataFormat":"microsoft.qio-results.v2","outputDataUri":"https://sasdkreview.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=2019-02-02&sr=b&sig=sanitized&se=2021-01-28T09%3A58%3A22Z&sp=r","creationTime":"2021-01-26T21:58:19.4136614+00:00","beginExecutionTime":"2021-01-26T21:57:37.9746752Z","endExecutionTime":"2021-01-26T21:57:38.1833167Z","cancellationTime":null,"errorData":null}'
+    headers:
+      content-length:
+      - '1124'
+      content-type:
+      - application/json; charset=utf-8
+      date:
+      - Tue, 26 Jan 2021 21:58:22 GMT
       request-context:
       - appId=cid-v1:4d6ac272-7369-45c6-9036-63d733c8519f
       server:
@@ -824,7 +668,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.7.0 Python/3.9.1 (Windows-10-10.0.19041-SP0)
       x-ms-date:
-      - Tue, 26 Jan 2021 00:07:32 GMT
+      - Tue, 26 Jan 2021 21:58:22 GMT
       x-ms-encryption-algorithm:
       - AES256
       x-ms-range:
@@ -832,7 +676,7 @@ interactions:
       x-ms-version:
       - '2020-04-08'
     method: GET
-    uri: https://sasdkreview.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=2019-02-02&sr=b&sig=9atsj93CRvtTpvYffouGQVkkT27rLmd443RU7BnFbIQ%3D&se=2021-01-27T12%3A07%3A32Z&sp=r
+    uri: https://sasdkreview.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=2019-02-02&sr=b&sig=sanitized&se=2021-01-28T09%3A58%3A22Z&sp=r
   response:
     body:
       string: '{"version": "1.0","configuration": {  "0": 1,"1": 1,"2": -1,"3": 1,"4":
@@ -847,11 +691,11 @@ interactions:
       content-type:
       - application/json
       date:
-      - Tue, 26 Jan 2021 00:07:32 GMT
+      - Tue, 26 Jan 2021 21:58:22 GMT
       etag:
-      - '"0x8D8C18E5EBC4E86"'
+      - '"0x8D8C2457EF14E81"'
       last-modified:
-      - Tue, 26 Jan 2021 00:07:29 GMT
+      - Tue, 26 Jan 2021 21:58:21 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-blob-content-md5:
@@ -859,7 +703,7 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-creation-time:
-      - Tue, 26 Jan 2021 00:07:27 GMT
+      - Tue, 26 Jan 2021 21:58:19 GMT
       x-ms-lease-state:
       - available
       x-ms-lease-status:

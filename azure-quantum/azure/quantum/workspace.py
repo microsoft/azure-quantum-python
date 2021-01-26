@@ -81,7 +81,8 @@ class TokenCacheWrapper:
         if not os.path.isdir(cache_folder):
             os.makedirs(cache_folder)
 
-        open(self.cache_path, "w").write(self.token_cache.serialize())
+        with open(self.cache_path, "w") as afile:
+            afile.write(self.token_cache.serialize())
 
 class MsalWrapper:
     def __init__(self, subscription_id: str, refresh: bool):
@@ -372,10 +373,9 @@ class Workspace:
         :returns:
             the user credentials to authenticate with Azure Quantum
         """
-        if refresh or (self.credentials is None):
-            self.credentials = None
-            msal_wrapper = MsalWrapper(self.subscription_id, refresh=refresh)
-            auth_token = msal_wrapper.acquire_auth_token()
-            return BasicTokenAuthentication(auth_token)
 
-        return self.credentials
+        if refresh or (self.credentials is None):
+            msal_wrapper = MsalWrapper(self.subscription_id, refresh=refresh)
+            self.credentials = msal_wrapper.acquire_auth_token()
+
+        return BasicTokenAuthentication(self.credentials)
