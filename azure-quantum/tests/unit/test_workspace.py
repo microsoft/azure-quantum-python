@@ -21,6 +21,7 @@ def test_workspace_login():
     resource_group = "rg"
     name = "n"
 
+    # This tests Workspace.login() using a mock authentication token
     ws = create_workspace_mock_login(
         subscription_id=subscription_id,
         resource_group=resource_group,
