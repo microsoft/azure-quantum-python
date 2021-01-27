@@ -99,6 +99,7 @@ class TestJob(ReplayableTest):
         
 
 def update_recordings_with_dummy_values():
+    """Replace all secrets in the recorded .yaml files with dummy values as defined in RecordingUpdater. This only needs to be run once."""
     recording_directory = os.path.abspath(os.path.join(os.path.dirname(__file__), "recordings"))
     recording_glob = "*.yaml"
     if os.path.exists(recording_directory):    
