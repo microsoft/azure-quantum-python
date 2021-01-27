@@ -75,6 +75,37 @@ class TestJob(ReplayableTest):
             job = solver.submit(problem)
             job.refresh()
 
+    def test_job_has_completed(self):
+        ws = self.create_workspace()
+
+        problem = Problem(name="test")
+        count = 4
+
+        for i in range(count):
+            problem.add_term(c=i, indices=[i, i+1])
+
+        with unittest.mock.patch.object(Job, self.mock_create_job_id_name, return_value=self.get_dummy_job_id()):
+            solver = SimulatedAnnealing(ws)
+            job = solver.submit(problem)
+            self.assertEqual(False, job.has_completed())
+            job.get_results()
+            self.assertEqual(True, job.has_completed())
+
+    def test_job_wait_unit_completed(self):
+        ws = self.create_workspace()
+
+        problem = Problem(name="test")
+        count = 4
+
+        for i in range(count):
+            problem.add_term(c=i, indices=[i, i+1])
+
+        with unittest.mock.patch.object(Job, self.mock_create_job_id_name, return_value=self.get_dummy_job_id()):
+            solver = SimulatedAnnealing(ws)
+            job = solver.submit(problem)
+            job.wait_until_completed()
+            self.assertEqual(True, job.has_completed())
+
     def test_job_get_results(self):
         ws = self.create_workspace()
 
