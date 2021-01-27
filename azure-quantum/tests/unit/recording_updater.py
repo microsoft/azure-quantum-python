@@ -23,13 +23,22 @@ class RecordingUpdater:
     dummy_rg = "dummy-rg"
     dummy_ws = "dummy-ws"
 
-    def __init__(self, recording_directory, recording_glob):
+    def __init__(self, recording_directory: str, recording_glob: str):
+        """RecordingUpdater constructor
+        
+        :param recording_directory: Directory name where recording files are found.
+        :type recording_directory: str
+        :param recording_glob: A file name glob used to find recordings in the recording-directory. For example, '*.yaml'
+        :type recording_glob: str
+        """
         super().__init__()
         path = os.path.join(recording_directory, recording_glob)
         self._recording_file_names = glob.glob(path)
         self._auth_prog = re.compile(r'authorization_uri="https://login.windows.net/(?P<authid>([a-f0-9]+[-]){4}[a-f0-9]+)"')
 
     def update_recordings_with_dummy_values(self):
+        """Uses regular expressions to replace secrets with dummy values in network recordings.
+        """
         progs = self._get_regex_programs()
         for file_name in self._recording_file_names:
             with open(file_name) as afile:
@@ -40,7 +49,7 @@ class RecordingUpdater:
             with open(file_name, 'w') as afile:
                 afile.write(contents)
             
-    def _get_regex_programs(self):
+    def _get_regex_programs(self) -> list:
         progs = []
         # progs.append((re.compile(<regex>), <replacemnt-string>))
         progs.append((re.compile(r'/subscriptions/([a-f0-9]+[-]){4}[a-f0-9]+'), "/subscriptions/" + self.dummy_uid))
@@ -52,7 +61,7 @@ class RecordingUpdater:
         progs.append((re.compile(r'sig=[0-9a-zA-Z%]+\&'), "sig=sanitized&"))
         return progs
 
-    def _replace_auth_with_dummy_values(self, contents):
+    def _replace_auth_with_dummy_values(self, contents: str) -> str:
         match = self._auth_prog.search(contents)
         if match:
             info = match.groupdict()
