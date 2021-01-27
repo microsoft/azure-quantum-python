@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 ##
 import logging
-import uuid, io
+import io
 import azure.quantum
 
 from typing import List, Union, Any, Optional
@@ -54,7 +54,7 @@ class Solver:
             of a Problem has been uploaded.
         """
         ## Create a container URL:
-        job_id = uuid.uuid1()
+        job_id = Job.create_job_id()
         logger.info(f"Submitting job with id: {job_id}")
 
         container_name = f"job-{job_id}"
