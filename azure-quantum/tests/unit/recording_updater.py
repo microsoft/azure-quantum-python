@@ -17,7 +17,7 @@ import re
 class RecordingUpdater:
     """RecordingUpdater
     
-    Replaces sensitive data with dummy values in network recordings.
+    Replaces secrets with dummy values in network recordings.
     """
     dummy_uid = "00000000-0000-0000-0000-000000000000"
     dummy_rg = "dummy-rg"
