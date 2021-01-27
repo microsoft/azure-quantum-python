@@ -88,4 +88,4 @@ class Job:
     def create_job_id() -> str:
         """Create a unique id for a new job.
         """
-        return uuid.uuid1()
+        return str(uuid.uuid1())
