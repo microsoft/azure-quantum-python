@@ -6,6 +6,7 @@ import logging
 import time
 import io
 import json
+import uuid
 
 from typing import List, TYPE_CHECKING
 from urllib.parse import urlparse
@@ -82,3 +83,9 @@ class Job:
 
         result = json.loads(payload.decode('utf8'))
         return result
+            
+    @staticmethod
+    def create_job_id() -> str:
+        """Create a unique id for a new job.
+        """
+        return str(uuid.uuid1())
