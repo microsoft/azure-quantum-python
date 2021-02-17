@@ -4,10 +4,11 @@
 ##
 import io
 import logging
-from typing import Any
-
-from azure.storage.blob import BlobServiceClient, ContainerClient, BlobClient, BlobSasPermissions, ContentSettings, generate_blob_sas, generate_container_sas
+from typing import Any, Dict
+from azure.core import exceptions
+from azure.storage.blob import BlobServiceClient, ContainerClient, BlobClient, BlobSasPermissions, ContentSettings, generate_blob_sas, generate_container_sas, BlobType
 from datetime import datetime, timedelta
+from enum import Enum
 
 logger = logging.getLogger(__name__)
 
@@ -53,14 +54,7 @@ def get_container_uri(connection_string: str, container_name: str) -> str:
     return uri
 
 
-def upload_blob(
-    container: ContainerClient,
-    blob_name: str,
-    content_type:str,
-    content_encoding:str,
-    data: Any,
-    return_sas_token: bool=True
-) -> str:
+def upload_blob(container: ContainerClient, blob_name: str, content_type:str, content_encoding:str, data: Any, returnSasToken: bool=True) -> str:
     """
     Uploads the given data to a blob record. If a blob with the given name already exist, it throws an error.
 
@@ -74,23 +68,56 @@ def upload_blob(
     blob.upload_blob(data, content_settings=content_settings)
     logger.debug(f"  - blob '{blob_name}' uploaded. generating sas token.")
 
-    if return_sas_token:
-        sas_token = generate_blob_sas(
-            blob.account_name,
-            blob.container_name,
-            blob.blob_name,
-            account_key=blob.credential.account_key,
-            permission=BlobSasPermissions(read=True),
-            expiry=datetime.utcnow() + timedelta(days=14)
-        )
-
-        uri = blob.url + "?" + sas_token
+    if returnSasToken:
+        uri = get_blob_uri_with_sas_token(blob)
     else:
         uri = remove_sas_token(blob.url)
 
     logger.debug(f"  - blob access url: '{uri}'.")
 
     return uri
+
+def append_blob(container: ContainerClient, blob_name: str, content_type:str, content_encoding:str, data: Any, returnSasToken: bool=True, metadata: Dict[str, str] = None) -> str:
+    """
+    Uploads the given data to a blob record. If a blob with the given name already exist, it throws an error.
+
+    Returns a uri with a SAS token to access the newly created blob.
+    """
+    create_container_using_client(container)
+    logger.info(f"Appending data to blob '{blob_name}' in container '{container.container_name}' on account: '{container.account_name}'")
+
+    content_settings = ContentSettings(content_type=content_type, content_encoding=content_encoding)
+    blob = container.get_blob_client(blob_name)
+    try:
+        props = blob.get_blob_properties()
+        if props.blob_type != BlobType.AppendBlob:
+            raise Exception('blob must be an append blob')
+    except exceptions.ResourceNotFoundError:
+        props = blob.create_append_blob(content_settings=content_settings, metadata=metadata)
+
+    blob.append_block(data, len(data))
+    logger.debug(f"  - blob '{blob_name}' appended. generating sas token.")
+
+    if returnSasToken:
+        uri = get_blob_uri_with_sas_token(blob)
+    else:
+        uri = remove_sas_token(blob.url)
+
+    logger.debug(f"  - blob access url: '{uri}'.")
+
+    return uri
+
+def get_blob_uri_with_sas_token(blob: BlobClient):
+    sas_token = generate_blob_sas(
+            blob.account_name,
+            blob.container_name,
+            blob.blob_name,
+            account_key=blob.credential.account_key,
+            permission=BlobSasPermissions(read=True),
+            expiry= datetime.utcnow() + timedelta(days=14)
+        )
+
+    return blob.url + "?" + sas_token
 
 def download_blob(blob_url: str) -> Any:
     """
@@ -104,6 +131,23 @@ def download_blob(blob_url: str) -> Any:
 
     return response
 
+def download_blob_properties(blob_url: str) -> Dict[str, str]:
+    blob_client = BlobClient.from_blob_url(blob_url)
+    logger.info(f"Downloading blob properties '{blob_client.blob_name}' from container '{blob_client.container_name}' on account: '{blob_client.account_name}'")
+
+    response = blob_client.get_blob_properties()
+    logger.debug(response)
+
+    return response
+
+def download_blob_metadata(blob_url: str) -> Dict[str, str]:
+    return download_blob_properties(blob_url).metadata
+
+def set_blob_metadata(blob_url: str, metadata: Dict[str, str]):
+    blob_client = BlobClient.from_blob_url(blob_url)
+    logger.info(f"Setting blob properties '{blob_client.blob_name}' from container '{blob_client.container_name}' on account: '{blob_client.account_name}'")
+    return blob_client.set_blob_metadata(metadata=metadata)
+
 def remove_sas_token(sas_uri: str) -> str:
     index = sas_uri.find('?')
     if index != -1:
@@ -111,3 +155,85 @@ def remove_sas_token(sas_uri: str) -> str:
     
     return sas_uri
 
+
+def init_blob_for_streaming_upload(container: ContainerClient, blob_name: str, content_type:str, content_encoding:str, data: Any, returnSasToken: bool=True) -> str:
+    """
+    Uploads the given data to a blob record. If a blob with the given name already exist, it throws an error.
+
+    Returns a uri with a SAS token to access the newly created blob.
+    """
+    create_container_using_client(container)
+    logger.info(f"Streaming blob '{blob_name}' to container '{container.container_name}' on account: '{container.account_name}'")
+
+    content_settings = ContentSettings(content_type=content_type, content_encoding=content_encoding)
+    blob = container.get_blob_client(blob_name)
+    blob.stage_block()
+    blob.commit_block_list()
+    blob.upload_blob(data, content_settings=content_settings)
+    logger.debug(f"  - blob '{blob_name}' uploaded. generating sas token.")
+
+    if returnSasToken:
+        sas_token = generate_blob_sas(
+            blob.account_name,
+            blob.container_name,
+            blob.blob_name,
+            account_key=blob.credential.account_key,
+            permission=BlobSasPermissions(read=True),
+            expiry= datetime.utcnow() + timedelta(days=14)
+        )
+
+        uri = blob.url + "?" + sas_token
+    else:
+        uri = remove_sas_token(blob.url)
+
+    logger.debug(f"  - blob access url: '{uri}'.")
+
+    return uri
+
+class StreamedBlobState(str, Enum):
+    not_initialized  = 0
+    uploading = 1
+    committed = 2
+
+class StreamedBlob:
+    def __init__(self, container: ContainerClient, blob_name: str, content_type: str, content_encoding:str):
+        self.container = container
+        self.blob_name = blob_name
+        self.content_settings = ContentSettings(content_type=content_type, content_encoding=content_encoding)
+        self.state = StreamedBlobState.not_initialized
+        self.blob = container.get_blob_client(blob_name)
+        self.blocks = []
+
+    def upload_data(self, data):
+        if self.state == StreamedBlobState.not_initialized:
+            create_container_using_client(self.container)
+            logger.info(f"Streaming blob '{self.blob_name}' to container '{self.container.container_name}' on account: '{self.container.account_name}'")
+            self.initialized = True
+        
+        self.state = StreamedBlobState.uploading
+        id = self._get_next_block_id()
+        logger.debug(f"Uploading block '{id}' to {self.blob_name}")
+        self.blob.stage_block(id, data, length=len(data))
+        self.blocks.append(id)
+
+    def commit(self, metadata: Dict[str, str] = None):
+        if self.state == StreamedBlobState.not_initialized:
+            raise Exception('StreamedBlob cannot commit before uploading data')
+        elif self.state == StreamedBlobState.committed:
+            raise Exception('StreamedBlob is already committed')
+
+        logger.debug(f"Committing {len(self.blocks)} blocks {self.blob_name}")
+        self.blob.commit_block_list(self.blocks, content_settings=self.content_settings, metadata=metadata)
+        self.state = StreamedBlobState.committed
+        logger.debug(f"Committed {self.blob_name}")
+
+    def getUri(self, withSasToken : bool = False):
+        if self.state != StreamedBlobState.committed:
+            raise Exception('Can only retrieve sas token for committed blob')
+        if withSasToken:
+            return get_blob_uri_with_sas_token(self.blob)
+
+        return remove_sas_token(self.blob.url)
+
+    def _get_next_block_id(self):
+        return f'{len(self.blocks):10}'

@@ -29,6 +29,10 @@ class Term:
     def to_dict(self):
         return self.__dict__
 
+    @staticmethod
+    def from_dict(obj):
+        return Term(indices = obj['ids'], c = obj['c'])
+
     def __repr__(self):
         return str(self.__dict__)
 
