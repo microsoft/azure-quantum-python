@@ -25,7 +25,23 @@ logger = logging.getLogger(__name__)
 __all__ = ['StreamingProblem']
 
 class StreamingProblem(object):
+    """Problem to be streamed to the service.
 
+    Streaming problems are uploaded on the fly as terms are added,
+    meaning that the whole problem representation is not kept in memory. This
+    is very useful when constructing large problems.
+
+    :param workspace: Workspace to upload problem to
+    :type workspace: Workspace
+    :param name: Problem name
+    :type name: str
+    :param terms: Problem terms, depending on solver. Defaults to None
+    :type terms: Optional[List[Term]], optional
+    :param init_config: Optional configuration details, depending on solver. Defaults to None
+    :type init_config: Optional[Dict[str,int]], optional
+    :param problem_type: Problem type (ProblemType.pubo or ProblemType.ising), defaults to ProblemType.ising
+    :type problem_type: ProblemType, optional
+    """
     def __init__(
         self,
         workspace: Workspace,
@@ -139,6 +155,16 @@ class StreamingProblem(object):
         return self.uploaded_uri
             
 class JsonStreamingProblemUploader:
+    """Helper class for uploading json problem files in chunks.
+
+    :param problem: Back-ref to the problem being uploaded
+    :param container: Reference to the container client in which to store the problem
+    :param name: Name of the problem (added to blob metadata)
+    :param compress: Whether the problem should be compressed on the fly
+    :param upload_size_threshold: Chunking threshold (in bytes). Once the internal buffer reaches this size, the chunk will be uploaded.
+    :param upload_term_threshold: Chunking threshold (in terms). Once this many terms are ready to be uploaded, the chunk will be uploaded.
+    :param blob_properties: Properties to set on the blob.
+    """
     def __init__(
         self,
         problem: StreamingProblem,
