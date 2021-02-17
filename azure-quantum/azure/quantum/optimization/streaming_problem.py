@@ -130,6 +130,9 @@ class StreamingProblem(object):
             self.terms_queue.put(terms)
 
     def download(self):
+        if not self.uploaded_uri:
+            raise Exception('StreamingProblem may not be downloaded before it is uploaded')
+
         coords = self._get_upload_coords()
         blob = coords['container_client'].get_blob_client(coords['blob_name'])
         contents = download_blob(blob.url)
