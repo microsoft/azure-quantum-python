@@ -9,8 +9,6 @@ import io
 import gzip
 import json
 import threading
-import gzip
-import io
 import sys
 
 from typing import List, Union, Dict, Optional
