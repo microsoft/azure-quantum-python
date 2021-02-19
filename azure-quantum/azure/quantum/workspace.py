@@ -290,6 +290,11 @@ class Workspace:
                 "Azure Quantum workspace not fully specified. Please specify either a valid resource ID " +
                 "or a valid combination of subscription ID, resource group name, and workspace name.")
 
+        if not location:
+            raise ValueError(
+                "Azure Quantum workspace does not have an associated location. " +
+                "Please specify the location associated with your workspace.")
+
         self.name = name
         self.resource_group = resource_group
         self.subscription_id = subscription_id
@@ -297,7 +302,10 @@ class Workspace:
 
         # Convert user-provided location into names recognized by Azure resource manager.
         # For example, a customer-provided value of "West US" should be converted to "westus".
-        self.location = "".join(location.split()).lower() if location and location.split() else "westus"
+        if location and location.split():
+            self.location = "".join(location.split()).lower()
+        else:
+            raise ValueError("Invalid location specified.")
 
     def _create_client(self) -> QuantumClient:
         auth = self.login()
