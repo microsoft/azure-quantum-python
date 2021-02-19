@@ -378,7 +378,8 @@ class Workspace:
             self.credentials = None
 
         if self.credentials is None:
-            msal_wrapper = MsalWrapper (self.subscription_id, refresh=refresh)
+            msal_wrapper = MsalWrapper(subscription_id=self.subscription_id, refresh=refresh)
+
             auth_token = msal_wrapper.acquire_auth_token()
             return BasicTokenAuthentication(auth_token)
 
