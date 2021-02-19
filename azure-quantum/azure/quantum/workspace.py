@@ -374,8 +374,15 @@ class Workspace:
             the user credentials to authenticate with Azure Quantum
         """
 
-        if refresh or (self.credentials is None):
-            msal_wrapper = MsalWrapper(self.subscription_id, refresh=refresh)
-            self.credentials = msal_wrapper.acquire_auth_token()
+        if refresh:
+            self.credentials = None
 
-        return BasicTokenAuthentication(self.credentials)
+        if self.credentials is None:
+            msal_wrapper = MsalWrapper (self.subscription_id, refresh=refresh)
+            auth_token = msal_wrapper.acquire_auth_token()
+            return BasicTokenAuthentication(auth_token)
+
+        if not isinstance(self.credentials, Authentication):
+            return BasicTokenAuthentication(self.credentials)
+
+        return self.credentials
