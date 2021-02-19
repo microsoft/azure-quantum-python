@@ -36,6 +36,12 @@ jupyter notebook
 
 ## Development
 
+Install pre-reqs:
+
+```bash
+pip install azure_devtools pytest pytest-azurepipelines pytest-cov
+```
+
 To create a new Conda environment, run:
 
 ```bash
