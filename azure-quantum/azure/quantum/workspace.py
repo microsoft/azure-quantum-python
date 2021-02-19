@@ -374,7 +374,7 @@ class Workspace:
             the user credentials to authenticate with Azure Quantum
         """
 
-        if refresh:
+        if refresh and isinstance(self.credentials, BasicTokenAuthentication):
             self.credentials = None
 
         if self.credentials is None:
