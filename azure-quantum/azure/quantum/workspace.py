@@ -385,6 +385,7 @@ class Workspace:
 
 
         if not isinstance(self.credentials, Authentication):
-            return BasicTokenAuthentication(self.credentials)
+            return BasicTokenAuthentication(token=self.credentials)
+
 
         return self.credentials
