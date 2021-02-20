@@ -21,11 +21,8 @@ class TestWorkspace(QuantumTestBase):
         resource_group = "rg"
         name = "n"
 
-        # This tests Workspace.login() using a mock authentication token
-        ws = self.create_workspace_mock_login(
-            subscription_id=subscription_id,
-            resource_group=resource_group,
-            name=name)
+        ws = self.create_workspace()
+        ws.login() 
 
     def test_create_workspace_instance_valid(self):
         subscription_id = "44ef49ad-64e4-44e5-a3ba-1ee87e19d3f4"
