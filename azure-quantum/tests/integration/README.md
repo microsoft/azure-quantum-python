@@ -1,7 +1,7 @@
 # Integration tests
 
 These integration tests are for running end-to-end tests against a live service.
-To be able to run the tests, make sure to add a the following environment variables:
+To be able to run the tests, make sure to set the following environment variables:
 
 ```plaintext
 AZURE_CLIENT_ID
