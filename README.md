@@ -7,7 +7,7 @@ QDK-Python is the repository for Python packages of the Quantum Development Kit 
 - qdk
 - azure-quantum
 
-Coming soom:
+Coming soon:
 
 - qsharp
 
@@ -35,6 +35,12 @@ jupyter notebook
 ```
 
 ## Development
+
+Install pre-reqs:
+
+```bash
+pip install azure_devtools pytest pytest-azurepipelines pytest-cov
+```
 
 To create a new Conda environment, run:
 

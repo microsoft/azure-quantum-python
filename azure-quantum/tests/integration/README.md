@@ -1,14 +1,18 @@
 # Integration tests
 
 These integration tests are for running end-to-end tests against a live service.
-To be able to run the tests, make sure to add a `config.ini` file to the package root (`azure-quantum`) containing your credential info in the following format:
+To be able to run the tests, make sure to set the following environment variables:
 
 ```plaintext
-[azure.quantum]
-subscription_id=<enter subscription ID here>
-resource_group=<enter resource group here>
-workspace_name=<enter workspace name here>
-1qbit_enabled=<optional, true or false>
+AZURE_CLIENT_ID
+AZURE_CLIENT_SECRET
+AZURE_TENANT_ID 
+RESOURCE_GROUP
+SUBSCRIPTION_ID
+WORKSPACE_NAME
+AZURE_QUANTUM_1QBIT
 ```
+
+`AZURE_QUANTUM_1QBIT` is optional and can be `0` or `1` and it defaults to `0`.
 
 To run the tests, run `python tests/integration/test_integration.py`.

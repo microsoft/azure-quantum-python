@@ -10,14 +10,14 @@
 
 ## IMPORTS ##
 
-import unittest
 import json
 
 from azure.quantum import Workspace
 from azure.quantum.optimization import Problem, ProblemType, Term
 from azure.quantum.optimization.solvers import ParallelTempering, SimulatedAnnealing, HardwarePlatform, QuantumMonteCarlo
+from tests.quantum_test_base import QuantumTestBase 
 
-class TestProblem(unittest.TestCase):
+class TestProblem(QuantumTestBase):
     def test_add_terms(self):
         problem = Problem(name="test")
         count = 4
@@ -124,7 +124,7 @@ def _init_ws_():
         storage=None
     )
 
-class TestSolvers(unittest.TestCase):
+class TestSolvers(QuantumTestBase):
 
     def test_available_solvers(self):
         ws = _init_ws_()
@@ -204,8 +204,6 @@ class TestSolvers(unittest.TestCase):
         self.assertIsNotNone(good)
         self.assertEqual("microsoft.qmc.cpu",good.target)
         self.assertEqual({"trotter_number":100,"seed":4321},good.params["params"])
-
-
 
 
 # TODO AB#11076: Add tests for:

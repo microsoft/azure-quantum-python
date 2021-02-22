@@ -1,146 +1,71 @@
 interactions:
 - request:
-    body: null
+    body: grant_type=client_credentials&client_id=00000000-0000-0000-0000-000000000000&resource=https%3A%2F%2Fquantum.microsoft.com&client_secret=sanitized
     headers:
       Accept:
       - '*/*'
+      Accept-Charset:
+      - utf-8
       Accept-Encoding:
       - gzip, deflate
       Connection:
       - keep-alive
+      Content-Length:
+      - '170'
       User-Agent:
       - python-requests/2.25.1
-    method: GET
-    uri: https://management.azure.com//subscriptions/00000000-0000-0000-0000-000000000000?api-version=2018-01-01
+      content-type:
+      - application/x-www-form-urlencoded
+      return-client-request-id:
+      - 'true'
+      x-client-CPU:
+      - x64
+      x-client-OS:
+      - darwin
+      x-client-SKU:
+      - Python
+      x-client-Ver:
+      - 1.2.6
+    method: POST
+    uri: https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/token
   response:
     body:
-      string: '{"error":{"code":"AuthenticationFailed","message":"Authentication failed.
-        The ''Authorization'' header is missing."}}'
+      string: '{"token_type": "Bearer", "expires_in": "86399", "ext_expires_in": "86399",
+        "expires_on": "1613897614", "not_before": "1613810914", "resource": "https://quantum.microsoft.com",
+        "access_token": "fake_token"}'
     headers:
       cache-control:
-      - no-cache
-      connection:
-      - close
+      - no-store, no-cache
       content-length:
-      - '115'
+      - '1422'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 26 Jan 2021 23:43:38 GMT
+      - Sat, 20 Feb 2021 08:53:34 GMT
       expires:
       - '-1'
+      p3p:
+      - CP="DSP CUR OTPi IND OTRi ONL FIN"
       pragma:
       - no-cache
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      www-authenticate:
-      - Bearer authorization_uri="https://login.windows.net/00000000-0000-0000-0000-000000000000",
-        error="invalid_token", error_description="The authentication failed because
-        of missing 'Authorization' header."
-      x-content-type-options:
-      - nosniff
-      x-ms-failure-cause:
-      - gateway
-    status:
-      code: 401
-      message: Unauthorized
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python-requests/2.25.1
-    method: GET
-    uri: https://login.microsoftonline.com/common/discovery/instance?authorization_endpoint=https%3A%2F%2Flogin.windows.net%2F00000000-0000-0000-0000-000000000000%2Foauth2%2Fv2.0%2Fauthorize&api-version=1.0
-  response:
-    body:
-      string: '{"tenant_discovery_endpoint":"https://login.windows.net/00000000-0000-0000-0000-000000000000/v2.0/.well-known/openid-configuration"}'
-    headers:
-      access-control-allow-methods:
-      - GET, OPTIONS
-      access-control-allow-origin:
-      - '*'
-      cache-control:
-      - max-age=86400, private
-      content-length:
-      - '132'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Tue, 26 Jan 2021 23:43:39 GMT
-      p3p:
-      - CP="DSP CUR OTPi IND OTRi ONL FIN"
       set-cookie:
-      - fpc=Avn0sm1uSOdArYKJfX5Hi_g; expires=Thu, 25-Feb-2021 23:43:39 GMT; path=/;
-        secure; HttpOnly; SameSite=None
-      - esctx=AQABAAAAAABeStGSRwwnTq2vHplZ9KL4RUc1iygUwwYW9D9MDyncy1JlWHSa-2StTzaKOekn0yiG17vIaBfjGN1thyygjkMNQH6sT3LP410-xmi1N1IHlA_oLQp3wHkfPUXryTQx5_5VzD89XLRKsT47ppyY87mYt4lKrr9kH9v7AprNG-oos7-RdmPsjhWkop1nA7eHlxsgAA;
-        domain=.login.microsoftonline.com; path=/; secure; HttpOnly; SameSite=None
+      - fpc=AlmLsD873_VHvNNcA8cMto5J_3RTAQAAAA3FwtcOAAAA; expires=Mon, 22-Mar-2021
+        08:53:34 GMT; path=/; secure; HttpOnly; SameSite=None
       - x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly
       - stsservicecookie=estsfd; path=/; secure; samesite=none; httponly
       strict-transport-security:
       - max-age=31536000; includeSubDomains
       x-content-type-options:
       - nosniff
+      x-ms-clitelem:
+      - 1,0,0,,
       x-ms-ests-server:
-      - 2.1.11419.13 - WUS2 ProdSlices
+      - 2.1.11496.7 - EUS ProdSlices
     status:
       code: 200
       message: OK
 - request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python-requests/2.25.1
-    method: GET
-    uri: https://login.windows.net/00000000-0000-0000-0000-000000000000/v2.0/.well-known/openid-configuration
-  response:
-    body:
-      string: '{"token_endpoint":"https://login.windows.net/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token","token_endpoint_auth_methods_supported":["client_secret_post","private_key_jwt","client_secret_basic"],"jwks_uri":"https://login.windows.net/00000000-0000-0000-0000-000000000000/discovery/v2.0/keys","response_modes_supported":["query","fragment","form_post"],"subject_types_supported":["pairwise"],"id_token_signing_alg_values_supported":["RS256"],"response_types_supported":["code","id_token","code
-        id_token","id_token token"],"scopes_supported":["openid","profile","email","offline_access"],"issuer":"https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/v2.0","request_uri_parameter_supported":false,"userinfo_endpoint":"https://graph.microsoft.com/oidc/userinfo","authorization_endpoint":"https://login.windows.net/00000000-0000-0000-0000-000000000000/oauth2/v2.0/authorize","device_authorization_endpoint":"https://login.windows.net/00000000-0000-0000-0000-000000000000/oauth2/v2.0/devicecode","http_logout_supported":true,"frontchannel_logout_supported":true,"end_session_endpoint":"https://login.windows.net/00000000-0000-0000-0000-000000000000/oauth2/v2.0/logout","claims_supported":["sub","iss","cloud_instance_name","cloud_instance_host_name","cloud_graph_host_name","msgraph_host","aud","exp","iat","auth_time","acr","nonce","preferred_username","name","tid","ver","at_hash","c_hash","email"],"tenant_region_scope":"WW","cloud_instance_name":"microsoftonline.com","cloud_graph_host_name":"graph.windows.net","msgraph_host":"graph.microsoft.com","rbac_url":"https://pas.windows.net"}'
-    headers:
-      access-control-allow-methods:
-      - GET, OPTIONS
-      access-control-allow-origin:
-      - '*'
-      cache-control:
-      - max-age=86400, private
-      content-length:
-      - '1611'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Tue, 26 Jan 2021 23:43:39 GMT
-      p3p:
-      - CP="DSP CUR OTPi IND OTRi ONL FIN"
-      set-cookie:
-      - fpc=Alcp5RRjZM9AlK1_KN6wQnM; expires=Thu, 25-Feb-2021 23:43:39 GMT; path=/;
-        secure; HttpOnly; SameSite=None
-      - esctx=AQABAAAAAABeStGSRwwnTq2vHplZ9KL4zkUX3QFOVGmvvSt5vj4l6hJclGkyuzN4RIuGRYsjBjFxDGZd753yyQoR5_T02J3vpLza7AXOv002P74pceMI80TLNlDcJMpEUzTVvY02pDA9LfY40jfMgdYvYVJQaHC1dSO0GQRPlaukR5TxEUpXhyPjI1dP5fiXJeKTravxSC4gAA;
-        domain=.login.windows.net; path=/; secure; HttpOnly; SameSite=None
-      - x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly
-      - stsservicecookie=estsfd; path=/; secure; samesite=none; httponly
-      strict-transport-security:
-      - max-age=31536000; includeSubDomains
-      x-content-type-options:
-      - nosniff
-      x-ms-ests-server:
-      - 2.1.11419.13 - WUS2 ProdSlices
-    status:
-      code: 200
-      message: OK
-- request:
-    body: '{"containerName": "job-00000000-0000-0000-0000-000000000000"}'
+    body: 'b''{"containerName": "job-00000000-0000-0000-0000-000000000000"}'''
     headers:
       Accept:
       - application/json
@@ -153,7 +78,7 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.9.1 (Windows-10-10.0.19041-SP0) msrest/0.6.19 msrest_azure/0.6.4
+      - python/3.7.9 (Darwin-20.3.0-x86_64-i386-64bit) msrest/0.6.21 msrest_azure/0.6.4
         quantumclient/2019-11-04-preview Azure-SDK-For-Python
       accept-language:
       - en-US
@@ -161,14 +86,15 @@ interactions:
     uri: https://westus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/dummy-rg/providers/Microsoft.Quantum/workspaces/dummy-ws/storage/sasUri
   response:
     body:
-      string: '{"sasUri":"https://sasdkreview.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=2019-02-02&sig=sanitized&se=2021-01-28T11%3A43%3A40Z&srt=co&ss=b&sp=racw"}'
+      string: '{"sasUri": "https://sasdkreview.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=sanitized&sig=sanitized&se=sanitized&srt=co&ss=b&sp=racw",
+        "access_token": "fake_token"}'
     headers:
       content-length:
-      - '212'
+      - '210'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 26 Jan 2021 23:43:39 GMT
+      - Sat, 20 Feb 2021 08:53:34 GMT
       request-context:
       - appId=cid-v1:4d6ac272-7369-45c6-9036-63d733c8519f
       server:
@@ -188,7 +114,7 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: null
+    body: None
     headers:
       Accept:
       - application/xml
@@ -197,24 +123,24 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-blob/12.7.0 Python/3.9.1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-storage-blob/12.7.1 Python/3.7.9 (Darwin-20.3.0-x86_64-i386-64bit)
       x-ms-date:
-      - Tue, 26 Jan 2021 23:43:40 GMT
+      - Sat, 20 Feb 2021 08:53:34 GMT
       x-ms-version:
       - '2020-04-08'
     method: GET
-    uri: https://sasdkreview.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?restype=container&sv=2019-02-02&sig=sanitized&se=2021-01-28T11%3A43%3A40Z&srt=co&ss=b&sp=racw
+    uri: https://sasdkreview.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?restype=container&sv=sanitized&sig=sanitized&se=sanitized&srt=co&ss=b&sp=racw
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerNotFound</Code><Message>The
-        specified container does not exist.\nRequestId:96a6d39c-401e-002e-393d-f40874000000\nTime:2021-01-26T23:43:40.7852424Z</Message></Error>"
+        specified container does not exist.\nRequestId:ce646ebb-d01e-0085-4665-0777be000000\nTime:2021-02-20T08:53:34.9645441Z</Message></Error>"
     headers:
       content-length:
       - '225'
       content-type:
       - application/xml
       date:
-      - Tue, 26 Jan 2021 23:43:40 GMT
+      - Sat, 20 Feb 2021 08:53:34 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-error-code:
@@ -225,7 +151,7 @@ interactions:
       code: 404
       message: The specified container does not exist.
 - request:
-    body: null
+    body: None
     headers:
       Accept:
       - application/xml
@@ -236,13 +162,13 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-blob/12.7.0 Python/3.9.1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-storage-blob/12.7.1 Python/3.7.9 (Darwin-20.3.0-x86_64-i386-64bit)
       x-ms-date:
-      - Tue, 26 Jan 2021 23:43:40 GMT
+      - Sat, 20 Feb 2021 08:53:34 GMT
       x-ms-version:
       - '2020-04-08'
     method: PUT
-    uri: https://sasdkreview.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?restype=container&sv=2019-02-02&sig=sanitized&se=2021-01-28T11%3A43%3A40Z&srt=co&ss=b&sp=racw
+    uri: https://sasdkreview.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?restype=container&sv=sanitized&sig=sanitized&se=sanitized&srt=co&ss=b&sp=racw
   response:
     body:
       string: ''
@@ -250,11 +176,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 26 Jan 2021 23:43:40 GMT
+      - Sat, 20 Feb 2021 08:53:34 GMT
       etag:
-      - '"0x8D8C25435CF4696"'
+      - '"0x8D8D57D01C44E87"'
       last-modified:
-      - Tue, 26 Jan 2021 23:43:40 GMT
+      - Sat, 20 Feb 2021 08:53:35 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-version:
@@ -263,7 +189,7 @@ interactions:
       code: 201
       message: Created
 - request:
-    body: '{"containerName": "job-00000000-0000-0000-0000-000000000000"}'
+    body: 'b''{"containerName": "job-00000000-0000-0000-0000-000000000000"}'''
     headers:
       Accept:
       - application/json
@@ -276,7 +202,7 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.9.1 (Windows-10-10.0.19041-SP0) msrest/0.6.19 msrest_azure/0.6.4
+      - python/3.7.9 (Darwin-20.3.0-x86_64-i386-64bit) msrest/0.6.21 msrest_azure/0.6.4
         quantumclient/2019-11-04-preview Azure-SDK-For-Python
       accept-language:
       - en-US
@@ -284,14 +210,15 @@ interactions:
     uri: https://westus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/dummy-rg/providers/Microsoft.Quantum/workspaces/dummy-ws/storage/sasUri
   response:
     body:
-      string: '{"sasUri":"https://sasdkreview.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=2019-02-02&sig=sanitized&se=2021-01-28T11%3A43%3A41Z&srt=co&ss=b&sp=racw"}'
+      string: '{"sasUri": "https://sasdkreview.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=sanitized&sig=sanitized&se=sanitized&srt=co&ss=b&sp=racw",
+        "access_token": "fake_token"}'
     headers:
       content-length:
       - '214'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 26 Jan 2021 23:43:40 GMT
+      - Sat, 20 Feb 2021 08:53:35 GMT
       request-context:
       - appId=cid-v1:4d6ac272-7369-45c6-9036-63d733c8519f
       server:
@@ -311,7 +238,7 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: null
+    body: None
     headers:
       Accept:
       - application/xml
@@ -320,13 +247,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-blob/12.7.0 Python/3.9.1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-storage-blob/12.7.1 Python/3.7.9 (Darwin-20.3.0-x86_64-i386-64bit)
       x-ms-date:
-      - Tue, 26 Jan 2021 23:43:41 GMT
+      - Sat, 20 Feb 2021 08:53:35 GMT
       x-ms-version:
       - '2020-04-08'
     method: GET
-    uri: https://sasdkreview.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?restype=container&sv=2019-02-02&sig=sanitized&se=2021-01-28T11%3A43%3A41Z&srt=co&ss=b&sp=racw
+    uri: https://sasdkreview.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?restype=container&sv=sanitized&sig=sanitized&se=sanitized&srt=co&ss=b&sp=racw
   response:
     body:
       string: ''
@@ -334,11 +261,11 @@ interactions:
       content-length:
       - '0'
       date:
-      - Tue, 26 Jan 2021 23:43:41 GMT
+      - Sat, 20 Feb 2021 08:53:35 GMT
       etag:
-      - '"0x8D8C25435CF4696"'
+      - '"0x8D8D57D01C44E87"'
       last-modified:
-      - Tue, 26 Jan 2021 23:43:40 GMT
+      - Sat, 20 Feb 2021 08:53:35 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-default-encryption-scope:
@@ -359,10 +286,7 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: !!binary |
-      H4sIACypEGAC/0WJMQ6AIBAEv0KuJgbEyq8YYoFoKAQDaGIIf/eE4qqdnSlgQsrrfnuTXfAwswKP
-      jakzyEEAZ5Dfy/7XJeePJmw8E5qlgMERqNzWBKLUlbMeJAXEkcJIAVFRUBQQJ111rR8sZwd5pQAA
-      AA==
+    body: b"\x1f\x8b\x08\x00\x0f\xce0`\x02\xffE\x891\x0e\x80 \x10\x04\xbfB\xae&\x06\xc4\xca\xaf\x18b\x81h(\x04\x03hb\x08\x7f\xf7\x84\xe2\xaa\x9d\x9d)`B\xca\xeb~{\x93]\xf00\xb3\x02\x8f\x8d\xa93\xc8A\x00g\x90\xdf\xcb\xfe\xd7%\xe7\x8f&l<\x13\x9a\xa5\x80\xc1\x11\xa8\xdc\xd6\x04\xa2\xd4\x95\xb3\x1e$\x05\xc4\x91\xc2H\x01QQP\x14\x10']u\xad\x1f,g\x07y\xa5\x00\x00\x00"
     headers:
       Accept:
       - application/xml
@@ -377,7 +301,7 @@ interactions:
       If-None-Match:
       - '*'
       User-Agent:
-      - azsdk-python-storage-blob/12.7.0 Python/3.9.1 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-storage-blob/12.7.1 Python/3.7.9 (Darwin-20.3.0-x86_64-i386-64bit)
       x-ms-blob-content-encoding:
       - gzip
       x-ms-blob-content-type:
@@ -385,13 +309,13 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-date:
-      - Tue, 26 Jan 2021 23:43:41 GMT
+      - Sat, 20 Feb 2021 08:53:36 GMT
       x-ms-encryption-algorithm:
       - AES256
       x-ms-version:
       - '2020-04-08'
     method: PUT
-    uri: https://sasdkreview.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=2019-02-02&sig=sanitized&se=2021-01-28T11%3A43%3A41Z&srt=co&ss=b&sp=racw
+    uri: https://sasdkreview.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=sanitized&sig=sanitized&se=sanitized&srt=co&ss=b&sp=racw
   response:
     body:
       string: ''
@@ -399,17 +323,17 @@ interactions:
       content-length:
       - '0'
       content-md5:
-      - pwDKyEX8WqJjLgkHEN1orA==
+      - hn5BJLPnl802xYcwLaq62g==
       date:
-      - Tue, 26 Jan 2021 23:43:41 GMT
+      - Sat, 20 Feb 2021 08:53:36 GMT
       etag:
-      - '"0x8D8C254365C032A"'
+      - '"0x8D8D57D02777C08"'
       last-modified:
-      - Tue, 26 Jan 2021 23:43:41 GMT
+      - Sat, 20 Feb 2021 08:53:36 GMT
       server:
       - Windows-Azure-Blob/1.0 Microsoft-HTTPAPI/2.0
       x-ms-content-crc64:
-      - BbN+UCAD20k=
+      - v/3Vl5H9lUo=
       x-ms-request-server-encrypted:
       - 'true'
       x-ms-version:
@@ -418,12 +342,12 @@ interactions:
       code: 201
       message: Created
 - request:
-    body: '{"id": "00000000-0000-0000-0000-000000000000", "name": "test", "containerUri":
+    body: 'b''{"id": "00000000-0000-0000-0000-000000000000", "name": "test", "containerUri":
       "https://sasdkreview.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000",
       "inputDataUri": "https://sasdkreview.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData",
       "inputDataFormat": "microsoft.qio.v2", "inputParams": {"params": {}}, "providerId":
       "Microsoft", "target": "microsoft.simulatedannealing-parameterfree.cpu", "outputDataFormat":
-      "microsoft.qio-results.v2"}'
+      "microsoft.qio-results.v2"}'''
     headers:
       Accept:
       - application/json
@@ -436,7 +360,7 @@ interactions:
       Content-Type:
       - application/json; charset=utf-8
       User-Agent:
-      - python/3.9.1 (Windows-10-10.0.19041-SP0) msrest/0.6.19 msrest_azure/0.6.4
+      - python/3.7.9 (Darwin-20.3.0-x86_64-i386-64bit) msrest/0.6.21 msrest_azure/0.6.4
         quantumclient/2019-11-04-preview Azure-SDK-For-Python
       accept-language:
       - en-US
@@ -446,14 +370,23 @@ interactions:
     uri: https://westus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/dummy-rg/providers/Microsoft.Quantum/workspaces/dummy-ws/jobs/00000000-0000-0000-0000-000000000000
   response:
     body:
-      string: '{"containerUri":"https://sasdkreview.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=2019-02-02&sr=c&sig=sanitized&se=2021-01-28T11%3A43%3A42Z&sp=rcw","inputDataUri":"https://sasdkreview.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=2019-02-02&sr=b&sig=sanitized&se=2021-01-28T11%3A43%3A42Z&sp=rcw","inputDataFormat":"microsoft.qio.v2","inputParams":{"params":{}},"providerId":"microsoft","target":"microsoft.simulatedannealing-parameterfree.cpu","metadata":null,"name":"test","id": "00000000-0000-0000-0000-000000000000","status":"Waiting","outputDataFormat":"microsoft.qio-results.v2","outputDataUri":"https://sasdkreview.blob.core.windows.net:443/job-00000000-0000-0000-0000-000000000000/outputData?sv=2019-02-02&sr=c&sig=sanitized&se=2021-01-28T11%3A43%3A42Z&sp=rcw","creationTime":"2021-01-26T23:43:42.462112+00:00","beginExecutionTime":null,"endExecutionTime":null,"cancellationTime":null,"errorData":null}'
+      string: '{"containerUri": "https://sasdkreview.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=sanitized&sr=c&sig=sanitized&se=sanitized&sp=rcw",
+        "inputDataUri": "https://sasdkreview.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=sanitized&sr=b&sig=sanitized&se=sanitized&sp=rcw",
+        "inputDataFormat": "microsoft.qio.v2", "inputParams": {"params": {}}, "providerId":
+        "microsoft", "target": "microsoft.simulatedannealing-parameterfree.cpu", "metadata":
+        null, "name": "test", "id": "00000000-0000-0000-0000-000000000000", "status":
+        "Waiting", "outputDataFormat": "microsoft.qio-results.v2", "outputDataUri":
+        "https://sasdkreview.blob.core.windows.net:443/job-00000000-0000-0000-0000-000000000000/outputData?sv=sanitized&sr=c&sig=sanitized&se=sanitized&sp=rcw",
+        "creationTime": "2021-02-20T08:53:36.6402343+00:00", "beginExecutionTime":
+        null, "endExecutionTime": null, "cancellationTime": null, "errorData": null,
+        "access_token": "fake_token"}'
     headers:
       content-length:
-      - '1094'
+      - '1073'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 26 Jan 2021 23:43:42 GMT
+      - Sat, 20 Feb 2021 08:53:36 GMT
       request-context:
       - appId=cid-v1:4d6ac272-7369-45c6-9036-63d733c8519f
       server:
@@ -473,7 +406,7 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: null
+    body: None
     headers:
       Accept:
       - application/json
@@ -482,7 +415,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - python/3.9.1 (Windows-10-10.0.19041-SP0) msrest/0.6.19 msrest_azure/0.6.4
+      - python/3.7.9 (Darwin-20.3.0-x86_64-i386-64bit) msrest/0.6.21 msrest_azure/0.6.4
         quantumclient/2019-11-04-preview Azure-SDK-For-Python
       accept-language:
       - en-US
@@ -492,152 +425,23 @@ interactions:
     uri: https://westus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/dummy-rg/providers/Microsoft.Quantum/workspaces/dummy-ws/jobs/00000000-0000-0000-0000-000000000000
   response:
     body:
-      string: '{"containerUri":"https://sasdkreview.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=2019-02-02&sr=c&sig=sanitized&se=2021-01-28T11%3A43%3A42Z&sp=rcw","inputDataUri":"https://sasdkreview.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=2019-02-02&sr=b&sig=sanitized&se=2021-01-28T11%3A43%3A43Z&sp=r","inputDataFormat":"microsoft.qio.v2","inputParams":{"params":{}},"providerId":"microsoft","target":"microsoft.simulatedannealing-parameterfree.cpu","metadata":null,"name":"test","id": "00000000-0000-0000-0000-000000000000","status":"Waiting","outputDataFormat":"microsoft.qio-results.v2","outputDataUri":"https://sasdkreview.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/outputData?sv=2019-02-02&sr=b&sig=sanitized&se=2021-01-28T11%3A43%3A43Z&sp=r","creationTime":"2021-01-26T23:43:42.462112+00:00","beginExecutionTime":null,"endExecutionTime":null,"cancellationTime":null,"errorData":null}'
+      string: '{"containerUri": "https://sasdkreview.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=sanitized&sr=c&sig=sanitized&se=sanitized&sp=rcw",
+        "inputDataUri": "https://sasdkreview.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=sanitized&sr=b&sig=sanitized&se=sanitized&sp=r&rscd=attachment%3B%20filename%3Dtest-1d240a14-7359-11eb-ab3e-acde48001122.input.json",
+        "inputDataFormat": "microsoft.qio.v2", "inputParams": {"params": {}}, "providerId":
+        "microsoft", "target": "microsoft.simulatedannealing-parameterfree.cpu", "metadata":
+        null, "name": "test", "id": "00000000-0000-0000-0000-000000000000", "status":
+        "Succeeded", "outputDataFormat": "microsoft.qio-results.v2", "outputDataUri":
+        "https://sasdkreview.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=sanitized&sr=b&sig=sanitized&se=sanitized&sp=r&rscd=attachment%3B%20filename%3Dtest-1d240a14-7359-11eb-ab3e-acde48001122.output.json",
+        "creationTime": "2021-02-20T08:53:36.6402343+00:00", "beginExecutionTime":
+        "2021-02-20T08:53:34.5537645Z", "endExecutionTime": "2021-02-20T08:53:34.713798Z",
+        "cancellationTime": null, "errorData": null, "access_token": "fake_token"}'
     headers:
       content-length:
-      - '1072'
+      - '1294'
       content-type:
       - application/json; charset=utf-8
       date:
-      - Tue, 26 Jan 2021 23:43:42 GMT
-      request-context:
-      - appId=cid-v1:4d6ac272-7369-45c6-9036-63d733c8519f
-      server:
-      - Microsoft-IIS/10.0
-      set-cookie:
-      - ARRAffinity=a80c7c3a42bc29f88c9055a7e2789984b224746994993027ab866c65455cca24;Path=/;HttpOnly;Secure;Domain=westus.quantum.azure.com
-      - ARRAffinitySameSite=a80c7c3a42bc29f88c9055a7e2789984b224746994993027ab866c65455cca24;Path=/;HttpOnly;SameSite=None;Secure;Domain=westus.quantum.azure.com
-      strict-transport-security:
-      - max-age=2592000
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-powered-by:
-      - ASP.NET
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.9.1 (Windows-10-10.0.19041-SP0) msrest/0.6.19 msrest_azure/0.6.4
-        quantumclient/2019-11-04-preview Azure-SDK-For-Python
-      accept-language:
-      - en-US
-      x-ms-azurequantum-sdk-version:
-      - 0.0.0.1
-    method: GET
-    uri: https://westus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/dummy-rg/providers/Microsoft.Quantum/workspaces/dummy-ws/jobs/00000000-0000-0000-0000-000000000000
-  response:
-    body:
-      string: '{"containerUri":"https://sasdkreview.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=2019-02-02&sr=c&sig=sanitized&se=2021-01-28T11%3A43%3A42Z&sp=rcw","inputDataUri":"https://sasdkreview.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=2019-02-02&sr=b&sig=sanitized&se=2021-01-28T11%3A43%3A43Z&sp=r","inputDataFormat":"microsoft.qio.v2","inputParams":{"params":{}},"providerId":"microsoft","target":"microsoft.simulatedannealing-parameterfree.cpu","metadata":null,"name":"test","id": "00000000-0000-0000-0000-000000000000","status":"Waiting","outputDataFormat":"microsoft.qio-results.v2","outputDataUri":"https://sasdkreview.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/outputData?sv=2019-02-02&sr=b&sig=sanitized&se=2021-01-28T11%3A43%3A44Z&sp=r","creationTime":"2021-01-26T23:43:42.462112+00:00","beginExecutionTime":null,"endExecutionTime":null,"cancellationTime":null,"errorData":null}'
-    headers:
-      content-length:
-      - '1076'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Tue, 26 Jan 2021 23:43:43 GMT
-      request-context:
-      - appId=cid-v1:4d6ac272-7369-45c6-9036-63d733c8519f
-      server:
-      - Microsoft-IIS/10.0
-      set-cookie:
-      - ARRAffinity=a80c7c3a42bc29f88c9055a7e2789984b224746994993027ab866c65455cca24;Path=/;HttpOnly;Secure;Domain=westus.quantum.azure.com
-      - ARRAffinitySameSite=a80c7c3a42bc29f88c9055a7e2789984b224746994993027ab866c65455cca24;Path=/;HttpOnly;SameSite=None;Secure;Domain=westus.quantum.azure.com
-      strict-transport-security:
-      - max-age=2592000
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-powered-by:
-      - ASP.NET
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.9.1 (Windows-10-10.0.19041-SP0) msrest/0.6.19 msrest_azure/0.6.4
-        quantumclient/2019-11-04-preview Azure-SDK-For-Python
-      accept-language:
-      - en-US
-      x-ms-azurequantum-sdk-version:
-      - 0.0.0.1
-    method: GET
-    uri: https://westus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/dummy-rg/providers/Microsoft.Quantum/workspaces/dummy-ws/jobs/00000000-0000-0000-0000-000000000000
-  response:
-    body:
-      string: '{"containerUri":"https://sasdkreview.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=2019-02-02&sr=c&sig=sanitized&se=2021-01-28T11%3A43%3A42Z&sp=rcw","inputDataUri":"https://sasdkreview.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=2019-02-02&sr=b&sig=sanitized&se=2021-01-28T11%3A43%3A44Z&sp=r","inputDataFormat":"microsoft.qio.v2","inputParams":{"params":{}},"providerId":"microsoft","target":"microsoft.simulatedannealing-parameterfree.cpu","metadata":null,"name":"test","id": "00000000-0000-0000-0000-000000000000","status":"Waiting","outputDataFormat":"microsoft.qio-results.v2","outputDataUri":"https://sasdkreview.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/outputData?sv=2019-02-02&sr=b&sig=sanitized&se=2021-01-28T11%3A43%3A45Z&sp=r","creationTime":"2021-01-26T23:43:42.462112+00:00","beginExecutionTime":null,"endExecutionTime":null,"cancellationTime":null,"errorData":null}'
-    headers:
-      content-length:
-      - '1076'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Tue, 26 Jan 2021 23:43:45 GMT
-      request-context:
-      - appId=cid-v1:4d6ac272-7369-45c6-9036-63d733c8519f
-      server:
-      - Microsoft-IIS/10.0
-      set-cookie:
-      - ARRAffinity=a80c7c3a42bc29f88c9055a7e2789984b224746994993027ab866c65455cca24;Path=/;HttpOnly;Secure;Domain=westus.quantum.azure.com
-      - ARRAffinitySameSite=a80c7c3a42bc29f88c9055a7e2789984b224746994993027ab866c65455cca24;Path=/;HttpOnly;SameSite=None;Secure;Domain=westus.quantum.azure.com
-      strict-transport-security:
-      - max-age=2592000
-      transfer-encoding:
-      - chunked
-      vary:
-      - Accept-Encoding
-      x-powered-by:
-      - ASP.NET
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python/3.9.1 (Windows-10-10.0.19041-SP0) msrest/0.6.19 msrest_azure/0.6.4
-        quantumclient/2019-11-04-preview Azure-SDK-For-Python
-      accept-language:
-      - en-US
-      x-ms-azurequantum-sdk-version:
-      - 0.0.0.1
-    method: GET
-    uri: https://westus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/dummy-rg/providers/Microsoft.Quantum/workspaces/dummy-ws/jobs/00000000-0000-0000-0000-000000000000
-  response:
-    body:
-      string: '{"containerUri":"https://sasdkreview.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=2019-02-02&sr=c&sig=sanitized&se=2021-01-28T11%3A43%3A42Z&sp=rcw","inputDataUri":"https://sasdkreview.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=2019-02-02&sr=b&sig=sanitized&se=2021-01-28T11%3A43%3A45Z&sp=r","inputDataFormat":"microsoft.qio.v2","inputParams":{"params":{}},"providerId":"microsoft","target":"microsoft.simulatedannealing-parameterfree.cpu","metadata":null,"name":"test","id": "00000000-0000-0000-0000-000000000000","status":"Succeeded","outputDataFormat":"microsoft.qio-results.v2","outputDataUri":"https://sasdkreview.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=2019-02-02&sr=b&sig=sanitized&se=2021-01-28T11%3A43%3A46Z&sp=r","creationTime":"2021-01-26T23:43:42.462112+00:00","beginExecutionTime":"2021-01-26T23:42:31.0161486Z","endExecutionTime":"2021-01-26T23:42:31.1718263Z","cancellationTime":null,"errorData":null}'
-    headers:
-      content-length:
-      - '1133'
-      content-type:
-      - application/json; charset=utf-8
-      date:
-      - Tue, 26 Jan 2021 23:43:46 GMT
+      - Sat, 20 Feb 2021 08:53:39 GMT
       request-context:
       - appId=cid-v1:4d6ac272-7369-45c6-9036-63d733c8519f
       server:
