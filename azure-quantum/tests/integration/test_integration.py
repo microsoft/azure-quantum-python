@@ -8,6 +8,7 @@
 import os
 import configparser
 import functools
+from azure.common.credentials import ServicePrincipalCredentials
 
 from azure.quantum import Workspace
 from azure.quantum.optimization import (
@@ -25,36 +26,41 @@ from azure.quantum.optimization.oneqbit import (
     PathRelinkingSolver
 )
 
-
-def get_config() -> configparser.ConfigParser:
-    """Read config file and return config parser
-
-    :return: Config parser for reading config file
-    :rtype: configparser.ConfigParser
-    """
-    config = configparser.ConfigParser()
-    path = os.path.abspath(os.path.join(os.path.split(__file__)[0], "..", ".."))
-    config_path = os.path.join(path, "config.ini")
-    assert os.path.exists(config_path), "Cannot run integration tests: no config file found in azure-quantum folder."
-    config.read(config_path)
-
-    return config
-
-
 def create_workspace() -> Workspace:
     """Create workspace using credentials stored in config file
 
     :return: Workspace
     :rtype: Workspace
     """
-    config = get_config()
-    workspace = Workspace(
-        subscription_id=config["azure.quantum"]["subscription_id"],
-        resource_group=config["azure.quantum"]["resource_group"],
-        name=config["azure.quantum"]["workspace_name"],
-        storage="")
 
-    # try to login - this should trigger the device flow
+    client_id = os.environ.get("AZURE_CLIENT_ID","")
+    client_secret = os.environ.get("AZURE_CLIENT_SECRET","")
+    tenant_id = os.environ.get("AZURE_TENANT_ID","")
+    resource_group = os.environ.get("RESOURCE_GROUP","")
+    subscription_id = os.environ.get("SUBSCRIPTION_ID","")
+    workspace_name = os.environ.get("WORKSPACE_NAME","")
+
+    assert len(client_id)>0, "AZURE_CLIENT_ID not found in environment variables."
+    assert len(client_id)>0, "AZURE_CLIENT_SECRET not found in environment variables."
+    assert len(client_id)>0, "AZURE_TENANT_ID not found in environment variables."
+    assert len(client_id)>0, "RESOURCE_GROUP not found in environment variables."
+    assert len(client_id)>0, "SUBSCRIPTION_ID not found in environment variables."
+    assert len(client_id)>0, "WORKSPACE_NAME not found in environment variables."
+
+    if len(client_secret) > 0:
+        workspace = Workspace(
+          
+            subscription_id=subscription_id,
+            resource_group=resource_group,
+            name=workspace_name,
+        )
+        workspace.credentials = ServicePrincipalCredentials(
+            tenant=tenant_id,
+            client_id=client_id,
+            secret=client_secret,
+            resource  = "https://quantum.microsoft.com"
+        )
+
     workspace.login(False)
     return workspace
 
@@ -136,10 +142,9 @@ if __name__ == "__main__":
     ]
 
     # Check if 1QBit solvers are enabled
-    config = get_config()
-    one_qbit_enabled = config["azure.quantum"].get("1qbit_enabled", "false").lower()
+    one_qbit_enabled = os.environ.get("AZURE_QUANTUM_1QBIT", "") == "1"
 
-    if one_qbit_enabled == "true":
+    if one_qbit_enabled:
         print("1QBit solver is enabled.")
         names += [
             "TabuSearch",

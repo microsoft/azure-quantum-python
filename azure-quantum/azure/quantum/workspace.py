@@ -374,8 +374,20 @@ class Workspace:
             the user credentials to authenticate with Azure Quantum
         """
 
-        if refresh or (self.credentials is None):
-            msal_wrapper = MsalWrapper(self.subscription_id, refresh=refresh)
-            self.credentials = msal_wrapper.acquire_auth_token()
+        # We only clear the credentials if they are of type BasicTokenAuthentication
+        if refresh and isinstance(self.credentials, BasicTokenAuthentication):
+            self.credentials = None
 
-        return BasicTokenAuthentication(self.credentials)
+        if self.credentials is None:
+            msal_wrapper = MsalWrapper(subscription_id=self.subscription_id, refresh=refresh)
+
+            auth_token = msal_wrapper.acquire_auth_token()
+            return BasicTokenAuthentication(token=auth_token)
+
+        # When we already have an object of type Authentication, like
+        # the ServicePrincipalCredentials, we should NOT wrap it in a BasicTokenAuthentication
+        if not isinstance(self.credentials, Authentication):
+            return BasicTokenAuthentication(token=self.credentials)
+
+
+        return self.credentials

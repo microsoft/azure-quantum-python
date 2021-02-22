@@ -13,53 +13,27 @@ import unittest
 import json
 import uuid
 import os
+import time
 
 from azure.quantum import Workspace
 from azure.quantum.optimization import Problem
 from azure.quantum.optimization.solvers import SimulatedAnnealing
 from azure.quantum import Job
-from azure_devtools.scenario_tests.base import ReplayableTest
+from tests.quantum_test_base import QuantumTestBase 
 
-from workspace_init import create_workspace, create_workspace_mock_login
-from recording_updater import RecordingUpdater
-
-class TestJob(ReplayableTest):
+class TestJob(QuantumTestBase):
     """TestJob
 
     Tests the azure.quantum.job module.
-
-    The 'recordings' directory is used to replay network connections.
-    To manully create new recordings, remove the 'recordings' subdirectory and run the tests twice.
-        Once to generate the recordings using valid credentials.
-        A second time to update the recordings with dummy values and validate the updated recordings work.
-
-    Additionally, a temporary 'config.ini' file will be required in the 'azure-quantum' directory for the first run of the tests.
-    Create the 'config.ini' with the following contents using valid values:
-    [azure.quantum]
-    subscription_id=<id>
-    resource_group=<rg>
-    workspace_name=<ws>
-    1qbit_enabled=false
     """
     mock_create_job_id_name = "create_job_id"
     create_job_id = Job.create_job_id
 
     def get_dummy_job_id(self):
-        if self.in_recording:
-            # This is live, so return a real job id.
-            return TestJob.create_job_id()
-        # This is a replay, so return the dummy job id that will be in the updated recordings.
-        return RecordingUpdater.dummy_uid
+        if self.in_recording or self.is_live:
+            return Job.create_job_id()
         
-    def create_workspace(self):
-        if self.in_recording:
-            ws = create_workspace()
-        else:
-            ws = create_workspace_mock_login(
-                subscription_id=RecordingUpdater.dummy_uid,
-                resource_group=RecordingUpdater.dummy_rg,
-                name=RecordingUpdater.dummy_ws)
-        return ws
+        return self.dummy_uid
 
     def test_job_refresh(self):
         ws = self.create_workspace()
@@ -88,6 +62,8 @@ class TestJob(ReplayableTest):
             solver = SimulatedAnnealing(ws)
             job = solver.submit(problem)
             self.assertEqual(False, job.has_completed())
+            if self.in_recording:
+                time.sleep(3)
             job.get_results()
             self.assertEqual(True, job.has_completed())
 
@@ -103,6 +79,8 @@ class TestJob(ReplayableTest):
         with unittest.mock.patch.object(Job, self.mock_create_job_id_name, return_value=self.get_dummy_job_id()):
             solver = SimulatedAnnealing(ws)
             job = solver.submit(problem)
+            if self.in_recording:
+                time.sleep(3)
             job.wait_until_completed()
             self.assertEqual(True, job.has_completed())
 
@@ -118,26 +96,20 @@ class TestJob(ReplayableTest):
         with unittest.mock.patch.object(Job, self.mock_create_job_id_name, return_value=self.get_dummy_job_id()):
             solver = SimulatedAnnealing(ws)
             job = solver.submit(problem)
+            if self.in_recording:
+                time.sleep(3)
             actual = job.get_results()
 
         expected = {
-            'version': '1.0',
-            'configuration': {'0': 1, '1': 1, '2': -1, '3': 1, '4': -1},
-            'cost': -6.0,
-            'parameters': {'beta_start': 0.2, 'beta_stop': 1.9307236000000003, 'restarts': 360, 'sweeps': 50}}
+            'configuration': {'0': 1, '1': 1, '2': -1, '3': 1, '4': -1}, 
+            'cost': -6.0, 
+            'parameters': {'beta_start': 0.2, 'beta_stop': 1.9307236000000003, 'restarts': 360, 'sweeps': 50}, 
+            }
 
-        self.assertEqual(expected, actual)
-        
-
-def update_recordings_with_dummy_values():
-    """Replace all secrets in the recorded .yaml files with dummy values as defined in RecordingUpdater. This only needs to be run once."""
-    recording_directory = os.path.abspath(os.path.join(os.path.dirname(__file__), "recordings"))
-    recording_glob = "*.yaml"
-    if os.path.exists(recording_directory):    
-        recording_updater = RecordingUpdater(recording_directory, recording_glob)
-        recording_updater.update_recordings_with_dummy_values()
+        self.assertEqual(expected["configuration"], actual["configuration"])
+        self.assertEqual(expected["cost"], actual["cost"])
+        self.assertEqual(expected["parameters"], actual["parameters"])
 
 
 if __name__ == "__main__":
-    update_recordings_with_dummy_values()
     unittest.main()
