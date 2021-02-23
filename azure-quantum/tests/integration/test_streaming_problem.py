@@ -53,7 +53,7 @@ class TestStreamingProblem(unittest.TestCase):
         ws = _init_ws_()
         sProblem = StreamingProblem(
             ws,
-            name = "test",
+            name="test",
             problem_type=problem_type,
             terms=initial_terms
         )
