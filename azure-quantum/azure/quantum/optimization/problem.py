@@ -80,9 +80,9 @@ class Problem:
         """
         result = json.loads(string)
         problem = Problem(
-            name = name,
-            terms = [Term.from_dict(t) for t in result['cost_function']['terms']],
-            problem_type = ProblemType[result['cost_function']['type']]
+            name=name,
+            terms=[Term.from_dict(t) for t in result['cost_function']['terms']],
+            problem_type=ProblemType[result['cost_function']['type']]
         )
         
         if 'initial_configuration' in result['cost_function']:
