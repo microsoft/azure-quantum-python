@@ -76,6 +76,13 @@ class StreamingProblem(object):
             self.add_terms(terms.copy())
 
     def add_term(self, c: Union[int, float], indices: List[int]) : 
+        """Adds a single term to the `Problem` representation
+
+        :param c: The cost or weight of this term
+        :type c: int, float
+        :param indices: The variable indices that are in this term
+        :type indices: List[int]
+        """
         self.add_terms([Term(indices=indices, c=c)])
     
     def _get_upload_coords(self):
@@ -97,6 +104,10 @@ class StreamingProblem(object):
         return { 'blob_name': blob_name, 'container_client': container_client }
 
     def add_terms(self, terms: List[Term]) :
+        """Adds a list of terms to the `Problem` representation
+
+        :param terms: The list of terms to add to the problem
+        """
         if self.uploaded_uri is not None:
             raise Exception('Cannot add terms after problem has been uploaded')
 
@@ -128,6 +139,7 @@ class StreamingProblem(object):
             self.terms_queue.put(terms)
 
     def download(self):
+        """Downloads the uploaded problem as an instance of `Problem`"""
         if not self.uploaded_uri:
             raise Exception('StreamingProblem may not be downloaded before it is uploaded')
 
@@ -178,7 +190,7 @@ class JsonStreamingProblemUploader:
     ):
         self.problem = problem
         self.started_upload = False
-        self.blob = StreamedBlob(container, name, 'application/json', self.get_content_type(compress))
+        self.blob = StreamedBlob(container, name, 'application/json', self._get_content_type(compress))
         self.compressedStream = io.BytesIO() if compress else None
         self.compressor = gzip.GzipFile(mode='wb', fileobj=self.compressedStream) if compress else None
         self.uploaded_terms = 0
@@ -189,13 +201,14 @@ class JsonStreamingProblemUploader:
         self.__upload_size_threshold=upload_size_threshold
         self.__read_pos = 0
 
-    def get_content_type(self, compress: bool):
+    def _get_content_type(self, compress: bool):
         if compress:
             return 'gzip'
         
         return 'identity'
 
     def start(self):
+        """Starts the problem uploader in another thread"""
         if self.__thread is not None:
             raise Exception('JsonStreamingProblemUploader thread already started')
 
@@ -203,6 +216,10 @@ class JsonStreamingProblemUploader:
         self.__thread.start()
 
     def join(self, timeout : float = None) -> StreamedBlob:
+        """Joins the problem uploader thread - returning when it completes or when `timeout` is hit
+
+        :param timeout: The the time to wait for the thread to complete. If omitted, the method will wait until the thread completes
+        """
         if self.__thread is None:
             raise Exception('JsonStreamingProblemUploader has not started')
 
@@ -210,6 +227,7 @@ class JsonStreamingProblemUploader:
         return self.blob
 
     def is_done(self):
+        """True if the thread uploader has completed"""
         return not self.__thread.isAlive()
 
     def _run_queue(self):

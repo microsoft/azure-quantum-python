@@ -55,6 +55,7 @@ class Problem:
         self.uploaded_blob_params = None
 
     def serialize(self) -> str:
+        """Serializes the problem to a JSON string"""
         result = {
             "cost_function": {
                 "version": "1.1" if self.init_config else "1.0",
@@ -69,7 +70,14 @@ class Problem:
         return json.dumps(result)
 
     @staticmethod
-    def deserialize(string, name):
+    def deserialize(string: str, name: str):
+        """Deserializes the problem from a JSON string
+
+        :param string: The string to be deserializes to a `Problem` instance
+        :type string: str
+        :param name: The name of the problem
+        :type name: str
+        """
         result = json.loads(string)
         problem = Problem(
             name = name,
@@ -83,10 +91,21 @@ class Problem:
         return problem
  
     def add_term(self, c: Union[int, float], indices: List[int]): 
+        """Adds a single term to the `Problem` representation
+
+        :param c: The cost or weight of this term
+        :type c: int, float
+        :param indices: The variable indices that are in this term
+        :type indices: List[int]
+        """
         self.terms.append(Term(indices=indices, c=c))
         self.uploaded_blob_uri = None
     
     def add_terms(self, terms: List[Term]): 
+        """Adds a list of terms to the `Problem` representation
+
+        :param terms: The list of terms to add to the problem
+        """
         self.terms += terms
         self.uploaded_blob_uri = None
 
