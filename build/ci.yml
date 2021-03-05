@@ -13,6 +13,14 @@ variables:
   Build.Minor: 1
   Drops.Dir: $(Build.ArtifactStagingDirectory)/drops
 
+schedules:
+- cron: "0 9 * * Sat"
+  displayName: 'Build for Component Governance'
+  branches:
+    include:
+    - main
+  always: true
+
 jobs:
 - job: "QDKPython"
   pool: 
