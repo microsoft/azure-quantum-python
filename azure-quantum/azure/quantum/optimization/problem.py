@@ -69,16 +69,16 @@ class Problem:
 
         return json.dumps(result)
 
-    @staticmethod
-    def deserialize(string: str, name: str):
-        """Deserializes the problem from a JSON string
+    @classmethod
+    def deserialize(cls, problem_as_json: str, name: str):
+        """Deserializes the problem from a JSON string serialized with Problem.serialize()
 
-        :param string: The string to be deserializes to a `Problem` instance
-        :type string: str
+        :param problem_as_json: The string to be deserialized to a `Problem` instance
+        :type problem_as_json: str
         :param name: The name of the problem
         :type name: str
         """
-        result = json.loads(string)
+        result = json.loads(problem_as_json)
         problem = Problem(
             name=name,
             terms=[Term.from_dict(t) for t in result['cost_function']['terms']],

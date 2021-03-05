@@ -77,7 +77,15 @@ def upload_blob(container: ContainerClient, blob_name: str, content_type:str, co
 
     return uri
 
-def append_blob(container: ContainerClient, blob_name: str, content_type:str, content_encoding:str, data: Any, returnSasToken: bool=True, metadata: Dict[str, str] = None) -> str:
+def append_blob(
+        container: ContainerClient,
+        blob_name: str,
+        content_type:str,
+        content_encoding:str,
+        data: Any,
+        return_sas_token: bool=True,
+        metadata: Dict[str, str] = None
+    ) -> str:
     """
     Uploads the given data to a blob record. If a blob with the given name already exist, it throws an error.
 
@@ -98,7 +106,7 @@ def append_blob(container: ContainerClient, blob_name: str, content_type:str, co
     blob.append_block(data, len(data))
     logger.debug(f"  - blob '{blob_name}' appended. generating sas token.")
 
-    if returnSasToken:
+    if return_sas_token:
         uri = get_blob_uri_with_sas_token(blob)
     else:
         uri = remove_sas_token(blob.url)
@@ -108,6 +116,7 @@ def append_blob(container: ContainerClient, blob_name: str, content_type:str, co
     return uri
 
 def get_blob_uri_with_sas_token(blob: BlobClient):
+    """Returns a URI for the given blob that contains a SAS Token"""
     sas_token = generate_blob_sas(
             blob.account_name,
             blob.container_name,
@@ -132,6 +141,7 @@ def download_blob(blob_url: str) -> Any:
     return response
 
 def download_blob_properties(blob_url: str) -> Dict[str, str]:
+    """Downloads the blob properties from Azure for the given blob URI"""
     blob_client = BlobClient.from_blob_url(blob_url)
     logger.info(f"Downloading blob properties '{blob_client.blob_name}' from container '{blob_client.container_name}' on account: '{blob_client.account_name}'")
 
@@ -141,22 +151,31 @@ def download_blob_properties(blob_url: str) -> Dict[str, str]:
     return response
 
 def download_blob_metadata(blob_url: str) -> Dict[str, str]:
+    """Downloads the blob metadata from the blob properties in Azure for the given blob URI"""
     return download_blob_properties(blob_url).metadata
 
 def set_blob_metadata(blob_url: str, metadata: Dict[str, str]):
+    """Sets the provided dictionary as the metadata on the Azure blob"""
     blob_client = BlobClient.from_blob_url(blob_url)
     logger.info(f"Setting blob properties '{blob_client.blob_name}' from container '{blob_client.container_name}' on account: '{blob_client.account_name}'")
     return blob_client.set_blob_metadata(metadata=metadata)
 
 def remove_sas_token(sas_uri: str) -> str:
+    """Removes the SAS Token from the given URI if it contains one"""
     index = sas_uri.find('?')
     if index != -1:
         sas_uri = sas_uri[0:index]
     
     return sas_uri
 
-
-def init_blob_for_streaming_upload(container: ContainerClient, blob_name: str, content_type:str, content_encoding:str, data: Any, returnSasToken: bool=True) -> str:
+def init_blob_for_streaming_upload(
+        container: ContainerClient,
+        blob_name: str,
+        content_type:str,
+        content_encoding:str,
+        data: Any,
+        return_sas_token: bool=True
+    ) -> str:
     """
     Uploads the given data to a blob record. If a blob with the given name already exist, it throws an error.
 
@@ -172,7 +191,7 @@ def init_blob_for_streaming_upload(container: ContainerClient, blob_name: str, c
     blob.upload_blob(data, content_settings=content_settings)
     logger.debug(f"  - blob '{blob_name}' uploaded. generating sas token.")
 
-    if returnSasToken:
+    if return_sas_token:
         sas_token = generate_blob_sas(
             blob.account_name,
             blob.container_name,
@@ -196,7 +215,24 @@ class StreamedBlobState(str, Enum):
     committed = 2
 
 class StreamedBlob:
-    def __init__(self, container: ContainerClient, blob_name: str, content_type: str, content_encoding:str):
+    """Class that provides a state machine for writing blobs using the Azure Block Blob API
+
+    Internally implements a state machine for uploading blob data. To use, start calling `upload_data()`
+    to add data blocks. Each call to `upload_data()` will synchronously upload an individual block to Azure.
+    Once all blocks have been added, call `commit()` to commit the blocks and make the blob available/readable.
+    
+    :param container: The container client that the blob will be uploaded to
+    :param blob_name: The name of the blob (including optional path) within the blob container
+    :param content_type: The HTTP content type to apply to the blob metadata
+    :param content_encoding: The HTTP content encoding to apply to the blob metadata
+    """
+    def __init__(
+            self,
+            container: ContainerClient,
+            blob_name: str,
+            content_type: str,
+            content_encoding: str
+        ):
         self.container = container
         self.blob_name = blob_name
         self.content_settings = ContentSettings(content_type=content_type, content_encoding=content_encoding)
@@ -205,6 +241,11 @@ class StreamedBlob:
         self.blocks = []
 
     def upload_data(self, data):
+        """Synchronously uploads a block to the given block blob in Azure
+        
+        :param data: The data to be uploaded as a block.
+        :type data: Union[Iterable[AnyStr], IO[AnyStr]]
+        """
         if self.state == StreamedBlobState.not_initialized:
             create_container_using_client(self.container)
             logger.info(f"Streaming blob '{self.blob_name}' to container '{self.container.container_name}' on account: '{self.container.account_name}'")
@@ -217,6 +258,10 @@ class StreamedBlob:
         self.blocks.append(id)
 
     def commit(self, metadata: Dict[str, str] = None):
+        """Synchronously commits all previously uploaded blobs to the block blob
+
+        :param metadata: Optional dictionary of metadata to be applied to the block blob
+        """
         if self.state == StreamedBlobState.not_initialized:
             raise Exception('StreamedBlob cannot commit before uploading data')
         elif self.state == StreamedBlobState.committed:
@@ -228,6 +273,7 @@ class StreamedBlob:
         logger.debug(f"Committed {self.blob_name}")
 
     def getUri(self, withSasToken : bool = False):
+        """Gets the full Azure Storage URI for the uploaded blob after it has been committed"""
         if self.state != StreamedBlobState.committed:
             raise Exception('Can only retrieve sas token for committed blob')
         if withSasToken:

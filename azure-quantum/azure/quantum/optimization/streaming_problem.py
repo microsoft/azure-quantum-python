@@ -76,7 +76,7 @@ class StreamingProblem(object):
             self.add_terms(terms.copy())
 
     def add_term(self, c: Union[int, float], indices: List[int]) : 
-        """Adds a single term to the `Problem` representation
+        """Adds a single term to the `Problem` representation and queues it to be uploaded
 
         :param c: The cost or weight of this term
         :type c: int, float
@@ -103,8 +103,8 @@ class StreamingProblem(object):
         
         return { 'blob_name': blob_name, 'container_client': container_client }
 
-    def add_terms(self, terms: List[Term]) :
-        """Adds a list of terms to the `Problem` representation
+    def add_terms(self, terms: List[Term]):
+        """Adds a list of terms to the `Problem` representation and queues them to be uploaded
 
         :param terms: The list of terms to add to the problem
         """
