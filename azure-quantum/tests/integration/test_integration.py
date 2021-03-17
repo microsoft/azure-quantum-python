@@ -57,7 +57,6 @@ def create_workspace() -> Workspace:
             subscription_id=subscription_id,
             resource_group=resource_group,
             name=workspace_name,
-            location="eastus2euap"
         )
         workspace.credentials = ServicePrincipalCredentials(
             tenant=tenant_id,
