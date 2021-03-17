@@ -26,6 +26,10 @@ from azure.quantum.optimization.oneqbit import (
     PathRelinkingSolver
 )
 
+from azure.quantum.optimization.toshiba import (
+    SimulatedBifurcationMachine
+)
+
 def create_workspace() -> Workspace:
     """Create workspace using credentials stored in config file
 
@@ -157,7 +161,19 @@ if __name__ == "__main__":
             functools.partial(PticmSolver, num_sweeps_per_run=99),
             functools.partial(PathRelinkingSolver, distance_scale=0.44),
         ]
+    # Check if 1QBit solvers are enabled
+    toshiba_enabled = os.environ.get("AZURE_QUANTUM_1QBIT", "") == "1"
 
+    if toshiba_enabled:
+        print("1QBit solver is enabled.")
+        names += [
+            "SimulatedBifurcationMachine"
+        ]
+
+        solvers += [
+            functools.partial(SimulatedBifurcationMachine, loops=10),
+        ]
+        
     # Create problems
     problems = [
         create_problem(),
