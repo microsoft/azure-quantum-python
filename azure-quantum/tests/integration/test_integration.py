@@ -94,10 +94,10 @@ def create_problem(init: bool = False) -> Problem:
             "3": 1
         }
 
-        return Problem(name="initial_condition_demo", terms = terms, init_config=initial_config)
+        return Problem(name="initial_condition_demo", terms = terms, init_config=initial_config, problem_type = ProblemType.pubo) 
 
     else:
-        return Problem(name = "first-demo", terms=terms)
+        return Problem(name = "first-demo", terms=terms, problem_type = ProblemType.pubo)
 
 
 def solve(problem: Problem, solver_name: str, solver_factory: callable) -> None:
