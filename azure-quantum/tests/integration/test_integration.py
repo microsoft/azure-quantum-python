@@ -120,15 +120,13 @@ def solve(problem: Problem, solver_name: str, solver_factory: callable) -> None:
     job = solver.submit(problem)
     solution = job.get_results()
     print(f"Solution found ({solver_name}):")
-    print(f" -> cost: {solution['cost']}")
-    print(f" -> configuration: {solution['configuration']}")
+    print(f" -> solution: {solution}")
 
     print("Download old results:")
     job = ws.get_job(job.id)
     results = job.get_results()
     print("Job results:")
-    print(f" -> cost: {results['cost']}")
-    print(f" -> configuration: {results['configuration']}")
+    print(f" -> solution: {results}")
 
 
 if __name__ == "__main__":
