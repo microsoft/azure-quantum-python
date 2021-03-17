@@ -53,10 +53,11 @@ def create_workspace() -> Workspace:
 
     if len(client_secret) > 0:
         workspace = Workspace(
-          
+            
             subscription_id=subscription_id,
             resource_group=resource_group,
             name=workspace_name,
+            location="eastus2euap"
         )
         workspace.credentials = ServicePrincipalCredentials(
             tenant=tenant_id,
@@ -65,7 +66,7 @@ def create_workspace() -> Workspace:
             resource  = "https://quantum.microsoft.com"
         )
 
-    workspace.login(False)
+    workspace.login()
     return workspace
 
 
@@ -116,6 +117,7 @@ def solve(problem: Problem, solver_name: str, solver_factory: callable) -> None:
     ## Call optimize on a solver to find the solution of a problem:
     print("Finding solution...")
     solver = solver_factory(ws)
+    print(solver)
     job = solver.submit(problem)
     solution = job.get_results()
     print(f"Solution found ({solver_name}):")
@@ -161,11 +163,11 @@ if __name__ == "__main__":
             functools.partial(PticmSolver, num_sweeps_per_run=99),
             functools.partial(PathRelinkingSolver, distance_scale=0.44),
         ]
-    # Check if 1QBit solvers are enabled
+    # Check if Toshiba solvers are enabled
     toshiba_enabled = os.environ.get("AZURE_QUANTUM_TOSHIBA", "") == "1"
 
     if toshiba_enabled:
-        print("1QBit solver is enabled.")
+        print("Toshiba solver is enabled.")
         names += [
             "SimulatedBifurcationMachine"
         ]
