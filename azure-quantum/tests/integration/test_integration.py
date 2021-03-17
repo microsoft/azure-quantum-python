@@ -162,7 +162,7 @@ if __name__ == "__main__":
             functools.partial(PathRelinkingSolver, distance_scale=0.44),
         ]
     # Check if 1QBit solvers are enabled
-    toshiba_enabled = os.environ.get("AZURE_QUANTUM_1QBIT", "") == "1"
+    toshiba_enabled = os.environ.get("AZURE_QUANTUM_TOSHIBA", "") == "1"
 
     if toshiba_enabled:
         print("1QBit solver is enabled.")
@@ -173,7 +173,7 @@ if __name__ == "__main__":
         solvers += [
             functools.partial(SimulatedBifurcationMachine, loops=10),
         ]
-        
+
     # Create problems
     problems = [
         create_problem(),
