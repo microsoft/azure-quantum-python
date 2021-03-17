@@ -81,7 +81,7 @@ class SimulatedBifurcationMachine(Solver):
             provider="toshiba",
             target="tosshiba.sbm.ising",
             input_data_format="microsoft.qio.v2",
-            output_data_format="microsoft.qio-results.v1",
+            output_data_format="microsoft.qio-results.v2",
             nested_params=False,
             force_str_params=True)
         self.set_one_param("steps", steps)
