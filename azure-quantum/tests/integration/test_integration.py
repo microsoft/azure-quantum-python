@@ -26,6 +26,10 @@ from azure.quantum.optimization.oneqbit import (
     PathRelinkingSolver
 )
 
+from azure.quantum.optimization.toshiba import (
+    SimulatedBifurcationMachine
+)
+
 def create_workspace() -> Workspace:
     """Create workspace using credentials stored in config file
 
@@ -49,7 +53,7 @@ def create_workspace() -> Workspace:
 
     if len(client_secret) > 0:
         workspace = Workspace(
-          
+            
             subscription_id=subscription_id,
             resource_group=resource_group,
             name=workspace_name,
@@ -61,7 +65,7 @@ def create_workspace() -> Workspace:
             resource  = "https://quantum.microsoft.com"
         )
 
-    workspace.login(False)
+    workspace.login()
     return workspace
 
 
@@ -90,10 +94,10 @@ def create_problem(init: bool = False) -> Problem:
             "3": 1
         }
 
-        return Problem(name="initial_condition_demo", terms = terms, init_config=initial_config)
+        return Problem(name="initial_condition_demo", terms = terms, init_config=initial_config, problem_type = ProblemType.pubo) 
 
     else:
-        return Problem(name = "first-demo", terms=terms)
+        return Problem(name = "first-demo", terms=terms, problem_type = ProblemType.pubo)
 
 
 def solve(problem: Problem, solver_name: str, solver_factory: callable) -> None:
@@ -112,18 +116,17 @@ def solve(problem: Problem, solver_name: str, solver_factory: callable) -> None:
     ## Call optimize on a solver to find the solution of a problem:
     print("Finding solution...")
     solver = solver_factory(ws)
+    print(solver)
     job = solver.submit(problem)
     solution = job.get_results()
     print(f"Solution found ({solver_name}):")
-    print(f" -> cost: {solution['cost']}")
-    print(f" -> configuration: {solution['configuration']}")
+    print(f" -> solution: {solution}")
 
     print("Download old results:")
     job = ws.get_job(job.id)
     results = job.get_results()
     print("Job results:")
-    print(f" -> cost: {results['cost']}")
-    print(f" -> configuration: {results['configuration']}")
+    print(f" -> solution: {results}")
 
 
 if __name__ == "__main__":
@@ -156,6 +159,18 @@ if __name__ == "__main__":
             functools.partial(TabuSearch, improvement_cutoff=10),
             functools.partial(PticmSolver, num_sweeps_per_run=99),
             functools.partial(PathRelinkingSolver, distance_scale=0.44),
+        ]
+    # Check if Toshiba solvers are enabled
+    toshiba_enabled = os.environ.get("AZURE_QUANTUM_TOSHIBA", "") == "1"
+
+    if toshiba_enabled:
+        print("Toshiba solver is enabled.")
+        names += [
+            "SimulatedBifurcationMachine"
+        ]
+
+        solvers += [
+            functools.partial(SimulatedBifurcationMachine, loops=10),
         ]
 
     # Create problems
