@@ -54,7 +54,7 @@ def get_container_uri(connection_string: str, container_name: str) -> str:
     return uri
 
 
-def upload_blob(container: ContainerClient, blob_name: str, content_type:str, content_encoding:str, data: Any, returnSasToken: bool=True) -> str:
+def upload_blob(container: ContainerClient, blob_name: str, content_type:str, content_encoding:str, data: Any, return_sas_token: bool=True) -> str:
     """
     Uploads the given data to a blob record. If a blob with the given name already exist, it throws an error.
 
@@ -68,7 +68,7 @@ def upload_blob(container: ContainerClient, blob_name: str, content_type:str, co
     blob.upload_blob(data, content_settings=content_settings)
     logger.debug(f"  - blob '{blob_name}' uploaded. generating sas token.")
 
-    if returnSasToken:
+    if return_sas_token:
         uri = get_blob_uri_with_sas_token(blob)
     else:
         uri = remove_sas_token(blob.url)
@@ -272,11 +272,11 @@ class StreamedBlob:
         self.state = StreamedBlobState.committed
         logger.debug(f"Committed {self.blob_name}")
 
-    def getUri(self, withSasToken : bool = False):
+    def getUri(self, with_sas_token : bool = False):
         """Gets the full Azure Storage URI for the uploaded blob after it has been committed"""
         if self.state != StreamedBlobState.committed:
             raise Exception('Can only retrieve sas token for committed blob')
-        if withSasToken:
+        if with_sas_token:
             return get_blob_uri_with_sas_token(self.blob)
 
         return remove_sas_token(self.blob.url)
