@@ -153,11 +153,11 @@ class Problem:
             # No storage account is passed, use the linked one
             container_uri = workspace._get_linked_storage_sas_uri(container_name)
             container_client = ContainerClient.from_container_url(container_uri)
-            self.uploaded_blob_uri = upload_blob(container_client, blob_name, content_type, encoding, data.getvalue(), returnSasToken=False)
+            self.uploaded_blob_uri = upload_blob(container_client, blob_name, content_type, encoding, data.getvalue(), return_sas_token=False)
         else:
             # Use the specified storage account
             container_client = ContainerClient.from_connection_string(workspace.storage, container_name)
-            self.uploaded_blob_uri = upload_blob(container_client, blob_name, content_type, encoding, data.getvalue(), returnSasToken=True)
+            self.uploaded_blob_uri = upload_blob(container_client, blob_name, content_type, encoding, data.getvalue(), return_sas_token=True)
 
         self.uploaded_blob_params = blob_params
         return self.uploaded_blob_uri

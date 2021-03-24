@@ -18,26 +18,8 @@ from typing import List
 from azure.quantum import Workspace
 from azure.quantum.optimization import StreamingProblem, Problem, ProblemType, Term
 from azure.quantum.storage import download_blob
-from azure.common.credentials import ServicePrincipalCredentials
 from azure.identity import DefaultAzureCredential
-
-def _init_ws_():
-    workspace = Workspace(
-        subscription_id=os.environ.get('TEST_WORKSPACE_SUB'), 
-        resource_group=os.environ.get('TEST_WORKSPACE_RG'),
-        name=os.environ.get('TEST_WORKSPACE_NAME'),
-    )
-
-    if os.environ.get('AZURE_TENANT_ID') is not None:
-        workspace.credentials = ServicePrincipalCredentials(
-            tenant    = os.environ.get('AZURE_TENANT_ID'), # From service principal creation, your Directory (tenant) ID
-            client_id = os.environ.get('AZURE_CLIENT_ID'), # From service principal creation, your Application (client) ID
-            secret    = os.environ.get('AZURE_CLIENT_SECRET'), # From service principal creation, your secret
-            resource  = "https://quantum.microsoft.com/" # Do not change! This is the resource you want to authenticate against - the Azure Quantum service
-        )
-
-    workspace.login()
-    return workspace
+from integration_test_util import create_workspace
 
 class TestStreamingProblem(unittest.TestCase):
     def __test_upload_problem(
@@ -50,7 +32,7 @@ class TestStreamingProblem(unittest.TestCase):
         initial_terms: List[Term] = [],
         **kwargs
     ):
-        ws = _init_ws_()
+        ws = create_workspace()
         sProblem = StreamingProblem(
             ws,
             name="test",
