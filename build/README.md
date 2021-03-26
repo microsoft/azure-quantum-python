@@ -14,4 +14,4 @@ Additionally, the folder contains the `build.yml` and `steps.yml` files that run
 2. Activate environment and run unit tests using `pytest`
 3. Run Component Governance checks to make sure that the packages are compliant with CVE guidelines
 
-The component governance checks are automated through Azure Devops and makes use of the open source [license curation](https://github.com/clearlydefined/curated-data/pull/9005v) by clearlydefined.io.
+The component governance checks are automated through Azure Devops and makes use of the open source [license curation](https://github.com/clearlydefined/curated-data) by clearlydefined.io.
