@@ -13,6 +13,7 @@
 import unittest
 import json
 import os
+import pytest
 from typing import List
 
 from azure.quantum import Workspace
@@ -65,26 +66,45 @@ class TestStreamingProblem(unittest.TestCase):
 
         return default
 
+    @pytest.mark.skip(reason="No live-test infra available yet")
     def test_small_chunks(self):
         self.__test_upload_problem(4, 1, 1, False)
 
+    @pytest.mark.skip(reason="No live-test infra available yet")
     def test_large_chunks(self):
         self.__test_upload_problem(4, 1000, 10e6, False)
 
+    @pytest.mark.skip(reason="No live-test infra available yet")
     def test_small_chunks_compressed(self):
         self.__test_upload_problem(4, 1, 1, True)
 
+    @pytest.mark.skip(reason="No live-test infra available yet")
     def test_large_chunks_compressed(self):
         self.__test_upload_problem(4, 1000, 10e6, True)
 
+    @pytest.mark.skip(reason="No live-test infra available yet")
     def test_pubo(self):
         self.__test_upload_problem(4, 1, 1, False, ProblemType.pubo)
 
+    @pytest.mark.skip(reason="No live-test infra available yet")
     def test_initial_terms(self):
         self.__test_upload_problem(4, 1, 1, False, initial_terms=[
             Term(w=10, indices=[0, 1, 2]),
             Term(w=20, indices=[1, 2, 3])
         ], avg_coupling=(4*2 + 6)/6, max_coupling=3)
 
+    def check_all(self):
+        self.test_small_chunks();
+        self.test_large_chunks();
+        self.test_small_chunks_compressed();
+        self.test_large_chunks_compressed();
+        self.test_pubo();
+        self.test_initial_terms();
+
 if __name__ == "__main__":
-    unittest.main()
+    # Our test infra is not quite ready to run tests against a live service
+    # To run these tests follow the README.md from the integration tests folder
+    # unittest.main()
+
+    tests = TestStreamingProblem();
+    tests.check_all();
