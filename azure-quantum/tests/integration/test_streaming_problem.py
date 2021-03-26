@@ -18,7 +18,6 @@ from typing import List
 from azure.quantum import Workspace
 from azure.quantum.optimization import StreamingProblem, Problem, ProblemType, Term
 from azure.quantum.storage import download_blob
-from azure.identity import DefaultAzureCredential
 from integration_test_util import create_workspace
 
 class TestStreamingProblem(unittest.TestCase):
