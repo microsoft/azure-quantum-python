@@ -85,7 +85,7 @@ pip install -e qdk
 
 ### How to install Jupyter-JSME in development mode
 
-Jupyter-JSME is an optional dependency that will enable a simple Molecule editor. For more information about JSME, see: [JSME](https://peter-ertl.com/jsme).
+Jupyter-JSME is an optional dependency that will enable a simple Molecule editor. For more information about JSME, see: [JSME](https://jsme-editor.github.io/).
 
 ```bash
 jupyter nbextension install jupyter_jsme
