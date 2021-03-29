@@ -8,7 +8,7 @@
 import os
 import configparser
 import functools
-from azure.common.credentials import ServicePrincipalCredentials
+from integration_test_util import create_workspace
 
 from azure.quantum import Workspace
 from azure.quantum.optimization import (
@@ -88,9 +88,9 @@ def create_problem(init: bool = False) -> Problem:
 
     if init is True:
         initial_config = {
-            "1": -1,
+            "1": 0,
             "0": 1,
-            "2": -1,
+            "2": 0,
             "3": 1
         }
 

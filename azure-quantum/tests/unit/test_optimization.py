@@ -115,6 +115,35 @@ class TestProblem(QuantumTestBase):
         actual = problem.serialize()
         self.assertEqual(expected, actual)
 
+    def test_deserialize(self):
+        count = 2
+        terms = []
+        for i in range(count):
+            terms.append(Term(c = i, indices = [i, i+1]))
+        problem = Problem(name = "test", terms=terms)
+        deserialized = Problem.deserialize(problem.serialize(), problem.name)
+        self.assertEqual(problem.name, deserialized.name)
+        self.assertEqual(problem.problem_type, deserialized.problem_type)
+        self.assertEqual(count, len(deserialized.terms))
+        self.assertEqual(problem.init_config, deserialized.init_config)
+        self.assertEqual(Term(c = 0, indices = [0, 1]), problem.terms[0])
+        self.assertEqual(Term(c = 1, indices = [1, 2]), problem.terms[1])
+
+    def test_deserialize_init_config(self):
+        count = 2
+        terms = []
+        for i in range(count):
+            terms.append(Term(c = i, indices = [i, i+1]))
+        init_config = {"0":-1 , "1": 1, "2": -1}
+        problem = Problem(name = "test", terms=terms, init_config=init_config)
+        deserialized = Problem.deserialize(problem.serialize(), problem.name)
+        self.assertEqual(problem.name, deserialized.name)
+        self.assertEqual(problem.problem_type, deserialized.problem_type)
+        self.assertEqual(count, len(deserialized.terms))
+        self.assertEqual(problem.init_config, deserialized.init_config)
+        self.assertEqual(Term(c = 0, indices = [0, 1]), problem.terms[0])
+        self.assertEqual(Term(c = 1, indices = [1, 2]), problem.terms[1])
+
 
 def _init_ws_():
     return Workspace(
