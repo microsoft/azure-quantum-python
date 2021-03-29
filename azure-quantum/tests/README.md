@@ -23,3 +23,5 @@ WORKSPACE_NAME
   - ParallelTempering
 - Jobs
 
+# Integration Tests
+- Streaming Problem

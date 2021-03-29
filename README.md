@@ -1,11 +1,13 @@
+[![Build Status](https://dev.azure.com/ms-quantum-public/Microsoft%20Quantum%20(public)/_apis/build/status/microsoft.qdk-python?branchName=main)](https://dev.azure.com/ms-quantum-public/Microsoft%20Quantum%20(public)/_build/latest?definitionId=32&branchName=main)
+
 # QDK-Python
 
 ## Introduction
 
 QDK-Python is the repository for Python packages of the Quantum Development Kit (QDK). Currently, this consists of the following packages:
 
-- qdk
-- azure-quantum
+- `qdk` [![PyPI version](https://badge.fury.io/py/qdk.svg)](https://badge.fury.io/py/qdk)
+- `azure-quantum` [![PyPI version](https://badge.fury.io/py/azure-quantum.svg)](https://badge.fury.io/py/azure-quantum)
 
 Coming soon:
 
