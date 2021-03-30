@@ -245,12 +245,13 @@ class SimulatedAnnealing(Solver):
 class Tabu(Solver):
     
     def __init__(
-        self,
-        workspace: Workspace,
-        sweeps: Optional[int]=None,
-        tabu_tenure: Optional[int]=None,
-        timeout: Optional[int]=None,
-        seed: Optional[int]=None
+        self, 
+        workspace: Workspace, 
+        sweeps: Optional[int]=None, 
+        tabu_tenure: Optional[int]=None, 
+        timeout: Optional[int]=None, 
+        seed: Optional[int]=None, 
+        restarts: Optional[int]=None
     ):
         """The constructor of an Tabu Search solver.
         
@@ -264,6 +265,8 @@ class Tabu(Solver):
             specifies the number of sweeps.
         :param tabu_tenure: 
             specifies the tabu tenure.
+        :param restarts:
+            specifies how many runs the solver will execute.
         :param timeout: 
             specifies maximum number of seconds to run the core solver
             loop. initialization time does not respect this value, so the 
@@ -273,10 +276,11 @@ class Tabu(Solver):
         """
         param_free = (
             sweeps is None and
-            tabu_tenure is None 
+            tabu_tenure is None and
+            restarts is None
         )
         
-        target = "microsoft.tabu-parameterfree.cpu" if param_free else "microsoft.tabu.cpu"
+        target = "microsoft.tabu-parameterfree.cpu" if param_free  else "microsoft.tabu.cpu"
         
         super().__init__(
             workspace=workspace, 
@@ -289,6 +293,7 @@ class Tabu(Solver):
         self.set_one_param("tabu_tenure", tabu_tenure)
         self.set_one_param("timeout", timeout)
         self.set_one_param("seed", seed)
+        self.set_one_param("restarts", restarts)
 
 class QuantumMonteCarlo(Solver):
     def __init__(
