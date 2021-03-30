@@ -244,7 +244,15 @@ class SimulatedAnnealing(Solver):
 
 class Tabu(Solver):
     
-    def __init__(self, workspace:Workspace, sweeps:Optional[int]=None, tabu_tenure:Optional[int]=None, timeout:Optional[int]=None, seed:Optional[int]=None, restarts:Optional[int]=None):
+    def __init__(
+        self, 
+        workspace:Workspace, 
+        sweeps:Optional[int]=None, 
+        tabu_tenure:Optional[int]=None, 
+        timeout:Optional[int]=None, 
+        seed:Optional[int]=None, 
+        restarts:Optional[int]=None
+    ):
         """The constructor of an Tabu Search solver.
         
         Multi-core Tabu Search solver for binary optimization problems 
