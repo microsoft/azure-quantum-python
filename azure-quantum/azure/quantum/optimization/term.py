@@ -46,8 +46,23 @@ class Term:
 
         return multiplier*self.c
 
-    def reduce_by_variable_state(self, fixed_variables: Dict[int, int])) -> Term:
-        pass
+    def reduce_by_variable_state(self, fixed_variables: Dict[int, int]) -> Union[Term, None]:
+        """ Given some fixed variable states, transform the existing term into new term.
+            Returns None if the new term is effectively 0
+            :param fixed_variables: The dictionary of variable ids and their fixed state
+        """
+        new_ids = []
+        new_c = self.c
+
+        for i in self.ids:
+            if i not in fixed_variables:
+                new_ids.append(i)
+            else:
+                new_c *= fixed_variables[i]
+                if new_c == 0:
+                    return None
+        
+        return Term(indices=new_ids, c=new_c)
 
     def __repr__(self):
         return str(self.__dict__)
