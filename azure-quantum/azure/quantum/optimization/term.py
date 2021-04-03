@@ -3,7 +3,8 @@
 # Licensed under the MIT License.
 ##
 
-from typing import List, Union, Optional
+import numpy as np
+from typing import List, Dict, Union, Optional
 
 __all__ = ['Term']
 
@@ -32,6 +33,21 @@ class Term:
     @staticmethod
     def from_dict(obj):
         return Term(indices = obj['ids'], c = obj['c'])
+
+    def evaluate(self, configuration: Dict[int, int]) -> float:
+        """ Given a variable configuration, evaluate the value of the term.
+            :param configuration: The dictionary of variable ids to their assigned value
+        """
+        try:
+            multiplier = np.prod([configuration[i] for i in self.ids])
+        except KeyError:
+            print("Error - variable id found in term {0}, but not found in the supplied configuration.".format(self.ids))
+            raise
+
+        return multiplier*self.c
+
+    def reduce_by_variable_state(self, fixed_variables: Dict[int, int])) -> Term:
+        pass
 
     def __repr__(self):
         return str(self.__dict__)

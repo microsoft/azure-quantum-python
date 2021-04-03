@@ -8,6 +8,7 @@ import uuid
 import io
 import gzip
 import json
+import numpy as np
 
 from typing import List, Union, Dict, Optional, TYPE_CHECKING
 from enum import Enum
@@ -161,3 +162,41 @@ class Problem:
 
         self.uploaded_blob_params = blob_params
         return self.uploaded_blob_uri
+
+    def set_fixed_variables(self, fixed_variables: Union[Dict[int, int], Dict[str, int]]) -> Problem:
+        """ Transforms the current problem with a set of fixed variables and returns the new modified problem.
+        The original Problem instance is untouched. 
+
+        :param fixed_variables: The dictionary of variable ids and their fixed state
+        """    
+        fixed_transformed = {int(k): fixed_variables(k) for k in fixed_variables} # if ids are given in string form, convert them to int    
+        new_terms = []
+        
+        for term in self.terms:
+            reduced_term = term.reduce_by_variable_state(fixed_transformed)
+            if reduced_term:
+                new_terms.append(reduced_term)
+
+        new_init_config = {}
+        if self.init_config:
+            new_init_config = {k: self.init_config[k] for k in self.init_config if int(k) not in fixed_variables}
+
+        return Problem(
+            self.name,
+            terms = new_terms,
+            init_config = new_init_config,
+            problem_type = self.problem_type
+        )
+
+    def evaluate(self, configuration: Union[Dict[int, int], Dict[str, int]]) -> float:
+        """ Given a configuration/variable assignment, return the cost function value of this problem.
+        
+        :param configuration: The dictionary of variable ids to their assigned value
+        """
+        configuration_transformed = {int(k): configuration(k) for k in configuration} # if ids are given in string form, convert them to int
+        total_cost = 0
+        if self.terms:
+            for term in self.terms:
+                total_cost += term.evaluate(configuration_transformed)
+
+        return total_cost
