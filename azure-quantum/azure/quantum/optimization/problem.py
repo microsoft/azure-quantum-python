@@ -177,9 +177,9 @@ class Problem:
             if reduced_term:
                 new_terms.append(reduced_term)
 
-        new_init_config = {}
+        new_init_config = None
         if self.init_config:
-            new_init_config = {k: self.init_config[k] for k in self.init_config if int(k) not in fixed_variables}
+            new_init_config = {k: self.init_config[k] for k in self.init_config if int(k) not in fixed_transformed}
 
         return Problem(
             self.name,
