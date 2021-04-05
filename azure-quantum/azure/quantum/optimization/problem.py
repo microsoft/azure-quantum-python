@@ -169,13 +169,24 @@ class Problem:
 
         :param fixed_variables: The dictionary of variable ids and their fixed state
         """    
+        if len(fixed_variables) == 0:
+            raise RuntimeError("Error: fixed_variables is empty - please specify at least one fixed variable")
+
         fixed_transformed = {int(k): fixed_variables(k) for k in fixed_variables} # if ids are given in string form, convert them to int    
         new_terms = []
         
+        constant = 0
         for term in self.terms:
             reduced_term = term.reduce_by_variable_state(fixed_transformed)
             if reduced_term:
-                new_terms.append(reduced_term)
+                if len(reduced_term.ids) > 0:
+                    new_terms.append(reduced_term)
+                else:
+                    # reduced to a constant term
+                    contant += reduced_term.c
+        
+        if constant:
+            new_terms.append(Term(c=constant, indices=[]))
 
         new_init_config = None
         if self.init_config:
