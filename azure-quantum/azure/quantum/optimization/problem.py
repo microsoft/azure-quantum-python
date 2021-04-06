@@ -173,7 +173,7 @@ class Problem:
         if len(fixed_variables) == 0:
             raise RuntimeError("Error: fixed_variables is empty - please specify at least one fixed variable")
 
-        fixed_transformed = {int(k): fixed_variables(k) for k in fixed_variables} # if ids are given in string form, convert them to int    
+        fixed_transformed = {int(k): fixed_variables[k] for k in fixed_variables} # if ids are given in string form, convert them to int    
         new_terms = []
         
         constant = 0
@@ -184,7 +184,7 @@ class Problem:
                     new_terms.append(reduced_term)
                 else:
                     # reduced to a constant term
-                    contant += reduced_term.c
+                    constant += reduced_term.c
         
         if constant:
             new_terms.append(Term(c=constant, indices=[]))
@@ -205,7 +205,7 @@ class Problem:
         
         :param configuration: The dictionary of variable ids to their assigned value
         """
-        configuration_transformed = {int(k): configuration(k) for k in configuration} # if ids are given in string form, convert them to int
+        configuration_transformed = {int(k): configuration[k] for k in configuration} # if ids are given in string form, convert them to int
         total_cost = 0
         if self.terms:
             for term in self.terms:

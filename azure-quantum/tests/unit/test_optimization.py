@@ -164,6 +164,10 @@ class TestProblem(QuantumTestBase):
         self.assertEqual(-5, problem.evaluate({'0':0, '1':1, '2':1}))
         self.assertEqual(5, problem.evaluate({'0':1, '1':1, '2':1}))
 
+        terms = [Term(c=10, indices=[])] # constant term
+        problem = Problem(name="test", terms=terms, problem_type=ProblemType.pubo)
+        self.assertEqual(10, problem.evaluate({}))
+
     def test_problem_fixed_variables(self):
         terms = []
         problem = Problem(name="test", terms=terms, problem_type=ProblemType.pubo)
@@ -178,6 +182,11 @@ class TestProblem(QuantumTestBase):
 
         # test all const terms get merged
         self.assertEqual([Term(c=5, indices=[])], problem.set_fixed_variables({'0': 1, '1': 1, '2':1}).terms)
+
+        # test init_config gets transferred
+        problem =  Problem("My Problem", terms=terms, init_config = {'0': 1, '1': 1, '2': 1})
+        problem2 = problem.set_fixed_variables({'0':0})
+        self.assertEqual({'1':1, '2':1}, problem2.init_config)
 
 def _init_ws_():
     return Workspace(

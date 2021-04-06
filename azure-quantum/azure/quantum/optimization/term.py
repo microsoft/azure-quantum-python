@@ -40,7 +40,7 @@ class Term:
             :param configuration: The dictionary of variable ids to their assigned value
         """
         try:
-            multiplier = np.prod([configuration[i] for i in self.ids])
+            multiplier = np.prod([configuration[i] for i in self.ids]) if len(self.ids) > 0 else 1.0
         except KeyError:
             print("Error - variable id found in term {0}, but not found in the supplied configuration.".format(self.ids))
             raise
