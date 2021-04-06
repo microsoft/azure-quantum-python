@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 ##
 
+from __future__ import annotations
 import numpy as np
 from typing import List, Dict, Union, Optional
 
@@ -46,7 +47,7 @@ class Term:
 
         return multiplier*self.c
 
-    def reduce_by_variable_state(self, fixed_variables: Dict[int, int]) -> Union[Term, None]:
+    def reduce_by_variable_state(self, fixed_variables: Dict[int, int]) -> Optional[Term]:
         """ Given some fixed variable states, transform the existing term into new term.
             Returns None if the new term is effectively 0
             :param fixed_variables: The dictionary of variable ids and their fixed state
