@@ -15,7 +15,7 @@ import json
 from azure.quantum import Workspace
 from azure.quantum.optimization import Problem, ProblemType, Term
 from azure.quantum.optimization.solvers import ParallelTempering, SimulatedAnnealing, HardwarePlatform, QuantumMonteCarlo
-from tests.quantum_test_base import QuantumTestBase 
+from quantum_test_base import QuantumTestBase 
 
 class TestProblem(QuantumTestBase):
     def test_add_terms(self):
@@ -144,6 +144,49 @@ class TestProblem(QuantumTestBase):
         self.assertEqual(Term(c = 0, indices = [0, 1]), problem.terms[0])
         self.assertEqual(Term(c = 1, indices = [1, 2]), problem.terms[1])
 
+    def test_problem_evaluate(self):
+        terms = []
+        problem = Problem(name="test", terms=terms, problem_type=ProblemType.pubo)
+        self.assertEqual(0, problem.evaluate({}))
+        self.assertEqual(0, problem.evaluate({'0':1}))
+
+        terms = [Term(c=10, indices=[0,1,2])]
+        problem = Problem(name="test", terms=terms, problem_type=ProblemType.pubo)
+        self.assertEqual(0, problem.evaluate({'0':0, '1':1, '2':1}))
+        self.assertEqual(10, problem.evaluate({'0':1, '1':1, '2':1}))
+
+        problem = Problem(name="test", terms=terms, problem_type=ProblemType.ising)
+        self.assertEqual(-10, problem.evaluate({'0':-1, '1':1, '2':1}))
+        self.assertEqual(10, problem.evaluate({'0':-1, '1':-1, '2':1}))
+
+        terms = [Term(c=10, indices=[0,1,2]), Term(c=-5, indices=[1,2])]
+        problem = Problem(name="test", terms=terms, problem_type=ProblemType.pubo)
+        self.assertEqual(-5, problem.evaluate({'0':0, '1':1, '2':1}))
+        self.assertEqual(5, problem.evaluate({'0':1, '1':1, '2':1}))
+
+        terms = [Term(c=10, indices=[])] # constant term
+        problem = Problem(name="test", terms=terms, problem_type=ProblemType.pubo)
+        self.assertEqual(10, problem.evaluate({}))
+
+    def test_problem_fixed_variables(self):
+        terms = []
+        problem = Problem(name="test", terms=terms, problem_type=ProblemType.pubo)
+        problem_new = problem.set_fixed_variables({'0':1})
+        self.assertEqual([], problem_new.terms)
+        
+        # test small cases 
+        terms = [Term(c=10, indices=[0,1,2]), Term(c=-5, indices=[1,2])]
+        problem = Problem(name="test", terms=terms, problem_type=ProblemType.pubo)
+        self.assertEqual([], problem.set_fixed_variables({'1': 0}).terms)
+        self.assertEqual([Term(c=10, indices=[0]), Term(c=-5, indices=[])], problem.set_fixed_variables({'1': 1, '2':1}).terms)
+
+        # test all const terms get merged
+        self.assertEqual([Term(c=5, indices=[])], problem.set_fixed_variables({'0': 1, '1': 1, '2':1}).terms)
+
+        # test init_config gets transferred
+        problem =  Problem("My Problem", terms=terms, init_config = {'0': 1, '1': 1, '2': 1})
+        problem2 = problem.set_fixed_variables({'0':0})
+        self.assertEqual({'1':1, '2':1}, problem2.init_config)
 
 def _init_ws_():
     return Workspace(

@@ -19,7 +19,7 @@ from azure.quantum import Workspace
 from azure.quantum.optimization import Problem
 from azure.quantum.optimization.solvers import SimulatedAnnealing
 from azure.quantum import Job
-from tests.quantum_test_base import QuantumTestBase 
+from quantum_test_base import QuantumTestBase 
 
 class TestJob(QuantumTestBase):
     """TestJob
