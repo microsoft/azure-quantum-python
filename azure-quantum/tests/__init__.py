@@ -1,1 +1,1 @@
-from . import quantum_test_base
+from . import common
