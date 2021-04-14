@@ -17,6 +17,7 @@ from azure.common.credentials import ServicePrincipalCredentials
 from msrest.authentication import BasicTokenAuthentication
 from azure_devtools.scenario_tests.base import ReplayableTest
 from azure_devtools.scenario_tests.recording_processors import RecordingProcessor, is_text_payload, AccessTokenReplacer
+from azure_devtools.scenario_tests.utilities import _get_content_type
 
 class QuantumTestBase(ReplayableTest):
     """QuantumTestBase
