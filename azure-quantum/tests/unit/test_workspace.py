@@ -13,7 +13,7 @@ import json
 import pytest
 
 from azure.quantum import Workspace
-from tests.quantum_test_base import QuantumTestBase 
+from quantum_test_base import QuantumTestBase 
 
 class TestWorkspace(QuantumTestBase):
     def test_workspace_login(self):

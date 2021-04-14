@@ -1,4 +1,10 @@
-# Unit tests
+# Unit tests #
+
+## Environment Pre-reqs ##
+
+Refer to [the parent README](../README.md) for how to prepare the development environment before running the unit tests.
+
+### Environment variables for Recording and Live-Tests ###
 
 The 'recordings' directory is used to replay network connections.
 To manually create new recordings, remove the 'recordings' subdirectory and run the tests.
@@ -13,15 +19,3 @@ RESOURCE_GROUP
 SUBSCRIPTION_ID
 WORKSPACE_NAME
 ```
-
-- Workspace.login() authentication
-- Problem
-- Solver
-  - SimulatedAnnealing
-  - Tabu
-  - QuantumMonteCarlo
-  - ParallelTempering
-- Jobs
-
-# Integration Tests
-- Streaming Problem
