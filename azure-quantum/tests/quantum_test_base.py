@@ -161,7 +161,7 @@ class CustomRecordingProcessor(RecordingProcessor):
 
         for oldRegex, new in self._regexes:
             request.uri = oldRegex.sub(new, request.uri)            
-
+        '''
         if _get_content_type(request) == "application/x-www-form-urlencoded":
             body = request.body.decode("utf-8")
             for oldRegex, new in self._regexes:
@@ -172,7 +172,7 @@ class CustomRecordingProcessor(RecordingProcessor):
             for oldRegex, new in self._regexes:
                 body = oldRegex.sub(new, body)
             request.body = body
-
+        '''
         return request
 
     def process_response(self, response):

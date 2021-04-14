@@ -9,13 +9,12 @@
 ##
 
 ## IMPORTS ##
-
 import json
-
+import unittest
 from azure.quantum import Workspace
 from azure.quantum.optimization import Problem, ProblemType, Term
 from azure.quantum.optimization.solvers import ParallelTempering, SimulatedAnnealing, HardwarePlatform, QuantumMonteCarlo
-from tests.quantum_test_base import QuantumTestBase 
+from ..quantum_test_base import QuantumTestBase 
 
 class TestProblem(QuantumTestBase):
     def test_add_terms(self):
