@@ -17,7 +17,7 @@ from azure.common.credentials import ServicePrincipalCredentials
 from msrest.authentication import BasicTokenAuthentication
 from azure_devtools.scenario_tests.base import ReplayableTest
 from azure_devtools.scenario_tests.recording_processors import RecordingProcessor, is_text_payload, AccessTokenReplacer
-
+from azure_devtools.scenario_tests.utilities import _get_content_type
 class QuantumTestBase(ReplayableTest):
     """QuantumTestBase
     
@@ -161,7 +161,7 @@ class CustomRecordingProcessor(RecordingProcessor):
 
         for oldRegex, new in self._regexes:
             request.uri = oldRegex.sub(new, request.uri)            
-        '''
+        
         if _get_content_type(request) == "application/x-www-form-urlencoded":
             body = request.body.decode("utf-8")
             for oldRegex, new in self._regexes:
@@ -172,7 +172,7 @@ class CustomRecordingProcessor(RecordingProcessor):
             for oldRegex, new in self._regexes:
                 body = oldRegex.sub(new, body)
             request.body = body
-        '''
+        
         return request
 
     def process_response(self, response):
