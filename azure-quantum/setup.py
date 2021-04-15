@@ -12,7 +12,7 @@
 import setuptools
 import os
 import distutils
-
+from setuptools import read_configuration
 ## VERSION INFORMATION ##
 # Our build process sets the PYTHON_VERSION environment variable to a version
 # string that is compatible with PEP 440, and so we inherit that version number
@@ -46,7 +46,7 @@ with open("./README.md", "r") as fh:
 # Get list of requirements from requirements.txt
 with open("./requirements.txt", "r") as fh:
     requirements = fh.readlines()
-
+conf_dict = read_configuration("./setup.cfg")
 ## SETUPTOOLS INVOCATION ##
 setuptools.setup(
     name="azure-quantum",
