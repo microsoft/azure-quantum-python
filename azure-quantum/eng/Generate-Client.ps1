@@ -11,9 +11,9 @@ $TempFolder = Join-Path $PSScriptRoot "../temp/"
 $SpecsFolder = Join-Path $TempFolder  "/specs/"
 
 $CheckoutScript = Join-Path $PSScriptRoot "./Checkout-Repo.ps1" -Resolve
-&$CheckoutScript -RepoUrl $SpecsRepo -TargetFolder $SpecsFolder -PathAllowList $PathAllowList -BranchName $SpecsBranch -CommitId $SpecsCommitId -Force | Write-Verbose
+# &$CheckoutScript -RepoUrl $SpecsRepo -TargetFolder $SpecsFolder -PathAllowList $PathAllowList -BranchName $SpecsBranch -CommitId $SpecsCommitId -Force | Write-Verbose
 
-$TempGeneratedClientFolder = Join-Path $TempFolder "generated"
+$TempGeneratedClientFolder = Join-Path $TempFolder "generated/_client/"
 if (Test-Path $TempGeneratedClientFolder) {
     Remove-Item $TempGeneratedClientFolder -Recurse | Write-Verbose
 }
@@ -28,10 +28,10 @@ autorest $AutoRestConfig `
     --package-name=$PackageName `
     --package-version=$PackageVersion `
     --namespace=$Namespace `
-    --output-folder=$TempGeneratedClientFolder `
     --no-namespace-folders=true `
     --add-credential `
-    --python-mode=update `
+    --python-mode=custom `
+    --output-folder=$TempGeneratedClientFolder `
     | Write-Verbose
 
 $AzureQuantumClient_Folder =  Join-Path $PSScriptRoot "../azure/quantum/_client/"
@@ -39,4 +39,4 @@ if (Test-Path $AzureQuantumClient_Folder) {
     Remove-Item $AzureQuantumClient_Folder -Recurse | Write-Verbose
 }
 
-Copy-Item $TempGeneratedClientFolder $AzureQuantumClient_Folder -Recurse | Write-Verbose
+Copy-Item $TempGeneratedClientFolder $AzureQuantumClient_Folder -Recurse -Force | Write-Verbose
