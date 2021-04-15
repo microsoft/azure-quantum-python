@@ -8,7 +8,7 @@
 import os
 import configparser
 import functools
-from integration_test_util import create_workspace
+from ..testutils.integration_test_util import create_workspace
 
 from azure.quantum import Workspace
 from azure.quantum.optimization import (
