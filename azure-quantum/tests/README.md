@@ -19,3 +19,8 @@ RESOURCE_GROUP
 SUBSCRIPTION_ID
 WORKSPACE_NAME
 ```
+
+## Coverage report
+1. pip install coverage
+2. coverage run -m pytest
+3. coverage report -m
