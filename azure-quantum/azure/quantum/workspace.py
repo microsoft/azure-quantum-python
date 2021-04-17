@@ -347,13 +347,22 @@ class Workspace:
         details = client.get(job_id, custom_headers=self._custom_headers())
         return Job(self, details)
 
-    def list_jobs(self) -> List[Job]:
+    def list_jobs(self, tags: Optional[List[str]] = None) -> List[Job]:
         client = self._create_jobs_client()
         jobs = client.list(custom_headers=self._custom_headers())
 
+        # TODO replace with server side filtering when ready - #27666
+        # For now we default to "and" filtering - a job must have all tags in order to be added.
         result = []
+        set_tags = set(tags) if tags and len(tags) > 0 else None
         for j in jobs:
-            result.append(Job(self, j))
+            job = Job(self,j)
+            if set_tags:
+                if set_tags.intersection(set(job.get_tags())) == set_tags:
+                    result.append(job)
+            else:
+                # no tags supplied
+                result.append(job)
 
         return result
 

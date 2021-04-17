@@ -6,6 +6,7 @@ import logging
 import time
 import io
 import json
+import re
 import uuid
 
 from typing import List, TYPE_CHECKING
@@ -83,9 +84,37 @@ class Job:
 
         result = json.loads(payload.decode('utf8'))
         return result
+    
+    def get_tags(self) -> List[str]:
+        """ Get the existing tags for the job
+        """
+        if "tags" in self.details.metadata:
+            return Job.deserialize_tags(self.details.metadata["tags"])
+        else:
+            return []
+
+    def update_tags(self, tags: List[str]):
+        """ Updates current job metadata with given list of tags. 
+            Job must be updated as a submission to the workspace in order for tags to persist.
+        """
+        if tags and len(tags) > 0:
+            self.details.metadata["tags"] = Job.serialize_tags(tags)
             
     @staticmethod
     def create_job_id() -> str:
         """Create a unique id for a new job.
         """
         return str(uuid.uuid1())
+    
+    @staticmethod
+    def serialize_tags(tags: List[str]) -> str:
+        """
+        Tags are stored in job metadata as comma separated alphanumeric values.
+        All special characters (except for _) will be stripped. 
+        """
+        # \W is a special python character that matches [^a-zA-Z0-9_]
+        return ",".join([re.sub(r'\W+', '', tag.lower()) for tag in tags])
+
+    @staticmethod
+    def deserialize_tags(tags_string: str) -> List[str]:
+        return tags_string.split(',')
