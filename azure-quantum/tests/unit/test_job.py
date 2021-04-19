@@ -7,19 +7,16 @@
 # Licensed under the MIT License.
 ##
 
-## IMPORTS ##
+# IMPORTS
 
 import unittest
-import json
-import uuid
-import os
 import time
 
-from azure.quantum import Workspace
 from azure.quantum.optimization import Problem
 from azure.quantum.optimization.solvers import SimulatedAnnealing
 from azure.quantum import Job
-from quantum_test_base import QuantumTestBase 
+from quantum_test_base import QuantumTestBase
+
 
 class TestJob(QuantumTestBase):
     """TestJob
@@ -32,7 +29,6 @@ class TestJob(QuantumTestBase):
     def get_dummy_job_id(self):
         if self.in_recording or self.is_live:
             return Job.create_job_id()
-        
         return self.dummy_uid
 
     def test_job_refresh(self):
@@ -44,7 +40,8 @@ class TestJob(QuantumTestBase):
         for i in range(count):
             problem.add_term(c=i, indices=[i, i+1])
 
-        with unittest.mock.patch.object(Job, self.mock_create_job_id_name, return_value=self.get_dummy_job_id()):
+        with unittest.mock.patch.object(Job, self.mock_create_job_id_name,
+                                        return_value=self.get_dummy_job_id()):
             solver = SimulatedAnnealing(ws)
             job = solver.submit(problem)
             job.refresh()
@@ -58,7 +55,8 @@ class TestJob(QuantumTestBase):
         for i in range(count):
             problem.add_term(c=i, indices=[i, i+1])
 
-        with unittest.mock.patch.object(Job, self.mock_create_job_id_name, return_value=self.get_dummy_job_id()):
+        with unittest.mock.patch.object(Job, self.mock_create_job_id_name,
+                                        return_value=self.get_dummy_job_id()):
             solver = SimulatedAnnealing(ws)
             job = solver.submit(problem)
             self.assertEqual(False, job.has_completed())
@@ -76,7 +74,8 @@ class TestJob(QuantumTestBase):
         for i in range(count):
             problem.add_term(c=i, indices=[i, i+1])
 
-        with unittest.mock.patch.object(Job, self.mock_create_job_id_name, return_value=self.get_dummy_job_id()):
+        with unittest.mock.patch.object(Job, self.mock_create_job_id_name,
+                                        return_value=self.get_dummy_job_id()):
             solver = SimulatedAnnealing(ws)
             job = solver.submit(problem)
             if self.in_recording:
@@ -93,7 +92,8 @@ class TestJob(QuantumTestBase):
         for i in range(count):
             problem.add_term(c=i, indices=[i, i+1])
 
-        with unittest.mock.patch.object(Job, self.mock_create_job_id_name, return_value=self.get_dummy_job_id()):
+        with unittest.mock.patch.object(Job, self.mock_create_job_id_name,
+                                        return_value=self.get_dummy_job_id()):
             solver = SimulatedAnnealing(ws)
             job = solver.submit(problem)
             if self.in_recording:
@@ -101,9 +101,10 @@ class TestJob(QuantumTestBase):
             actual = job.get_results()
 
         expected = {
-            'configuration': {'0': 1, '1': 1, '2': -1, '3': 1, '4': -1}, 
-            'cost': -6.0, 
-            'parameters': {'beta_start': 0.2, 'beta_stop': 1.9307236000000003, 'restarts': 360, 'sweeps': 50}, 
+            'configuration': {'0': 1, '1': 1, '2': -1, '3': 1, '4': -1},
+            'cost': -6.0,
+            'parameters': {'beta_start': 0.2, 'beta_stop': 1.9307236000000003,
+                           'restarts': 360, 'sweeps': 50},
             }
 
         self.assertEqual(expected["configuration"], actual["configuration"])
