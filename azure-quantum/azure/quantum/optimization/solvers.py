@@ -45,15 +45,19 @@ class Solver:
         self.force_str_params = force_str_params
         self.params = { "params": {} } if nested_params else {}
 
-    def submit(self, problem: Union[str, Problem], tags: Optional[List[str]] = None) -> Job:
+
+    def submit(self, problem: Union[str, Problem], compress: bool = True,  tags: Optional[List[str]] = None) -> Job:
         """Submits a job to execution to the associated Azure Quantum Workspace.
 
-       :param problem: 
+        :param problem:
             The Problem to solve. It can be an instance of a Problem, 
             or the URL of an Azure Storage Blob where the serialized version
             of a Problem has been uploaded.
+        :param compress:
+            Whether or not to compress the problem when uploading it
+            the Blob Storage.
         """
-        ## Create a container URL:
+        # Create a container URL:
         job_id = Job.create_job_id()
         logger.info(f"Submitting job with id: {job_id}")
 
@@ -76,7 +80,7 @@ class Solver:
             problem_uri = problem  
         else:
             name = problem.name
-            problem_uri = problem.upload(self.workspace, compress=True, container_name=container_name, blob_name="inputData")
+            problem_uri = problem.upload(self.workspace, compress=compress, container_name=container_name, blob_name="inputData")
         
         logger.info(f"Submitting problem '{name}' with tags: '{tags}'. Using payload from: '{problem_uri}'")
 
