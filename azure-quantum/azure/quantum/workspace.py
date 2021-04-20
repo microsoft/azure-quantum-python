@@ -358,7 +358,7 @@ class Workspace:
         for j in jobs:
             job = Job(self,j)
             if set_tags:
-                if set_tags.intersection(set(job.get_tags())) == set_tags:
+                if len(set_tags.intersection(set(job.get_tags()))) == len(set_tags):
                     result.append(job)
             else:
                 # no tags supplied
