@@ -300,7 +300,7 @@ class Tabu(Solver):
         restarts: Optional[int]=None
     ):
         """The constructor of an Tabu Search solver.
-        
+
         Multi-core Tabu Search solver for binary optimization problems 
         with k-local interactions on an all-to-all graph topology with double 
         precision support for the coupler weights. 
@@ -409,7 +409,7 @@ class PopulationAnnealing(Solver):
         with k-local interactions on an all-to-all graph topology with double 
         precision support for the coupler weights. 
 
-        This solver is CPU only.
+        This solver is CPU only, and not support parameter free now.
 
         :param alpha: 
             ratio to trigger a restart, must be larger than 1
@@ -457,7 +457,7 @@ class SubstochasticMonteCarlo(Solver):
         with k-local interactions on an all-to-all graph topology with double 
         precision support for the coupler weights. 
 
-        This solver is CPU only.
+        This solver is CPU only, and not support parameter free now.
 
         :param alpha: 
             alpha (chance to step) values evolve over time
