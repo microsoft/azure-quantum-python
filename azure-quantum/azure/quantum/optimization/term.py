@@ -47,7 +47,7 @@ class Term:
             # Legacy support if 'w' is used to specify term instead of the expected 'c'.
             self.w = _convert_if_numpy_type(w)
             if(type(w) != int and type(w) != float):
-                raise RuntimeError("w must be a float or int value, or a numpy value that can be converted to those.")
+                raise RuntimeError("w must be a float or int value, or a NumPy value that can be converted to those.")
             else:
                 self.c = w
         elif(c != None):
