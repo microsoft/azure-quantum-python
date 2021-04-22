@@ -41,23 +41,21 @@ except ImportError:
 class Term:
 
     def __init__(self, indices: List[int] = None, w: Optional[WArray] = None, c: Optional[WArray] = None):
-        if(type(w) == None and type(c) == None):
+        if type(w) == None and type(c) == None:
             raise RuntimeError("Cost should be provided for each term.")
 
-        if(w != None):
+        if w != None:
             # Legacy support if 'w' is used to specify term instead of the expected 'c'.
-            self.w = _convert_if_numpy_type(w)
-            if(type(w) != int and type(w) != float):
+            w = _convert_if_numpy_type(w)
+            if type(w) != int and type(w) != float:
                 raise RuntimeError("w must be a float or int value, or a NumPy value that can be converted to those.")
-            else:
-                self.c = w
-        elif(c != None):
+            self.c = w
+        elif c != None:
             # Current intended specification of term.
-            self.c = _convert_if_numpy_type(c)
-            if(type(c) != int and type(c) != float):
+            c = _convert_if_numpy_type(c)
+            if type(c) != int and type(c) != float:
                 raise RuntimeError("c must be a float or int value, or a numpy value that can be converted to those.")
-            else:
-                self.c = c
+            self.c = c
 
         self.ids = indices
 
