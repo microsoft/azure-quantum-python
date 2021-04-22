@@ -21,7 +21,7 @@ try:
 
         numpy_float_types = [np.float16, np.float32, np.float64, np.float_, np.half, np.single, np.double]
 
-        if (type(param) in numpy_integer_types + numpy_float_types):
+        if (hasattr(param, 'dtype') and param.dtype in numpy_integer_types + numpy_float_types):
             return param.item()
         else:
             return param
