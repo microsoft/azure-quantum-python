@@ -54,7 +54,7 @@ class Term:
 
         coeff = _convert_if_numpy_type(coeff)
         if type(coeff) != int and type(coeff) != float:
-            raise RuntimeError(f"{parameter_name_used} must be a float or int value, or a numpy value that can be converted to those.")
+            raise RuntimeError(f"{parameter_name_used} must be a float or int value, or a NumPy value that can be converted to those.")
         self.c = coeff
 
         self.ids = indices
