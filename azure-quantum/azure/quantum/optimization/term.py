@@ -21,7 +21,11 @@ try:
 
         numpy_float_types = [np.float16, np.float32, np.float64, np.float_, np.half, np.single, np.double]
 
-        if (hasattr(param, 'dtype') and param.dtype in numpy_integer_types + numpy_float_types):
+        if hasattr(param, '__iter__'):
+            # Handle scalar-like arrays, if specified.
+            param = param[0]
+
+        if hasattr(param, 'dtype') and param.dtype in numpy_integer_types + numpy_float_types:
             return param.item()
         else:
             return param
@@ -39,9 +43,6 @@ class Term:
     def __init__(self, indices: List[int] = None, w: Optional[WArray] = None, c: Optional[WArray] = None):
         if(type(w) == None and type(c) == None):
             raise RuntimeError("Cost should be provided for each term.")
-
-        if(type(w) != None and type(c) != None):
-            raise RuntimeError("Cost has been specified multiple times. Please do not specify 'w' if using 'c'.")
 
         if(w != None):
             # Legacy support if 'w' is used to specify term instead of the expected 'c'.
