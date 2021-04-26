@@ -27,9 +27,9 @@ __all__ = [
     'SubstochasticMonteCarlo'
 ]
 
-class RangeSchedule:
-    def __init__(self, type:str, initial:float, final:float):
-        """The constructor of Range Schedulor for solver.
+class RangeSchedule: 
+    def __init__(self, type: str, initial: float, final: float): 
+        """The constructor of Range Scheduler for solver.
 
         :param type: 
             specifies type of range scheduler, currently only support 'linear' and 'geometric'.
@@ -137,14 +137,26 @@ class Solver:
             params = self.params["params"] if self.nested_params else self.params
             params[name] = str(value) if self.force_str_params else value
 
-    def check_set_schedule(self, schedule:RangeSchedule, schedule_name:str):
+    def check_set_schedule(self, schedule: RangeSchedule, schedule_name: str):
+        """Check whether the schedule parameter is set well from RangeSchedule.
+        :param schedule:
+            schedule paramter to be checked whether is from RangeSchedule.
+        :param schedule_name:
+            name of the schedule parameter.
+        """
         if not(schedule is None):
             if not isinstance(schedule, RangeSchedule):
                 raise ValueError(f'{schedule_name} can only be from class "RangeSchedule"!')
-            schedule_param = {"type":schedule.type, "initial":schedule.initial, "final":schedule.final}
+            schedule_param = {"type": schedule.type, "initial": schedule.initial, "final": schedule.final}
             self.set_one_param(schedule_name, schedule_param)
 
-    def check_set_positive_int(self, var:int, var_name:str):
+    def check_set_positive_int(self, var: int, var_name: str):
+        """Check whether the var parameter is a positive integer.
+        :param var:
+            var paramter to be checked whether is a positive integer.
+        :param var_name:
+            name of the variable.
+        """
         if not(var is None):
             if not isinstance(var, int):
                 raise ValueError(f'{var_name} shall be int!')
@@ -152,7 +164,15 @@ class Solver:
                 raise ValueError(f'{var_name} must be positive!')
             self.set_one_param(var_name, var)
 
-    def check_set_float_limit(self, var:float, var_name:str, var_limit:float):
+    def check_set_float_limit(self, var: float, var_name: str, var_limit: float):
+        """Check whether the var parameter is a float larger than var_limit.
+        :param var:
+            var paramter to be checked whether is a float larger than var_limit.
+        :param var_name:
+            name of the variable.
+        :var_limit:
+            limit value of the variable to be checked.
+        """
         if not(var is None):
             if not (isinstance(var, float) or isinstance(var, int)):
                 raise ValueError(f'{var_name} shall be float!')
@@ -396,12 +416,12 @@ class PopulationAnnealing(Solver):
     def __init__(
         self, 
         workspace: Workspace, 
-        alpha: Optional[float]=None, 
-        seed: Optional[int]=None,  
+        alpha: Optional[float] = None, 
+        seed: Optional[int] = None,  
         population: Optional[int] = None,
         sweeps: Optional[int] = None,
         beta: Optional[RangeSchedule] = None,
-        culling_fraction: Optional[float]=None
+        culling_fraction: Optional[float] = None
     ):
         """The constructor of Population Annealing Search solver.
         
@@ -428,10 +448,10 @@ class PopulationAnnealing(Solver):
         target = "microsoft.populationannealing.cpu"
         super().__init__(
             workspace=workspace,
-            provider="Microsoft",
-            target=target,
-            input_data_format="microsoft.qio.v2",
-            output_data_format="microsoft.qio-results.v2")
+            provider = "Microsoft",
+            target = target,
+            input_data_format = "microsoft.qio.v2",
+            output_data_format = "microsoft.qio-results.v2")
 
         self.check_set_float_limit(alpha, "alpha", 1.0)
         self.set_one_param("seed", seed)
@@ -444,12 +464,12 @@ class SubstochasticMonteCarlo(Solver):
     def __init__(
         self, 
         workspace: Workspace, 
-        alpha: Optional[RangeSchedule]=None, 
-        seed: Optional[int]=None,  
+        alpha: Optional[RangeSchedule] = None, 
+        seed: Optional[int] = None,  
         target_population: Optional[int] = None,
         step_limit: Optional[int] = None,
         beta: Optional[RangeSchedule] = None,
-        steps_per_walker: Optional[int]=None
+        steps_per_walker: Optional[int] = None
     ):
         """The constructor of Population Annealing Search solver.
         
@@ -475,10 +495,10 @@ class SubstochasticMonteCarlo(Solver):
         target = "microsoft.substochasticmontecarlo.cpu"
         super().__init__(
             workspace=workspace,
-            provider="Microsoft",
-            target=target,
-            input_data_format="microsoft.qio.v2",
-            output_data_format="microsoft.qio-results.v2")
+            provider = "Microsoft",
+            target = target,
+            input_data_format = "microsoft.qio.v2",
+            output_data_format = "microsoft.qio-results.v2")
         self.set_one_param("seed", seed)
         self.check_set_schedule(beta, "beta")
         self.check_set_schedule(alpha, "alpha")
