@@ -275,34 +275,34 @@ class TestSolvers(QuantumTestBase):
         good = QuantumMonteCarlo(ws,trotter_number=100,seed=4321)
         self.assertIsNotNone(good)
         self.assertEqual("microsoft.qmc.cpu",good.target)
-        self.assertEqual({"trotter_number":100,"seed":4321},good.params["params"])
+        self.assertEqual({"trotter_number": 100,"seed": 4321}, good.params["params"])
 
     def test_PopulationAnnealing_input_params(self):
         ws = _init_ws_()
         beta = RangeSchedule('linear', 0.8, 5.8)
-        good = PopulationAnnealing(ws,alpha=100,seed=8888, population=300, sweeps=1000, culling_fraction=.5, beta=beta)
+        good = PopulationAnnealing(ws,alpha = 100,seed = 8888, population = 300, sweeps = 1000, culling_fraction = .5, beta = beta)
         self.assertIsNotNone(good)
         self.assertEqual("microsoft.populationannealing.cpu",good.target)
-        self.assertEqual(8888,good.params["params"]["seed"])
-        self.assertEqual(100.0,good.params["params"]["alpha"])
+        self.assertEqual(8888, good.params["params"]["seed"])
+        self.assertEqual(100.0, good.params["params"]["alpha"])
         self.assertEqual(300, good.params["params"]["population"])
         self.assertEqual(1000, good.params["params"]["sweeps"])
         self.assertEqual(.5, good.params["params"]["culling_fraction"])
-        self.assertEqual({"type":"linear", "initial":0.8, "final":5.8}, good.params["params"]["beta"])
+        self.assertEqual({"type": "linear", "initial": 0.8, "final": 5.8}, good.params["params"]["beta"])
 
     def test_SubstochasticMonteCarlo_input_params(self):
         ws = _init_ws_()
         beta = RangeSchedule('linear', 2.8, 15.8)
         alpha = RangeSchedule('geometric', 1.8, 2.8)
-        good = SubstochasticMonteCarlo(ws,alpha=alpha,seed=1888, target_population=3000, step_limit=1000, steps_per_walker=5, beta=beta)
+        good = SubstochasticMonteCarlo(ws,alpha = alpha,seed = 1888, target_population = 3000, step_limit = 1000, steps_per_walker = 5, beta = beta)
         self.assertIsNotNone(good)
-        self.assertEqual("microsoft.substochasticmontecarlo.cpu",good.target)
+        self.assertEqual("microsoft.substochasticmontecarlo.cpu", good.target)
         self.assertEqual(1888,good.params["params"]["seed"])
-        self.assertEqual({"type":"geometric", "initial":1.8, "final":2.8},good.params["params"]["alpha"])
+        self.assertEqual({"type": "geometric", "initial": 1.8, "final": 2.8},good.params["params"]["alpha"])
         self.assertEqual(3000, good.params["params"]["target_population"])
         self.assertEqual(1000, good.params["params"]["step_limit"])
         self.assertEqual(5, good.params["params"]["steps_per_walker"])
-        self.assertEqual({"type":"linear", "initial":2.8, "final":15.8}, good.params["params"]["beta"])
+        self.assertEqual({"type": "linear", "initial": 2.8, "final": 15.8}, good.params["params"]["beta"])
 
     def test_SSMC_bad_input_params(self):
         bad_range = None
@@ -315,12 +315,12 @@ class TestSolvers(QuantumTestBase):
         ws = _init_ws_()
         bad_solver = None
         with self.assertRaises(ValueError) as context:
-            bad_solver = SubstochasticMonteCarlo(ws, alpha=alpha,seed=1888, target_population=3000, step_limit=1000, steps_per_walker=5, beta=beta)
+            bad_solver = SubstochasticMonteCarlo(ws, alpha = alpha, seed = 1888, target_population = 3000, step_limit = 1000, steps_per_walker = 5, beta = beta)
         self.assertTrue('can only be from class "RangeSchedule"!' in str(context.exception))
         self.assertTrue(bad_solver is None)
 
         with self.assertRaises(ValueError) as context:
-            bad_solver = SubstochasticMonteCarlo(ws, seed=1888, target_population=3000, step_limit=1000, steps_per_walker=-1)
+            bad_solver = SubstochasticMonteCarlo(ws, seed = 1888, target_population = 3000, step_limit = 1000, steps_per_walker = -1)
         self.assertTrue('must be positive' in str(context.exception))
         self.assertTrue(bad_solver is None)
 
@@ -329,17 +329,17 @@ class TestSolvers(QuantumTestBase):
         ws = _init_ws_()
         bad_solver = None
         with self.assertRaises(ValueError) as context:
-            bad_solver = PopulationAnnealing(ws,alpha=100,seed=8888, population=300, sweeps=1000, culling_fraction=.5, beta=beta)
+            bad_solver = PopulationAnnealing(ws,alpha = 100, seed = 8888, population = 300, sweeps = 1000, culling_fraction= .5, beta = beta)
         self.assertTrue('can only be from class "RangeSchedule"!' in str(context.exception))
         self.assertTrue(bad_solver is None)
 
         with self.assertRaises(ValueError) as context:
-            bad_solver = PopulationAnnealing(ws,alpha=100,seed=8888, population=-300, sweeps=1000, culling_fraction=.5)
+            bad_solver = PopulationAnnealing(ws,alpha = 100, seed = 8888, population = -300, sweeps = 1000, culling_fraction = .5)
         self.assertTrue('must be positive' in str(context.exception))
         self.assertTrue(bad_solver is None)
 
         with self.assertRaises(ValueError) as context:
-            bad_solver = PopulationAnnealing(ws,alpha=0.2,seed=8888, sweeps=1000, culling_fraction=.5)
+            bad_solver = PopulationAnnealing(ws, alpha = 0.2, seed = 8888, sweeps = 1000, culling_fraction = .5)
         self.assertTrue('can not be smaller than' in str(context.exception))
         self.assertTrue(bad_solver is None)
 
