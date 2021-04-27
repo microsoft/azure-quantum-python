@@ -28,21 +28,21 @@ __all__ = [
 ]
 
 class RangeSchedule: 
-    def __init__(self, type: str, initial: float, final: float): 
+    def __init__(self, schedule_type: str, initial: float, final: float): 
         """The constructor of Range Scheduler for solver.
 
-        :param type: 
-            specifies type of range scheduler, currently only support 'linear' and 'geometric'.
+        :param schedule_type: 
+            specifies schedule_type of range scheduler, currently only support 'linear' and 'geometric'.
         :param initial: 
             initial value of range schedule.
         :param final:
             stop value of range schedule
         """
-        self.type = type
+        self.schedule_type = schedule_type
         self.initial = initial
         self.final = final
-        if not (self.type == 'linear' or self.type == 'geometric'):
-            raise ValueError('"type" can only be "linear" or "geometric"!')
+        if not (self.schedule_type == 'linear' or self.schedule_type == 'geometric'):
+            raise ValueError('"schedule_type" can only be "linear" or "geometric"!')
 
 class Solver:
 
@@ -147,7 +147,7 @@ class Solver:
         if not(schedule is None):
             if not isinstance(schedule, RangeSchedule):
                 raise ValueError(f'{schedule_name} can only be from class "RangeSchedule"!')
-            schedule_param = {"type": schedule.type, "initial": schedule.initial, "final": schedule.final}
+            schedule_param = {"type": schedule.schedule_type, "initial": schedule.initial, "final": schedule.final}
             self.set_one_param(schedule_name, schedule_param)
 
     def check_set_positive_int(self, var: int, var_name: str):
