@@ -107,6 +107,24 @@ class Solver:
             or the URL of an Azure Storage Blob where the serialized version
             of a Problem has been uploaded.
         """
+        # print a warning if we suspect the job may take long based on its configured properties.
+        if not isinstance(problem, str):
+            is_large_problem = problem.is_large()
+            if is_large_problem:
+                if nested_params and "sweeps" in self.params["params"]:
+                    sweeps = self.params["params"]["sweeps"]
+                    # if problem is large and sweeps is large, warn. 
+                    if sweeps >= 10000:
+                        logger.warn(f"There is a large problem submitted and a large number of sweeps ({sweeps}) configured. \
+                        This submission could result in a long runtime.")
+
+        # do a timeout check if param-free, to warn new users who accidentally set high timeout values.
+        if nested_params and "timeout" in self.params["params"]:
+            timeout = self.params["params"]["timeout"]
+            if timeout >= 600:
+                logger.warn(f"A large timeout has been set for this submission ({timeout}). If this is intended, disregard this warning. \
+                Otherwise, consider cancelling the job and resubmitting with a lower timeout.")
+
         job = self.submit(problem)
         logger.info(f"Submitted job: '{job.id}'")
         

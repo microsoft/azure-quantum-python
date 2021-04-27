@@ -212,3 +212,16 @@ class Problem:
                 total_cost += term.evaluate(configuration_transformed)
 
         return total_cost
+
+    def is_large(self) -> bool:
+        """Determines if the current problem is large. 
+        "large" is an arbitrary threshold and can be easily changed. Based on usage data, we have defined a 
+        large problem to be 2500+ variables AND 1mil+ terms. 
+        """
+
+        set_vars = set()
+        num_terms = len(self.terms)
+        for term in self.terms:
+            set_vars.update(term.ids)
+        
+        return (len(set_vars) >= 2500 and len(self.terms) >= 10e6)
