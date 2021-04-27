@@ -308,7 +308,7 @@ class TestSolvers(QuantumTestBase):
         bad_range = None
         with self.assertRaises(ValueError) as context:
             bad_range = RangeSchedule('nothing', 2.8, 15.8)
-        self.assertTrue('"type" can only be' in str(context.exception))
+        self.assertTrue('"schedule_type" can only be' in str(context.exception))
         self.assertTrue(bad_range is None)
         beta = 1
         alpha = 2
