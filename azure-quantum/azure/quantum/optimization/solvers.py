@@ -129,18 +129,18 @@ class Solver:
         # print a warning if we suspect the job may take long based on its configured properties.
         is_large_problem = problem.is_large()
         if is_large_problem:
-            if nested_params and "sweeps" in self.params["params"]:
+            if self.nested_params and "sweeps" in self.params["params"]:
                 sweeps = int(self.params["params"]["sweeps"])
                 # if problem is large and sweeps is large, warn. 
-                if sweeps >= SWEEPS_WARNING:
-                    logger.warn(f"There is a large problem submitted and a large number of sweeps ({sweeps}) configured. \
+                if sweeps >= Solver.SWEEPS_WARNING:
+                    logger.warning(f"There is a large problem submitted and a large number of sweeps ({sweeps}) configured. \
                     This submission could result in a long runtime.")
 
         # do a timeout check if param-free, to warn new users who accidentally set high timeout values.
-        if nested_params and "timeout" in self.params["params"]:
+        if self.nested_params and "timeout" in self.params["params"]:
             timeout = int(self.params["params"]["timeout"])
-            if timeout >= TIMEOUT_WARNING:
-                logger.warn(f"A large timeout has been set for this submission ({timeout}). If this is intended, disregard this warning. \
+            if timeout >= Solver.TIMEOUT_WARNING:
+                logger.warning(f"A large timeout has been set for this submission ({timeout}). If this is intended, disregard this warning. \
                 Otherwise, consider cancelling the job and resubmitting with a lower timeout.")
 
 class HardwarePlatform(Enum):

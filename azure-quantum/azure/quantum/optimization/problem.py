@@ -60,7 +60,7 @@ class Problem:
     Constant thresholds used to determine if a problem is "large".
     """
     NUM_VARIABLES_LARGE = 2500
-    NUM_TERMS_LARGE = 10e6
+    NUM_TERMS_LARGE = 1e6
 
     def serialize(self) -> str:
         """Serializes the problem to a JSON string"""
@@ -226,8 +226,7 @@ class Problem:
         """
 
         set_vars = set()
-        num_terms = len(self.terms)
         for term in self.terms:
             set_vars.update(term.ids)
         
-        return (len(set_vars) >= NUM_VARIABLES_LARGE and len(self.terms) >= NUM_TERMS_LARGE)
+        return (len(set_vars) >= Problem.NUM_VARIABLES_LARGE and len(self.terms) >= Problem.NUM_TERMS_LARGE)
