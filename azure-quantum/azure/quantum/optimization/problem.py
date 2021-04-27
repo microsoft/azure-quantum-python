@@ -56,6 +56,12 @@ class Problem:
         self.uploaded_blob_uri = None
         self.uploaded_blob_params = None
 
+    """
+    Constant thresholds used to determine if a problem is "large".
+    """
+    NUM_VARIABLES_LARGE = 2500
+    NUM_TERMS_LARGE = 10e6
+
     def serialize(self) -> str:
         """Serializes the problem to a JSON string"""
         result = {
@@ -224,4 +230,4 @@ class Problem:
         for term in self.terms:
             set_vars.update(term.ids)
         
-        return (len(set_vars) >= 2500 and len(self.terms) >= 10e6)
+        return (len(set_vars) >= NUM_VARIABLES_LARGE and len(self.terms) >= NUM_TERMS_LARGE)
