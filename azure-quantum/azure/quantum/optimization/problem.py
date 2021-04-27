@@ -222,7 +222,7 @@ class Problem:
     def is_large(self) -> bool:
         """Determines if the current problem is large. 
         "large" is an arbitrary threshold and can be easily changed. Based on usage data, we have defined a 
-        large problem to be 2500+ variables AND 1mil+ terms. 
+        large problem to be NUM_VARIABLES_LARGE+ variables AND NUM_TERMS_LARGE+ terms. 
         """
 
         set_vars = set()
