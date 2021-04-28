@@ -198,7 +198,7 @@ class TestProblem(QuantumTestBase):
         problem.add_term(6.0, list(range(3000)))
         self.assertTrue(not problem.is_large())
 
-        problem.add_terms([Term(indices=[9999], c=1.0)]*int(1e6)) #create 2mil dummy terms
+        problem.add_terms([Term(indices=[9999], c=1.0)]*int(1e6)) #create 1mil dummy terms
         self.assertTrue(problem.is_large())
 
 def _init_ws_():
