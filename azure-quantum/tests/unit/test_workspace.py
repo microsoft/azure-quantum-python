@@ -7,13 +7,12 @@
 # Licensed under the MIT License.
 ##
 
-## IMPORTS ##
-
 import json
 import pytest
 
 from azure.quantum import Workspace
 from quantum_test_base import QuantumTestBase 
+
 
 class TestWorkspace(QuantumTestBase):
     def test_workspace_login(self):
@@ -22,7 +21,7 @@ class TestWorkspace(QuantumTestBase):
         name = "n"
 
         ws = self.create_workspace()
-        ws.login() 
+        ws.login()
 
     def test_create_workspace_instance_valid(self):
         subscription_id = "44ef49ad-64e4-44e5-a3ba-1ee87e19d3f4"
@@ -65,14 +64,14 @@ class TestWorkspace(QuantumTestBase):
             resource_group=resource_group,
             name=name)
         assert ws.location == "westus"
-        
+
         ws = Workspace(
             subscription_id=subscription_id,
             resource_group=resource_group,
             name=name,
             location="   ")
         assert ws.location == "westus"
-        
+
         # User-provided location name should be normalized
         location = "East US"
         ws = Workspace(

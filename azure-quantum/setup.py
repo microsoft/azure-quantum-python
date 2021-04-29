@@ -7,13 +7,11 @@
 # Licensed under the MIT License.
 ##
 
-## IMPORTS ##
-
 import setuptools
 import os
 import distutils
 
-## VERSION INFORMATION ##
+# VERSION INFORMATION
 # Our build process sets the PYTHON_VERSION environment variable to a version
 # string that is compatible with PEP 440, and so we inherit that version number
 # here and propagate that to qsharp/version.py.
@@ -34,7 +32,7 @@ with open('./azure/quantum/version.py', 'w') as f:
 __version__ = "{version}"
 ''')
 
-## DESCRIPTION ##
+# DESCRIPTION
 # The long description metadata passed to setuptools is used to populate the
 # PyPI page for this package. Thus, we'll generate the description by using the
 # same README.md file that we use in the GitHub repo.
@@ -42,12 +40,12 @@ __version__ = "{version}"
 with open("./README.md", "r") as fh:
     long_description = fh.read()
 
-## LIST OF REQUIREMENTS ##
+# LIST OF REQUIREMENTS
 # Get list of requirements from requirements.txt
 with open("./requirements.txt", "r") as fh:
     requirements = fh.readlines()
 
-## SETUPTOOLS INVOCATION ##
+# SETUPTOOLS INVOCATION
 setuptools.setup(
     name="azure-quantum",
     version=version,
