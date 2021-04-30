@@ -65,6 +65,11 @@ class Solver:
         self.force_str_params = force_str_params
         self.params = { "params": {} } if nested_params else {}
 
+    """Constants that define thresholds for submission warnings
+    """
+    SWEEPS_WARNING = 10000
+    TIMEOUT_WARNING = 600
+
     def submit(self, problem: Union[str, Problem], compress: bool = True) -> Job:
         """Submits a job to execution to the associated Azure Quantum Workspace.
 
@@ -127,6 +132,9 @@ class Solver:
             or the URL of an Azure Storage Blob where the serialized version
             of a Problem has been uploaded.
         """
+        if not isinstance(problem, str):
+            self.check_submission_warnings(problem)
+
         job = self.submit(problem)
         logger.info(f"Submitted job: '{job.id}'")
         
@@ -136,6 +144,24 @@ class Solver:
         if value is not None:
             params = self.params["params"] if self.nested_params else self.params
             params[name] = str(value) if self.force_str_params else value
+    
+    def check_submission_warnings(self, problem: Problem):
+        # print a warning if we suspect the job may take long based on its configured properties.
+        is_large_problem = problem.is_large()
+        if is_large_problem:
+            if self.nested_params and "sweeps" in self.params["params"]:
+                sweeps = int(self.params["params"]["sweeps"])
+                # if problem is large and sweeps is large, warn. 
+                if sweeps >= Solver.SWEEPS_WARNING:
+                    logger.warning(f"There is a large problem submitted and a large number of sweeps ({sweeps}) configured. \
+                    This submission could result in a long runtime.")
+
+        # do a timeout check if param-free, to warn new users who accidentally set high timeout values.
+        if self.nested_params and "timeout" in self.params["params"]:
+            timeout = int(self.params["params"]["timeout"])
+            if timeout >= Solver.TIMEOUT_WARNING:
+                logger.warning(f"A large timeout has been set for this submission ({timeout}). If this is intended, disregard this warning. \
+                Otherwise, consider cancelling the job and resubmitting with a lower timeout.")
 
     def check_set_schedule(self, schedule: RangeSchedule, schedule_name: str):
         """Check whether the schedule parameter is set well from RangeSchedule.

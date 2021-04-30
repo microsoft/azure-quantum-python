@@ -188,6 +188,19 @@ class TestProblem(QuantumTestBase):
         problem2 = problem.set_fixed_variables({'0':0})
         self.assertEqual({'1':1, '2':1}, problem2.init_config)
 
+    def test_problem_large(self):
+        problem = Problem(name="test", terms=[], problem_type=ProblemType.pubo)
+        self.assertTrue(not problem.is_large())
+
+        problem.add_term(5.0, [])
+        self.assertTrue(not problem.is_large())
+
+        problem.add_term(6.0, list(range(3000)))
+        self.assertTrue(not problem.is_large())
+
+        problem.add_terms([Term(indices=[9999], c=1.0)]*int(1e6)) #create 1mil dummy terms
+        self.assertTrue(problem.is_large())
+
 def _init_ws_():
     return Workspace(
         subscription_id="subs_id", 
