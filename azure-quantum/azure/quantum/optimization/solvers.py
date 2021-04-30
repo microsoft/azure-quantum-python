@@ -16,13 +16,33 @@ from azure.quantum.storage import ContainerClient, create_container_using_client
 logger = logging.getLogger(__name__)
 
 __all__ = [
+    'RangeSchedule',
     'Solver',
     'ParallelTempering',
     'SimulatedAnnealing',
     'HardwarePlatform',
     'Tabu',
-    'QuantumMonteCarlo'
+    'QuantumMonteCarlo',
+    'PopulationAnnealing',
+    'SubstochasticMonteCarlo'
 ]
+
+class RangeSchedule: 
+    def __init__(self, schedule_type: str, initial: float, final: float): 
+        """The constructor of Range Scheduler for solver.
+
+        :param schedule_type: 
+            specifies schedule_type of range scheduler, currently only support 'linear' and 'geometric'.
+        :param initial: 
+            initial value of range schedule.
+        :param final:
+            stop value of range schedule
+        """
+        self.schedule_type = schedule_type
+        self.initial = initial
+        self.final = final
+        if not (self.schedule_type == 'linear' or self.schedule_type == 'geometric'):
+            raise ValueError('"schedule_type" can only be "linear" or "geometric"!')
 
 class Solver:
 
@@ -45,15 +65,23 @@ class Solver:
         self.force_str_params = force_str_params
         self.params = { "params": {} } if nested_params else {}
 
-    def submit(self, problem: Union[str, Problem]) -> Job:
+    """Constants that define thresholds for submission warnings
+    """
+    SWEEPS_WARNING = 10000
+    TIMEOUT_WARNING = 600
+
+    def submit(self, problem: Union[str, Problem], compress: bool = True) -> Job:
         """Submits a job to execution to the associated Azure Quantum Workspace.
 
-       :param problem: 
+        :param problem:
             The Problem to solve. It can be an instance of a Problem, 
             or the URL of an Azure Storage Blob where the serialized version
             of a Problem has been uploaded.
+        :param compress:
+            Whether or not to compress the problem when uploading it
+            the Blob Storage.
         """
-        ## Create a container URL:
+        # Create a container URL:
         job_id = Job.create_job_id()
         logger.info(f"Submitting job with id: {job_id}")
 
@@ -76,7 +104,7 @@ class Solver:
             problem_uri = problem  
         else:
             name = problem.name
-            problem_uri = problem.upload(self.workspace, compress=True, container_name=container_name, blob_name="inputData")
+            problem_uri = problem.upload(self.workspace, compress=compress, container_name=container_name, blob_name="inputData")
         
         logger.info(f"Submitting problem '{name}'. Using payload from: '{problem_uri}'")
 
@@ -104,6 +132,9 @@ class Solver:
             or the URL of an Azure Storage Blob where the serialized version
             of a Problem has been uploaded.
         """
+        if not isinstance(problem, str):
+            self.check_submission_warnings(problem)
+
         job = self.submit(problem)
         logger.info(f"Submitted job: '{job.id}'")
         
@@ -113,6 +144,67 @@ class Solver:
         if value is not None:
             params = self.params["params"] if self.nested_params else self.params
             params[name] = str(value) if self.force_str_params else value
+    
+    def check_submission_warnings(self, problem: Problem):
+        # print a warning if we suspect the job may take long based on its configured properties.
+        is_large_problem = problem.is_large()
+        if is_large_problem:
+            if self.nested_params and "sweeps" in self.params["params"]:
+                sweeps = int(self.params["params"]["sweeps"])
+                # if problem is large and sweeps is large, warn. 
+                if sweeps >= Solver.SWEEPS_WARNING:
+                    logger.warning(f"There is a large problem submitted and a large number of sweeps ({sweeps}) configured. \
+                    This submission could result in a long runtime.")
+
+        # do a timeout check if param-free, to warn new users who accidentally set high timeout values.
+        if self.nested_params and "timeout" in self.params["params"]:
+            timeout = int(self.params["params"]["timeout"])
+            if timeout >= Solver.TIMEOUT_WARNING:
+                logger.warning(f"A large timeout has been set for this submission ({timeout}). If this is intended, disregard this warning. \
+                Otherwise, consider cancelling the job and resubmitting with a lower timeout.")
+
+    def check_set_schedule(self, schedule: RangeSchedule, schedule_name: str):
+        """Check whether the schedule parameter is set well from RangeSchedule.
+        :param schedule:
+            schedule paramter to be checked whether is from RangeSchedule.
+        :param schedule_name:
+            name of the schedule parameter.
+        """
+        if not(schedule is None):
+            if not isinstance(schedule, RangeSchedule):
+                raise ValueError(f'{schedule_name} can only be from class "RangeSchedule"!')
+            schedule_param = {"type": schedule.schedule_type, "initial": schedule.initial, "final": schedule.final}
+            self.set_one_param(schedule_name, schedule_param)
+
+    def check_set_positive_int(self, var: int, var_name: str):
+        """Check whether the var parameter is a positive integer.
+        :param var:
+            var paramter to be checked whether is a positive integer.
+        :param var_name:
+            name of the variable.
+        """
+        if not(var is None):
+            if not isinstance(var, int):
+                raise ValueError(f'{var_name} shall be int!')
+            if var <= 0:
+                raise ValueError(f'{var_name} must be positive!')
+            self.set_one_param(var_name, var)
+
+    def check_set_float_limit(self, var: float, var_name: str, var_limit: float):
+        """Check whether the var parameter is a float larger than var_limit.
+        :param var:
+            var paramter to be checked whether is a float larger than var_limit.
+        :param var_name:
+            name of the variable.
+        :var_limit:
+            limit value of the variable to be checked.
+        """
+        if not(var is None):
+            if not (isinstance(var, float) or isinstance(var, int)):
+                raise ValueError(f'{var_name} shall be float!')
+            if var <= var_limit:
+                raise ValueError(f'{var_name} can not be smaller than {var_limit}!')
+            self.set_one_param(var_name, var)
 
 class HardwarePlatform(Enum):
     CPU = 1
@@ -254,7 +346,7 @@ class Tabu(Solver):
         restarts: Optional[int]=None
     ):
         """The constructor of an Tabu Search solver.
-        
+
         Multi-core Tabu Search solver for binary optimization problems 
         with k-local interactions on an all-to-all graph topology with double 
         precision support for the coupler weights. 
@@ -345,4 +437,98 @@ class QuantumMonteCarlo(Solver):
         self.set_one_param("transverse_field_stop",transverse_field_stop)
         self.set_one_param("beta_start",beta_start)
         self.set_one_param("restarts",restarts)
+
+class PopulationAnnealing(Solver):
+    def __init__(
+        self, 
+        workspace: Workspace, 
+        alpha: Optional[float] = None, 
+        seed: Optional[int] = None,  
+        population: Optional[int] = None,
+        sweeps: Optional[int] = None,
+        beta: Optional[RangeSchedule] = None,
+        culling_fraction: Optional[float] = None
+    ):
+        """The constructor of Population Annealing Search solver.
+        
+        Population Annealing Search solver for binary optimization problems 
+        with k-local interactions on an all-to-all graph topology with double 
+        precision support for the coupler weights. 
+
+        This solver is CPU only, and not support parameter free now.
+
+        :param alpha: 
+            ratio to trigger a restart, must be larger than 1
+        :param seed: 
+            specifies a random seed value.
+        :population:
+            size of target population, must be positive
+        :param sweeps:
+            Number of monte carlo sweeps
+        :param beta:
+            beta value to control the annealing temperatures, it must be a object of RangeSchedule
+        :param culling_fraction:
+            constant culling rate, must be larger than 0
+        """
+
+        target = "microsoft.populationannealing.cpu"
+        super().__init__(
+            workspace=workspace,
+            provider = "Microsoft",
+            target = target,
+            input_data_format = "microsoft.qio.v2",
+            output_data_format = "microsoft.qio-results.v2")
+
+        self.check_set_float_limit(alpha, "alpha", 1.0)
+        self.set_one_param("seed", seed)
+        self.check_set_positive_int(population, "population")
+        self.check_set_positive_int(sweeps, "sweeps")
+        self.check_set_schedule(beta, "beta")
+        self.check_set_float_limit(culling_fraction, "culling_fraction", 0.0)
+
+class SubstochasticMonteCarlo(Solver):
+    def __init__(
+        self, 
+        workspace: Workspace, 
+        alpha: Optional[RangeSchedule] = None, 
+        seed: Optional[int] = None,  
+        target_population: Optional[int] = None,
+        step_limit: Optional[int] = None,
+        beta: Optional[RangeSchedule] = None,
+        steps_per_walker: Optional[int] = None
+    ):
+        """The constructor of Population Annealing Search solver.
+        
+        Population Annealing Search solver for binary optimization problems 
+        with k-local interactions on an all-to-all graph topology with double 
+        precision support for the coupler weights. 
+
+        This solver is CPU only, and not support parameter free now.
+
+        :param alpha: 
+            alpha (chance to step) values evolve over time
+        :param seed: 
+            specifies a random seed value.
+        :target_population:
+            size of target population, must be positive
+        :param step_limit:
+            number of monte carlo steps, must be positive
+        :param beta:
+            beta (resampling factor) values evolve over time
+        :param steps_per_walker:
+            number of steps to attempt for each walker, must be postive
+        """
+        target = "microsoft.substochasticmontecarlo.cpu"
+        super().__init__(
+            workspace=workspace,
+            provider = "Microsoft",
+            target = target,
+            input_data_format = "microsoft.qio.v2",
+            output_data_format = "microsoft.qio-results.v2")
+        self.set_one_param("seed", seed)
+        self.check_set_schedule(beta, "beta")
+        self.check_set_schedule(alpha, "alpha")
+        self.check_set_positive_int(target_population, "target_population")
+        self.check_set_positive_int(steps_per_walker, "steps_per_walker")
+        self.check_set_positive_int(step_limit, "step_limit")
 
