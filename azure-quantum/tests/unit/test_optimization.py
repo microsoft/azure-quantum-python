@@ -11,7 +11,7 @@
 ## IMPORTS ##
 
 import json
-
+import unittest
 from azure.quantum import Workspace
 from azure.quantum.optimization import Problem, ProblemType, Term
 from azure.quantum.optimization.solvers import ParallelTempering, PopulationAnnealing, RangeSchedule, SimulatedAnnealing, HardwarePlatform, QuantumMonteCarlo, SubstochasticMonteCarlo
