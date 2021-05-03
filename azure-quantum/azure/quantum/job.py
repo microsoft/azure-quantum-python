@@ -4,24 +4,15 @@
 ##
 import logging
 import time
-import io
 import json
 import uuid
 
-from typing import List, TYPE_CHECKING
+from typing import TYPE_CHECKING
 from urllib.parse import urlparse
 
-from msrest.authentication import Authentication
 from azure.quantum._client.models import JobDetails
 from azure.quantum.storage import download_blob
-from azure.storage.blob import (
-    BlobServiceClient,
-    ContainerClient,
-    BlobClient,
-    BlobSasPermissions,
-    generate_blob_sas,
-    generate_container_sas,
-)
+from azure.storage.blob import BlobClient
 
 __all__ = ["Job"]
 
@@ -36,9 +27,11 @@ class Job:
 
     :param workspace: Workspace instance to submit job to
     :type workspace: Workspace
-    :param job_details: Job details model, contains Job ID, name and other details
+    :param job_details: Job details model,
+            contains Job ID, name and other details
     :type job_details: JobDetails
     """
+
     def __init__(self, workspace: "Workspace", job_details: JobDetails):
         self.workspace = workspace
         self.details = job_details
@@ -55,12 +48,14 @@ class Job:
                 or self.details.status == "Cancelled")
 
     def wait_until_completed(self, max_poll_wait_secs=30):
-        """Keeps refreshing the Job's details until it reaches a finished status."""
+        """Keeps refreshing the Job's details
+        until it reaches a finished status."""
         self.refresh()
         poll_wait = 0.2
         while not self.has_completed():
             logger.debug(
-                f"Waiting for job {self.id}, it is in status '{self.details.status}'"
+                f"Waiting for job {self.id}," +
+                f"it is in status '{self.details.status}'"
             )
             print(".", end="", flush=True)
             time.sleep(poll_wait)
@@ -69,7 +64,7 @@ class Job:
                          else poll_wait * 1.5)
 
     def get_results(self):
-        if not self.results is None:
+        if self.results is not None:
             return self.results
 
         if not self.has_completed():
@@ -77,12 +72,15 @@ class Job:
 
         if not self.details.status == "Succeeded":
             raise RuntimeError(
-                f"Cannot retrieve results as job execution failed (status: {self.details.status}. error: {self.details.error_data})"
+                f'{"Cannot retrieve results as job execution failed"}' +
+                f"(status: {self.details.status}." +
+                f"error: {self.details.error_data})"
             )
 
         url = urlparse(self.details.output_data_uri)
         if url.query.find("se=") == -1:
-            # output_data_uri does not contains SAS token, get sas url from service
+            # output_data_uri does not contains SAS token,
+            # get sas url from service
             blob_client = BlobClient.from_blob_url(
                 self.details.output_data_uri)
             blob_uri = self.workspace._get_linked_storage_sas_uri(
