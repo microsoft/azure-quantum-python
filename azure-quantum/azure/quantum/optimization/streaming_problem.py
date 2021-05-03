@@ -294,7 +294,8 @@ class JsonStreamingProblemUploader:
     def _upload_start(self, terms):
         self.started_upload = True
         self._upload_chunk(
-            f'{{"cost_function":{{"version":"{self._get_version()}","type":"{self._scrub(self.problem.problem_type.name)}",'
+            f'{{"cost_function":{{"version":"{self._get_version()}",'
+            + f'"type":"{self._scrub(self.problem.problem_type.name)}",'
             + self._get_initial_config_string() + '"terms":[' +
             self._get_terms_string(terms))
 
