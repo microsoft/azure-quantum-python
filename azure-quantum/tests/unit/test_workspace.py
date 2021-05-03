@@ -7,11 +7,13 @@
 # Licensed under the MIT License.
 ##
 
+## IMPORTS ##
+
 import json
 import pytest
 
 from azure.quantum import Workspace
-from quantum_test_base import QuantumTestBase 
+from quantum_test_base import QuantumTestBase
 
 
 class TestWorkspace(QuantumTestBase):
@@ -32,7 +34,8 @@ class TestWorkspace(QuantumTestBase):
         ws = Workspace(
             subscription_id=subscription_id,
             resource_group=resource_group,
-            name=name)
+            name=name,
+        )
         assert ws.subscription_id == subscription_id
         assert ws.resource_group == resource_group
         assert ws.name == name
@@ -41,7 +44,8 @@ class TestWorkspace(QuantumTestBase):
             subscription_id=subscription_id,
             resource_group=resource_group,
             name=name,
-            storage=storage)
+            storage=storage,
+        )
         assert ws.storage == storage
 
         resource_id = f"/subscriptions/{subscription_id}/RESOurceGroups/{resource_group}/providers/Microsoft.Quantum/Workspaces/{name}"
@@ -62,14 +66,16 @@ class TestWorkspace(QuantumTestBase):
         ws = Workspace(
             subscription_id=subscription_id,
             resource_group=resource_group,
-            name=name)
+            name=name,
+        )
         assert ws.location == "westus"
 
         ws = Workspace(
             subscription_id=subscription_id,
             resource_group=resource_group,
             name=name,
-            location="   ")
+            location="   ",
+        )
         assert ws.location == "westus"
 
         # User-provided location name should be normalized
@@ -78,7 +84,8 @@ class TestWorkspace(QuantumTestBase):
             subscription_id=subscription_id,
             resource_group=resource_group,
             name=name,
-            location=location)
+            location=location,
+        )
         assert ws.location == "eastus"
 
     def test_create_workspace_instance_invalid(self):
@@ -94,7 +101,8 @@ class TestWorkspace(QuantumTestBase):
             ws = Workspace(
                 subscription_id=subscription_id,
                 resource_group=resource_group,
-                name="")
+                name="",
+            )
 
         with pytest.raises(ValueError):
             ws = Workspace(resource_id="invalid/resource/id")

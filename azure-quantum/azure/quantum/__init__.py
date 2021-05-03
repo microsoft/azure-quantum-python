@@ -4,9 +4,13 @@
 ##
 import logging
 
-from .version import __version__
-from .job import *
-from .workspace import *
+try:
+    from .version import __version__
+except:
+    __version__ = "<unknown>"
 
 logger = logging.getLogger(__name__)
 logger.info(f"version: {__version__}")
+
+from .job import *
+from .workspace import *
