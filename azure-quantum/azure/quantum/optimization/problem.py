@@ -9,7 +9,6 @@ import uuid
 import io
 import gzip
 import json
-import numpy as np
 
 from typing import List, Union, Dict, Optional, TYPE_CHECKING
 from enum import Enum
@@ -34,11 +33,14 @@ class Problem:
 
     :param name: Problem name
     :type name: str
-    :param terms: Problem terms, depending on solver. Defaults to None
+    :param terms: Problem terms, depending on solver.
+        Defaults to None
     :type terms: Optional[List[Term]], optional
-    :param init_config: Optional configuration details, depending on solver. Defaults to None
+    :param init_config: Optional configuration details, depending on solver.
+        Defaults to None
     :type init_config: Optional[Dict[str,int]], optional
-    :param problem_type: Problem type (ProblemType.pubo or ProblemType.ising), defaults to ProblemType.ising
+    :param problem_type: Problem type (ProblemType.pubo or
+        ProblemType.ising), defaults to ProblemType.ising
     :type problem_type: ProblemType, optional
     """
     def __init__(
@@ -78,9 +80,11 @@ class Problem:
 
     @classmethod
     def deserialize(cls, problem_as_json: str, name: str):
-        """Deserializes the problem from a JSON string serialized with Problem.serialize()
+        """Deserializes the problem from a
+            JSON string serialized with Problem.serialize()
 
-        :param problem_as_json: The string to be deserialized to a `Problem` instance
+        :param problem_as_json:
+            The string to be deserialized to a `Problem` instance
         :type problem_as_json: str
         :param name: The name of the problem
         :type name: str
@@ -126,7 +130,8 @@ class Problem:
         blob_name: str = None,
         compress: bool = True,
     ):
-        """Uploads an optimization problem instance to the cloud storage linked with the Workspace.
+        """Uploads an optimization problem instance to
+        the cloud storage linked with the Workspace.
 
         :param workspace: interaction terms of the problem.
         :type workspace: Workspace
@@ -192,14 +197,17 @@ class Problem:
     def set_fixed_variables(
             self, fixed_variables: Union[Dict[int, int],
                                          Dict[str, int]]) -> Problem:
-        """Transforms the current problem with a set of fixed variables and returns the new modified problem.
+        """Transforms the current problem with a set of fixed
+        variables and returns the new modified problem.
         The original Problem instance is untouched.
 
-        :param fixed_variables: The dictionary of variable ids and their fixed state
+        :param fixed_variables:
+            The dictionary of variable ids and their fixed state
         """
         if len(fixed_variables) == 0:
             raise RuntimeError(
-                "Error: fixed_variables is empty - please specify at least one fixed variable"
+                "Error: fixed_variables is empty - \
+                please specify at least one fixed variable"
             )
 
         fixed_transformed = {
@@ -238,9 +246,11 @@ class Problem:
     def evaluate(
             self, configuration: Union[Dict[int, int], Dict[str,
                                                             int]]) -> float:
-        """Given a configuration/variable assignment, return the cost function value of this problem.
+        """Given a configuration/variable assignment,
+        return the cost function value of this problem.
 
-        :param configuration: The dictionary of variable ids to their assigned value
+        :param configuration: The dictionary of
+         variable ids to their assigned value
         """
         configuration_transformed = {
             int(k): configuration[k]
@@ -255,8 +265,10 @@ class Problem:
 
     def is_large(self) -> bool:
         """Determines if the current problem is large.
-        "large" is an arbitrary threshold and can be easily changed. Based on usage data, we have defined a
-        large problem to be NUM_VARIABLES_LARGE+ variables AND NUM_TERMS_LARGE+ terms.
+        "large" is an arbitrary threshold and can be easily changed.
+        Based on usage data, we have defined a
+        large problem to be NUM_VARIABLES_LARGE+
+        variables AND NUM_TERMS_LARGE+ terms.
         """
 
         set_vars = set()
