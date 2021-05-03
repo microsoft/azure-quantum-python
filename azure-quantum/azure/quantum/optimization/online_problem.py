@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 
 class OnlineProblem(Problem):
     def __init__(self, name:str, blob_uri:str):
-        #super().__init__(self, self.name = name)
+        super().__init__(self)
         self.name = name
         self.uploaded_blob_uri = blob_uri
     

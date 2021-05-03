@@ -1,5 +1,5 @@
 import unittest
-from unittest.mock import Mock, patch
+from unittest.mock import Mock
 from azure.quantum.optimization import Problem, Term
 import azure.quantum.optimization.problem 
 from common import expected_terms

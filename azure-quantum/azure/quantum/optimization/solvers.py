@@ -101,7 +101,10 @@ class Solver:
 
         if isinstance(problem, str):
             name = "Optimization problem"
-            problem_uri = problem  
+            problem_uri = problem 
+        elif not problem.terms:
+            name = problem.name
+            problem_uri = problem.uploaded_blob_uri
         else:
             name = problem.name
             problem_uri = problem.upload(self.workspace, compress=compress, container_name=container_name, blob_name="inputData")
