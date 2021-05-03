@@ -27,5 +27,13 @@ class TestOnlineProblemClass(unittest.TestCase):
         }
         with self.assertRaises(Exception):
             self.o_problem.evaluate(config_dict)
+    
+    def test_set_fixed_variables(self):
+        config_dict = {
+            1:1,
+            0:1
+        }
+        with self.assertRaises(Exception):
+            self.o_problem.set_fixed_variables(config_dict)
 
 
