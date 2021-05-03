@@ -79,7 +79,8 @@ class Solver:
     def submit(self,
                problem: Union[str, Problem],
                compress: bool = True) -> Job:
-        """Submits a job to execution to the associated Azure Quantum Workspace.
+        """Submits a job to execution to the associated
+        Azure Quantum Workspace.
 
         :param problem:
             The Problem to solve. It can be an instance of a Problem,
@@ -188,7 +189,8 @@ class Solver:
             timeout = int(self.params["params"]["timeout"])
             if timeout >= Solver.TIMEOUT_WARNING:
                 logger.warning(
-                    f"A large timeout has been set for this submission ({timeout}). \
+                    f"A large timeout has been set for this submission \
+                        ({timeout}). \
                         If this is intended, disregard this warning. \
                         Otherwise, consider cancelling the job \
                         and resubmitting with a lower timeout."

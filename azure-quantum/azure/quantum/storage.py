@@ -344,7 +344,8 @@ class StreamedBlob:
         self.blocks.append(id)
 
     def commit(self, metadata: Dict[str, str] = None):
-        """Synchronously commits all previously uploaded blobs to the block blob
+        """Synchronously commits all previously
+        uploaded blobs to the block blob
 
         :param metadata: Optional dictionary of
                metadata to be applied to the block blob

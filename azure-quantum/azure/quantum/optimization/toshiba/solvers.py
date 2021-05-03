@@ -127,7 +127,8 @@ class SimulatedBifurcationMachine(Solver):
     def submit(
         self, problem: Union[str, Problem], compress: bool = True
     ) -> Job:
-        """Submits a job to execution to the associated Azure Quantum Workspace.
+        """Submits a job to execution to
+        the associated Azure Quantum Workspace.
 
         :param problem:
             The Problem to solve. It can be an instance of a Problem,
