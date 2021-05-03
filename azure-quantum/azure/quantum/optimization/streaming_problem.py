@@ -12,7 +12,6 @@ import threading
 import sys
 
 from typing import List, Union, Dict, Optional
-from enum import Enum
 from azure.quantum import Workspace
 from azure.quantum.optimization import Term, Problem, ProblemType
 from azure.quantum.storage import (
@@ -41,9 +40,11 @@ class StreamingProblem(object):
     :type name: str
     :param terms: Problem terms, depending on solver. Defaults to None
     :type terms: Optional[List[Term]], optional
-    :param init_config: Optional configuration details, depending on solver. Defaults to None
+    :param init_config: Optional configuration details,
+     depending on solver. Defaults to None
     :type init_config: Optional[Dict[str,int]], optional
-    :param problem_type: Problem type (ProblemType.pubo or ProblemType.ising), defaults to ProblemType.ising
+    :param problem_type: Problem type (ProblemType.pubo or
+     ProblemType.ising), defaults to ProblemType.ising
     :type problem_type: ProblemType, optional
     """
     def __init__(
@@ -82,7 +83,8 @@ class StreamingProblem(object):
             self.add_terms(terms.copy())
 
     def add_term(self, c: Union[int, float], indices: List[int]):
-        """Adds a single term to the `Problem` representation and queues it to be uploaded
+        """Adds a single term to the `Problem`
+        representation and queues it to be uploaded
 
         :param c: The cost or weight of this term
         :type c: int, float
@@ -112,7 +114,8 @@ class StreamingProblem(object):
         return {"blob_name": blob_name, "container_client": container_client}
 
     def add_terms(self, terms: List[Term]):
-        """Adds a list of terms to the `Problem` representation and queues them to be uploaded
+        """Adds a list of terms to the `Problem`
+         representation and queues them to be uploaded
 
         :param terms: The list of terms to add to the problem
         """
@@ -166,7 +169,8 @@ class StreamingProblem(object):
         blob_name: str = None,
         compress: bool = True,
     ):
-        """Uploads an optimization problem instance to the cloud storage linked with the Workspace.
+        """Uploads an optimization problem instance
+           to the cloud storage linked with the Workspace.
 
         :param workspace: interaction terms of the problem.
         :return: uri of the uploaded problem
@@ -192,11 +196,14 @@ class JsonStreamingProblemUploader:
     """Helper class for uploading json problem files in chunks.
 
     :param problem: Back-ref to the problem being uploaded
-    :param container: Reference to the container client in which to store the problem
+    :param container: Reference to the container
+     client in which to store the problem
     :param name: Name of the problem (added to blob metadata)
     :param compress: Whether the problem should be compressed on the fly
-    :param upload_size_threshold: Chunking threshold (in bytes). Once the internal buffer reaches this size, the chunk will be uploaded.
-    :param upload_term_threshold: Chunking threshold (in terms). Once this many terms are ready to be uploaded, the chunk will be uploaded.
+    :param upload_size_threshold: Chunking threshold (in bytes).
+     Once the internal buffer reaches this size, the chunk will be uploaded.
+    :param upload_term_threshold: Chunking threshold (in terms).
+     Once this many terms are ready to be uploaded, the chunk will be uploaded.
     :param blob_properties: Properties to set on the blob.
     """
     def __init__(
@@ -244,9 +251,11 @@ class JsonStreamingProblemUploader:
         self.__thread.start()
 
     def join(self, timeout: float = None) -> StreamedBlob:
-        """Joins the problem uploader thread - returning when it completes or when `timeout` is hit
+        """Joins the problem uploader thread -
+        returning when it completes or when `timeout` is hit
 
-        :param timeout: The the time to wait for the thread to complete. If omitted, the method will wait until the thread completes
+        :param timeout: The the time to wait for the thread to complete.
+        If omitted, the method will wait until the thread completes
         """
         if self.__thread is None:
             raise Exception("JsonStreamingProblemUploader has not started")
@@ -291,7 +300,7 @@ class JsonStreamingProblemUploader:
 
     def _get_initial_config_string(self):
         if self.problem.init_config:
-            return (f'"initial_configuration":' +
+            return (f'{"initial_configuration":}' +
                     json.dumps(self.problem.init_config) + ",")
         return ""
 
@@ -349,5 +358,5 @@ class JsonStreamingProblemUploader:
         if not self.started_upload:
             self._upload_start([])
 
-        self._upload_chunk(f"]}}}}", True)
+        self._upload_chunk(f'{"]}}}}"}', True)
         self.blob.commit(metadata=self.blob_properties)
