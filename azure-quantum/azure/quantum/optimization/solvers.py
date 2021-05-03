@@ -3,7 +3,6 @@
 # Licensed under the MIT License.
 ##
 import logging
-import io
 import azure.quantum
 
 from typing import List, Union, Any, Optional
@@ -36,7 +35,8 @@ class RangeSchedule:
         """The constructor of Range Scheduler for solver.
 
         :param schedule_type:
-            specifies schedule_type of range scheduler, currently only support 'linear' and 'geometric'.
+            specifies schedule_type of range scheduler,
+            currently only support 'linear' and 'geometric'.
         :param initial:
             initial value of range schedule.
         :param final:
@@ -96,7 +96,8 @@ class Solver:
         container_name = f"job-{job_id}"
 
         if not self.workspace.storage:
-            # No storage account is passed, in this case, get linked account from the service
+            # No storage account is passed, in this
+            # case, get linked account from the service
             container_uri = self.workspace._get_linked_storage_sas_uri(
                 container_name)
             container_client = ContainerClient.from_container_url(
@@ -144,7 +145,8 @@ class Solver:
         return job
 
     def optimize(self, problem: Union[str, Problem]):
-        """Submits the Problem to the associated Azure Quantum Workspace and get the results.
+        """Submits the Problem to the associated
+            Azure Quantum Workspace and get the results.
 
         :param problem:
             The Problem to solve. It can be an instance of a Problem,
@@ -166,7 +168,8 @@ class Solver:
             params[name] = str(value) if self.force_str_params else value
 
     def check_submission_warnings(self, problem: Problem):
-        # print a warning if we suspect the job may take long based on its configured properties.
+        # print a warning if we suspect the job
+        # may take long based on its configured properties.
         is_large_problem = problem.is_large()
         if is_large_problem:
             if self.nested_params and "sweeps" in self.params["params"]:
@@ -174,16 +177,21 @@ class Solver:
                 # if problem is large and sweeps is large, warn.
                 if sweeps >= Solver.SWEEPS_WARNING:
                     logger.warning(
-                        f"There is a large problem submitted and a large number of sweeps ({sweeps}) configured. \
-                    This submission could result in a long runtime.")
+                        f"There is a large problem submitted and \
+                        a large number of sweeps ({sweeps}) configured. \
+                        This submission could result in a long runtime."
+                        )
 
-        # do a timeout check if param-free, to warn new users who accidentally set high timeout values.
+        # do a timeout check if param-free, to warn
+        # new users who accidentally set high timeout values.
         if self.nested_params and "timeout" in self.params["params"]:
             timeout = int(self.params["params"]["timeout"])
             if timeout >= Solver.TIMEOUT_WARNING:
                 logger.warning(
-                    f"A large timeout has been set for this submission ({timeout}). If this is intended, disregard this warning. \
-                Otherwise, consider cancelling the job and resubmitting with a lower timeout."
+                    f"A large timeout has been set for this submission ({timeout}). \
+                        If this is intended, disregard this warning. \
+                        Otherwise, consider cancelling the job \
+                        and resubmitting with a lower timeout."
                 )
 
     def check_set_schedule(self, schedule: RangeSchedule, schedule_name: str):
@@ -222,7 +230,8 @@ class Solver:
                               var_limit: float):
         """Check whether the var parameter is a float larger than var_limit.
         :param var:
-            var paramter to be checked whether is a float larger than var_limit.
+            var paramter to be checked
+            whether is a float larger than var_limit.
         :param var_name:
             name of the variable.
         :var_limit:
@@ -254,7 +263,8 @@ class ParallelTempering(Solver):
     ):
         """The constructor of a Parallel Tempering solver.
 
-        Multi-core Parallel Tempering solver for binary optimization problems with k-local interactions on an all-to-all
+        Multi-core Parallel Tempering solver for binary
+        optimization problems with k-local interactions on an all-to-all
         graph topology with double precision support for the coupler weights.
 
         :param sweeps:
@@ -263,7 +273,8 @@ class ParallelTempering(Solver):
             specifies the number of replicas.
         :param all_betas:
             a list of floats specifying the list of inverse temperatures.
-            > Note: this list must be equal in length to the number of replicas.
+            > Note: this list must be equal in
+            length to the number of replicas.
         :param timeout:
             specifies maximum number of seconds to run the core solver
             loop. initialization time does not respect this value, so the
@@ -295,12 +306,13 @@ class ParallelTempering(Solver):
         self.set_one_param("seed", seed)
 
         # Check parameters:
-        if not all_betas is None:
+        if all_betas is not None:
             if replicas is None:
                 self.set_one_param("replicas", len(all_betas))
             elif len(all_betas) != replicas:
                 raise ValueError(
-                    "Parameter 'replicas' must equal the length of the 'all_betas' parameters."
+                    "Parameter 'replicas' must equal the" +
+                    "length of the 'all_betas' parameters."
                 )
 
 
@@ -337,7 +349,8 @@ class SimulatedAnnealing(Solver):
         :param seed:
             specifies a random seed value.
         :platform:
-            specifies hardware platform HardwarePlatform.CPU or HardwarePlatform.FPGA.
+            specifies hardware platform
+            HardwarePlatform.CPU or HardwarePlatform.FPGA.
         """
         param_free = (beta_start is None and beta_stop is None
                       and sweeps is None and restarts is None)
@@ -438,7 +451,8 @@ class QuantumMonteCarlo(Solver):
         This solver is CPU only.
 
         :param trotter_number:
-            specifies the number of trotter time slices i.e. number of copies of each variable.
+            specifies the number of trotter time slices
+            i.e. number of copies of each variable.
         :param seed:
             specifies a random seed value.
         :param sweeps:
@@ -498,7 +512,8 @@ class PopulationAnnealing(Solver):
         :param sweeps:
             Number of monte carlo sweeps
         :param beta:
-            beta value to control the annealing temperatures, it must be a object of RangeSchedule
+            beta value to control the annealing temperatures,
+            it must be a object of RangeSchedule
         :param culling_fraction:
             constant culling rate, must be larger than 0
         """
