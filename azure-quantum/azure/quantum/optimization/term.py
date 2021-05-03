@@ -15,7 +15,8 @@ try:
     WArray = Union[int, float, npt.ArrayLike]
 
     def _convert_if_numpy_type(param: WArray):
-        # Attempt first a conversion to a supported type if parameter is a numpy float/int.
+        # Attempt first a conversion to a supported
+        # type if parameter is a numpy float/int.
         numpy_integer_types = [
             np.byte,
             np.ubyte,
@@ -72,11 +73,12 @@ class Term:
         w: Optional[WArray] = None,
         c: Optional[WArray] = None,
     ):
-        if w != None:
-            # Legacy support if 'w' is used to specify term instead of the expected 'c'.
+        if w is not None:
+            # Legacy support if 'w' is used to specify
+            # term instead of the expected 'c'.
             coeff = w
             parameter_name_used = "w"
-        elif c != None:
+        elif c is not None:
             # Current intended specification of term.
             coeff = c
             parameter_name_used = "c"
@@ -86,7 +88,8 @@ class Term:
         coeff = _convert_if_numpy_type(coeff)
         if type(coeff) != int and type(coeff) != float:
             raise RuntimeError(
-                f"{parameter_name_used} must be a float or int value, or a NumPy value that can be converted to those."
+                f"{parameter_name_used} must be a float or int value, \
+                    or a NumPy value that can be converted to those."
             )
         self.c = coeff
 
@@ -101,14 +104,16 @@ class Term:
 
     def evaluate(self, configuration: Dict[int, int]) -> float:
         """Given a variable configuration, evaluate the value of the term.
-        :param configuration: The dictionary of variable ids to their assigned value
+        :param configuration:
+            The dictionary of variable ids to their assigned value
         """
         try:
             multiplier = (np.prod([configuration[i] for i in self.ids])
                           if len(self.ids) > 0 else 1.0)
         except KeyError:
             print(
-                "Error - variable id found in term {0}, but not found in the supplied configuration."
+                "Error - variable id found in term {0}, \
+                    but not found in the supplied configuration."
                 .format(self.ids))
             raise
 
@@ -116,9 +121,11 @@ class Term:
 
     def reduce_by_variable_state(
             self, fixed_variables: Dict[int, int]) -> Optional[Term]:
-        """Given some fixed variable states, transform the existing term into new term.
+        """Given some fixed variable states,
+            transform the existing term into new term.
         Returns None if the new term is effectively 0
-        :param fixed_variables: The dictionary of variable ids and their fixed state
+        :param fixed_variables:
+            The dictionary of variable ids and their fixed state
         """
         new_ids = []
         new_c = self.c
