@@ -14,8 +14,8 @@ import numpy as np
 from typing import List, Union, Dict, Optional, TYPE_CHECKING
 from enum import Enum
 from azure.quantum.optimization import Term
-from azure.quantum.storage import upload_blob, ContainerClient
-
+from azure.quantum.storage import upload_blob, ContainerClient, BlobClient, download_blob
+#import azure.quantum.storage
 
 logger = logging.getLogger(__name__)
 
@@ -230,3 +230,12 @@ class Problem:
             set_vars.update(term.ids)
         
         return (len(set_vars) >= Problem.NUM_VARIABLES_LARGE and len(self.terms) >= Problem.NUM_TERMS_LARGE)
+
+    def download(self):
+        """Dowloads an uploaded problem as an instance of 'Problem'
+        """
+        if not self.uploaded_blob_uri: 
+            raise Exception("Problem must be uploaded before it can be downloaded")
+        contents = download_blob(self.uploaded_blob_uri)
+        return Problem.deserialize(contents, self.name)
+
