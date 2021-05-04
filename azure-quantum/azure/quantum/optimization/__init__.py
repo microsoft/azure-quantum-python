@@ -4,8 +4,7 @@
 # Licensed under the MIT License.
 ##
 
-from .term    import *
+from .term import *
 from .problem import *
 from .solvers import *
 from .streaming_problem import *
-

@@ -3,14 +3,10 @@
 # Licensed under the MIT License.
 ##
 import logging
+from .version import __version__
 
-try:
-    from .version import __version__
-except:
-    __version__ = "<unknown>"
+from .job import *
+from .workspace import *
 
 logger = logging.getLogger(__name__)
 logger.info(f"version: {__version__}")
-
-from .job       import *
-from .workspace import *
