@@ -31,3 +31,12 @@ class TestProblemClass(unittest.TestCase):
         acutal_result = self.problem.download()
         assert acutal_result.name == "test"
         azure.quantum.optimization.problem.download_blob.assert_called_once()
+
+    def test_get_term(self):
+        terms = self.problem.get_terms(0)
+        assert len(terms) == 2
+
+    def test_get_term_raise_exception(self):
+        test_prob = Problem(name="random")
+        with self.assertRaises(Exception):
+            test_prob.get_terms(id=0)

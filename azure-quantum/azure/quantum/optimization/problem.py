@@ -292,3 +292,17 @@ class Problem:
             )
         contents = download_blob(self.uploaded_blob_uri)
         return Problem.deserialize(contents, self.name)
+
+    def get_terms(self, id:int) -> List[Term]:
+        """ Given an index the function will return
+        a list of terms with that index
+        """
+        terms = []
+        if self.terms != []:
+            for term in self.terms:
+                if id in term.ids:
+                    terms.append(term)
+            return terms
+        else:
+            raise Exception("Please download the problem on the client" \
+                            "to perform this operation")
