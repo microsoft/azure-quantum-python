@@ -19,6 +19,8 @@ from azure.quantum.optimization import (
     SimulatedAnnealing,
     Tabu,
     QuantumMonteCarlo,
+    PopulationAnnealing,
+    SubstochasticMonteCarlo
 )
 from azure.quantum.optimization.oneqbit import (
     TabuSearch,
@@ -98,6 +100,8 @@ if __name__ == "__main__":
         "ParallelTempering",
         "Tabu",
         "QuantumMonteCarlo",
+        "PopulationAnnealing",
+        "SubstochasticMonteCarlo"
     ]
 
     solvers = [
@@ -105,6 +109,8 @@ if __name__ == "__main__":
         functools.partial(ParallelTempering, sweeps=100),
         functools.partial(Tabu, sweeps=100),
         functools.partial(QuantumMonteCarlo, trotter_number=1),
+        functools.partial(PopulationAnnealing, sweeps=200),
+        functools.partial(SubstochasticMonteCarlo, step_limit=280)
     ]
 
     # Check if 1QBit solvers are enabled
