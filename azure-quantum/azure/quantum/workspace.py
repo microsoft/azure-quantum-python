@@ -123,14 +123,12 @@ class MsalWrapper:
             )
             response = requests.get(uri)
 
-            # This gnarly piece of code is how we get the guest
-            # tenant authority associated with the subscription.
-            # We make a unauthenticated request to ARM and
-            # extract the tenant authority from the
-            # WWW-Authenticate header in the response.
-            # The header is of the form -
-            # Bearer authoritization_uri
-            # =https://login.microsoftonline.com/tenantId, key1=value1
+            # This gnarly piece of code is how we get the guest tenant
+            # authority associated with the subscription.
+            # We make a unauthenticated request to ARM and extract the tenant
+            # authority from the WWW-Authenticate header in the response.
+            # The header is of the form:
+            # Bearer authorization_uri=https://login.microsoftonline.com/tenantId, key1=value1s
             auth_header = response.headers["WWW-Authenticate"]
             logger.debug(
                 f'{"got the following auth header from"}'
