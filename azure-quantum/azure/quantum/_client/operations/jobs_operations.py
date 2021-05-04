@@ -35,8 +35,7 @@ class JobsOperations(object):
 
         self.config = config
 
-    def list(
-            self, custom_headers=None, raw=False, **operation_config):
+    def list(self, custom_headers=None, raw=False, **operation_config):
         """List jobs.
 
         :param dict custom_headers: headers that will be added to the request
@@ -49,15 +48,28 @@ class JobsOperations(object):
          ~azure.quantum.models.JobDetailsPaged[~azure.quantum.models.JobDetails]
         :raises: :class:`CloudError<msrestazure.azure_exceptions.CloudError>`
         """
+
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
                 # Construct URL
-                url = self.list.metadata['url']
+                url = self.list.metadata["url"]
                 path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-                    'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str'),
-                    'workspaceName': self._serialize.url("self.config.workspace_name", self.config.workspace_name, 'str')
+                    "subscriptionId": self._serialize.url(
+                        "self.config.subscription_id",
+                        self.config.subscription_id,
+                        "str",
+                    ),
+                    "resourceGroupName": self._serialize.url(
+                        "self.config.resource_group_name",
+                        self.config.resource_group_name,
+                        "str",
+                    ),
+                    "workspaceName": self._serialize.url(
+                        "self.config.workspace_name",
+                        self.config.workspace_name,
+                        "str",
+                    ),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -70,38 +82,52 @@ class JobsOperations(object):
 
             # Construct headers
             header_parameters = {}
-            header_parameters['Accept'] = 'application/json'
+            header_parameters["Accept"] = "application/json"
             if self.config.generate_client_request_id:
-                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+                header_parameters["x-ms-client-request-id"] = str(uuid.uuid1())
             if custom_headers:
                 header_parameters.update(custom_headers)
             if self.config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+                header_parameters["accept-language"] = self._serialize.header(
+                    "self.config.accept_language",
+                    self.config.accept_language,
+                    "str",
+                )
 
             # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
-            response = self._client.send(request, stream=False, **operation_config)
+            request = self._client.get(
+                url, query_parameters, header_parameters
+            )
+            response = self._client.send(
+                request, stream=False, **operation_config
+            )
 
             if response.status_code not in [200]:
                 exp = CloudError(response)
-                exp.request_id = response.headers.get('x-ms-request-id')
+                exp.request_id = response.headers.get("x-ms-request-id")
                 raise exp
 
             return response
 
         # Deserialize response
-        deserialized = models.JobDetailsPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.JobDetailsPaged(
+            internal_paging, self._deserialize.dependencies
+        )
 
         if raw:
             header_dict = {}
-            client_raw_response = models.JobDetailsPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.JobDetailsPaged(
+                internal_paging, self._deserialize.dependencies, header_dict
+            )
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Quantum/workspaces/{workspaceName}/jobs'}
 
-    def get(
-            self, job_id, custom_headers=None, raw=False, **operation_config):
+    list.metadata = {
+        "url": "/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Quantum/workspaces/{workspaceName}/jobs"
+    }
+
+    def get(self, job_id, custom_headers=None, raw=False, **operation_config):
         """Get job by id.
 
         :param job_id: Id of the job.
@@ -118,12 +144,22 @@ class JobsOperations(object):
          :class:`RestErrorException<azure.quantum.models.RestErrorException>`
         """
         # Construct URL
-        url = self.get.metadata['url']
+        url = self.get.metadata["url"]
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str'),
-            'workspaceName': self._serialize.url("self.config.workspace_name", self.config.workspace_name, 'str'),
-            'jobId': self._serialize.url("job_id", job_id, 'str')
+            "subscriptionId": self._serialize.url(
+                "self.config.subscription_id",
+                self.config.subscription_id,
+                "str",
+            ),
+            "resourceGroupName": self._serialize.url(
+                "self.config.resource_group_name",
+                self.config.resource_group_name,
+                "str",
+            ),
+            "workspaceName": self._serialize.url(
+                "self.config.workspace_name", self.config.workspace_name, "str"
+            ),
+            "jobId": self._serialize.url("job_id", job_id, "str"),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -132,13 +168,17 @@ class JobsOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
+        header_parameters["Accept"] = "application/json"
         if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            header_parameters["x-ms-client-request-id"] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
         if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+            header_parameters["accept-language"] = self._serialize.header(
+                "self.config.accept_language",
+                self.config.accept_language,
+                "str",
+            )
 
         # Construct and send request
         request = self._client.get(url, query_parameters, header_parameters)
@@ -150,17 +190,21 @@ class JobsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('JobDetails', response)
+            deserialized = self._deserialize("JobDetails", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    get.metadata = {'url': '/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Quantum/workspaces/{workspaceName}/jobs/{jobId}'}
+
+    get.metadata = {
+        "url": "/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Quantum/workspaces/{workspaceName}/jobs/{jobId}"
+    }
 
     def create(
-            self, job_id, job, custom_headers=None, raw=False, **operation_config):
+        self, job_id, job, custom_headers=None, raw=False, **operation_config
+    ):
         """Create a job.
 
         :param job_id: Id of the job.
@@ -179,12 +223,22 @@ class JobsOperations(object):
          :class:`RestErrorException<azure.quantum.models.RestErrorException>`
         """
         # Construct URL
-        url = self.create.metadata['url']
+        url = self.create.metadata["url"]
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str'),
-            'workspaceName': self._serialize.url("self.config.workspace_name", self.config.workspace_name, 'str'),
-            'jobId': self._serialize.url("job_id", job_id, 'str')
+            "subscriptionId": self._serialize.url(
+                "self.config.subscription_id",
+                self.config.subscription_id,
+                "str",
+            ),
+            "resourceGroupName": self._serialize.url(
+                "self.config.resource_group_name",
+                self.config.resource_group_name,
+                "str",
+            ),
+            "workspaceName": self._serialize.url(
+                "self.config.workspace_name", self.config.workspace_name, "str"
+            ),
+            "jobId": self._serialize.url("job_id", job_id, "str"),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -193,20 +247,26 @@ class JobsOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters['Accept'] = 'application/json'
-        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
+        header_parameters["Accept"] = "application/json"
+        header_parameters["Content-Type"] = "application/json; charset=utf-8"
         if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            header_parameters["x-ms-client-request-id"] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
         if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+            header_parameters["accept-language"] = self._serialize.header(
+                "self.config.accept_language",
+                self.config.accept_language,
+                "str",
+            )
 
         # Construct body
-        body_content = self._serialize.body(job, 'JobDetails')
+        body_content = self._serialize.body(job, "JobDetails")
 
         # Construct and send request
-        request = self._client.put(url, query_parameters, header_parameters, body_content)
+        request = self._client.put(
+            url, query_parameters, header_parameters, body_content
+        )
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200, 201]:
@@ -215,19 +275,23 @@ class JobsOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize('JobDetails', response)
+            deserialized = self._deserialize("JobDetails", response)
         if response.status_code == 201:
-            deserialized = self._deserialize('JobDetails', response)
+            deserialized = self._deserialize("JobDetails", response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-    create.metadata = {'url': '/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Quantum/workspaces/{workspaceName}/jobs/{jobId}'}
+
+    create.metadata = {
+        "url": "/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Quantum/workspaces/{workspaceName}/jobs/{jobId}"
+    }
 
     def cancel(
-            self, job_id, custom_headers=None, raw=False, **operation_config):
+        self, job_id, custom_headers=None, raw=False, **operation_config
+    ):
         """Cancel a job.
 
         :param job_id: Id of the job.
@@ -243,12 +307,22 @@ class JobsOperations(object):
          :class:`RestErrorException<azure.quantum.models.RestErrorException>`
         """
         # Construct URL
-        url = self.cancel.metadata['url']
+        url = self.cancel.metadata["url"]
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str'),
-            'workspaceName': self._serialize.url("self.config.workspace_name", self.config.workspace_name, 'str'),
-            'jobId': self._serialize.url("job_id", job_id, 'str')
+            "subscriptionId": self._serialize.url(
+                "self.config.subscription_id",
+                self.config.subscription_id,
+                "str",
+            ),
+            "resourceGroupName": self._serialize.url(
+                "self.config.resource_group_name",
+                self.config.resource_group_name,
+                "str",
+            ),
+            "workspaceName": self._serialize.url(
+                "self.config.workspace_name", self.config.workspace_name, "str"
+            ),
+            "jobId": self._serialize.url("job_id", job_id, "str"),
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -258,11 +332,15 @@ class JobsOperations(object):
         # Construct headers
         header_parameters = {}
         if self.config.generate_client_request_id:
-            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+            header_parameters["x-ms-client-request-id"] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
         if self.config.accept_language is not None:
-            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+            header_parameters["accept-language"] = self._serialize.header(
+                "self.config.accept_language",
+                self.config.accept_language,
+                "str",
+            )
 
         # Construct and send request
         request = self._client.delete(url, query_parameters, header_parameters)
@@ -274,4 +352,7 @@ class JobsOperations(object):
         if raw:
             client_raw_response = ClientRawResponse(None, response)
             return client_raw_response
-    cancel.metadata = {'url': '/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Quantum/workspaces/{workspaceName}/jobs/{jobId}'}
+
+    cancel.metadata = {
+        "url": "/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Quantum/workspaces/{workspaceName}/jobs/{jobId}"
+    }

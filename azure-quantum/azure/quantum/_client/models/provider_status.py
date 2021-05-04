@@ -29,15 +29,15 @@ class ProviderStatus(Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'current_availability': {'readonly': True},
-        'targets': {'readonly': True},
+        "id": {"readonly": True},
+        "current_availability": {"readonly": True},
+        "targets": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'current_availability': {'key': 'currentAvailability', 'type': 'str'},
-        'targets': {'key': 'targets', 'type': '[TargetStatus]'},
+        "id": {"key": "id", "type": "str"},
+        "current_availability": {"key": "currentAvailability", "type": "str"},
+        "targets": {"key": "targets", "type": "[TargetStatus]"},
     }
 
     def __init__(self, **kwargs):

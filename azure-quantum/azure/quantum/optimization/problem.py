@@ -43,6 +43,7 @@ class Problem:
         ProblemType.ising), defaults to ProblemType.ising
     :type problem_type: ProblemType, optional
     """
+
     def __init__(
         self,
         name: str,
@@ -100,7 +101,8 @@ class Problem:
 
         if "initial_configuration" in result["cost_function"]:
             problem.init_config = result["cost_function"][
-                "initial_configuration"]
+                "initial_configuration"
+            ]
 
         return problem
 
@@ -167,9 +169,11 @@ class Problem:
         if not workspace.storage:
             # No storage account is passed, use the linked one
             container_uri = workspace._get_linked_storage_sas_uri(
-                container_name)
+                container_name
+            )
             container_client = ContainerClient.from_container_url(
-                container_uri)
+                container_uri
+            )
             self.uploaded_blob_uri = upload_blob(
                 container_client,
                 blob_name,
@@ -181,7 +185,8 @@ class Problem:
         else:
             # Use the specified storage account
             container_client = ContainerClient.from_connection_string(
-                workspace.storage, container_name)
+                workspace.storage, container_name
+            )
             self.uploaded_blob_uri = upload_blob(
                 container_client,
                 blob_name,
@@ -195,8 +200,8 @@ class Problem:
         return self.uploaded_blob_uri
 
     def set_fixed_variables(
-            self, fixed_variables: Union[Dict[int, int],
-                                         Dict[str, int]]) -> Problem:
+        self, fixed_variables: Union[Dict[int, int], Dict[str, int]]
+    ) -> Problem:
         """Transforms the current problem with a set of fixed
         variables and returns the new modified problem.
         The original Problem instance is untouched.
@@ -211,8 +216,7 @@ class Problem:
             )
 
         fixed_transformed = {
-            int(k): fixed_variables[k]
-            for k in fixed_variables
+            int(k): fixed_variables[k] for k in fixed_variables
         }  # if ids are given in string form, convert them to int
         new_terms = []
 
@@ -233,7 +237,8 @@ class Problem:
         if self.init_config:
             new_init_config = {
                 k: self.init_config[k]
-                for k in self.init_config if int(k) not in fixed_transformed
+                for k in self.init_config
+                if int(k) not in fixed_transformed
             }
 
         return Problem(
@@ -244,8 +249,8 @@ class Problem:
         )
 
     def evaluate(
-            self, configuration: Union[Dict[int, int], Dict[str,
-                                                            int]]) -> float:
+        self, configuration: Union[Dict[int, int], Dict[str, int]]
+    ) -> float:
         """Given a configuration/variable assignment,
         return the cost function value of this problem.
 
@@ -253,8 +258,7 @@ class Problem:
          variable ids to their assigned value
         """
         configuration_transformed = {
-            int(k): configuration[k]
-            for k in configuration
+            int(k): configuration[k] for k in configuration
         }  # if ids are given in string form, convert them to int
         total_cost = 0
         if self.terms:
@@ -274,14 +278,17 @@ class Problem:
         set_vars = set()
         for term in self.terms:
             set_vars.update(term.ids)
-        
-        return (len(set_vars) >= Problem.NUM_VARIABLES_LARGE and len(self.terms) >= Problem.NUM_TERMS_LARGE)
+
+        return (
+            len(set_vars) >= Problem.NUM_VARIABLES_LARGE
+            and len(self.terms) >= Problem.NUM_TERMS_LARGE
+        )
 
     def download(self):
-        """Dowloads an uploaded problem as an instance of 'Problem'
-        """
-        if not self.uploaded_blob_uri: 
-            raise Exception("Problem must be uploaded before it can be downloaded")
+        """Dowloads an uploaded problem as an instance of 'Problem'"""
+        if not self.uploaded_blob_uri:
+            raise Exception(
+                "Problem must be uploaded before it can be downloaded"
+            )
         contents = download_blob(self.uploaded_blob_uri)
         return Problem.deserialize(contents, self.name)
-

@@ -39,23 +39,31 @@ class QuantumClientConfiguration(AzureConfiguration):
     """
 
     def __init__(
-            self, credentials, subscription_id, resource_group_name, workspace_name, base_url=None):
+        self,
+        credentials,
+        subscription_id,
+        resource_group_name,
+        workspace_name,
+        base_url=None,
+    ):
 
         if credentials is None:
             raise ValueError("Parameter 'credentials' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
         if resource_group_name is None:
-            raise ValueError("Parameter 'resource_group_name' must not be None.")
+            raise ValueError(
+                "Parameter 'resource_group_name' must not be None."
+            )
         if workspace_name is None:
             raise ValueError("Parameter 'workspace_name' must not be None.")
         if not base_url:
-            base_url = 'https://quantum.azure.com'
+            base_url = "https://quantum.azure.com"
 
         super(QuantumClientConfiguration, self).__init__(base_url)
 
-        self.add_user_agent('quantumclient/{}'.format(VERSION))
-        self.add_user_agent('Azure-SDK-For-Python')
+        self.add_user_agent("quantumclient/{}".format(VERSION))
+        self.add_user_agent("Azure-SDK-For-Python")
 
         self.credentials = credentials
         self.subscription_id = subscription_id
@@ -92,21 +100,41 @@ class QuantumClient(SDKClient):
     """
 
     def __init__(
-            self, credentials, subscription_id, resource_group_name, workspace_name, base_url=None):
+        self,
+        credentials,
+        subscription_id,
+        resource_group_name,
+        workspace_name,
+        base_url=None,
+    ):
 
-        self.config = QuantumClientConfiguration(credentials, subscription_id, resource_group_name, workspace_name, base_url)
-        super(QuantumClient, self).__init__(self.config.credentials, self.config)
+        self.config = QuantumClientConfiguration(
+            credentials,
+            subscription_id,
+            resource_group_name,
+            workspace_name,
+            base_url,
+        )
+        super(QuantumClient, self).__init__(
+            self.config.credentials, self.config
+        )
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
-        self.api_version = '2019-11-04-preview'
+        client_models = {
+            k: v for k, v in models.__dict__.items() if isinstance(v, type)
+        }
+        self.api_version = "2019-11-04-preview"
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
 
         self.jobs = JobsOperations(
-            self._client, self.config, self._serialize, self._deserialize)
+            self._client, self.config, self._serialize, self._deserialize
+        )
         self.providers = ProvidersOperations(
-            self._client, self.config, self._serialize, self._deserialize)
+            self._client, self.config, self._serialize, self._deserialize
+        )
         self.storage = StorageOperations(
-            self._client, self.config, self._serialize, self._deserialize)
+            self._client, self.config, self._serialize, self._deserialize
+        )
         self.quotas = QuotasOperations(
-            self._client, self.config, self._serialize, self._deserialize)
+            self._client, self.config, self._serialize, self._deserialize
+        )

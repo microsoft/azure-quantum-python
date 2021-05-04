@@ -39,9 +39,9 @@ class TestJob(QuantumTestBase):
             problem.add_term(c=i, indices=[i, i + 1])
 
         with unittest.mock.patch.object(
-                Job,
-                self.mock_create_job_id_name,
-                return_value=self.get_dummy_job_id(),
+            Job,
+            self.mock_create_job_id_name,
+            return_value=self.get_dummy_job_id(),
         ):
             solver = SimulatedAnnealing(ws)
             job = solver.submit(problem)
@@ -57,9 +57,9 @@ class TestJob(QuantumTestBase):
             problem.add_term(c=i, indices=[i, i + 1])
 
         with unittest.mock.patch.object(
-                Job,
-                self.mock_create_job_id_name,
-                return_value=self.get_dummy_job_id(),
+            Job,
+            self.mock_create_job_id_name,
+            return_value=self.get_dummy_job_id(),
         ):
             solver = SimulatedAnnealing(ws)
             job = solver.submit(problem)
@@ -79,9 +79,9 @@ class TestJob(QuantumTestBase):
             problem.add_term(c=i, indices=[i, i + 1])
 
         with unittest.mock.patch.object(
-                Job,
-                self.mock_create_job_id_name,
-                return_value=self.get_dummy_job_id(),
+            Job,
+            self.mock_create_job_id_name,
+            return_value=self.get_dummy_job_id(),
         ):
             solver = SimulatedAnnealing(ws)
             job = solver.submit(problem)
@@ -100,9 +100,9 @@ class TestJob(QuantumTestBase):
             problem.add_term(c=i, indices=[i, i + 1])
 
         with unittest.mock.patch.object(
-                Job,
-                self.mock_create_job_id_name,
-                return_value=self.get_dummy_job_id(),
+            Job,
+            self.mock_create_job_id_name,
+            return_value=self.get_dummy_job_id(),
         ):
             solver = SimulatedAnnealing(ws)
             job = solver.submit(problem)
@@ -111,13 +111,7 @@ class TestJob(QuantumTestBase):
             actual = job.get_results()
 
         expected = {
-            "configuration": {
-                "0": 1,
-                "1": 1,
-                "2": -1,
-                "3": 1,
-                "4": -1
-            },
+            "configuration": {"0": 1, "1": 1, "2": -1, "3": 1, "4": -1},
             "cost": -6.0,
             "parameters": {
                 "beta_start": 0.2,

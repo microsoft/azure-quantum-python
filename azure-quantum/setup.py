@@ -24,7 +24,8 @@ import distutils
 version = os.environ.get("PYTHON_VERSION", "0.0.0.1")
 
 with open("./azure/quantum/version.py", "w") as f:
-    f.write(f"""# Auto-generated file, do not edit.
+    f.write(
+        f"""# Auto-generated file, do not edit.
 ##
 # version.py: Specifies the version of the azure.quantum package.
 ##
@@ -32,7 +33,8 @@ with open("./azure/quantum/version.py", "w") as f:
 # Licensed under the MIT License.
 ##
 __version__ = "{version}"
-""")
+"""
+    )
 
 # DESCRIPTION #
 # The long description metadata passed to setuptools is used to populate the

@@ -10,7 +10,8 @@ import json
 import pytest
 
 from azure.quantum import Workspace
-from common import QuantumTestBase 
+from common import QuantumTestBase
+
 
 class TestWorkspace(QuantumTestBase):
     def test_workspace_login(self):

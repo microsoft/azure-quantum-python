@@ -34,8 +34,7 @@ class QuotasOperations(object):
 
         self.config = config
 
-    def list(
-            self, custom_headers=None, raw=False, **operation_config):
+    def list(self, custom_headers=None, raw=False, **operation_config):
         """List quotas for the given workspace.
 
         :param dict custom_headers: headers that will be added to the request
@@ -48,15 +47,28 @@ class QuotasOperations(object):
         :raises:
          :class:`RestErrorException<azure.quantum.models.RestErrorException>`
         """
+
         def internal_paging(next_link=None, raw=False):
 
             if not next_link:
                 # Construct URL
-                url = self.list.metadata['url']
+                url = self.list.metadata["url"]
                 path_format_arguments = {
-                    'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
-                    'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str'),
-                    'workspaceName': self._serialize.url("self.config.workspace_name", self.config.workspace_name, 'str')
+                    "subscriptionId": self._serialize.url(
+                        "self.config.subscription_id",
+                        self.config.subscription_id,
+                        "str",
+                    ),
+                    "resourceGroupName": self._serialize.url(
+                        "self.config.resource_group_name",
+                        self.config.resource_group_name,
+                        "str",
+                    ),
+                    "workspaceName": self._serialize.url(
+                        "self.config.workspace_name",
+                        self.config.workspace_name,
+                        "str",
+                    ),
                 }
                 url = self._client.format_url(url, **path_format_arguments)
 
@@ -69,17 +81,25 @@ class QuotasOperations(object):
 
             # Construct headers
             header_parameters = {}
-            header_parameters['Accept'] = 'application/json'
+            header_parameters["Accept"] = "application/json"
             if self.config.generate_client_request_id:
-                header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
+                header_parameters["x-ms-client-request-id"] = str(uuid.uuid1())
             if custom_headers:
                 header_parameters.update(custom_headers)
             if self.config.accept_language is not None:
-                header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
+                header_parameters["accept-language"] = self._serialize.header(
+                    "self.config.accept_language",
+                    self.config.accept_language,
+                    "str",
+                )
 
             # Construct and send request
-            request = self._client.get(url, query_parameters, header_parameters)
-            response = self._client.send(request, stream=False, **operation_config)
+            request = self._client.get(
+                url, query_parameters, header_parameters
+            )
+            response = self._client.send(
+                request, stream=False, **operation_config
+            )
 
             if response.status_code not in [200]:
                 raise models.RestErrorException(self._deserialize, response)
@@ -87,12 +107,19 @@ class QuotasOperations(object):
             return response
 
         # Deserialize response
-        deserialized = models.QuotaPaged(internal_paging, self._deserialize.dependencies)
+        deserialized = models.QuotaPaged(
+            internal_paging, self._deserialize.dependencies
+        )
 
         if raw:
             header_dict = {}
-            client_raw_response = models.QuotaPaged(internal_paging, self._deserialize.dependencies, header_dict)
+            client_raw_response = models.QuotaPaged(
+                internal_paging, self._deserialize.dependencies, header_dict
+            )
             return client_raw_response
 
         return deserialized
-    list.metadata = {'url': '/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Quantum/workspaces/{workspaceName}/quotas'}
+
+    list.metadata = {
+        "url": "/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Quantum/workspaces/{workspaceName}/quotas"
+    }

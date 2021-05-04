@@ -67,51 +67,54 @@ class JobDetails(Model):
     """
 
     _validation = {
-        'container_uri': {'required': True},
-        'input_data_format': {'required': True},
-        'provider_id': {'required': True},
-        'target': {'required': True},
-        'status': {'readonly': True},
-        'creation_time': {'readonly': True},
-        'begin_execution_time': {'readonly': True},
-        'end_execution_time': {'readonly': True},
-        'cancellation_time': {'readonly': True},
-        'error_data': {'readonly': True},
+        "container_uri": {"required": True},
+        "input_data_format": {"required": True},
+        "provider_id": {"required": True},
+        "target": {"required": True},
+        "status": {"readonly": True},
+        "creation_time": {"readonly": True},
+        "begin_execution_time": {"readonly": True},
+        "end_execution_time": {"readonly": True},
+        "cancellation_time": {"readonly": True},
+        "error_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'container_uri': {'key': 'containerUri', 'type': 'str'},
-        'input_data_uri': {'key': 'inputDataUri', 'type': 'str'},
-        'input_data_format': {'key': 'inputDataFormat', 'type': 'str'},
-        'input_params': {'key': 'inputParams', 'type': 'object'},
-        'provider_id': {'key': 'providerId', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'metadata': {'key': 'metadata', 'type': '{str}'},
-        'output_data_uri': {'key': 'outputDataUri', 'type': 'str'},
-        'output_data_format': {'key': 'outputDataFormat', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'creation_time': {'key': 'creationTime', 'type': 'iso-8601'},
-        'begin_execution_time': {'key': 'beginExecutionTime', 'type': 'iso-8601'},
-        'end_execution_time': {'key': 'endExecutionTime', 'type': 'iso-8601'},
-        'cancellation_time': {'key': 'cancellationTime', 'type': 'iso-8601'},
-        'error_data': {'key': 'errorData', 'type': 'ErrorData'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "container_uri": {"key": "containerUri", "type": "str"},
+        "input_data_uri": {"key": "inputDataUri", "type": "str"},
+        "input_data_format": {"key": "inputDataFormat", "type": "str"},
+        "input_params": {"key": "inputParams", "type": "object"},
+        "provider_id": {"key": "providerId", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "metadata": {"key": "metadata", "type": "{str}"},
+        "output_data_uri": {"key": "outputDataUri", "type": "str"},
+        "output_data_format": {"key": "outputDataFormat", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "creation_time": {"key": "creationTime", "type": "iso-8601"},
+        "begin_execution_time": {
+            "key": "beginExecutionTime",
+            "type": "iso-8601",
+        },
+        "end_execution_time": {"key": "endExecutionTime", "type": "iso-8601"},
+        "cancellation_time": {"key": "cancellationTime", "type": "iso-8601"},
+        "error_data": {"key": "errorData", "type": "ErrorData"},
     }
 
     def __init__(self, **kwargs):
         super(JobDetails, self).__init__(**kwargs)
-        self.id = kwargs.get('id', None)
-        self.name = kwargs.get('name', None)
-        self.container_uri = kwargs.get('container_uri', None)
-        self.input_data_uri = kwargs.get('input_data_uri', None)
-        self.input_data_format = kwargs.get('input_data_format', None)
-        self.input_params = kwargs.get('input_params', None)
-        self.provider_id = kwargs.get('provider_id', None)
-        self.target = kwargs.get('target', None)
-        self.metadata = kwargs.get('metadata', None)
-        self.output_data_uri = kwargs.get('output_data_uri', None)
-        self.output_data_format = kwargs.get('output_data_format', None)
+        self.id = kwargs.get("id", None)
+        self.name = kwargs.get("name", None)
+        self.container_uri = kwargs.get("container_uri", None)
+        self.input_data_uri = kwargs.get("input_data_uri", None)
+        self.input_data_format = kwargs.get("input_data_format", None)
+        self.input_params = kwargs.get("input_params", None)
+        self.provider_id = kwargs.get("provider_id", None)
+        self.target = kwargs.get("target", None)
+        self.metadata = kwargs.get("metadata", None)
+        self.output_data_uri = kwargs.get("output_data_uri", None)
+        self.output_data_format = kwargs.get("output_data_format", None)
         self.status = None
         self.creation_time = None
         self.begin_execution_time = None

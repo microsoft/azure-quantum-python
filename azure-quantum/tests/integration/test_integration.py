@@ -2,7 +2,8 @@
 # Licensed under the MIT License.
 
 ##
-# Integration tests for connecting to the Azure Quantum service and solving Optimization problems.
+# Integration tests for connecting to the
+# Azure Quantum service and solving Optimization problems.
 ##
 
 import os
@@ -57,13 +58,14 @@ def create_problem(init: bool = False) -> Problem:
         )
 
     else:
-        return Problem(name="first-demo",
-                       terms=terms,
-                       problem_type=ProblemType.pubo)
+        return Problem(
+            name="first-demo", terms=terms, problem_type=ProblemType.pubo
+        )
 
 
-def solve(problem: Problem, solver_name: str,
-          solver_factory: callable) -> None:
+def solve(
+    problem: Problem, solver_name: str, solver_factory: callable
+) -> None:
     """Solve the problem with the given solver
 
     :param problem Problem to solve

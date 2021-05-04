@@ -21,26 +21,35 @@ from azure_devtools.scenario_tests.recording_processors import (
 )
 from azure_devtools.scenario_tests.utilities import _get_content_type
 import json
+
+
 class QuantumTestBase(ReplayableTest):
     """QuantumTestBase
 
-    During init, gets Azure Credentials and Azure Quantum Workspace parameters from OS environment variables.
+    During init, gets Azure Credentials and
+    Azure Quantum Workspace parameters from OS environment variables.
     """
 
     dummy_uid = "00000000-0000-0000-0000-000000000000"
     dummy_rg = "dummy-rg"
     dummy_ws = "dummy-ws"
     dummy_clientsecret = "PLACEHOLDER"
-    dummy_auth_token = {'access_token': 'PLACEHOLDER', 'token_type': 'Bearer', 'expires_in': 485}
+    dummy_auth_token = {
+        "access_token": "PLACEHOLDER",
+        "token_type": "Bearer",
+        "expires_in": 485,
+    }
 
     def __init__(self, method_name):
         self._client_id = os.environ.get("AZURE_CLIENT_ID", self.dummy_uid)
-        self._client_secret = os.environ.get("AZURE_CLIENT_SECRET",
-                                             self.dummy_clientsecret)
+        self._client_secret = os.environ.get(
+            "AZURE_CLIENT_SECRET", self.dummy_clientsecret
+        )
         self._tenant_id = os.environ.get("AZURE_TENANT_ID", self.dummy_uid)
         self._resource_group = os.environ.get("RESOURCE_GROUP", self.dummy_rg)
-        self._subscription_id = os.environ.get("SUBSCRIPTION_ID",
-                                               self.dummy_uid)
+        self._subscription_id = os.environ.get(
+            "SUBSCRIPTION_ID", self.dummy_uid
+        )
         self._workspace_name = os.environ.get("WORKSPACE_NAME", self.dummy_ws)
 
         regex_replacer = CustomRecordingProcessor()
@@ -64,8 +73,9 @@ class QuantumTestBase(ReplayableTest):
             self._workspace_name = self.dummy_ws
 
         regex_replacer.register_regex(self.client_id, self.dummy_uid)
-        regex_replacer.register_regex(self.client_secret,
-                                      self.dummy_clientsecret)
+        regex_replacer.register_regex(
+            self.client_secret, self.dummy_clientsecret
+        )
         regex_replacer.register_regex(self.tenant_id, self.dummy_uid)
         regex_replacer.register_regex(self.subscription_id, self.dummy_uid)
         regex_replacer.register_regex(self.workspace_name, self.dummy_ws)
@@ -74,18 +84,22 @@ class QuantumTestBase(ReplayableTest):
             r"/subscriptions/([a-f0-9]+[-]){4}[a-f0-9]+",
             "/subscriptions/" + self.dummy_uid,
         )
-        regex_replacer.register_regex(r"job-([a-f0-9]+[-]){4}[a-f0-9]+",
-                                      "job-" + self.dummy_uid)
-        regex_replacer.register_regex(r"jobs/([a-f0-9]+[-]){4}[a-f0-9]+",
-                                      "jobs/" + self.dummy_uid)
+        regex_replacer.register_regex(
+            r"job-([a-f0-9]+[-]){4}[a-f0-9]+", "job-" + self.dummy_uid
+        )
+        regex_replacer.register_regex(
+            r"jobs/([a-f0-9]+[-]){4}[a-f0-9]+", "jobs/" + self.dummy_uid
+        )
         regex_replacer.register_regex(
             r'"id":\s*"([a-f0-9]+[-]){4}[a-f0-9]+"',
             '"id": "{}"'.format(self.dummy_uid),
         )
-        regex_replacer.register_regex(r"/resourceGroups/[a-z0-9-]+/",
-                                      "/resourceGroups/dummy-rg/")
-        regex_replacer.register_regex(r"/workspaces/[a-z0-9-]+/",
-                                      "/workspaces/dummy-ws/")
+        regex_replacer.register_regex(
+            r"/resourceGroups/[a-z0-9-]+/", "/resourceGroups/dummy-rg/"
+        )
+        regex_replacer.register_regex(
+            r"/workspaces/[a-z0-9-]+/", "/workspaces/dummy-ws/"
+        )
         regex_replacer.register_regex(r"sig=[0-9a-zA-Z%]+\&", "sig=sanitized&")
         regex_replacer.register_regex(r"sv=[^&]+\&", "sv=sanitized&")
         regex_replacer.register_regex(r"se=[^&]+\&", "se=sanitized&")
@@ -142,7 +156,8 @@ class QuantumTestBase(ReplayableTest):
             workspace.login(False)
         else:
             workspace.credentials = BasicTokenAuthentication(
-                token=self.dummy_auth_token)
+                token=self.dummy_auth_token
+            )
 
         return workspace
 
@@ -216,16 +231,19 @@ class CustomRecordingProcessor(RecordingProcessor):
 
         return response
 
-#helper functions
+
+# helper functions
 
 # helpers
 def expected_terms():
-    expected = json.dumps({
-        "cost_function": {
-        "version": "1.1",
-        "type":  "ising",
-        "terms": [ { 'c':3, 'ids':[1,0] }, {'c':5, 'ids':[2,0]} ],
-        "initial_configuration": {"0":-1 , "1": 1, "2": -1},
+    expected = json.dumps(
+        {
+            "cost_function": {
+                "version": "1.1",
+                "type": "ising",
+                "terms": [{"c": 3, "ids": [1, 0]}, {"c": 5, "ids": [2, 0]}],
+                "initial_configuration": {"0": -1, "1": 1, "2": -1},
+            }
         }
-    })
+    )
     return expected

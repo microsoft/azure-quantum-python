@@ -45,10 +45,12 @@ class RangeSchedule:
         self.schedule_type = schedule_type
         self.initial = initial
         self.final = final
-        if not (self.schedule_type == "linear"
-                or self.schedule_type == "geometric"):
+        if not (
+            self.schedule_type == "linear" or self.schedule_type == "geometric"
+        ):
             raise ValueError(
-                '"schedule_type" can only be "linear" or "geometric"!')
+                '"schedule_type" can only be "linear" or "geometric"!'
+            )
 
 
 class Solver:
@@ -76,9 +78,9 @@ class Solver:
     SWEEPS_WARNING = 10000
     TIMEOUT_WARNING = 600
 
-    def submit(self,
-               problem: Union[str, Problem],
-               compress: bool = True) -> Job:
+    def submit(
+        self, problem: Union[str, Problem], compress: bool = True
+    ) -> Job:
         """Submits a job to execution to the associated
         Azure Quantum Workspace.
 
@@ -100,22 +102,26 @@ class Solver:
             # No storage account is passed, in this
             # case, get linked account from the service
             container_uri = self.workspace._get_linked_storage_sas_uri(
-                container_name)
+                container_name
+            )
             container_client = ContainerClient.from_container_url(
-                container_uri)
+                container_uri
+            )
             create_container_using_client(container_client)
             container_uri = azure.quantum.storage.remove_sas_token(
-                container_uri)
+                container_uri
+            )
         else:
             # Storage account is passed, use it to generate a container_uri
             container_uri = azure.quantum.storage.get_container_uri(
-                self.workspace.storage, container_name)
+                self.workspace.storage, container_name
+            )
 
         logger.debug(f"Container URI: {container_uri}")
 
         if isinstance(problem, str):
             name = "Optimization problem"
-            problem_uri = problem 
+            problem_uri = problem
         elif not problem.terms:
             name = problem.name
             problem_uri = problem.uploaded_blob_uri
@@ -167,8 +173,9 @@ class Solver:
 
     def set_one_param(self, name: str, value: Any):
         if value is not None:
-            params = (self.params["params"]
-                      if self.nested_params else self.params)
+            params = (
+                self.params["params"] if self.nested_params else self.params
+            )
             params[name] = str(value) if self.force_str_params else value
 
     def check_submission_warnings(self, problem: Problem):
@@ -184,7 +191,7 @@ class Solver:
                         f"There is a large problem submitted and \
                         a large number of sweeps ({sweeps}) configured. \
                         This submission could result in a long runtime."
-                        )
+                    )
 
         # do a timeout check if param-free, to warn
         # new users who accidentally set high timeout values.
@@ -209,7 +216,8 @@ class Solver:
         if not (schedule is None):
             if not isinstance(schedule, RangeSchedule):
                 raise ValueError(
-                    f'{schedule_name} can only be from class "RangeSchedule"!')
+                    f'{schedule_name} can only be from class "RangeSchedule"!'
+                )
             schedule_param = {
                 "type": schedule.schedule_type,
                 "initial": schedule.initial,
@@ -231,8 +239,9 @@ class Solver:
                 raise ValueError(f"{var_name} must be positive!")
             self.set_one_param(var_name, var)
 
-    def check_set_float_limit(self, var: float, var_name: str,
-                              var_limit: float):
+    def check_set_float_limit(
+        self, var: float, var_name: str, var_limit: float
+    ):
         """Check whether the var parameter is a float larger than var_limit.
         :param var:
             var paramter to be checked
@@ -247,7 +256,8 @@ class Solver:
                 raise ValueError(f"{var_name} shall be float!")
             if var <= var_limit:
                 raise ValueError(
-                    f"{var_name} can not be smaller than {var_limit}!")
+                    f"{var_name} can not be smaller than {var_limit}!"
+                )
             self.set_one_param(var_name, var)
 
 
@@ -292,8 +302,11 @@ class ParallelTempering(Solver):
         if platform == HardwarePlatform.FPGA:
             target = "microsoft.paralleltempering.fpga"
         else:
-            target = ("microsoft.paralleltempering-parameterfree.cpu"
-                      if param_free else "microsoft.paralleltempering.cpu")
+            target = (
+                "microsoft.paralleltempering-parameterfree.cpu"
+                if param_free
+                else "microsoft.paralleltempering.cpu"
+            )
 
         super().__init__(
             workspace=workspace,
@@ -316,8 +329,8 @@ class ParallelTempering(Solver):
                 self.set_one_param("replicas", len(all_betas))
             elif len(all_betas) != replicas:
                 raise ValueError(
-                    "Parameter 'replicas' must equal the" +
-                    "length of the 'all_betas' parameters."
+                    "Parameter 'replicas' must equal the"
+                    + "length of the 'all_betas' parameters."
                 )
 
 
@@ -357,15 +370,25 @@ class SimulatedAnnealing(Solver):
             specifies hardware platform
             HardwarePlatform.CPU or HardwarePlatform.FPGA.
         """
-        param_free = (beta_start is None and beta_stop is None
-                      and sweeps is None and restarts is None)
+        param_free = (
+            beta_start is None
+            and beta_stop is None
+            and sweeps is None
+            and restarts is None
+        )
 
         if platform == HardwarePlatform.FPGA:
-            target = ("microsoft.simulatedannealing-parameterfree.fpga"
-                      if param_free else "microsoft.simulatedannealing.fpga")
+            target = (
+                "microsoft.simulatedannealing-parameterfree.fpga"
+                if param_free
+                else "microsoft.simulatedannealing.fpga"
+            )
         else:
-            target = ("microsoft.simulatedannealing-parameterfree.cpu"
-                      if param_free else "microsoft.simulatedannealing.cpu")
+            target = (
+                "microsoft.simulatedannealing-parameterfree.cpu"
+                if param_free
+                else "microsoft.simulatedannealing.cpu"
+            )
 
         super().__init__(
             workspace=workspace,
@@ -414,11 +437,15 @@ class Tabu(Solver):
         :param seed:
             specifies a random seed value.
         """
-        param_free = (sweeps is None and tabu_tenure is None
-                      and restarts is None)
+        param_free = (
+            sweeps is None and tabu_tenure is None and restarts is None
+        )
 
-        target = ("microsoft.tabu-parameterfree.cpu"
-                  if param_free else "microsoft.tabu.cpu")
+        target = (
+            "microsoft.tabu-parameterfree.cpu"
+            if param_free
+            else "microsoft.tabu.cpu"
+        )
 
         super().__init__(
             workspace=workspace,
