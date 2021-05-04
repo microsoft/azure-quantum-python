@@ -78,7 +78,7 @@ def solve(
     """
     ws = create_workspace()
 
-    ## Call optimize on a solver to find the solution of a problem:
+    # Call optimize on a solver to find the solution of a problem:
     print("Finding solution...")
     solver = solver_factory(ws)
     print(solver)
