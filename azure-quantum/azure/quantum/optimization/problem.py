@@ -9,17 +9,15 @@ import uuid
 import io
 import gzip
 import json
-import numpy as np
 
 from typing import List, Union, Dict, Optional, TYPE_CHECKING
 from enum import Enum
 from azure.quantum.optimization import Term
 from azure.quantum.storage import upload_blob, ContainerClient
 
-
 logger = logging.getLogger(__name__)
 
-__all__ = ['Problem', 'ProblemType']
+__all__ = ["Problem", "ProblemType"]
 
 if TYPE_CHECKING:
     from azure.quantum.workspace import Workspace
@@ -35,13 +33,14 @@ class Problem:
 
     :param name: Problem name
     :type name: str
-    :param terms: Problem terms, depending on solver. Defaults to None
+    :param terms: Problem terms, depending on solver.
+        Defaults to None
     :type terms: Optional[List[Term]], optional
     :param init_config: Optional configuration details, depending on solver.
         Defaults to None
     :type init_config: Optional[Dict[str,int]], optional
-    :param problem_type: Problem type (ProblemType.pubo or ProblemType.ising).
-        Defaults to ProblemType.ising
+    :param problem_type: Problem type (ProblemType.pubo or
+        ProblemType.ising), defaults to ProblemType.ising
     :type problem_type: ProblemType, optional
     """
     def __init__(
@@ -49,7 +48,7 @@ class Problem:
         name: str,
         terms: Optional[List[Term]] = None,
         init_config: Optional[Dict[str, int]] = None,
-        problem_type: ProblemType = ProblemType.ising
+        problem_type: ProblemType = ProblemType.ising,
     ):
         self.name = name
         self.terms = terms.copy() if terms is not None else []
@@ -70,7 +69,7 @@ class Problem:
             "cost_function": {
                 "version": "1.1" if self.init_config else "1.0",
                 "type": self.problem_type.name,
-                "terms": [term.to_dict() for term in self.terms]
+                "terms": [term.to_dict() for term in self.terms],
             }
         }
 
@@ -81,11 +80,11 @@ class Problem:
 
     @classmethod
     def deserialize(cls, problem_as_json: str, name: str):
-        """Deserializes the problem from a JSON string serialized with
-        Problem.serialize()
+        """Deserializes the problem from a
+            JSON string serialized with Problem.serialize()
 
-        :param problem_as_json: The string to be deserialized to a
-            `Problem` instance
+        :param problem_as_json:
+            The string to be deserialized to a `Problem` instance
         :type problem_as_json: str
         :param name: The name of the problem
         :type name: str
@@ -93,14 +92,15 @@ class Problem:
         result = json.loads(problem_as_json)
         problem = Problem(
             name=name,
-            terms=[Term.from_dict(t)
-                   for t in result['cost_function']['terms']],
-            problem_type=ProblemType[result['cost_function']['type']]
+            terms=[
+                Term.from_dict(t) for t in result["cost_function"]["terms"]
+            ],
+            problem_type=ProblemType[result["cost_function"]["type"]],
         )
 
-        if 'initial_configuration' in result['cost_function']:
-            problem.init_config = (result['cost_function']
-                                         ['initial_configuration'])
+        if "initial_configuration" in result["cost_function"]:
+            problem.init_config = result["cost_function"][
+                "initial_configuration"]
 
         return problem
 
@@ -128,10 +128,10 @@ class Problem:
         workspace: "Workspace",
         container_name: str = "qio-problems",
         blob_name: str = None,
-        compress: bool = True
+        compress: bool = True,
     ):
-        """Uploads an optimization problem instance to the cloud storage
-        linked with the Workspace.
+        """Uploads an optimization problem instance to
+        the cloud storage linked with the Workspace.
 
         :param workspace: interaction terms of the problem.
         :type workspace: Workspace
@@ -149,7 +149,7 @@ class Problem:
             return self.uploaded_blob_uri
 
         if blob_name is None:
-            blob_name = '{}-{}'.format(self.name, uuid.uuid1())
+            blob_name = "{}-{}".format(self.name, uuid.uuid1())
 
         problem_json = self.serialize()
         logger.debug("Problem json: " + problem_json)
@@ -159,7 +159,7 @@ class Problem:
         data = io.BytesIO()
         if compress:
             encoding = "gzip"
-            with gzip.GzipFile(fileobj=data, mode='w') as fo:
+            with gzip.GzipFile(fileobj=data, mode="w") as fo:
                 fo.write(problem_json.encode())
         else:
             data.write(problem_json.encode())
@@ -176,40 +176,44 @@ class Problem:
                 content_type,
                 encoding,
                 data.getvalue(),
-                return_sas_token=False)
+                return_sas_token=False,
+            )
         else:
             # Use the specified storage account
             container_client = ContainerClient.from_connection_string(
-                workspace.storage,
-                container_name)
+                workspace.storage, container_name)
             self.uploaded_blob_uri = upload_blob(
                 container_client,
                 blob_name,
                 content_type,
                 encoding,
                 data.getvalue(),
-                return_sas_token=True)
+                return_sas_token=True,
+            )
 
         self.uploaded_blob_params = blob_params
         return self.uploaded_blob_uri
 
     def set_fixed_variables(
-            self,
-            fixed_variables: Union[Dict[int, int], Dict[str, int]]) -> Problem:
-        """ Transforms the current problem with a set of fixed variables and
-        returns the new modified problem.
+            self, fixed_variables: Union[Dict[int, int],
+                                         Dict[str, int]]) -> Problem:
+        """Transforms the current problem with a set of fixed
+        variables and returns the new modified problem.
         The original Problem instance is untouched.
 
-        :param fixed_variables: The dictionary of variable ids and
-            their fixed state
+        :param fixed_variables:
+            The dictionary of variable ids and their fixed state
         """
         if len(fixed_variables) == 0:
-            raise RuntimeError("Error: fixed_variables is empty. "
-                               + "Please specify at least one fixed variable")
+            raise RuntimeError(
+                "Error: fixed_variables is empty - \
+                please specify at least one fixed variable"
+            )
 
-        # if ids are given in string form, convert them to int
-        fixed_transformed = {int(k): fixed_variables[k]
-                             for k in fixed_variables}
+        fixed_transformed = {
+            int(k): fixed_variables[k]
+            for k in fixed_variables
+        }  # if ids are given in string form, convert them to int
         new_terms = []
 
         constant = 0
@@ -221,35 +225,37 @@ class Problem:
                 else:
                     # reduced to a constant term
                     constant += reduced_term.c
-        
+
         if constant:
             new_terms.append(Term(c=constant, indices=[]))
 
         new_init_config = None
         if self.init_config:
-            new_init_config = {k: self.init_config[k]
-                               for k in self.init_config
-                               if int(k) not in fixed_transformed}
+            new_init_config = {
+                k: self.init_config[k]
+                for k in self.init_config if int(k) not in fixed_transformed
+            }
 
         return Problem(
             self.name,
             terms=new_terms,
             init_config=new_init_config,
-            problem_type=self.problem_type
+            problem_type=self.problem_type,
         )
 
     def evaluate(
-            self, 
-            configuration: Union[Dict[int, int], Dict[str, int]]) -> float:
-        """ Given a configuration/variable assignment, return the cost
-        function value of this problem.
+            self, configuration: Union[Dict[int, int], Dict[str,
+                                                            int]]) -> float:
+        """Given a configuration/variable assignment,
+        return the cost function value of this problem.
 
-        :param configuration: The dictionary of variable ids to their
-            assigned value
+        :param configuration: The dictionary of
+         variable ids to their assigned value
         """
-        # if ids are given in string form, convert them to int
-        configuration_transformed = {int(k): configuration[k]
-                                     for k in configuration}
+        configuration_transformed = {
+            int(k): configuration[k]
+            for k in configuration
+        }  # if ids are given in string form, convert them to int
         total_cost = 0
         if self.terms:
             for term in self.terms:
@@ -260,8 +266,9 @@ class Problem:
     def is_large(self) -> bool:
         """Determines if the current problem is large.
         "large" is an arbitrary threshold and can be easily changed.
-        Based on usage data, we have defined a large problem to
-        be NUM_VARIABLES_LARGE+ variables AND NUM_TERMS_LARGE+ terms.
+        Based on usage data, we have defined a
+        large problem to be NUM_VARIABLES_LARGE+
+        variables AND NUM_TERMS_LARGE+ terms.
         """
 
         set_vars = set()
