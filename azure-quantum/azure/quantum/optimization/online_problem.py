@@ -6,13 +6,12 @@ logger = logging.getLogger(__name__)
 
 __all__ = ["OnlineProblem"]
 
-if TYPE_CHECKING:
-    from azure.quantum.workspace import Workspace
-
-
-class OnlineProblem(Problem):
-    def __init__(self, name: str, blob_uri: str):
-        super().__init__(self)
+class OnlineProblem(object):
+    def __init__(
+        self, name: str, 
+        blob_uri: str,
+        **kw):
+        super(OnlineProblem,self).__init__(**kw)
         self.name = name
         self.uploaded_blob_uri = blob_uri
 
@@ -42,4 +41,4 @@ class OnlineProblem(Problem):
 
     def download(self) -> Problem:
         logger.warning("The problem will be downloaded to the client")
-        return super().download()
+        return Problem.download(self)

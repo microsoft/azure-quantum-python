@@ -122,10 +122,7 @@ class Solver:
         if isinstance(problem, str):
             name = "Optimization problem"
             problem_uri = problem
-        elif not problem.terms:
-            name = problem.name
-            problem_uri = problem.uploaded_blob_uri
-        else:
+        elif isinstance(problem, Problem):
             name = problem.name
             problem_uri = problem.upload(
                 self.workspace,
@@ -133,6 +130,9 @@ class Solver:
                 container_name=container_name,
                 blob_name="inputData",
             )
+        else:
+            name = problem.name
+            problem_uri = problem.uploaded_blob_uri
 
         logger.info(
             f"Submitting problem '{name}'. Using payload from: '{problem_uri}'"
