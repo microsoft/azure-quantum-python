@@ -6,12 +6,14 @@ logger = logging.getLogger(__name__)
 
 __all__ = ["OnlineProblem"]
 
+
 class OnlineProblem(object):
     def __init__(
-        self, name: str, 
+        self, name: str,
         blob_uri: str,
-        **kw):
-        super(OnlineProblem,self).__init__(**kw)
+        **kw
+        ):
+        super(OnlineProblem, self).__init__(**kw)
         self.name = name
         self.uploaded_blob_uri = blob_uri
 
