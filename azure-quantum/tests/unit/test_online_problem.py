@@ -15,6 +15,7 @@ import azure.quantum.optimization.problem
 from common import expected_terms
 import json
 
+
 class TestOnlineProblemClass(unittest.TestCase):
     def setUp(self):
         self.mock_ws = Mock()

@@ -13,7 +13,12 @@ import json
 from typing import List, Union, Dict, Optional, TYPE_CHECKING
 from enum import Enum
 from azure.quantum.optimization import Term
-from azure.quantum.storage import upload_blob, ContainerClient, download_blob, BlobClient
+from azure.quantum.storage import (
+    upload_blob,
+    ContainerClient,
+    download_blob,
+    BlobClient
+)
 
 logger = logging.getLogger(__name__)
 
