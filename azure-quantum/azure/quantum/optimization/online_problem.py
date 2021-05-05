@@ -9,12 +9,13 @@ __all__ = ["OnlineProblem"]
 if TYPE_CHECKING:
     from azure.quantum.workspace import Workspace
 
+
 class OnlineProblem(object):
     def __init__(
         self, name: str,
         blob_uri: str,
         **kw
-        ):
+    ):
         super(OnlineProblem, self).__init__(**kw)
         self.name = name
         self.uploaded_blob_uri = blob_uri

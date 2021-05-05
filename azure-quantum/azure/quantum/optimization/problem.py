@@ -312,5 +312,6 @@ class Problem:
                     terms.append(term)
             return terms
         else:
-            raise Exception("Please download the problem on the client" \
-                            "to perform this operation")
+            raise Exception("There are currently no terms in this problem. \
+                Please download the problem on the client or add terms to the \
+                    problem to perform this operation")
