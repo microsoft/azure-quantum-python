@@ -13,7 +13,7 @@ import json
 from typing import List, Union, Dict, Optional, TYPE_CHECKING
 from enum import Enum
 from azure.quantum.optimization import Term
-from azure.quantum.storage import upload_blob, ContainerClient, download_blob
+from azure.quantum.storage import upload_blob, ContainerClient, download_blob, BlobClient
 
 logger = logging.getLogger(__name__)
 
@@ -284,13 +284,21 @@ class Problem:
             and len(self.terms) >= Problem.NUM_TERMS_LARGE
         )
 
-    def download(self):
-        """Dowloads an uploaded problem as an instance of 'Problem'"""
+    def download(self, workspace:"Workspace"):
+        """Downloads the uploaded problem as an instance of `Problem`"""
         if not self.uploaded_blob_uri:
             raise Exception(
-                "Problem must be uploaded before it can be downloaded"
+                "Problem may not be downloaded before it is uploaded"
             )
-        contents = download_blob(self.uploaded_blob_uri)
+        blob_client = BlobClient.from_blob_url(self.uploaded_blob_uri)
+        container_client = ContainerClient.from_container_url(
+            workspace._get_linked_storage_sas_uri(
+                blob_client.container_name
+            )
+        )
+        blob_name = blob_client.blob_name
+        blob = container_client.get_blob_client(blob_name)
+        contents = download_blob(blob.url)
         return Problem.deserialize(contents, self.name)
 
     def get_terms(self, id:int) -> List[Term]:

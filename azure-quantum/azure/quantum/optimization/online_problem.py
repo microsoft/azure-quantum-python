@@ -6,6 +6,8 @@ logger = logging.getLogger(__name__)
 
 __all__ = ["OnlineProblem"]
 
+if TYPE_CHECKING:
+    from azure.quantum.workspace import Workspace
 
 class OnlineProblem(object):
     def __init__(
@@ -17,6 +19,6 @@ class OnlineProblem(object):
         self.name = name
         self.uploaded_blob_uri = blob_uri
 
-    def download(self) -> Problem:
+    def download(self, workspace:"Workspace") -> Problem:
         logger.warning("The problem will be downloaded to the client")
-        return Problem.download(self)
+        return Problem.download(self, workspace)
