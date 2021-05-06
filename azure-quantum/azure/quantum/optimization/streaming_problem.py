@@ -32,7 +32,7 @@ class StreamingProblem(object):
 
     Streaming problems are uploaded on the fly as terms are added,
     meaning that the whole problem representation is not kept in memory. This
-    is very useful when constructing large problems.
+    is very useful when constructing large  problems.
 
     :param workspace: Workspace to upload problem to
     :type workspace: Workspace
