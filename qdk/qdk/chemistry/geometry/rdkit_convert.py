@@ -4,6 +4,7 @@
 """Module for converting to and from RDKit data structures
 """
 
+import logging
 from typing import List, Tuple, Iterable, TYPE_CHECKING
 
 from .xyz import coordinates_to_xyz
@@ -12,6 +13,8 @@ from rdkit.Chem import AllChem as Chem
 
 if TYPE_CHECKING:
     from rdkit.Chem import Mol, Conformer
+
+_log = logging.getLogger(__name__)
 
 
 def get_conformer(mol: "Mol", num_confs: int = 10) -> "Conformer":
@@ -41,7 +44,7 @@ def get_conformer(mol: "Mol", num_confs: int = 10) -> "Conformer":
         ((not_converged, energy), conformer) = min(
             zip(res, mol.GetConformers()), key=lambda x: x[0][1])
         if not_converged:
-            print(f"Solution did not converge. Lowest energy found: {energy}")
+            _log.debug(f"Solution did not converge. Lowest energy found: {energy}")
     return conformer
 
 
