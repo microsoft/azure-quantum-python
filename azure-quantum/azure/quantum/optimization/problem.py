@@ -13,7 +13,12 @@ import json
 from typing import List, Union, Dict, Optional, TYPE_CHECKING
 from enum import Enum
 from azure.quantum.optimization import Term
-from azure.quantum.storage import upload_blob, ContainerClient
+from azure.quantum.storage import (
+    upload_blob,
+    ContainerClient,
+    download_blob,
+    BlobClient
+)
 
 logger = logging.getLogger(__name__)
 
@@ -43,6 +48,7 @@ class Problem:
         ProblemType.ising), defaults to ProblemType.ising
     :type problem_type: ProblemType, optional
     """
+
     def __init__(
         self,
         name: str,
@@ -100,7 +106,8 @@ class Problem:
 
         if "initial_configuration" in result["cost_function"]:
             problem.init_config = result["cost_function"][
-                "initial_configuration"]
+                "initial_configuration"
+            ]
 
         return problem
 
@@ -167,9 +174,11 @@ class Problem:
         if not workspace.storage:
             # No storage account is passed, use the linked one
             container_uri = workspace._get_linked_storage_sas_uri(
-                container_name)
+                container_name
+            )
             container_client = ContainerClient.from_container_url(
-                container_uri)
+                container_uri
+            )
             self.uploaded_blob_uri = upload_blob(
                 container_client,
                 blob_name,
@@ -181,7 +190,8 @@ class Problem:
         else:
             # Use the specified storage account
             container_client = ContainerClient.from_connection_string(
-                workspace.storage, container_name)
+                workspace.storage, container_name
+            )
             self.uploaded_blob_uri = upload_blob(
                 container_client,
                 blob_name,
@@ -195,8 +205,8 @@ class Problem:
         return self.uploaded_blob_uri
 
     def set_fixed_variables(
-            self, fixed_variables: Union[Dict[int, int],
-                                         Dict[str, int]]) -> Problem:
+        self, fixed_variables: Union[Dict[int, int], Dict[str, int]]
+    ) -> Problem:
         """Transforms the current problem with a set of fixed
         variables and returns the new modified problem.
         The original Problem instance is untouched.
@@ -211,8 +221,7 @@ class Problem:
             )
 
         fixed_transformed = {
-            int(k): fixed_variables[k]
-            for k in fixed_variables
+            int(k): fixed_variables[k] for k in fixed_variables
         }  # if ids are given in string form, convert them to int
         new_terms = []
 
@@ -233,7 +242,8 @@ class Problem:
         if self.init_config:
             new_init_config = {
                 k: self.init_config[k]
-                for k in self.init_config if int(k) not in fixed_transformed
+                for k in self.init_config
+                if int(k) not in fixed_transformed
             }
 
         return Problem(
@@ -244,8 +254,8 @@ class Problem:
         )
 
     def evaluate(
-            self, configuration: Union[Dict[int, int], Dict[str,
-                                                            int]]) -> float:
+        self, configuration: Union[Dict[int, int], Dict[str, int]]
+    ) -> float:
         """Given a configuration/variable assignment,
         return the cost function value of this problem.
 
@@ -253,8 +263,7 @@ class Problem:
          variable ids to their assigned value
         """
         configuration_transformed = {
-            int(k): configuration[k]
-            for k in configuration
+            int(k): configuration[k] for k in configuration
         }  # if ids are given in string form, convert them to int
         total_cost = 0
         if self.terms:
@@ -275,5 +284,39 @@ class Problem:
         for term in self.terms:
             set_vars.update(term.ids)
 
-        return (len(set_vars) >= Problem.NUM_VARIABLES_LARGE
-                and len(self.terms) >= Problem.NUM_TERMS_LARGE)
+        return (
+            len(set_vars) >= Problem.NUM_VARIABLES_LARGE
+            and len(self.terms) >= Problem.NUM_TERMS_LARGE
+        )
+
+    def download(self, workspace:"Workspace"):
+        """Downloads the uploaded problem as an instance of `Problem`"""
+        if not self.uploaded_blob_uri:
+            raise Exception(
+                "Problem may not be downloaded before it is uploaded"
+            )
+        blob_client = BlobClient.from_blob_url(self.uploaded_blob_uri)
+        container_client = ContainerClient.from_container_url(
+            workspace._get_linked_storage_sas_uri(
+                blob_client.container_name
+            )
+        )
+        blob_name = blob_client.blob_name
+        blob = container_client.get_blob_client(blob_name)
+        contents = download_blob(blob.url)
+        return Problem.deserialize(contents, self.name)
+
+    def get_terms(self, id:int) -> List[Term]:
+        """ Given an index the function will return
+        a list of terms with that index
+        """
+        terms = []
+        if self.terms != []:
+            for term in self.terms:
+                if id in term.ids:
+                    terms.append(term)
+            return terms
+        else:
+            raise Exception("There are currently no terms in this problem. \
+                Please download the problem on the client or add terms to the \
+                    problem to perform this operation")

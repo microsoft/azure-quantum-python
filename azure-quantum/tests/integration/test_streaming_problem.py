@@ -6,9 +6,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 ##
-
-## IMPORTS ##
-
 import unittest
 import json
 import os
@@ -27,22 +24,23 @@ from integration_test_util import create_workspace
 
 
 class TestStreamingProblem(unittest.TestCase):
-    def __test_upload_problem(self,
-                              count: int,
-                              terms_thresh: int,
-                              size_thresh: int,
-                              compress: bool,
-                              problem_type: ProblemType = ProblemType.ising,
-                              initial_terms: List[Term] = [],
-                              **kwargs):
+    def __test_upload_problem(
+        self,
+        count: int,
+        terms_thresh: int,
+        size_thresh: int,
+        compress: bool,
+        problem_type: ProblemType = ProblemType.ising,
+        initial_terms: List[Term] = [],
+        **kwargs
+    ):
         ws = create_workspace()
-        sProblem = StreamingProblem(ws,
-                                    name="test",
-                                    problem_type=problem_type,
-                                    terms=initial_terms)
-        rProblem = Problem("test",
-                           problem_type=problem_type,
-                           terms=initial_terms)
+        sProblem = StreamingProblem(
+            ws, name="test", problem_type=problem_type, terms=initial_terms
+        )
+        rProblem = Problem(
+            "test", problem_type=problem_type, terms=initial_terms
+        )
         sProblem.upload_terms_threshold = terms_thresh
         sProblem.upload_size_threshold = size_thresh
         sProblem.compress = compress
@@ -53,8 +51,9 @@ class TestStreamingProblem(unittest.TestCase):
 
         self.assertEqual(problem_type, sProblem.problem_type)
         self.assertEqual(problem_type.name, sProblem.stats["type"])
-        self.assertEqual(count + len(initial_terms),
-                         sProblem.stats["num_terms"])
+        self.assertEqual(
+            count + len(initial_terms), sProblem.stats["num_terms"]
+        )
         self.assertEqual(
             self.__kwarg_or_value(kwargs, "avg_coupling", 2),
             sProblem.stats["avg_coupling"],
