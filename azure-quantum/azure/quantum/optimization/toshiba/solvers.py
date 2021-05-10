@@ -34,7 +34,7 @@ class SimulatedBifurcationMachine(Solver):
         Goto, H., Tatsumura, K., & Dixon, A. R. (2019)
         Combinatorial optimization by simulating adiabatic bifurcations
         in nonlinear Hamiltonian systems, Science Advances,
-        5(4), DOI:10.1126/sciadv.aav2372
+        5(4),  DOI:10.1126/sciadv.aav2372
         :param steps:
            The number of steps in a computation request.
            The default is 0.
