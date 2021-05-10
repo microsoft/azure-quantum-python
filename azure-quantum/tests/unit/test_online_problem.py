@@ -22,7 +22,7 @@ class TestOnlineProblemClass(unittest.TestCase):
         self.mock_ws._get_linked_storage_sas_uri.return_value = Mock()
         self.o_problem = OnlineProblem(name="test", blob_uri="mock_blob_uri")
 
-    @pytesat.skip(reason= "OnlineProblem not available in SDK yet")
+    @pytest.skip(reason= "OnlineProblem not available in SDK yet")
     def test_download(self):
         azure.quantum.optimization.problem.download_blob = Mock(
             return_value=expected_terms()
