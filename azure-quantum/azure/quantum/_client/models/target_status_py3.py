@@ -31,17 +31,17 @@ class TargetStatus(Model):
     """
 
     _validation = {
-        "id": {"readonly": True},
-        "current_availability": {"readonly": True},
-        "average_queue_time": {"readonly": True},
-        "status_page": {"readonly": True},
+        'id': {'readonly': True},
+        'current_availability': {'readonly': True},
+        'average_queue_time': {'readonly': True},
+        'status_page': {'readonly': True},
     }
 
     _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "current_availability": {"key": "currentAvailability", "type": "str"},
-        "average_queue_time": {"key": "averageQueueTime", "type": "long"},
-        "status_page": {"key": "statusPage", "type": "str"},
+        'id': {'key': 'id', 'type': 'str'},
+        'current_availability': {'key': 'currentAvailability', 'type': 'str'},
+        'average_queue_time': {'key': 'averageQueueTime', 'type': 'long'},
+        'status_page': {'key': 'statusPage', 'type': 'str'},
     }
 
     def __init__(self, **kwargs) -> None:

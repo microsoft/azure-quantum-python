@@ -24,13 +24,11 @@ class ErrorData(Model):
     """
 
     _attribute_map = {
-        "code": {"key": "code", "type": "str"},
-        "message": {"key": "message", "type": "str"},
+        'code': {'key': 'code', 'type': 'str'},
+        'message': {'key': 'message', 'type': 'str'},
     }
 
-    def __init__(
-        self, *, code: str = None, message: str = None, **kwargs
-    ) -> None:
+    def __init__(self, *, code: str=None, message: str=None, **kwargs) -> None:
         super(ErrorData, self).__init__(**kwargs)
         self.code = code
         self.message = message

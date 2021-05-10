@@ -37,21 +37,21 @@ class Quota(Model):
     """
 
     _attribute_map = {
-        "dimension": {"key": "dimension", "type": "str"},
-        "scope": {"key": "scope", "type": "str"},
-        "provider_id": {"key": "providerId", "type": "str"},
-        "utilization": {"key": "utilization", "type": "float"},
-        "holds": {"key": "holds", "type": "float"},
-        "limit": {"key": "limit", "type": "float"},
-        "period": {"key": "period", "type": "str"},
+        'dimension': {'key': 'dimension', 'type': 'str'},
+        'scope': {'key': 'scope', 'type': 'str'},
+        'provider_id': {'key': 'providerId', 'type': 'str'},
+        'utilization': {'key': 'utilization', 'type': 'float'},
+        'holds': {'key': 'holds', 'type': 'float'},
+        'limit': {'key': 'limit', 'type': 'float'},
+        'period': {'key': 'period', 'type': 'str'},
     }
 
     def __init__(self, **kwargs):
         super(Quota, self).__init__(**kwargs)
-        self.dimension = kwargs.get("dimension", None)
-        self.scope = kwargs.get("scope", None)
-        self.provider_id = kwargs.get("provider_id", None)
-        self.utilization = kwargs.get("utilization", None)
-        self.holds = kwargs.get("holds", None)
-        self.limit = kwargs.get("limit", None)
-        self.period = kwargs.get("period", None)
+        self.dimension = kwargs.get('dimension', None)
+        self.scope = kwargs.get('scope', None)
+        self.provider_id = kwargs.get('provider_id', None)
+        self.utilization = kwargs.get('utilization', None)
+        self.holds = kwargs.get('holds', None)
+        self.limit = kwargs.get('limit', None)
+        self.period = kwargs.get('period', None)

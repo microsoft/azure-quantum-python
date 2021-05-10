@@ -12,6 +12,7 @@
 from .quantum_client import QuantumClient
 from .version import VERSION
 
-__all__ = ["QuantumClient"]
+__all__ = ['QuantumClient']
 
 __version__ = VERSION
+

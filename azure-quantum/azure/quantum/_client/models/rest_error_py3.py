@@ -21,7 +21,7 @@ class RestError(Model):
     """
 
     _attribute_map = {
-        "error": {"key": "error", "type": "ErrorData"},
+        'error': {'key': 'error', 'type': 'ErrorData'},
     }
 
     def __init__(self, *, error=None, **kwargs) -> None:
@@ -38,6 +38,4 @@ class RestErrorException(HttpOperationError):
 
     def __init__(self, deserialize, response, *args):
 
-        super(RestErrorException, self).__init__(
-            deserialize, response, "RestError", *args
-        )
+        super(RestErrorException, self).__init__(deserialize, response, 'RestError', *args)

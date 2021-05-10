@@ -35,8 +35,7 @@ class StorageOperations(object):
         self.config = config
 
     def sas_uri(
-        self, blob_details, custom_headers=None, raw=False, **operation_config
-    ):
+            self, blob_details, custom_headers=None, raw=False, **operation_config):
         """Gets a URL with SAS token for a container/blob in the storage account
         associated with the workspace. The SAS URL can be used to upload job
         input and/or download job output.
@@ -56,21 +55,11 @@ class StorageOperations(object):
          :class:`RestErrorException<azure.quantum.models.RestErrorException>`
         """
         # Construct URL
-        url = self.sas_uri.metadata["url"]
+        url = self.sas_uri.metadata['url']
         path_format_arguments = {
-            "subscriptionId": self._serialize.url(
-                "self.config.subscription_id",
-                self.config.subscription_id,
-                "str",
-            ),
-            "resourceGroupName": self._serialize.url(
-                "self.config.resource_group_name",
-                self.config.resource_group_name,
-                "str",
-            ),
-            "workspaceName": self._serialize.url(
-                "self.config.workspace_name", self.config.workspace_name, "str"
-            ),
+            'subscriptionId': self._serialize.url("self.config.subscription_id", self.config.subscription_id, 'str'),
+            'resourceGroupName': self._serialize.url("self.config.resource_group_name", self.config.resource_group_name, 'str'),
+            'workspaceName': self._serialize.url("self.config.workspace_name", self.config.workspace_name, 'str')
         }
         url = self._client.format_url(url, **path_format_arguments)
 
@@ -79,26 +68,20 @@ class StorageOperations(object):
 
         # Construct headers
         header_parameters = {}
-        header_parameters["Accept"] = "application/json"
-        header_parameters["Content-Type"] = "application/json; charset=utf-8"
+        header_parameters['Accept'] = 'application/json'
+        header_parameters['Content-Type'] = 'application/json; charset=utf-8'
         if self.config.generate_client_request_id:
-            header_parameters["x-ms-client-request-id"] = str(uuid.uuid1())
+            header_parameters['x-ms-client-request-id'] = str(uuid.uuid1())
         if custom_headers:
             header_parameters.update(custom_headers)
         if self.config.accept_language is not None:
-            header_parameters["accept-language"] = self._serialize.header(
-                "self.config.accept_language",
-                self.config.accept_language,
-                "str",
-            )
+            header_parameters['accept-language'] = self._serialize.header("self.config.accept_language", self.config.accept_language, 'str')
 
         # Construct body
-        body_content = self._serialize.body(blob_details, "BlobDetails")
+        body_content = self._serialize.body(blob_details, 'BlobDetails')
 
         # Construct and send request
-        request = self._client.post(
-            url, query_parameters, header_parameters, body_content
-        )
+        request = self._client.post(url, query_parameters, header_parameters, body_content)
         response = self._client.send(request, stream=False, **operation_config)
 
         if response.status_code not in [200]:
@@ -107,14 +90,11 @@ class StorageOperations(object):
         deserialized = None
 
         if response.status_code == 200:
-            deserialized = self._deserialize("SasUriResponse", response)
+            deserialized = self._deserialize('SasUriResponse', response)
 
         if raw:
             client_raw_response = ClientRawResponse(deserialized, response)
             return client_raw_response
 
         return deserialized
-
-    sas_uri.metadata = {
-        "url": "/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Quantum/workspaces/{workspaceName}/storage/sasUri"
-    }
+    sas_uri.metadata = {'url': '/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Quantum/workspaces/{workspaceName}/storage/sasUri'}

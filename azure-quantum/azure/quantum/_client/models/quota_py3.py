@@ -37,27 +37,16 @@ class Quota(Model):
     """
 
     _attribute_map = {
-        "dimension": {"key": "dimension", "type": "str"},
-        "scope": {"key": "scope", "type": "str"},
-        "provider_id": {"key": "providerId", "type": "str"},
-        "utilization": {"key": "utilization", "type": "float"},
-        "holds": {"key": "holds", "type": "float"},
-        "limit": {"key": "limit", "type": "float"},
-        "period": {"key": "period", "type": "str"},
+        'dimension': {'key': 'dimension', 'type': 'str'},
+        'scope': {'key': 'scope', 'type': 'str'},
+        'provider_id': {'key': 'providerId', 'type': 'str'},
+        'utilization': {'key': 'utilization', 'type': 'float'},
+        'holds': {'key': 'holds', 'type': 'float'},
+        'limit': {'key': 'limit', 'type': 'float'},
+        'period': {'key': 'period', 'type': 'str'},
     }
 
-    def __init__(
-        self,
-        *,
-        dimension: str = None,
-        scope=None,
-        provider_id: str = None,
-        utilization: float = None,
-        holds: float = None,
-        limit: float = None,
-        period=None,
-        **kwargs
-    ) -> None:
+    def __init__(self, *, dimension: str=None, scope=None, provider_id: str=None, utilization: float=None, holds: float=None, limit: float=None, period=None, **kwargs) -> None:
         super(Quota, self).__init__(**kwargs)
         self.dimension = dimension
         self.scope = scope

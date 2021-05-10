@@ -24,17 +24,15 @@ class BlobDetails(Model):
     """
 
     _validation = {
-        "container_name": {"required": True},
+        'container_name': {'required': True},
     }
 
     _attribute_map = {
-        "container_name": {"key": "containerName", "type": "str"},
-        "blob_name": {"key": "blobName", "type": "str"},
+        'container_name': {'key': 'containerName', 'type': 'str'},
+        'blob_name': {'key': 'blobName', 'type': 'str'},
     }
 
-    def __init__(
-        self, *, container_name: str, blob_name: str = None, **kwargs
-    ) -> None:
+    def __init__(self, *, container_name: str, blob_name: str=None, **kwargs) -> None:
         super(BlobDetails, self).__init__(**kwargs)
         self.container_name = container_name
         self.blob_name = blob_name

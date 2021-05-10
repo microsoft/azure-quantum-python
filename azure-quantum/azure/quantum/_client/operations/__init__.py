@@ -15,8 +15,8 @@ from .storage_operations import StorageOperations
 from .quotas_operations import QuotasOperations
 
 __all__ = [
-    "JobsOperations",
-    "ProvidersOperations",
-    "StorageOperations",
-    "QuotasOperations",
+    'JobsOperations',
+    'ProvidersOperations',
+    'StorageOperations',
+    'QuotasOperations',
 ]

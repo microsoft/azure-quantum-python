@@ -18,8 +18,8 @@ class ProviderStatusPaged(Paged):
     """
 
     _attribute_map = {
-        "next_link": {"key": "nextLink", "type": "str"},
-        "current_page": {"key": "value", "type": "[ProviderStatus]"},
+        'next_link': {'key': 'nextLink', 'type': 'str'},
+        'current_page': {'key': 'value', 'type': '[ProviderStatus]'}
     }
 
     def __init__(self, *args, **kwargs):

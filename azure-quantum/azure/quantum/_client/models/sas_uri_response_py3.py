@@ -21,9 +21,9 @@ class SasUriResponse(Model):
     """
 
     _attribute_map = {
-        "sas_uri": {"key": "sasUri", "type": "str"},
+        'sas_uri': {'key': 'sasUri', 'type': 'str'},
     }
 
-    def __init__(self, *, sas_uri: str = None, **kwargs) -> None:
+    def __init__(self, *, sas_uri: str=None, **kwargs) -> None:
         super(SasUriResponse, self).__init__(**kwargs)
         self.sas_uri = sas_uri
