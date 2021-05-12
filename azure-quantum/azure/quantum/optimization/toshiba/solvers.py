@@ -23,7 +23,7 @@ class SimulatedBifurcationMachine(Solver):
         workspace: Workspace,
         steps: Optional[int]=None,
         loops: Optional[int]=None,
-        target_val: Optional[float]=None,
+        target: Optional[float]=None,
         maxout: Optional[int]=None,
         timeout: Optional[float]=None,
         dt: Optional[float] = None,
@@ -46,7 +46,7 @@ class SimulatedBifurcationMachine(Solver):
             The number of loops in SBM computation. 
             SBM computation service searches for a better solution while repeating loops as many times as is specified. 
             The default is 1. If 0 (zero) is specified, computation will be repeated until a timeout occurs. The maximum is 10,000,000.
-        :param target_val: 
+        :param target:
             The end condition of a computation request. When the evaluation value reaches this value, the computation will stop. 
             If 0 is specified for the parameter loops, loops will be repeated either until the objective function reaches the value 
             specified in the parameter target or until a timeout occurs. 
@@ -87,10 +87,11 @@ class SimulatedBifurcationMachine(Solver):
             input_data_format="microsoft.qio.v2",
             output_data_format="microsoft.qio-results.v2",
             nested_params=False,
-            force_str_params=True)
+            force_str_params=False,
+        )
         self.set_one_param("steps", steps)
         self.set_one_param("loops", loops)
-        self.set_one_param("target_val", target_val)
+        self.set_one_param("target", target)
         self.set_one_param("maxout", maxout)
         self.set_one_param("timeout", timeout)
         self.set_one_param("dt",dt)
@@ -112,4 +113,4 @@ class SimulatedBifurcationMachine(Solver):
             Whether or not to compress the problem when uploading it
             the Blob Storage.
         """
-        super().submit(self=self, problem=problem, compress=False)
+        return super().submit(problem=problem, compress=False)
