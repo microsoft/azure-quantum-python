@@ -151,7 +151,7 @@ class TestProblemClass(unittest.TestCase):
         default_pubo = numpy.load(self.default_pubo)
         with_keywords_pubo = numpy.load(self.with_keywords_pubo)
 
-        # Valid files
+        ## Valid files
         self.assertTrue(self.problem.is_valid_npz(default_qubo.files))
         self.assertTrue(self.problem.is_valid_npz(
             default_qubo.files,
@@ -197,7 +197,6 @@ class TestProblemClass(unittest.TestCase):
             "k")
         )
 
-        # Wrong column names
         self.assertFalse(self.pubo_problem.is_valid_npz(
             with_keywords_pubo.files,
             ["x", "y", "z"],
@@ -221,7 +220,6 @@ class TestProblemClass(unittest.TestCase):
     def test_terms_from_npz_qubo(self):
         # Exceptions are raised for invalid file paths or files with incorrect naming
         self.assertRaises(Exception, self.problem.terms_from_npz, "invalid_file_path.npz")
-
         self.assertRaises(
             Exception,
             self.problem.terms_from_npz,
@@ -231,7 +229,6 @@ class TestProblemClass(unittest.TestCase):
         )
 
         # Terms are produced for valid files
-
         self.assertEqual(
             self.problem.terms_from_npz(self.default_qubo),
             self.problem.terms
@@ -249,7 +246,6 @@ class TestProblemClass(unittest.TestCase):
     def test_terms_from_npz_pubo(self):
         # Exceptions are raised for invalid file paths or files with incorrect naming
         self.assertRaises(Exception, self.pubo_problem.terms_from_npz, "invalid_file_path.npz")
-
         self.assertRaises(
             Exception,
             self.pubo_problem.terms_from_npz,
@@ -259,7 +255,6 @@ class TestProblemClass(unittest.TestCase):
         )
 
         # Terms are produced for valid files
-
         self.assertEqual(
             self.pubo_problem.terms_from_npz(
                 self.default_pubo,
