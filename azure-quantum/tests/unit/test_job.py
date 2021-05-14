@@ -9,7 +9,7 @@
 import unittest
 import time
 
-from azure.quantum.optimization import Problem
+from azure.quantum.optimization import Problem, ProblemType
 from azure.quantum.optimization.solvers import SimulatedAnnealing
 from azure.quantum.optimization.toshiba.solvers import SimulatedBifurcationMachine
 from azure.quantum import Job
@@ -73,7 +73,8 @@ class TestJob(QuantumTestBase):
     def test_job_toshiba_has_completed(self):
         ws = self.create_workspace()
 
-        problem = Problem(name="test")
+        problem = Problem(name="test",
+                          problem_type=ProblemType.pubo)
         count = 4
 
         for i in range(count):
