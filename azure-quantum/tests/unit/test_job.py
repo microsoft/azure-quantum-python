@@ -11,6 +11,7 @@ import time
 
 from azure.quantum.optimization import Problem
 from azure.quantum.optimization.solvers import SimulatedAnnealing
+from azure.quantum.optimization.toshiba.solvers import SimulatedBifurcationMachine
 from azure.quantum import Job
 from common import QuantumTestBase
 
@@ -62,6 +63,28 @@ class TestJob(QuantumTestBase):
             return_value=self.get_dummy_job_id(),
         ):
             solver = SimulatedAnnealing(ws)
+            job = solver.submit(problem)
+            self.assertEqual(False, job.has_completed())
+            if self.in_recording:
+                time.sleep(3)
+            job.get_results()
+            self.assertEqual(True, job.has_completed())
+
+    def test_job_toshiba_has_completed(self):
+        ws = self.create_workspace()
+
+        problem = Problem(name="test")
+        count = 4
+
+        for i in range(count):
+            problem.add_term(c=i, indices=[i, i + 1])
+
+        with unittest.mock.patch.object(
+            Job,
+            self.mock_create_job_id_name,
+            return_value=self.get_dummy_job_id(),
+        ):
+            solver = SimulatedBifurcationMachine(ws)
             job = solver.submit(problem)
             self.assertEqual(False, job.has_completed())
             if self.in_recording:
