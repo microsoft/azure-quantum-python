@@ -209,7 +209,7 @@ class Solver:
     def check_set_schedule(self, schedule: RangeSchedule, schedule_name: str):
         """Check whether the schedule parameter is set well from RangeSchedule.
         :param schedule:
-            schedule paramter to be checked whether is from RangeSchedule.
+            schedule parameter to be checked whether is from RangeSchedule.
         :param schedule_name:
             name of the schedule parameter.
         """
@@ -228,7 +228,7 @@ class Solver:
     def check_set_positive_int(self, var: int, var_name: str):
         """Check whether the var parameter is a positive integer.
         :param var:
-            var paramter to be checked whether is a positive integer.
+            var parameter to be checked whether is a positive integer.
         :param var_name:
             name of the variable.
         """
@@ -244,7 +244,7 @@ class Solver:
     ):
         """Check whether the var parameter is a float larger than var_limit.
         :param var:
-            var paramter to be checked
+            var parameter to be checked
             whether is a float larger than var_limit.
         :param var_name:
             name of the variable.
@@ -474,8 +474,8 @@ class QuantumMonteCarlo(Solver):
         sweeps: Optional[int] = None,
         beta_start: Optional[float] = None,
     ):
-        """The constructor of Simulated Qunatum Annelaing Search solver.
-
+        """The constructor of Simulated Quantum Annealing Search solver.
+ 
         Simulated Quantum Search solver for binary optimization problems
         with k-local interactions on an all-to-all graph topology with double
         precision support for the coupler weights.
@@ -597,7 +597,7 @@ class SubstochasticMonteCarlo(Solver):
         :param beta:
             beta (resampling factor) values evolve over time
         :param steps_per_walker:
-            number of steps to attempt for each walker, must be postive
+            number of steps to attempt for each walker, must be positive
         """
         target = "microsoft.substochasticmontecarlo.cpu"
         super().__init__(
