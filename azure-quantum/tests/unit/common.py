@@ -47,6 +47,7 @@ class QuantumTestBase(ReplayableTest):
         )
         self._tenant_id = os.environ.get("AZURE_TENANT_ID", self.dummy_uid)
         self._resource_group = os.environ.get("RESOURCE_GROUP", self.dummy_rg)
+        self._location = os.environ.get("LOCATION", "eastus")
         self._subscription_id = os.environ.get(
             "SUBSCRIPTION_ID", self.dummy_uid
         )
@@ -130,6 +131,10 @@ class QuantumTestBase(ReplayableTest):
         return self._subscription_id
 
     @property
+    def location(self):
+        return self._location
+
+    @property
     def workspace_name(self):
         return self._workspace_name
 
@@ -144,6 +149,7 @@ class QuantumTestBase(ReplayableTest):
             subscription_id=self.subscription_id,
             resource_group=self.resource_group,
             name=self.workspace_name,
+            location=self.location
         )
 
         if self.is_live or self.in_recording:
