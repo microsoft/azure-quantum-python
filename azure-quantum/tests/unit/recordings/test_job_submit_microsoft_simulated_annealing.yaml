@@ -60,7 +60,7 @@ interactions:
     uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/storage/sasUri
   response:
     body:
-      string: '{"sasUri": "https://getest2.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+      string: '{"sasUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
         "access_token": "fake_token"}'
     headers:
       content-length:
@@ -88,7 +88,7 @@ interactions:
       x-ms-version:
       - '2020-04-08'
     method: GET
-    uri: https://getest2.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?restype=container&sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
+    uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?restype=container&sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerNotFound</Code><Message>The
@@ -121,7 +121,7 @@ interactions:
       x-ms-version:
       - '2020-04-08'
     method: PUT
-    uri: https://getest2.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?restype=container&sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
+    uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?restype=container&sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
   response:
     body:
       string: ''
@@ -152,7 +152,7 @@ interactions:
     uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/storage/sasUri
   response:
     body:
-      string: '{"sasUri": "https://getest2.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+      string: '{"sasUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
         "access_token": "fake_token"}'
     headers:
       content-length:
@@ -180,7 +180,7 @@ interactions:
       x-ms-version:
       - '2020-04-08'
     method: GET
-    uri: https://getest2.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?restype=container&sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
+    uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?restype=container&sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
   response:
     body:
       string: ''
@@ -227,7 +227,7 @@ interactions:
       x-ms-version:
       - '2020-04-08'
     method: PUT
-    uri: https://getest2.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
+    uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
   response:
     body:
       string: ''
@@ -241,8 +241,8 @@ interactions:
       message: Created
 - request:
     body: 'b''{"id": "00000000-0000-0000-0000-000000000000", "name": "Test-SimulatedAnnealing-\\"20210518-003508\\"",
-      "containerUri": "https://getest2.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000",
-      "inputDataUri": "https://getest2.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData",
+      "containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000",
+      "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData",
       "inputDataFormat": "microsoft.qio.v2", "inputParams": {"params": {"beta_start":
       0}}, "providerId": "Microsoft", "target": "microsoft.simulatedannealing.cpu",
       "outputDataFormat": "microsoft.qio-results.v2"}'''
@@ -263,13 +263,13 @@ interactions:
     uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000000
   response:
     body:
-      string: '{"containerUri": "https://getest2.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000",
-        "inputDataUri": "https://getest2.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
         "inputDataFormat": "microsoft.qio.v2", "inputParams": {"params": {"beta_start":
         0}}, "providerId": "microsoft", "target": "microsoft.simulatedannealing.cpu",
         "metadata": null, "name": "Test-SimulatedAnnealing-\"20210518-003508\"", "id":
         "00000000-0000-0000-0000-000000000000", "status": "Waiting", "outputDataFormat":
-        "microsoft.qio-results.v2", "outputDataUri": "https://getest2.blob.core.windows.net:443/job-00000000-0000-0000-0000-000000000000/outputData",
+        "microsoft.qio-results.v2", "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-00000000-0000-0000-0000-000000000000/outputData",
         "creationTime": "2021-05-18T07:35:13.3674722+00:00", "beginExecutionTime":
         null, "endExecutionTime": null, "cancellationTime": null, "errorData": null,
         "isCancelling": false, "tags": [], "access_token": "fake_token"}'
@@ -298,13 +298,13 @@ interactions:
     uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000000
   response:
     body:
-      string: '{"containerUri": "https://getest2.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000",
-        "inputDataUri": "https://getest2.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-SimulatedAnnealing-%252220210518-003508%2522-924501f4-b7ab-11eb-a418-acde48001122.input.json",
+      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-SimulatedAnnealing-%252220210518-003508%2522-924501f4-b7ab-11eb-a418-acde48001122.input.json",
         "inputDataFormat": "microsoft.qio.v2", "inputParams": {"params": {"beta_start":
         0}}, "providerId": "microsoft", "target": "microsoft.simulatedannealing.cpu",
         "metadata": null, "name": "Test-SimulatedAnnealing-\"20210518-003508\"", "id":
         "00000000-0000-0000-0000-000000000000", "status": "Executing", "outputDataFormat":
-        "microsoft.qio-results.v2", "outputDataUri": "https://getest2.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/outputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-SimulatedAnnealing-%252220210518-003508%2522-924501f4-b7ab-11eb-a418-acde48001122.output.json",
+        "microsoft.qio-results.v2", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/outputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-SimulatedAnnealing-%252220210518-003508%2522-924501f4-b7ab-11eb-a418-acde48001122.output.json",
         "creationTime": "2021-05-18T07:35:13.3674722+00:00", "beginExecutionTime":
         "2021-05-18T07:35:14.5581227Z", "endExecutionTime": null, "cancellationTime":
         null, "errorData": null, "isCancelling": false, "tags": [], "access_token":
@@ -334,13 +334,13 @@ interactions:
     uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000000
   response:
     body:
-      string: '{"containerUri": "https://getest2.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000",
-        "inputDataUri": "https://getest2.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-SimulatedAnnealing-%252220210518-003508%2522-924501f4-b7ab-11eb-a418-acde48001122.input.json",
+      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-SimulatedAnnealing-%252220210518-003508%2522-924501f4-b7ab-11eb-a418-acde48001122.input.json",
         "inputDataFormat": "microsoft.qio.v2", "inputParams": {"params": {"beta_start":
         0}}, "providerId": "microsoft", "target": "microsoft.simulatedannealing.cpu",
         "metadata": null, "name": "Test-SimulatedAnnealing-\"20210518-003508\"", "id":
         "00000000-0000-0000-0000-000000000000", "status": "Executing", "outputDataFormat":
-        "microsoft.qio-results.v2", "outputDataUri": "https://getest2.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/outputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-SimulatedAnnealing-%252220210518-003508%2522-924501f4-b7ab-11eb-a418-acde48001122.output.json",
+        "microsoft.qio-results.v2", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/outputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-SimulatedAnnealing-%252220210518-003508%2522-924501f4-b7ab-11eb-a418-acde48001122.output.json",
         "creationTime": "2021-05-18T07:35:13.3674722+00:00", "beginExecutionTime":
         "2021-05-18T07:35:14.5581227Z", "endExecutionTime": null, "cancellationTime":
         null, "errorData": null, "isCancelling": false, "tags": [], "access_token":
@@ -370,13 +370,13 @@ interactions:
     uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000000
   response:
     body:
-      string: '{"containerUri": "https://getest2.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000",
-        "inputDataUri": "https://getest2.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-SimulatedAnnealing-%252220210518-003508%2522-924501f4-b7ab-11eb-a418-acde48001122.input.json",
+      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-SimulatedAnnealing-%252220210518-003508%2522-924501f4-b7ab-11eb-a418-acde48001122.input.json",
         "inputDataFormat": "microsoft.qio.v2", "inputParams": {"params": {"beta_start":
         0}}, "providerId": "microsoft", "target": "microsoft.simulatedannealing.cpu",
         "metadata": null, "name": "Test-SimulatedAnnealing-\"20210518-003508\"", "id":
         "00000000-0000-0000-0000-000000000000", "status": "Executing", "outputDataFormat":
-        "microsoft.qio-results.v2", "outputDataUri": "https://getest2.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/outputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-SimulatedAnnealing-%252220210518-003508%2522-924501f4-b7ab-11eb-a418-acde48001122.output.json",
+        "microsoft.qio-results.v2", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/outputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-SimulatedAnnealing-%252220210518-003508%2522-924501f4-b7ab-11eb-a418-acde48001122.output.json",
         "creationTime": "2021-05-18T07:35:13.3674722+00:00", "beginExecutionTime":
         "2021-05-18T07:35:14.5581227Z", "endExecutionTime": null, "cancellationTime":
         null, "errorData": null, "isCancelling": false, "tags": [], "access_token":
@@ -406,13 +406,13 @@ interactions:
     uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000000
   response:
     body:
-      string: '{"containerUri": "https://getest2.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000",
-        "inputDataUri": "https://getest2.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-SimulatedAnnealing-%252220210518-003508%2522-924501f4-b7ab-11eb-a418-acde48001122.input.json",
+      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-SimulatedAnnealing-%252220210518-003508%2522-924501f4-b7ab-11eb-a418-acde48001122.input.json",
         "inputDataFormat": "microsoft.qio.v2", "inputParams": {"params": {"beta_start":
         0}}, "providerId": "microsoft", "target": "microsoft.simulatedannealing.cpu",
         "metadata": null, "name": "Test-SimulatedAnnealing-\"20210518-003508\"", "id":
         "00000000-0000-0000-0000-000000000000", "status": "Executing", "outputDataFormat":
-        "microsoft.qio-results.v2", "outputDataUri": "https://getest2.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/outputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-SimulatedAnnealing-%252220210518-003508%2522-924501f4-b7ab-11eb-a418-acde48001122.output.json",
+        "microsoft.qio-results.v2", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/outputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-SimulatedAnnealing-%252220210518-003508%2522-924501f4-b7ab-11eb-a418-acde48001122.output.json",
         "creationTime": "2021-05-18T07:35:13.3674722+00:00", "beginExecutionTime":
         "2021-05-18T07:35:14.5581227Z", "endExecutionTime": null, "cancellationTime":
         null, "errorData": null, "isCancelling": false, "tags": [], "access_token":
@@ -442,13 +442,13 @@ interactions:
     uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000000
   response:
     body:
-      string: '{"containerUri": "https://getest2.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000",
-        "inputDataUri": "https://getest2.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-SimulatedAnnealing-%252220210518-003508%2522-924501f4-b7ab-11eb-a418-acde48001122.input.json",
+      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-SimulatedAnnealing-%252220210518-003508%2522-924501f4-b7ab-11eb-a418-acde48001122.input.json",
         "inputDataFormat": "microsoft.qio.v2", "inputParams": {"params": {"beta_start":
         0}}, "providerId": "microsoft", "target": "microsoft.simulatedannealing.cpu",
         "metadata": null, "name": "Test-SimulatedAnnealing-\"20210518-003508\"", "id":
         "00000000-0000-0000-0000-000000000000", "status": "Executing", "outputDataFormat":
-        "microsoft.qio-results.v2", "outputDataUri": "https://getest2.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/outputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-SimulatedAnnealing-%252220210518-003508%2522-924501f4-b7ab-11eb-a418-acde48001122.output.json",
+        "microsoft.qio-results.v2", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/outputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-SimulatedAnnealing-%252220210518-003508%2522-924501f4-b7ab-11eb-a418-acde48001122.output.json",
         "creationTime": "2021-05-18T07:35:13.3674722+00:00", "beginExecutionTime":
         "2021-05-18T07:35:14.5581227Z", "endExecutionTime": null, "cancellationTime":
         null, "errorData": null, "isCancelling": false, "tags": [], "access_token":
@@ -478,13 +478,13 @@ interactions:
     uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000000
   response:
     body:
-      string: '{"containerUri": "https://getest2.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000",
-        "inputDataUri": "https://getest2.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-SimulatedAnnealing-%252220210518-003508%2522-924501f4-b7ab-11eb-a418-acde48001122.input.json",
+      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-SimulatedAnnealing-%252220210518-003508%2522-924501f4-b7ab-11eb-a418-acde48001122.input.json",
         "inputDataFormat": "microsoft.qio.v2", "inputParams": {"params": {"beta_start":
         0}}, "providerId": "microsoft", "target": "microsoft.simulatedannealing.cpu",
         "metadata": null, "name": "Test-SimulatedAnnealing-\"20210518-003508\"", "id":
         "00000000-0000-0000-0000-000000000000", "status": "Executing", "outputDataFormat":
-        "microsoft.qio-results.v2", "outputDataUri": "https://getest2.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/outputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-SimulatedAnnealing-%252220210518-003508%2522-924501f4-b7ab-11eb-a418-acde48001122.output.json",
+        "microsoft.qio-results.v2", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/outputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-SimulatedAnnealing-%252220210518-003508%2522-924501f4-b7ab-11eb-a418-acde48001122.output.json",
         "creationTime": "2021-05-18T07:35:13.3674722+00:00", "beginExecutionTime":
         "2021-05-18T07:35:14.5581227Z", "endExecutionTime": null, "cancellationTime":
         null, "errorData": null, "isCancelling": false, "tags": [], "access_token":
@@ -514,13 +514,13 @@ interactions:
     uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000000
   response:
     body:
-      string: '{"containerUri": "https://getest2.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000",
-        "inputDataUri": "https://getest2.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-SimulatedAnnealing-%252220210518-003508%2522-924501f4-b7ab-11eb-a418-acde48001122.input.json",
+      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-SimulatedAnnealing-%252220210518-003508%2522-924501f4-b7ab-11eb-a418-acde48001122.input.json",
         "inputDataFormat": "microsoft.qio.v2", "inputParams": {"params": {"beta_start":
         0}}, "providerId": "microsoft", "target": "microsoft.simulatedannealing.cpu",
         "metadata": null, "name": "Test-SimulatedAnnealing-\"20210518-003508\"", "id":
         "00000000-0000-0000-0000-000000000000", "status": "Executing", "outputDataFormat":
-        "microsoft.qio-results.v2", "outputDataUri": "https://getest2.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/outputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-SimulatedAnnealing-%252220210518-003508%2522-924501f4-b7ab-11eb-a418-acde48001122.output.json",
+        "microsoft.qio-results.v2", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/outputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-SimulatedAnnealing-%252220210518-003508%2522-924501f4-b7ab-11eb-a418-acde48001122.output.json",
         "creationTime": "2021-05-18T07:35:13.3674722+00:00", "beginExecutionTime":
         "2021-05-18T07:35:14.5581227Z", "endExecutionTime": null, "cancellationTime":
         null, "errorData": null, "isCancelling": false, "tags": [], "access_token":
@@ -550,13 +550,13 @@ interactions:
     uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000000
   response:
     body:
-      string: '{"containerUri": "https://getest2.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000",
-        "inputDataUri": "https://getest2.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-SimulatedAnnealing-%252220210518-003508%2522-924501f4-b7ab-11eb-a418-acde48001122.input.json",
+      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-SimulatedAnnealing-%252220210518-003508%2522-924501f4-b7ab-11eb-a418-acde48001122.input.json",
         "inputDataFormat": "microsoft.qio.v2", "inputParams": {"params": {"beta_start":
         0}}, "providerId": "microsoft", "target": "microsoft.simulatedannealing.cpu",
         "metadata": null, "name": "Test-SimulatedAnnealing-\"20210518-003508\"", "id":
         "00000000-0000-0000-0000-000000000000", "status": "Executing", "outputDataFormat":
-        "microsoft.qio-results.v2", "outputDataUri": "https://getest2.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/outputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-SimulatedAnnealing-%252220210518-003508%2522-924501f4-b7ab-11eb-a418-acde48001122.output.json",
+        "microsoft.qio-results.v2", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/outputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-SimulatedAnnealing-%252220210518-003508%2522-924501f4-b7ab-11eb-a418-acde48001122.output.json",
         "creationTime": "2021-05-18T07:35:13.3674722+00:00", "beginExecutionTime":
         "2021-05-18T07:35:14.5581227Z", "endExecutionTime": null, "cancellationTime":
         null, "errorData": null, "isCancelling": false, "tags": [], "access_token":
@@ -586,13 +586,13 @@ interactions:
     uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000000
   response:
     body:
-      string: '{"containerUri": "https://getest2.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000",
-        "inputDataUri": "https://getest2.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-SimulatedAnnealing-%252220210518-003508%2522-924501f4-b7ab-11eb-a418-acde48001122.input.json",
+      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-SimulatedAnnealing-%252220210518-003508%2522-924501f4-b7ab-11eb-a418-acde48001122.input.json",
         "inputDataFormat": "microsoft.qio.v2", "inputParams": {"params": {"beta_start":
         0}}, "providerId": "microsoft", "target": "microsoft.simulatedannealing.cpu",
         "metadata": null, "name": "Test-SimulatedAnnealing-\"20210518-003508\"", "id":
         "00000000-0000-0000-0000-000000000000", "status": "Executing", "outputDataFormat":
-        "microsoft.qio-results.v2", "outputDataUri": "https://getest2.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/outputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-SimulatedAnnealing-%252220210518-003508%2522-924501f4-b7ab-11eb-a418-acde48001122.output.json",
+        "microsoft.qio-results.v2", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/outputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-SimulatedAnnealing-%252220210518-003508%2522-924501f4-b7ab-11eb-a418-acde48001122.output.json",
         "creationTime": "2021-05-18T07:35:13.3674722+00:00", "beginExecutionTime":
         "2021-05-18T07:35:14.5581227Z", "endExecutionTime": null, "cancellationTime":
         null, "errorData": null, "isCancelling": false, "tags": [], "access_token":
@@ -622,13 +622,13 @@ interactions:
     uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000000
   response:
     body:
-      string: '{"containerUri": "https://getest2.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000",
-        "inputDataUri": "https://getest2.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-SimulatedAnnealing-%252220210518-003508%2522-924501f4-b7ab-11eb-a418-acde48001122.input.json",
+      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-SimulatedAnnealing-%252220210518-003508%2522-924501f4-b7ab-11eb-a418-acde48001122.input.json",
         "inputDataFormat": "microsoft.qio.v2", "inputParams": {"params": {"beta_start":
         0}}, "providerId": "microsoft", "target": "microsoft.simulatedannealing.cpu",
         "metadata": null, "name": "Test-SimulatedAnnealing-\"20210518-003508\"", "id":
         "00000000-0000-0000-0000-000000000000", "status": "Succeeded", "outputDataFormat":
-        "microsoft.qio-results.v2", "outputDataUri": "https://getest2.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-SimulatedAnnealing-%252220210518-003508%2522-924501f4-b7ab-11eb-a418-acde48001122.output.json",
+        "microsoft.qio-results.v2", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-SimulatedAnnealing-%252220210518-003508%2522-924501f4-b7ab-11eb-a418-acde48001122.output.json",
         "creationTime": "2021-05-18T07:35:13.3674722+00:00", "beginExecutionTime":
         "2021-05-18T07:35:14.7874813Z", "endExecutionTime": "2021-05-18T07:35:29.6677212Z",
         "cancellationTime": null, "errorData": null, "isCancelling": false, "tags":
@@ -663,7 +663,7 @@ interactions:
       x-ms-version:
       - '2020-04-08'
     method: GET
-    uri: https://getest2.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-SimulatedAnnealing-%252220210518-003508%2522-924501f4-b7ab-11eb-a418-acde48001122.output.json
+    uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-SimulatedAnnealing-%252220210518-003508%2522-924501f4-b7ab-11eb-a418-acde48001122.output.json
   response:
     body:
       string: '{"version": "1.0", "configuration": {"1": 1, "0": 1, "2": 0, "3": 1},
@@ -707,13 +707,13 @@ interactions:
     uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000000
   response:
     body:
-      string: '{"containerUri": "https://getest2.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000",
-        "inputDataUri": "https://getest2.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-SimulatedAnnealing-%252220210518-003508%2522-924501f4-b7ab-11eb-a418-acde48001122.input.json",
+      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-SimulatedAnnealing-%252220210518-003508%2522-924501f4-b7ab-11eb-a418-acde48001122.input.json",
         "inputDataFormat": "microsoft.qio.v2", "inputParams": {"params": {"beta_start":
         0}}, "providerId": "microsoft", "target": "microsoft.simulatedannealing.cpu",
         "metadata": null, "name": "Test-SimulatedAnnealing-\"20210518-003508\"", "id":
         "00000000-0000-0000-0000-000000000000", "status": "Succeeded", "outputDataFormat":
-        "microsoft.qio-results.v2", "outputDataUri": "https://getest2.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-SimulatedAnnealing-%252220210518-003508%2522-924501f4-b7ab-11eb-a418-acde48001122.output.json",
+        "microsoft.qio-results.v2", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-SimulatedAnnealing-%252220210518-003508%2522-924501f4-b7ab-11eb-a418-acde48001122.output.json",
         "creationTime": "2021-05-18T07:35:13.3674722+00:00", "beginExecutionTime":
         "2021-05-18T07:35:14.7874813Z", "endExecutionTime": "2021-05-18T07:35:29.6677212Z",
         "cancellationTime": null, "errorData": null, "isCancelling": false, "tags":

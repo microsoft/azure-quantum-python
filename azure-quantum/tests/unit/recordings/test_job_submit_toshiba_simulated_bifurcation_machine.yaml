@@ -60,7 +60,7 @@ interactions:
     uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/storage/sasUri
   response:
     body:
-      string: '{"sasUri": "https://getest2.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+      string: '{"sasUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
         "access_token": "fake_token"}'
     headers:
       content-length:
@@ -88,7 +88,7 @@ interactions:
       x-ms-version:
       - '2020-04-08'
     method: GET
-    uri: https://getest2.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?restype=container&sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
+    uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?restype=container&sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerNotFound</Code><Message>The
@@ -121,7 +121,7 @@ interactions:
       x-ms-version:
       - '2020-04-08'
     method: PUT
-    uri: https://getest2.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?restype=container&sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
+    uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?restype=container&sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
   response:
     body:
       string: ''
@@ -152,7 +152,7 @@ interactions:
     uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/storage/sasUri
   response:
     body:
-      string: '{"sasUri": "https://getest2.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+      string: '{"sasUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
         "access_token": "fake_token"}'
     headers:
       content-length:
@@ -180,7 +180,7 @@ interactions:
       x-ms-version:
       - '2020-04-08'
     method: GET
-    uri: https://getest2.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?restype=container&sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
+    uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?restype=container&sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
   response:
     body:
       string: ''
@@ -226,7 +226,7 @@ interactions:
       x-ms-version:
       - '2020-04-08'
     method: PUT
-    uri: https://getest2.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
+    uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
   response:
     body:
       string: ''
@@ -240,8 +240,8 @@ interactions:
       message: Created
 - request:
     body: 'b''{"id": "00000000-0000-0000-0000-000000000000", "name": "Test-SimulatedBifurcationMachine-\\"20210518-003723\\"",
-      "containerUri": "https://getest2.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000",
-      "inputDataUri": "https://getest2.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData",
+      "containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000",
+      "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData",
       "inputDataFormat": "microsoft.qio.v2", "inputParams": {"loops": 10}, "providerId":
       "toshiba", "target": "toshiba.sbm.ising", "outputDataFormat": "microsoft.qio-results.v2"}'''
     headers:
@@ -261,12 +261,12 @@ interactions:
     uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000000
   response:
     body:
-      string: '{"containerUri": "https://getest2.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000",
-        "inputDataUri": "https://getest2.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData",
+      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData",
         "inputDataFormat": "microsoft.qio.v2", "inputParams": {"loops": 10}, "providerId":
         "toshiba", "target": "toshiba.sbm.ising", "metadata": null, "name": "Test-SimulatedBifurcationMachine-\"20210518-003723\"",
         "id": "00000000-0000-0000-0000-000000000000", "status": "Waiting", "outputDataFormat":
-        "microsoft.qio-results.v2", "outputDataUri": "https://getest2.blob.core.windows.net:443/job-00000000-0000-0000-0000-000000000000/outputData",
+        "microsoft.qio-results.v2", "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-00000000-0000-0000-0000-000000000000/outputData",
         "creationTime": "2021-05-18T07:37:36.3035691+00:00", "beginExecutionTime":
         null, "endExecutionTime": null, "cancellationTime": null, "errorData": null,
         "isCancelling": false, "access_token": "fake_token"}'
@@ -295,12 +295,12 @@ interactions:
     uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000000
   response:
     body:
-      string: '{"containerUri": "https://getest2.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000",
-        "inputDataUri": "https://getest2.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-SimulatedBifurcationMachine-%252220210518-003723%2522-e2f30420-b7ab-11eb-a7c3-acde48001122.input.json",
+      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-SimulatedBifurcationMachine-%252220210518-003723%2522-e2f30420-b7ab-11eb-a7c3-acde48001122.input.json",
         "inputDataFormat": "microsoft.qio.v2", "inputParams": {"loops": 10}, "providerId":
         "toshiba", "target": "toshiba.sbm.ising", "metadata": null, "name": "Test-SimulatedBifurcationMachine-\"20210518-003723\"",
         "id": "00000000-0000-0000-0000-000000000000", "status": "Waiting", "outputDataFormat":
-        "microsoft.qio-results.v2", "outputDataUri": "https://getest2.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/outputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-SimulatedBifurcationMachine-%252220210518-003723%2522-e2f30420-b7ab-11eb-a7c3-acde48001122.output.json",
+        "microsoft.qio-results.v2", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/outputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-SimulatedBifurcationMachine-%252220210518-003723%2522-e2f30420-b7ab-11eb-a7c3-acde48001122.output.json",
         "creationTime": "2021-05-18T07:37:36.3035691+00:00", "beginExecutionTime":
         null, "endExecutionTime": null, "cancellationTime": null, "errorData": null,
         "isCancelling": false, "access_token": "fake_token"}'
@@ -329,12 +329,12 @@ interactions:
     uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000000
   response:
     body:
-      string: '{"containerUri": "https://getest2.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000",
-        "inputDataUri": "https://getest2.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-SimulatedBifurcationMachine-%252220210518-003723%2522-e2f30420-b7ab-11eb-a7c3-acde48001122.input.json",
+      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-SimulatedBifurcationMachine-%252220210518-003723%2522-e2f30420-b7ab-11eb-a7c3-acde48001122.input.json",
         "inputDataFormat": "microsoft.qio.v2", "inputParams": {"loops": 10}, "providerId":
         "toshiba", "target": "toshiba.sbm.ising", "metadata": null, "name": "Test-SimulatedBifurcationMachine-\"20210518-003723\"",
         "id": "00000000-0000-0000-0000-000000000000", "status": "Succeeded", "outputDataFormat":
-        "microsoft.qio-results.v2", "outputDataUri": "https://getest2.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-SimulatedBifurcationMachine-%252220210518-003723%2522-e2f30420-b7ab-11eb-a7c3-acde48001122.output.json",
+        "microsoft.qio-results.v2", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-SimulatedBifurcationMachine-%252220210518-003723%2522-e2f30420-b7ab-11eb-a7c3-acde48001122.output.json",
         "creationTime": "2021-05-18T07:37:36.3035691+00:00", "beginExecutionTime":
         "2021-05-18T07:37:42.66+00:00", "endExecutionTime": "2021-05-18T07:37:43.207+00:00",
         "cancellationTime": null, "errorData": null, "isCancelling": false, "access_token":
@@ -369,11 +369,11 @@ interactions:
       x-ms-version:
       - '2020-04-08'
     method: GET
-    uri: https://getest2.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-SimulatedBifurcationMachine-%252220210518-003723%2522-e2f30420-b7ab-11eb-a7c3-acde48001122.output.json
+    uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-SimulatedBifurcationMachine-%252220210518-003723%2522-e2f30420-b7ab-11eb-a7c3-acde48001122.output.json
   response:
     body:
       string: '{"target": "toshiba.sbm.ising", "version": "1.0", "input_params": {"loops":
-        10}, "input_data_uri": "https://getest2.blob.core.windows.net/job-e2f30420-b7ab-11eb-a7c3-acde48001122/inputData?sv=2019-02-02&sr=b&sig=7T8dHHr2lphvpte9yFFn%2F0TlbgsiUm9W%2B5hHGj5Grz0%3D&se=2021-05-22T07%3A37%3A37Z&sp=rcw",
+        10}, "input_data_uri": "https://mystorage.blob.core.windows.net/job-e2f30420-b7ab-11eb-a7c3-acde48001122/inputData?sv=2019-02-02&sr=b&sig=7T8dHHr2lphvpte9yFFn%2F0TlbgsiUm9W%2B5hHGj5Grz0%3D&se=2021-05-22T07%3A37%3A37Z&sp=rcw",
         "solutions": [{"cost": -5.0, "configuration": {"0": 1, "1": 1, "2": 0, "3":
         1}, "parameters": {"runs": 1600, "message": "finished"}}], "access_token":
         "fake_token"}'
@@ -416,12 +416,12 @@ interactions:
     uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000000
   response:
     body:
-      string: '{"containerUri": "https://getest2.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000",
-        "inputDataUri": "https://getest2.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-SimulatedBifurcationMachine-%252220210518-003723%2522-e2f30420-b7ab-11eb-a7c3-acde48001122.input.json",
+      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-SimulatedBifurcationMachine-%252220210518-003723%2522-e2f30420-b7ab-11eb-a7c3-acde48001122.input.json",
         "inputDataFormat": "microsoft.qio.v2", "inputParams": {"loops": 10}, "providerId":
         "toshiba", "target": "toshiba.sbm.ising", "metadata": null, "name": "Test-SimulatedBifurcationMachine-\"20210518-003723\"",
         "id": "00000000-0000-0000-0000-000000000000", "status": "Succeeded", "outputDataFormat":
-        "microsoft.qio-results.v2", "outputDataUri": "https://getest2.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-SimulatedBifurcationMachine-%252220210518-003723%2522-e2f30420-b7ab-11eb-a7c3-acde48001122.output.json",
+        "microsoft.qio-results.v2", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-SimulatedBifurcationMachine-%252220210518-003723%2522-e2f30420-b7ab-11eb-a7c3-acde48001122.output.json",
         "creationTime": "2021-05-18T07:37:36.3035691+00:00", "beginExecutionTime":
         "2021-05-18T07:37:42.66+00:00", "endExecutionTime": "2021-05-18T07:37:43.207+00:00",
         "cancellationTime": null, "errorData": null, "isCancelling": false, "access_token":
