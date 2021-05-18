@@ -232,7 +232,7 @@ class Workspace:
 
         return result
 
-    @deprecated(version='0.16.2105', reason="This method is deprecated and no longer necessary to be called")
+    @deprecated(version='0.17.2105', reason="This method is deprecated and no longer necessary to be called")
     def login(self, refresh: bool = False) -> object:
         """DEPRECATED. 
         This method is deprecated and no longer necessary to be called.
