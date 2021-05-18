@@ -1,5 +1,17 @@
 $PackageName = "azure-quantum-_client"
-$PackageVersion = "0.0.1.0"
+
+$PackageVersion = $env:PYTHON_VERSION 
+if ([string]::IsNullOrEmpty($PackageVersion)) {
+    $VersionFilePath = Join-Path $PSScriptRoot "../azure/quantum/version.py"
+    if (Test-Path $VersionFilePath) {
+        $VersionFileContent = Get-Content -Path $VersionFilePath
+        $PackageVersion = [regex]::Match($VersionFileContent, '__version__\s*=\s*"(?<version>[^"]+)"').Groups["version"]?.Value
+    }
+}
+if ([string]::IsNullOrEmpty($PackageVersion)) {
+    $PackageVersion = "0.0.0.1"
+}
+
 $Namespace = "azure.quantum._client"
 
 $SpecsRepo = "https://github.com/Azure/azure-rest-api-specs.git"
