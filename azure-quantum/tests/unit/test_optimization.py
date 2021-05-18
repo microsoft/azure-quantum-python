@@ -246,21 +246,15 @@ class TestProblem(QuantumTestBase):
         self.assertTrue(problem.is_large())
 
 
-def _init_ws_():
-    return Workspace(
-        subscription_id="subs_id", resource_group="rg", name="n", storage=None
-    )
-
-
 class TestSolvers(QuantumTestBase):
     def test_available_solvers(self):
-        ws = _init_ws_()
+        ws = self.create_workspace()
 
         self.assertIsNotNone(SimulatedAnnealing(ws))
         self.assertIsNotNone(ParallelTempering(ws))
 
     def test_input_params(self):
-        ws = _init_ws_()
+        ws = self.create_workspace()
 
         s2_params = SimulatedAnnealing(ws).params
         self.assertEqual({}, s2_params["params"])
@@ -282,7 +276,7 @@ class TestSolvers(QuantumTestBase):
         )
 
     def test_ParallelTempering_input_params(self):
-        ws = _init_ws_()
+        ws = self.create_workspace()
 
         good = ParallelTempering(ws, timeout=1011)
         self.assertIsNotNone(good)
@@ -322,7 +316,7 @@ class TestSolvers(QuantumTestBase):
             )
 
     def test_SimulatedAnnealing_input_params(self):
-        ws = _init_ws_()
+        ws = self.create_workspace()
 
         good = SimulatedAnnealing(ws, timeout=1011, seed=4321)
         self.assertIsNotNone(good)
@@ -357,7 +351,7 @@ class TestSolvers(QuantumTestBase):
         self.assertEqual({"beta_start": 21}, good.params["params"])
 
     def test_QuantumMonteCarlo_input_params(self):
-        ws = _init_ws_()
+        ws = self.create_workspace()
         good = QuantumMonteCarlo(ws, trotter_number=100, seed=4321)
         self.assertIsNotNone(good)
         self.assertEqual("microsoft.qmc.cpu", good.target)
@@ -366,7 +360,7 @@ class TestSolvers(QuantumTestBase):
         )
 
     def test_PopulationAnnealing_input_params(self):
-        ws = _init_ws_()
+        ws = self.create_workspace()
         beta = RangeSchedule("linear", 0.8, 5.8)
         good = PopulationAnnealing(
             ws,
@@ -390,7 +384,7 @@ class TestSolvers(QuantumTestBase):
         )
 
     def test_SubstochasticMonteCarlo_input_params(self):
-        ws = _init_ws_()
+        ws = self.create_workspace()
         beta = RangeSchedule("linear", 2.8, 15.8)
         alpha = RangeSchedule("geometric", 1.8, 2.8)
         good = SubstochasticMonteCarlo(
@@ -427,7 +421,7 @@ class TestSolvers(QuantumTestBase):
         self.assertTrue(bad_range is None)
         beta = 1
         alpha = 2
-        ws = _init_ws_()
+        ws = self.create_workspace()
         bad_solver = None
         with self.assertRaises(ValueError) as context:
             bad_solver = SubstochasticMonteCarlo(
@@ -457,7 +451,7 @@ class TestSolvers(QuantumTestBase):
 
     def test_PA_bad_input_params(self):
         beta = 1
-        ws = _init_ws_()
+        ws = self.create_workspace()
         bad_solver = None
         with self.assertRaises(ValueError) as context:
             bad_solver = PopulationAnnealing(
@@ -493,12 +487,6 @@ class TestSolvers(QuantumTestBase):
         self.assertTrue("can not be smaller than" in str(context.exception))
         self.assertTrue(bad_solver is None)
 
-
-# TODO AB#11076: Add tests for:
-#  * [ ] Problem upload
-#  * [ ] Solvers.optimize
-#  * [ ] Job
-#  * [ ] Workspace
 
 if __name__ == "__main__":
     unittest.main()
