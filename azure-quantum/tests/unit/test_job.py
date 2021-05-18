@@ -14,8 +14,8 @@ import functools
 import pytest
 from datetime import datetime
 
-from common import QuantumTestBase
-from azure.quantum import Job, Workspace
+from common import QuantumTestBase, ZERO_UID
+from azure.quantum import Job
 from azure.quantum.optimization import Problem, Term, ProblemType
 import azure.quantum.optimization as microsoft
 import azure.quantum.optimization.oneqbit as oneqbit
@@ -85,9 +85,8 @@ class TestJob(QuantumTestBase):
     create_job_id = Job.create_job_id
 
     def get_dummy_job_id(self):
-        if self.in_recording or self.is_live:
-            return Job.create_job_id()
-        return self.dummy_uid
+        return ZERO_UID if self.is_playback \
+               else Job.create_job_id()
 
     def test_job_submit_microsoft_simulated_annealing(self):
         solver_type = functools.partial(microsoft.SimulatedAnnealing, beta_start=0)
