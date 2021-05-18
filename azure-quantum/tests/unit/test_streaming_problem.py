@@ -24,7 +24,7 @@ from common import QuantumTestBase
 
 
 class TestStreamingProblem(QuantumTestBase):
-
+    
     def __test_upload_problem(
         self,
         count: int,
@@ -44,47 +44,43 @@ class TestStreamingProblem(QuantumTestBase):
             return
 
         ws = self.create_workspace()
-        with unittest.mock.patch.object(
-            StreamingProblem,
-            'id',
-            return_value=self.dummy_uid,
-        ):        
-            sProblem = StreamingProblem(
-                ws, name="test", problem_type=problem_type, terms=initial_terms
-            )
-            rProblem = Problem(
-                "test", problem_type=problem_type, terms=initial_terms
-            )
-            sProblem.upload_terms_threshold = terms_thresh
-            sProblem.upload_size_threshold = size_thresh
-            sProblem.compress = compress
 
-            for i in range(count):
-                sProblem.add_term(c=i, indices=[i, i + 1])
-                rProblem.add_term(c=i, indices=[i, i + 1])
+        sProblem = StreamingProblem(
+            ws, name="test", problem_type=problem_type, terms=initial_terms
+        )
+        rProblem = Problem(
+            "test", problem_type=problem_type, terms=initial_terms
+        )
+        sProblem.upload_terms_threshold = terms_thresh
+        sProblem.upload_size_threshold = size_thresh
+        sProblem.compress = compress
 
-            self.assertEqual(problem_type, sProblem.problem_type)
-            self.assertEqual(problem_type.name, sProblem.stats["type"])
-            self.assertEqual(
-                count + len(initial_terms), sProblem.stats["num_terms"]
-            )
-            self.assertEqual(
-                self.__kwarg_or_value(kwargs, "avg_coupling", 2),
-                sProblem.stats["avg_coupling"],
-            )
-            self.assertEqual(
-                self.__kwarg_or_value(kwargs, "max_coupling", 2),
-                sProblem.stats["max_coupling"],
-            )
-            self.assertEqual(
-                self.__kwarg_or_value(kwargs, "min_coupling", 2),
-                sProblem.stats["min_coupling"],
-            )
+        for i in range(count):
+            sProblem.add_term(c=i, indices=[i, i + 1])
+            rProblem.add_term(c=i, indices=[i, i + 1])
 
-            uri = sProblem.upload(ws)
-            uploaded = json.loads(sProblem.download().serialize())
-            local = json.loads(rProblem.serialize())
-            self.assertEqual(uploaded, local)
+        self.assertEqual(problem_type, sProblem.problem_type)
+        self.assertEqual(problem_type.name, sProblem.stats["type"])
+        self.assertEqual(
+            count + len(initial_terms), sProblem.stats["num_terms"]
+        )
+        self.assertEqual(
+            self.__kwarg_or_value(kwargs, "avg_coupling", 2),
+            sProblem.stats["avg_coupling"],
+        )
+        self.assertEqual(
+            self.__kwarg_or_value(kwargs, "max_coupling", 2),
+            sProblem.stats["max_coupling"],
+        )
+        self.assertEqual(
+            self.__kwarg_or_value(kwargs, "min_coupling", 2),
+            sProblem.stats["min_coupling"],
+        )
+
+        uri = sProblem.upload(ws)
+        uploaded = json.loads(sProblem.download().serialize())
+        local = json.loads(rProblem.serialize())
+        self.assertEqual(uploaded, local)
 
     def __kwarg_or_value(self, kwarg, name, default):
         if name in kwarg:
@@ -93,26 +89,26 @@ class TestStreamingProblem(QuantumTestBase):
         return default
 
 
-    def test_small_chunks(self):
+    def test_streaming_problem_small_chunks(self):
         self.__test_upload_problem(4, 1, 1, False)
 
 
-    def test_large_chunks(self):
+    def test_streaming_problem_large_chunks(self):
         self.__test_upload_problem(4, 1000, 10e6, False)
 
 
-    def test_small_chunks_compressed(self):
+    def test_streaming_problem_small_chunks_compressed(self):
         self.__test_upload_problem(4, 1, 1, True)
 
 
-    def test_large_chunks_compressed(self):
+    def test_streaming_problem_large_chunks_compressed(self):
         self.__test_upload_problem(4, 1000, 10e6, True)
 
 
-    def test_pubo(self):
+    def test_streaming_problem_pubo(self):
         self.__test_upload_problem(4, 1, 1, False, ProblemType.pubo)
 
-    def test_initial_terms(self):
+    def test_streaming_problem_initial_terms(self):
         self.__test_upload_problem(
             4,
             1,
@@ -127,12 +123,12 @@ class TestStreamingProblem(QuantumTestBase):
         )
 
     def check_all(self):
-        self.test_small_chunks()
-        self.test_large_chunks()
-        self.test_small_chunks_compressed()
-        self.test_large_chunks_compressed()
-        self.test_pubo()
-        self.test_initial_terms()
+        self.test_streaming_problem_small_chunks()
+        self.test_streaming_problem_large_chunks()
+        self.test_streaming_problem_small_chunks_compressed()
+        self.test_streaming_problem_large_chunks_compressed()
+        self.test_streaming_problem_pubo()
+        self.test_streaming_problem_initial_terms()
 
 
 if __name__ == "__main__":
