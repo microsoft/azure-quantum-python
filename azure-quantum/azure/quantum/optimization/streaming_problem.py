@@ -60,7 +60,7 @@ class StreamingProblem(object):
     ):
         super(StreamingProblem, self).__init__(**kw)
         self.name = name
-        self.id = str(uuid.uuid1())
+        self._id = str(uuid.uuid1())
         self.workspace = workspace
         self.problem_type = problem_type
         self.init_config = init_config
@@ -82,6 +82,10 @@ class StreamingProblem(object):
         self.metadata = metadata
         if terms is not None and len(terms) > 0:
             self.add_terms(terms.copy())
+
+    @property
+    def id(self):
+        return self._id
 
     def add_term(self, c: Union[int, float], indices: List[int]):
         """Adds a single term to the `Problem`
