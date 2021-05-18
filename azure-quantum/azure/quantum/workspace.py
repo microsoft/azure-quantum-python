@@ -97,7 +97,6 @@ class Workspace:
         The Azure region where the Azure Quantum workspace is provisioned.
         This may be specified as a region name such as
         \"East US\" or a location name such as \"eastus\".
-        If no valid value is specified, defaults to \"westus\".
 
     :param credential:
         The credential to use to connect to Azure services.
@@ -146,6 +145,11 @@ class Workspace:
                 + "resource group name, and workspace name."
             )
 
+        if not location:
+            raise ValueError(
+                "Azure Quantum workspace does not have an associated location. " +
+                "Please specify the location associated with your workspace.")
+
         self.name = name
         self.resource_group = resource_group
         self.subscription_id = subscription_id
@@ -155,11 +159,8 @@ class Workspace:
         # recognized by Azure resource manager.
         # For example, a customer-provided value of
         # "West US" should be converted to "westus".
-        self.location = (
-            "".join(location.split()).lower()
-            if location and location.split()
-            else "westus"
-        )
+        self.location = "".join(location.split()).lower()
+
 
     def _create_client(self) -> QuantumClient:
         base_url = BASE_URL(self.location)
