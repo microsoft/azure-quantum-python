@@ -68,10 +68,10 @@ class QuantumTestBase(ReplayableTest):
         ]
 
         replay_processors = [
-            #AuthenticationMetadataFilter(),
-            #OAuthRequestResponsesFilter(),
-            #RequestUrlNormalizer(),
-            #OAuthResponsesFilter(),
+            AuthenticationMetadataFilter(),
+            OAuthRequestResponsesFilter(),
+            RequestUrlNormalizer(),
+            OAuthResponsesFilter(),
         ]
 
         super(QuantumTestBase, self).__init__(
@@ -80,7 +80,7 @@ class QuantumTestBase(ReplayableTest):
             replay_processors=replay_processors,
         )
 
-        if not (self.in_recording or self.is_live):
+        if self.is_playback:
             self._client_id = self.dummy_uid
             self._client_secret = self.dummy_clientsecret
             self._tenant_id = self.dummy_uid
@@ -124,6 +124,10 @@ class QuantumTestBase(ReplayableTest):
         super(QuantumTestBase, self).setUp()
         # mitigation for issue https://github.com/kevin1024/vcrpy/issues/533
         self.cassette.allow_playback_repeats = True
+
+    @property
+    def is_playback(self):
+        return not (self.in_recording or self.is_live)
 
     @property
     def client_id(self):
