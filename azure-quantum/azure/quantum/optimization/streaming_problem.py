@@ -274,7 +274,7 @@ class JsonStreamingProblemUploader:
 
     def is_done(self):
         """True if the thread uploader has completed"""
-        return not self.__thread.isAlive()
+        return not self.__thread.is_alive()
 
     def _run_queue(self):
         continue_processing = True
@@ -377,5 +377,5 @@ class JsonStreamingProblemUploader:
         if not self.started_upload:
             self._upload_start([])
 
-        self._upload_chunk(f'{"]}}}}"}', True)
+        self._upload_chunk(f'{"]}}"}', True)
         self.blob.commit(metadata=self.blob_properties)
