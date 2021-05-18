@@ -6,13 +6,71 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 ##
+from azure.quantum.optimization.solvers import Solver
 import unittest
 import time
+import os
+import functools
+import pytest
+from datetime import datetime
 
-from azure.quantum.optimization import Problem
-from azure.quantum.optimization.solvers import SimulatedAnnealing
-from azure.quantum import Job
 from common import QuantumTestBase
+from azure.quantum import Job, Workspace
+from azure.quantum.optimization import Problem, Term, ProblemType
+import azure.quantum.optimization as microsoft
+import azure.quantum.optimization.oneqbit as oneqbit
+import azure.quantum.optimization.toshiba as toshiba
+
+SOLVER_TYPES = [
+    functools.partial(microsoft.SimulatedAnnealing, beta_start=0),
+    functools.partial(microsoft.ParallelTempering, sweeps=100),
+    functools.partial(microsoft.Tabu, sweeps=100),
+    functools.partial(microsoft.QuantumMonteCarlo, trotter_number=1),
+    functools.partial(microsoft.PopulationAnnealing, sweeps=200),
+    functools.partial(microsoft.SubstochasticMonteCarlo, step_limit=280),
+    functools.partial(oneqbit.TabuSearch, improvement_cutoff=10),
+    functools.partial(oneqbit.PticmSolver, num_sweeps_per_run=99),
+    functools.partial(oneqbit.PathRelinkingSolver, distance_scale=0.44),
+    functools.partial(toshiba.SimulatedBifurcationMachine, loops=10),
+]
+
+def get_solver_types():
+    one_qbit_enabled = os.environ.get("AZURE_QUANTUM_1QBIT", "") == "1"
+    toshiba_enabled = os.environ.get("AZURE_QUANTUM_TOSHIBA", "") == "1"
+    
+    solver_types = []
+    for solver_type in SOLVER_TYPES:
+        solver_type_name = f'{solver_type.func.__module__}.{solver_type.func.__qualname__}'
+        
+        if (solver_type_name.startswith("azure.quantum.optimization.solvers.") # Microsoft solvers
+            or (solver_type_name.__contains__("toshiba") and toshiba_enabled)
+            or (solver_type_name.__contains__("oneqbit") and one_qbit_enabled)):
+            solver_types.append(solver_type)
+    return solver_types
+
+def pytest_generate_tests(metafunc):
+    if "solver_type" in metafunc.fixturenames:
+        solver_types = get_solver_types()
+        metafunc.parametrize(
+            argnames="solver_type",
+            argvalues=(solver_type \
+                       for solver_type in solver_types) ,
+            ids=(f'{solver_type.func.__module__}.{solver_type.func.__qualname__}' \
+                 for solver_type in solver_types) 
+        )
+
+class TestJobForSolver:
+    """
+    Wrapper for TestJob as a workaround to use pytest_generate_tests to 
+    dynamically generate test cases for each solver.
+    The base classes of TestJob (QuantumTestBase, ReplayableTest) are not
+    compatible the pytest_generate_tests as they have a constructor parameter.
+    Similar issue here: https://stackoverflow.com/questions/63978287/missing-1-required-positional-argument-error-for-fixture-when-softest-testcase-i
+    """
+
+    def test_job_submit(self, solver_type):
+        test_job = TestJob("_test_job_submit")
+        test_job._test_job_submit(solver_type=solver_type)
 
 
 class TestJob(QuantumTestBase):
@@ -20,6 +78,7 @@ class TestJob(QuantumTestBase):
 
     Tests the azure.quantum.job module.
     """
+
 
     mock_create_job_id_name = "create_job_id"
     create_job_id = Job.create_job_id
@@ -29,101 +88,81 @@ class TestJob(QuantumTestBase):
             return Job.create_job_id()
         return self.dummy_uid
 
-    def test_job_refresh(self):
-        ws = self.create_workspace()
+    def _test_job_submit_microsoft_simulatedannealing(self):
+        solver_type = functools.partial(microsoft.SimulatedAnnealing, beta_start=0)
+        self._test_job_submit(solver_type)
 
-        problem = Problem(name="test")
-        count = 4
 
-        for i in range(count):
-            problem.add_term(c=i, indices=[i, i + 1])
+    def _test_job_submit(self, solver_type):
+        """Tests the job submission and its lifecycle for a given solver.
 
-        with unittest.mock.patch.object(
-            Job,
-            self.mock_create_job_id_name,
-            return_value=self.get_dummy_job_id(),
-        ):
-            solver = SimulatedAnnealing(ws)
-            job = solver.submit(problem)
-            job.refresh()
+        :param solver_type:
+            The class name of the solver, for example "SimulatedAnnealing".
+        """
 
-    def test_job_has_completed(self):
-        ws = self.create_workspace()
+        workspace = self.create_workspace()
 
-        problem = Problem(name="test")
-        count = 4
+        solver = solver_type(workspace)
 
-        for i in range(count):
-            problem.add_term(c=i, indices=[i, i + 1])
+        problem_name = f'Test-{type(solver).__name__}-{datetime.now():"%Y%m%d-%H%M%S"}'
+
+        problem = self.create_problem(name=problem_name)
 
         with unittest.mock.patch.object(
             Job,
             self.mock_create_job_id_name,
             return_value=self.get_dummy_job_id(),
         ):
-            solver = SimulatedAnnealing(ws)
+            #solver.optimize(problem)
+
             job = solver.submit(problem)
             self.assertEqual(False, job.has_completed())
             if self.in_recording:
                 time.sleep(3)
+
+            job.refresh()
+
+            job.wait_until_completed()
+
             job.get_results()
             self.assertEqual(True, job.has_completed())
 
-    def test_job_wait_unit_completed(self):
-        ws = self.create_workspace()
-
-        problem = Problem(name="test")
-        count = 4
-
-        for i in range(count):
-            problem.add_term(c=i, indices=[i, i + 1])
-
-        with unittest.mock.patch.object(
-            Job,
-            self.mock_create_job_id_name,
-            return_value=self.get_dummy_job_id(),
-        ):
-            solver = SimulatedAnnealing(ws)
-            job = solver.submit(problem)
-            if self.in_recording:
-                time.sleep(3)
-            job.wait_until_completed()
+            job = workspace.get_job(job.id)
             self.assertEqual(True, job.has_completed())
 
-    def test_job_get_results(self):
-        ws = self.create_workspace()
 
-        problem = Problem(name="test")
-        count = 4
 
-        for i in range(count):
-            problem.add_term(c=i, indices=[i, i + 1])
+    def create_problem(
+            self,
+            name: str,
+            init: bool = False,
+            problem_type: ProblemType = ProblemType.pubo,
+        ) -> Problem:
+        """Create optimization problem with some default terms
 
-        with unittest.mock.patch.object(
-            Job,
-            self.mock_create_job_id_name,
-            return_value=self.get_dummy_job_id(),
-        ):
-            solver = SimulatedAnnealing(ws)
-            job = solver.submit(problem)
-            if self.in_recording:
-                time.sleep(3)
-            actual = job.get_results()
+        :param init: Set initial configuration
+        :type init: bool
+        :return: Optimization problem
+        :rtype: Problem
+        """
+        terms = [
+            Term(w=-3, indices=[1, 0]),
+            Term(w=5, indices=[2, 0]),
+            Term(w=9, indices=[2, 1]),
+            Term(w=2, indices=[3, 0]),
+            Term(w=-4, indices=[3, 1]),
+            Term(w=4, indices=[3, 2]),
+        ]
 
-        expected = {
-            "configuration": {"0": 1, "1": 1, "2": -1, "3": 1, "4": -1},
-            "cost": -6.0,
-            "parameters": {
-                "beta_start": 0.2,
-                "beta_stop": 1.9307236000000003,
-                "restarts": 360,
-                "sweeps": 50,
-            },
-        }
+        initial_config = {"1": 0, "0": 1, "2": 0, "3": 1} if init \
+                         else None
 
-        self.assertEqual(expected["configuration"], actual["configuration"])
-        self.assertEqual(expected["cost"], actual["cost"])
-        self.assertEqual(expected["parameters"], actual["parameters"])
+        return Problem(
+            name=name,
+            terms=terms,
+            init_config=initial_config,
+            problem_type=problem_type,
+        )
 
 
 if __name__ == "__main__":

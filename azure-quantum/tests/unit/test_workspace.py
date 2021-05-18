@@ -14,13 +14,6 @@ from common import QuantumTestBase
 
 
 class TestWorkspace(QuantumTestBase):
-    def test_workspace_login(self):
-        subscription_id = "44ef49ad-64e4-44e5-a3ba-1ee87e19d3f4"
-        resource_group = "rg"
-        name = "n"
-
-        ws = self.create_workspace()
-        ws.login()
 
     def test_create_workspace_instance_valid(self):
         subscription_id = "44ef49ad-64e4-44e5-a3ba-1ee87e19d3f4"
