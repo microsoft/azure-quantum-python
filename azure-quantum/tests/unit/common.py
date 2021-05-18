@@ -49,7 +49,7 @@ class QuantumTestBase(ReplayableTest):
         self._client_secret = os.environ.get(
             "AZURE_CLIENT_SECRET", self.dummy_clientsecret
         )
-        self._location = os.environ.get("LOCATION", None)
+        self._location = os.environ.get("LOCATION", "eastus")
         self._tenant_id = os.environ.get("AZURE_TENANT_ID", self.dummy_uid)
         self._resource_group = os.environ.get("RESOURCE_GROUP", self.dummy_rg)
         self._subscription_id = os.environ.get(
