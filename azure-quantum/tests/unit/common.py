@@ -31,6 +31,7 @@ PLACEHOLDER = "PLACEHOLDER"
 RESOURCE_GROUP = "myresourcegroup"
 WORKSPACE = "myworkspace"
 LOCATION = "eastus"
+STORAGE = "mystorage"
 
 class QuantumTestBase(ReplayableTest):
     """QuantumTestBase
@@ -78,6 +79,7 @@ class QuantumTestBase(ReplayableTest):
             self._resource_group = RESOURCE_GROUP
             self._subscription_id = ZERO_UID
             self._workspace_name = WORKSPACE
+            self._location = LOCATION
 
         regex_replacer.register_regex(self.client_id, ZERO_UID)
         regex_replacer.register_regex(
@@ -108,6 +110,16 @@ class QuantumTestBase(ReplayableTest):
         regex_replacer.register_regex(
             r"/workspaces/[a-z0-9-]+/", f'/workspaces/{WORKSPACE}/'
         )
+        regex_replacer.register_regex(
+            r"https://[^\.]+.blob.core.windows.net/", f'https://{STORAGE}.blob.core.windows.net/'
+        )
+        regex_replacer.register_regex(
+            r"https://[^\.]+.quantum.azure.com/", f'https://{LOCATION}.quantum.azure.com/'
+        )
+        regex_replacer.register_regex(
+            r"/workspaces/[a-z0-9-]+/", f'/workspaces/{WORKSPACE}/'
+        )
+        
         regex_replacer.register_regex(r"sig=[0-9a-zA-Z%]+\&", "sig=PLACEHOLDER&")
         regex_replacer.register_regex(r"sv=[^&]+\&", "sv=PLACEHOLDER&")
         regex_replacer.register_regex(r"se=[^&]+\&", "se=PLACEHOLDER&")
