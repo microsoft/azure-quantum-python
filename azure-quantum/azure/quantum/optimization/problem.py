@@ -9,6 +9,8 @@ import uuid
 import io
 import gzip
 import json
+import numpy
+import os
 
 from typing import List, Union, Dict, Optional, TYPE_CHECKING
 from enum import Enum
@@ -320,3 +322,75 @@ class Problem:
             raise Exception("There are currently no terms in this problem. \
                 Please download the problem on the client or add terms to the \
                     problem to perform this operation")
+
+    def is_valid_npz(self, 
+        files: List[str],
+        indices_column_names: List[str] = ["arr_0", "arr_1"],
+        c_column_name: str = "arr_2"
+        ) -> bool:
+        """Determines if the supplied npz has expected column names.
+        If none are supplied, checks default naming.
+        Otherwise, it checks user-supplied naming.
+
+        :param files: the associated column names of an npz file
+        :type: List[str]
+        :param indices_column_names: the names of the indices columns
+        :type indices_column_names: List[str], optional
+        :param c_column_name: the name of the coefficient column
+        :type c_column_name: str, optional
+        """
+
+        all_columns = indices_column_names + [c_column_name]
+
+        if (len(files) != len(all_columns)):
+            return False
+        
+        if(sorted(files) != sorted(all_columns)):
+            return False
+
+        return True
+
+    def terms_from_npz(self,
+        file_path = str,
+        indices_column_names: List[str] = ["arr_0", "arr_1"],
+        c_column_name: str = "arr_2"
+        ) -> List[Term]:
+        """Reads a user supplied npz file and converts it to a list of `Term`.
+        An NPZ file contains several arrays (or columns), which can specify
+        the indices of a problem term, along with the coefficient.
+        Default naming for these columns is used unless specified by the user.
+
+        :param file_path: file path of the NPZ file to be converted
+        :type file_name: str
+        :param indices_column_names: the names of the indices columns
+        :type indices_column_names: List[str], optional
+        :param c_column_name: the name of the coefficient column
+        :type c_column_name: str, optional
+        """
+
+        terms = []
+
+        if os.path.isfile(file_path):
+            problem_file = numpy.load(file_path)
+
+            # Check the default or user-supplied columns are present
+            if not(self.is_valid_npz(problem_file.files, indices_column_names, c_column_name)):
+                raise Exception("Error in validating NPZ file. \
+                    Please check that the names of the arrays match the default \
+                        or user-supplied namings.")
+            
+            # For each of the indices column names, extract the associated indices column data
+            problem_ids = [list(problem_file[id]) for id in indices_column_names]
+
+            # Unpack the problem indices and zip with the coefficient column data
+            # to produce problem terms
+            for term in zip(*problem_ids, problem_file[c_column_name]):
+                ids = list(term[:-1])
+                indices = list(map(int, ids))
+
+                c = float(term[-1])
+                terms.append(Term(c=c, indices=indices))
+            return terms
+        else:
+            raise Exception("Unable to read NPZ file. \
+                Please check the file path supplied is correct.")
