@@ -172,7 +172,7 @@ class QuantumTestBase(ReplayableTest):
                                                      self.client_id,
                                                      self.client_secret)
         default_credential = playback_credential if self.is_playback \
-                             else DefaultAzureCredential()
+                             else DefaultAzureCredential(exclude_interactive_browser_credential=False)
 
         workspace = Workspace(
             credential=default_credential,

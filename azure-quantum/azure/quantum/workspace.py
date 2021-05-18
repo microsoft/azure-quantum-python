@@ -116,7 +116,7 @@ class Workspace:
         storage: Optional[str] = None,
         resource_id: Optional[str] = None,
         location: Optional[str] = None,
-        credential: Optional[object] = DefaultAzureCredential(),
+        credential: Optional[object] = DefaultAzureCredential(exclude_interactive_browser_credential=False),
     ):
         self.credentials = credential
 
