@@ -43,9 +43,11 @@ class Job:
         self.details = self.workspace.get_job(self.id).details
 
     def has_completed(self):
-        return (self.details.status == "Succeeded"
-                or self.details.status == "Failed"
-                or self.details.status == "Cancelled")
+        return (
+            self.details.status == "Succeeded"
+            or self.details.status == "Failed"
+            or self.details.status == "Cancelled"
+        )
 
     def wait_until_completed(self, max_poll_wait_secs=30):
         """Keeps refreshing the Job's details
@@ -54,14 +56,17 @@ class Job:
         poll_wait = 0.2
         while not self.has_completed():
             logger.debug(
-                f"Waiting for job {self.id}," +
-                f"it is in status '{self.details.status}'"
+                f"Waiting for job {self.id},"
+                + f"it is in status '{self.details.status}'"
             )
             print(".", end="", flush=True)
             time.sleep(poll_wait)
             self.refresh()
-            poll_wait = (max_poll_wait_secs if poll_wait >= max_poll_wait_secs
-                         else poll_wait * 1.5)
+            poll_wait = (
+                max_poll_wait_secs
+                if poll_wait >= max_poll_wait_secs
+                else poll_wait * 1.5
+            )
 
     def get_results(self):
         if self.results is not None:
@@ -72,9 +77,9 @@ class Job:
 
         if not self.details.status == "Succeeded":
             raise RuntimeError(
-                f'{"Cannot retrieve results as job execution failed"}' +
-                f"(status: {self.details.status}." +
-                f"error: {self.details.error_data})"
+                f'{"Cannot retrieve results as job execution failed"}'
+                + f"(status: {self.details.status}."
+                + f"error: {self.details.error_data})"
             )
 
         url = urlparse(self.details.output_data_uri)
@@ -82,9 +87,11 @@ class Job:
             # output_data_uri does not contains SAS token,
             # get sas url from service
             blob_client = BlobClient.from_blob_url(
-                self.details.output_data_uri)
+                self.details.output_data_uri
+            )
             blob_uri = self.workspace._get_linked_storage_sas_uri(
-                blob_client.container_name, blob_client.blob_name)
+                blob_client.container_name, blob_client.blob_name
+            )
             payload = download_blob(blob_uri)
         else:
             # output_data_uri contains SAS token, use it

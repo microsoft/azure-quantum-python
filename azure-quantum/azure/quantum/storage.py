@@ -21,16 +21,18 @@ from enum import Enum
 logger = logging.getLogger(__name__)
 
 
-def create_container(connection_string: str,
-                     container_name: str) -> ContainerClient:
+def create_container(
+    connection_string: str, container_name: str
+) -> ContainerClient:
     """
     Creates and initialize a container; returns the client needed to access it.
     """
     blob_service_client = BlobServiceClient.from_connection_string(
-        connection_string)
+        connection_string
+    )
     logger.info(
-        f'{"Initializing storage client for account:"}' +
-        f"{blob_service_client.account_name}"
+        f'{"Initializing storage client for account:"}'
+        + f"{blob_service_client.account_name}"
     )
 
     container_client = blob_service_client.get_container_client(container_name)
@@ -60,18 +62,17 @@ def get_container_uri(connection_string: str, container_name: str) -> str:
     """
     container = create_container(connection_string, container_name)
     logger.info(
-        f'{"Creating SAS token for container"}' +
-        f"'{container_name}' on account: '{container.account_name}'"
+        f'{"Creating SAS token for container"}'
+        + f"'{container_name}' on account: '{container.account_name}'"
     )
 
     sas_token = generate_container_sas(
         container.account_name,
         container.container_name,
         account_key=container.credential.account_key,
-        permission=BlobSasPermissions(read=True,
-                                      add=True,
-                                      write=True,
-                                      create=True),
+        permission=BlobSasPermissions(
+            read=True, add=True, write=True, create=True
+        ),
         expiry=datetime.utcnow() + timedelta(days=14),
     )
 
@@ -96,13 +97,14 @@ def upload_blob(
     """
     create_container_using_client(container)
     logger.info(
-        f"Uploading blob '{blob_name}'" +
-        f"to container '{container.container_name}'" +
-        f"on account: '{container.account_name}'"
+        f"Uploading blob '{blob_name}'"
+        + f"to container '{container.container_name}'"
+        + f"on account: '{container.account_name}'"
     )
 
-    content_settings = ContentSettings(content_type=content_type,
-                                       content_encoding=content_encoding)
+    content_settings = ContentSettings(
+        content_type=content_type, content_encoding=content_encoding
+    )
     blob = container.get_blob_client(blob_name)
     blob.upload_blob(data, content_settings=content_settings)
     logger.debug(f"  - blob '{blob_name}' uploaded. generating sas token.")
@@ -134,21 +136,23 @@ def append_blob(
     """
     create_container_using_client(container)
     logger.info(
-        f"Appending data to blob '{blob_name}'" +
-        f"in container '{container.container_name}'" +
-        f"on account: '{container.account_name}'"
+        f"Appending data to blob '{blob_name}'"
+        + f"in container '{container.container_name}'"
+        + f"on account: '{container.account_name}'"
     )
 
-    content_settings = ContentSettings(content_type=content_type,
-                                       content_encoding=content_encoding)
+    content_settings = ContentSettings(
+        content_type=content_type, content_encoding=content_encoding
+    )
     blob = container.get_blob_client(blob_name)
     try:
         props = blob.get_blob_properties()
         if props.blob_type != BlobType.AppendBlob:
             raise Exception("blob must be an append blob")
     except exceptions.ResourceNotFoundError:
-        props = blob.create_append_blob(content_settings=content_settings,
-                                        metadata=metadata)
+        props = blob.create_append_blob(
+            content_settings=content_settings, metadata=metadata
+        )
 
     blob.append_block(data, len(data))
     logger.debug(f"  - blob '{blob_name}' appended. generating sas token.")
@@ -183,9 +187,9 @@ def download_blob(blob_url: str) -> Any:
     """
     blob_client = BlobClient.from_blob_url(blob_url)
     logger.info(
-        f"Downloading blob '{blob_client.blob_name}'" +
-        f"from container '{blob_client.container_name}'" +
-        f"on account: '{blob_client.account_name}'"
+        f"Downloading blob '{blob_client.blob_name}'"
+        + f"from container '{blob_client.container_name}'"
+        + f"on account: '{blob_client.account_name}'"
     )
 
     response = blob_client.download_blob().readall()
@@ -198,9 +202,9 @@ def download_blob_properties(blob_url: str) -> Dict[str, str]:
     """Downloads the blob properties from Azure for the given blob URI"""
     blob_client = BlobClient.from_blob_url(blob_url)
     logger.info(
-        f"Downloading blob properties '{blob_client.blob_name}'" +
-        f"from container '{blob_client.container_name}'" +
-        f"on account: '{blob_client.account_name}'"
+        f"Downloading blob properties '{blob_client.blob_name}'"
+        + f"from container '{blob_client.container_name}'"
+        + f"on account: '{blob_client.account_name}'"
     )
 
     response = blob_client.get_blob_properties()
@@ -219,9 +223,9 @@ def set_blob_metadata(blob_url: str, metadata: Dict[str, str]):
     """Sets the provided dictionary as the metadata on the Azure blob"""
     blob_client = BlobClient.from_blob_url(blob_url)
     logger.info(
-        f"Setting blob properties '{blob_client.blob_name}'" +
-        f"from container '{blob_client.container_name}' on account:" +
-        f"'{blob_client.account_name}'"
+        f"Setting blob properties '{blob_client.blob_name}'"
+        + f"from container '{blob_client.container_name}' on account:"
+        + f"'{blob_client.account_name}'"
     )
     return blob_client.set_blob_metadata(metadata=metadata)
 
@@ -251,13 +255,14 @@ def init_blob_for_streaming_upload(
     """
     create_container_using_client(container)
     logger.info(
-        f"Streaming blob '{blob_name}'" +
-        f"to container '{container.container_name}' on account:" +
-        f"'{container.account_name}'"
+        f"Streaming blob '{blob_name}'"
+        + f"to container '{container.container_name}' on account:"
+        + f"'{container.account_name}'"
     )
 
-    content_settings = ContentSettings(content_type=content_type,
-                                       content_encoding=content_encoding)
+    content_settings = ContentSettings(
+        content_type=content_type, content_encoding=content_encoding
+    )
     blob = container.get_blob_client(blob_name)
     blob.stage_block()
     blob.commit_block_list()
@@ -307,6 +312,7 @@ class StreamedBlob:
     :param content_encoding: The HTTP
         content encoding to apply to the blob metadata
     """
+
     def __init__(
         self,
         container: ContainerClient,
@@ -317,7 +323,8 @@ class StreamedBlob:
         self.container = container
         self.blob_name = blob_name
         self.content_settings = ContentSettings(
-            content_type=content_type, content_encoding=content_encoding)
+            content_type=content_type, content_encoding=content_encoding
+        )
         self.state = StreamedBlobState.not_initialized
         self.blob = container.get_blob_client(blob_name)
         self.blocks = []
@@ -331,9 +338,9 @@ class StreamedBlob:
         if self.state == StreamedBlobState.not_initialized:
             create_container_using_client(self.container)
             logger.info(
-                f"Streaming blob '{self.blob_name}' to container" +
-                f"'{self.container.container_name}'" +
-                f"on account: '{self.container.account_name}'"
+                f"Streaming blob '{self.blob_name}' to container"
+                + f"'{self.container.container_name}'"
+                + f"on account: '{self.container.account_name}'"
             )
             self.initialized = True
 
@@ -366,7 +373,7 @@ class StreamedBlob:
 
     def getUri(self, with_sas_token: bool = False):
         """Gets the full Azure Storage URI for the
-            uploaded blob after it has been committed"""
+        uploaded blob after it has been committed"""
         if self.state != StreamedBlobState.committed:
             raise Exception("Can only retrieve sas token for committed blob")
         if with_sas_token:

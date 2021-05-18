@@ -32,7 +32,7 @@ class StreamingProblem(object):
 
     Streaming problems are uploaded on the fly as terms are added,
     meaning that the whole problem representation is not kept in memory. This
-    is very useful when constructing large problems.
+    is very useful when constructing large  problems.
 
     :param workspace: Workspace to upload problem to
     :type workspace: Workspace
@@ -47,6 +47,7 @@ class StreamingProblem(object):
      ProblemType.ising), defaults to ProblemType.ising
     :type problem_type: ProblemType, optional
     """
+
     def __init__(
         self,
         workspace: Workspace,
@@ -99,17 +100,21 @@ class StreamingProblem(object):
             blob_client = BlobClient.from_blob_url(self.upload_to_url)
             container_client = ContainerClient.from_container_url(
                 self.workspace._get_linked_storage_sas_uri(
-                    blob_client.container_name))
+                    blob_client.container_name
+                )
+            )
             blob_name = blob_client.blob_name
         elif not self.workspace.storage:
             # No storage account is passed, use the linked one
             container_uri = self.workspace._get_linked_storage_sas_uri(self.id)
             container_client = ContainerClient.from_container_url(
-                container_uri)
+                container_uri
+            )
         else:
             # Use the specified storage account
             container_client = ContainerClient.from_connection_string(
-                self.workspace.storage, self.id)
+                self.workspace.storage, self.id
+            )
 
         return {"blob_name": blob_name, "container_client": container_client}
 
@@ -136,15 +141,17 @@ class StreamingProblem(object):
                 self.uploader.start()
             elif self.uploader.is_done():
                 raise Exception(
-                    "Cannot add terms after problem has been uploaded")
+                    "Cannot add terms after problem has been uploaded"
+                )
 
             term_couplings = [len(term.ids) for term in terms]
             max_coupling = max(term_couplings)
             min_coupling = min(term_couplings)
             self.__n_couplers += sum(term_couplings)
             self.stats["num_terms"] += len(terms)
-            self.stats["avg_coupling"] = (self.__n_couplers /
-                                          self.stats["num_terms"])
+            self.stats["avg_coupling"] = (
+                self.__n_couplers / self.stats["num_terms"]
+            )
             if self.stats["max_coupling"] < max_coupling:
                 self.stats["max_coupling"] = max_coupling
             if self.stats["min_coupling"] > min_coupling:
@@ -155,7 +162,8 @@ class StreamingProblem(object):
         """Downloads the uploaded problem as an instance of `Problem`"""
         if not self.uploaded_uri:
             raise Exception(
-                "StreamingProblem may not be downloaded before it is uploaded")
+                "StreamingProblem may not be downloaded before it is uploaded"
+            )
 
         coords = self._get_upload_coords()
         blob = coords["container_client"].get_blob_client(coords["blob_name"])
@@ -177,11 +185,7 @@ class StreamingProblem(object):
         """
         if not self.uploaded_uri:
             self.uploader.blob_properties = {
-                k: str(v)
-                for k, v in {
-                    **self.stats,
-                    **self.metadata
-                }.items()
+                k: str(v) for k, v in {**self.stats, **self.metadata}.items()
             }
             self.terms_queue.put(None)
             blob = self.uploader.join()
@@ -206,6 +210,7 @@ class JsonStreamingProblemUploader:
      Once this many terms are ready to be uploaded, the chunk will be uploaded.
     :param blob_properties: Properties to set on the blob.
     """
+
     def __init__(
         self,
         problem: StreamingProblem,
@@ -225,8 +230,11 @@ class JsonStreamingProblemUploader:
             self._get_content_type(compress),
         )
         self.compressedStream = io.BytesIO() if compress else None
-        self.compressor = (gzip.GzipFile(
-            mode="wb", fileobj=self.compressedStream) if compress else None)
+        self.compressor = (
+            gzip.GzipFile(mode="wb", fileobj=self.compressedStream)
+            if compress
+            else None
+        )
         self.uploaded_terms = 0
         self.blob_properties = blob_properties
         self.__thread = None
@@ -245,7 +253,8 @@ class JsonStreamingProblemUploader:
         """Starts the problem uploader in another thread"""
         if self.__thread is not None:
             raise Exception(
-                "JsonStreamingProblemUploader thread already started")
+                "JsonStreamingProblemUploader thread already started"
+            )
 
         self.__thread = threading.Thread(target=self._run_queue)
         self.__thread.start()
@@ -273,7 +282,8 @@ class JsonStreamingProblemUploader:
         while continue_processing:
             try:
                 new_terms = self.problem.terms_queue.get(
-                    block=True, timeout=self.__queue_wait_timeout)
+                    block=True, timeout=self.__queue_wait_timeout
+                )
                 if new_terms is None:
                     continue_processing = False
                 else:
@@ -296,13 +306,18 @@ class JsonStreamingProblemUploader:
         self._upload_chunk(
             f'{{"cost_function":{{"version":"{self._get_version()}",'
             + f'"type":"{self._scrub(self.problem.problem_type.name)}",'
-            + self._get_initial_config_string() + '"terms":[' +
-            self._get_terms_string(terms))
+            + self._get_initial_config_string()
+            + '"terms":['
+            + self._get_terms_string(terms)
+        )
 
     def _get_initial_config_string(self):
         if self.problem.init_config:
-            return (f'{"initial_configuration":}' +
-                    json.dumps(self.problem.init_config) + ",")
+            return (
+                f'{"initial_configuration":}'
+                + json.dumps(self.problem.init_config)
+                + ","
+            )
         return ""
 
     def _get_version(self):
@@ -310,7 +325,8 @@ class JsonStreamingProblemUploader:
 
     def _get_terms_string(self, terms):
         result = ("," if self.uploaded_terms > 0 else "") + ",".join(
-            [json.dumps(term.to_dict()) for term in terms])
+            [json.dumps(term.to_dict()) for term in terms]
+        )
         self.uploaded_terms += len(terms)
         return result
 
@@ -338,8 +354,10 @@ class JsonStreamingProblemUploader:
         if is_final:
             self.compressor.flush()
             self.compressor.close()
-        elif (self.compressedStream.getbuffer().nbytes <
-              self.__upload_size_threshold):
+        elif (
+            self.compressedStream.getbuffer().nbytes
+            < self.__upload_size_threshold
+        ):
             self.__read_pos = 0
             return
 

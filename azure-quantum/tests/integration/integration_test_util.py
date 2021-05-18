@@ -17,18 +17,24 @@ def create_workspace() -> Workspace:
     subscription_id = os.environ.get("SUBSCRIPTION_ID", "")
     workspace_name = os.environ.get("WORKSPACE_NAME", "")
 
-    assert (len(client_id) >
-            0), "AZURE_CLIENT_ID not found in environment variables."
-    assert (len(client_secret) >
-            0), "AZURE_CLIENT_SECRET not found in environment variables."
-    assert (len(tenant_id) >
-            0), "AZURE_TENANT_ID not found in environment variables."
-    assert (len(resource_group) >
-            0), "RESOURCE_GROUP not found in environment variables."
-    assert (len(subscription_id) >
-            0), "SUBSCRIPTION_ID not found in environment variables."
-    assert (len(workspace_name) >
-            0), "WORKSPACE_NAME not found in environment variables."
+    assert (
+        len(client_id) > 0
+    ), "AZURE_CLIENT_ID not found in environment variables."
+    assert (
+        len(client_secret) > 0
+    ), "AZURE_CLIENT_SECRET not found in environment variables."
+    assert (
+        len(tenant_id) > 0
+    ), "AZURE_TENANT_ID not found in environment variables."
+    assert (
+        len(resource_group) > 0
+    ), "RESOURCE_GROUP not found in environment variables."
+    assert (
+        len(subscription_id) > 0
+    ), "SUBSCRIPTION_ID not found in environment variables."
+    assert (
+        len(workspace_name) > 0
+    ), "WORKSPACE_NAME not found in environment variables."
 
     if len(client_secret) > 0:
         workspace = Workspace(

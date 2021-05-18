@@ -118,8 +118,8 @@ class MsalWrapper:
     def get_tenant_authorization_uri(self):
         try:
             uri = (
-                f"{ARM_BASE_URL}/subscriptions/" +
-                f"{self.subscription_id}?api-version=2018-01-01"
+                f"{ARM_BASE_URL}/subscriptions/"
+                + f"{self.subscription_id}?api-version=2018-01-01"
             )
             response = requests.get(uri)
 
@@ -128,7 +128,8 @@ class MsalWrapper:
             # We make a unauthenticated request to ARM and extract the tenant
             # authority from the WWW-Authenticate header in the response.
             # The header is of the form:
-            # Bearer authorization_uri=https://login.microsoftonline.com/tenantId, key1=value1s
+            # Bearer authorization_uri=
+            # https://login.microsoftonline.com/tenantId, key1=value1s
             auth_header = response.headers["WWW-Authenticate"]
             logger.debug(
                 f'{"got the following auth header from"}'
@@ -152,8 +153,8 @@ class MsalWrapper:
             ]  # strip it of surrounding quotes
 
             logger.debug(
-                f'{"got the following tenant uri from"}' +
-                f"the authentication header: {tenant_uri}"
+                f'{"got the following tenant uri from"}'
+                + f"the authentication header: {tenant_uri}"
             )
 
             return tenant_uri
@@ -170,8 +171,8 @@ class MsalWrapper:
             if authority is None:
                 raise ValueError(
                     f'{"Failed to get tenant authority for subscription"}'
-                    f"{self.subscription_id}." +
-                    f'{"Make sure the subscription id is correct."}'
+                    f"{self.subscription_id}."
+                    + f'{"Make sure the subscription id is correct."}'
                 )
 
             try:
@@ -187,8 +188,8 @@ class MsalWrapper:
                 )
             except Exception as e:
                 raise ValueError(
-                    f'{"Failed to create PublicClientApplication"}' +
-                    f"with tenant authority: {e}"
+                    f'{"Failed to create PublicClientApplication"}'
+                    + f"with tenant authority: {e}"
                 )
         return _msal_apps[self.subscription_id]
 
@@ -250,9 +251,9 @@ class MsalWrapper:
         if _last_account != account["username"]:
             _last_account = account["username"]
             logger.info(
-                f'{"Account(s) exists in aad token cache."}' +
-                f'{"Getting token for"}' +
-                f"(userName: {account['username']}, tenantId: {tid})"
+                f'{"Account(s) exists in aad token cache."}'
+                + f'{"Getting token for"}'
+                + f"(userName: {account['username']}, tenantId: {tid})"
             )
 
         return self.get_app().acquire_token_silent(self.scopes, account)
@@ -374,10 +375,10 @@ class Workspace:
 
         if not subscription_id or not resource_group or not name:
             raise ValueError(
-                "Azure Quantum workspace not fully specified." +
-                "Please specify either a valid resource ID " +
-                "or a valid combination of subscription ID," +
-                "resource group name, and workspace name."
+                "Azure Quantum workspace not fully specified."
+                + "Please specify either a valid resource ID "
+                + "or a valid combination of subscription ID,"
+                + "resource group name, and workspace name."
             )
 
         self.name = name
@@ -399,8 +400,8 @@ class Workspace:
         auth = self.login()
         base_url = BASE_URL(self.location)
         logger.debug(
-            f"Creating client for: subs:{self.subscription_id}," +
-            f"rg={self.resource_group}, ws={self.name}, frontdoor={base_url}"
+            f"Creating client for: subs:{self.subscription_id},"
+            + f"rg={self.resource_group}, ws={self.name}, frontdoor={base_url}"
         )
         client = QuantumClient(
             auth,

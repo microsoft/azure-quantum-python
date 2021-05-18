@@ -52,11 +52,14 @@ try:
             # Handle scalar-like arrays, if specified.
             param = param[0]
 
-        if (hasattr(param, "dtype")
-                and param.dtype in numpy_integer_types + numpy_float_types):
+        if (
+            hasattr(param, "dtype")
+            and param.dtype in numpy_integer_types + numpy_float_types
+        ):
             return param.item()
         else:
             return param
+
 
 except ImportError:
     npt = None
@@ -108,19 +111,25 @@ class Term:
             The dictionary of variable ids to their assigned value
         """
         try:
-            multiplier = (np.prod([configuration[i] for i in self.ids])
-                          if len(self.ids) > 0 else 1.0)
+            multiplier = (
+                np.prod([configuration[i] for i in self.ids])
+                if len(self.ids) > 0
+                else 1.0
+            )
         except KeyError:
             print(
                 "Error - variable id found in term {0}, \
-                    but not found in the supplied configuration."
-                .format(self.ids))
+                    but not found in the supplied configuration.".format(
+                    self.ids
+                )
+            )
             raise
 
         return multiplier * self.c
 
     def reduce_by_variable_state(
-            self, fixed_variables: Dict[int, int]) -> Optional[Term]:
+        self, fixed_variables: Dict[int, int]
+    ) -> Optional[Term]:
         """Given some fixed variable states,
             transform the existing term into new term.
         Returns None if the new term is effectively 0
