@@ -43,7 +43,7 @@ class ProvidersOperations:
 
     def get_status(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.ProviderStatusList"]:
         """Get provider status.
 

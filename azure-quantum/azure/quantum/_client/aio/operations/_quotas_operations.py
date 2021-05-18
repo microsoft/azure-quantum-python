@@ -43,7 +43,7 @@ class QuotasOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.QuotaList"]:
         """List quotas for the given workspace.
 

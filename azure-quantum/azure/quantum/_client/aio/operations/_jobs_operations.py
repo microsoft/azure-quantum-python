@@ -43,7 +43,7 @@ class JobsOperations:
 
     def list(
         self,
-        **kwargs
+        **kwargs: Any
     ) -> AsyncIterable["_models.JobDetailsList"]:
         """List jobs.
 
@@ -110,7 +110,7 @@ class JobsOperations:
     async def get(
         self,
         job_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> "_models.JobDetails":
         """Get job by id.
 
@@ -166,7 +166,7 @@ class JobsOperations:
         self,
         job_id: str,
         job: "_models.JobDetails",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.JobDetails":
         """Create a job.
 
@@ -232,7 +232,7 @@ class JobsOperations:
     async def cancel(
         self,
         job_id: str,
-        **kwargs
+        **kwargs: Any
     ) -> None:
         """Cancel a job.
 

@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Dict, Optional, Union
+from typing import Any, Dict, Optional, Union
 
 from azure.core.exceptions import HttpResponseError
 import msrest.serialization
@@ -97,7 +97,7 @@ class JobDetails(msrest.serialization.Model):
     :param input_params: The input parameters for the job. JSON object used by the target solver.
      It is expected that the size of this object is small and only used to specify parameters for
      the execution target, not the input data.
-    :type input_params: object
+    :type input_params: any
     :param provider_id: Required. The unique identifier for the provider.
     :type provider_id: str
     :param target: Required. The target identifier to run the job.
@@ -168,7 +168,7 @@ class JobDetails(msrest.serialization.Model):
         id: Optional[str] = None,
         name: Optional[str] = None,
         input_data_uri: Optional[str] = None,
-        input_params: Optional[object] = None,
+        input_params: Optional[Any] = None,
         metadata: Optional[Dict[str, str]] = None,
         output_data_uri: Optional[str] = None,
         output_data_format: Optional[str] = None,

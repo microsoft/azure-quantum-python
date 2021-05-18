@@ -87,7 +87,7 @@ class JobDetails(msrest.serialization.Model):
     :param input_params: The input parameters for the job. JSON object used by the target solver.
      It is expected that the size of this object is small and only used to specify parameters for
      the execution target, not the input data.
-    :type input_params: object
+    :type input_params: any
     :param provider_id: Required. The unique identifier for the provider.
     :type provider_id: str
     :param target: Required. The target identifier to run the job.

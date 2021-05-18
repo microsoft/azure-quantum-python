@@ -43,7 +43,7 @@ class StorageOperations:
     async def sas_uri(
         self,
         blob_details: "_models.BlobDetails",
-        **kwargs
+        **kwargs: Any
     ) -> "_models.SasUriResponse":
         """Gets a URL with SAS token for a container/blob in the storage account associated with the
         workspace. The SAS URL can be used to upload job input and/or download job output.
