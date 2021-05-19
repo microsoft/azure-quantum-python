@@ -60,7 +60,7 @@ class StreamingProblem(object):
     ):
         super(StreamingProblem, self).__init__(**kw)
         self.name = name
-        self.id = str(uuid.uuid1())
+        self._id = str(uuid.uuid1())
         self.workspace = workspace
         self.problem_type = problem_type
         self.init_config = init_config
@@ -82,6 +82,10 @@ class StreamingProblem(object):
         self.metadata = metadata
         if terms is not None and len(terms) > 0:
             self.add_terms(terms.copy())
+
+    @property
+    def id(self):
+        return self._id
 
     def add_term(self, c: Union[int, float], indices: List[int]):
         """Adds a single term to the `Problem`
@@ -274,7 +278,7 @@ class JsonStreamingProblemUploader:
 
     def is_done(self):
         """True if the thread uploader has completed"""
-        return not self.__thread.isAlive()
+        return not self.__thread.is_alive()
 
     def _run_queue(self):
         continue_processing = True
@@ -377,5 +381,5 @@ class JsonStreamingProblemUploader:
         if not self.started_upload:
             self._upload_start([])
 
-        self._upload_chunk(f'{"]}}}}"}', True)
+        self._upload_chunk(f'{"]}}"}', True)
         self.blob.commit(metadata=self.blob_properties)
