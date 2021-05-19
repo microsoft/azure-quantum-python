@@ -38,15 +38,15 @@ class TestProblemClass(unittest.TestCase):
         # If arguments are passed to savez with no keywords
         # then default names are used (e.g. "arr_0", "arr_1", etc)
         # otherwise it uses those supplied by user (e.g. "row", "col", etc)
-        self.default_qubo = "default_qubo.npz"
-        numpy.savez(self.default_qubo, 
+        self.default_qubo_filename = "default_qubo.npz"
+        numpy.savez(self.default_qubo_filename, 
             self.problem.row,
             self.problem.col,
             self.problem.data
         )
 
-        self.with_keywords_qubo = "with_keywords_qubo.npz"
-        numpy.savez(self.with_keywords_qubo,
+        self.with_keywords_qubo_filename = "with_keywords_qubo.npz"
+        numpy.savez(self.with_keywords_qubo_filename,
             row=self.problem.row,
             col=self.problem.col,
             data=self.problem.data
@@ -67,16 +67,16 @@ class TestProblemClass(unittest.TestCase):
         self.pubo_problem.k = numpy.array([1, 0, 0, 1])
         self.pubo_problem.c = numpy.array([3, 5, -1, 4])
         
-        self.default_pubo = "default_pubo.npz"
-        numpy.savez(self.default_pubo, 
+        self.default_pubo_filename = "default_pubo.npz"
+        numpy.savez(self.default_pubo_filename, 
             self.pubo_problem.i,
             self.pubo_problem.j,
             self.pubo_problem.k,
             self.pubo_problem.c
         )
 
-        self.with_keywords_pubo = "with_keywords_pubo.npz"
-        numpy.savez(self.with_keywords_pubo,
+        self.with_keywords_pubo_filename = "with_keywords_pubo.npz"
+        numpy.savez(self.with_keywords_pubo_filename,
             i=self.pubo_problem.i,
             j=self.pubo_problem.j,
             k=self.pubo_problem.k,
@@ -110,7 +110,7 @@ class TestProblemClass(unittest.TestCase):
         # e.g. "arr_0", "arr_1" etc
         
         # QUBO
-        npz_file = numpy.load(self.default_qubo)
+        npz_file = numpy.load(self.default_qubo_filename)
         num_columns = 3
 
         self.assertEqual(len(npz_file.files), num_columns)
@@ -118,7 +118,7 @@ class TestProblemClass(unittest.TestCase):
             self.assertEqual(npz_file.files[i], "arr_%s" % i)
 
         # PUBO
-        npz_file = numpy.load(self.default_pubo)
+        npz_file = numpy.load(self.default_pubo_filename)
         num_columns = 4
 
         self.assertEqual(len(npz_file.files), num_columns)
@@ -129,7 +129,7 @@ class TestProblemClass(unittest.TestCase):
         # When keywords are supplied, columns use these names
 
         # QUBO
-        npz_file = numpy.load(self.with_keywords_qubo)
+        npz_file = numpy.load(self.with_keywords_qubo_filename)
         keywords = ["row", "col", "data"]
 
         self.assertEqual(len(npz_file.files), len(keywords))
@@ -137,7 +137,7 @@ class TestProblemClass(unittest.TestCase):
             self.assertEqual(npz_file.files[i], keywords[i])
 
         # PUBO
-        npz_file = numpy.load(self.with_keywords_pubo)
+        npz_file = numpy.load(self.with_keywords_pubo_filename)
         keywords = ["i", "j", "k", "c"]
 
         self.assertEqual(len(npz_file.files), len(keywords))
@@ -145,11 +145,11 @@ class TestProblemClass(unittest.TestCase):
             self.assertEqual(npz_file.files[i], keywords[i])
 
     def test_valid_npz(self):
-        default_qubo = numpy.load(self.default_qubo)
-        with_keywords_qubo = numpy.load(self.with_keywords_qubo)
+        default_qubo = numpy.load(self.default_qubo_filename)
+        with_keywords_qubo = numpy.load(self.with_keywords_qubo_filename)
 
-        default_pubo = numpy.load(self.default_pubo)
-        with_keywords_pubo = numpy.load(self.with_keywords_pubo)
+        default_pubo = numpy.load(self.default_pubo_filename)
+        with_keywords_pubo = numpy.load(self.with_keywords_pubo_filename)
 
         ## Valid files
         self.assertTrue(self.problem.is_valid_npz(default_qubo.files))
@@ -223,20 +223,20 @@ class TestProblemClass(unittest.TestCase):
         self.assertRaises(
             Exception,
             self.problem.terms_from_npz,
-            self.default_qubo,
+            self.default_qubo_filename,
             ["arr_0", "arr_1", "arr_2"],
             "arr_3"
         )
 
         # Terms are produced for valid files
         self.assertEqual(
-            self.problem.terms_from_npz(self.default_qubo),
+            self.problem.terms_from_npz(self.default_qubo_filename),
             self.problem.terms
         )
 
         self.assertEqual(
             self.problem.terms_from_npz(
-                self.with_keywords_qubo,
+                self.with_keywords_qubo_filename,
                 ["row", "col"],
                 "data"
             ),
@@ -249,7 +249,7 @@ class TestProblemClass(unittest.TestCase):
         self.assertRaises(
             Exception,
             self.pubo_problem.terms_from_npz,
-            self.default_pubo,
+            self.default_pubo_filename,
             ["arr_0", "arr_1", "arr_2", "arr_3"],
             "arr_4"
         )
@@ -257,7 +257,7 @@ class TestProblemClass(unittest.TestCase):
         # Terms are produced for valid files
         self.assertEqual(
             self.pubo_problem.terms_from_npz(
-                self.default_pubo,
+                self.default_pubo_filename,
                 ["arr_0", "arr_1", "arr_2"],
                 "arr_3"
             ),
@@ -266,7 +266,7 @@ class TestProblemClass(unittest.TestCase):
 
         self.assertEqual(
             self.pubo_problem.terms_from_npz(
-                self.with_keywords_pubo,
+                self.with_keywords_pubo_filename,
                 ["i", "j", "k"],
                 "c"
             ),
@@ -276,10 +276,10 @@ class TestProblemClass(unittest.TestCase):
 
     def tearDown(self):
         test_files = [
-            self.default_qubo,
-            self.with_keywords_qubo,
-            self.default_pubo,
-            self.with_keywords_pubo
+            self.default_qubo_filename,
+            self.with_keywords_qubo_filename,
+            self.default_pubo_filename,
+            self.with_keywords_pubo_filename
         ]
 
         for test_file in test_files:
