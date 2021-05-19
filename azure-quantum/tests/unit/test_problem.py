@@ -114,10 +114,14 @@ class TestProblemClass(unittest.TestCase):
                                                        name=new_problem_name)
             assert new_problem_name == deserialized_problem.name
 
+        # test deserializing a problem that does not have a name in the json
+        # and leaving the name as None
         serialized_problem_without_name = '{"cost_function": {"version": "1.0", "type": "ising", "terms": [{"c": 3, "ids": [1, 0]}, {"c": 5, "ids": [2, 0]}]}}'        
         deserialized_problem = Problem.deserialize(problem_as_json=serialized_problem_without_name)
         assert deserialized_problem.name is None
 
+        # test deserializing a problem that does not have a name in the json
+        # and using the name parameter
         new_problem_name = "new_problem_name"
         deserialized_problem = Problem.deserialize(problem_as_json=serialized_problem_without_name,
                                                    name=new_problem_name)
