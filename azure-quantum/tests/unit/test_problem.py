@@ -8,14 +8,15 @@
 ##
 
 import unittest
+import json
+import numpy
+import os
+import re
 from unittest.mock import Mock
 from typing import TYPE_CHECKING
 from azure.quantum.optimization import Problem, Term
 import azure.quantum.optimization.problem
 from common import expected_terms
-import json
-import numpy
-import os
 
 class TestProblemClass(unittest.TestCase):
     def setUp(self):
@@ -83,6 +84,45 @@ class TestProblemClass(unittest.TestCase):
             c=self.pubo_problem.c
         )
         
+    def test_problem_name_serialization(self):
+        problem_names = ["test",
+                         "my_problem"]
+        for problem_name in problem_names:
+            problem = Problem(name=problem_name)
+            problem.terms = [
+                Term(c=3, indices=[1, 0]),
+                Term(c=5, indices=[2, 0]),
+            ]
+            serialized_problem = problem.serialize()
+
+            # name is in the serialized string
+            assert re.search(f'"name"\\s*:\\s*"{problem_name}"',
+                             serialized_problem,
+                             flags=re.RegexFlag.MULTILINE)
+
+            # name is in the correct place in the json structure
+            problem_json = json.loads(serialized_problem)
+            assert problem_json["name"] == problem_name
+
+            # deserializes name
+            deserialized_problem = Problem.deserialize(problem_as_json=serialized_problem)
+            assert problem_name == deserialized_problem.name
+
+            new_problem_name = "new_problem_name"
+            # use the name passed in the parameter
+            deserialized_problem = Problem.deserialize(problem_as_json=serialized_problem,
+                                                       name=new_problem_name)
+            assert new_problem_name == deserialized_problem.name
+
+        serialized_problem_without_name = '{"cost_function": {"version": "1.0", "type": "ising", "terms": [{"c": 3, "ids": [1, 0]}, {"c": 5, "ids": [2, 0]}]}}'        
+        deserialized_problem = Problem.deserialize(problem_as_json=serialized_problem_without_name)
+        assert deserialized_problem.name is None
+
+        new_problem_name = "new_problem_name"
+        deserialized_problem = Problem.deserialize(problem_as_json=serialized_problem_without_name,
+                                                   name=new_problem_name)
+        assert new_problem_name == deserialized_problem.name
+
 
     def test_download(self):
         azure.quantum.optimization.problem.download_blob = Mock(
