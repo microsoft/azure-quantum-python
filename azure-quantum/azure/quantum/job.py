@@ -2,15 +2,17 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 ##
+from datetime import datetime
 import logging
 import time
 import json
+import re
 import uuid
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 from urllib.parse import urlparse
 
-from azure.quantum._client.models import JobDetails
+from azure.quantum._client.models import JobDetails, JobStatus
 from azure.quantum.storage import download_blob
 from azure.storage.blob import BlobClient
 
@@ -99,6 +101,26 @@ class Job:
 
         result = json.loads(payload.decode("utf8"))
         return result
+
+    def matches_filter(
+        self, 
+        name_match: str = None, 
+        status:  Optional[JobStatus] = None,
+        created_after: Optional[datetime] = None
+    ) -> bool:
+        if name_match is not None:
+            if re.search(name_match, self.details.name) is None:
+               return False
+        
+        if status is not None:
+            if self.details.status != status.value:
+                return False
+        
+        if created_after is not None:
+            if self.details.creation_time < created_after:
+                return False
+
+        return True
 
     @staticmethod
     def create_job_id() -> str:

@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 ##
+from datetime import datetime
 import logging
 import os
 import re
@@ -13,7 +14,7 @@ from azure.identity import DefaultAzureCredential
 
 from azure.quantum._client import QuantumClient
 from azure.quantum._client.operations import JobsOperations, StorageOperations
-from azure.quantum._client.models import BlobDetails
+from azure.quantum._client.models import BlobDetails, JobStatus
 from azure.quantum import Job
 
 from .version import __version__
@@ -223,13 +224,28 @@ class Workspace:
         details = client.get(job_id)
         return Job(self, details)
 
-    def list_jobs(self) -> List[Job]:
+    def list_jobs(
+        self, 
+        name_match: str = None, 
+        status: Optional[JobStatus] = None,
+        created_after: Optional[datetime] = None
+    ) -> List[Job]:
+        """Returns list of jobs that meet optional (limited) filter criteria. 
+            :param name_match: regex expression for job name matching
+            :param status: filter by job status
+            :param created_after: filter jobs after time of job creation
+
+            todo #27666 - replace some of these with server-side filtering.  
+            todo #27664 - tag filtering when swagger is ready
+        """
         client = self._create_jobs_client()
         jobs = client.list()
 
         result = []
         for j in jobs:
-            result.append(Job(self, j))
+            deserialized_job = Job(self, j)
+            if deserialized_job.matches_filter(name_match, status, created_after):
+                result.append(deserialized_job)
 
         return result
 
