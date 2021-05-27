@@ -9,7 +9,10 @@ import re
 from typing import List, Optional
 from deprecated import deprecated
 
-from azure.identity import DefaultAzureCredential
+# Temporarily replacing the DefaultAzureCredential with
+# a custom _DefaultAzureCredential
+#   from azure.identity import DefaultAzureCredential
+from ._authentication import _DefaultAzureCredential
 
 from azure.quantum._client import QuantumClient
 from azure.quantum._client.operations import JobsOperations, StorageOperations
@@ -116,7 +119,9 @@ class Workspace:
         storage: Optional[str] = None,
         resource_id: Optional[str] = None,
         location: Optional[str] = None,
-        credential: Optional[object] = DefaultAzureCredential(exclude_interactive_browser_credential=False),
+        # Temporarily using a custom _DefaultAzureCredential
+        # instead of Azure.Identity.DefaultAzureCredential
+        credential: Optional[object] = _DefaultAzureCredential(exclude_interactive_browser_credential=False),
     ):
         self.credentials = credential
 
