@@ -162,7 +162,9 @@ class QuantumTestBase(ReplayableTest):
         return self._workspace_name
 
     def create_workspace(self) -> Workspace:
-        """Create workspace using credentials stored in config file
+        """Create workspace using credentials passed via OS Environment Variables
+        described in the README.md documentation, or when in playback mode use
+        a placeholder credential.
 
         :return: Workspace
         :rtype: Workspace
@@ -188,35 +190,51 @@ class QuantumTestBase(ReplayableTest):
 class CustomRecordingProcessor(RecordingProcessor):
 
     ALLOW_HEADERS = [
+        "connection",
         "content-length",
         "content-type",
         "accept",
         "accept-encoding",
         "accept-charset",
         "accept-ranges",
-        "x-ms-range",
         "transfer-encoding",
         "x-ms-blob-content-md5",
         "x-ms-blob-type",
         "x-ms-creation-time",
+        "x-ms-date",
+        "x-ms-encryption-algorithm",
         "x-ms-lease-state",
         "x-ms-lease-status",
+        "x-ms-meta-avg_coupling",
+        "x-ms-meta-max_coupling",
+        "x-ms-meta-min_coupling",
+        "x-ms-meta-num_terms",
+        "x-ms-meta-type",
+        "x-ms-range",
         "x-ms-server-encrypted",
         "x-ms-version",
+        "x-client-cpu",
+        "x-client-current-telemetry",
+        "x-client-os",
+        "x-client-sku",
+        "x-client-ver",
+        "user-agent",
     ]
 
     def __init__(self):
         self._regexes = []
 
     def register_regex(self, oldRegex, new):
-        self._regexes.append((re.compile(oldRegex), new))
+        self._regexes.append((re.compile(pattern=oldRegex, 
+                                         flags=re.IGNORECASE | re.MULTILINE),
+                             new))
 
     def process_request(self, request):
         headers = {}
         for key in request.headers:
             if key.lower() in self.ALLOW_HEADERS:
                 headers[key] = request.headers[key]
-        # request.headers = headers
+        request.headers = headers
 
         for oldRegex, new in self._regexes:
             request.uri = oldRegex.sub(new, request.uri)
@@ -234,18 +252,36 @@ class CustomRecordingProcessor(RecordingProcessor):
 
         return request
 
+    def _get_content_type(self, entity):
+        # 'headers' is a field of 'request', but it is a dict-key in 'response'
+        headers = getattr(entity, 'headers', None)
+        if headers is None:
+            headers = entity.get('headers')
+
+        content_type = None
+        if headers:
+            content_type = headers.get('content-type', None)
+            if content_type:
+                # content-type could an array from response, let us extract it out
+                content_type = content_type[0] if isinstance(content_type, list) else content_type
+                content_type = content_type.split(";")[0].lower()
+        return content_type
+
     def process_response(self, response):
         headers = {}
         for key in response["headers"]:
             if key.lower() in self.ALLOW_HEADERS:
                 headers[key.lower()] = response["headers"][key]
-        response['headers'] = headers
+        response["headers"] = headers
 
-        if is_text_payload(response):
+        content_type = self._get_content_type(response)
+        content_type_is_octet = "application/octet-stream" == content_type
+
+        if is_text_payload(response) or content_type_is_octet:
             body = response["body"]["string"]
             if not isinstance(body, six.string_types):
                 body = body.decode("utf-8")
-            if is_text_payload(response) and body:
+            if body:
                 for oldRegex, new in self._regexes:
                     body = oldRegex.sub(new, body)
                 response["body"]["string"] = body
