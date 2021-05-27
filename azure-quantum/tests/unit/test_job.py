@@ -48,6 +48,11 @@ def get_solver_types():
             solver_types.append(solver_type)
     return solver_types
 
+"""
+Temporarily disabling generation of parametrized test cases due to 
+compatibility issues with VCR
+"""
+
 def pytest_generate_tests(metafunc):
     if "solver_type" in metafunc.fixturenames:
         solver_types = get_solver_types()
@@ -68,8 +73,9 @@ class TestJobForSolver:
     Similar issue here: https://stackoverflow.com/questions/63978287/missing-1-required-positional-argument-error-for-fixture-when-softest-testcase-i
     """
 
-    # Disabling this test as it does not work with VCR
-    def _test_job_submit(self, solver_type):
+#    @pytest.mark.skip(reason="Temporarily disabling generation of parametrized test cases due to \
+#                              compatibility issues with VCR")
+    def test_job_submit(self, solver_type):
         test_job = TestJob("_test_job_submit")
         test_job._test_job_submit(solver_type=solver_type)
 
@@ -84,7 +90,7 @@ class TestJob(QuantumTestBase):
     mock_create_job_id_name = "create_job_id"
     create_job_id = Job.create_job_id
 
-    def get_dummy_job_id(self):
+    def get_test_job_id(self):
         return ZERO_UID if self.is_playback \
                else Job.create_job_id()
 
@@ -150,7 +156,7 @@ class TestJob(QuantumTestBase):
         with unittest.mock.patch.object(
             Job,
             self.mock_create_job_id_name,
-            return_value=self.get_dummy_job_id(),
+            return_value=self.get_test_job_id(),
         ):
 
             job = solver.submit(problem)
