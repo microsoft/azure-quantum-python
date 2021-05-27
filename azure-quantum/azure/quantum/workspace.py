@@ -12,7 +12,7 @@ from deprecated import deprecated
 # Temporarily replacing the DefaultAzureCredential with
 # a custom _DefaultAzureCredential
 #   from azure.identity import DefaultAzureCredential
-from ._authentication import _DefaultAzureCredential
+from azure.quantum._authentication import _DefaultAzureCredential
 
 from azure.quantum._client import QuantumClient
 from azure.quantum._client.operations import JobsOperations, StorageOperations
