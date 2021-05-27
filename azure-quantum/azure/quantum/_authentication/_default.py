@@ -9,14 +9,14 @@ from azure.identity._constants import EnvironmentVariables
 from azure.identity._internal import get_default_authority, normalize_authority
 from azure.identity import (
     AzurePowerShellCredential,
-    InteractiveBrowserCredential,
     EnvironmentCredential,
     ManagedIdentityCredential,
     SharedTokenCacheCredential,
     AzureCliCredential,
     VisualStudioCodeCredential
 )
-from .chained import _ChainedTokenCredential
+from ._chained import _ChainedTokenCredential
+from ._browser import _InteractiveBrowserCredential
 
 try:
     from typing import TYPE_CHECKING
@@ -38,7 +38,8 @@ class _DefaultAzureCredential(_ChainedTokenCredential):
     The two key differences are:
     1) Inherit from _ChainedTokenCredential, which has 
        more aggressive error handling than ChainedTokenCredential
-    2) Use of the _InteractiveBrowserCredential
+    2) Use of the _InteractiveBrowserCredential which prints a warning message
+       if tenant_id is not passed
     """
 
     def __init__(self, **kwargs):
@@ -92,7 +93,7 @@ class _DefaultAzureCredential(_ChainedTokenCredential):
         if not exclude_powershell_credential:
             credentials.append(AzurePowerShellCredential())
         if not exclude_interactive_browser_credential:
-            credentials.append(InteractiveBrowserCredential(tenant_id=interactive_browser_tenant_id))
+            credentials.append(_InteractiveBrowserCredential(tenant_id=interactive_browser_tenant_id))
 
         super(_DefaultAzureCredential, self).__init__(*credentials)
 

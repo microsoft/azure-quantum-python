@@ -6,3 +6,4 @@
 
 from ._chained import *
 from ._default import *
+from ._browser import *
