@@ -20,6 +20,15 @@ if TYPE_CHECKING:
 
 _LOGGER = logging.getLogger(__name__)
 
+import logging
+import sys
+
+def filter_credential_warnings(record):
+    """Suppress warnings from credentials other than DefaultAzureCredential"""
+    if record.levelno == logging.WARNING:
+        message = record.getMessage()
+        return "DefaultAzureCredential" in message
+    return True
 
 def _get_error_message(history):
     attempts = []
@@ -60,29 +69,40 @@ class _ChainedTokenCredential(object):
         :raises ~azure.core.exceptions.ClientAuthenticationError: no credential in the chain provided a token
         """
         history = []
-        for credential in self.credentials:
-            try:
-                token = credential.get_token(*scopes, **kwargs)
-                _LOGGER.info("%s acquired a token from %s", self.__class__.__name__, credential.__class__.__name__)
-                self._successful_credential = credential
-                return token
-            except CredentialUnavailableError as ex:
-                # credential didn't attempt authentication because it lacks required data or state -> continue
-                history.append((credential, ex.message))
-                _LOGGER.info("%s - %s is unavailable", self.__class__.__name__, credential.__class__.__name__)
-            except Exception as ex:  # pylint: disable=broad-except
-                # credential failed to authenticate, or something unexpectedly raised -> break
-                history.append((credential, str(ex)))
-                # instead of logging a warning, we just want to log an info
-                # since other credentials might succeed
-                _LOGGER.info(
-                    '%s.get_token failed: %s raised unexpected error "%s"',
-                    self.__class__.__name__,
-                    credential.__class__.__name__,
-                    ex,
-                    exc_info=_LOGGER.isEnabledFor(logging.DEBUG),
-                )
-                # here we do NOT want break and will continue to try other credentials
+
+        # Suppress warnings from credentials in Azure.Identity
+        azure_identity_logger = logging.getLogger("azure.identity")
+        handler = logging.StreamHandler(stream=sys.stdout)
+        handler.addFilter(filter_credential_warnings)
+        azure_identity_logger.addHandler(handler)
+        try:
+            for credential in self.credentials:
+                try:
+                    token = credential.get_token(*scopes, **kwargs)
+                    _LOGGER.info("%s acquired a token from %s", self.__class__.__name__, credential.__class__.__name__)
+                    self._successful_credential = credential
+                    return token
+                except CredentialUnavailableError as ex:
+                    # credential didn't attempt authentication because it lacks required data or state -> continue
+                    history.append((credential, ex.message))
+                    _LOGGER.info("%s - %s is unavailable", self.__class__.__name__, credential.__class__.__name__)
+                except Exception as ex:  # pylint: disable=broad-except
+                    # credential failed to authenticate, or something unexpectedly raised -> break
+                    history.append((credential, str(ex)))
+                    # instead of logging a warning, we just want to log an info
+                    # since other credentials might succeed
+                    _LOGGER.info(
+                        '%s.get_token failed: %s raised unexpected error "%s"',
+                        self.__class__.__name__,
+                        credential.__class__.__name__,
+                        ex,
+                        exc_info=_LOGGER.isEnabledFor(logging.DEBUG),
+                    )
+                    # here we do NOT want break and will continue to try other credentials
+
+        finally:
+            # Re-enable warnings from credentials in Azure.Identity
+            azure_identity_logger.removeHandler(handler)
 
         # if all attempts failed, only then we log a warning and raise an error
         attempts = _get_error_message(history)
