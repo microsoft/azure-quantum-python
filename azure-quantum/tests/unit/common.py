@@ -260,11 +260,12 @@ class CustomRecordingProcessor(RecordingProcessor):
             headers = entity.get('headers')
 
         content_type = None
-        if headers:
-            content_type = headers.get('content-type', None)
-            if content_type:
-                # content-type could an array from response, let us extract it out
-                content_type = content_type[0] if isinstance(content_type, list) else content_type
+        if headers is not None:
+            content_type = headers.get('content-type')
+            if content_type is not None:
+                # content-type could be an array from response, let us extract it out
+                if isinstance(content_type, list):
+                    content_type = content_type[0]
                 content_type = content_type.split(";")[0].lower()
         return content_type
 
