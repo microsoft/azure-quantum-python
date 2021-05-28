@@ -97,13 +97,7 @@ class Workspace:
         The Azure region where the Azure Quantum workspace is provisioned.
         This may be specified as a region name such as
         \"East US\" or a location name such as \"eastus\".
-
-    :param credential:
-        The credential to use to connect to Azure services.
-        Normally one of the credential types from Azure.Identity (https://docs.microsoft.com/en-us/python/api/overview/azure/identity-readme?view=azure-python#credential-classes).
-
-        Defaults to \"DefaultAzureCredential\", which will attempt multiple 
-        forms of authentication.
+        If no valid value is specified, defaults to \"westus\".
     """
 
     credentials = None
@@ -116,9 +110,7 @@ class Workspace:
         storage: Optional[str] = None,
         resource_id: Optional[str] = None,
         location: Optional[str] = None,
-        credential: Optional[object] = DefaultAzureCredential(exclude_interactive_browser_credential=False),
     ):
-        self.credentials = credential
 
         if resource_id is not None:
             # A valid resource ID looks like:
@@ -145,11 +137,6 @@ class Workspace:
                 + "resource group name, and workspace name."
             )
 
-        if not location:
-            raise ValueError(
-                "Azure Quantum workspace does not have an associated location. " +
-                "Please specify the location associated with your workspace.")
-
         self.name = name
         self.resource_group = resource_group
         self.subscription_id = subscription_id
@@ -159,22 +146,25 @@ class Workspace:
         # recognized by Azure resource manager.
         # For example, a customer-provided value of
         # "West US" should be converted to "westus".
-        self.location = "".join(location.split()).lower()
-
+        self.location = (
+            "".join(location.split()).lower()
+            if location and location.split()
+            else "westus"
+        )
 
     def _create_client(self) -> QuantumClient:
+        auth = self.login()
         base_url = BASE_URL(self.location)
         logger.debug(
             f"Creating client for: subs:{self.subscription_id},"
             + f"rg={self.resource_group}, ws={self.name}, frontdoor={base_url}"
         )
-
         client = QuantumClient(
-            credential=self.credentials,
-            subscription_id=self.subscription_id,
-            resource_group_name=self.resource_group,
-            workspace_name=self.name,
-            base_url=base_url,
+            auth,
+            self.subscription_id,
+            self.resource_group,
+            self.name,
+            base_url,
         )
         return client
 
