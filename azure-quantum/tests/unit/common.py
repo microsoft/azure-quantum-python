@@ -224,7 +224,7 @@ class CustomRecordingProcessor(RecordingProcessor):
     def __init__(self):
         self._regexes = []
 
-    def register_regex(self, oldRegex, new):
+    def register_regex(self, old_regex, new):
         self._regexes.append((re.compile(pattern=oldRegex, 
                                          flags=re.IGNORECASE | re.MULTILINE),
                              new))
