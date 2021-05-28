@@ -1,47 +1,5 @@
 interactions:
 - request:
-    body: client_id=00000000-0000-0000-0000-000000000000&grant_type=client_credentials&client_info=1&client_secret=PLACEHOLDER&scope=https%3A%2F%2Fquantum.microsoft.com%2F.default
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '192'
-      Content-Type:
-      - application/x-www-form-urlencoded
-      Cookie:
-      - esctx=AQABAAAAAAD--DLA3VO7QrddgJg7WevrHJ_3iwcY_7ROYXjgiN-52HmhLj_yw455KnXAJBM3UIKETPWKb5ZnRPdiRosoWwkNBbqeRsycw5Fu6IlUqfHKPv91I2DMPNCOfxWWJZ2fFznD5lIoWdMwF1KyNSsa4ZDVKbkFfosJEMboefrkrRdVtxy0_eMLtdfAFfuXnmdMf8wgAA;
-        fpc=AtxiU3xRhbVDv-7ZbZ155_8; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd
-      User-Agent:
-      - azsdk-python-identity/1.6.0 Python/3.7.9 (Darwin-20.4.0-x86_64-i386-64bit)
-      x-client-cpu:
-      - x64
-      x-client-current-telemetry:
-      - 1|730,0|
-      x-client-os:
-      - darwin
-      x-client-sku:
-      - MSAL.Python
-      x-client-ver:
-      - 1.9.0
-    method: POST
-    uri: https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token
-  response:
-    body:
-      string: '{"token_type": "Bearer", "expires_in": 86399, "ext_expires_in": 86399,
-        "access_token": "fake_token"}'
-    headers:
-      content-length:
-      - '1722'
-      content-type:
-      - application/json; charset=utf-8
-    status:
-      code: 200
-      message: OK
-- request:
     body: 'b''{"containerName": "job-00000000-0000-0000-0000-000000000000"}'''
     headers:
       Accept:
@@ -53,9 +11,12 @@ interactions:
       Content-Length:
       - '61'
       Content-Type:
-      - application/json
+      - application/json; charset=utf-8
       User-Agent:
-      - azsdk-python-quantum/0.0.0.1 Python/3.7.9 (Darwin-20.4.0-x86_64-i386-64bit)
+      - python/3.7.4 (Darwin-20.4.0-x86_64-i386-64bit) msrest/0.6.21 msrest_azure/0.6.4
+        quantumclient/2019-11-04-preview Azure-SDK-For-Python
+      accept-language:
+      - en-US
     method: POST
     uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/storage/sasUri
   response:
@@ -82,24 +43,24 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-blob/12.7.1 Python/3.7.9 (Darwin-20.4.0-x86_64-i386-64bit)
+      - azsdk-python-storage-blob/12.8.0 Python/3.7.4 (Darwin-20.4.0-x86_64-i386-64bit)
       x-ms-date:
-      - Tue, 18 May 2021 20:48:40 GMT
+      - Fri, 28 May 2021 02:16:30 GMT
       x-ms-version:
-      - '2020-04-08'
+      - '2020-06-12'
     method: GET
     uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?restype=container&sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerNotFound</Code><Message>The
-        specified container does not exist.\nRequestId:df26dd29-901e-006f-0a27-4c951e000000\nTime:2021-05-18T20:48:40.7736836Z</Message></Error>"
+        specified container does not exist.\nRequestId:a1577f56-101e-0085-7f67-53b230000000\nTime:2021-05-28T02:16:31.2840379Z</Message></Error>"
     headers:
       content-length:
       - '225'
       content-type:
       - application/xml
       x-ms-version:
-      - '2020-04-08'
+      - '2020-06-12'
     status:
       code: 404
       message: The specified container does not exist.
@@ -115,11 +76,11 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-blob/12.7.1 Python/3.7.9 (Darwin-20.4.0-x86_64-i386-64bit)
+      - azsdk-python-storage-blob/12.8.0 Python/3.7.4 (Darwin-20.4.0-x86_64-i386-64bit)
       x-ms-date:
-      - Tue, 18 May 2021 20:48:40 GMT
+      - Fri, 28 May 2021 02:16:31 GMT
       x-ms-version:
-      - '2020-04-08'
+      - '2020-06-12'
     method: PUT
     uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?restype=container&sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
   response:
@@ -129,7 +90,7 @@ interactions:
       content-length:
       - '0'
       x-ms-version:
-      - '2020-04-08'
+      - '2020-06-12'
     status:
       code: 201
       message: Created
@@ -145,9 +106,12 @@ interactions:
       Content-Length:
       - '61'
       Content-Type:
-      - application/json
+      - application/json; charset=utf-8
       User-Agent:
-      - azsdk-python-quantum/0.0.0.1 Python/3.7.9 (Darwin-20.4.0-x86_64-i386-64bit)
+      - python/3.7.4 (Darwin-20.4.0-x86_64-i386-64bit) msrest/0.6.21 msrest_azure/0.6.4
+        quantumclient/2019-11-04-preview Azure-SDK-For-Python
+      accept-language:
+      - en-US
     method: POST
     uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/storage/sasUri
   response:
@@ -156,7 +120,7 @@ interactions:
         "access_token": "fake_token"}'
     headers:
       content-length:
-      - '209'
+      - '207'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -174,11 +138,11 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-blob/12.7.1 Python/3.7.9 (Darwin-20.4.0-x86_64-i386-64bit)
+      - azsdk-python-storage-blob/12.8.0 Python/3.7.4 (Darwin-20.4.0-x86_64-i386-64bit)
       x-ms-date:
-      - Tue, 18 May 2021 20:48:41 GMT
+      - Fri, 28 May 2021 02:16:31 GMT
       x-ms-version:
-      - '2020-04-08'
+      - '2020-06-12'
     method: GET
     uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?restype=container&sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
   response:
@@ -192,12 +156,12 @@ interactions:
       x-ms-lease-status:
       - unlocked
       x-ms-version:
-      - '2020-04-08'
+      - '2020-06-12'
     status:
       code: 200
       message: OK
 - request:
-    body: b'\x1f\x8b\x08\x00((\xa4`\x02\xffU\xcbA\n\x80 \x10\x05\xd0\xab\xc8\xac5RkQW\t\t2\x83\x16e\xa4\x05!\xde=\xab\x85\xcdj\xe6\xff\xc7\x0f\xa0\xad\xf3\xfdt\xac\xda\xcfv\x85\x96\x048\xcd\xee\xbe\x1fxQ\x02%\xe0\xaf\xcd<q;\x06\xfbf\xb3/.\x15]\x00\x9d\x0e\x93\xa9\x9b\xc7\xb7\xe1\x94\x94*R\xf2I\x9dA
+    body: b'\x1f\x8b\x08\x00\x7fR\xb0`\x02\xffU\xcbA\n\x80 \x10\x05\xd0\xab\xc8\xac5RkQW\t\t2\x83\x16e\xa4\x05!\xde=\xab\x85\xcdj\xe6\xff\xc7\x0f\xa0\xad\xf3\xfdt\xac\xda\xcfv\x85\x96\x048\xcd\xee\xbe\x1fxQ\x02%\xe0\xaf\xcd<q;\x06\xfbf\xb3/.\x15]\x00\x9d\x0e\x93\xa9\x9b\xc7\xb7\xe1\x94\x94*R\xf2I\x9dA
       h\x10\xf0\x0c"\x83D\x0bV!\xf9M0\x08\x15U\x8c7\xc4,d\x84\xd8\x00\x00\x00'
     headers:
       Accept:
@@ -213,7 +177,7 @@ interactions:
       If-None-Match:
       - '*'
       User-Agent:
-      - azsdk-python-storage-blob/12.7.1 Python/3.7.9 (Darwin-20.4.0-x86_64-i386-64bit)
+      - azsdk-python-storage-blob/12.8.0 Python/3.7.4 (Darwin-20.4.0-x86_64-i386-64bit)
       x-ms-blob-content-encoding:
       - gzip
       x-ms-blob-content-type:
@@ -221,11 +185,11 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-date:
-      - Tue, 18 May 2021 20:48:41 GMT
+      - Fri, 28 May 2021 02:16:32 GMT
       x-ms-encryption-algorithm:
       - AES256
       x-ms-version:
-      - '2020-04-08'
+      - '2020-06-12'
     method: PUT
     uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
   response:
@@ -235,12 +199,12 @@ interactions:
       content-length:
       - '0'
       x-ms-version:
-      - '2020-04-08'
+      - '2020-06-12'
     status:
       code: 201
       message: Created
 - request:
-    body: 'b''{"id": "00000000-0000-0000-0000-000000000000", "name": "Test-PticmSolver-\\"20210518-134838\\"",
+    body: 'b''{"id": "00000000-0000-0000-0000-000000000000", "name": "Test-PticmSolver-\\"20210527-191630\\"",
       "containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000",
       "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData",
       "inputDataFormat": "microsoft.qio.v2", "inputParams": {"num_sweeps_per_run":
@@ -255,9 +219,14 @@ interactions:
       Content-Length:
       - '482'
       Content-Type:
-      - application/json
+      - application/json; charset=utf-8
       User-Agent:
-      - azsdk-python-quantum/0.0.0.1 Python/3.7.9 (Darwin-20.4.0-x86_64-i386-64bit)
+      - python/3.7.4 (Darwin-20.4.0-x86_64-i386-64bit) msrest/0.6.21 msrest_azure/0.6.4
+        quantumclient/2019-11-04-preview Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      x-ms-azurequantum-sdk-version:
+      - 0.0.0.1
     method: PUT
     uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000000
   response:
@@ -266,10 +235,10 @@ interactions:
         "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
         "inputDataFormat": "microsoft.qio.v2", "inputParams": {"num_sweeps_per_run":
         "99"}, "providerId": "1qbit", "target": "1qbit.pticm", "metadata": null, "name":
-        "Test-PticmSolver-\"20210518-134838\"", "id": "00000000-0000-0000-0000-000000000000",
+        "Test-PticmSolver-\"20210527-191630\"", "id": "00000000-0000-0000-0000-000000000000",
         "status": "Waiting", "outputDataFormat": "microsoft.qio-results.v1", "outputDataUri":
-        "https://mystorage.blob.core.windows.net:443/job-00000000-0000-0000-0000-000000000000/outputData",
-        "creationTime": "2021-05-18T20:48:42.3993864+00:00", "beginExecutionTime":
+        "https://e2etests.blob.core.windows.net:443/job-00000000-0000-0000-0000-000000000000/outputData",
+        "creationTime": "2021-05-28T02:16:32.9111152+00:00", "beginExecutionTime":
         null, "endExecutionTime": null, "cancellationTime": null, "errorData": null,
         "isCancelling": false, "tags": [], "access_token": "fake_token"}'
     headers:
@@ -292,20 +261,25 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-quantum/0.0.0.1 Python/3.7.9 (Darwin-20.4.0-x86_64-i386-64bit)
+      - python/3.7.4 (Darwin-20.4.0-x86_64-i386-64bit) msrest/0.6.21 msrest_azure/0.6.4
+        quantumclient/2019-11-04-preview Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      x-ms-azurequantum-sdk-version:
+      - 0.0.0.1
     method: GET
     uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000000
   response:
     body:
       string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000",
-        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-PticmSolver-%252220210518-134838%2522-6c3994ce-b81a-11eb-bf71-acde48001122.input.json",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-PticmSolver-%252220210527-191630%2522-b6fe3cde-bf5a-11eb-b0b1-acde48001122.input.json",
         "inputDataFormat": "microsoft.qio.v2", "inputParams": {"num_sweeps_per_run":
         "99"}, "providerId": "1qbit", "target": "1qbit.pticm", "metadata": null, "name":
-        "Test-PticmSolver-\"20210518-134838\"", "id": "00000000-0000-0000-0000-000000000000",
+        "Test-PticmSolver-\"20210527-191630\"", "id": "00000000-0000-0000-0000-000000000000",
         "status": "Succeeded", "outputDataFormat": "microsoft.qio-results.v1", "outputDataUri":
-        "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-PticmSolver-%252220210518-134838%2522-6c3994ce-b81a-11eb-bf71-acde48001122.output.json",
-        "creationTime": "2021-05-18T20:48:42.3993864+00:00", "beginExecutionTime":
-        "2021-05-18T20:48:43.006475Z", "endExecutionTime": "2021-05-18T20:48:43.220633Z",
+        "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-PticmSolver-%252220210527-191630%2522-b6fe3cde-bf5a-11eb-b0b1-acde48001122.output.json",
+        "creationTime": "2021-05-28T02:16:32.9111152+00:00", "beginExecutionTime":
+        "2021-05-28T02:16:33.933805Z", "endExecutionTime": "2021-05-28T02:16:34.458413Z",
         "cancellationTime": null, "errorData": null, "isCancelling": false, "tags":
         [], "access_token": "fake_token"}'
     headers:
@@ -328,25 +302,30 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-quantum/0.0.0.1 Python/3.7.9 (Darwin-20.4.0-x86_64-i386-64bit)
+      - python/3.7.4 (Darwin-20.4.0-x86_64-i386-64bit) msrest/0.6.21 msrest_azure/0.6.4
+        quantumclient/2019-11-04-preview Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      x-ms-azurequantum-sdk-version:
+      - 0.0.0.1
     method: GET
     uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000000
   response:
     body:
       string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000",
-        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-PticmSolver-%252220210518-134838%2522-6c3994ce-b81a-11eb-bf71-acde48001122.input.json",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-PticmSolver-%252220210527-191630%2522-b6fe3cde-bf5a-11eb-b0b1-acde48001122.input.json",
         "inputDataFormat": "microsoft.qio.v2", "inputParams": {"num_sweeps_per_run":
         "99"}, "providerId": "1qbit", "target": "1qbit.pticm", "metadata": null, "name":
-        "Test-PticmSolver-\"20210518-134838\"", "id": "00000000-0000-0000-0000-000000000000",
+        "Test-PticmSolver-\"20210527-191630\"", "id": "00000000-0000-0000-0000-000000000000",
         "status": "Succeeded", "outputDataFormat": "microsoft.qio-results.v1", "outputDataUri":
-        "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-PticmSolver-%252220210518-134838%2522-6c3994ce-b81a-11eb-bf71-acde48001122.output.json",
-        "creationTime": "2021-05-18T20:48:42.3993864+00:00", "beginExecutionTime":
-        "2021-05-18T20:48:43.006475Z", "endExecutionTime": "2021-05-18T20:48:43.220633Z",
+        "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-PticmSolver-%252220210527-191630%2522-b6fe3cde-bf5a-11eb-b0b1-acde48001122.output.json",
+        "creationTime": "2021-05-28T02:16:32.9111152+00:00", "beginExecutionTime":
+        "2021-05-28T02:16:33.933805Z", "endExecutionTime": "2021-05-28T02:16:34.458413Z",
         "cancellationTime": null, "errorData": null, "isCancelling": false, "tags":
         [], "access_token": "fake_token"}'
     headers:
       content-length:
-      - '1293'
+      - '1295'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -364,36 +343,36 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-blob/12.7.1 Python/3.7.9 (Darwin-20.4.0-x86_64-i386-64bit)
+      - azsdk-python-storage-blob/12.8.0 Python/3.7.4 (Darwin-20.4.0-x86_64-i386-64bit)
       x-ms-date:
-      - Tue, 18 May 2021 20:48:46 GMT
+      - Fri, 28 May 2021 02:16:36 GMT
       x-ms-encryption-algorithm:
       - AES256
       x-ms-range:
       - bytes=0-33554431
       x-ms-version:
-      - '2020-04-08'
+      - '2020-06-12'
     method: GET
-    uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-PticmSolver-%252220210518-134838%2522-6c3994ce-b81a-11eb-bf71-acde48001122.output.json
+    uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-PticmSolver-%252220210527-191630%2522-b6fe3cde-bf5a-11eb-b0b1-acde48001122.output.json
   response:
     body:
       string: '{"input_data_uri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
         "input_params": {"auto_set_temperatures": "true", "elite_threshold": "0.3",
         "frac_icm_thermal_layers": "0.5", "frac_sweeps_fixing": "0.15", "frac_sweeps_idle":
-        "1", "frac_sweeps_stagnation": "1", "goal": "OPTIMIZE", "high_temp": "0.708805",
-        "low_temp": "0.0708805", "manual_temperatures": "", "max_samples_per_layer":
-        "10", "max_total_sweeps": "1000", "mc_acceptance_probability": "[ 0.0162338,
-        0.0214785, 0.0397103, 0.0545704, 0.0503247, 0.0372128, 0.0912837, 0.0427073,
-        0.0811688, 0.0901598, 0.132992, 0.119256, 0.142857, 0.102772, 0.168457, 0.18519,
-        0.137612, 0.198926, 0.198052, 0.23951, 0.271479, 0.232517, 0.3002, 0.33017,
-        0.371504, 0.350524, 0.417458, 0.420704, 0.47028, 0.522852 ]", "num_elite_temps":
+        "1", "frac_sweeps_stagnation": "1", "goal": "OPTIMIZE", "high_temp": "0.685204",
+        "low_temp": "0.0685204", "manual_temperatures": "", "max_samples_per_layer":
+        "10", "max_total_sweeps": "1000", "mc_acceptance_probability": "[ 0.0193556,
+        0.0183566, 0.0390859, 0.0216034, 0.0634366, 0.0549451, 0.0407093, 0.0881618,
+        0.0520729, 0.0849151, 0.103272, 0.143357, 0.0912837, 0.161464, 0.150225, 0.139236,
+        0.217033, 0.199675, 0.202547, 0.234266, 0.249001, 0.250125, 0.243132, 0.307567,
+        0.314186, 0.378122, 0.418082, 0.402473, 0.46466, 0.506494 ]", "num_elite_temps":
         "4", "num_replicas": "2", "num_sweeps_per_run": "99", "num_temps": "30", "pt_acceptance_probability":
-        "[ 0.003996, 0.0529471, 0.0744256, 0, 0.003996, 0.101898, 0, 0.149351, 0.138362,
-        0.141359, 0.00899101, 0.00749251, 0.011988, 0.342657, 0.22977, 0.0889111,
-        0.405594, 0.33017, 0.324675, 0.368132, 0.204795, 0.511488, 0.404096, 0.422078,
-        0.187313, 0.668332, 0.466034, 0.497503, 0.385614 ]", "runs_counter": "10",
+        "[ 0.00999001, 0.023976, 0, 0.0649351, 0.00749251, 0.0154845, 0.0989011, 0.0234765,
+        0.162338, 0.147852, 0.170829, 0.0104895, 0.23976, 0.0514486, 0.0144855, 0.301199,
+        0.0314685, 0.0204795, 0.112887, 0.132368, 0.144356, 0.201299, 0.563437, 0.42008,
+        0.473027, 0.455045, 0.272228, 0.537463, 0.323676 ]", "runs_counter": "10",
         "scaling_factor": "4", "scaling_type": "MEDIAN", "solver_name": "PTICM", "sweeps_to_best":
-        "1", "time_to_best": "7", "total_sweeps": "1000", "var_fixing_type": "NO_FIXING"},
+        "1", "time_to_best": "14", "total_sweeps": "1000", "var_fixing_type": "NO_FIXING"},
         "solutions": [{"configuration": {"0": "1", "1": "1", "2": "0", "3": "1"},
         "cost": -5.0}], "target": "1qbit.pticm", "version": "v1", "access_token":
         "fake_token"}'
@@ -401,15 +380,15 @@ interactions:
       accept-ranges:
       - bytes
       content-length:
-      - '1579'
+      - '1599'
       content-type:
       - text/plain; charset=utf-8
       x-ms-blob-content-md5:
-      - J3+/6ZsXnxvA4f1Dr+h3dg==
+      - y3VPdTeReaEtXDOZaSrF3Q==
       x-ms-blob-type:
       - BlockBlob
       x-ms-creation-time:
-      - Tue, 18 May 2021 20:48:42 GMT
+      - Fri, 28 May 2021 02:16:33 GMT
       x-ms-lease-state:
       - available
       x-ms-lease-status:
@@ -417,7 +396,7 @@ interactions:
       x-ms-server-encrypted:
       - 'true'
       x-ms-version:
-      - '2020-04-08'
+      - '2020-06-12'
     status:
       code: 206
       message: Partial Content
@@ -431,25 +410,30 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-quantum/0.0.0.1 Python/3.7.9 (Darwin-20.4.0-x86_64-i386-64bit)
+      - python/3.7.4 (Darwin-20.4.0-x86_64-i386-64bit) msrest/0.6.21 msrest_azure/0.6.4
+        quantumclient/2019-11-04-preview Azure-SDK-For-Python
+      accept-language:
+      - en-US
+      x-ms-azurequantum-sdk-version:
+      - 0.0.0.1
     method: GET
     uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000000
   response:
     body:
       string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000",
-        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-PticmSolver-%252220210518-134838%2522-6c3994ce-b81a-11eb-bf71-acde48001122.input.json",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-PticmSolver-%252220210527-191630%2522-b6fe3cde-bf5a-11eb-b0b1-acde48001122.input.json",
         "inputDataFormat": "microsoft.qio.v2", "inputParams": {"num_sweeps_per_run":
         "99"}, "providerId": "1qbit", "target": "1qbit.pticm", "metadata": null, "name":
-        "Test-PticmSolver-\"20210518-134838\"", "id": "00000000-0000-0000-0000-000000000000",
+        "Test-PticmSolver-\"20210527-191630\"", "id": "00000000-0000-0000-0000-000000000000",
         "status": "Succeeded", "outputDataFormat": "microsoft.qio-results.v1", "outputDataUri":
-        "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-PticmSolver-%252220210518-134838%2522-6c3994ce-b81a-11eb-bf71-acde48001122.output.json",
-        "creationTime": "2021-05-18T20:48:42.3993864+00:00", "beginExecutionTime":
-        "2021-05-18T20:48:43.006475Z", "endExecutionTime": "2021-05-18T20:48:43.220633Z",
+        "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-PticmSolver-%252220210527-191630%2522-b6fe3cde-bf5a-11eb-b0b1-acde48001122.output.json",
+        "creationTime": "2021-05-28T02:16:32.9111152+00:00", "beginExecutionTime":
+        "2021-05-28T02:16:33.933805Z", "endExecutionTime": "2021-05-28T02:16:34.458413Z",
         "cancellationTime": null, "errorData": null, "isCancelling": false, "tags":
         [], "access_token": "fake_token"}'
     headers:
       content-length:
-      - '1299'
+      - '1291'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
