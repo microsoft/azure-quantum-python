@@ -277,7 +277,6 @@ class CustomRecordingProcessor(RecordingProcessor):
         response["headers"] = headers
 
         content_type = self._get_content_type(response)
-        content_type_is_octet = "application/octet-stream" == content_type
 
         if is_text_payload(response) or content_type_is_octet:
             body = response["body"]["string"]
