@@ -278,7 +278,7 @@ class CustomRecordingProcessor(RecordingProcessor):
 
         content_type = self._get_content_type(response)
 
-        if is_text_payload(response) or content_type_is_octet:
+        if is_text_payload(response) or "application/octet-stream" == content_type:
             body = response["body"]["string"]
             if not isinstance(body, six.string_types):
                 body = body.decode("utf-8")
