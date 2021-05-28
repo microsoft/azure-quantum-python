@@ -10,6 +10,7 @@
 import os
 import re
 import six
+import json
 
 from azure.quantum import Workspace
 from azure.identity import DefaultAzureCredential, ClientSecretCredential
@@ -23,7 +24,8 @@ from azure_devtools.scenario_tests.recording_processors import (
     RequestUrlNormalizer,
 )
 from azure_devtools.scenario_tests.utilities import _get_content_type
-import json
+from azure.common.credentials import ServicePrincipalCredentials
+from msrest.authentication import BasicTokenAuthentication
 
 ZERO_UID = "00000000-0000-0000-0000-000000000000"
 TENANT_ID = "72f988bf-86f1-41af-91ab-2d7cd011db47"
@@ -32,6 +34,11 @@ RESOURCE_GROUP = "myresourcegroup"
 WORKSPACE = "myworkspace"
 LOCATION = "eastus"
 STORAGE = "mystorage"
+AUTH_TOKEN = {
+    "access_token": "PLACEHOLDER",
+    "token_type": "Bearer",
+    "expires_in": 485,
+}
 
 class QuantumTestBase(ReplayableTest):
     """QuantumTestBase
@@ -168,11 +175,15 @@ class QuantumTestBase(ReplayableTest):
         :rtype: Workspace
         """
 
-        playback_credential = ClientSecretCredential(self.tenant_id,
-                                                     self.client_id,
-                                                     self.client_secret)
+        playback_credential = BasicTokenAuthentication(
+            token=AUTH_TOKEN
+        )
+
         default_credential = playback_credential if self.is_playback \
-                             else DefaultAzureCredential(exclude_interactive_browser_credential=False)
+                             else ServicePrincipalCredentials(tenant=self.tenant_id,
+                                                              client_id=self.client_id,
+                                                              secret=self.client_secret,
+                                                              resource="https://quantum.microsoft.com")
 
         workspace = Workspace(
             credential=default_credential,
