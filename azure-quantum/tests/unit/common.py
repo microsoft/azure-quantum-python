@@ -254,8 +254,9 @@ class CustomRecordingProcessor(RecordingProcessor):
 
     def _get_content_type(self, entity):
         # 'headers' is a field of 'request', but it is a dict-key in 'response'
-        headers = getattr(entity, 'headers', None)
-        if headers is None:
+        if hasattr(entity, "headers"):
+            headers = getattr(entity, "headers")
+        else:
             headers = entity.get('headers')
 
         content_type = None
