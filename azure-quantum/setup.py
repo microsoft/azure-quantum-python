@@ -36,7 +36,7 @@ __version__ = "{version}"
 """
     )
 
-with open("./azure/quantum/_client/_version.py", "w") as f:
+with open("./azure/quantum/_client/version.py", "w") as f:
     f.write(
         f"""# coding=utf-8
 # --------------------------------------------------------------------------
