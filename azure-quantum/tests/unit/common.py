@@ -179,7 +179,7 @@ class QuantumTestBase(ReplayableTest):
             token=AUTH_TOKEN
         )
 
-        default_credential = playback_credential if self.is_playback \
+        default_credential = playback_credential if (self.is_playback or self.client_id == ZERO_UID) \
                              else ServicePrincipalCredentials(tenant=self.tenant_id,
                                                               client_id=self.client_id,
                                                               secret=self.client_secret,
