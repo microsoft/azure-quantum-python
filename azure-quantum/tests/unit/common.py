@@ -224,8 +224,8 @@ class CustomRecordingProcessor(RecordingProcessor):
     def __init__(self):
         self._regexes = []
 
-    def register_regex(self, oldRegex, new):
-        self._regexes.append((re.compile(pattern=oldRegex, 
+    def register_regex(self, old_regex, new):
+        self._regexes.append((re.compile(pattern=old_regex, 
                                          flags=re.IGNORECASE | re.MULTILINE),
                              new))
 
@@ -254,16 +254,18 @@ class CustomRecordingProcessor(RecordingProcessor):
 
     def _get_content_type(self, entity):
         # 'headers' is a field of 'request', but it is a dict-key in 'response'
-        headers = getattr(entity, 'headers', None)
-        if headers is None:
+        if hasattr(entity, "headers"):
+            headers = getattr(entity, "headers")
+        else:
             headers = entity.get('headers')
 
         content_type = None
-        if headers:
-            content_type = headers.get('content-type', None)
-            if content_type:
-                # content-type could an array from response, let us extract it out
-                content_type = content_type[0] if isinstance(content_type, list) else content_type
+        if headers is not None:
+            content_type = headers.get('content-type')
+            if content_type is not None:
+                # content-type could be an array from response, let us extract it out
+                if isinstance(content_type, list):
+                    content_type = content_type[0]
                 content_type = content_type.split(";")[0].lower()
         return content_type
 
@@ -275,9 +277,8 @@ class CustomRecordingProcessor(RecordingProcessor):
         response["headers"] = headers
 
         content_type = self._get_content_type(response)
-        content_type_is_octet = "application/octet-stream" == content_type
 
-        if is_text_payload(response) or content_type_is_octet:
+        if is_text_payload(response) or "application/octet-stream" == content_type:
             body = response["body"]["string"]
             if not isinstance(body, six.string_types):
                 body = body.decode("utf-8")
