@@ -131,7 +131,8 @@ class QuantumTestBase(ReplayableTest):
 
     @property
     def is_playback(self):
-        return not (self.in_recording or self.is_live)
+        return self.client_id == ZERO_UID or \
+               (not (self.in_recording or self.is_live))
 
     @property
     def client_id(self):
