@@ -214,12 +214,27 @@ class Solver:
                         and resubmitting with a lower timeout."
                 )
 
-    def check_set_schedule(self, schedule: RangeSchedule, schedule_name: str):
+    class ScheduleEvolution(Enum):
+        INCREASING = 1
+        DECREASING = 2
+
+    def check_set_schedule(
+        self, schedule: RangeSchedule, schedule_name: str,
+        evolution: Optional[ScheduleEvolution] = None,
+        lower_bound: Optional[float] = None,
+        lower_bound_inclusive: Optional[float] = None,
+    ):
         """Check whether the schedule parameter is set well from RangeSchedule.
         :param schedule:
             schedule paramter to be checked whether is from RangeSchedule.
         :param schedule_name:
             name of the schedule parameter.
+        :param evolution
+            required ScheduleEvolution (INCREASING or DECREASING)
+        :lower_bound:
+            lower limit value of the schedule to be checked (exclusive)
+        :lower_bound_inclusive:
+            lower limit value of the schedule to be checked (inclusive)
         """
         if not (schedule is None):
             if not isinstance(schedule, RangeSchedule):
@@ -231,6 +246,31 @@ class Solver:
                 "initial": schedule.initial,
                 "final": schedule.final,
             }
+            if evolution is not None:
+                if (evolution == self.ScheduleEvolution.INCREASING and
+                        schedule.initial > schedule.final):
+                    raise ValueError(
+                            f"Schedule for {schedule_name} must be increasing;"
+                            f" found {schedule_name}.initial = "
+                            f"{schedule.initial} > {schedule.final} = "
+                            f"{schedule_name}.final."
+                    )
+                if (evolution == self.ScheduleEvolution.DECREASING and
+                        schedule.initial < schedule.final):
+                    raise ValueError(
+                            f"Schedule for {schedule_name} must be decreasing;"
+                            f" found {schedule_name}.initial = "
+                            f"{schedule.initial} < {schedule.final} = "
+                            f"{schedule_name}.final."
+                    )
+            self.check_limit(
+                    schedule.initial, f"{schedule_name}.initial",
+                    lower_bound=lower_bound,
+                    lower_bound_inclusive=lower_bound_inclusive)
+            self.check_limit(
+                    schedule.initial, f"{schedule_name}.final",
+                    lower_bound=lower_bound,
+                    lower_bound_inclusive=lower_bound_inclusive)
             self.set_one_param(schedule_name, schedule_param)
 
     def check_set_positive_int(self, var: int, var_name: str):
@@ -248,25 +288,56 @@ class Solver:
             self.set_one_param(var_name, var)
 
     def check_set_float_limit(
-        self, var: float, var_name: str, var_limit: float
+        self, var: float, var_name: str,
+        lower_bound: Optional[float] = None,
+        lower_bound_inclusive: Optional[float] = None,
     ):
-        """Check whether the var parameter is a float larger than var_limit.
+        """Check whether the var parameter is a float satisfying bounds.
         :param var:
             var paramter to be checked
             whether is a float larger than var_limit.
         :param var_name:
             name of the variable.
-        :var_limit:
-            limit value of the variable to be checked.
+        :lower_bound:
+            lower limit value of the variable to be checked (exclusive)
+        :lower_bound_inclusive:
+            lower limit value of the variable to be checked (inclusive)
         """
         if not (var is None):
             if not (isinstance(var, float) or isinstance(var, int)):
                 raise ValueError(f"{var_name} shall be float!")
-            if var <= var_limit:
-                raise ValueError(
-                    f"{var_name} can not be smaller than {var_limit}!"
-                )
+            self.check_limit(
+                    lower_bound=lower_bound,
+                    lower_bound_inclusive=lower_bound_inclusive)
             self.set_one_param(var_name, var)
+
+    def check_limit(
+        self, var: Optional[float], var_name: str,
+        lower_bound: Optional[float] = None,
+        lower_bound_inclusive: Optional[float] = None,
+    ):
+        """Check whether the var parameter is a float satisfying bounds.
+        :param var:
+            var paramter to be checked
+            whether is a float larger than var_limit.
+        :param var_name:
+            name of the variable.
+        :lower_bound:
+            lower limit value of the variable to be checked (exclusive)
+        :lower_bound_inclusive:
+            lower limit value of the variable to be checked (inclusive)
+        """
+        if not (var is None):
+            if lower_bound is not None and var <= lower_bound:
+                raise ValueError(
+                    f"{var_name} must be greater than {lower_bound}!"
+                )
+            if (lower_bound_inclusive is not None and
+                    var < lower_bound_inclusive):
+                raise ValueError(
+                    f"{var_name} must be greater equal "
+                    f"{lower_bound_inclusive}!"
+                )
 
 
 class HardwarePlatform(Enum):
@@ -533,29 +604,28 @@ class PopulationAnnealing(Solver):
         population: Optional[int] = None,
         sweeps: Optional[int] = None,
         beta: Optional[RangeSchedule] = None,
-        culling_fraction: Optional[float] = None,
     ):
-        """The constructor of Population Annealing Search solver.
+        """Constructor of the Population Annealing solver.
 
         Population Annealing Search solver for binary optimization problems
         with k-local interactions on an all-to-all graph topology with double
         precision support for the coupler weights.
 
-        This solver is CPU only, and not support parameter free now.
+        This solver is CPU only.
+        It currently does not support parameter-free invocation.
 
-        :param alpha:
-            ratio to trigger a restart, must be larger than 1
         :param seed:
-            specifies a random seed value.
-        :population:
-            size of target population, must be positive
+            Specifies the random number generator seed value.
         :param sweeps:
-            Number of monte carlo sweeps
+            Number of Monte Carlo sweeps. Must be positive.
+        :population:
+            Size of the population. Must be positive.
+        :param alpha:
+            Ratio to trigger a restart. Must be larger than 1.
         :param beta:
-            beta value to control the annealing temperatures,
-            it must be a object of RangeSchedule
-        :param culling_fraction:
-            constant culling rate, must be larger than 0
+            Evolution of the inverse annealing temperature.
+            Must be an object of type RangeSchedule describing
+            an increasing evolution (0 < initial < final).
         """
 
         target = "microsoft.populationannealing.cpu"
@@ -567,12 +637,13 @@ class PopulationAnnealing(Solver):
             output_data_format="microsoft.qio-results.v2",
         )
 
-        self.check_set_float_limit(alpha, "alpha", 1.0)
+        self.check_set_float_limit(alpha, "alpha", lower_bound=1.0)
         self.set_one_param("seed", seed)
         self.check_set_positive_int(population, "population")
         self.check_set_positive_int(sweeps, "sweeps")
-        self.check_set_schedule(beta, "beta")
-        self.check_set_float_limit(culling_fraction, "culling_fraction", 0.0)
+        self.check_set_schedule(
+                beta, "beta", evolution=self.ScheduleEvolution.INCREASING,
+                lower_bound=0)
 
 
 class SubstochasticMonteCarlo(Solver):
@@ -587,35 +658,40 @@ class SubstochasticMonteCarlo(Solver):
         steps_per_walker: Optional[int] = None,
         timeout: Optional[int] = None,
     ):
-        """The constructor of Substochastic Monte Carlo solver.
+        """Constructor of Substochastic Monte Carlo solver.
 
         Substochastic Monte Carlo solver for binary optimization problems
         with k-local interactions on an all-to-all graph topology with double
         precision support for the coupler weights.
 
-        This solver is CPU only, and not support parameter free now.
+        This solver is CPU only.
+        It currently does not support parameter-free invocation.
 
         :param alpha:
-            alpha (chance to step) values evolve over time
+            Evolution of alpha (chance to step) over time.
+            Must be an object of type RangeSchedule describing a
+            decreasing probability (1 >= initial > final >= 0).
         :param seed:
-            specifies a random seed value.
+            Specifies the random number generator seed value.
         :target_population:
-            size of target population, must be positive
+            Target size of the population. Must be positive.
         :param step_limit:
-            number of monte carlo steps, must be positive
+            Number of Monte Carlo steps (not sweeps!). Must be positive.
         :param beta:
-            beta (resampling factor) values evolve over time
+            Evolution of beta (resampling factor) over time.
+            Must be an object of type RangeSchedule describing
+            an increasing evolution (0 < initial < final)
         :param steps_per_walker:
-            number of steps to attempt for each walker, must be postive
+            Number of steps to attempt for each walker. Must be positive.
         :param timeout:
-            specifies maximum number of seconds to run the core solver
+            Specifies maximum number of seconds to run the core solver
             loop. Initialization time does not respect this value, so the
             solver may run longer than the value specified. Setting this value
             will trigger the parameter free substochastic monte carlo solver.
         """
 
         if timeout is None:
-            target = "microsoft.substochasticmontecarlo.cpu" 
+            target = "microsoft.substochasticmontecarlo.cpu"
         else:
             target = "microsoft.substochasticmontecarlo-parameterfree.cpu"
         super().__init__(
@@ -626,9 +702,13 @@ class SubstochasticMonteCarlo(Solver):
             output_data_format="microsoft.qio-results.v2",
         )
         self.set_one_param("seed", seed)
-        self.check_set_schedule(beta, "beta")
-        self.check_set_schedule(alpha, "alpha")
-        self.check_set_positive_int(target_population, "target_population")
-        self.check_set_positive_int(steps_per_walker, "steps_per_walker")
-        self.check_set_positive_int(step_limit, "step_limit")
-        self.check_set_positive_int(timeout, "timeout")
+        self.check_set_positive_int("steps_per_walker", steps_per_walker)
+        self.check_set_positive_int("target_population", target_population)
+        self.check_set_positive_int("step_limit", step_limit)
+        self.check_set_schedule(
+                alpha, "alpha", evolution=self.ScheduleEvolution.DECREASING,
+                lower_bound_inclusive=0)
+        self.check_set_schedule(
+                beta, "beta", evolution=self.ScheduleEvolution.INCREASING,
+                lower_bound=0)
+        self.check_set_positive_int("timeout", timeout)
