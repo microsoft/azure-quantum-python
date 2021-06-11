@@ -101,6 +101,9 @@ class QuantumTestBase(ReplayableTest):
             r"jobs/([a-f0-9]+[-]){4}[a-f0-9]+", "jobs/" + ZERO_UID
         )
         regex_replacer.register_regex(
+            r"\d{8}-\d{6}", "20210101-000000"
+        )        
+        regex_replacer.register_regex(
             r'"id":\s*"([a-f0-9]+[-]){4}[a-f0-9]+"',
             '"id": "{}"'.format(ZERO_UID),
         )

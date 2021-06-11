@@ -51,7 +51,6 @@ def get_solver_types():
 """
 Temporarily disabling generation of parametrized test cases due to 
 compatibility issues with VCR
-"""
 
 def pytest_generate_tests(metafunc):
     if "solver_type" in metafunc.fixturenames:
@@ -63,6 +62,7 @@ def pytest_generate_tests(metafunc):
             ids=(f'{solver_type.func.__module__}.{solver_type.func.__qualname__}' \
                  for solver_type in solver_types) 
         )
+"""
 
 class TestJobForSolver:
     """
@@ -73,8 +73,8 @@ class TestJobForSolver:
     Similar issue here: https://stackoverflow.com/questions/63978287/missing-1-required-positional-argument-error-for-fixture-when-softest-testcase-i
     """
 
-#    @pytest.mark.skip(reason="Temporarily disabling generation of parametrized test cases due to \
-#                              compatibility issues with VCR")
+    @pytest.mark.skip(reason="Temporarily disabling generation of parametrized test cases due to \
+                              compatibility issues with VCR")
     def test_job_submit(self, solver_type):
         test_job = TestJob("_test_job_submit")
         test_job._test_job_submit(solver_type=solver_type)
