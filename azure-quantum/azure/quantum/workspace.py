@@ -76,6 +76,12 @@ class Workspace:
     If the Azure Quantum workspace does not have linked storage, the caller
     must also pass a valid Azure storage account connection string.
 
+    :param credential:
+        The credential to use to connect to Azure services.
+        Normally one of the credential types from Azure.Identity (https://docs.microsoft.com/en-us/python/api/overview/azure/identity-readme?view=azure-python#credential-classes).
+        Please see https://aka.ms/quantum-python-sdk-auth for 
+        more information and examples.
+
     :param subscription_id:
         The Azure subscription ID. Ignored if resource_id is specified.
 
@@ -97,27 +103,28 @@ class Workspace:
         The Azure region where the Azure Quantum workspace is provisioned.
         This may be specified as a region name such as
         \"East US\" or a location name such as \"eastus\".
-
-    :param credential:
-        The credential to use to connect to Azure services.
-        Normally one of the credential types from Azure.Identity (https://docs.microsoft.com/en-us/python/api/overview/azure/identity-readme?view=azure-python#credential-classes).
-
-        Defaults to \"DefaultAzureCredential\", which will attempt multiple 
-        forms of authentication.
     """
 
     credentials = None
 
     def __init__(
         self,
+        credential,
         subscription_id: Optional[str] = None,
         resource_group: Optional[str] = None,
         name: Optional[str] = None,
         storage: Optional[str] = None,
         resource_id: Optional[str] = None,
         location: Optional[str] = None,
-        credential: Optional[object] = DefaultAzureCredential(exclude_interactive_browser_credential=False),
     ):
+        if credential is None:
+            raise ValueError(
+                "You need to pass a credential to authenticate \
+                 against the Azure Services. \
+                 Please see https://aka.ms/quantum-python-sdk-auth \
+                 for more information."
+            )
+
         self.credentials = credential
 
         if resource_id is not None:
