@@ -533,29 +533,28 @@ class PopulationAnnealing(Solver):
         population: Optional[int] = None,
         sweeps: Optional[int] = None,
         beta: Optional[RangeSchedule] = None,
-        culling_fraction: Optional[float] = None,
     ):
-        """The constructor of Population Annealing Search solver.
+        """Constructor of the Population Annealing solver.
 
         Population Annealing Search solver for binary optimization problems
         with k-local interactions on an all-to-all graph topology with double
         precision support for the coupler weights.
 
-        This solver is CPU only, and not support parameter free now.
+        This solver is CPU only.
+        It currently does not support parameter-free invocation.
 
-        :param alpha:
-            ratio to trigger a restart, must be larger than 1
         :param seed:
-            specifies a random seed value.
-        :population:
-            size of target population, must be positive
+            Specifies the random number generator seed value.
         :param sweeps:
-            Number of monte carlo sweeps
+            Number of Monte Carlo sweeps. Must be positive.
+        :population:
+            Size of the population. Must be positive.
+        :param alpha:
+            Ratio to trigger a restart. Must be larger than 1.
         :param beta:
-            beta value to control the annealing temperatures,
-            it must be a object of RangeSchedule
-        :param culling_fraction:
-            constant culling rate, must be larger than 0
+            Evolution of the inverse annealing temperature.
+            Must be an object of type RangeSchedule describing
+            an increasing evolution (0 < initial < final).
         """
 
         target = "microsoft.populationannealing.cpu"
@@ -572,7 +571,6 @@ class PopulationAnnealing(Solver):
         self.check_set_positive_int(population, "population")
         self.check_set_positive_int(sweeps, "sweeps")
         self.check_set_schedule(beta, "beta")
-        self.check_set_float_limit(culling_fraction, "culling_fraction", 0.0)
 
 
 class SubstochasticMonteCarlo(Solver):
@@ -586,26 +584,31 @@ class SubstochasticMonteCarlo(Solver):
         beta: Optional[RangeSchedule] = None,
         steps_per_walker: Optional[int] = None,
     ):
-        """The constructor of Population Annealing Search solver.
+        """Constructor of the Substochastic Monte Carlo solver.
 
-        Population Annealing Search solver for binary optimization problems
+        Substochastic Monte Carlo solver for binary optimization problems
         with k-local interactions on an all-to-all graph topology with double
         precision support for the coupler weights.
 
-        This solver is CPU only, and not support parameter free now.
+        This solver is CPU only.
+        It currently does not support parameter-free invocation.
 
-        :param alpha:
-            alpha (chance to step) values evolve over time
         :param seed:
-            specifies a random seed value.
-        :target_population:
-            size of target population, must be positive
-        :param step_limit:
-            number of monte carlo steps, must be positive
-        :param beta:
-            beta (resampling factor) values evolve over time
+            Specifies the random number generator seed value.
         :param steps_per_walker:
-            number of steps to attempt for each walker, must be postive
+            Number of steps to attempt for each walker. Must be positive.
+        :target_population:
+            Target size of the population. Must be positive.
+        :param step_limit:
+            Number of Monte Carlo steps (not sweeps!). Must be positive.
+        :param alpha:
+            Evolution of alpha (chance to step) over time.
+            Must be an object of type RangeSchedule describing a
+            decreasing probability (1 >= initial > final >= 0).
+        :param beta:
+            Evolution of beta (resampling factor) over time.
+            Must be an object of type RangeSchedule describing
+            an increasing evolution (0 < initial < final)
         """
         target = "microsoft.substochasticmontecarlo.cpu"
         super().__init__(
