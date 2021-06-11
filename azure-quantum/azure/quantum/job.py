@@ -108,17 +108,14 @@ class Job:
         status:  Optional[JobStatus] = None,
         created_after: Optional[datetime] = None
     ) -> bool:
-        if name_match is not None:
-            if re.search(name_match, self.details.name) is None:
-               return False
+        if name_match is not None and re.search(name_match, self.details.name) is None:
+           return False
         
-        if status is not None:
-            if self.details.status != status.value:
-                return False
+        if status is not None and self.details.status != status.value:
+            return False
         
-        if created_after is not None:
-            if self.details.creation_time < created_after:
-                return False
+        if created_after is not None and self.details.creation_time < created_after:
+            return False
 
         return True
 
