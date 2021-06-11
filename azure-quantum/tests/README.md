@@ -4,12 +4,17 @@
 
 Refer to [the parent README](../README.md) for how to prepare the development environment before running the unit tests.
 
-### Environment variables for Recording and Live-Tests ##
+### Environment variables for Recording and Live-Tests ###
 
 The 'recordings' directory is used to replay network connections.
-To manually create new recordings, remove the 'recordings' subdirectory and run the tests.
+To manually **create new recordings**, remove the 'recordings' subdirectory and run the tests.
 
-To be able to run the tests, make sure to set the following environment variables:
+To **force the tests to run live**, even with existing recordings, set the environment variable:
+```plaintext
+AZURE_TEST_RUN_LIVE="yes"
+```
+
+To be able to run the tests in recording or live mode, make sure to set the following environment variables:
 
 ```plaintext
 AZURE_CLIENT_ID
