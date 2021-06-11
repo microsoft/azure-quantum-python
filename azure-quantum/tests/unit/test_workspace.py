@@ -6,7 +6,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 ##
-import json
 import pytest
 
 from azure.quantum import Workspace
@@ -16,68 +15,60 @@ from azure.identity import DefaultAzureCredential
 class TestWorkspace(QuantumTestBase):
 
     def test_create_workspace_instance_valid(self):
-        subscription_id = "44ef49ad-64e4-44e5-a3ba-1ee87e19d3f4"
-        resource_group = "rg"
-        name = "n"
         storage = "strg"
-        location = "eastus"
 
         credential = DefaultAzureCredential()
 
         ws = Workspace(
             credential=credential,
-            subscription_id=subscription_id,
-            resource_group=resource_group,
-            name=name,
-            location=location
+            subscription_id=self.subscription_id,
+            resource_group=self.resource_group,
+            name=self.workspace_name,
+            location=self.location
         )
-        assert ws.subscription_id == subscription_id
-        assert ws.resource_group == resource_group
-        assert ws.name == name
-        assert ws.location == location
+        assert ws.subscription_id == self.subscription_id
+        assert ws.resource_group == self.resource_group
+        assert ws.name == self.workspace_name
+        assert ws.location == self.location
 
         ws = Workspace(
             credential=credential,
-            subscription_id=subscription_id,
-            resource_group=resource_group,
-            name=name,
-            storage=storage,
-            location=location
+            subscription_id=self.subscription_id,
+            resource_group=self.resource_group,
+            name=self.workspace_name,
+            location=self.location,
+            storage=storage
         )
         assert ws.storage == storage
 
-        resource_id = f"/subscriptions/{subscription_id}/ResourceGroups/{resource_group}/providers/Microsoft.Quantum/Workspaces/{name}"
+        resource_id = f"/subscriptions/{self.subscription_id}/ResourceGroups/{self.resource_group}/providers/Microsoft.Quantum/Workspaces/{self.workspace_name}"
         ws = Workspace(
             credential=credential,
             resource_id=resource_id, 
-            location=location
+            location=self.location
         )
-        assert ws.subscription_id == subscription_id
-        assert ws.resource_group == resource_group
-        assert ws.name == name
+        assert ws.subscription_id == self.subscription_id
+        assert ws.resource_group == self.resource_group
+        assert ws.name == self.workspace_name
 
         ws = Workspace(
             credential=credential,
             resource_id=resource_id, 
             storage=storage, 
-            location=location
+            location=self.location
         )
         assert ws.storage == storage
 
     def test_create_workspace_locations(self):
-        subscription_id = "44ef49ad-64e4-44e5-a3ba-1ee87e19d3f4"
-        resource_group = "rg"
-        name = "n"
-
         credential = DefaultAzureCredential()
 
         # location is mandatory
         with self.assertRaises(Exception) as context:
-            ws = Workspace(
+            Workspace(
                 credential=credential,
-                subscription_id=subscription_id,
-                resource_group=resource_group,
-                name=name,
+                subscription_id=self.subscription_id,
+                resource_group=self.resource_group,
+                name=self.workspace_name,
             )
             self.assertTrue("Azure Quantum workspace does not have an associated location." in context.exception)
 
@@ -85,9 +76,9 @@ class TestWorkspace(QuantumTestBase):
         location = "East US"
         ws = Workspace(
             credential=credential,
-            subscription_id=subscription_id,
-            resource_group=resource_group,
-            name=name,
+            subscription_id=self.subscription_id,
+            resource_group=self.resource_group,
+            name=self.workspace_name,
             location=location,
         )
         assert ws.location == "eastus"
@@ -95,7 +86,7 @@ class TestWorkspace(QuantumTestBase):
     def test_create_workspace_instance_invalid(self):
         subscription_id = "44ef49ad-64e4-44e5-a3ba-1ee87e19d3f4"
         resource_group = "rg"
-        storage = "strg"
+        storage = "invalid_storage"
 
         credential = DefaultAzureCredential()
 
@@ -105,8 +96,8 @@ class TestWorkspace(QuantumTestBase):
         with pytest.raises(ValueError):
             Workspace(
                 credential=credential,
-                subscription_id=subscription_id,
-                resource_group=resource_group,
+                subscription_id=self.subscription_id,
+                resource_group=self.resource_group,
                 name="",
             )
 
