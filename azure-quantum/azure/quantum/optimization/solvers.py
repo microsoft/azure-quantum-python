@@ -234,15 +234,15 @@ class Solver:
         the specified bound.
 
         :param schedule_name:
-            name of the schedule parameter.
+            Name of the schedule parameter.
         :param schedule_value:
-            schedule value to be assigned and checked.
+            Schedule value to be assigned and checked.
         :param evolution
-            expected schedule evolution (INCREASING or DECREASING)
+            Expected schedule evolution (INCREASING or DECREASING)
         :lower_bound_exclusive:
-            exclusive lower bound for both ends of the schedule, optional.
+            Exclusive lower bound for both ends of the schedule, optional.
         :lower_bound_inclusive:
-            inclusive lower bound for both ends of the schedule, optional.
+            Inclusive lower bound for both ends of the schedule, optional.
         """
         if not (schedule_value is None):
             if not isinstance(schedule_value, RangeSchedule):
@@ -294,9 +294,9 @@ class Solver:
         and check that it is a positive integer.
 
         :param parameter_name:
-            name of the parameter.
+            Name of the parameter.
         :param parameter_value:
-            value to be assigned and checked.
+            Value to be assigned and checked.
         """
         if not (parameter_value is None):
             if not isinstance(parameter_value, int):
@@ -321,13 +321,13 @@ class Solver:
         and check that it has a float value satisfying bounds.
 
         :param parameter_name:
-            name of the parameter.
+            Name of the parameter.
         :param parameter_value:
-            value to be assigned and checked.
+            Value to be assigned and checked.
         :lower_bound_exclusive:
-            exclusive lower bound to check parameter_value against, optional.
+            Exclusive lower bound to check parameter_value against, optional.
         :lower_bound_inclusive:
-            inclusive lower bound to check parameter_value against, optional.
+            Inclusive lower bound to check parameter_value against, optional.
         """
         if not (parameter_value is None):
             if not (isinstance(parameter_value, float) or
@@ -350,13 +350,13 @@ class Solver:
         """Check whether `parameter_value` satisfies a lower bound.
 
         :param parameter_name:
-            name of the parameter.
+            Name of the parameter.
         :param parameter_value:
-            value to be checked.
+            Value to be checked.
         :lower_bound_exclusive:
-            exclusive lower bound to check parameter_value against, optional.
+            Exclusive lower bound to check parameter_value against, optional.
         :lower_bound_inclusive:
-            inclusive lower bound to check parameter_value against, optional.
+            Inclusive lower bound to check parameter_value against, optional.
         """
         if not (parameter_value is None):
             if (lower_bound_exclusive is not None and
