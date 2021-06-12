@@ -108,6 +108,11 @@ class Job:
         status:  Optional[JobStatus] = None,
         created_after: Optional[datetime] = None
     ) -> bool:
+        """Checks if job (self) matches the given properties if any.
+            :param name_match: regex expression for job name matching
+            :param status: filter by job status
+            :param created_after: filter jobs after time of job creation
+        """
         if name_match is not None and re.search(name_match, self.details.name) is None:
            return False
         

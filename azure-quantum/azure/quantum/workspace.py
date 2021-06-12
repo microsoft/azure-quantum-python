@@ -234,9 +234,6 @@ class Workspace:
             :param name_match: regex expression for job name matching
             :param status: filter by job status
             :param created_after: filter jobs after time of job creation
-
-            todo #27666 - replace some of these with server-side filtering.  
-            todo #27664 - tag filtering when swagger is ready
         """
         client = self._create_jobs_client()
         jobs = client.list()
