@@ -38,9 +38,11 @@ class _DefaultAzureCredential(_ChainedTokenCredential):
     The two key differences are:
     1) Inherit from _ChainedTokenCredential, which has 
        more aggressive error handling than ChainedTokenCredential
-    2) Use of the _InteractiveBrowserCredential which prints a warning message
-       if tenant_id is not passed
+    2) Use of the _InteractiveBrowserCredential which automatically
+       identifies the tenant_id
     """
+
+    
 
     def __init__(self, **kwargs):
         # type: (**Any) -> None
@@ -50,6 +52,14 @@ class _DefaultAzureCredential(_ChainedTokenCredential):
         interactive_browser_tenant_id = kwargs.pop(
             "interactive_browser_tenant_id", os.environ.get(EnvironmentVariables.AZURE_TENANT_ID)
         )
+
+        subscription_id = kwargs.pop(
+            "subscription_id", os.environ.get("SUBSCRIPTION_ID")
+        )
+        arm_base_url = kwargs.pop(
+            "arm_base_url", "https://management.azure.com/"
+        )
+
 
         managed_identity_client_id = kwargs.pop(
             "managed_identity_client_id", os.environ.get(EnvironmentVariables.AZURE_CLIENT_ID)
@@ -93,7 +103,9 @@ class _DefaultAzureCredential(_ChainedTokenCredential):
         if not exclude_powershell_credential:
             credentials.append(AzurePowerShellCredential())
         if not exclude_interactive_browser_credential:
-            credentials.append(_InteractiveBrowserCredential(tenant_id=interactive_browser_tenant_id))
+            credentials.append(_InteractiveBrowserCredential(tenant_id=interactive_browser_tenant_id,
+                                                             subscription_id=subscription_id,
+                                                             arm_base_url=arm_base_url))
 
         super(_DefaultAzureCredential, self).__init__(*credentials)
 

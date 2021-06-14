@@ -119,10 +119,17 @@ class Workspace:
         storage: Optional[str] = None,
         resource_id: Optional[str] = None,
         location: Optional[str] = None,
+        credential: Optional[object] = None,
+    ):
         # Temporarily using a custom _DefaultAzureCredential
         # instead of Azure.Identity.DefaultAzureCredential
-        credential: Optional[object] = _DefaultAzureCredential(exclude_interactive_browser_credential=False),
-    ):
+        # See _DefaultAzureCredential documentation for more info.
+        if credential is None:
+            credential = _DefaultAzureCredential(exclude_interactive_browser_credential=False,
+                                                 subscription_id=subscription_id,
+                                                 arm_base_url=ARM_BASE_URL)
+
+
         self.credentials = credential
 
         if resource_id is not None:
