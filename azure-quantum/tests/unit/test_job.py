@@ -138,6 +138,31 @@ class TestJob(QuantumTestBase):
         solver_type = functools.partial(toshiba.SimulatedBifurcationMachine, loops=10)
         self._test_job_submit(solver_type)
 
+    def test_job_filter(self):
+        """Tests the self filter functionality of job.
+        """
+        before_time = datetime.now()
+        workspace = self.create_workspace()
+        solver = microsoft.SimulatedAnnealing(workspace)
+        problem = self.create_problem(name="Test-Job-Filtering")
+
+        with unittest.mock.patch.object(
+            Job,
+            self.mock_create_job_id_name,
+            return_value=self.get_test_job_id(),
+        ):
+            job = solver.submit(problem)
+
+            self.assertEqual(True, job.matches_filter()) # test no filters
+            self.assertEqual(False, job.matches_filter(name_match="Test1"))
+            self.assertEqual(True, job.matches_filter(name_match="Test-Job-Filtering"))
+            self.assertEqual(True, job.matches_filter(name_match="Test-Job-"))
+            self.assertEqual(True, job.matches_filter(name_match="Test.+"))
+
+            self.assertEqual(False, job.matches_filter(created_after=datetime.now()))  
+            self.assertEqual(True, job.matches_filter(created_after=before_time))            
+
+
     def _test_job_submit(self, solver_type):
         """Tests the job submission and its lifecycle for a given solver.
 
