@@ -6,6 +6,7 @@ from datetime import datetime
 import logging
 import time
 import json
+import pytz
 import re
 import uuid
 
@@ -119,7 +120,7 @@ class Job:
         if status is not None and self.details.status != status.value:
             return False
         
-        if created_after is not None and self.details.creation_time < created_after:
+        if created_after is not None and self.details.creation_time.replace(tzinfo=pytz.UTC) < created_after.replace(tzinfo=pytz.UTC):
             return False
 
         return True
