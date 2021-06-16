@@ -94,12 +94,13 @@ class _DefaultAzureCredential(_ChainedTokenCredential):
         super(_DefaultAzureCredential, self).__init__()
 
     def _initialize_credentials(self):
-        if self.vscode_tenant_id is None:
-            self.vscode_tenant_id = self._get_tenant_id(arm_base_url=self.arm_base_url, subscription_id=self.subscription_id)
-        if self.shared_cache_tenant_id is None:
-            self.shared_cache_tenant_id = self._get_tenant_id(arm_base_url=self.arm_base_url, subscription_id=self.subscription_id)
-        if self.interactive_browser_tenant_id is None:
-            self.interactive_browser_tenant_id = self._get_tenant_id(arm_base_url=self.arm_base_url, subscription_id=self.subscription_id)
+        if self.subscription_id is not None:
+            if self.vscode_tenant_id is None:
+                self.vscode_tenant_id = self._get_tenant_id(arm_base_url=self.arm_base_url, subscription_id=self.subscription_id)
+            if self.shared_cache_tenant_id is None:
+                self.shared_cache_tenant_id = self._get_tenant_id(arm_base_url=self.arm_base_url, subscription_id=self.subscription_id)
+            if self.interactive_browser_tenant_id is None:
+                self.interactive_browser_tenant_id = self._get_tenant_id(arm_base_url=self.arm_base_url, subscription_id=self.subscription_id)
 
         credentials = []  # type: List[TokenCredential]
         if not self.exclude_environment_credential:
