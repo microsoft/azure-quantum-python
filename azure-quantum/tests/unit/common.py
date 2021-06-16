@@ -134,7 +134,7 @@ class QuantumTestBase(ReplayableTest):
 
     @property
     def is_playback(self):
-        return self.client_id == ZERO_UID or \
+        return self.subscription_id == ZERO_UID or \
                (not (self.in_recording or self.is_live))
 
     @property
@@ -178,7 +178,7 @@ class QuantumTestBase(ReplayableTest):
                                                      self.client_id,
                                                      self.client_secret)
         default_credential = playback_credential if self.is_playback \
-                             else DefaultAzureCredential(exclude_interactive_browser_credential=False)
+                             else None
 
         workspace = Workspace(
             credential=default_credential,
