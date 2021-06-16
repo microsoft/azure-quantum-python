@@ -55,9 +55,6 @@ class _ChainedTokenCredential(object):
 
     def __init__(self, *credentials):
         # type: (*TokenCredential) -> None
-        if not credentials:
-            raise ValueError("at least one credential is required")
-
         self._successful_credential = None  # type: Optional[TokenCredential]
         self.credentials = credentials
 

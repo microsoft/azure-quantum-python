@@ -6,4 +6,3 @@
 
 from ._chained import *
 from ._default import _DefaultAzureCredential
-from ._browser import *
