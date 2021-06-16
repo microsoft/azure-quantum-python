@@ -94,7 +94,8 @@ class _DefaultAzureCredential(_ChainedTokenCredential):
         super(_DefaultAzureCredential, self).__init__()
 
     def _initialize_credentials(self):
-        if self.subscription_id is not None:
+        if self.subscription_id is not None \
+           and self.arm_base_url is not None:
             if self.vscode_tenant_id is None:
                 self.vscode_tenant_id = self._get_tenant_id(arm_base_url=self.arm_base_url, subscription_id=self.subscription_id)
             if self.shared_cache_tenant_id is None:
@@ -144,6 +145,11 @@ class _DefaultAzureCredential(_ChainedTokenCredential):
         return super(_DefaultAzureCredential, self).get_token(*scopes, **kwargs)
 
     def _get_tenant_id(self, arm_base_url:str, subscription_id:str):
+        if arm_base_url is None:
+            raise ValueError("arm_base_url is mandatory parameter")
+        if subscription_id is None:
+            raise ValueError("subscription_id is mandatory parameter")
+
         # returns the cached tenant_id if available
         if self._successfull_tenant_id is not None:
             return self._successfull_tenant_id
