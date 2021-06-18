@@ -585,6 +585,7 @@ class SubstochasticMonteCarlo(Solver):
         step_limit: Optional[int] = None,
         beta: Optional[RangeSchedule] = None,
         steps_per_walker: Optional[int] = None,
+        timeout: Optional[int] = None,
     ):
         """The constructor of Population Annealing Search solver.
 
@@ -606,8 +607,14 @@ class SubstochasticMonteCarlo(Solver):
             beta (resampling factor) values evolve over time
         :param steps_per_walker:
             number of steps to attempt for each walker, must be postive
+        :param timeout:
+            specifies maximum number of seconds to run the core solver
+            loop. initialization time does not respect this value, so the
+            solver may run longer than the value specified. Setting this value
+            will trigger the parameter free substochastic monte carlo solver.
         """
-        target = "microsoft.substochasticmontecarlo.cpu"
+        parameter_free = False if timeout is None else True
+        target = "microsoft.substochasticmontecarlo.cpu" if not parameter_free else "microsoft.substochasticmontecarlo-parameterfree.cpu"
         super().__init__(
             workspace=workspace,
             provider="Microsoft",
@@ -621,3 +628,4 @@ class SubstochasticMonteCarlo(Solver):
         self.check_set_positive_int(target_population, "target_population")
         self.check_set_positive_int(steps_per_walker, "steps_per_walker")
         self.check_set_positive_int(step_limit, "step_limit")
+        self.check_set_positive_int(timeout, "timeout")
