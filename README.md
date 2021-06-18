@@ -68,7 +68,7 @@ pip install -e .
 
 ### Integration tests
 
-For instructions on how to run integration tests for the Azure Quantum package, please refer to the [README](azure-quantum/tests/integration/README.md) file.
+For instructions on how to run integration tests for the Azure Quantum package, please refer to the [README](azure-quantum/tests/README.md) file.
 
 ## Contributing
 
