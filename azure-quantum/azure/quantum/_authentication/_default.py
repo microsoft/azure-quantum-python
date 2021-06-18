@@ -89,6 +89,7 @@ class _DefaultAzureCredential(_ChainedTokenCredential):
         self.exclude_visual_studio_code_credential = kwargs.pop("exclude_visual_studio_code_credential", False)
         self.exclude_cli_credential = kwargs.pop("exclude_cli_credential", False)
         self.exclude_interactive_browser_credential = kwargs.pop("exclude_interactive_browser_credential", True)
+        self.exclude_device_code_credential = kwargs.pop("exclude_device_code_credential", False)
         self.exclude_powershell_credential = kwargs.pop("exclude_powershell_credential", False)
 
         # credentials will be created lazy on the first call to get_token
