@@ -121,17 +121,6 @@ class Workspace:
         location: Optional[str] = None,
         credential: Optional[object] = None,
     ):
-        # Temporarily using a custom _DefaultAzureCredential
-        # instead of Azure.Identity.DefaultAzureCredential
-        # See _DefaultAzureCredential documentation for more info.
-        if credential is None:
-            credential = _DefaultAzureCredential(exclude_interactive_browser_credential=False,
-                                                 subscription_id=subscription_id,
-                                                 arm_base_url=ARM_BASE_URL)
-
-
-        self.credentials = credential
-
         if resource_id is not None:
             # A valid resource ID looks like:
             # /subscriptions/f846b2bd-d0e2-4a1d-8141-4c6944a9d387/resourceGroups/
@@ -162,6 +151,15 @@ class Workspace:
                 "Azure Quantum workspace does not have an associated location. " +
                 "Please specify the location associated with your workspace.")
 
+        # Temporarily using a custom _DefaultAzureCredential
+        # instead of Azure.Identity.DefaultAzureCredential
+        # See _DefaultAzureCredential documentation for more info.
+        if credential is None:
+            credential = _DefaultAzureCredential(exclude_interactive_browser_credential=False,
+                                                 subscription_id=subscription_id,
+                                                 arm_base_url=ARM_BASE_URL)
+
+        self.credentials = credential
         self.name = name
         self.resource_group = resource_group
         self.subscription_id = subscription_id
