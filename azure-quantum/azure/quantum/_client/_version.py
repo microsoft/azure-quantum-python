@@ -6,14 +6,4 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._jobs_operations import JobsOperations
-from ._providers_operations import ProvidersOperations
-from ._storage_operations import StorageOperations
-from ._quotas_operations import QuotasOperations
-
-__all__ = [
-    'JobsOperations',
-    'ProvidersOperations',
-    'StorageOperations',
-    'QuotasOperations',
-]
+VERSION = "0.0.0.1"
