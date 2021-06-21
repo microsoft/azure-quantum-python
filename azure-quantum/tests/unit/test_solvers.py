@@ -10,7 +10,7 @@
 import unittest
 from unittest.mock import Mock, patch
 from azure.quantum import Workspace, storage
-from azure.quantum.optimization import Solver, OnlineProblem
+from azure.quantum.optimization import Solver, OnlineProblem, Problem
 import azure.quantum.storage
 
 
@@ -22,6 +22,15 @@ class TestSolvers(unittest.TestCase):
         self.testsolver = Solver(
             self.mock_ws, "Microsoft", "SimulatedAnnealing", "json", "json"
         )
+
+    def test_submit_problem(self):
+        azure.quantum.optimization.problem.upload_blob = Mock()
+        azure.quantum.optimization.problem.upload_blob.get_blob_uri_with_sas_token = Mock()
+        
+        problem = Problem(name="test", terms = [])
+        job = self.testsolver.submit(problem)
+        azure.quantum.optimization.problem.upload_blob.assert_called_once()
+        self.testsolver.workspace.submit_job.assert_called_once()
 
     def test_submit_online_problem(self):
         # Arrange
