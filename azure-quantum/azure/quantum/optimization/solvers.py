@@ -586,7 +586,7 @@ class SubstochasticMonteCarlo(Solver):
         beta: Optional[RangeSchedule] = None,
         steps_per_walker: Optional[int] = None,
     ):
-        """The constructor of  Substochastic Monte Carlo solver.
+        """The constructor of Substochastic Monte Carlo solver.
 
         Substochastic Monte Carlo solver for binary optimization problems
         with k-local interactions on an all-to-all graph topology with double
