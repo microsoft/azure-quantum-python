@@ -17,6 +17,7 @@ from azure.identity import (
     AzureCliCredential,
     VisualStudioCodeCredential,
     InteractiveBrowserCredential,
+    DeviceCodeCredential,
     _credentials
 )
 from ._chained import _ChainedTokenCredential
@@ -88,6 +89,7 @@ class _DefaultAzureCredential(_ChainedTokenCredential):
         self.exclude_visual_studio_code_credential = kwargs.pop("exclude_visual_studio_code_credential", False)
         self.exclude_cli_credential = kwargs.pop("exclude_cli_credential", False)
         self.exclude_interactive_browser_credential = kwargs.pop("exclude_interactive_browser_credential", True)
+        self.exclude_device_code_credential = kwargs.pop("exclude_device_code_credential", False)
         self.exclude_powershell_credential = kwargs.pop("exclude_powershell_credential", False)
 
         # credentials will be created lazy on the first call to get_token
@@ -125,6 +127,8 @@ class _DefaultAzureCredential(_ChainedTokenCredential):
             credentials.append(AzurePowerShellCredential())
         if not self.exclude_interactive_browser_credential:
             credentials.append(InteractiveBrowserCredential(tenant_id=self.interactive_browser_tenant_id))
+        if not self.exclude_device_code_credential:
+            credentials.append(DeviceCodeCredential(tenant_id=self.interactive_browser_tenant_id))
 
         self.credentials = credentials
 
