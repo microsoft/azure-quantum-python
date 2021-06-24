@@ -66,10 +66,6 @@ To install the package in development mode, run:
 pip install -e .
 ```
 
-### Integration tests
-
-For instructions on how to run integration tests for the Azure Quantum package, please refer to the [README](azure-quantum/tests/README.md) file.
-
 ## Contributing
 
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a
