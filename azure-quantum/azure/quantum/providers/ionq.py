@@ -38,7 +38,7 @@ class IonQ:
             name = f"ionq_{n_qubits}_qubits_{n_gates}_gates"
         job_id = Job.create_job_id()
         data = self.encode_data(circuit)
-        container_uri, uploaded_blob_uri = self.upload_blob(data)
+        container_uri, uploaded_blob_uri = self.upload_blob(data, job_id)
         details = JobDetails(
             id=job_id,
             name=name,
