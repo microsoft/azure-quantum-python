@@ -54,7 +54,7 @@ class IonQ:
         job = self.workspace.submit_job(job)
         return job
 
-    def encode_data(circuit: IonQJson) -> bytes:
+    def encode_data(self, circuit: IonQJson) -> bytes:
         data = io.BytesIO()
         circuit = json.dumps(circuit)
         data.write(circuit.encode())
