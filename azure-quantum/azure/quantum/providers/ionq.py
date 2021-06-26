@@ -1,30 +1,72 @@
+##
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+##
 import io
 import json
-from typing import Any, Dict, Tuple
+from typing import Any, Dict
 
-from azure.quantum import Job
-from azure.quantum._client.models import JobDetails
-from azure.quantum.storage import upload_blob, ContainerClient
+from azure.quantum.providers.provider_job import ProviderJobMixin
 from azure.quantum.workspace import Workspace
+from azure.quantum.job import DEFAULT_TIMEOUT, Job
 
-IonQJson = Dict[str, Any]
-IONQ_INPUT_DATA_FORMAT = "ionq.circuit.v1"
-IONQ_OUTPUT_DATA_FORMAT = "ionq.quantum-results.v1"
-IONQ_PROVIDER_ID = "IonQ"
-DEFAULT_TIMEOUT = 100
+_IonQJson = Dict[str, Any]
 
+
+class IonqJob(ProviderJobMixin, Job):
+    input_data_format = "ionq.circuit.v1"
+    output_data_format = "ionq.quantum-results.v1"
+    provider_id = "IonQ"
 
 class IonQ:
-    def __init__(self, workspace: Workspace, target: str = "ionq.simulator"):
+    def __init__(
+        self,
+        workspace: Workspace,
+        target: str = "ionq.simulator"
+    ):
         self.workspace = workspace
         self.target = target
-    
+
+    @staticmethod
+    def _encode_json_data(data: Dict[Any, Any]) -> bytes:
+        data = io.BytesIO()
+        data = json.dumps(data)
+        data.write(data.encode())
+        return data.getvalue()
+
+    def submit_blob(
+        self,
+        blob: bytes,
+        name: str,
+        timeout: int = DEFAULT_TIMEOUT
+    ) -> IonqJob:
+        """Submit blob data to the service
+
+        :param blob: Blob data to submit to Azure Quantum
+        :type blob: bytes
+        :param name: Blob name
+        :type name: str
+        :param timeout: Job submission timeout, defaults to DEFAULT_TIMEOUT
+        :type timeout: int, optional
+        :return: [description]
+        :rtype: IonQJob
+        """
+        job = IonqJob.from_blob(
+            workspace=self.workspace,
+            target=self.target,
+            blob=blob,
+            name=name,
+            timeout=timeout
+        )
+        job.submit()
+        return job
+
     def submit(
         self,
-        circuit: IonQJson,
+        circuit: _IonQJson,
         name: str = None,
         timeout: int = DEFAULT_TIMEOUT
-    ) -> Job:
+    ) -> ProviderJobMixin:
         """Submit an IonQ circuit (JSON format)
 
         :param circuit: Quantum circuit in IonQ JSON format
@@ -32,44 +74,5 @@ class IonQ:
         :return: Azure Quantum job
         :rtype: Job
         """
-        if name is None:
-            n_qubits = circuit["qubits"]
-            n_gates = len(circuit["circuit"])
-            name = f"ionq_{n_qubits}_qubits_{n_gates}_gates"
-        job_id = Job.create_job_id()
-        data = self.encode_data(circuit)
-        container_uri, uploaded_blob_uri = self.upload_blob(data, job_id)
-        details = JobDetails(
-            id=job_id,
-            name=name,
-            container_uri=container_uri,
-            input_data_format=IONQ_INPUT_DATA_FORMAT,
-            output_data_format=IONQ_OUTPUT_DATA_FORMAT,
-            input_data_uri=uploaded_blob_uri,
-            provider_id=IONQ_PROVIDER_ID,
-            target=self.target,
-            input_params={'params': {'timeout': timeout}},
-        )
-        job = Job(self.workspace, details)
-        job = self.workspace.submit_job(job)
-        return job
-
-    def encode_data(self, circuit: IonQJson) -> bytes:
-        data = io.BytesIO()
-        circuit = json.dumps(circuit)
-        data.write(circuit.encode())
-        return data.getvalue()
-
-    def upload_blob(
-        self,
-        data: bytes,
-        job_id: str,
-        blob_name = "inputData",
-        content_type = "application/json",
-        encoding = ""
-    ) -> Tuple[str, str]:
-        container_name = f"job-{job_id}"
-        container_uri = self.workspace._get_linked_storage_sas_uri(container_name)
-        container_client = ContainerClient.from_container_url(container_uri)
-        uploaded_blob_uri = upload_blob(container_client, blob_name, content_type, encoding, data, return_sas_token=False)
-        return container_uri, uploaded_blob_uri
+        blob = self._encode_json_data(circuit)
+        self.submit_blob(blob=blob, name=name, timeout=timeout)
