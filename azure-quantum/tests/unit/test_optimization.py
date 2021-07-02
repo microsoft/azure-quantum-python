@@ -459,6 +459,16 @@ class TestSolvers(QuantumTestBase):
         self.assertTrue("must be positive" in str(context.exception))
         self.assertTrue(bad_solver is None)
 
+    def test_PopulationAnnealing_parameter_free(self):
+        ws = self.create_workspace()
+        good = PopulationAnnealing(
+            ws,
+            timeout=8,
+        )
+        self.assertIsNotNone(good)
+        self.assertEqual("microsoft.populationannealing-parameterfree.cpu", good.target)
+        self.assertEqual(8, good.params["params"]["timeout"])
+
     def test_PA_bad_input_params(self):
         beta = 1
         ws = self.create_workspace()

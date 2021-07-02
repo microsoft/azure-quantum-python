@@ -534,6 +534,7 @@ class PopulationAnnealing(Solver):
         sweeps: Optional[int] = None,
         beta: Optional[RangeSchedule] = None,
         culling_fraction: Optional[float] = None,
+        timeout: Optional[int] = None,
     ):
         """The constructor of Population Annealing Search solver.
 
@@ -556,9 +557,14 @@ class PopulationAnnealing(Solver):
             it must be a object of RangeSchedule
         :param culling_fraction:
             constant culling rate, must be larger than 0
+        :param timeout:
+            specifies maximum number of seconds to run the core solver
+            loop. initialization time does not respect this value, so the
+            solver may run longer than the value specified. Setting this value
+            will trigger the parameter free population annealing solver.
         """
-
-        target = "microsoft.populationannealing.cpu"
+        parameter_free = False if timeout is None else True
+        target = "microsoft.populationannealing.cpu" if not parameter_free else "microsoft.populationannealing-parameterfree.cpu"
         super().__init__(
             workspace=workspace,
             provider="Microsoft",
@@ -573,6 +579,7 @@ class PopulationAnnealing(Solver):
         self.check_set_positive_int(sweeps, "sweeps")
         self.check_set_schedule(beta, "beta")
         self.check_set_float_limit(culling_fraction, "culling_fraction", 0.0)
+        self.check_set_positive_int(timeout, "timeout")
 
 
 class SubstochasticMonteCarlo(Solver):
