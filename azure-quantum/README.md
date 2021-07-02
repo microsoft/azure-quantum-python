@@ -28,6 +28,12 @@ Then to activate the environment:
 conda activate azure-quantum
 ```
 
+In case you have created the conda environment a while ago, you can make sure you have the latest versions of all dependencies by updating your environment:
+
+```bash
+conda env update -f environment.yml -n azure-quantum --prune
+```
+
 ### Install the local development package ###
 
 To install the package in development mode, run:
