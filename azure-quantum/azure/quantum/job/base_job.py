@@ -5,7 +5,6 @@
 import abc
 import logging
 import uuid
-import json
 
 from urllib.parse import urlparse
 from typing import Tuple
