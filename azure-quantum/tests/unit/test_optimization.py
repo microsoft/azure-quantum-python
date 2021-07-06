@@ -449,7 +449,7 @@ class TestSolvers(QuantumTestBase):
 
         alpha_increasing = RangeSchedule("linear", 1.0, 2.0)
         with self.assertRaises(ValueError) as context:
-            bad_solver = PopulationAnnealing(
+            bad_solver = SubstochasticMonteCarlo(
                 ws,
                 seed=1888,
                 target_population=3000,
@@ -462,7 +462,7 @@ class TestSolvers(QuantumTestBase):
 
         beta_decreasing = RangeSchedule("linear", 2.0, 1.0)
         with self.assertRaises(ValueError) as context:
-            bad_solver = PopulationAnnealing(
+            bad_solver = SubstochasticMonteCarlo(
                 ws,
                 seed=1888,
                 target_population=3000,
