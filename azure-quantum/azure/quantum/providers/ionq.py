@@ -6,9 +6,9 @@ import io
 import json
 from typing import Any, Dict
 
-from azure.quantum.providers.provider_job import ProviderJobMixin
+from azure.quantum.providers.provider_job import ProviderJobMixin, DEFAULT_TIMEOUT
 from azure.quantum.workspace import Workspace
-from azure.quantum.job import DEFAULT_TIMEOUT, Job
+from azure.quantum.job import Job
 
 _IonQJson = Dict[str, Any]
 
