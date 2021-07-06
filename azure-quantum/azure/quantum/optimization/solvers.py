@@ -330,13 +330,15 @@ class Solver:
         if not (var is None):
             if lower_bound is not None and var <= lower_bound:
                 raise ValueError(
-                    f"{var_name} must be greater than {lower_bound}!"
+                    f"{var_name} must be greater than {lower_bound}; "
+                    f"found {var_name}={var}."
                 )
             if (lower_bound_inclusive is not None and
                     var < lower_bound_inclusive):
                 raise ValueError(
                     f"{var_name} must be greater equal "
-                    f"{lower_bound_inclusive}!"
+                    f"{lower_bound_inclusive}; found "
+                    f"{var_name}={var}."
                 )
 
 
