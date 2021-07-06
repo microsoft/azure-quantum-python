@@ -569,6 +569,32 @@ class TestSolvers(QuantumTestBase):
                  "found beta.initial=-2.0") in str(context.exception))
         self.assertTrue(bad_solver is None)
 
+        alpha_increasing = RangeSchedule("linear", 1.0, 2.0)
+        with self.assertRaises(ValueError) as context:
+            bad_solver = PopulationAnnealing(
+                ws,
+                seed=1888,
+                target_population=3000,
+                step_limit=1000,
+                alpha=alpha_increasing,
+                beta=beta,
+            )
+        self.assertTrue("alpha must be decreasing" in str(context.exception))
+        self.assertTrue(bad_solver is None)
+
+        beta_decreasing = RangeSchedule("linear", 2.0, 1.0)
+        with self.assertRaises(ValueError) as context:
+            bad_solver = PopulationAnnealing(
+                ws,
+                seed=1888,
+                target_population=3000,
+                step_limit=1000,
+                alpha=alpha,
+                beta=beta_decreasing,
+            )
+        self.assertTrue("beta must be increasing" in str(context.exception))
+        self.assertTrue(bad_solver is None)
+
     def test_PA_bad_input_params(self):
         beta = 1
         ws = self.create_workspace()
