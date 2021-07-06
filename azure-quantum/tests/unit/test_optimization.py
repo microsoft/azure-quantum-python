@@ -496,6 +496,7 @@ class TestSolvers(QuantumTestBase):
         self.assertTrue("must be greater equal" in str(context.exception))
         self.assertTrue(bad_solver is None)
 
+        alpha = RangeSchedule("linear", 1.0, 0.0)
         beta_decreasing = RangeSchedule("linear", 2.0, 1.0)
         with self.assertRaises(ValueError) as context:
             bad_solver = SubstochasticMonteCarlo(
