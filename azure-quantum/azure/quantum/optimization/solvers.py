@@ -268,7 +268,7 @@ class Solver:
                     lower_bound=lower_bound,
                     lower_bound_inclusive=lower_bound_inclusive)
             self.check_limit(
-                    schedule.initial, f"{schedule_name}.final",
+                    schedule.final, f"{schedule_name}.final",
                     lower_bound=lower_bound,
                     lower_bound_inclusive=lower_bound_inclusive)
             self.set_one_param(schedule_name, schedule_param)
@@ -307,7 +307,7 @@ class Solver:
             if not (isinstance(var, float) or isinstance(var, int)):
                 raise ValueError(f"{var_name} shall be float!")
             self.check_limit(
-                    lower_bound=lower_bound,
+                    var, var_name, lower_bound=lower_bound,
                     lower_bound_inclusive=lower_bound_inclusive)
             self.set_one_param(var_name, var)
 
