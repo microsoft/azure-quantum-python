@@ -368,7 +368,6 @@ class TestSolvers(QuantumTestBase):
             seed=8888,
             population=300,
             sweeps=1000,
-            culling_fraction=0.5,
             beta=beta,
         )
         self.assertIsNotNone(good)
@@ -377,7 +376,6 @@ class TestSolvers(QuantumTestBase):
         self.assertEqual(100.0, good.params["params"]["alpha"])
         self.assertEqual(300, good.params["params"]["population"])
         self.assertEqual(1000, good.params["params"]["sweeps"])
-        self.assertEqual(0.5, good.params["params"]["culling_fraction"])
         self.assertEqual(
             {"type": "linear", "initial": 0.8, "final": 5.8},
             good.params["params"]["beta"],
@@ -386,7 +384,7 @@ class TestSolvers(QuantumTestBase):
     def test_SubstochasticMonteCarlo_input_params(self):
         ws = self.create_workspace()
         beta = RangeSchedule("linear", 2.8, 15.8)
-        alpha = RangeSchedule("geometric", 1.8, 2.8)
+        alpha = RangeSchedule("geometric", 2.8, 1.8)
         good = SubstochasticMonteCarlo(
             ws,
             alpha=alpha,
@@ -400,7 +398,7 @@ class TestSolvers(QuantumTestBase):
         self.assertEqual("microsoft.substochasticmontecarlo.cpu", good.target)
         self.assertEqual(1888, good.params["params"]["seed"])
         self.assertEqual(
-            {"type": "geometric", "initial": 1.8, "final": 2.8},
+            {"type": "geometric", "initial": 2.8, "final": 1.8},
             good.params["params"]["alpha"],
         )
         self.assertEqual(3000, good.params["params"]["target_population"])
@@ -449,6 +447,32 @@ class TestSolvers(QuantumTestBase):
         self.assertTrue("must be positive" in str(context.exception))
         self.assertTrue(bad_solver is None)
 
+        alpha_increasing = RangeSchedule("linear", 1.0, 2.0)
+        with self.assertRaises(ValueError) as context:
+            bad_solver = PopulationAnnealing(
+                ws,
+                seed=1888,
+                target_population=3000,
+                step_limit=1000,
+                alpha=alpha_increasing,
+                beta=beta,
+            )
+        self.assertTrue("alpha must be decreasing" in str(context.exception))
+        self.assertTrue(bad_solver is None)
+
+        beta_decreasing = RangeSchedule("linear", 2.0, 1.0)
+        with self.assertRaises(ValueError) as context:
+            bad_solver = PopulationAnnealing(
+                ws,
+                seed=1888,
+                target_population=3000,
+                step_limit=1000,
+                alpha=alpha,
+                beta=beta_decreasing,
+            )
+        self.assertTrue("beta must be increasing" in str(context.exception))
+        self.assertTrue(bad_solver is None)
+
     def test_PA_bad_input_params(self):
         beta = 1
         ws = self.create_workspace()
@@ -460,7 +484,6 @@ class TestSolvers(QuantumTestBase):
                 seed=8888,
                 population=300,
                 sweeps=1000,
-                culling_fraction=0.5,
                 beta=beta,
             )
         self.assertTrue(
@@ -475,16 +498,28 @@ class TestSolvers(QuantumTestBase):
                 seed=8888,
                 population=-300,
                 sweeps=1000,
-                culling_fraction=0.5,
             )
         self.assertTrue("must be positive" in str(context.exception))
         self.assertTrue(bad_solver is None)
 
         with self.assertRaises(ValueError) as context:
             bad_solver = PopulationAnnealing(
-                ws, alpha=0.2, seed=8888, sweeps=1000, culling_fraction=0.5
+                ws, alpha=0.2, seed=8888, sweeps=1000,
             )
-        self.assertTrue("can not be smaller than" in str(context.exception))
+        self.assertTrue("alpha must be greater than" in str(context.exception))
+        self.assertTrue(bad_solver is None)
+
+        beta_decreasing = RangeSchedule("linear", 2.0, 1.0)
+        with self.assertRaises(ValueError) as context:
+            bad_solver = PopulationAnnealing(
+                ws,
+                alpha=100,
+                seed=8888,
+                population=300,
+                sweeps=1000,
+                beta=beta_decreasing,
+            )
+        self.assertTrue("must be increasing" in str(context.exception))
         self.assertTrue(bad_solver is None)
 
 
