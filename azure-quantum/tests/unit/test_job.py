@@ -12,7 +12,7 @@ import time
 import os
 import functools
 import pytest
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from common import QuantumTestBase, ZERO_UID
 from azure.quantum import Job
@@ -48,6 +48,10 @@ def get_solver_types():
             solver_types.append(solver_type)
     return solver_types
 
+"""
+Temporarily disabling generation of parametrized test cases due to 
+compatibility issues with VCR
+
 def pytest_generate_tests(metafunc):
     if "solver_type" in metafunc.fixturenames:
         solver_types = get_solver_types()
@@ -58,6 +62,7 @@ def pytest_generate_tests(metafunc):
             ids=(f'{solver_type.func.__module__}.{solver_type.func.__qualname__}' \
                  for solver_type in solver_types) 
         )
+"""
 
 class TestJobForSolver:
     """
@@ -68,8 +73,9 @@ class TestJobForSolver:
     Similar issue here: https://stackoverflow.com/questions/63978287/missing-1-required-positional-argument-error-for-fixture-when-softest-testcase-i
     """
 
-    # Disabling this test as it does not work with VCR
-    def _test_job_submit(self, solver_type):
+    @pytest.mark.skip(reason="Temporarily disabling generation of parametrized test cases due to \
+                              compatibility issues with VCR")
+    def test_job_submit(self, solver_type):
         test_job = TestJob("_test_job_submit")
         test_job._test_job_submit(solver_type=solver_type)
 
@@ -84,13 +90,14 @@ class TestJob(QuantumTestBase):
     mock_create_job_id_name = "create_job_id"
     create_job_id = Job.create_job_id
 
-    def get_dummy_job_id(self):
+    def get_test_job_id(self):
         return ZERO_UID if self.is_playback \
                else Job.create_job_id()
 
     def test_job_submit_microsoft_simulated_annealing(self):
         solver_type = functools.partial(microsoft.SimulatedAnnealing, beta_start=0)
         self._test_job_submit(solver_type)
+        self._test_job_filter(solver_type)
 
     def test_job_submit_microsoft_parallel_tempering(self):
         solver_type = functools.partial(microsoft.ParallelTempering, sweeps=100)
@@ -132,6 +139,28 @@ class TestJob(QuantumTestBase):
         solver_type = functools.partial(toshiba.SimulatedBifurcationMachine, loops=10)
         self._test_job_submit(solver_type)
 
+    def _test_job_filter(self, solver_type):
+        workspace = self.create_workspace()
+        solver = solver_type(workspace)
+        problem = self.create_problem(name="Test-Job-Filtering")
+
+        with unittest.mock.patch.object(
+            Job,
+            self.mock_create_job_id_name,
+            return_value=self.get_test_job_id()
+        ):
+            job = solver.submit(problem)
+
+            self.assertEqual(True, job.matches_filter()) # test no filters
+            self.assertEqual(False, job.matches_filter(name_match="Test1"))
+            self.assertEqual(True, job.matches_filter(name_match="Test-"))
+            self.assertEqual(True, job.matches_filter(name_match="Test.+"))
+
+            self.assertEqual(False, job.matches_filter(created_after=datetime.now()))  
+
+            before_time = datetime.now() - timedelta(days=100)
+            self.assertEqual(True, job.matches_filter(created_after=before_time))    
+
     def _test_job_submit(self, solver_type):
         """Tests the job submission and its lifecycle for a given solver.
 
@@ -150,7 +179,7 @@ class TestJob(QuantumTestBase):
         with unittest.mock.patch.object(
             Job,
             self.mock_create_job_id_name,
-            return_value=self.get_dummy_job_id(),
+            return_value=self.get_test_job_id(),
         ):
 
             job = solver.submit(problem)

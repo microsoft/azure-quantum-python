@@ -101,6 +101,9 @@ class QuantumTestBase(ReplayableTest):
             r"jobs/([a-f0-9]+[-]){4}[a-f0-9]+", "jobs/" + ZERO_UID
         )
         regex_replacer.register_regex(
+            r"\d{8}-\d{6}", "20210101-000000"
+        )        
+        regex_replacer.register_regex(
             r'"id":\s*"([a-f0-9]+[-]){4}[a-f0-9]+"',
             '"id": "{}"'.format(ZERO_UID),
         )
@@ -131,7 +134,8 @@ class QuantumTestBase(ReplayableTest):
 
     @property
     def is_playback(self):
-        return not (self.in_recording or self.is_live)
+        return self.subscription_id == ZERO_UID or \
+               (not (self.in_recording or self.is_live))
 
     @property
     def client_id(self):
@@ -162,7 +166,9 @@ class QuantumTestBase(ReplayableTest):
         return self._workspace_name
 
     def create_workspace(self) -> Workspace:
-        """Create workspace using credentials stored in config file
+        """Create workspace using credentials passed via OS Environment Variables
+        described in the README.md documentation, or when in playback mode use
+        a placeholder credential.
 
         :return: Workspace
         :rtype: Workspace
@@ -172,7 +178,7 @@ class QuantumTestBase(ReplayableTest):
                                                      self.client_id,
                                                      self.client_secret)
         default_credential = playback_credential if self.is_playback \
-                             else DefaultAzureCredential(exclude_interactive_browser_credential=False)
+                             else None
 
         workspace = Workspace(
             credential=default_credential,
@@ -188,35 +194,51 @@ class QuantumTestBase(ReplayableTest):
 class CustomRecordingProcessor(RecordingProcessor):
 
     ALLOW_HEADERS = [
+        "connection",
         "content-length",
         "content-type",
         "accept",
         "accept-encoding",
         "accept-charset",
         "accept-ranges",
-        "x-ms-range",
         "transfer-encoding",
         "x-ms-blob-content-md5",
         "x-ms-blob-type",
         "x-ms-creation-time",
+        "x-ms-date",
+        "x-ms-encryption-algorithm",
         "x-ms-lease-state",
         "x-ms-lease-status",
+        "x-ms-meta-avg_coupling",
+        "x-ms-meta-max_coupling",
+        "x-ms-meta-min_coupling",
+        "x-ms-meta-num_terms",
+        "x-ms-meta-type",
+        "x-ms-range",
         "x-ms-server-encrypted",
         "x-ms-version",
+        "x-client-cpu",
+        "x-client-current-telemetry",
+        "x-client-os",
+        "x-client-sku",
+        "x-client-ver",
+        "user-agent",
     ]
 
     def __init__(self):
         self._regexes = []
 
-    def register_regex(self, oldRegex, new):
-        self._regexes.append((re.compile(oldRegex), new))
+    def register_regex(self, old_regex, new):
+        self._regexes.append((re.compile(pattern=old_regex, 
+                                         flags=re.IGNORECASE | re.MULTILINE),
+                             new))
 
     def process_request(self, request):
         headers = {}
         for key in request.headers:
             if key.lower() in self.ALLOW_HEADERS:
                 headers[key] = request.headers[key]
-        # request.headers = headers
+        request.headers = headers
 
         for oldRegex, new in self._regexes:
             request.uri = oldRegex.sub(new, request.uri)
@@ -234,18 +256,37 @@ class CustomRecordingProcessor(RecordingProcessor):
 
         return request
 
+    def _get_content_type(self, entity):
+        # 'headers' is a field of 'request', but it is a dict-key in 'response'
+        if hasattr(entity, "headers"):
+            headers = getattr(entity, "headers")
+        else:
+            headers = entity.get('headers')
+
+        content_type = None
+        if headers is not None:
+            content_type = headers.get('content-type')
+            if content_type is not None:
+                # content-type could be an array from response, let us extract it out
+                if isinstance(content_type, list):
+                    content_type = content_type[0]
+                content_type = content_type.split(";")[0].lower()
+        return content_type
+
     def process_response(self, response):
         headers = {}
         for key in response["headers"]:
             if key.lower() in self.ALLOW_HEADERS:
                 headers[key.lower()] = response["headers"][key]
-        response['headers'] = headers
+        response["headers"] = headers
 
-        if is_text_payload(response):
+        content_type = self._get_content_type(response)
+
+        if is_text_payload(response) or "application/octet-stream" == content_type:
             body = response["body"]["string"]
             if not isinstance(body, six.string_types):
                 body = body.decode("utf-8")
-            if is_text_payload(response) and body:
+            if body:
                 for oldRegex, new in self._regexes:
                     body = oldRegex.sub(new, body)
                 response["body"]["string"] = body

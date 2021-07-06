@@ -33,3 +33,9 @@ class TestSolvers(unittest.TestCase):
         _ = self.testsolver.submit(o_problem)
         # Assert
         self.testsolver.workspace.submit_job.assert_called_once()
+
+    def test_number_of_solutions_set(self):
+        param_name = "number_of_solutions"
+        self.testsolver.set_number_of_solutions(100)
+        assert param_name in self.testsolver.params["params"]
+        assert self.testsolver.params["params"][param_name] == 100

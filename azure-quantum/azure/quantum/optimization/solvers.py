@@ -178,6 +178,14 @@ class Solver:
             )
             params[name] = str(value) if self.force_str_params else value
 
+    def set_number_of_solutions(self, number_of_solutions: int):
+        """Sets the number of solutions to return. Applies to all solvers. Default 1 if not supplied.
+        
+        :param number_of_solutions:
+            Number of solutions to return. Must be a positive integer.
+        """
+        self.set_one_param("number_of_solutions", number_of_solutions)
+
     def check_submission_warnings(self, problem: Problem):
         # print a warning if we suspect the job
         # may take long based on its configured properties.
@@ -578,9 +586,9 @@ class SubstochasticMonteCarlo(Solver):
         beta: Optional[RangeSchedule] = None,
         steps_per_walker: Optional[int] = None,
     ):
-        """The constructor of Population Annealing Search solver.
+        """The constructor of Substochastic Monte Carlo solver.
 
-        Population Annealing Search solver for binary optimization problems
+        Substochastic Monte Carlo solver for binary optimization problems
         with k-local interactions on an all-to-all graph topology with double
         precision support for the coupler weights.
 

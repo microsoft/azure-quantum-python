@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 ##
+from datetime import datetime
 import logging
 import os
 import re
@@ -9,11 +10,14 @@ import re
 from typing import List, Optional
 from deprecated import deprecated
 
-from azure.identity import DefaultAzureCredential
+# Temporarily replacing the DefaultAzureCredential with
+# a custom _DefaultAzureCredential
+#   from azure.identity import DefaultAzureCredential
+from azure.quantum._authentication import _DefaultAzureCredential
 
 from azure.quantum._client import QuantumClient
 from azure.quantum._client.operations import JobsOperations, StorageOperations
-from azure.quantum._client.models import BlobDetails
+from azure.quantum._client.models import BlobDetails, JobStatus
 from azure.quantum import Job
 
 from .version import __version__
@@ -116,10 +120,8 @@ class Workspace:
         storage: Optional[str] = None,
         resource_id: Optional[str] = None,
         location: Optional[str] = None,
-        credential: Optional[object] = DefaultAzureCredential(exclude_interactive_browser_credential=False),
+        credential: Optional[object] = None,
     ):
-        self.credentials = credential
-
         if resource_id is not None:
             # A valid resource ID looks like:
             # /subscriptions/f846b2bd-d0e2-4a1d-8141-4c6944a9d387/resourceGroups/
@@ -150,6 +152,15 @@ class Workspace:
                 "Azure Quantum workspace does not have an associated location. " +
                 "Please specify the location associated with your workspace.")
 
+        # Temporarily using a custom _DefaultAzureCredential
+        # instead of Azure.Identity.DefaultAzureCredential
+        # See _DefaultAzureCredential documentation for more info.
+        if credential is None:
+            credential = _DefaultAzureCredential(exclude_interactive_browser_credential=False,
+                                                 subscription_id=subscription_id,
+                                                 arm_base_url=ARM_BASE_URL)
+
+        self.credentials = credential
         self.name = name
         self.resource_group = resource_group
         self.subscription_id = subscription_id
@@ -223,13 +234,25 @@ class Workspace:
         details = client.get(job_id)
         return Job(self, details)
 
-    def list_jobs(self) -> List[Job]:
+    def list_jobs(
+        self, 
+        name_match: str = None, 
+        status: Optional[JobStatus] = None,
+        created_after: Optional[datetime] = None
+    ) -> List[Job]:
+        """Returns list of jobs that meet optional (limited) filter criteria. 
+            :param name_match: regex expression for job name matching
+            :param status: filter by job status
+            :param created_after: filter jobs after time of job creation
+        """
         client = self._create_jobs_client()
         jobs = client.list()
 
         result = []
         for j in jobs:
-            result.append(Job(self, j))
+            deserialized_job = Job(self, j)
+            if deserialized_job.matches_filter(name_match, status, created_after):
+                result.append(deserialized_job)
 
         return result
 
