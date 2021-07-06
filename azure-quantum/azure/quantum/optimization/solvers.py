@@ -230,7 +230,7 @@ class Solver:
         :param schedule_name:
             name of the schedule parameter.
         :param evolution
-            required ScheduleEvolution (INCREASING or DECREASING)
+            expected schedule evolution (INCREASING or DECREASING)
         :lower_bound:
             lower limit value of the schedule to be checked (exclusive)
         :lower_bound_inclusive:
