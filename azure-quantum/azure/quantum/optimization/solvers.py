@@ -221,7 +221,7 @@ class Solver:
     def check_set_schedule(
         self, schedule: RangeSchedule, schedule_name: str,
         evolution: Optional[ScheduleEvolution] = None,
-        lower_bound: Optional[float] = None,
+        lower_bound_exclusive: Optional[float] = None,
         lower_bound_inclusive: Optional[float] = None,
     ):
         """Check whether the schedule parameter is set well from RangeSchedule.
@@ -231,7 +231,7 @@ class Solver:
             name of the schedule parameter.
         :param evolution
             expected schedule evolution (INCREASING or DECREASING)
-        :lower_bound:
+        :lower_bound_exclusive:
             lower limit value of the schedule to be checked (exclusive)
         :lower_bound_inclusive:
             lower limit value of the schedule to be checked (inclusive)
@@ -265,11 +265,11 @@ class Solver:
                     )
             self.check_limit(
                     schedule.initial, f"{schedule_name}.initial",
-                    lower_bound=lower_bound,
+                    lower_bound_exclusive=lower_bound_exclusive,
                     lower_bound_inclusive=lower_bound_inclusive)
             self.check_limit(
                     schedule.final, f"{schedule_name}.final",
-                    lower_bound=lower_bound,
+                    lower_bound_exclusive=lower_bound_exclusive,
                     lower_bound_inclusive=lower_bound_inclusive)
             self.set_one_param(schedule_name, schedule_param)
 
@@ -289,7 +289,7 @@ class Solver:
 
     def check_set_float_limit(
         self, var: float, var_name: str,
-        lower_bound: Optional[float] = None,
+        lower_bound_exclusive: Optional[float] = None,
         lower_bound_inclusive: Optional[float] = None,
     ):
         """Check whether the var parameter is a float satisfying bounds.
@@ -298,7 +298,7 @@ class Solver:
             whether is a float larger than var_limit.
         :param var_name:
             name of the variable.
-        :lower_bound:
+        :lower_bound_exclusive:
             lower limit value of the variable to be checked (exclusive)
         :lower_bound_inclusive:
             lower limit value of the variable to be checked (inclusive)
@@ -307,13 +307,13 @@ class Solver:
             if not (isinstance(var, float) or isinstance(var, int)):
                 raise ValueError(f"{var_name} shall be float!")
             self.check_limit(
-                    var, var_name, lower_bound=lower_bound,
+                    var, var_name, lower_bound_exclusive=lower_bound_exclusive,
                     lower_bound_inclusive=lower_bound_inclusive)
             self.set_one_param(var_name, var)
 
     def check_limit(
         self, var: Optional[float], var_name: str,
-        lower_bound: Optional[float] = None,
+        lower_bound_exclusive: Optional[float] = None,
         lower_bound_inclusive: Optional[float] = None,
     ):
         """Check whether the var parameter is a float satisfying bounds.
@@ -322,15 +322,17 @@ class Solver:
             whether is a float larger than var_limit.
         :param var_name:
             name of the variable.
-        :lower_bound:
+        :lower_bound_exclusive:
             lower limit value of the variable to be checked (exclusive)
         :lower_bound_inclusive:
             lower limit value of the variable to be checked (inclusive)
         """
         if not (var is None):
-            if lower_bound is not None and var <= lower_bound:
+            if (lower_bound_exclusive is not None and
+                    var <= lower_bound_exclusive):
                 raise ValueError(
-                    f"{var_name} must be greater than {lower_bound}; "
+                    f"{var_name} must be greater than "
+                    f"{lower_bound_exclusive}; "
                     f"found {var_name}={var}."
                 )
             if (lower_bound_inclusive is not None and
@@ -639,13 +641,13 @@ class PopulationAnnealing(Solver):
             output_data_format="microsoft.qio-results.v2",
         )
 
-        self.check_set_float_limit(alpha, "alpha", lower_bound=1.0)
+        self.check_set_float_limit(alpha, "alpha", lower_bound_exclusive=1.0)
         self.set_one_param("seed", seed)
         self.check_set_positive_int(population, "population")
         self.check_set_positive_int(sweeps, "sweeps")
         self.check_set_schedule(
                 beta, "beta", evolution=self.ScheduleEvolution.INCREASING,
-                lower_bound=0)
+                lower_bound_exclusive=0)
 
 
 class SubstochasticMonteCarlo(Solver):
@@ -708,9 +710,9 @@ class SubstochasticMonteCarlo(Solver):
         self.check_set_positive_int("target_population", target_population)
         self.check_set_positive_int("step_limit", step_limit)
         self.check_set_schedule(
-                alpha, "alpha", evolution=self.ScheduleEvolution.DECREASING,
+                "alpha", alpha, evolution=self.ScheduleEvolution.DECREASING,
                 lower_bound_inclusive=0)
         self.check_set_schedule(
-                beta, "beta", evolution=self.ScheduleEvolution.INCREASING,
-                lower_bound=0)
+                "beta", beta, evolution=self.ScheduleEvolution.INCREASING,
+                lower_bound_exclusive=0)
         self.check_set_positive_int("timeout", timeout)
