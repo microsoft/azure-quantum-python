@@ -9,8 +9,8 @@ import json
 from typing import TYPE_CHECKING
 
 from azure.quantum._client.models import JobDetails
-from azure.quantum.job.base_job import _BaseJob
-from azure.quantum.job.filtered_job import _FilteredJob
+from azure.quantum.job.base_job import BaseJob
+from azure.quantum.job.filtered_job import FilteredJob
 
 __all__ = ["Job"]
 
@@ -19,11 +19,10 @@ logger = logging.getLogger(__name__)
 if TYPE_CHECKING:
     from azure.quantum.workspace import Workspace
 
-DEFAULT_TIMEOUT = 100
 
 _log = logging.getLogger(__name__)
 
-class Job(_BaseJob, _FilteredJob):
+class Job(BaseJob, FilteredJob):
     """Azure Quantum Job that is submitted to a given Workspace.
 
     :param workspace: Workspace instance to submit job to

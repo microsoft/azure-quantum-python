@@ -11,7 +11,7 @@ from datetime import datetime, timezone
 from azure.quantum._client.models import JobStatus
 
 
-class _FilteredJob(abc.ABC):
+class FilteredJob(abc.ABC):
     """
     Mixin for adding methods to filter jobs
     """
