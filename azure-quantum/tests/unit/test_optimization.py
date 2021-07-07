@@ -414,7 +414,7 @@ class TestSolvers(QuantumTestBase):
         with self.assertRaises(ValueError) as context:
             bad_range = RangeSchedule("nothing", 2.8, 15.8)
         self.assertTrue(
-            '"schedule_type" can only be' in str(context.exception)
+            '"schedule_type" must be' in str(context.exception)
         )
         self.assertTrue(bad_range is None)
         beta = 1
@@ -431,8 +431,10 @@ class TestSolvers(QuantumTestBase):
                 steps_per_walker=5,
                 beta=beta,
             )
+        print(str(context.exception))
         self.assertTrue(
-            'can only be from class "RangeSchedule"!' in str(context.exception)
+            ('alpha must be of type RangeSchedule; '
+             'found type(alpha)=int') in str(context.exception)
         )
         self.assertTrue(bad_solver is None)
 
@@ -444,7 +446,9 @@ class TestSolvers(QuantumTestBase):
                 step_limit=1000,
                 steps_per_walker=-1,
             )
-        self.assertTrue("must be positive" in str(context.exception))
+        self.assertTrue(
+                ("steps_per_walker must be positive; "
+                 "found steps_per_walker=-1") in str(context.exception))
         self.assertTrue(bad_solver is None)
 
         alpha_increasing = RangeSchedule("linear", 1.0, 2.0)
@@ -457,7 +461,10 @@ class TestSolvers(QuantumTestBase):
                 alpha=alpha_increasing,
                 beta=beta,
             )
-        self.assertTrue("must be decreasing" in str(context.exception))
+        self.assertTrue(
+                ("alpha must be decreasing; "
+                 "found alpha.initial=1.0 < 2.0=alpha.final.")
+                in str(context.exception))
         self.assertTrue(bad_solver is None)
 
         alpha_negative = RangeSchedule("linear", 1.0, -1.0)
@@ -470,7 +477,9 @@ class TestSolvers(QuantumTestBase):
                 alpha=alpha_negative,
                 beta=beta,
             )
-        self.assertTrue("must be greater equal" in str(context.exception))
+        self.assertTrue(
+                ("alpha.final must be greater equal 0; "
+                 "found alpha.final=-1.") in str(context.exception))
         self.assertTrue(bad_solver is None)
 
         alpha_strictly_negative = RangeSchedule("linear", -1.0, -2.0)
@@ -483,7 +492,9 @@ class TestSolvers(QuantumTestBase):
                 alpha=alpha_strictly_negative,
                 beta=beta,
             )
-        self.assertTrue("must be greater equal" in str(context.exception))
+        self.assertTrue(
+                ("alpha.initial must be greater equal 0; "
+                 "found alpha.initial=-1.") in str(context.exception))
         self.assertTrue(bad_solver is None)
 
         alpha = RangeSchedule("linear", 1.0, 0.0)
@@ -497,7 +508,10 @@ class TestSolvers(QuantumTestBase):
                 alpha=alpha,
                 beta=beta_decreasing,
             )
-        self.assertTrue("must be increasing" in str(context.exception))
+        self.assertTrue(
+                ("beta must be increasing; "
+                 "found beta.initial=2.0 > 1.0=beta.final.")
+                in str(context.exception))
         self.assertTrue(bad_solver is None)
 
         beta_zero = RangeSchedule("linear", 0.0, 1.0)
@@ -510,7 +524,9 @@ class TestSolvers(QuantumTestBase):
                 alpha=alpha,
                 beta=beta_zero,
             )
-        self.assertTrue("must be greater than" in str(context.exception))
+        self.assertTrue(
+                ("beta.initial must be greater than 0; "
+                 "found beta.initial=0.") in str(context.exception))
         self.assertTrue(bad_solver is None)
 
         beta_negative = RangeSchedule("linear", -1.0, 1.0)
@@ -523,7 +539,9 @@ class TestSolvers(QuantumTestBase):
                 alpha=alpha,
                 beta=beta_negative,
             )
-        self.assertTrue("must be greater than" in str(context.exception))
+        self.assertTrue(
+                ("beta.initial must be greater than 0; "
+                 "found beta.initial=-1.0") in str(context.exception))
         self.assertTrue(bad_solver is None)
 
         beta_strictly_negative = RangeSchedule("linear", -2.0, -1.0)
@@ -536,7 +554,9 @@ class TestSolvers(QuantumTestBase):
                 alpha=alpha,
                 beta=beta_strictly_negative,
             )
-        self.assertTrue("must be greater than" in str(context.exception))
+        self.assertTrue(
+                ("beta.initial must be greater than 0; "
+                 "found beta.initial=-2.0") in str(context.exception))
         self.assertTrue(bad_solver is None)
 
     def test_PA_bad_input_params(self):
@@ -553,7 +573,8 @@ class TestSolvers(QuantumTestBase):
                 beta=beta,
             )
         self.assertTrue(
-            'can only be from class "RangeSchedule"!' in str(context.exception)
+            ("beta must be of type RangeSchedule; "
+             "found type(beta)=int.") in str(context.exception)
         )
         self.assertTrue(bad_solver is None)
 
@@ -572,7 +593,9 @@ class TestSolvers(QuantumTestBase):
             bad_solver = PopulationAnnealing(
                 ws, alpha=0.2, seed=8888, sweeps=1000,
             )
-        self.assertTrue("alpha must be greater than" in str(context.exception))
+        self.assertTrue(
+                ("alpha must be greater than 1.0; "
+                 "found alpha=0.2.") in str(context.exception))
         self.assertTrue(bad_solver is None)
 
         beta_decreasing = RangeSchedule("linear", 2.0, 1.0)
@@ -585,7 +608,10 @@ class TestSolvers(QuantumTestBase):
                 sweeps=1000,
                 beta=beta_decreasing,
             )
-        self.assertTrue("must be increasing" in str(context.exception))
+        self.assertTrue(
+                ("beta must be increasing; "
+                 "found beta.initial=2.0 > 1.0=beta.final.")
+                in str(context.exception))
         self.assertTrue(bad_solver is None)
 
         beta_zero = RangeSchedule("linear", 0.0, 1.0)
@@ -598,7 +624,9 @@ class TestSolvers(QuantumTestBase):
                 sweeps=1000,
                 beta=beta_zero,
             )
-        self.assertTrue("must be greater than" in str(context.exception))
+        self.assertTrue(
+                ("beta.initial must be greater than 0; "
+                 "found beta.initial=0.") in str(context.exception))
         self.assertTrue(bad_solver is None)
 
         beta_negative = RangeSchedule("linear", -1.0, 1.0)
@@ -611,7 +639,9 @@ class TestSolvers(QuantumTestBase):
                 sweeps=1000,
                 beta=beta_negative,
             )
-        self.assertTrue("must be greater than" in str(context.exception))
+        self.assertTrue(
+                ("beta.initial must be greater than 0; "
+                 "found beta.initial=-1.0") in str(context.exception))
         self.assertTrue(bad_solver is None)
 
         beta_strictly_negative = RangeSchedule("linear", -2.0, -1.0)
@@ -624,7 +654,9 @@ class TestSolvers(QuantumTestBase):
                 sweeps=1000,
                 beta=beta_strictly_negative,
             )
-        self.assertTrue("must be greater than" in str(context.exception))
+        self.assertTrue(
+                ("beta.initial must be greater than 0; "
+                 "found beta.initial=-2.0") in str(context.exception))
         self.assertTrue(bad_solver is None)
 
 
