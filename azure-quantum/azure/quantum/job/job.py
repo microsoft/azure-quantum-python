@@ -96,6 +96,6 @@ class Job(BaseJob, FilteredJob):
                 + f"error: {self.details.error_data})"
             )
 
-        payload = self._download_blob(self.details.output_data_uri)
+        payload = self.download_blob(self.details.output_data_uri)
         results = json.loads(payload.decode("utf8"))
         return results

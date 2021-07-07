@@ -220,8 +220,7 @@ class BaseJob(abc.ABC):
         )
         return uploaded_blob_uri
 
-    @staticmethod
-    def _download_blob(self, blob_uri: str) -> dict:
+    def download_blob(self, blob_uri: str) -> dict:
         """Download blob file"""
         url = urlparse(blob_uri)
         if url.query.find("se=") == -1:
