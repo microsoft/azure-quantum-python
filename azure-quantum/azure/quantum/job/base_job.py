@@ -51,7 +51,7 @@ class BaseJob(abc.ABC):
         target: str,
         blob: bytes,
         blob_name: str,
-        encoding: str,
+        encoding: str = "",
         input_data_format: str = None,
         output_data_format: str = None,
         provider_id: str = None,
@@ -69,7 +69,7 @@ class BaseJob(abc.ABC):
         :type blob: bytes
         :param blob_name: Blob name
         :type blob_name: str
-        :param encoding: Blob encoding, e.g. "gzip"
+        :param encoding: Blob encoding, e.g. "gzip", defaults to empty string
         :type encoding: str
         :param input_data_format: Input data format, defaults to None
         :type input_data_format: str, optional
