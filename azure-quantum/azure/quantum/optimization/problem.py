@@ -9,7 +9,6 @@ import uuid
 import io
 import gzip
 import json
-from azure.quantum.job.job import Job
 import numpy
 import os
 
@@ -17,11 +16,11 @@ from typing import List, Tuple, Union, Dict, Optional, TYPE_CHECKING
 from enum import Enum
 from azure.quantum.optimization import Term
 from azure.quantum.storage import (
-    upload_blob,
     ContainerClient,
     download_blob,
     BlobClient
 )
+from azure.quantum.job.job import Job
 
 logger = logging.getLogger(__name__)
 
@@ -146,14 +145,12 @@ class Problem:
         data = io.BytesIO()
 
         if compress:
-            encoding = "gzip"
             with gzip.GzipFile(fileobj=data, mode="w") as fo:
                 fo.write(problem_json.encode())
         else:
-            encoding = ""
             data.write(problem_json.encode())
 
-        return data.getvalue(), encoding
+        return data.getvalue()
     
     def _blob_name(self):
         return "{}-{}".format(self.name, uuid.uuid1())
@@ -187,8 +184,8 @@ class Problem:
             blob_name = self._blob_name()
 
         encoding = "gzip" if compress else ""
-        blob = self.to_blob(encoding=encoding)
-        _, input_data_uri = Job.upload_blob(
+        blob = self.to_blob(compress=compress)
+        input_data_uri = Job.upload_blob(
             workspace=workspace,
             container_name=container_name,
             blob=blob,

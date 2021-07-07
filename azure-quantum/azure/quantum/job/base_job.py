@@ -7,14 +7,16 @@ import logging
 import uuid
 
 from urllib.parse import urlparse
-from typing import Any, Dict, Tuple
+from typing import Any, Dict, TYPE_CHECKING, Tuple
 from urllib.parse import urlparse
 from azure.storage.blob import BlobClient
 
-from azure.quantum.job import Job
-from azure.quantum.workspace import Workspace
 from azure.quantum.storage import create_container_using_client, get_container_uri, remove_sas_token, upload_blob, download_blob, ContainerClient
 from azure.quantum._client.models import JobDetails
+
+
+if TYPE_CHECKING:
+    from azure.quantum.workspace import Workspace
 
 
 logger = logging.getLogger(__name__)
@@ -44,7 +46,7 @@ class BaseJob(abc.ABC):
     @classmethod
     def from_blob(
         cls,
-        workspace: Workspace,
+        workspace: "Workspace",
         name: str,
         target: str,
         blob: bytes,
@@ -54,11 +56,11 @@ class BaseJob(abc.ABC):
         output_data_format: str = None,
         provider_id: str = None,
         input_params: Dict[str, Any] = None
-    ) -> "Job":
+    ) -> "BaseJob":
         """Create a new Azure Quantum job based on a raw blob payload.
 
         :param workspace: Azure Quantum workspace to submit the blob to
-        :type workspace: Workspace
+        :type workspace: "Workspace"
         :param name: Name of the job
         :type name: str
         :param target: Azure Quantum target
@@ -108,7 +110,7 @@ class BaseJob(abc.ABC):
     @classmethod
     def from_uri(
         cls,
-        workspace: Workspace,
+        workspace: "Workspace",
         job_id: str,
         target: str,
         input_data_uri: str,
@@ -118,12 +120,12 @@ class BaseJob(abc.ABC):
         output_data_format: str = None,
         provider_id: str = None,
         input_params: Dict[str, Any] = None
-    ) -> Job:
+    ) -> "BaseJob":
         """Create new Job from URI if input data is already uploaded
         to blob storage
 
         :param workspace: Azure Quantum workspace to submit the blob to
-        :type workspace: Workspace
+        :type workspace: "Workspace"
         :param job_id: Pre-generated job ID
         :type job_id: str
         :param target: Azure Quantum target
@@ -169,7 +171,7 @@ class BaseJob(abc.ABC):
 
     @staticmethod
     def upload_blob(
-        workspace: Workspace,
+        workspace: "Workspace",
         container_name: str,
         blob: bytes,
         blob_name = "inputData",
