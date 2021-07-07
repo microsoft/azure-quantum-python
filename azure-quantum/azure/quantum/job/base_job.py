@@ -23,7 +23,7 @@ DEFAULT_TIMEOUT = 100
 
 
 class BaseJob(abc.ABC):
-    # Optionally override these class attributes
+    # Optionally override these to create a Provider-specific Job subclass
     input_data_format = None
     output_data_format = None
     provider_id = None
