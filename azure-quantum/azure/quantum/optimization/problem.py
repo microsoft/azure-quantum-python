@@ -161,6 +161,7 @@ class Problem:
         container_name: str = "qio-problems",
         blob_name: str = None,
         compress: bool = True,
+        container_uri: str = None
     ):
         """Uploads an optimization problem instance to
         the cloud storage linked with the Workspace.
@@ -173,6 +174,8 @@ class Problem:
         :type blob_name: str, optional
         :param compress: Flag to compress the payload, defaults to True
         :type compress: bool, optional
+        :param container_uri: Optional container URI
+        :type container_uri: str
         :return: uri of the uploaded problem
         :rtype: str
         """
@@ -185,10 +188,11 @@ class Problem:
 
         encoding = "gzip" if compress else ""
         blob = self.to_blob(compress=compress)
-        container_uri = Job.create_container(
-            workspace=workspace,
-            container_name=container_name
-        )
+        if container_uri is None:
+            container_uri = Job.create_container(
+                workspace=workspace,
+                container_name=container_name
+            )
         input_data_uri = Job.upload_blob(
             blob=blob,
             blob_name=blob_name,

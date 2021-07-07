@@ -109,6 +109,7 @@ class Solver:
                 compress=compress,
                 container_name=container_name,
                 blob_name="inputData",
+                container_uri=container_uri
             )
         else:
             name = problem.name
