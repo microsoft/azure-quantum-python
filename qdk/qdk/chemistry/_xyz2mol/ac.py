@@ -12,6 +12,7 @@ Implementation by Jan H. Jensen, based on the paper
     DOI: 10.1002/bkcs.10334
 """
 
+import logging
 import os
 import sys
 import copy
@@ -34,6 +35,8 @@ from rdkit.Chem import AllChem, rdmolops
 
 from qdk.chemistry._xyz2mol.util import *
 from qdk.chemistry._xyz2mol.bo import *
+
+_log = logging.getLogger(__name__)
 
 
 def get_AC(mol, covalent_factor=1.3):
@@ -160,7 +163,7 @@ def AC2BO(AC, atoms, charge, allow_charged_fragments=True, use_graph=True):
         # valence can't be smaller than number of neighbourgs
         possible_valence = [x for x in atomic_valence[atomicNum] if x >= valence]
         if not possible_valence:
-            print('Valence of atom',i,'is',valence,'which bigger than allowed max',max(atomic_valence[atomicNum]),'. Stopping')
+            _log.error('Valence of atom',i,'is',valence,'which bigger than allowed max',max(atomic_valence[atomicNum]),'. Stopping')
             sys.exit()
         valences_list_of_lists.append(possible_valence)
 
@@ -199,7 +202,7 @@ def AC2BO(AC, atoms, charge, allow_charged_fragments=True, use_graph=True):
                 best_BO = BO.copy()
 
     if not charge_OK:
-        print("Warning: SMILES charge doesn't match input charge")
+        _log.debug("Warning: SMILES charge doesn't match input charge")
     return best_BO, atomic_valence_electrons
 
 

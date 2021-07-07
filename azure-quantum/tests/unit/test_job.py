@@ -12,7 +12,7 @@ import time
 import os
 import functools
 import pytest
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from common import QuantumTestBase, ZERO_UID
 from azure.quantum import Job
@@ -97,6 +97,7 @@ class TestJob(QuantumTestBase):
     def test_job_submit_microsoft_simulated_annealing(self):
         solver_type = functools.partial(microsoft.SimulatedAnnealing, beta_start=0)
         self._test_job_submit(solver_type)
+        self._test_job_filter(solver_type)
 
     def test_job_submit_microsoft_parallel_tempering(self):
         solver_type = functools.partial(microsoft.ParallelTempering, sweeps=100)
@@ -137,6 +138,28 @@ class TestJob(QuantumTestBase):
     def test_job_submit_toshiba_simulated_bifurcation_machine(self):
         solver_type = functools.partial(toshiba.SimulatedBifurcationMachine, loops=10)
         self._test_job_submit(solver_type)
+
+    def _test_job_filter(self, solver_type):
+        workspace = self.create_workspace()
+        solver = solver_type(workspace)
+        problem = self.create_problem(name="Test-Job-Filtering")
+
+        with unittest.mock.patch.object(
+            Job,
+            self.mock_create_job_id_name,
+            return_value=self.get_test_job_id()
+        ):
+            job = solver.submit(problem)
+
+            self.assertEqual(True, job.matches_filter()) # test no filters
+            self.assertEqual(False, job.matches_filter(name_match="Test1"))
+            self.assertEqual(True, job.matches_filter(name_match="Test-"))
+            self.assertEqual(True, job.matches_filter(name_match="Test.+"))
+
+            self.assertEqual(False, job.matches_filter(created_after=datetime.now()))  
+
+            before_time = datetime.now() - timedelta(days=100)
+            self.assertEqual(True, job.matches_filter(created_after=before_time))    
 
     def _test_job_submit(self, solver_type):
         """Tests the job submission and its lifecycle for a given solver.

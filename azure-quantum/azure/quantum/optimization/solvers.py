@@ -587,9 +587,9 @@ class SubstochasticMonteCarlo(Solver):
         steps_per_walker: Optional[int] = None,
         timeout: Optional[int] = None,
     ):
-        """The constructor of Population Annealing Search solver.
+        """The constructor of Substochastic Monte Carlo solver.
 
-        Population Annealing Search solver for binary optimization problems
+        Substochastic Monte Carlo solver for binary optimization problems
         with k-local interactions on an all-to-all graph topology with double
         precision support for the coupler weights.
 
