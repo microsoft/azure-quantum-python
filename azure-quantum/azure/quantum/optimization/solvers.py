@@ -32,15 +32,15 @@ __all__ = [
 
 class RangeSchedule:
     def __init__(self, schedule_type: str, initial: float, final: float):
-        """The constructor of Range Scheduler for solver.
+        """Constructor of RangeSchedule for solvers.
 
         :param schedule_type:
-            specifies schedule_type of range scheduler,
-            currently only support 'linear' and 'geometric'.
+            str, type of the RangeSchedule
+            currently only supports 'linear' and 'geometric'.
         :param initial:
-            initial value of range schedule.
+            float, initial value of RangeSchedule
         :param final:
-            stop value of range schedule
+            float, final value of the RangeSchedule
         """
         self.schedule_type = schedule_type
         self.initial = initial
@@ -49,7 +49,7 @@ class RangeSchedule:
             self.schedule_type == "linear" or self.schedule_type == "geometric"
         ):
             raise ValueError(
-                '"schedule_type" can only be "linear" or "geometric"!'
+                '"schedule_type" must be "linear" or "geometric"!'
             )
 
 
@@ -179,8 +179,11 @@ class Solver:
             params[name] = str(value) if self.force_str_params else value
 
     def set_number_of_solutions(self, number_of_solutions: int):
-        """Sets the number of solutions to return. Applies to all solvers. Default 1 if not supplied.
-        
+        """Sets the number of solutions to return.
+
+        Applies to all solvers.
+        Default value is 1 if not supplied.
+
         :param number_of_solutions:
             Number of solutions to return. Must be a positive integer.
         """
@@ -219,128 +222,156 @@ class Solver:
         DECREASING = 2
 
     def check_set_schedule(
-        self, schedule: RangeSchedule, schedule_name: str,
+        self,
+        schedule_name: str,
+        schedule_value: RangeSchedule,
         evolution: Optional[ScheduleEvolution] = None,
         lower_bound_exclusive: Optional[float] = None,
         lower_bound_inclusive: Optional[float] = None,
     ):
-        """Check whether the schedule parameter is set well from RangeSchedule.
-        :param schedule:
-            schedule paramter to be checked whether is from RangeSchedule.
+        """Set the parameter `schedule_name` from the value `schedule_value`
+        and check that it is of type `RangeSchedule` and each end satisfies
+        the specified bound.
+
         :param schedule_name:
             name of the schedule parameter.
+        :param schedule_value:
+            schedule value to be assigned and checked.
         :param evolution
             expected schedule evolution (INCREASING or DECREASING)
         :lower_bound_exclusive:
-            lower limit value of the schedule to be checked (exclusive)
+            exclusive lower bound for both ends of the schedule, optional.
         :lower_bound_inclusive:
-            lower limit value of the schedule to be checked (inclusive)
+            inclusive lower bound for both ends of the schedule, optional.
         """
-        if not (schedule is None):
-            if not isinstance(schedule, RangeSchedule):
+        if not (schedule_value is None):
+            if not isinstance(schedule_value, RangeSchedule):
                 raise ValueError(
-                    f'{schedule_name} can only be from class "RangeSchedule"!'
+                    f"{schedule_name} must be of type RangeSchedule; found"
+                    f" type({schedule_name})={type(schedule_value).__name__}."
                 )
             schedule_param = {
-                "type": schedule.schedule_type,
-                "initial": schedule.initial,
-                "final": schedule.final,
+                "type": schedule_value.schedule_type,
+                "initial": schedule_value.initial,
+                "final": schedule_value.final,
             }
             if evolution is not None:
                 if (evolution == self.ScheduleEvolution.INCREASING and
-                        schedule.initial > schedule.final):
+                        schedule_value.initial > schedule_value.final):
                     raise ValueError(
                             f"Schedule for {schedule_name} must be increasing;"
-                            f" found {schedule_name}.initial = "
-                            f"{schedule.initial} > {schedule.final} = "
-                            f"{schedule_name}.final."
+                            f" found {schedule_name}.initial"
+                            f"={schedule_value.initial}"
+                            f" > {schedule_value.final}"
+                            f"={schedule_name}.final."
                     )
                 if (evolution == self.ScheduleEvolution.DECREASING and
-                        schedule.initial < schedule.final):
+                        schedule_value.initial < schedule_value.final):
                     raise ValueError(
                             f"Schedule for {schedule_name} must be decreasing;"
-                            f" found {schedule_name}.initial = "
-                            f"{schedule.initial} < {schedule.final} = "
-                            f"{schedule_name}.final."
+                            f" found {schedule_name}.initial"
+                            f"={schedule_value.initial}"
+                            f" < {schedule_value.final}"
+                            f"={schedule_name}.final."
                     )
             self.check_limit(
-                    schedule.initial, f"{schedule_name}.initial",
+                    f"{schedule_name}.initial",
+                    schedule_value.initial,
                     lower_bound_exclusive=lower_bound_exclusive,
                     lower_bound_inclusive=lower_bound_inclusive)
             self.check_limit(
-                    schedule.final, f"{schedule_name}.final",
+                    f"{schedule_name}.final",
+                    schedule_value.final,
                     lower_bound_exclusive=lower_bound_exclusive,
                     lower_bound_inclusive=lower_bound_inclusive)
             self.set_one_param(schedule_name, schedule_param)
 
-    def check_set_positive_int(self, var: int, var_name: str):
-        """Check whether the var parameter is a positive integer.
-        :param var:
-            var paramter to be checked whether is a positive integer.
-        :param var_name:
-            name of the variable.
-        """
-        if not (var is None):
-            if not isinstance(var, int):
-                raise ValueError(f"{var_name} shall be int!")
-            if var <= 0:
-                raise ValueError(f"{var_name} must be positive!")
-            self.set_one_param(var_name, var)
+    def check_set_positive_int(
+            self,
+            parameter_name: str,
+            parameter_value: int):
+        """Set the parameter `parameter_name` from the value `parameter_value`
+        and check that it is a positive integer.
 
-    def check_set_float_limit(
-        self, var: float, var_name: str,
+        :param parameter_name:
+            name of the parameter.
+        :param parameter_value:
+            value to be assigned and checked.
+        """
+        if not (parameter_value is None):
+            if not isinstance(parameter_value, int):
+                raise ValueError(
+                        f"{parameter_name} must be of type int; found"
+                        f"type({parameter_name})"
+                        f"={type(parameter_value).__name__}.")
+            if parameter_value <= 0:
+                raise ValueError(
+                        f"{parameter_name} must be positive; found "
+                        f"{parameter_name}={parameter_value}.")
+            self.set_one_param(parameter_name, parameter_value)
+
+    def check_set_float(
+        self,
+        parameter_name: str,
+        parameter_value: float,
         lower_bound_exclusive: Optional[float] = None,
         lower_bound_inclusive: Optional[float] = None,
     ):
-        """Check whether the var parameter is a float satisfying bounds.
-        :param var:
-            var paramter to be checked
-            whether is a float larger than var_limit.
-        :param var_name:
-            name of the variable.
+        """Set the parameter `parameter_name` from the value `parameter_value`
+        and check that it has a float value satisfying bounds.
+
+        :param parameter_name:
+            name of the parameter.
+        :param parameter_value:
+            value to be assigned and checked.
         :lower_bound_exclusive:
-            lower limit value of the variable to be checked (exclusive)
+            exclusive lower bound to check parameter_value against, optional.
         :lower_bound_inclusive:
-            lower limit value of the variable to be checked (inclusive)
+            inclusive lower bound to check parameter_value against, optional.
         """
-        if not (var is None):
-            if not (isinstance(var, float) or isinstance(var, int)):
-                raise ValueError(f"{var_name} shall be float!")
+        if not (parameter_value is None):
+            if not (isinstance(parameter_value, float) or
+                    isinstance(parameter_value, int)):
+                raise ValueError(f"{parameter_name} must be a float!")
             self.check_limit(
-                    var, var_name, lower_bound_exclusive=lower_bound_exclusive,
+                    parameter_name=parameter_name,
+                    parameter_value=parameter_value,
+                    lower_bound_exclusive=lower_bound_exclusive,
                     lower_bound_inclusive=lower_bound_inclusive)
-            self.set_one_param(var_name, var)
+            self.set_one_param(parameter_name, parameter_value)
 
     def check_limit(
-        self, var: Optional[float], var_name: str,
+        self,
+        parameter_name: str,
+        parameter_value: Optional[float],
         lower_bound_exclusive: Optional[float] = None,
         lower_bound_inclusive: Optional[float] = None,
     ):
-        """Check whether the var parameter is a float satisfying bounds.
-        :param var:
-            var paramter to be checked
-            whether is a float larger than var_limit.
-        :param var_name:
-            name of the variable.
+        """Check whether `parameter_value` satisfies a lower bound.
+
+        :param parameter_name:
+            name of the parameter.
+        :param parameter_value:
+            value to be checked.
         :lower_bound_exclusive:
-            lower limit value of the variable to be checked (exclusive)
+            exclusive lower bound to check parameter_value against, optional.
         :lower_bound_inclusive:
-            lower limit value of the variable to be checked (inclusive)
+            inclusive lower bound to check parameter_value against, optional.
         """
-        if not (var is None):
+        if not (parameter_value is None):
             if (lower_bound_exclusive is not None and
-                    var <= lower_bound_exclusive):
+                    parameter_value <= lower_bound_exclusive):
                 raise ValueError(
-                    f"{var_name} must be greater than "
+                    f"{parameter_name} must be greater than "
                     f"{lower_bound_exclusive}; "
-                    f"found {var_name}={var}."
+                    f"found {parameter_name}={parameter_value}."
                 )
             if (lower_bound_inclusive is not None and
-                    var < lower_bound_inclusive):
+                    parameter_value < lower_bound_inclusive):
                 raise ValueError(
-                    f"{var_name} must be greater equal "
+                    f"{parameter_name} must be greater equal "
                     f"{lower_bound_inclusive}; found "
-                    f"{var_name}={var}."
+                    f"{parameter_name}={parameter_value}."
                 )
 
 
@@ -618,14 +649,14 @@ class PopulationAnnealing(Solver):
         This solver is CPU only.
         It currently does not support parameter-free invocation.
 
-        :param seed:
-            Specifies the random number generator seed value.
-        :param sweeps:
-            Number of Monte Carlo sweeps. Must be positive.
-        :population:
-            Size of the population. Must be positive.
         :param alpha:
             Ratio to trigger a restart. Must be larger than 1.
+        :param seed:
+            Specifies the random number generator seed value.
+        :population:
+            Size of the population. Must be positive.
+        :param sweeps:
+            Number of Monte Carlo sweeps. Must be positive.
         :param beta:
             Evolution of the inverse annealing temperature.
             Must be an object of type RangeSchedule describing
@@ -641,12 +672,12 @@ class PopulationAnnealing(Solver):
             output_data_format="microsoft.qio-results.v2",
         )
 
-        self.check_set_float_limit(alpha, "alpha", lower_bound_exclusive=1.0)
+        self.check_set_float("alpha", alpha, lower_bound_exclusive=1.0)
         self.set_one_param("seed", seed)
-        self.check_set_positive_int(population, "population")
-        self.check_set_positive_int(sweeps, "sweeps")
+        self.check_set_positive_int("population", population)
+        self.check_set_positive_int("sweeps", sweeps)
         self.check_set_schedule(
-                beta, "beta", evolution=self.ScheduleEvolution.INCREASING,
+                "beta", beta, evolution=self.ScheduleEvolution.INCREASING,
                 lower_bound_exclusive=0)
 
 
@@ -696,12 +727,12 @@ class SubstochasticMonteCarlo(Solver):
             output_data_format="microsoft.qio-results.v2",
         )
         self.set_one_param("seed", seed)
-        self.check_set_positive_int(steps_per_walker, "steps_per_walker")
-        self.check_set_positive_int(target_population, "target_population")
-        self.check_set_positive_int(step_limit, "step_limit")
+        self.check_set_positive_int("steps_per_walker", steps_per_walker)
+        self.check_set_positive_int("target_population", target_population)
+        self.check_set_positive_int("step_limit", step_limit)
         self.check_set_schedule(
-                alpha, "alpha", evolution=self.ScheduleEvolution.DECREASING,
+                "alpha", alpha, evolution=self.ScheduleEvolution.DECREASING,
                 lower_bound_inclusive=0)
         self.check_set_schedule(
-                beta, "beta", evolution=self.ScheduleEvolution.INCREASING,
+                "beta", beta, evolution=self.ScheduleEvolution.INCREASING,
                 lower_bound_exclusive=0)
