@@ -57,7 +57,9 @@ class Molecule(object):
         self.design_widget = None
         self._xyz = xyz
 
-        if mol:
+        if xyz:
+            self.widget = JsmolWidget.from_str(data=xyz)
+        elif mol:
             self.widget = JsmolWidget.from_mol(mol=mol, num_confs=num_confs)
         else:
             self.widget = None
