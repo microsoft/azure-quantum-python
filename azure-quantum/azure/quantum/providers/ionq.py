@@ -6,17 +6,17 @@ import io
 import json
 from typing import Any, Dict
 
-from azure.quantum.providers.provider_job import ProviderJobMixin, DEFAULT_TIMEOUT
 from azure.quantum.workspace import Workspace
 from azure.quantum.job import Job
 
 _IonQJson = Dict[str, Any]
 
 
-class IonqJob(ProviderJobMixin, Job):
+class IonqJob(Job):
     input_data_format = "ionq.circuit.v1"
     output_data_format = "ionq.quantum-results.v1"
     provider_id = "IonQ"
+
 
 class IonQ:
     def __init__(
@@ -38,25 +38,25 @@ class IonQ:
         self,
         blob: bytes,
         name: str,
-        timeout: int = DEFAULT_TIMEOUT
+        blob_name: str = "inputData"
     ) -> IonqJob:
         """Submit blob data to the service
 
         :param blob: Blob data to submit to Azure Quantum
         :type blob: bytes
-        :param name: Blob name
+        :param name: Job name
         :type name: str
-        :param timeout: Job submission timeout, defaults to DEFAULT_TIMEOUT
-        :type timeout: int, optional
-        :return: [description]
-        :rtype: IonQJob
+        :param blob_name: Blob name
+        :type blob_name: str
+        :return: IonqJob instance
+        :rtype: IonqJob
         """
         job = IonqJob.from_blob(
             workspace=self.workspace,
+            name=name,
             target=self.target,
             blob=blob,
-            name=name,
-            timeout=timeout
+            blob_name=blob_name
         )
         job.submit()
         return job
@@ -64,15 +64,16 @@ class IonQ:
     def submit(
         self,
         circuit: _IonQJson,
-        name: str = None,
-        timeout: int = DEFAULT_TIMEOUT
-    ) -> ProviderJobMixin:
+        name: str = None
+    ) -> IonqJob:
         """Submit an IonQ circuit (JSON format)
 
         :param circuit: Quantum circuit in IonQ JSON format
         :type circuit: Dict[str, Any]
+        :param name: Job name
+        :type name: str
         :return: Azure Quantum job
         :rtype: Job
         """
         blob = self._encode_json_data(circuit)
-        self.submit_blob(blob=blob, name=name, timeout=timeout)
+        return self.submit_blob(blob=blob, name=name)
