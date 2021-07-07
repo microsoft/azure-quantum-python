@@ -609,12 +609,15 @@ class SubstochasticMonteCarlo(Solver):
             number of steps to attempt for each walker, must be postive
         :param timeout:
             specifies maximum number of seconds to run the core solver
-            loop. initialization time does not respect this value, so the
+            loop. Initialization time does not respect this value, so the
             solver may run longer than the value specified. Setting this value
             will trigger the parameter free substochastic monte carlo solver.
         """
-        parameter_free = False if timeout is None else True
-        target = "microsoft.substochasticmontecarlo.cpu" if not parameter_free else "microsoft.substochasticmontecarlo-parameterfree.cpu"
+
+        if timeout is None:
+            target = "microsoft.substochasticmontecarlo.cpu" 
+        else:
+            target = "microsoft.substochasticmontecarlo-parameterfree.cpu"
         super().__init__(
             workspace=workspace,
             provider="Microsoft",
