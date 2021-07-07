@@ -185,11 +185,14 @@ class Problem:
 
         encoding = "gzip" if compress else ""
         blob = self.to_blob(compress=compress)
-        input_data_uri = Job.upload_blob(
+        container_uri = Job.create_container(
             workspace=workspace,
-            container_name=container_name,
+            container_name=container_name
+        )
+        input_data_uri = Job.upload_blob(
             blob=blob,
             blob_name=blob_name,
+            container_uri=container_uri,
             encoding=encoding
         )
         self.uploaded_blob_params = blob_params

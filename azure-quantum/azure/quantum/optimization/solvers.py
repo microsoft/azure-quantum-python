@@ -13,6 +13,7 @@ from azure.quantum.optimization import Problem
 from azure.quantum.storage import (
     ContainerClient,
     create_container_using_client,
+    remove_sas_token,
 )
 
 logger = logging.getLogger(__name__)
@@ -95,29 +96,8 @@ class Solver:
         # Create a container URL:
         job_id = Job.create_job_id()
         logger.info(f"Submitting job with id: {job_id}")
-
         container_name = f"job-{job_id}"
-
-        if not self.workspace.storage:
-            # No storage account is passed, in this
-            # case, get linked account from the service
-            container_uri = self.workspace._get_linked_storage_sas_uri(
-                container_name
-            )
-            container_client = ContainerClient.from_container_url(
-                container_uri
-            )
-            create_container_using_client(container_client)
-            container_uri = azure.quantum.storage.remove_sas_token(
-                container_uri
-            )
-        else:
-            # Storage account is passed, use it to generate a container_uri
-            container_uri = azure.quantum.storage.get_container_uri(
-                self.workspace.storage, container_name
-            )
-
-        logger.debug(f"Container URI: {container_uri}")
+        container_uri = Job.create_container(self.workspace, container_name)
 
         if isinstance(problem, str):
             name = "Optimization problem"
@@ -137,21 +117,25 @@ class Solver:
         logger.info(
             f"Submitting problem '{name}'. Using payload from: '{problem_uri}'"
         )
+        container_uri = remove_sas_token(
+            container_uri
+        )
 
-        details = JobDetails(
-            id=job_id,
+        job = Job.from_uri(
+            workspace=self.workspace,
+            job_id=job_id,
+            target=self.target,
             name=name,
             container_uri=container_uri,
             input_data_format=self.input_data_format,
             output_data_format=self.output_data_format,
             input_data_uri=problem_uri,
             provider_id=self.provider,
-            target=self.target,
             input_params=self.params,
         )
 
-        logger.debug(f"==> submitting: {details}")
-        job = self.workspace.submit_job(Job(self.workspace, details))
+        logger.debug(f"==> submitting: {job.details}")
+        job.submit()
         return job
 
     def optimize(self, problem: Union[str, Problem]):

@@ -11,7 +11,7 @@ from typing import Any, Dict, TYPE_CHECKING, Tuple
 from urllib.parse import urlparse
 from azure.storage.blob import BlobClient
 
-from azure.quantum.storage import create_container_using_client, get_container_uri, remove_sas_token, upload_blob, download_blob, ContainerClient
+from azure.quantum.storage import create_container_using_client, get_container_uri, upload_blob, download_blob, ContainerClient
 from azure.quantum._client.models import JobDetails
 
 
@@ -86,9 +86,12 @@ class BaseJob(abc.ABC):
         """
         job_id = cls.create_job_id()
         container_name = f"job-{job_id}"
-        container_uri, input_data_uri = cls.upload_blob(
+        container_uri = cls.create_container(
             workspace=workspace,
-            container_name=container_name,
+            container_name=container_name
+        )
+        logger.debug(f"Container URI: {container_uri}")
+        input_data_uri = cls.upload_blob(
             blob=blob,
             blob_name=blob_name,
             encoding=encoding
@@ -110,12 +113,12 @@ class BaseJob(abc.ABC):
     @classmethod
     def from_uri(
         cls,
+        name: str,
         workspace: "Workspace",
         job_id: str,
         target: str,
         input_data_uri: str,
         container_uri: str,
-        name: str,
         input_data_format: str = None,
         output_data_format: str = None,
         provider_id: str = None,
@@ -124,6 +127,8 @@ class BaseJob(abc.ABC):
         """Create new Job from URI if input data is already uploaded
         to blob storage
 
+        :param name: Job name
+        :type name: str
         :param workspace: Azure Quantum workspace to submit the blob to
         :type workspace: "Workspace"
         :param job_id: Pre-generated job ID
@@ -134,8 +139,6 @@ class BaseJob(abc.ABC):
         :type input_data_uri: str
         :param container_uri: Container URI
         :type container_uri: str
-        :param name: Job name
-        :type name: str
         :param input_data_format: Input data format, defaults to None
         :type input_data_format: str, optional
         :param output_data_format: Output data format, defaults to None
@@ -170,16 +173,10 @@ class BaseJob(abc.ABC):
         return cls(workspace, details)
 
     @staticmethod
-    def upload_blob(
+    def create_container(
         workspace: "Workspace",
-        container_name: str,
-        blob: bytes,
-        blob_name = "inputData",
-        content_type = "application/json",
-        encoding = "",
-        return_sas_token: bool = False
-    ) -> Tuple[str, str]:
-        """Upload blob file"""
+        container_name: str
+    ):
         # Create container URI and get container client
         if workspace.storage is None:
             # Get linked storage account from the service, create
@@ -197,15 +194,21 @@ class BaseJob(abc.ABC):
             container_uri = get_container_uri(
                 workspace.storage, container_name
             )
-            container_client = ContainerClient.from_connection_string(
-                workspace.storage, container_name
-            )
-        logger.debug(f"Container URI: {container_uri}")
+        return container_uri
 
-        if not return_sas_token:
-            container_uri = remove_sas_token(
-                container_uri
-            )
+    @staticmethod
+    def upload_blob(
+        container_uri: str,
+        blob: bytes,
+        blob_name = "inputData",
+        content_type = "application/json",
+        encoding = "",
+        return_sas_token: bool = False
+    ) -> str:
+        """Upload blob file"""
+        container_client = ContainerClient.from_container_url(
+            container_uri
+        )
 
         uploaded_blob_uri = upload_blob(
             container_client,
