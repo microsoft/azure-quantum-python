@@ -7,7 +7,7 @@ import logging
 import uuid
 
 from urllib.parse import urlparse
-from typing import Any, Dict, TYPE_CHECKING, Tuple
+from typing import Any, Dict, TYPE_CHECKING
 from urllib.parse import urlparse
 from azure.storage.blob import BlobClient
 
