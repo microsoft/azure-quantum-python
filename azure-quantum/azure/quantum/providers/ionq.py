@@ -28,7 +28,7 @@ class IonQ:
         self.target = target
 
     @staticmethod
-    def _encode_json_data(data: Dict[Any, Any]) -> bytes:
+    def _encode_input_data(data: Dict[Any, Any]) -> bytes:
         data = io.BytesIO()
         data = json.dumps(data)
         data.write(data.encode())
@@ -75,5 +75,5 @@ class IonQ:
         :return: Azure Quantum job
         :rtype: Job
         """
-        blob = self._encode_json_data(circuit)
+        blob = self._encode_input_data(circuit)
         return self.submit_blob(blob=blob, name=name)
