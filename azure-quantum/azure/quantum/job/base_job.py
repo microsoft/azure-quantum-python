@@ -44,32 +44,32 @@ class BaseJob(abc.ABC):
         return f"job-{self.id}"
 
     @classmethod
-    def from_blob(
+    def from_input_data(
         cls,
         workspace: "Workspace",
         name: str,
         target: str,
-        blob: bytes,
-        blob_name: str,
+        input_data: bytes,
+        input_data_name: str,
         encoding: str = "",
         input_data_format: str = None,
         output_data_format: str = None,
         provider_id: str = None,
         input_params: Dict[str, Any] = None
     ) -> "BaseJob":
-        """Create a new Azure Quantum job based on a raw blob payload.
+        """Create a new Azure Quantum job based on a raw input_data payload.
 
-        :param workspace: Azure Quantum workspace to submit the blob to
+        :param workspace: Azure Quantum workspace to submit the input_data to
         :type workspace: "Workspace"
         :param name: Name of the job
         :type name: str
         :param target: Azure Quantum target
         :type target: str
-        :param blob: Raw blob data to submit
-        :type blob: bytes
-        :param blob_name: Blob name
-        :type blob_name: str
-        :param encoding: Blob encoding, e.g. "gzip", defaults to empty string
+        :param input_data: Raw input data to submit
+        :type input_data: bytes
+        :param input_data_name: input name
+        :type input_data_name: str
+        :param encoding: input_data encoding, e.g. "gzip", defaults to empty string
         :type encoding: str
         :param input_data_format: Input data format, defaults to None
         :type input_data_format: str, optional
@@ -91,9 +91,9 @@ class BaseJob(abc.ABC):
             container_name=container_name
         )
         logger.debug(f"Container URI: {container_uri}")
-        input_data_uri = cls.upload_blob(
-            blob=blob,
-            blob_name=blob_name,
+        input_data_uri = cls.upload_input_data(
+            data=input_data,
+            input_data_name=input_data_name,
             encoding=encoding
         )
 
@@ -197,44 +197,44 @@ class BaseJob(abc.ABC):
         return container_uri
 
     @staticmethod
-    def upload_blob(
+    def upload_input_data(
         container_uri: str,
-        blob: bytes,
-        blob_name = "inputData",
+        input_data: bytes,
+        input_data_name = "inputData",
         content_type = "application/json",
         encoding = "",
         return_sas_token: bool = False
     ) -> str:
-        """Upload blob file"""
+        """Upload input data file"""
         container_client = ContainerClient.from_container_url(
             container_uri
         )
 
         uploaded_blob_uri = upload_blob(
             container_client,
-            blob_name,
+            input_data_name,
             content_type,
             encoding,
-            blob,
+            input_data,
             return_sas_token=return_sas_token
         )
         return uploaded_blob_uri
 
-    def download_blob(self, blob_uri: str) -> dict:
-        """Download blob file"""
-        url = urlparse(blob_uri)
+    def download_data(self, data_uri: str) -> dict:
+        """Download file from blob uri"""
+        url = urlparse(data_uri)
         if url.query.find("se=") == -1:
-            # output_data_uri does not contains SAS token,
+            # data_uri does not contains SAS token,
             # get sas url from service
             blob_client = BlobClient.from_blob_url(
-                blob_uri
+                data_uri
             )
-            blob_uri = self.workspace._get_linked_storage_sas_uri(
+            data_uri = self.workspace._get_linked_storage_sas_uri(
                 blob_client.container_name, blob_client.blob_name
             )
-            payload = download_blob(blob_uri)
+            payload = download_blob(data_uri)
         else:
-            # output_data_uri contains SAS token, use it
-            payload = download_blob(blob_uri)
+            # data_uri contains SAS token, use it
+            payload = download_blob(data_uri)
 
         return payload
