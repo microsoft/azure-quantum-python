@@ -193,9 +193,9 @@ class Problem:
                 workspace=workspace,
                 container_name=container_name
             )
-        input_data_uri = Job.upload_blob(
-            blob=blob,
-            blob_name=blob_name,
+        input_data_uri = Job.upload_input_data(
+            input_data=blob,
+            input_data_name=blob_name,
             container_uri=container_uri,
             encoding=encoding
         )
