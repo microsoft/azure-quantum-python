@@ -195,9 +195,10 @@ class Problem:
             )
         input_data_uri = Job.upload_input_data(
             input_data=blob,
-            input_data_name=blob_name,
+            blob_name=blob_name,
             container_uri=container_uri,
-            encoding=encoding
+            encoding=encoding,
+            content_type="application/json"
         )
         self.uploaded_blob_params = blob_params
         return input_data_uri

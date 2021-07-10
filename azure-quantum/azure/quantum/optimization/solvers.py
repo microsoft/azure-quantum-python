@@ -93,46 +93,50 @@ class Solver:
             Whether or not to compress the problem when uploading it
             the Blob Storage.
         """
-        # Create a container URL:
-        job_id = Job.create_job_id()
-        logger.info(f"Submitting job with id: {job_id}")
-        container_name = f"job-{job_id}"
-        container_uri = Job.create_container(self.workspace, container_name)
-
-        if isinstance(problem, str):
-            name = "Optimization problem"
-            problem_uri = problem
-        elif isinstance(problem, Problem):
+        if isinstance(problem, Problem):
+            # Create job from input data
             name = problem.name
-            problem_uri = problem.upload(
-                self.workspace,
-                compress=compress,
-                container_name=container_name,
+            blob = problem.to_blob(compress=compress)
+            job = Job.from_input_data(
+                workspace=self.workspace,
+                name="Optimization problem",
+                target=self.target,
+                input_data=blob,
                 blob_name="inputData",
-                container_uri=container_uri
+                content_type="application/json",
+                provider_id=self.provider,
+                input_data_format=self.input_data_format,
+                output_data_format=self.output_data_format,
+                input_params=self.params,
             )
+        
         else:
-            name = problem.name
-            problem_uri = problem.uploaded_blob_uri
+            if hasattr(problem, "uploaded_blob_uri"):
+                name = problem.name
+                problem_uri = problem.uploaded_blob_uri
+
+            elif isinstance(problem, str):
+                name = "Optimization problem"
+                problem_uri = problem
+            
+            else:
+                raise ValueError("Cannot submit problem: should be of type str, Problem or have uploaded_blob_uri attribute.")
+
+            # Create job from storage URI
+            job = Job.from_storage_uri(
+                workspace=self.workspace,
+                name=name,
+                target=self.target,
+                input_data_uri=problem_uri,
+                provider_id=self.provider,
+                input_data_format=self.input_data_format,
+                output_data_format=self.output_data_format,
+                input_params=self.params
+            )
 
         logger.info(
-            f"Submitting problem '{name}'. Using payload from: '{problem_uri}'"
-        )
-        container_uri = remove_sas_token(
-            container_uri
-        )
-
-        job = Job.from_uri(
-            workspace=self.workspace,
-            job_id=job_id,
-            target=self.target,
-            name=name,
-            container_uri=container_uri,
-            input_data_format=self.input_data_format,
-            output_data_format=self.output_data_format,
-            input_data_uri=problem_uri,
-            provider_id=self.provider,
-            input_params=self.params,
+            f"Submitting problem '{name}'. \
+                Using payload from: '{job.details.input_data_uri}'"
         )
 
         logger.debug(f"==> submitting: {job.details}")

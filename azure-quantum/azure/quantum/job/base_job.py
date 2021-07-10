@@ -22,6 +22,7 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 DEFAULT_TIMEOUT = 100
+DEFAULT_CONTAINER_NAME_FORMAT = "job-{job_id}"
 
 
 class BaseJob(abc.ABC):
@@ -50,11 +51,14 @@ class BaseJob(abc.ABC):
         name: str,
         target: str,
         input_data: bytes,
-        input_data_name: str,
+        blob_name: str,
+        content_type: str,
         encoding: str = "",
+        job_id: str = None,
+        container_name: str = None,
+        provider_id: str = None,
         input_data_format: str = None,
         output_data_format: str = None,
-        provider_id: str = None,
         input_params: Dict[str, Any] = None
     ) -> "BaseJob":
         """Create a new Azure Quantum job based on a raw input_data payload.
@@ -67,16 +71,22 @@ class BaseJob(abc.ABC):
         :type target: str
         :param input_data: Raw input data to submit
         :type input_data: bytes
-        :param input_data_name: input name
-        :type input_data_name: str
+        :param blob_name: Input data blob name
+        :type blob_name: str
+        :param content_type: Content type, e.g. "application/json"
+        :type content_type: str
         :param encoding: input_data encoding, e.g. "gzip", defaults to empty string
         :type encoding: str
+        :param job_id: Job ID, defaults to None
+        :type job_id: str, optional
+        :param container_name: Container name, defaults to None
+        :type container_name: str
+        :param provider_id: Provider ID, defaults to None
+        :type provider_id: str, optional
         :param input_data_format: Input data format, defaults to None
         :type input_data_format: str, optional
         :param output_data_format: Output data format, defaults to None
         :type output_data_format: str, optional
-        :param provider_id: Provider ID, defaults to None
-        :type provider_id: str, optional
         :param input_params: Input parameters, defaults to None
         :type input_params: Dict[str, Any], optional
         :param input_params: Input params for job
@@ -84,20 +94,29 @@ class BaseJob(abc.ABC):
         :return: Azure Quantum Job
         :rtype: Job
         """
-        job_id = cls.create_job_id()
-        container_name = f"job-{job_id}"
+        # Generate job ID if not specified
+        if job_id is None:
+            job_id = cls.create_job_id()
+
+        # Create container if it does not yet exist
         container_uri = cls.create_container(
             workspace=workspace,
+            job_id=job_id,
             container_name=container_name
         )
         logger.debug(f"Container URI: {container_uri}")
+
+        # Upload data to container
         input_data_uri = cls.upload_input_data(
-            data=input_data,
-            input_data_name=input_data_name,
+            container_uri=container_uri,
+            input_data=input_data,
+            content_type=content_type,
+            blob_name=blob_name,
             encoding=encoding
         )
 
-        return cls.from_uri(
+        # Create job
+        return cls.from_storage_uri(
             workspace=workspace,
             job_id=job_id,
             target=target,
@@ -111,47 +130,50 @@ class BaseJob(abc.ABC):
         )
 
     @classmethod
-    def from_uri(
+    def from_storage_uri(
         cls,
-        name: str,
         workspace: "Workspace",
-        job_id: str,
+        name: str,
         target: str,
         input_data_uri: str,
-        container_uri: str,
+        container_uri: str = None,
+        job_id: str = None,
+        provider_id: str = None,
         input_data_format: str = None,
         output_data_format: str = None,
-        provider_id: str = None,
         input_params: Dict[str, Any] = None
     ) -> "BaseJob":
         """Create new Job from URI if input data is already uploaded
         to blob storage
 
-        :param name: Job name
-        :type name: str
         :param workspace: Azure Quantum workspace to submit the blob to
         :type workspace: "Workspace"
-        :param job_id: Pre-generated job ID
-        :type job_id: str
+        :param name: Job name
+        :type name: str
         :param target: Azure Quantum target
         :type target: str
         :param input_data_uri: Input data URI
         :type input_data_uri: str
-        :param container_uri: Container URI
+        :param container_uri: Container URI, defaults to None
         :type container_uri: str
+        :param job_id: Pre-generated job ID, defaults to None
+        :type job_id: str
+        :param provider_id: Provider ID, defaults to None
+        :type provider_id: str, optional
         :param input_data_format: Input data format, defaults to None
         :type input_data_format: str, optional
         :param output_data_format: Output data format, defaults to None
         :type output_data_format: str, optional
-        :param provider_id: Provider ID, defaults to None
-        :type provider_id: str, optional
         :param input_params: Input parameters, defaults to None
         :type input_params: Dict[str, Any], optional
         :return: Job instsance
         :rtype: Job
         """
+        # Generate job_id, input_params, data formats and provider ID if not specified
+        if job_id is None:
+            job_id = cls.create_job_id()
         if input_params is None:
-            input_params = {"params": {"timeout": DEFAULT_TIMEOUT}}
+            input_params = {}
         if input_data_format is None:
             input_data_format = cls.input_data_format
         if output_data_format is None:
@@ -159,6 +181,11 @@ class BaseJob(abc.ABC):
         if provider_id is None:
             provider_id = cls.provider_id
 
+        # Create container for output data if not specified
+        if container_uri is None:
+            cls.create_container(workspace=workspace, job_id=job_id)
+
+        # Create job details and return Job
         details = JobDetails(
             id=job_id,
             name=name,
@@ -175,8 +202,15 @@ class BaseJob(abc.ABC):
     @staticmethod
     def create_container(
         workspace: "Workspace",
-        container_name: str
+        job_id: str = None,
+        container_name: str = None,
+        container_name_format: str = DEFAULT_CONTAINER_NAME_FORMAT
     ):
+        if container_name is None:
+            if job_id is not None:
+                container_name = container_name_format.format(job_id=job_id)
+            elif job_id is None:
+                raise ValueError("Must specify job_id or container_name.")
         # Create container URI and get container client
         if workspace.storage is None:
             # Get linked storage account from the service, create
@@ -200,19 +234,35 @@ class BaseJob(abc.ABC):
     def upload_input_data(
         container_uri: str,
         input_data: bytes,
-        input_data_name = "inputData",
-        content_type = "application/json",
+        content_type: str,
+        blob_name: str = "inputData",
         encoding = "",
         return_sas_token: bool = False
     ) -> str:
-        """Upload input data file"""
+        """Upload input data file
+
+        :param container_uri: Container URI
+        :type container_uri: str
+        :param input_data: Input data in binary format
+        :type input_data: bytes
+        :param content_type: Content type, e.g. "application/json"
+        :type content_type: str
+        :param blob_name: Blob name, defaults to "inputData"
+        :type blob_name: str, optional
+        :param encoding: Encoding, e.g. "gzip", defaults to ""
+        :type encoding: str, optional
+        :param return_sas_token: Flag to return SAS token as part of URI, defaults to False
+        :type return_sas_token: bool, optional
+        :return: Uploaded data URI
+        :rtype: str
+        """
         container_client = ContainerClient.from_container_url(
             container_uri
         )
 
         uploaded_blob_uri = upload_blob(
             container_client,
-            input_data_name,
+            blob_name,
             content_type,
             encoding,
             input_data,
@@ -220,21 +270,27 @@ class BaseJob(abc.ABC):
         )
         return uploaded_blob_uri
 
-    def download_data(self, data_uri: str) -> dict:
-        """Download file from blob uri"""
-        url = urlparse(data_uri)
+    def download_data(self, blob_uri: str) -> dict:
+        """Download file from blob uri
+
+        :param blob_uri: Blob URI
+        :type blob_uri: str
+        :return: Payload from blob
+        :rtype: dict
+        """
+        url = urlparse(blob_uri)
         if url.query.find("se=") == -1:
-            # data_uri does not contains SAS token,
+            # blob_uri does not contains SAS token,
             # get sas url from service
             blob_client = BlobClient.from_blob_url(
-                data_uri
+                blob_uri
             )
-            data_uri = self.workspace._get_linked_storage_sas_uri(
+            blob_uri = self.workspace._get_linked_storage_sas_uri(
                 blob_client.container_name, blob_client.blob_name
             )
-            payload = download_blob(data_uri)
+            payload = download_blob(blob_uri)
         else:
-            # data_uri contains SAS token, use it
-            payload = download_blob(data_uri)
+            # blob_uri contains SAS token, use it
+            payload = download_blob(blob_uri)
 
         return payload
