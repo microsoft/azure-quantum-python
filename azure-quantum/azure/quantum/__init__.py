@@ -5,7 +5,7 @@
 import logging
 from .version import __version__
 
-from .job import *
+from .job.job import *
 from .workspace import *
 
 logger = logging.getLogger(__name__)

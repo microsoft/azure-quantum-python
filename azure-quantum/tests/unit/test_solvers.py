@@ -30,8 +30,10 @@ class TestSolvers(unittest.TestCase):
         azure.quantum.storage.get_container_uri = Mock(
             return_value="mock_container_uri"
         )
-        _ = self.testsolver.submit(o_problem)
-        # Assert
+        with patch("azure.quantum.job.base_job.get_container_uri") as mock:
+            mock.return_value = "mock_container_uri"
+            _ = self.testsolver.submit(o_problem)
+            # Assert
         self.testsolver.workspace.submit_job.assert_called_once()
 
     def test_number_of_solutions_set(self):
