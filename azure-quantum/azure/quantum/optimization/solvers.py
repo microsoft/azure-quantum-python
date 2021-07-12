@@ -95,10 +95,11 @@ class Solver:
         """
         if isinstance(problem, Problem):
             # Create job from input data
+            name = problem.name
             blob = problem.to_blob(compress=compress)
             job = Job.from_input_data(
                 workspace=self.workspace,
-                name=problem.name,
+                name=name,
                 target=self.target,
                 input_data=blob,
                 blob_name="inputData",
