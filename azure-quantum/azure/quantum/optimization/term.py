@@ -8,7 +8,7 @@ import numpy as np
 from typing import List, Dict, Union, Optional
 from enum import Enum
 
-__all__ = ["Term"]
+__all__ = ["GenTerm", "Term", "GroupType", "GroupedTerm"]
 
 try:
     import numpy.typing as npt
@@ -70,9 +70,9 @@ except ImportError:
         return param
 
 
-class Term:
+class GenTerm:
     """
-    Parent class for monomial and grouped terms; rarely should be directly used.
+    Generic term class; rarely to be directly initialized.
     """
     def __init__(
         self,
@@ -104,7 +104,7 @@ class Term:
 
     @staticmethod
     def from_dict(obj):
-        return Term(c=obj["c"])
+        return GenTerm(c=obj["c"])
 
     def evaluate(self, configuration: Dict[int, int]) -> float:
         """Given a variable configuration, evaluate the value of the term.
@@ -115,14 +115,14 @@ class Term:
 
     def reduce_by_variable_state(
         self, fixed_variables: Dict[int, int]
-    ) -> Optional[Term]:
+    ) -> Optional[GenTerm]:
         """Given some fixed variable states,
             transform the existing term into new term.
         Returns None if the new term is effectively 0
         :param fixed_variables:
             The dictionary of variable ids and their fixed state
         """
-        return Term(c=self.c)
+        return GenTerm(c=self.c)
 
     def __repr__(self):
         return str(self.__dict__)
@@ -133,19 +133,22 @@ class Term:
         else:
             return False
 
-class MonomialTerm(Term):
+class Term(GenTerm):
+    """
+    Monomial term class
+    """
     def __init__(
         self,
         indices: List[int] = None,
         w: Optional[WArray] = None,
         c: Optional[WArray] = None,
     ):
-        Term(self, w=w, c=c)
+        GenTerm(self, w=w, c=c)
         self.ids = indices
     
     @staticmethod
     def from_dict(obj):
-        return MonomialTerm(indices=obj["ids"], c=obj["c"])
+        return Term(indices=obj["ids"], c=obj["c"])
     
     def evaluate(self, configuration: Dict[int, int]) -> float:
         """Given a variable configuration, evaluate the value of the term.
@@ -171,7 +174,7 @@ class MonomialTerm(Term):
     
     def reduce_by_variable_state(
         self, fixed_variables: Dict[int, int]
-    ) -> Optional[MonomialTerm]:
+    ) -> Optional[Term]:
         """Given some fixed variable states,
             transform the existing term into new term.
         Returns None if the new term is effectively 0
@@ -189,22 +192,25 @@ class MonomialTerm(Term):
                 if new_c == 0:
                     return None
 
-        return MonomialTerm(indices=new_ids, c=new_c)
+        return Term(indices=new_ids, c=new_c)
 
 
 class GroupType(Enum):
     combination = 0
     squared_linear_combination = 1
 
-class GroupedTerm(Term):
+class GroupedTerm(GenTerm):
+    """
+    Grouped term class featuring a particular combination type of monomial terms.
+    """
     def __init__(
         self,
         type: GroupType,
-        terms: List[MonomialTerm],
+        terms: List[Term],
         w: Optional[WArray] = None,
         c: Optional[WArray] = None,
     ):
-        Term(self, w=w, c=c)
+        GenTerm(self, w=w, c=c)
         self.type = type
         self.terms = terms
 
@@ -230,7 +236,7 @@ class GroupedTerm(Term):
             raise
         
         try:
-            terms = [MonomialTerm.from_dict(term_dict) for term_dict in obj["terms"]]
+            terms = [Term.from_dict(term_dict) for term_dict in obj["terms"]]
         except:
             print(
                 "Error - grouped list of terms missing or errant."
@@ -281,8 +287,8 @@ class GroupedTerm(Term):
                     new_terms_dict[ids] += new_monomial.c
                 except:
                     new_terms_dict[ids] = new_monomial.c
-        new_terms = [MonomialTerm(indices=ids, c=c) for ids,c in new_terms_dict.items()]
+        new_terms = [Term(indices=ids, c=c) for ids,c in new_terms_dict.items()]
 
         # To-do: Implement GroupType simplifications when new_terms has a single element
-        # For example, any of the *combination types would simplify to a MonomialTerm
+        # For example, any of the *combination types would simplify to a Term
         return GroupedTerm(type=self.type, terms=new_terms, c=self.c)

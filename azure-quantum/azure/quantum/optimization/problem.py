@@ -14,12 +14,7 @@ import os
 
 from typing import List, Tuple, Union, Dict, Optional, Type, TYPE_CHECKING
 from enum import Enum
-from azure.quantum.optimization.term import (
-    Term, 
-    MonomialTerm,
-    GroupType,
-    GroupedTerm
-)
+from azure.quantum.optimization import GenTerm, Term, GroupType, GroupedTerm
 from azure.quantum.storage import (
     upload_blob,
     ContainerClient,
@@ -47,7 +42,7 @@ class Problem:
     :type name: str
     :param terms: Problem terms, depending on solver.
         Defaults to None
-    :type terms: Optional[List[Term]], optional
+    :type terms: Optional[List[GenTerm]], optional
     :param init_config: Optional configuration details, depending on solver.
         Defaults to None
     :type init_config: Optional[Dict[str,int]], optional
@@ -59,7 +54,7 @@ class Problem:
     def __init__(
         self,
         name: str,
-        terms: Optional[List[Term]] = None,
+        terms: Optional[List[GenTerm]] = None,
         init_config: Optional[Dict[str, int]] = None,
         problem_type: ProblemType = ProblemType.ising,
     ):
@@ -108,7 +103,7 @@ class Problem:
             name=name,
             terms=[
                 GroupedTerm.from_dict(t) if "type" in t
-                else MonomialTerm.from_dict(t)
+                else Term.from_dict(t)
                 for t in result["cost_function"]["terms"]
             ],
             problem_type=ProblemType[result["cost_function"]["type"]],
@@ -129,10 +124,10 @@ class Problem:
         :param indices: The variable indices that are in this term
         :type indices: List[int]
         """
-        self.terms.append(MonomialTerm(indices=indices, c=c))
+        self.terms.append(Term(indices=indices, c=c))
         self.uploaded_blob_uri = None
 
-    def add_terms(self, terms: List[MonomialTerm],
+    def add_terms(self, terms: List[Term],
                   type: str = None, c: Union[int, float] = 1):
         """Adds an optionally grouped list of monomial terms 
         to the `Problem` representation
@@ -168,7 +163,7 @@ class Problem:
         """
         self.terms.append(
             GroupedTerm(GroupType.squared_linear_combination,
-                        [MonomialTerm(indices, c=tc) for tc,indices in terms],
+                        [Term(indices, c=tc) for tc,indices in terms],
                         c=c)
         )
         self.uploaded_blob_uri = None
@@ -279,7 +274,7 @@ class Problem:
                     constant += reduced_term.c
 
         if constant:
-            new_terms.append(MonomialTerm(c=constant, indices=[]))
+            new_terms.append(Term(c=constant, indices=[]))
 
         new_init_config = None
         if self.init_config:
@@ -349,7 +344,7 @@ class Problem:
         contents = download_blob(blob.url)
         return Problem.deserialize(contents, self.name)
 
-    def get_terms(self, id:int) -> List[Term]:
+    def get_terms(self, id:int) -> List[GenTerm]:
         """ Given an index the function will return
         a list of terms with that index
         """
@@ -395,9 +390,9 @@ class Problem:
         file_path = str,
         indices_column_names: List[str] = ["arr_0", "arr_1"],
         c_column_name: str = "arr_2"
-        ) -> List[MonomialTerm]:
+        ) -> List[Term]:
         """Reads a user supplied npz file and converts it to a list of
-        `MonomialTerm`. An NPZ file contains several arrays (or columns),
+        `Term`. An NPZ file contains several arrays (or columns),
         which can specify the indices of a problem term, along with the
         coefficient. Default naming for these columns is used unless
         specified by the user.
@@ -431,7 +426,7 @@ class Problem:
                 indices = list(map(int, ids))
 
                 c = float(term[-1])
-                terms.append(MonomialTerm(c=c, indices=indices))
+                terms.append(Term(c=c, indices=indices))
             return terms
         else:
             raise Exception("Unable to read NPZ file. \
