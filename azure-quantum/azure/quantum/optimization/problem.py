@@ -12,9 +12,14 @@ import json
 import numpy
 import os
 
-from typing import List, Union, Dict, Optional, TYPE_CHECKING
+from typing import List, Tuple, Union, Dict, Optional, TYPE_CHECKING
 from enum import Enum
-from azure.quantum.optimization import Term
+from azure.quantum.optimization.term import (
+    Term, 
+    MonomialTerm,
+    GroupType,
+    GroupedTerm
+)
 from azure.quantum.storage import (
     upload_blob,
     ContainerClient,
@@ -98,10 +103,13 @@ class Problem:
         :type name: str
         """
         result = json.loads(problem_as_json)
+
         problem = Problem(
             name=name,
             terms=[
-                Term.from_dict(t) for t in result["cost_function"]["terms"]
+                GroupedTerm.from_dict(t) if "type" in t
+                else MonomialTerm.from_dict(t)
+                for t in result["cost_function"]["terms"]
             ],
             problem_type=ProblemType[result["cost_function"]["type"]],
         )
@@ -114,22 +122,55 @@ class Problem:
         return problem
 
     def add_term(self, c: Union[int, float], indices: List[int]):
-        """Adds a single term to the `Problem` representation
+        """Adds a single monomial term to the `Problem` representation
 
         :param c: The cost or weight of this term
         :type c: int, float
         :param indices: The variable indices that are in this term
         :type indices: List[int]
         """
-        self.terms.append(Term(indices=indices, c=c))
+        self.terms.append(MonomialTerm(indices=indices, c=c))
         self.uploaded_blob_uri = None
 
-    def add_terms(self, terms: List[Term]):
-        """Adds a list of terms to the `Problem` representation
+    def add_terms(self, terms: List[MonomialTerm],
+                  type: str = None, c: Union[int, float] = 1):
+        """Adds an optionally grouped list of monomial terms 
+        to the `Problem` representation
 
         :param terms: The list of terms to add to the problem
+        :param type: Type of grouped term being added, if applicable
+        :param c: Weight of grouped term, if applicable
         """
-        self.terms += terms
+        if type:
+            # Grouped term
+            if type == 'na':
+                gtype = GroupType.combination
+            elif type == 'slc':
+                gtype = GroupType.squared_linear_combination
+            else:
+                raise Exception("Unsupported group type {}.".format(type))
+            self.terms.append(GroupedTerm(gtype, terms, c=c))
+        else:
+            # List of ungrouped monomial terms
+            self.terms += terms
+        self.uploaded_blob_uri = None
+    
+    def add_slc_term(self,
+                     terms: List[Tuple[Union[int, float], Union[int, NoneType]]],
+                     c: Union[int, float] = 1):
+        """Adds a squared linear combination term
+        to the `Problem` representation
+        
+        :param terms: List of monomial terms, with each represented by a pair.
+            The first entry represents the monomial term weight.
+            The second entry is the monomial term variable index or None.
+        :param c: Weight of SLC term
+        """
+        self.terms.append(
+            GroupedTerm(GroupType.squared_linear_combination,
+                        [MonomialTerm(indices, c=tc) for tc,indices in terms],
+                        c=c)
+        )
         self.uploaded_blob_uri = None
 
     def upload(
@@ -238,7 +279,7 @@ class Problem:
                     constant += reduced_term.c
 
         if constant:
-            new_terms.append(Term(c=constant, indices=[]))
+            new_terms.append(MonomialTerm(c=constant, indices=[]))
 
         new_init_config = None
         if self.init_config:
@@ -354,11 +395,12 @@ class Problem:
         file_path = str,
         indices_column_names: List[str] = ["arr_0", "arr_1"],
         c_column_name: str = "arr_2"
-        ) -> List[Term]:
-        """Reads a user supplied npz file and converts it to a list of `Term`.
-        An NPZ file contains several arrays (or columns), which can specify
-        the indices of a problem term, along with the coefficient.
-        Default naming for these columns is used unless specified by the user.
+        ) -> List[MonomialTerm]:
+        """Reads a user supplied npz file and converts it to a list of
+        `MonomialTerm`. An NPZ file contains several arrays (or columns),
+        which can specify the indices of a problem term, along with the
+        coefficient. Default naming for these columns is used unless
+        specified by the user.
 
         :param file_path: file path of the NPZ file to be converted
         :type file_name: str
@@ -389,7 +431,7 @@ class Problem:
                 indices = list(map(int, ids))
 
                 c = float(term[-1])
-                terms.append(Term(c=c, indices=indices))
+                terms.append(MonomialTerm(c=c, indices=indices))
             return terms
         else:
             raise Exception("Unable to read NPZ file. \
