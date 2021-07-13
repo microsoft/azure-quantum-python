@@ -27,10 +27,6 @@ DEFAULT_CONTAINER_NAME_FORMAT = "job-{job_id}"
 
 class BaseJob(abc.ABC):
     # Optionally override these to create a Provider-specific Job subclass
-    input_data_format = None
-    output_data_format = None
-    provider_id = None
-
     """
     Base job class with methods to create a job from raw blob data,
     upload blob data and download results.
@@ -136,11 +132,11 @@ class BaseJob(abc.ABC):
         name: str,
         target: str,
         input_data_uri: str,
+        provider_id: str,
+        input_data_format: str,
+        output_data_format: str,
         container_uri: str = None,
         job_id: str = None,
-        provider_id: str = None,
-        input_data_format: str = None,
-        output_data_format: str = None,
         input_params: Dict[str, Any] = None
     ) -> "BaseJob":
         """Create new Job from URI if input data is already uploaded
@@ -154,16 +150,16 @@ class BaseJob(abc.ABC):
         :type target: str
         :param input_data_uri: Input data URI
         :type input_data_uri: str
+        :param provider_id: Provider ID
+        :type provider_id: str, optional
+        :param input_data_format: Input data format
+        :type input_data_format: str, optional
+        :param output_data_format: Output data format
+        :type output_data_format: str, optional
         :param container_uri: Container URI, defaults to None
         :type container_uri: str
         :param job_id: Pre-generated job ID, defaults to None
         :type job_id: str
-        :param provider_id: Provider ID, defaults to None
-        :type provider_id: str, optional
-        :param input_data_format: Input data format, defaults to None
-        :type input_data_format: str, optional
-        :param output_data_format: Output data format, defaults to None
-        :type output_data_format: str, optional
         :param input_params: Input parameters, defaults to None
         :type input_params: Dict[str, Any], optional
         :return: Job instsance
@@ -174,12 +170,6 @@ class BaseJob(abc.ABC):
             job_id = cls.create_job_id()
         if input_params is None:
             input_params = {}
-        if input_data_format is None:
-            input_data_format = cls.input_data_format
-        if output_data_format is None:
-            output_data_format = cls.output_data_format
-        if provider_id is None:
-            provider_id = cls.provider_id
 
         # Create container for output data if not specified
         if container_uri is None:
