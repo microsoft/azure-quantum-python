@@ -236,7 +236,7 @@ class Solver:
     def check_set_positive_int(self, var: int, var_name: str):
         """Check whether the var parameter is a positive integer.
         :param var:
-            var paramter to be checked whether is a positive integer.
+            var parameter to be checked whether is a positive integer.
         :param var_name:
             name of the variable.
         """
