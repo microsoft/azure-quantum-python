@@ -136,7 +136,7 @@ class Problem:
         self,
         workspace: "Workspace",
         container_name: str = "qio-problems",
-        blob_name: str = None,
+        blob_name: str = "inputData",
         compress: bool = True,
     ):
         """Uploads an optimization problem instance to
@@ -156,9 +156,6 @@ class Problem:
         blob_params = [workspace, container_name, blob_name, compress]
         if self.uploaded_blob_uri and self.uploaded_blob_params == blob_params:
             return self.uploaded_blob_uri
-
-        if blob_name is None:
-            blob_name = "{}-{}".format(self.name, uuid.uuid1())
 
         problem_json = self.serialize()
         logger.debug("Problem json: " + problem_json)
