@@ -12,7 +12,7 @@ import json
 import numpy
 import os
 
-from typing import List, Tuple, Union, Dict, Optional, TYPE_CHECKING
+from typing import List, Tuple, Union, Dict, Optional, Type, TYPE_CHECKING
 from enum import Enum
 from azure.quantum.optimization.term import (
     Term, 
@@ -156,7 +156,7 @@ class Problem:
         self.uploaded_blob_uri = None
     
     def add_slc_term(self,
-                     terms: List[Tuple[Union[int, float], Union[int, NoneType]]],
+                     terms: List[Tuple[Union[int, float], Union[int, Type[None]]]],
                      c: Union[int, float] = 1):
         """Adds a squared linear combination term
         to the `Problem` representation
