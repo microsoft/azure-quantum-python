@@ -205,8 +205,8 @@ class GroupedTerm(Term):
         c: Optional[WArray] = None,
     ):
         Term(self, w=w, c=c)
-        self.terms = terms
         self.type = type
+        self.terms = terms
 
     def to_dict(self):
         return {
