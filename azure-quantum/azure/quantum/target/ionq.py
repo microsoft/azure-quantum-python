@@ -36,10 +36,10 @@ class IonQ(Target):
 
     @staticmethod
     def _encode_input_data(data: Dict[Any, Any]) -> bytes:
-        data = io.BytesIO()
+        buffer = io.BytesIO()
         data = json.dumps(data)
-        data.write(data.encode())
-        return data.getvalue()
+        buffer.write(data.encode())
+        return buffer.getvalue()
 
     def submit(
         self,
