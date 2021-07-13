@@ -668,8 +668,11 @@ class PopulationAnnealing(Solver):
             solver may run longer than the value specified. Setting this value
             will trigger the parameter free population annealing solver.
         """
-        parameter_free = False if timeout is None else True
-        target = "microsoft.populationannealing.cpu" if not parameter_free else "microsoft.populationannealing-parameterfree.cpu"
+
+        if timeout is None:
+            target = "microsoft.populationannealing.cpu" 
+        else:
+            target = "microsoft.populationannealing-parameterfree.cpu"
         super().__init__(
             workspace=workspace,
             provider="Microsoft",
