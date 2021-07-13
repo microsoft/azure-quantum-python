@@ -30,7 +30,6 @@ class Target(abc.ABC):
         self.encoding = encoding
 
     @abc.abstractstaticmethod
-    @staticmethod
     def _encode_input_data(data: Dict[Any, Any]) -> bytes:
         """Implement abstract method to encode input data to bytes
 

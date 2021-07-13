@@ -8,6 +8,7 @@ from typing import Any, Dict
 
 from azure.quantum.target.target import Target
 from azure.quantum.job.job import Job
+from azure.quantum.workspace import Workspace
 
 
 class IonQ(Target):
@@ -15,6 +16,7 @@ class IonQ(Target):
 
     def __init__(
         self,
+        workspace: Workspace,
         target: str = "ionq.simulator",
         input_data_format: str = "ionq.circuit.v1",
         output_data_format: str = "ionq.quantum-results.v1",
@@ -23,6 +25,7 @@ class IonQ(Target):
         encoding: str = ""
     ):
         super().__init__(
+            workspace=workspace,
             target=target,
             input_data_format=input_data_format,
             output_data_format=output_data_format,
