@@ -93,46 +93,50 @@ class Solver:
             Whether or not to compress the problem when uploading it
             the Blob Storage.
         """
-        # Create a container URL:
-        job_id = Job.create_job_id()
-        logger.info(f"Submitting job with id: {job_id}")
-        container_name = f"job-{job_id}"
-        container_uri = Job.create_container(self.workspace, container_name)
-
-        if isinstance(problem, str):
-            name = "Optimization problem"
-            problem_uri = problem
-        elif isinstance(problem, Problem):
+        if isinstance(problem, Problem):
+            # Create job from input data
             name = problem.name
-            problem_uri = problem.upload(
-                self.workspace,
-                compress=compress,
-                container_name=container_name,
+            blob = problem.to_blob(compress=compress)
+            job = Job.from_input_data(
+                workspace=self.workspace,
+                name=name,
+                target=self.target,
+                input_data=blob,
                 blob_name="inputData",
-                container_uri=container_uri
+                content_type="application/json",
+                provider_id=self.provider,
+                input_data_format=self.input_data_format,
+                output_data_format=self.output_data_format,
+                input_params=self.params,
             )
+        
         else:
-            name = problem.name
-            problem_uri = problem.uploaded_blob_uri
+            if hasattr(problem, "uploaded_blob_uri"):
+                name = problem.name
+                problem_uri = problem.uploaded_blob_uri
+
+            elif isinstance(problem, str):
+                name = "Optimization problem"
+                problem_uri = problem
+            
+            else:
+                raise ValueError("Cannot submit problem: should be of type str, Problem or have uploaded_blob_uri attribute.")
+
+            # Create job from storage URI
+            job = Job.from_storage_uri(
+                workspace=self.workspace,
+                name=name,
+                target=self.target,
+                input_data_uri=problem_uri,
+                provider_id=self.provider,
+                input_data_format=self.input_data_format,
+                output_data_format=self.output_data_format,
+                input_params=self.params
+            )
 
         logger.info(
-            f"Submitting problem '{name}'. Using payload from: '{problem_uri}'"
-        )
-        container_uri = remove_sas_token(
-            container_uri
-        )
-
-        job = Job.from_uri(
-            workspace=self.workspace,
-            job_id=job_id,
-            target=self.target,
-            name=name,
-            container_uri=container_uri,
-            input_data_format=self.input_data_format,
-            output_data_format=self.output_data_format,
-            input_data_uri=problem_uri,
-            provider_id=self.provider,
-            input_params=self.params,
+            f"Submitting problem '{name}'. \
+                Using payload from: '{job.details.input_data_uri}'"
         )
 
         logger.debug(f"==> submitting: {job.details}")
@@ -570,6 +574,7 @@ class SubstochasticMonteCarlo(Solver):
         step_limit: Optional[int] = None,
         beta: Optional[RangeSchedule] = None,
         steps_per_walker: Optional[int] = None,
+        timeout: Optional[int] = None,
     ):
         """The constructor of Substochastic Monte Carlo solver.
 
@@ -591,8 +596,17 @@ class SubstochasticMonteCarlo(Solver):
             beta (resampling factor) values evolve over time
         :param steps_per_walker:
             number of steps to attempt for each walker, must be postive
+        :param timeout:
+            specifies maximum number of seconds to run the core solver
+            loop. Initialization time does not respect this value, so the
+            solver may run longer than the value specified. Setting this value
+            will trigger the parameter free substochastic monte carlo solver.
         """
-        target = "microsoft.substochasticmontecarlo.cpu"
+
+        if timeout is None:
+            target = "microsoft.substochasticmontecarlo.cpu" 
+        else:
+            target = "microsoft.substochasticmontecarlo-parameterfree.cpu"
         super().__init__(
             workspace=workspace,
             provider="Microsoft",
@@ -606,3 +620,4 @@ class SubstochasticMonteCarlo(Solver):
         self.check_set_positive_int(target_population, "target_population")
         self.check_set_positive_int(steps_per_walker, "steps_per_walker")
         self.check_set_positive_int(step_limit, "step_limit")
+        self.check_set_positive_int(timeout, "timeout")

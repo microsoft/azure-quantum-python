@@ -410,6 +410,16 @@ class TestSolvers(QuantumTestBase):
             {"type": "linear", "initial": 2.8, "final": 15.8},
             good.params["params"]["beta"],
         )
+    
+    def test_SubstochasticMonteCarlo_parameter_free(self):
+        ws = self.create_workspace()
+        good = SubstochasticMonteCarlo(
+            ws,
+            timeout=10,
+        )
+        self.assertIsNotNone(good)
+        self.assertEqual("microsoft.substochasticmontecarlo-parameterfree.cpu", good.target)
+        self.assertEqual(10, good.params["params"]["timeout"])
 
     def test_SSMC_bad_input_params(self):
         bad_range = None
