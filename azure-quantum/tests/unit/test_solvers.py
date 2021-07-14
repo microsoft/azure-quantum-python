@@ -24,12 +24,12 @@ class TestSolvers(unittest.TestCase):
         )
 
     def test_submit_problem(self):
-        azure.quantum.optimization.problem.upload_blob = Mock()
-        azure.quantum.optimization.problem.upload_blob.get_blob_uri_with_sas_token = Mock()
-        
         problem = Problem(name="test", terms = [])
-        job = self.testsolver.submit(problem)
-        azure.quantum.optimization.problem.upload_blob.assert_called_once()
+        with patch("azure.quantum.job.base_job.get_container_uri") as mock, \
+            patch("azure.quantum.job.base_job.upload_blob") as mock_upload:
+            mock.return_value = "mock_container_uri/foo/bar"
+            job = self.testsolver.submit(problem)
+        mock_upload.assert_called_once()
         self.testsolver.workspace.submit_job.assert_called_once()
 
     def test_submit_online_problem(self):
