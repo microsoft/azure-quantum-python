@@ -143,7 +143,7 @@ class Term(GenTerm):
         w: Optional[WArray] = None,
         c: Optional[WArray] = None,
     ):
-        GenTerm(self, w=w, c=c)
+        GenTerm.__init__(self, w=w, c=c)
         self.ids = indices
     
     @staticmethod
@@ -195,9 +195,9 @@ class Term(GenTerm):
         return Term(indices=new_ids, c=new_c)
 
 
-class GroupType(Enum):
-    combination = 0
-    squared_linear_combination = 1
+class GroupType(str, Enum):
+    combination = "na"
+    squared_linear_combination = "slc"
 
 class GroupedTerm(GenTerm):
     """
@@ -210,7 +210,7 @@ class GroupedTerm(GenTerm):
         w: Optional[WArray] = None,
         c: Optional[WArray] = None,
     ):
-        GenTerm(self, w=w, c=c)
+        GenTerm.__init__(self, w=w, c=c)
         self.type = type
         self.terms = terms
 
@@ -272,9 +272,10 @@ class GroupedTerm(GenTerm):
     
     def reduce_by_variable_state(
         self, fixed_variables: Dict[int, int]
-    ) -> Optional[GroupedTerm]:
+    ) -> Optional[GenTerm]:
         """Given some fixed variable states,
-            transform the existing grouped term into new grouped term.
+            transform the existing grouped term into new term.
+        Returns None if the new term is effectively 0
         :param fixed_variables:
             The dictionary of variable ids and their fixed state
         """
@@ -288,7 +289,17 @@ class GroupedTerm(GenTerm):
                 except:
                     new_terms_dict[ids] = new_monomial.c
         new_terms = [Term(indices=ids, c=c) for ids,c in new_terms_dict.items()]
+        if len(new_terms) == 0:
+            return None
 
-        # To-do: Implement GroupType simplifications when new_terms has a single element
-        # For example, any of the *combination types would simplify to a Term
+        # GroupType simplifications when new_terms has a single element
+        if len(new_terms) == 1:
+            term = new_terms[0]
+            if self.type is GroupType.combination:
+                return Term(indices=term.ids, c=term.c * self.c)
+            elif self.type is GroupType.squared_linear_combination:
+                return Term(indices=term.ids + term.ids, c=term.c**2 * self.c)
+            else:
+                pass
+        
         return GroupedTerm(type=self.type, terms=new_terms, c=self.c)
