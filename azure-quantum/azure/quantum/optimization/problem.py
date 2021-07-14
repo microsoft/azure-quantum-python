@@ -359,8 +359,14 @@ class Problem:
         terms = []
         if self.terms != []:
             for term in self.terms:
-                if id in term.ids:
-                    terms.append(term)
+                if isinstance(term, Term):
+                    if id in term.ids:
+                        terms.append(term)
+                elif isinstance(term, GroupedTerm):
+                    for subterm in term.terms:
+                        if id in subterm.ids:
+                            terms.append(term)
+                            break
             return terms
         else:
             raise Exception("There are currently no terms in this problem. \
