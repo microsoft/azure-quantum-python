@@ -88,12 +88,14 @@ class TestProblemClass(unittest.TestCase):
         azure.quantum.optimization.problem.BlobClient.from_blob_url.return_value = Mock()
         azure.quantum.optimization.problem.ContainerClient = Mock()
         azure.quantum.optimization.problem.ContainerClient.from_container_url.return_value = Mock()
-        azure.quantum.optimization.problem.upload_blob = Mock()
-        azure.quantum.optimization.problem.upload_blob.get_blob_uri_with_sas_token = Mock()
+        azure.quantum.job.base_job.get_container_uri = Mock()
+        azure.quantum.job.base_job.get_container_uri.return_value = "mock_container/foo/bar"
+        azure.quantum.job.base_job.upload_blob = Mock()
+        azure.quantum.job.base_job.upload_blob.get_blob_uri_with_sas_token = Mock()
 
         assert(self.pubo_problem.uploaded_blob_uri == None)
         actual_result = self.pubo_problem.upload(self.mock_ws)
-        azure.quantum.optimization.problem.upload_blob.assert_called_once() 
+        azure.quantum.job.base_job.upload_blob.assert_called_once() 
 
     def test_download(self):
         azure.quantum.optimization.problem.download_blob = Mock(
