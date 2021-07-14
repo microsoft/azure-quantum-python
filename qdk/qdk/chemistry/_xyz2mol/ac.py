@@ -13,19 +13,17 @@ Implementation by Jan H. Jensen, based on the paper
 """
 
 import logging
-import os
 import sys
-import copy
 import itertools
 
 from rdkit.Chem import rdmolops
 from rdkit.Chem import rdchem
+
 try:
-    from rdkit.Chem import rdEHTTools #requires RDKit 2019.9.1 or later
+    from rdkit.Chem import rdEHTTools  # requires RDKit 2019.9.1 or later
 except ImportError:
     rdEHTTools = None
 
-from collections import defaultdict
 
 import numpy as np
 import networkx as nx
@@ -108,7 +106,7 @@ def xyz2AC_vdW(atoms, xyz):
     return AC, mol
 
 
-def xyz2AC_huckel(atomicNumList,xyz,charge):
+def xyz2AC_huckel(atomicNumList, xyz, charge):
     """
     args
         atomicNumList - atom type list
@@ -122,28 +120,32 @@ def xyz2AC_huckel(atomicNumList,xyz,charge):
 
     conf = Chem.Conformer(mol.GetNumAtoms())
     for i in range(mol.GetNumAtoms()):
-        conf.SetAtomPosition(i,(xyz[i][0],xyz[i][1],xyz[i][2]))
+        conf.SetAtomPosition(i, (xyz[i][0], xyz[i][1], xyz[i][2]))
     mol.AddConformer(conf)
 
     num_atoms = len(atomicNumList)
-    AC = np.zeros((num_atoms,num_atoms)).astype(int)
+    AC = np.zeros((num_atoms, num_atoms)).astype(int)
 
     mol_huckel = Chem.Mol(mol)
-    mol_huckel.GetAtomWithIdx(0).SetFormalCharge(charge) #mol charge arbitrarily added to 1st atom    
+    mol_huckel.GetAtomWithIdx(0).SetFormalCharge(
+        charge
+    )  # mol charge arbitrarily added to 1st atom
 
     # Run in temporary path because rdkit generates empty "nul" and "run.out" output files
     with in_temp_path(cleanup=True) as path:
-        passed,result = rdEHTTools.RunMol(mol_huckel)
+        passed, result = rdEHTTools.RunMol(mol_huckel)
 
     opop = result.GetReducedOverlapPopulationMatrix()
     tri = np.zeros((num_atoms, num_atoms))
-    tri[np.tril(np.ones((num_atoms, num_atoms), dtype=bool))] = opop #lower triangular to square matrix
+    tri[
+        np.tril(np.ones((num_atoms, num_atoms), dtype=bool))
+    ] = opop  # lower triangular to square matrix
     for i in range(num_atoms):
-        for j in range(i+1,num_atoms):
-            pair_pop = abs(tri[j,i])   
-            if pair_pop >= 0.15: #arbitry cutoff for bond. May need adjustment
-                AC[i,j] = 1
-                AC[j,i] = 1
+        for j in range(i + 1, num_atoms):
+            pair_pop = abs(tri[j, i])
+            if pair_pop >= 0.15:  # arbitry cutoff for bond. May need adjustment
+                AC[i, j] = 1
+                AC[j, i] = 1
 
     return AC, mol
 
@@ -158,12 +160,20 @@ def AC2BO(AC, atoms, charge, allow_charged_fragments=True, use_graph=True):
     # make a list of valences, e.g. for CO: [[4],[2,1]]
     valences_list_of_lists = []
     AC_valence = list(AC.sum(axis=1))
-    
-    for i,(atomicNum,valence) in enumerate(zip(atoms,AC_valence)):
+
+    for i, (atomicNum, valence) in enumerate(zip(atoms, AC_valence)):
         # valence can't be smaller than number of neighbourgs
         possible_valence = [x for x in atomic_valence[atomicNum] if x >= valence]
         if not possible_valence:
-            _log.error('Valence of atom',i,'is',valence,'which bigger than allowed max',max(atomic_valence[atomicNum]),'. Stopping')
+            _log.error(
+                "Valence of atom",
+                i,
+                "is",
+                valence,
+                "which bigger than allowed max",
+                max(atomic_valence[atomicNum]),
+                ". Stopping",
+            )
             sys.exit()
         valences_list_of_lists.append(possible_valence)
 
@@ -176,11 +186,18 @@ def AC2BO(AC, atoms, charge, allow_charged_fragments=True, use_graph=True):
 
         UA, DU_from_AC = get_UA(valences, AC_valence)
 
-        check_len = (len(UA) == 0)
+        check_len = len(UA) == 0
         if check_len:
-            check_bo = BO_is_OK(AC, AC, charge, DU_from_AC,
-                atomic_valence_electrons, atoms, valences,
-                allow_charged_fragments=allow_charged_fragments)
+            check_bo = BO_is_OK(
+                AC,
+                AC,
+                charge,
+                DU_from_AC,
+                atomic_valence_electrons,
+                atoms,
+                valences,
+                allow_charged_fragments=allow_charged_fragments,
+            )
         else:
             check_bo = None
 
@@ -190,15 +207,34 @@ def AC2BO(AC, atoms, charge, allow_charged_fragments=True, use_graph=True):
         UA_pairs_list = get_UA_pairs(UA, AC, use_graph=use_graph)
         for UA_pairs in UA_pairs_list:
             BO = get_BO(AC, UA, DU_from_AC, valences, UA_pairs, use_graph=use_graph)
-            status = BO_is_OK(BO, AC, charge, DU_from_AC,
-                        atomic_valence_electrons, atoms, valences,
-                        allow_charged_fragments=allow_charged_fragments)
-            charge_OK = charge_is_OK(BO, AC, charge, DU_from_AC, atomic_valence_electrons, atoms, valences,
-                                     allow_charged_fragments=allow_charged_fragments)
+            status = BO_is_OK(
+                BO,
+                AC,
+                charge,
+                DU_from_AC,
+                atomic_valence_electrons,
+                atoms,
+                valences,
+                allow_charged_fragments=allow_charged_fragments,
+            )
+            charge_OK = charge_is_OK(
+                BO,
+                AC,
+                charge,
+                DU_from_AC,
+                atomic_valence_electrons,
+                atoms,
+                valences,
+                allow_charged_fragments=allow_charged_fragments,
+            )
 
             if status:
                 return BO, atomic_valence_electrons
-            elif BO.sum() >= best_BO.sum() and valences_not_too_large(BO, valences) and charge_OK:
+            elif (
+                BO.sum() >= best_BO.sum()
+                and valences_not_too_large(BO, valences)
+                and charge_OK
+            ):
                 best_BO = BO.copy()
 
     if not charge_OK:
@@ -207,8 +243,7 @@ def AC2BO(AC, atoms, charge, allow_charged_fragments=True, use_graph=True):
 
 
 def AC2mol(mol, AC, atoms, charge, allow_charged_fragments=True, use_graph=True):
-    """
-    """
+    """ """
 
     # convert AC matrix to bond order (BO) matrix
     BO, atomic_valence_electrons = AC2BO(
@@ -216,7 +251,8 @@ def AC2mol(mol, AC, atoms, charge, allow_charged_fragments=True, use_graph=True)
         atoms,
         charge,
         allow_charged_fragments=allow_charged_fragments,
-        use_graph=use_graph)
+        use_graph=use_graph,
+    )
 
     # add BO connectivity and charge info to mol object
     mol = BO2mol(
@@ -225,10 +261,13 @@ def AC2mol(mol, AC, atoms, charge, allow_charged_fragments=True, use_graph=True)
         atoms,
         atomic_valence_electrons,
         charge,
-        allow_charged_fragments=allow_charged_fragments)
+        allow_charged_fragments=allow_charged_fragments,
+    )
 
     # BO2mol returns an arbitrary resonance form. Let's make the rest
-    mols = rdchem.ResonanceMolSupplier(mol, Chem.UNCONSTRAINED_CATIONS, Chem.UNCONSTRAINED_ANIONS)
+    mols = rdchem.ResonanceMolSupplier(
+        mol, Chem.UNCONSTRAINED_CATIONS, Chem.UNCONSTRAINED_ANIONS
+    )
     mols = [mol for mol in mols]
 
     return mols
