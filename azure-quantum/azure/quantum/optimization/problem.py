@@ -159,7 +159,7 @@ class Problem:
         self,
         workspace: "Workspace",
         container_name: str = "qio-problems",
-        blob_name: str = None,
+        blob_name: str = "inputData",
         compress: bool = True,
         container_uri: str = None
     ):

@@ -9,7 +9,6 @@
 
 import json
 import unittest
-from azure.quantum import Workspace
 from azure.quantum.optimization import Problem, ProblemType, Term
 from azure.quantum.optimization.solvers import (
     ParallelTempering,
@@ -368,7 +367,6 @@ class TestSolvers(QuantumTestBase):
             seed=8888,
             population=300,
             sweeps=1000,
-            culling_fraction=0.5,
             beta=beta,
         )
         self.assertIsNotNone(good)
@@ -377,7 +375,6 @@ class TestSolvers(QuantumTestBase):
         self.assertEqual(100.0, good.params["params"]["alpha"])
         self.assertEqual(300, good.params["params"]["population"])
         self.assertEqual(1000, good.params["params"]["sweeps"])
-        self.assertEqual(0.5, good.params["params"]["culling_fraction"])
         self.assertEqual(
             {"type": "linear", "initial": 0.8, "final": 5.8},
             good.params["params"]["beta"],
@@ -386,7 +383,7 @@ class TestSolvers(QuantumTestBase):
     def test_SubstochasticMonteCarlo_input_params(self):
         ws = self.create_workspace()
         beta = RangeSchedule("linear", 2.8, 15.8)
-        alpha = RangeSchedule("geometric", 1.8, 2.8)
+        alpha = RangeSchedule("geometric", 2.8, 1.8)
         good = SubstochasticMonteCarlo(
             ws,
             alpha=alpha,
@@ -400,7 +397,7 @@ class TestSolvers(QuantumTestBase):
         self.assertEqual("microsoft.substochasticmontecarlo.cpu", good.target)
         self.assertEqual(1888, good.params["params"]["seed"])
         self.assertEqual(
-            {"type": "geometric", "initial": 1.8, "final": 2.8},
+            {"type": "geometric", "initial": 2.8, "final": 1.8},
             good.params["params"]["alpha"],
         )
         self.assertEqual(3000, good.params["params"]["target_population"])
@@ -410,7 +407,7 @@ class TestSolvers(QuantumTestBase):
             {"type": "linear", "initial": 2.8, "final": 15.8},
             good.params["params"]["beta"],
         )
-    
+
     def test_SubstochasticMonteCarlo_parameter_free(self):
         ws = self.create_workspace()
         good = SubstochasticMonteCarlo(
@@ -418,7 +415,9 @@ class TestSolvers(QuantumTestBase):
             timeout=10,
         )
         self.assertIsNotNone(good)
-        self.assertEqual("microsoft.substochasticmontecarlo-parameterfree.cpu", good.target)
+        self.assertEqual(
+                "microsoft.substochasticmontecarlo-parameterfree.cpu",
+                good.target)
         self.assertEqual(10, good.params["params"]["timeout"])
 
     def test_SSMC_bad_input_params(self):
@@ -426,7 +425,7 @@ class TestSolvers(QuantumTestBase):
         with self.assertRaises(ValueError) as context:
             bad_range = RangeSchedule("nothing", 2.8, 15.8)
         self.assertTrue(
-            '"schedule_type" can only be' in str(context.exception)
+            '"schedule_type" must be' in str(context.exception)
         )
         self.assertTrue(bad_range is None)
         beta = 1
@@ -443,8 +442,10 @@ class TestSolvers(QuantumTestBase):
                 steps_per_walker=5,
                 beta=beta,
             )
+        print(str(context.exception))
         self.assertTrue(
-            'can only be from class "RangeSchedule"!' in str(context.exception)
+            ('alpha must be of type RangeSchedule; '
+             'found type(alpha)=int') in str(context.exception)
         )
         self.assertTrue(bad_solver is None)
 
@@ -456,7 +457,117 @@ class TestSolvers(QuantumTestBase):
                 step_limit=1000,
                 steps_per_walker=-1,
             )
-        self.assertTrue("must be positive" in str(context.exception))
+        self.assertTrue(
+                ("steps_per_walker must be positive; "
+                 "found steps_per_walker=-1") in str(context.exception))
+        self.assertTrue(bad_solver is None)
+
+        alpha_increasing = RangeSchedule("linear", 1.0, 2.0)
+        with self.assertRaises(ValueError) as context:
+            bad_solver = SubstochasticMonteCarlo(
+                ws,
+                seed=1888,
+                target_population=3000,
+                step_limit=1000,
+                alpha=alpha_increasing,
+                beta=beta,
+            )
+        self.assertTrue(
+                ("alpha must be decreasing; "
+                 "found alpha.initial=1.0 < 2.0=alpha.final.")
+                in str(context.exception))
+        self.assertTrue(bad_solver is None)
+
+        alpha_negative = RangeSchedule("linear", 1.0, -1.0)
+        with self.assertRaises(ValueError) as context:
+            bad_solver = SubstochasticMonteCarlo(
+                ws,
+                seed=1888,
+                target_population=3000,
+                step_limit=1000,
+                alpha=alpha_negative,
+                beta=beta,
+            )
+        self.assertTrue(
+                ("alpha.final must be greater equal 0; "
+                 "found alpha.final=-1.") in str(context.exception))
+        self.assertTrue(bad_solver is None)
+
+        alpha_strictly_negative = RangeSchedule("linear", -1.0, -2.0)
+        with self.assertRaises(ValueError) as context:
+            bad_solver = SubstochasticMonteCarlo(
+                ws,
+                seed=1888,
+                target_population=3000,
+                step_limit=1000,
+                alpha=alpha_strictly_negative,
+                beta=beta,
+            )
+        self.assertTrue(
+                ("alpha.initial must be greater equal 0; "
+                 "found alpha.initial=-1.") in str(context.exception))
+        self.assertTrue(bad_solver is None)
+
+        alpha = RangeSchedule("linear", 1.0, 0.0)
+        beta_decreasing = RangeSchedule("linear", 2.0, 1.0)
+        with self.assertRaises(ValueError) as context:
+            bad_solver = SubstochasticMonteCarlo(
+                ws,
+                seed=1888,
+                target_population=3000,
+                step_limit=1000,
+                alpha=alpha,
+                beta=beta_decreasing,
+            )
+        self.assertTrue(
+                ("beta must be increasing; "
+                 "found beta.initial=2.0 > 1.0=beta.final.")
+                in str(context.exception))
+        self.assertTrue(bad_solver is None)
+
+        beta_zero = RangeSchedule("linear", 0.0, 1.0)
+        with self.assertRaises(ValueError) as context:
+            bad_solver = SubstochasticMonteCarlo(
+                ws,
+                seed=1888,
+                target_population=3000,
+                step_limit=1000,
+                alpha=alpha,
+                beta=beta_zero,
+            )
+        self.assertTrue(
+                ("beta.initial must be greater than 0; "
+                 "found beta.initial=0.") in str(context.exception))
+        self.assertTrue(bad_solver is None)
+
+        beta_negative = RangeSchedule("linear", -1.0, 1.0)
+        with self.assertRaises(ValueError) as context:
+            bad_solver = SubstochasticMonteCarlo(
+                ws,
+                seed=1888,
+                target_population=3000,
+                step_limit=1000,
+                alpha=alpha,
+                beta=beta_negative,
+            )
+        self.assertTrue(
+                ("beta.initial must be greater than 0; "
+                 "found beta.initial=-1.0") in str(context.exception))
+        self.assertTrue(bad_solver is None)
+
+        beta_strictly_negative = RangeSchedule("linear", -2.0, -1.0)
+        with self.assertRaises(ValueError) as context:
+            bad_solver = SubstochasticMonteCarlo(
+                ws,
+                seed=1888,
+                target_population=3000,
+                step_limit=1000,
+                alpha=alpha,
+                beta=beta_strictly_negative,
+            )
+        self.assertTrue(
+                ("beta.initial must be greater than 0; "
+                 "found beta.initial=-2.0") in str(context.exception))
         self.assertTrue(bad_solver is None)
 
     def test_PA_bad_input_params(self):
@@ -470,11 +581,11 @@ class TestSolvers(QuantumTestBase):
                 seed=8888,
                 population=300,
                 sweeps=1000,
-                culling_fraction=0.5,
                 beta=beta,
             )
         self.assertTrue(
-            'can only be from class "RangeSchedule"!' in str(context.exception)
+            ("beta must be of type RangeSchedule; "
+             "found type(beta)=int.") in str(context.exception)
         )
         self.assertTrue(bad_solver is None)
 
@@ -485,16 +596,78 @@ class TestSolvers(QuantumTestBase):
                 seed=8888,
                 population=-300,
                 sweeps=1000,
-                culling_fraction=0.5,
             )
         self.assertTrue("must be positive" in str(context.exception))
         self.assertTrue(bad_solver is None)
 
         with self.assertRaises(ValueError) as context:
             bad_solver = PopulationAnnealing(
-                ws, alpha=0.2, seed=8888, sweeps=1000, culling_fraction=0.5
+                ws, alpha=0.2, seed=8888, sweeps=1000,
             )
-        self.assertTrue("can not be smaller than" in str(context.exception))
+        self.assertTrue(
+                ("alpha must be greater than 1.0; "
+                 "found alpha=0.2.") in str(context.exception))
+        self.assertTrue(bad_solver is None)
+
+        beta_decreasing = RangeSchedule("linear", 2.0, 1.0)
+        with self.assertRaises(ValueError) as context:
+            bad_solver = PopulationAnnealing(
+                ws,
+                alpha=100,
+                seed=8888,
+                population=300,
+                sweeps=1000,
+                beta=beta_decreasing,
+            )
+        self.assertTrue(
+                ("beta must be increasing; "
+                 "found beta.initial=2.0 > 1.0=beta.final.")
+                in str(context.exception))
+        self.assertTrue(bad_solver is None)
+
+        beta_zero = RangeSchedule("linear", 0.0, 1.0)
+        with self.assertRaises(ValueError) as context:
+            bad_solver = PopulationAnnealing(
+                ws,
+                alpha=100,
+                seed=8888,
+                population=300,
+                sweeps=1000,
+                beta=beta_zero,
+            )
+        self.assertTrue(
+                ("beta.initial must be greater than 0; "
+                 "found beta.initial=0.") in str(context.exception))
+        self.assertTrue(bad_solver is None)
+
+        beta_negative = RangeSchedule("linear", -1.0, 1.0)
+        with self.assertRaises(ValueError) as context:
+            bad_solver = PopulationAnnealing(
+                ws,
+                alpha=100,
+                seed=8888,
+                population=300,
+                sweeps=1000,
+                beta=beta_negative,
+            )
+        self.assertTrue(
+                ("beta.initial must be greater than 0; "
+                 "found beta.initial=-1.0") in str(context.exception))
+        self.assertTrue(bad_solver is None)
+
+        beta_strictly_negative = RangeSchedule("linear", -2.0, -1.0)
+        with self.assertRaises(ValueError) as context:
+            bad_solver = PopulationAnnealing(
+                ws,
+                alpha=100,
+                seed=8888,
+                population=300,
+                sweeps=1000,
+                beta=beta_strictly_negative,
+            )
+        self.assertTrue(
+                ("beta.initial must be greater than 0; "
+                 "found beta.initial=-2.0") in str(context.exception))
         self.assertTrue(bad_solver is None)
 
 
