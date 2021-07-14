@@ -688,7 +688,7 @@ class PopulationAnnealing(Solver):
         self.check_set_schedule(
                 "beta", beta, evolution=self.ScheduleEvolution.INCREASING,
                 lower_bound_exclusive=0)
-        self.check_set_positive_int(timeout, "timeout")
+        self.check_set_positive_int("timeout", timeout)
 
 
 class SubstochasticMonteCarlo(Solver):
