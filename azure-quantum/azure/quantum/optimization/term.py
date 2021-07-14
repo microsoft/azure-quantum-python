@@ -288,7 +288,7 @@ class GroupedTerm(GenTerm):
                     new_terms_dict[ids] += new_monomial.c
                 except:
                     new_terms_dict[ids] = new_monomial.c
-        new_terms = [Term(indices=ids, c=c) for ids,c in new_terms_dict.items()]
+        new_terms = [Term(indices=list(ids), c=c) for ids,c in new_terms_dict.items()]
         if len(new_terms) == 0:
             return None
 
@@ -296,9 +296,11 @@ class GroupedTerm(GenTerm):
         if len(new_terms) == 1:
             term = new_terms[0]
             if self.type is GroupType.combination:
-                return Term(indices=term.ids, c=term.c * self.c)
+                return Term(indices=term.ids, c=self.c * term.c)
             elif self.type is GroupType.squared_linear_combination:
-                return Term(indices=term.ids + term.ids, c=term.c**2 * self.c)
+                #return Term(indices=term.ids + term.ids, c=self.c * term.c**2)
+                if len(term.ids) == 0:
+                    return Term(indices=term.ids, c=self.c * term.c**2)
             else:
                 pass
         

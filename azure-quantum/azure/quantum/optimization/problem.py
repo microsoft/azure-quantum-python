@@ -268,7 +268,7 @@ class Problem:
         for term in self.terms:
             reduced_term = term.reduce_by_variable_state(fixed_transformed)
             if reduced_term:
-                if len(reduced_term.ids) > 0:
+                if isinstance(reduced_term, GroupedTerm) or len(reduced_term.ids) > 0:
                     new_terms.append(reduced_term)
                 else:
                     # reduced to a constant term
