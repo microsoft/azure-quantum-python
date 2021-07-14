@@ -320,12 +320,19 @@ class Problem:
         """
 
         set_vars = set()
+        total_term_count = 0
         for term in self.terms:
-            set_vars.update(term.ids)
-
+            if isinstance(term, Term):
+                set_vars.update(term.ids)
+                total_term_count += 1
+            elif isinstance(term, GroupedTerm):
+                for subterm in term.terms:
+                    set_vars.update(subterm.ids)
+                    total_term_count += 1
+        
         return (
             len(set_vars) >= Problem.NUM_VARIABLES_LARGE
-            and len(self.terms) >= Problem.NUM_TERMS_LARGE
+            and total_term_count >= Problem.NUM_TERMS_LARGE
         )
 
     def download(self, workspace:"Workspace"):
