@@ -163,7 +163,8 @@ class Problem:
         """
         self.terms.append(
             GroupedTerm(GroupType.squared_linear_combination,
-                        [Term(indices, c=tc) for tc,indices in terms],
+                        [Term([index], c=tc) if index is not None else Term([], c=tc)
+                         for tc,index in terms],
                         c=c)
         )
         self.uploaded_blob_uri = None
