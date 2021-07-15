@@ -179,11 +179,18 @@ class StreamingProblem(object):
                     "Cannot add terms after problem has been uploaded"
                 )
 
+            term_couplings = [len(term.ids) for term in terms]
+            max_coupling = max(term_couplings)
+            min_coupling = min(term_couplings)
+            self.__n_couplers += sum(term_couplings)
+            self.stats["num_terms"] += len(terms)
+
             for term in terms:
                 if isinstance(term, Term):
-                    max_coupling = max(max_coupling, 1)
-                    min_coupling = min(min_coupling, 1)
-                    self.__n_couplers += 1
+                    n = len(term.ids)
+                    max_coupling = max(max_coupling, n)
+                    min_coupling = min(min_coupling, n)
+                    self.__n_couplers += n
                     self.stats["num_terms"] += 1
                 elif isinstance(term, GroupedTerm):
                     sub_couplings = [len(subterm.ids) for subterm in term.terms]
@@ -193,11 +200,18 @@ class StreamingProblem(object):
                         min_coupling = min(min_coupling, min(sub_couplings))
                         self.__n_couplers += sum(sub_couplings)
                     elif term.type is GroupType.squared_linear_combination:
-                        max_coupling = max(max_coupling, 2*max(sub_couplings))
-                        min_coupling = min(min_coupling, 2*min(sub_couplings))
-                        for i in sub_couplings:
-                            for j in sub_couplings:
-                                self.__n_couplers += i*j
+                        if 1 in sub_couplings:
+                            max_coupling = max(max_coupling, 2)
+                        else:
+                            max_coupling = max(max_coupling, 0)
+                        if 0 in sub_couplings:
+                            min_coupling = min(min_coupling, 0)
+                        else:
+                            min_coupling = min(min_coupling, 2)
+                        # Counts couplings in expanded form of SLC term
+                        # Since SLC term has linear argument, sum(sub_couplings)
+                        # counts the number of non-constant terms
+                        self.__n_couplers += 2*len(sub_couplings)*sum(sub_couplings)
                     else:
                         raise Exception(
                             "Unsupported statistics for GroupType {}.".format(term.type)

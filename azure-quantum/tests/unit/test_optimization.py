@@ -149,8 +149,6 @@ class TestProblem(QuantumTestBase):
                 }
             }
         )
-        print(problem.serialize())
-        print(expected)
         actual = problem.serialize()
         self.assertEqual(expected, actual)
 
