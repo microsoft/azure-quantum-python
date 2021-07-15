@@ -173,7 +173,7 @@ class BaseJob(abc.ABC):
 
         # Create container for output data if not specified
         if container_uri is None:
-            cls.create_container(workspace=workspace, job_id=job_id)
+            container_uri = cls.create_container(workspace=workspace, job_id=job_id)
 
         # Create job details and return Job
         details = JobDetails(

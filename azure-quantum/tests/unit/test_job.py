@@ -96,48 +96,89 @@ class TestJob(QuantumTestBase):
 
     def test_job_submit_microsoft_simulated_annealing(self):
         solver_type = functools.partial(microsoft.SimulatedAnnealing, beta_start=0)
-        self._test_job_submit(solver_type)
+        solver_name = "SimulatedAnnealing"
+        self._test_job_submit(solver_name, solver_type)
         self._test_job_filter(solver_type)
 
     def test_job_submit_microsoft_parallel_tempering(self):
         solver_type = functools.partial(microsoft.ParallelTempering, sweeps=100)
-        self._test_job_submit(solver_type)
+        solver_name = "ParallelTempering"
+        self._test_job_submit(solver_name, solver_type)
 
     def test_job_submit_microsoft_tabu(self):
         solver_type = functools.partial(microsoft.Tabu, sweeps=100)
-        self._test_job_submit(solver_type)
+        solver_name = "Tabu"
+        self._test_job_submit(solver_name, solver_type)
 
     def test_job_submit_microsoft_quantum_monte_carlo(self):
         solver_type = functools.partial(microsoft.QuantumMonteCarlo, trotter_number=1)
-        self._test_job_submit(solver_type)
+        solver_name = "QuantumMonteCarlo"
+        self._test_job_submit(solver_name, solver_type)
 
     def test_job_submit_microsoft_population_annealing(self):
         solver_type = functools.partial(microsoft.PopulationAnnealing, sweeps=200)
-        self._test_job_submit(solver_type)
+        solver_name = "PopulationAnnealing"
+        self._test_job_submit(solver_name, solver_type)
 
     def test_job_submit_microsoft_substochastic_monte_carlo(self):
         solver_type = functools.partial(microsoft.SubstochasticMonteCarlo, step_limit=280)
-        self._test_job_submit(solver_type)
+        solver_name = "SubstochasticMonteCarlo"
+        self._test_job_submit(solver_name, solver_type)
+
+    def test_job_upload_and_run_solvers(self):
+        problem_name = f'Test-problem-{datetime.now():"%Y%m%d-%H%M%S"}'
+        problem = self.create_problem(name=problem_name)
+        workspace = self.create_workspace()
+
+        with unittest.mock.patch.object(
+            Job,
+            self.mock_create_job_id_name,
+            return_value=self.get_test_job_id(),
+        ):
+            workspace = self.create_workspace()
+            blob = problem.to_blob(compress=False)
+            job = Job.from_input_data(
+                workspace=workspace,
+                name=problem.name,
+                target="",
+                input_data=blob,
+                blob_name="inputData",
+                content_type="application/json",
+            )
+
+        for solver_type in get_solver_types():
+            solver = solver_type(workspace)
+
+            with unittest.mock.patch.object(
+                Job,
+                self.mock_create_job_id_name,
+                return_value=self.get_test_job_id(),
+            ):
+                job = solver.submit(job.details.input_data_uri)
 
     @pytest.mark.skipif(not(os.environ.get("AZURE_QUANTUM_1QBIT", "") == "1"), reason="1Qbit tests not enabled")
     def test_job_submit_oneqbit_tabu_search(self):
         solver_type = functools.partial(oneqbit.TabuSearch, improvement_cutoff=10)
-        self._test_job_submit(solver_type)
+        solver_name = "TabuSearch"
+        self._test_job_submit(solver_name, solver_type)
 
     @pytest.mark.skipif(not(os.environ.get("AZURE_QUANTUM_1QBIT", "") == "1"), reason="1Qbit tests not enabled")
     def test_job_submit_oneqbit_pticm_solver(self):
         solver_type = functools.partial(oneqbit.PticmSolver, num_sweeps_per_run=99)
-        self._test_job_submit(solver_type)
+        solver_name = "PticmSolver"
+        self._test_job_submit(solver_name, solver_type)
 
     @pytest.mark.skipif(not(os.environ.get("AZURE_QUANTUM_1QBIT", "") == "1"), reason="1Qbit tests not enabled")
     def test_job_submit_oneqbit_path_relinking_solver(self):
         solver_type = functools.partial(oneqbit.PathRelinkingSolver, distance_scale=0.44)
-        self._test_job_submit(solver_type)
+        solver_name = "PathRelinkingSolver"
+        self._test_job_submit(solver_name, solver_type)
 
     @pytest.mark.skipif(not(os.environ.get("AZURE_QUANTUM_TOSHIBA", "") == "1"), reason="Toshiba tests not enabled")
     def test_job_submit_toshiba_simulated_bifurcation_machine(self):
         solver_type = functools.partial(toshiba.SimulatedBifurcationMachine, loops=10)
-        self._test_job_submit(solver_type)
+        solver_name = "SimulatedBifurcationMachine"
+        self._test_job_submit(solver_name, solver_type)
 
     def _test_job_filter(self, solver_type):
         workspace = self.create_workspace()
@@ -161,20 +202,31 @@ class TestJob(QuantumTestBase):
             before_time = datetime.now() - timedelta(days=100)
             self.assertEqual(True, job.matches_filter(created_after=before_time))    
 
-    def _test_job_submit(self, solver_type):
+    def _test_job_submit(self, solver_name, solver_type):
         """Tests the job submission and its lifecycle for a given solver.
 
         :param solver_type:
             The class name of the solver, for example "SimulatedAnnealing".
         """
 
+        problem_name = f'Test-{solver_name}-{datetime.now():"%Y%m%d-%H%M%S"}'
+
+        problem = self.create_problem(name=problem_name)
+
+        self._test_job_submit_problem(solver_type, problem)
+    
+    def _test_job_submit_problem(self, solver_type, problem):
+        """Tests the job submission and its lifecycle for a given solver.
+
+        :param solver_type:
+            The class name of the solver, for example "SimulatedAnnealing".
+        :param problem
+            The problem to submit
+        """
+
         workspace = self.create_workspace()
 
         solver = solver_type(workspace)
-
-        problem_name = f'Test-{type(solver).__name__}-{datetime.now():"%Y%m%d-%H%M%S"}'
-
-        problem = self.create_problem(name=problem_name)
 
         with unittest.mock.patch.object(
             Job,
