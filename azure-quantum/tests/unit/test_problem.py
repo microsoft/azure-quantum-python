@@ -82,7 +82,18 @@ class TestProblemClass(unittest.TestCase):
             k=self.pubo_problem.k,
             c=self.pubo_problem.c
         )
-        
+              
+    def test_upload(self):
+        azure.quantum.optimization.problem.BlobClient = Mock()
+        azure.quantum.optimization.problem.BlobClient.from_blob_url.return_value = Mock()
+        azure.quantum.optimization.problem.ContainerClient = Mock()
+        azure.quantum.optimization.problem.ContainerClient.from_container_url.return_value = Mock()
+        azure.quantum.optimization.problem.upload_blob = Mock()
+        azure.quantum.optimization.problem.upload_blob.get_blob_uri_with_sas_token = Mock()
+
+        assert(self.pubo_problem.uploaded_blob_uri == None)
+        actual_result = self.pubo_problem.upload(self.mock_ws)
+        azure.quantum.optimization.problem.upload_blob.assert_called_once() 
 
     def test_download(self):
         azure.quantum.optimization.problem.download_blob = Mock(
@@ -92,8 +103,8 @@ class TestProblemClass(unittest.TestCase):
         azure.quantum.optimization.problem.BlobClient.from_blob_url.return_value = Mock()
         azure.quantum.optimization.problem.ContainerClient = Mock()
         azure.quantum.optimization.problem.ContainerClient.from_container_url.return_value = Mock()
-        acutal_result = self.problem.download(self.mock_ws)
-        assert acutal_result.name == "test"
+        actual_result = self.problem.download(self.mock_ws)
+        assert actual_result.name == "test"
         azure.quantum.optimization.problem.download_blob.assert_called_once()
 
     def test_get_term(self):
