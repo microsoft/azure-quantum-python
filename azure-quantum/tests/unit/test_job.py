@@ -136,14 +136,10 @@ class TestJob(QuantumTestBase):
             return_value=self.get_test_job_id(),
         ):
             workspace = self.create_workspace()
-            blob = problem.to_blob(compress=False)
-            container_uri = workspace.get_container_uri()
-            input_data_uri = Job.upload_input_data(
-                input_data=blob,
+            input_data_uri = problem.upload(
+                workspace=workspace,
                 blob_name="inputData",
-                container_uri=container_uri,
-                encoding="",
-                content_type="application/json"
+                compress=False
             )
 
         for solver_type in get_solver_types():
