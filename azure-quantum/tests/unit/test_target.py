@@ -51,7 +51,7 @@ class TestIonQ(QuantumTestBase):
             circuit = self._3_qubit_ghz()
             target = IonQ(workspace=workspace)
             job = target.submit(circuit)
-            # results = job.get_results()
-            # assert "histogram" in results
-            # assert results["histogram"]["0"] == 0.5
-            # assert results["histogram"]["7"] == 0.5
+            results = job.get_results()
+            assert "histogram" in results
+            assert results["histogram"]["0"] == 0.5
+            assert results["histogram"]["7"] == 0.5
