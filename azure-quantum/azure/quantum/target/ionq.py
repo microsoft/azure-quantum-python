@@ -56,4 +56,4 @@ class IonQ(Target):
         :rtype: Job
         """
         blob = self._encode_input_data(circuit)
-        return self.submit_input_data(input_data=blob, name=name)
+        return self._submit_encoded_input_data(input_data=blob, name=name)

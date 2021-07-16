@@ -40,7 +40,7 @@ class Target(abc.ABC):
         """
         pass
 
-    def submit_input_data(
+    def _submit_encoded_input_data(
         self,
         input_data: bytes,
         name: str,
@@ -87,4 +87,4 @@ class Target(abc.ABC):
         :rtype: Job
         """
         blob = self._encode_input_data(data=input_data)
-        return self.submit_input_data(blob=blob, name=name)
+        return self._submit_encoded_input_data(input_data=blob, name=name)
