@@ -137,13 +137,13 @@ class TestJob(QuantumTestBase):
         ):
             workspace = self.create_workspace()
             blob = problem.to_blob(compress=False)
-            job = Job.from_input_data(
-                workspace=workspace,
-                name=problem.name,
-                target="",
+            container_uri = workspace.get_container_uri()
+            input_data_uri = Job.upload_input_data(
                 input_data=blob,
                 blob_name="inputData",
-                content_type="application/json",
+                container_uri=container_uri,
+                encoding="",
+                content_type="application/json"
             )
 
         for solver_type in get_solver_types():
@@ -154,7 +154,7 @@ class TestJob(QuantumTestBase):
                 self.mock_create_job_id_name,
                 return_value=self.get_test_job_id(),
             ):
-                job = solver.submit(job.details.input_data_uri)
+                job = solver.submit(input_data_uri)
 
     @pytest.mark.skipif(not(os.environ.get("AZURE_QUANTUM_1QBIT", "") == "1"), reason="1Qbit tests not enabled")
     def test_job_submit_oneqbit_tabu_search(self):

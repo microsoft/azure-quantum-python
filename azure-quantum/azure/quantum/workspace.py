@@ -19,12 +19,15 @@ from azure.quantum._client import QuantumClient
 from azure.quantum._client.operations import JobsOperations, StorageOperations
 from azure.quantum._client.models import BlobDetails, JobStatus
 from azure.quantum import Job
+from azure.quantum.storage import create_container_using_client, get_container_uri, ContainerClient
 
 from .version import __version__
 
 logger = logging.getLogger(__name__)
 
 __all__ = ["Workspace"]
+
+DEFAULT_CONTAINER_NAME_FORMAT = "job-{job_id}"
 
 
 def sdk_environment(name):
@@ -269,3 +272,45 @@ class Workspace:
             the self.credentials
         """
         return self.credentials
+    
+    def get_container_uri(
+        self,
+        job_id: str = None,
+        container_name: str = None,
+        container_name_format: str = DEFAULT_CONTAINER_NAME_FORMAT
+    ) -> str:
+        """Get container URI based on job ID or container name.
+        Creates a new container if it does not yet exist.
+
+        :param job_id: Job ID, defaults to None
+        :type job_id: str, optional
+        :param container_name: Container name, defaults to None
+        :type container_name: str, optional
+        :param container_name_format: Container name format, defaults to "job-{job_id}"
+        :type container_name_format: str, optional
+        :return: Container URI
+        :rtype: str
+        """
+        if container_name is None:
+            if job_id is not None:
+                container_name = container_name_format.format(job_id=job_id)
+            elif job_id is None:
+                container_name = f"{self.name}-data"
+        # Create container URI and get container client
+        if self.storage is None:
+            # Get linked storage account from the service, create
+            # a new container if it does not yet exist
+            container_uri = self._get_linked_storage_sas_uri(
+                container_name
+            )
+            container_client = ContainerClient.from_container_url(
+                container_uri
+            )
+            create_container_using_client(container_client)
+        else:
+            # Use the storage acount specified to generate container URI,
+            # create a new container if it does not yet exist
+            container_uri = get_container_uri(
+                self.storage, container_name
+            )
+        return container_uri
