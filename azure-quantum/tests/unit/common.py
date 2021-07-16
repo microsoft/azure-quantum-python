@@ -53,6 +53,7 @@ class QuantumTestBase(ReplayableTest):
         recording_processors = [
             regex_replacer,
             AccessTokenReplacer(),
+            InteractiveAccessTokenReplacer(),
             SubscriptionRecordingProcessor(ZERO_UID),     
             AuthenticationMetadataFilter(),
             OAuthRequestResponsesFilter(),
@@ -125,11 +126,16 @@ class QuantumTestBase(ReplayableTest):
         regex_replacer.register_regex(
             r"/workspaces/[a-z0-9-]+/", f'/workspaces/{WORKSPACE}/'
         )
-        
+
         regex_replacer.register_regex(r"sig=[0-9a-zA-Z%]+\&", "sig=PLACEHOLDER&")
         regex_replacer.register_regex(r"sv=[^&]+\&", "sv=PLACEHOLDER&")
         regex_replacer.register_regex(r"se=[^&]+\&", "se=PLACEHOLDER&")
-
+        regex_replacer.register_regex(r"client_id=[^&]+\&", "client_id=PLACEHOLDER&")
+        regex_replacer.register_regex(r"claims=[^&]+\&", "claims=PLACEHOLDER&")
+        regex_replacer.register_regex(r"code_verifier=[^&]+\&", "code_verifier=PLACEHOLDER&")
+        regex_replacer.register_regex(r"code=[^&]+\&", "code_verifier=PLACEHOLDER&")
+        regex_replacer.register_regex(r"code=[^&]+\&", "code_verifier=PLACEHOLDER&")
+        
     def setUp(self):
         super(QuantumTestBase, self).setUp()
         # mitigation for issue https://github.com/kevin1024/vcrpy/issues/533
@@ -318,6 +324,29 @@ class AuthenticationMetadataFilter(RecordingProcessor):
         if "/.well-known/openid-configuration" in request.uri or "/common/discovery/instance" in request.uri:
             return None
         return request
+
+
+class InteractiveAccessTokenReplacer(RecordingProcessor):
+    """Replace the access token for interactive authentication in a response body."""
+
+    def __init__(self, replacement='fake_token'):
+        self._replacement = replacement
+
+    def process_response(self, response):
+        import json
+        try:
+            body = json.loads(response['body']['string'])
+            if 'access_token' in body:
+                body['access_token'] = self._replacement
+                for property in ('scope', 'refresh_token',
+                                'foci', 'client_info',
+                                'id_token'):
+                    if property in body:
+                        del body[property]
+        except (KeyError, ValueError):
+            return response
+        response['body']['string'] = json.dumps(body)
+        return response
 
 
 def expected_terms():
