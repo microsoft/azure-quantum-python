@@ -5,7 +5,6 @@ from azure.quantum.target import IonQ
 
 from common import QuantumTestBase, ZERO_UID
 
-
 class TestIonQ(QuantumTestBase):
     """TestIonq
 
@@ -51,6 +50,20 @@ class TestIonQ(QuantumTestBase):
             circuit = self._3_qubit_ghz()
             target = IonQ(workspace=workspace)
             job = target.submit(circuit)
+
+            # Make sure the job is completed before fetching the results
+            # playback currently does not work for repeated calls
+            if not self.is_playback:
+                self.assertEqual(False, job.has_completed())
+                if self.in_recording:
+                    import time
+                    time.sleep(3)
+                job.refresh()
+                job.wait_until_completed()
+                self.assertEqual(True, job.has_completed())
+                job = workspace.get_job(job.id)
+                self.assertEqual(True, job.has_completed())
+
             results = job.get_results()
             assert "histogram" in results
             assert results["histogram"]["0"] == 0.5
