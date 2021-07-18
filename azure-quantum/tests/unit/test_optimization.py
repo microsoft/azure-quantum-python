@@ -407,6 +407,16 @@ class TestSolvers(QuantumTestBase):
             {"type": "linear", "initial": 2.8, "final": 15.8},
             good.params["params"]["beta"],
         )
+    
+    def test_SubstochasticMonteCarlo_parameter_free(self):
+        ws = self.create_workspace()
+        good = SubstochasticMonteCarlo(
+            ws,
+            timeout=10,
+        )
+        self.assertIsNotNone(good)
+        self.assertEqual("microsoft.substochasticmontecarlo-parameterfree.cpu", good.target)
+        self.assertEqual(10, good.params["params"]["timeout"])
 
     def test_SubstochasticMonteCarlo_parameter_free(self):
         ws = self.create_workspace()
@@ -569,6 +579,16 @@ class TestSolvers(QuantumTestBase):
                 ("beta.initial must be greater than 0; "
                  "found beta.initial=-2.0") in str(context.exception))
         self.assertTrue(bad_solver is None)
+
+    def test_PopulationAnnealing_parameter_free(self):
+        ws = self.create_workspace()
+        good = PopulationAnnealing(
+            ws,
+            timeout=8,
+        )
+        self.assertIsNotNone(good)
+        self.assertEqual("microsoft.populationannealing-parameterfree.cpu", good.target)
+        self.assertEqual(8, good.params["params"]["timeout"])
 
     def test_PA_bad_input_params(self):
         beta = 1
