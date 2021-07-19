@@ -7,6 +7,7 @@ from .version import __version__
 
 from .job import *
 from .workspace import *
+from .aio_workspace import AsyncWorkspace
 
 logger = logging.getLogger(__name__)
 logger.info(f"version: {__version__}")

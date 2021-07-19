@@ -1,0 +1,106 @@
+##
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+##
+from datetime import datetime
+import logging
+
+from typing import List, Optional
+
+from azure.quantum._client.aio import QuantumClient
+from azure.quantum._client.aio.operations import JobsOperations, StorageOperations
+from azure.quantum._client.models import BlobDetails, JobStatus
+from azure.quantum import Job
+
+from azure.quantum.workspace import Workspace, BASE_URL
+
+from .version import __version__
+
+logger = logging.getLogger(__name__)
+
+__all__ = ["AsyncWorkspace"]
+
+
+class AsyncWorkspace(Workspace):
+
+    credentials = None
+
+    def _create_client(self) -> QuantumClient:
+        base_url = BASE_URL(self.location)
+        logger.debug(
+            f"Creating client for: subs:{self.subscription_id},"
+            + f"rg={self.resource_group}, ws={self.name}, frontdoor={base_url}"
+        )
+
+        client = QuantumClient(
+            credential=self.credentials,
+            subscription_id=self.subscription_id,
+            resource_group_name=self.resource_group,
+            workspace_name=self.name,
+            base_url=base_url,
+        )
+        return client
+
+    def _create_jobs_client(self) -> JobsOperations:
+        client = self._create_client().jobs
+        return client
+
+    def _create_workspace_storage_client(self) -> StorageOperations:
+        client = self._create_client().storage
+        return client
+
+    async def _get_linked_storage_sas_uri(
+        self, container_name: str, blob_name: str = None
+    ) -> str:
+        """
+        Calls the service and returns a container sas url
+        """
+        client = self._create_workspace_storage_client()
+        blob_details = BlobDetails(
+            container_name=container_name, blob_name=blob_name
+        )
+        container_uri = await client.sas_uri(blob_details=blob_details)
+
+        logger.debug(f"Container URI from service: {container_uri}")
+        return container_uri.sas_uri
+
+    async def submit_job(self, job: Job) -> Job:
+        client = self._create_jobs_client()
+        details = await client.create(
+            job.details.id, job.details
+        )
+        return Job(self, details)
+
+    async def cancel_job(self, job: Job) -> Job:
+        client = self._create_jobs_client()
+        await client.cancel(job.details.id)
+        details = await client.get(job.id)
+        return Job(self, details)
+
+    async def get_job(self, job_id: str) -> Job:
+        """Returns the job corresponding to the given id."""
+        client = self._create_jobs_client()
+        details = await client.get(job_id)
+        return Job(self, details)
+
+    async def list_jobs(
+        self, 
+        name_match: str = None, 
+        status: Optional[JobStatus] = None,
+        created_after: Optional[datetime] = None
+    ) -> List[Job]:
+        """Returns list of jobs that meet optional (limited) filter criteria. 
+            :param name_match: regex expression for job name matching
+            :param status: filter by job status
+            :param created_after: filter jobs after time of job creation
+        """
+        client = self._create_jobs_client()
+        jobs = client.list()
+
+        result = []
+        async for j in jobs:
+            deserialized_job = Job(self, j)
+            if deserialized_job.matches_filter(name_match, status, created_after):
+                result.append(deserialized_job)
+
+        return result
