@@ -22,7 +22,7 @@ if ($null -eq $PackageDirs) {
 }
 
 if ($null -eq $EnvNames) {
-  $EnvNames = $PackageDirs
+  $EnvNames = $PackageDirs | ForEach-Object {$_.replace("-", "")}
   Write-Host "##[info]No EnvNames. Setting to default '$EnvNames'"
 }
 
