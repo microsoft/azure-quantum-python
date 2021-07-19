@@ -244,25 +244,27 @@ class CustomRecordingProcessor(RecordingProcessor):
                                          flags=re.IGNORECASE | re.MULTILINE),
                              new))
 
+    def regex_replace_all(self, value: str):
+        for oldRegex, new in self._regexes:
+            value = oldRegex.sub(new, value)
+        return value
+
     def process_request(self, request):
         headers = {}
         for key in request.headers:
             if key.lower() in self.ALLOW_HEADERS:
-                headers[key] = request.headers[key]
+                headers[key] = self.regex_replace_all(request.headers[key])
         request.headers = headers
 
-        for oldRegex, new in self._regexes:
-            request.uri = oldRegex.sub(new, request.uri)
+        request.uri = self.regex_replace_all(request.uri)
 
         if _get_content_type(request) == "application/x-www-form-urlencoded":
             body = request.body.decode("utf-8")
-            for oldRegex, new in self._regexes:
-                body = oldRegex.sub(new, body)
+            body = self.regex_replace_all(body)
             request.body = body.encode("utf-8")
         else:
             body = str(request.body)
-            for oldRegex, new in self._regexes:
-                body = oldRegex.sub(new, body)
+            body = self.regex_replace_all(body)
             request.body = body
 
         return request
@@ -288,7 +290,11 @@ class CustomRecordingProcessor(RecordingProcessor):
         headers = {}
         for key in response["headers"]:
             if key.lower() in self.ALLOW_HEADERS:
-                headers[key.lower()] = response["headers"][key]
+                new_header_values = []
+                for old_header_value in response["headers"][key]:
+                    new_header_value = self.regex_replace_all(old_header_value)
+                    new_header_values.append(new_header_value)
+                headers[key] = new_header_values
         response["headers"] = headers
 
         content_type = self._get_content_type(response)
@@ -298,8 +304,7 @@ class CustomRecordingProcessor(RecordingProcessor):
             if not isinstance(body, six.string_types):
                 body = body.decode("utf-8")
             if body:
-                for oldRegex, new in self._regexes:
-                    body = oldRegex.sub(new, body)
+                body = self.regex_replace_all(body)
                 response["body"]["string"] = body
 
         return response
