@@ -7,7 +7,7 @@ import azure.quantum
 
 from typing import List, Union, Any, Optional
 from enum import Enum
-from azure.quantum import Workspace, Job
+from azure.quantum import AsyncWorkspace, Workspace, Job, AsyncJob
 from azure.quantum._client.models import JobDetails
 from azure.quantum.optimization import Problem
 from azure.quantum.storage import (
@@ -20,6 +20,7 @@ logger = logging.getLogger(__name__)
 __all__ = [
     "RangeSchedule",
     "Solver",
+    "AsyncSolver",
     "ParallelTempering",
     "SimulatedAnnealing",
     "HardwarePlatform",
@@ -78,20 +79,9 @@ class Solver:
     SWEEPS_WARNING = 10000
     TIMEOUT_WARNING = 600
 
-    def submit(
+    def _jobdetails_from_problem(
         self, problem: Union[str, Problem], compress: bool = True
-    ) -> Job:
-        """Submits a job to execution to the associated
-        Azure Quantum Workspace.
-
-        :param problem:
-            The Problem to solve. It can be an instance of a Problem,
-            or the URL of an Azure Storage Blob where the serialized version
-            of a Problem has been uploaded.
-        :param compress:
-            Whether or not to compress the problem when uploading it
-            the Blob Storage.
-        """
+    ) -> JobDetails:
         # Create a container URL:
         job_id = Job.create_job_id()
         logger.info(f"Submitting job with id: {job_id}")
@@ -151,8 +141,23 @@ class Solver:
         )
 
         logger.debug(f"==> submitting: {details}")
-        job = self.workspace.submit_job(Job(self.workspace, details))
-        return job
+        return details
+
+    def submit(
+        self, problem: Union[str, Problem], compress: bool = True
+    ) -> Job:
+        """Submits a job to execution to the associated
+        Azure Quantum Workspace.
+
+        :param problem:
+            The Problem to solve. It can be an instance of a Problem,
+            or the URL of an Azure Storage Blob where the serialized version
+            of a Problem has been uploaded.
+        :param compress:
+            Whether or not to compress the problem when uploading it
+            the Blob Storage.
+        """
+        return self.workspace.submit_job(Job(self.workspace, self._jobdetails_from_problem(problem, compress=compress)))
 
     def optimize(self, problem: Union[str, Problem]):
         """Submits the Problem to the associated
@@ -373,6 +378,49 @@ class Solver:
                     f"{lower_bound_inclusive}; found "
                     f"{parameter_name}={parameter_value}."
                 )
+
+
+class AsyncSolver(Solver):
+
+    workspace: AsyncWorkspace
+
+    async def submit(
+        self, problem: Union[str, Problem], compress: bool = True
+    ) -> AsyncJob:
+        """Submits a job to execution to the associated
+        Azure Quantum Workspace.
+
+        :param problem:
+            The Problem to solve. It can be an instance of a Problem,
+            or the URL of an Azure Storage Blob where the serialized version
+            of a Problem has been uploaded.
+        :param compress:
+            Whether or not to compress the problem when uploading it
+            the Blob Storage.
+        """
+        return await self.workspace.submit_job(
+            AsyncJob(
+                workspace=self.workspace, 
+                job_details=self._jobdetails_from_problem(problem, compress=compress)
+            )
+        )
+
+    async def optimize(self, problem: Union[str, Problem]):
+        """Submits the Problem to the associated
+            Azure Quantum Workspace and get the results.
+
+        :param problem:
+            The Problem to solve. It can be an instance of a Problem,
+            or the URL of an Azure Storage Blob where the serialized version
+            of a Problem has been uploaded.
+        """
+        if not isinstance(problem, str):
+            self.check_submission_warnings(problem)
+
+        job = await self.submit(problem)
+        logger.info(f"Submitted job: '{job.id}'")
+
+        return await job.get_results()
 
 
 class HardwarePlatform(Enum):

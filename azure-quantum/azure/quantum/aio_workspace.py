@@ -9,8 +9,8 @@ from typing import List, Optional
 
 from azure.quantum._client.aio import QuantumClient
 from azure.quantum._client.aio.operations import JobsOperations, StorageOperations
-from azure.quantum._client.models import BlobDetails, JobStatus
-from azure.quantum import Job
+from azure.quantum._client.models import JobStatus
+from azure.quantum import AsyncJob
 
 from azure.quantum.workspace import Workspace, BASE_URL
 
@@ -49,46 +49,31 @@ class AsyncWorkspace(Workspace):
         client = self._create_client().storage
         return client
 
-    async def _get_linked_storage_sas_uri(
-        self, container_name: str, blob_name: str = None
-    ) -> str:
-        """
-        Calls the service and returns a container sas url
-        """
-        client = self._create_workspace_storage_client()
-        blob_details = BlobDetails(
-            container_name=container_name, blob_name=blob_name
-        )
-        container_uri = await client.sas_uri(blob_details=blob_details)
-
-        logger.debug(f"Container URI from service: {container_uri}")
-        return container_uri.sas_uri
-
-    async def submit_job(self, job: Job) -> Job:
+    async def submit_job(self, job: AsyncJob) -> AsyncJob:
         client = self._create_jobs_client()
         details = await client.create(
             job.details.id, job.details
         )
-        return Job(self, details)
+        return AsyncJob(self, details)
 
-    async def cancel_job(self, job: Job) -> Job:
+    async def cancel_job(self, job: AsyncJob) -> AsyncJob:
         client = self._create_jobs_client()
         await client.cancel(job.details.id)
         details = await client.get(job.id)
-        return Job(self, details)
+        return AsyncJob(self, details)
 
-    async def get_job(self, job_id: str) -> Job:
+    async def get_job(self, job_id: str) -> AsyncJob:
         """Returns the job corresponding to the given id."""
         client = self._create_jobs_client()
         details = await client.get(job_id)
-        return Job(self, details)
+        return AsyncJob(self, details)
 
     async def list_jobs(
         self, 
         name_match: str = None, 
         status: Optional[JobStatus] = None,
         created_after: Optional[datetime] = None
-    ) -> List[Job]:
+    ) -> List[AsyncJob]:
         """Returns list of jobs that meet optional (limited) filter criteria. 
             :param name_match: regex expression for job name matching
             :param status: filter by job status
@@ -99,7 +84,7 @@ class AsyncWorkspace(Workspace):
 
         result = []
         async for j in jobs:
-            deserialized_job = Job(self, j)
+            deserialized_job = AsyncJob(self, j)
             if deserialized_job.matches_filter(name_match, status, created_after):
                 result.append(deserialized_job)
 
