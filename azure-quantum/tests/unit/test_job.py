@@ -21,6 +21,7 @@ import azure.quantum.optimization as microsoft
 import azure.quantum.optimization.oneqbit as oneqbit
 import azure.quantum.optimization.toshiba as toshiba
 
+
 SOLVER_TYPES = [
     functools.partial(microsoft.SimulatedAnnealing, beta_start=0),
     functools.partial(microsoft.ParallelTempering, sweeps=100),
@@ -136,10 +137,12 @@ class TestJob(QuantumTestBase):
             return_value=self.get_test_job_id(),
         ):
             workspace = self.create_workspace()
+            # Upload the blob data
             input_data_uri = problem.upload(
                 workspace=workspace,
                 blob_name="inputData",
-                compress=False
+                compress=False,
+                container_name=f"qc-test-{self.get_test_job_id()}"
             )
 
         for solver_type in get_solver_types():
@@ -150,6 +153,7 @@ class TestJob(QuantumTestBase):
                 self.mock_create_job_id_name,
                 return_value=self.get_test_job_id(),
             ):
+                # Submit the blob data URI and run job
                 job = solver.submit(input_data_uri)
 
     @pytest.mark.skipif(not(os.environ.get("AZURE_QUANTUM_1QBIT", "") == "1"), reason="1Qbit tests not enabled")
