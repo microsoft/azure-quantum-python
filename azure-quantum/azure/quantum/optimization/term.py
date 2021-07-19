@@ -213,6 +213,32 @@ class GroupedTerm(GenTerm):
         GenTerm.__init__(self, w=w, c=c)
         self.type = type
         self.terms = terms
+        self.validate()
+    
+    def validate(self):
+        if self.type is GroupType.squared_linear_combination:
+            # Check linearity of terms and that like terms are combined
+            seen = set()
+            for term in self.terms:
+                if len(term.ids) > 1:
+                    # Nonlinear term
+                    raise ValueError(
+                        "Error - nonlinear term in Term with type {}".format(self.type)
+                    )
+                elif len(term.ids) == 1:
+                    # Linear term
+                    id = term.ids[0]
+                else:
+                    # Constant term
+                    id = -1
+                if id in seen:
+                    raise ValueError(
+                        "Error - uncombined like terms in Term with type {}".format(self.type)
+                    )
+                else:
+                    seen.add(id)
+        else:
+            pass
 
     def to_dict(self):
         return {
@@ -293,6 +319,7 @@ class GroupedTerm(GenTerm):
             return None
 
         # GroupType simplifications when new_terms has a single element
+        # Further simplifications require knowledge of binary vs. spin setting
         if len(new_terms) == 1:
             term = new_terms[0]
             if self.type is GroupType.combination:

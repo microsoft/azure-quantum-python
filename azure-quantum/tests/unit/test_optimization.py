@@ -117,6 +117,23 @@ class TestProblem(QuantumTestBase):
             problem.terms[-1]
         )
 
+    def test_errant_grouped_terms(self):
+        with self.assertRaises(ValueError):
+            _ = GroupedTerm(
+                GroupType.squared_linear_combination,
+                [Term(c=i+2, indices=[i%2]) for i in range(3)], c=1
+            )
+        with self.assertRaises(ValueError):
+            _ = GroupedTerm(
+                GroupType.squared_linear_combination,
+                [Term(c=i+1, indices=[i, i+1]) for i in range(2)], c=1
+            )
+        with self.assertRaises(ValueError):
+            _ = GroupedTerm(
+                GroupType.squared_linear_combination,
+                [Term(c=i, indices=[]) for i in range(1,3)], c=1
+            )
+
     def test_serialization_cterms(self):
         count = 2
         terms = []
