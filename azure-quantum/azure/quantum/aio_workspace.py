@@ -23,8 +23,6 @@ __all__ = ["AsyncWorkspace"]
 
 class AsyncWorkspace(Workspace):
 
-    credentials = None
-
     def _create_client(self) -> QuantumClient:
         base_url = BASE_URL(self.location)
         logger.debug(
