@@ -9,7 +9,7 @@ from typing import List, Optional
 
 from azure.quantum._client.aio import QuantumClient
 from azure.quantum._client.aio.operations import JobsOperations, StorageOperations
-from azure.quantum._client.models import JobStatus
+from azure.quantum._client.models import BlobDetails, JobStatus
 from azure.quantum import AsyncJob
 
 from azure.quantum.workspace import Workspace, BASE_URL
@@ -48,6 +48,21 @@ class AsyncWorkspace(Workspace):
     def _create_workspace_storage_client(self) -> StorageOperations:
         client = self._create_client().storage
         return client
+
+    async def _get_linked_storage_sas_uri(
+        self, container_name: str, blob_name: str = None
+    ) -> str:
+        """
+        Calls the service and returns a container sas url
+        """
+        client = self._create_workspace_storage_client()
+        blob_details = BlobDetails(
+            container_name=container_name, blob_name=blob_name
+        )
+        container_uri = await client.sas_uri(blob_details=blob_details)
+
+        logger.debug(f"Container URI from service: {container_uri}")
+        return container_uri.sas_uri
 
     async def submit_job(self, job: AsyncJob) -> AsyncJob:
         client = self._create_jobs_client()

@@ -80,34 +80,10 @@ class Solver:
     TIMEOUT_WARNING = 600
 
     def _jobdetails_from_problem(
-        self, problem: Union[str, Problem], compress: bool = True
+        self, container_name: str, job_id: str,
+        container_uri: str, problem: Union[str, Problem],
+        compress: bool = True
     ) -> JobDetails:
-        # Create a container URL:
-        job_id = Job.create_job_id()
-        logger.info(f"Submitting job with id: {job_id}")
-
-        container_name = f"job-{job_id}"
-
-        if not self.workspace.storage:
-            # No storage account is passed, in this
-            # case, get linked account from the service
-            container_uri = self.workspace._get_linked_storage_sas_uri(
-                container_name
-            )
-            container_client = ContainerClient.from_container_url(
-                container_uri
-            )
-            create_container_using_client(container_client)
-            container_uri = azure.quantum.storage.remove_sas_token(
-                container_uri
-            )
-        else:
-            # Storage account is passed, use it to generate a container_uri
-            container_uri = azure.quantum.storage.get_container_uri(
-                self.workspace.storage, container_name
-            )
-
-        logger.debug(f"Container URI: {container_uri}")
 
         if isinstance(problem, str):
             name = "Optimization problem"
@@ -157,7 +133,32 @@ class Solver:
             Whether or not to compress the problem when uploading it
             the Blob Storage.
         """
-        return self.workspace.submit_job(Job(self.workspace, self._jobdetails_from_problem(problem, compress=compress)))
+        # Create a container URL:
+        job_id = Job.create_job_id()
+        logger.info(f"Submitting job with id: {job_id}")
+
+        container_name = f"job-{job_id}"
+        if not self.workspace.storage:
+            # No storage account is passed, in this
+            # case, get linked account from the service
+            container_uri = self.workspace._get_linked_storage_sas_uri(
+                container_name
+            )
+            container_client = ContainerClient.from_container_url(
+                container_uri
+            )
+            create_container_using_client(container_client)
+            container_uri = azure.quantum.storage.remove_sas_token(
+                container_uri
+            )
+        else:
+            # Storage account is passed, use it to generate a container_uri
+            container_uri = azure.quantum.storage.get_container_uri(
+                self.workspace.storage, container_name
+            )
+
+        logger.debug(f"Container URI: {container_uri}")
+        return self.workspace.submit_job(Job(self.workspace, self._jobdetails_from_problem(container_name, job_id, container_uri, problem, compress=compress)))
 
     def optimize(self, problem: Union[str, Problem]):
         """Submits the Problem to the associated
@@ -398,10 +399,38 @@ class AsyncSolver(Solver):
             Whether or not to compress the problem when uploading it
             the Blob Storage.
         """
+        # Create a container URL:
+        job_id = Job.create_job_id()
+        logger.info(f"Submitting job with id: {job_id}")
+
+        container_name = f"job-{job_id}"
+        if not self.workspace.storage:
+            # No storage account is passed, in this
+            # case, get linked account from the service
+            container_uri = await self.workspace._get_linked_storage_sas_uri(
+                container_name
+            )
+            container_client = ContainerClient.from_container_url(
+                container_uri
+            )
+            create_container_using_client(container_client)
+            container_uri = azure.quantum.storage.remove_sas_token(
+                container_uri
+            )
+        else:
+            # Storage account is passed, use it to generate a container_uri
+            container_uri = azure.quantum.storage.get_container_uri(
+                self.workspace.storage, container_name
+            )
+
+        logger.debug(f"Container URI: {container_uri}")
         return await self.workspace.submit_job(
             AsyncJob(
                 workspace=self.workspace, 
-                job_details=self._jobdetails_from_problem(problem, compress=compress)
+                job_details=self._jobdetails_from_problem(
+                    container_name, job_id, container_uri, 
+                    problem, compress=compress
+                )
             )
         )
 
