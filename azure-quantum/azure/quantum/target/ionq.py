@@ -45,7 +45,8 @@ class IonQ(Target):
         self,
         circuit: Dict[str, Any],
         name: str = "ionq-job",
-        num_shots: int = None
+        num_shots: int = None,
+        input_params: Dict[str, Any] = None
     ) -> Job:
         """Submit an IonQ circuit (JSON format)
 
@@ -53,18 +54,19 @@ class IonQ(Target):
         :type circuit: Dict[str, Any]
         :param name: Job name
         :type name: str
-        :param num_shots: Number of shots
+        :param num_shots: Number of shots, defaults to None
         :type num_shots: int
+        :param input_params: Optional input params dict
+        :type input_params: Dict[str, Any]
         :return: Azure Quantum job
         :rtype: Job
         """
         blob = self._encode_input_data(circuit)
-        if num_shots is not None:
-            input_params = {
-                "shots": num_shots
-            }
-        else:
+        if input_params is None:
             input_params = {}
+        if num_shots is not None:
+            input_params = input_params.copy()
+            input_params["shots"] = num_shots
 
         return self._submit_encoded_input_data(
             input_data=blob,

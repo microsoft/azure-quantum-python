@@ -77,7 +77,8 @@ class Target(abc.ABC):
     def submit(
         self,
         input_data: Any,
-        name: str = "azure-quantum-job"
+        name: str = "azure-quantum-job",
+        input_params: Dict[str, Any] = None
     ) -> Job:
         """Submit input data and return Job
 
@@ -85,8 +86,15 @@ class Target(abc.ABC):
         :type input_data: Any
         :param name: Job name
         :type name: str
+        :param input_params: Input parameters
+        :type input_params: Dict[str, Any]
         :return: Azure Quantum job
         :rtype: Job
         """
+        input_params = input_params or {}
         blob = self._encode_input_data(data=input_data)
-        return self._submit_encoded_input_data(input_data=blob, name=name)
+        return self._submit_encoded_input_data(
+            input_data=blob,
+            name=name,
+            input_params=input_params
+        )
