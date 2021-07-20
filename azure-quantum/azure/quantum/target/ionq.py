@@ -44,7 +44,7 @@ class IonQ(Target):
     def submit(
         self,
         circuit: Dict[str, Any],
-        name: str = None
+        name: str = "ionq-job"
     ) -> Job:
         """Submit an IonQ circuit (JSON format)
 

@@ -49,7 +49,7 @@ class TestIonQ(QuantumTestBase):
             workspace = self.create_workspace()
             circuit = self._3_qubit_ghz()
             target = IonQ(workspace=workspace)
-            job = target.submit(circuit)
+            job = target.submit(circuit, name="ionq-3ghz-job")
 
             # Make sure the job is completed before fetching the results
             # playback currently does not work for repeated calls
