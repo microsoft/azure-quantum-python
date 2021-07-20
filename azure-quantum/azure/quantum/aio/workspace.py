@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 ##
+import asyncio
 from datetime import datetime
 import logging
 
@@ -10,18 +11,16 @@ from typing import List, Optional
 from azure.quantum._client.aio import QuantumClient
 from azure.quantum._client.aio.operations import JobsOperations, StorageOperations
 from azure.quantum._client.models import BlobDetails, JobStatus
-from azure.quantum import AsyncJob
+from azure.quantum.aio.job import Job
 
-from azure.quantum.workspace import Workspace, BASE_URL
-
-from .version import __version__
+from azure.quantum.workspace import Workspace as SyncWorkspace, BASE_URL
 
 logger = logging.getLogger(__name__)
 
-__all__ = ["AsyncWorkspace"]
+__all__ = ["Workspace"]
 
 
-class AsyncWorkspace(Workspace):
+class Workspace(SyncWorkspace):
 
     def _create_client(self) -> QuantumClient:
         base_url = BASE_URL(self.location)
@@ -47,7 +46,7 @@ class AsyncWorkspace(Workspace):
         client = self._create_client().storage
         return client
 
-    async def _get_linked_storage_sas_uri(
+    def _get_linked_storage_sas_uri(
         self, container_name: str, blob_name: str = None
     ) -> str:
         """
@@ -57,36 +56,36 @@ class AsyncWorkspace(Workspace):
         blob_details = BlobDetails(
             container_name=container_name, blob_name=blob_name
         )
-        container_uri = await client.sas_uri(blob_details=blob_details)
-
+        loop = asyncio.get_event_loop()
+        container_uri = loop.run_until_complete(client.sas_uri(blob_details=blob_details))
         logger.debug(f"Container URI from service: {container_uri}")
         return container_uri.sas_uri
 
-    async def submit_job(self, job: AsyncJob) -> AsyncJob:
+    async def submit_job(self, job: Job) -> Job:
         client = self._create_jobs_client()
         details = await client.create(
             job.details.id, job.details
         )
-        return AsyncJob(self, details)
+        return Job(self, details)
 
-    async def cancel_job(self, job: AsyncJob) -> AsyncJob:
+    async def cancel_job(self, job: Job) -> Job:
         client = self._create_jobs_client()
         await client.cancel(job.details.id)
         details = await client.get(job.id)
-        return AsyncJob(self, details)
+        return Job(self, details)
 
-    async def get_job(self, job_id: str) -> AsyncJob:
+    async def get_job(self, job_id: str) -> Job:
         """Returns the job corresponding to the given id."""
         client = self._create_jobs_client()
         details = await client.get(job_id)
-        return AsyncJob(self, details)
+        return Job(self, details)
 
     async def list_jobs(
         self, 
         name_match: str = None, 
         status: Optional[JobStatus] = None,
         created_after: Optional[datetime] = None
-    ) -> List[AsyncJob]:
+    ) -> List[Job]:
         """Returns list of jobs that meet optional (limited) filter criteria. 
             :param name_match: regex expression for job name matching
             :param status: filter by job status
@@ -97,7 +96,7 @@ class AsyncWorkspace(Workspace):
 
         result = []
         async for j in jobs:
-            deserialized_job = AsyncJob(self, j)
+            deserialized_job = Job(self, j)
             if deserialized_job.matches_filter(name_match, status, created_after):
                 result.append(deserialized_job)
 

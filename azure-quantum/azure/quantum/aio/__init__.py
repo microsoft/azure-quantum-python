@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 ##
 import logging
-from .version import __version__
+from azure.quantum.version import __version__
 
 from .job import *
 from .workspace import *
