@@ -639,6 +639,7 @@ class PopulationAnnealing(Solver):
         population: Optional[int] = None,
         sweeps: Optional[int] = None,
         beta: Optional[RangeSchedule] = None,
+        timeout: Optional[int] = None,
     ):
         """Constructor of the Population Annealing solver.
 
@@ -661,9 +662,17 @@ class PopulationAnnealing(Solver):
             Evolution of the inverse annealing temperature.
             Must be an object of type RangeSchedule describing
             an increasing evolution (0 < initial < final).
+        :param timeout:
+            specifies maximum number of seconds to run the core solver
+            loop. initialization time does not respect this value, so the
+            solver may run longer than the value specified. Setting this value
+            will trigger the parameter free population annealing solver.
         """
 
-        target = "microsoft.populationannealing.cpu"
+        if timeout is None:
+            target = "microsoft.populationannealing.cpu" 
+        else:
+            target = "microsoft.populationannealing-parameterfree.cpu"
         super().__init__(
             workspace=workspace,
             provider="Microsoft",
@@ -679,6 +688,7 @@ class PopulationAnnealing(Solver):
         self.check_set_schedule(
                 "beta", beta, evolution=self.ScheduleEvolution.INCREASING,
                 lower_bound_exclusive=0)
+        self.check_set_positive_int("timeout", timeout)
 
 
 class SubstochasticMonteCarlo(Solver):
