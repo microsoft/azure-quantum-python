@@ -50,6 +50,7 @@ class IonQBackend(Backend):
         logger.info(f"Submitting job with id '{job.id()}' for circuit '{circuit.name}':")
         logger.info(input_data)
 
+        job._azure_job.details.metadata = { "qubits": str(circuit.num_qubits) }
         job.submit()
         return job
 

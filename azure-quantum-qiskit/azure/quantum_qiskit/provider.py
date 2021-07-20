@@ -10,8 +10,12 @@ from .job import AzureQuantumJob
 from .backends import IonQSimulatorBackend, IonQQPUBackend
 
 class AzureQuantumProvider(Provider):
-    def __init__(self, workspace):
+    def __init__(self, workspace = None, **kwargs):
         self._backends = None
+        if workspace is None:
+            kwargs.setdefault('user_agent', 'azure-quantum-qiskit')
+            workspace = Workspace(**kwargs)
+
         self._workspace = workspace
 
     def get_workspace(self) -> Workspace:

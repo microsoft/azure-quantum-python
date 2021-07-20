@@ -1,21 +1,17 @@
+##
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+##
 from qiskit import QuantumCircuit
-from qiskit.providers import JobStatus
-
-from azure.quantum import Workspace
 from azure.quantum_qiskit import AzureQuantumProvider
 
-from azure.identity import AzureCliCredential
-import time
+from utils import plot_results
 
-from qiskit.providers import backend
-
-# Azure Quantum Target
-workspace = Workspace(
+# Azure Quantum Provider
+provider = AzureQuantumProvider(
   resource_id="/subscriptions/916dfd6d-030c-4bd9-b579-7bb6d1926e97/resourceGroups/anpaz-demos/providers/Microsoft.Quantum/Workspaces/demo15",
-  location="westus",
-  credential=AzureCliCredential()
+  location="westus"
 )
-provider = AzureQuantumProvider(workspace)
 
 # Show all current supported backends in this workspace:
 print([backend.name() for backend in provider.backends()])
@@ -39,17 +35,19 @@ print("======================================================")
 # Submit the circuit to run on Azure Quantum
 job = simulator_backend.run(circuit, shots=250)
 id = job.id()
-print(id)
+print("Job id", id)
 #exit()
 
 # Get the job results (this method waits for the Job to complete):
 result = job.result()
+histogram = result.results['histogram']
+print()
+print("Results histogram", histogram)
 
-# Print the results.
-print(result)
+# Show the histogram as a plot:
+plot_results(job)
 
-# fetch an existing job:
-job = provider.get_job(id)
-result = job.result()
-print(result)
-exit()
+
+# fetch an existing job and show the results:
+job = provider.get_job('256f02ca-e934-11eb-87f9-2816a847b9a3')
+plot_results(job)

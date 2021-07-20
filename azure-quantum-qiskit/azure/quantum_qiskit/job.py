@@ -57,12 +57,12 @@ class AzureQuantumJob(JobV1):
         azResult = self._azure_job.get_results()
 
         return Result(
-            self._backend.name(),
-            self._backend.version,
-            self._circuit.name,
-            self._azure_job.details.id,
-            True,
-            azResult)
+            backend_name=self._backend.name(),
+            backend_version=self._backend.version,
+            qobj_id=self._azure_job.details.name,
+            job_id=self._azure_job.details.id,
+            success=True,
+            results=azResult)
 
     def cancel(self):
         """Attempt to cancel the job."""
