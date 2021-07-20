@@ -5,7 +5,6 @@
 from datetime import datetime, timezone
 import logging
 import time
-import asyncio
 import json
 import re
 import uuid
@@ -16,9 +15,8 @@ from urllib.parse import urlparse
 from azure.quantum._client.models import JobDetails, JobStatus
 from azure.quantum.storage import download_blob
 from azure.storage.blob import BlobClient
-from azure.storage.blob.aio import BlobClient as AsyncBlobClient
 
-__all__ = ["Job", "AsyncJob"]
+__all__ = ["Job"]
 
 logger = logging.getLogger(__name__)
 
