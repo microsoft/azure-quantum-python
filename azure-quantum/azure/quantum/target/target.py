@@ -44,7 +44,8 @@ class Target(abc.ABC):
         self,
         input_data: bytes,
         name: str,
-        blob_name: str = "inputData"
+        blob_name: str = "inputData",
+        **kwargs
     ) -> Job:
         """Submit blob data to the Azure Quantum service
 
@@ -67,7 +68,8 @@ class Target(abc.ABC):
             encoding=self.encoding,
             provider_id=self.provider_id,
             input_data_format=self.input_data_format,
-            output_data_format=self.output_data_format
+            output_data_format=self.output_data_format,
+            **kwargs
         )
         job.submit()
         return job
@@ -75,7 +77,8 @@ class Target(abc.ABC):
     def submit(
         self,
         input_data: Any,
-        name: str = None
+        name: str = "azure-quantum-job",
+        input_params: Dict[str, Any] = None
     ) -> Job:
         """Submit input data and return Job
 
@@ -83,8 +86,15 @@ class Target(abc.ABC):
         :type input_data: Any
         :param name: Job name
         :type name: str
+        :param input_params: Input parameters
+        :type input_params: Dict[str, Any]
         :return: Azure Quantum job
         :rtype: Job
         """
+        input_params = input_params or {}
         blob = self._encode_input_data(data=input_data)
-        return self._submit_encoded_input_data(input_data=blob, name=name)
+        return self._submit_encoded_input_data(
+            input_data=blob,
+            name=name,
+            input_params=input_params
+        )

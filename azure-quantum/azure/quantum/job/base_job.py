@@ -54,7 +54,8 @@ class BaseJob(abc.ABC):
         provider_id: str = None,
         input_data_format: str = None,
         output_data_format: str = None,
-        input_params: Dict[str, Any] = None
+        input_params: Dict[str, Any] = None,
+        **kwargs
     ) -> "BaseJob":
         """Create a new Azure Quantum job based on a raw input_data payload.
 
@@ -120,7 +121,8 @@ class BaseJob(abc.ABC):
             input_data_format=input_data_format,
             output_data_format=output_data_format,
             provider_id=provider_id,
-            input_params=input_params
+            input_params=input_params,
+            **kwargs
         )
 
     @classmethod
@@ -135,7 +137,8 @@ class BaseJob(abc.ABC):
         output_data_format: str,
         container_uri: str = None,
         job_id: str = None,
-        input_params: Dict[str, Any] = None
+        input_params: Dict[str, Any] = None,
+        **kwargs
     ) -> "BaseJob":
         """Create new Job from URI if input data is already uploaded
         to blob storage
@@ -185,7 +188,7 @@ class BaseJob(abc.ABC):
             target=target,
             input_params=input_params
         )
-        return cls(workspace, details)
+        return cls(workspace, details, **kwargs)
 
     @staticmethod
     def upload_input_data(
