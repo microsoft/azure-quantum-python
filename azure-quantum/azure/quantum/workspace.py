@@ -69,6 +69,7 @@ else:
     AAD_CLIENT_ID = "84ba0947-6c53-4dd2-9ca9-b3694761521b"
     AAD_SCOPES = ["https://quantum.microsoft.com/Jobs.ReadWrite"]
 
+
 class Workspace:
     """Represents an Azure Quantum workspace.
 

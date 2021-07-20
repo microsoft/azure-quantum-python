@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 ##
-import asyncio
 from datetime import datetime
 import logging
 import re
@@ -15,14 +14,14 @@ from azure.quantum._client.aio.operations import JobsOperations, StorageOperatio
 from azure.quantum._client.models import BlobDetails, JobStatus
 from azure.quantum.aio.job import Job
 
-from azure.quantum.workspace import Workspace as SyncWorkspace, BASE_URL, ARM_BASE_URL
+from azure.quantum.workspace import BASE_URL, ARM_BASE_URL
 
 logger = logging.getLogger(__name__)
 
 __all__ = ["Workspace"]
 
 
-class Workspace(SyncWorkspace):
+class Workspace:
     """Represents an Azure Quantum workspace.
 
     When creating a Workspace object, callers have two options for identifying
@@ -150,7 +149,7 @@ class Workspace(SyncWorkspace):
         client = self._create_client().storage
         return client
 
-    def _get_linked_storage_sas_uri(
+    async def _get_linked_storage_sas_uri(
         self, container_name: str, blob_name: str = None
     ) -> str:
         """
@@ -160,8 +159,7 @@ class Workspace(SyncWorkspace):
         blob_details = BlobDetails(
             container_name=container_name, blob_name=blob_name
         )
-        loop = asyncio.get_event_loop()
-        container_uri = loop.run_until_complete(client.sas_uri(blob_details=blob_details))
+        container_uri = await client.sas_uri(blob_details=blob_details)
         logger.debug(f"Container URI from service: {container_uri}")
         return container_uri.sas_uri
 

@@ -5,13 +5,17 @@
 import logging
 import asyncio
 import json
+import re
+import uuid
+from datetime import datetime, timezone
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 from urllib.parse import urlparse
 
-from azure.quantum.job import Job as SyncJob
-from azure.quantum._client.models import JobDetails
+from azure.quantum._client.models import JobDetails, JobStatus
+from azure.quantum.aio.storage import download_blob
 from azure.storage.blob.aio import BlobClient
+
 
 __all__ = ["Job"]
 
@@ -21,7 +25,7 @@ if TYPE_CHECKING:
     from azure.quantum.aio.workspace import Workspace
 
 
-class Job(SyncJob):
+class Job:
     """Azure Quantum Job that is submitted to a given Workspace.
 
     :param workspace: Workspace instance to submit job to
@@ -41,6 +45,13 @@ class Job(SyncJob):
         """Refreshes the Job's details by querying the workspace."""
         self.details = (await self.workspace.get_job(self.id)).details
 
+    def has_completed(self):
+        return (
+            self.details.status == "Succeeded"
+            or self.details.status == "Failed"
+            or self.details.status == "Cancelled"
+        )
+
     async def wait_until_completed(self, max_poll_wait_secs=30):
         """Keeps refreshing the Job's details
         until it reaches a finished status."""
@@ -59,16 +70,6 @@ class Job(SyncJob):
                 if poll_wait >= max_poll_wait_secs
                 else poll_wait * 1.5
             )
-
-    async def _download_blob(self, blob_url):
-        blob_client = BlobClient.from_blob_url(blob_url)
-        logger.info(
-            f"Downloading blob '{blob_client.blob_name}'"
-            + f"from container '{blob_client.container_name}'"
-            + f"on account: '{blob_client.account_name}'"
-        )
-
-        return (await blob_client.download_blob()).readall()
 
     async def get_results(self):
         if self.results is not None:
@@ -91,13 +92,40 @@ class Job(SyncJob):
             blob_client = BlobClient.from_blob_url(
                 self.details.output_data_uri
             )
-            blob_uri = self.workspace._get_linked_storage_sas_uri(
+            blob_uri = await self.workspace._get_linked_storage_sas_uri(
                 blob_client.container_name, blob_client.blob_name
             )
-            payload = await self._download_blob(blob_uri)
+            payload = await download_blob(blob_uri)
         else:
             # output_data_uri contains SAS token, use it
-            payload = await self._download_blob(self.details.output_data_uri)
+            payload = await download_blob(self.details.output_data_uri)
 
         result = json.loads(payload.decode("utf8"))
         return result
+
+    def matches_filter(
+        self, 
+        name_match: str = None, 
+        status:  Optional[JobStatus] = None,
+        created_after: Optional[datetime] = None
+    ) -> bool:
+        """Checks if job (self) matches the given properties if any.
+            :param name_match: regex expression for job name matching
+            :param status: filter by job status
+            :param created_after: filter jobs after time of job creation
+        """
+        if name_match is not None and re.search(name_match, self.details.name) is None:
+           return False
+        
+        if status is not None and self.details.status != status.value:
+            return False
+        
+        if created_after is not None and self.details.creation_time.replace(tzinfo=timezone.utc) < created_after.replace(tzinfo=timezone.utc):
+            return False
+
+        return True
+
+    @staticmethod
+    def create_job_id() -> str:
+        """Create a unique id for a new job."""
+        return str(uuid.uuid1())

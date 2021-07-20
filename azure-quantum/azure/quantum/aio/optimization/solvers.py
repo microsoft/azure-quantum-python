@@ -3,16 +3,18 @@
 # Licensed under the MIT License.
 ##
 import logging
-import azure.quantum
 
 from typing import List, Union, Optional
 from enum import Enum
 from azure.quantum.aio import Workspace, Job
-from azure.quantum.optimization import Problem, RangeSchedule
+from azure.quantum.aio.optimization import Problem
+from azure.quantum.optimization import RangeSchedule
 from azure.quantum.optimization.solvers import Solver as SyncSolver
-from azure.quantum.storage import (
+from azure.quantum.aio.storage import (
     ContainerClient,
     create_container_using_client,
+    remove_sas_token,
+    get_container_uri,
 )
 
 logger = logging.getLogger(__name__)
@@ -55,19 +57,19 @@ class Solver(SyncSolver):
         if not self.workspace.storage:
             # No storage account is passed, in this
             # case, get linked account from the service
-            container_uri = self.workspace._get_linked_storage_sas_uri(
+            container_uri = await self.workspace._get_linked_storage_sas_uri(
                 container_name
             )
             container_client = ContainerClient.from_container_url(
                 container_uri
             )
-            create_container_using_client(container_client)
-            container_uri = azure.quantum.storage.remove_sas_token(
+            await create_container_using_client(container_client)
+            container_uri = remove_sas_token(
                 container_uri
             )
         else:
             # Storage account is passed, use it to generate a container_uri
-            container_uri = azure.quantum.storage.get_container_uri(
+            container_uri = get_container_uri(
                 self.workspace.storage, container_name
             )
 

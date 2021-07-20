@@ -5,3 +5,4 @@
 ##
 
 from .solvers import *
+from .problem import *
