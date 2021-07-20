@@ -61,6 +61,8 @@ class Job:
                 f"Waiting for job {self.id},"
                 + f"it is in status '{self.details.status}'"
             )
+            if print_progress:
+                print(".", end="", flush=True)
             time.sleep(poll_wait)
             self.refresh()
             poll_wait = (
