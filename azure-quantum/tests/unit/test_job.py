@@ -12,7 +12,7 @@ import time
 import os
 import functools
 import pytest
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta
 
 from common import QuantumTestBase, ZERO_UID
 from azure.quantum import Job
@@ -160,6 +160,10 @@ class TestJob(QuantumTestBase):
 
             before_time = datetime.now() - timedelta(days=100)
             self.assertEqual(True, job.matches_filter(created_after=before_time))    
+
+            # test behaviour of datetime.date object
+            before_date = date.today() - timedelta(days=100)
+            self.assertEqual(True, job.matches_filter(created_after=before_date))
 
     def _test_job_submit(self, solver_type):
         """Tests the job submission and its lifecycle for a given solver.
