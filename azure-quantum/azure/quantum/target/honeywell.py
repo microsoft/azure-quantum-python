@@ -15,12 +15,12 @@ class Honeywell(Target):
     def __init__(
         self,
         workspace: Workspace,
-        target: str = "",
+        target: str = "honeywell.hqs-lt-s1-apival",
         input_data_format: str = "honeywell.openqasm.v1",
         output_data_format: str = "honeywell.quantum-results.v1",
         provider_id: str = "honeywell",
         content_type: str = "application/qasm",
-        encoding: str = "honeywell.hqs-lt-s1-apival"
+        encoding: str = ""
     ):
         super().__init__(
             workspace=workspace,
@@ -41,7 +41,7 @@ class Honeywell(Target):
     def submit(
         self,
         circuit: str,
-        name: str = None
+        name: str = "honeywell-job"
     ) -> Job:
         """Submit a Honeywell program (QASM format)
 

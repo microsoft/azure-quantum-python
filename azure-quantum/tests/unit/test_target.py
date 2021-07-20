@@ -147,3 +147,5 @@ class TestHoneywell(QuantumTestBase):
                 self.assertEqual(True, job.has_completed())
 
             results = job.get_results()
+            assert results["c0"] == ["0"]
+            assert results["c1"] == ["000"]
