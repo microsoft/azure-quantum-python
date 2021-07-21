@@ -141,13 +141,6 @@ class Workspace:
         )
         return client
 
-    def _create_jobs_client(self) -> JobsOperations:
-        client = self._create_client().jobs
-        return client
-
-    def _create_workspace_storage_client(self) -> StorageOperations:
-        client = self._create_client().storage
-        return client
 
     async def _get_linked_storage_sas_uri(
         self, container_name: str, blob_name: str = None
@@ -155,31 +148,31 @@ class Workspace:
         """
         Calls the service and returns a container sas url
         """
-        client = self._create_workspace_storage_client()
-        blob_details = BlobDetails(
-            container_name=container_name, blob_name=blob_name
-        )
-        container_uri = await client.sas_uri(blob_details=blob_details)
-        logger.debug(f"Container URI from service: {container_uri}")
+        async with self._create_client() as client:
+            blob_details = BlobDetails(
+                container_name=container_name, blob_name=blob_name
+            )
+            container_uri = await client.storage.sas_uri(blob_details=blob_details)
+            logger.debug(f"Container URI from service: {container_uri}")
         return container_uri.sas_uri
 
     async def submit_job(self, job: Job) -> Job:
-        client = self._create_jobs_client()
-        details = await client.create(
-            job.details.id, job.details
-        )
+        async with self._create_client() as client:
+            details = await client.jobs.create(
+                job.details.id, job.details
+            )
         return Job(self, details)
 
     async def cancel_job(self, job: Job) -> Job:
-        client = self._create_jobs_client()
-        await client.cancel(job.details.id)
-        details = await client.get(job.id)
+        async with self._create_client() as client:
+            await client.jobs.cancel(job.details.id)
+            details = await client.jobs.get(job.id)
         return Job(self, details)
 
     async def get_job(self, job_id: str) -> Job:
         """Returns the job corresponding to the given id."""
-        client = self._create_jobs_client()
-        details = await client.get(job_id)
+        async with self._create_client() as client:
+            details = await client.jobs.get(job_id)
         return Job(self, details)
 
     async def list_jobs(
@@ -193,13 +186,12 @@ class Workspace:
             :param status: filter by job status
             :param created_after: filter jobs after time of job creation
         """
-        client = self._create_jobs_client()
-        jobs = client.list()
+        async with self._create_client() as client:
+            jobs = client.jobs.list()
 
         result = []
         async for j in jobs:
             deserialized_job = Job(self, j)
             if deserialized_job.matches_filter(name_match, status, created_after):
                 result.append(deserialized_job)
-
         return result
