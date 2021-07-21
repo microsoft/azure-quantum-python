@@ -84,7 +84,7 @@ class TestProblem(QuantumTestBase):
             problem.terms[-1]
         )
 
-        problem.add_terms(subterms, type="slc", c=2)
+        problem.add_terms(subterms, type=GroupType.squared_linear_combination, c=2)
         self.assertEqual(2*count + 3, len(problem.terms))
         self.assertEqual(
             GroupedTerm(GroupType.squared_linear_combination,

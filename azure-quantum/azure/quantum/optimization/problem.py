@@ -128,7 +128,7 @@ class Problem:
         self.uploaded_blob_uri = None
 
     def add_terms(self, terms: List[Term],
-                  type: Union[Optional[GroupType], str] = None, c: Union[int, float] = 1):
+                  type: Optional[GroupType] = None, c: Union[int, float] = 1):
         """Adds an optionally grouped list of monomial terms 
         to the `Problem` representation
 
@@ -141,16 +141,7 @@ class Problem:
             self.terms += terms
         else:
             # Grouped term
-            if isinstance(type, str):
-                if type == 'na':
-                    gtype = GroupType.combination
-                elif type == 'slc':
-                    gtype = GroupType.squared_linear_combination
-                else:
-                    raise Exception("Unsupported group type {}.".format(type))
-            else:
-                gtype = type
-            self.terms.append(GroupedTerm(gtype, terms, c=c))
+            self.terms.append(GroupedTerm(type, terms, c=c))
         self.uploaded_blob_uri = None
     
     def add_slc_term(self,
