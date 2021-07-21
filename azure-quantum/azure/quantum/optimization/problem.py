@@ -154,7 +154,8 @@ class Problem:
         self.uploaded_blob_uri = None
     
     def add_slc_term(self,
-                     terms: List[Tuple[Union[int, float], Optional[int]]],
+                     terms: Union[List[Tuple[Union[int, float], Optional[int]]],
+                                  List[Term]],
                      c: Union[int, float] = 1):
         """Adds a squared linear combination term
         to the `Problem` representation
@@ -162,13 +163,16 @@ class Problem:
         :param terms: List of monomial terms, with each represented by a pair.
             The first entry represents the monomial term weight.
             The second entry is the monomial term variable index or None.
+            Alternatively, a list of Term objects may be input.
         :param c: Weight of SLC term
         """
+        if all(isinstance(term, Term) for term in terms):
+            gterms = terms
+        else:
+            gterms = [Term([index], c=tc) if index is not None else Term([], c=tc)
+                      for tc,index in terms]
         self.terms.append(
-            GroupedTerm(GroupType.squared_linear_combination,
-                        [Term([index], c=tc) if index is not None else Term([], c=tc)
-                         for tc,index in terms],
-                        c=c)
+            GroupedTerm(GroupType.squared_linear_combination, gterms, c=c)
         )
         self.uploaded_blob_uri = None
 

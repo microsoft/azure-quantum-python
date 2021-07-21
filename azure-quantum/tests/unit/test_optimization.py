@@ -91,6 +91,21 @@ class TestProblem(QuantumTestBase):
                         subterms, c=2),
             problem.terms[-1]
         )
+        problem.add_terms(subterms, type=GroupType.squared_linear_combination, c=0.5)
+        self.assertEqual(2*count + 4, len(problem.terms))
+        self.assertEqual(
+            GroupedTerm(GroupType.squared_linear_combination,
+                        subterms, c=0.5),
+            problem.terms[-1]
+        )
+
+        problem.add_slc_term(subterms, c=3)
+        self.assertEqual(2*count + 5, len(problem.terms))
+        self.assertEqual(
+            GroupedTerm(GroupType.squared_linear_combination,
+                        subterms, c=3),
+            problem.terms[-1]
+        )
 
     def test_provide_cterms(self):
         count = 4
