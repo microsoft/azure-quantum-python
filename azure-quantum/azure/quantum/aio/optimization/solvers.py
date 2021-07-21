@@ -69,7 +69,7 @@ class Solver(SyncSolver):
             )
         else:
             # Storage account is passed, use it to generate a container_uri
-            container_uri = get_container_uri(
+            container_uri = await get_container_uri(
                 self.workspace.storage, container_name
             )
 

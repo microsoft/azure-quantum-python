@@ -26,7 +26,7 @@ logger = logging.getLogger(__name__)
 __all__ = ["Problem", "ProblemType"]
 
 if TYPE_CHECKING:
-    from azure.quantum.workspace import Workspace
+    from azure.quantum.aio.workspace import Workspace
 
 
 class ProblemType(str, Enum):
@@ -131,7 +131,7 @@ class Problem:
         self.terms += terms
         self.uploaded_blob_uri = None
 
-    def upload(
+    async def upload(
         self,
         workspace: "Workspace",
         container_name: str = "qio-problems",
@@ -171,13 +171,13 @@ class Problem:
 
         if not workspace.storage:
             # No storage account is passed, use the linked one
-            container_uri = workspace._get_linked_storage_sas_uri(
+            container_uri = await workspace._get_linked_storage_sas_uri(
                 container_name
             )
             container_client = ContainerClient.from_container_url(
                 container_uri
             )
-            self.uploaded_blob_uri = upload_blob(
+            self.uploaded_blob_uri = await upload_blob(
                 container_client,
                 blob_name,
                 content_type,
@@ -190,7 +190,7 @@ class Problem:
             container_client = ContainerClient.from_connection_string(
                 workspace.storage, container_name
             )
-            self.uploaded_blob_uri = upload_blob(
+            self.uploaded_blob_uri = await upload_blob(
                 container_client,
                 blob_name,
                 content_type,
@@ -287,7 +287,7 @@ class Problem:
             and len(self.terms) >= Problem.NUM_TERMS_LARGE
         )
 
-    def download(self, workspace:"Workspace"):
+    async def download(self, workspace:"Workspace"):
         """Downloads the uploaded problem as an instance of `Problem`"""
         if not self.uploaded_blob_uri:
             raise Exception(
@@ -295,13 +295,13 @@ class Problem:
             )
         blob_client = BlobClient.from_blob_url(self.uploaded_blob_uri)
         container_client = ContainerClient.from_container_url(
-            workspace._get_linked_storage_sas_uri(
+            await workspace._get_linked_storage_sas_uri(
                 blob_client.container_name
             )
         )
         blob_name = blob_client.blob_name
         blob = container_client.get_blob_client(blob_name)
-        contents = download_blob(blob.url)
+        contents = await download_blob(blob.url)
         return Problem.deserialize(contents, self.name)
 
     def get_terms(self, id:int) -> List[Term]:

@@ -1,13 +1,13 @@
 import logging
 from typing import TYPE_CHECKING
-from azure.quantum.optimization import Problem
+from azure.quantum.aio.optimization import Problem
 
 logger = logging.getLogger(__name__)
 
 __all__ = ["OnlineProblem"]
 
 if TYPE_CHECKING:
-    from azure.quantum.workspace import Workspace
+    from azure.quantum.aio.workspace import Workspace
 
 
 class OnlineProblem(object):
@@ -20,6 +20,6 @@ class OnlineProblem(object):
         self.name = name
         self.uploaded_blob_uri = blob_uri
 
-    def download(self, workspace:"Workspace") -> Problem:
+    async def download(self, workspace:"Workspace") -> Problem:
         logger.warning("The problem will be downloaded to the client")
-        return Problem.download(self, workspace)
+        return await Problem.download(self, workspace)

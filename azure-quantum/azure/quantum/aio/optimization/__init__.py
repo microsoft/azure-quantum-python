@@ -4,5 +4,5 @@
 # Licensed under the MIT License.
 ##
 
-from .solvers import *
 from .problem import *
+from .solvers import *

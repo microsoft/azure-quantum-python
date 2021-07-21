@@ -8,7 +8,7 @@ import re
 
 from typing import List, Optional
 
-from azure.quantum._authentication._default import _DefaultAzureCredential
+from azure.quantum.aio._authentication._default import _DefaultAzureCredential
 from azure.quantum._client.aio import QuantumClient
 from azure.quantum._client.aio.operations import JobsOperations, StorageOperations
 from azure.quantum._client.models import BlobDetails, JobStatus

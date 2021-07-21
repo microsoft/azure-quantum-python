@@ -3,7 +3,6 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import logging
-from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.exceptions import ClientAuthenticationError
 from azure.identity import CredentialUnavailableError
 
@@ -17,7 +16,7 @@ except ImportError:
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
     from typing import Any, Optional
-    from azure.core.credentials_async import AccessToken
+    from azure.core.credentials_async import AccessToken, AsyncTokenCredential
 
 _LOGGER = logging.getLogger(__name__)
 
