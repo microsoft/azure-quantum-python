@@ -10,6 +10,7 @@ from azure.quantum.aio import Workspace, Job
 from azure.quantum.aio.optimization import Problem
 from azure.quantum.optimization import RangeSchedule
 from azure.quantum.optimization.solvers import Solver as SyncSolver
+from azure.quantum._client.models import JobDetails
 from azure.quantum.aio.storage import (
     ContainerClient,
     create_container_using_client,
@@ -34,6 +35,46 @@ __all__ = [
 class Solver(SyncSolver):
 
     workspace: Workspace
+
+    async def _jobdetails_from_problem(
+        self, container_name: str, job_id: str,
+        container_uri: str, problem: Union[str, Problem],
+        compress: bool = True
+    ) -> JobDetails:
+
+        if isinstance(problem, str):
+            name = "Optimization problem"
+            problem_uri = problem
+        elif isinstance(problem, Problem):
+            name = problem.name
+            problem_uri = await problem.upload(
+                self.workspace,
+                compress=compress,
+                container_name=container_name,
+                blob_name="inputData",
+            )
+        else:
+            name = problem.name
+            problem_uri = problem.uploaded_blob_uri
+
+        logger.info(
+            f"Submitting problem '{name}'. Using payload from: '{problem_uri}'"
+        )
+
+        details = JobDetails(
+            id=job_id,
+            name=name,
+            container_uri=container_uri,
+            input_data_format=self.input_data_format,
+            output_data_format=self.output_data_format,
+            input_data_uri=problem_uri,
+            provider_id=self.provider,
+            target=self.target,
+            input_params=self.params,
+        )
+
+        logger.debug(f"==> submitting: {details}")
+        return details
 
     async def submit(
         self, problem: Union[str, Problem], compress: bool = True
@@ -74,13 +115,14 @@ class Solver(SyncSolver):
             )
 
         logger.debug(f"Container URI: {container_uri}")
+        job_details = await self._jobdetails_from_problem(
+            container_name, job_id, container_uri, 
+            problem, compress=compress
+        )
         return await self.workspace.submit_job(
             Job(
                 workspace=self.workspace, 
-                job_details=self._jobdetails_from_problem(
-                    container_name, job_id, container_uri, 
-                    problem, compress=compress
-                )
+                job_details=job_details
             )
         )
 

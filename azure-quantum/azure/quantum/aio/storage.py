@@ -194,7 +194,7 @@ async def download_blob(blob_url: str) -> Any:
         + f"on account: '{blob_client.account_name}'"
     )
 
-    response = (await blob_client.download_blob()).readall()
+    response = await (await blob_client.download_blob()).readall()
     logger.debug(response)
 
     return response
