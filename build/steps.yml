@@ -1,4 +1,25 @@
+variables:
+  CONDA_CACHE_DIR: $(Pipeline.Workspace)/.condarc
+
+# Add conda to system path
 steps:
+- script: echo "##vso[task.prependpath]$CONDA/bin"
+  displayName: Add conda to PATH
+
+- task: Cache@2
+  displayName: Use cached Anaconda environment
+  inputs:
+    key: 'conda | "$(Agent.OS)" | ../qdk/environment.yml'
+    restoreKeys: | 
+      python | "$(Agent.OS)"
+      python
+    path: $(CONDA_CACHE_DIR)
+    cacheHitVar: CONDA_CACHE_RESTORED
+
+- script: conda env create --quiet --file ../qdk/environment.yml
+  displayName: Create Anaconda environment
+  condition: eq(variables.CONDA_CACHE_RESTORED, 'false')
+
 - pwsh: ./bootstrap.ps1 qdk
   displayName: Create qdk conda environment
 - pwsh: build/build.ps1 qdk
@@ -7,6 +28,21 @@ steps:
   displayName: Pack qdk
 - pwsh: build/test.ps1 qdk
   displayName: Test qdk
+
+- task: Cache@2
+  displayName: Use cached Anaconda environment
+  inputs:
+    key: 'conda | "$(Agent.OS)" | ../azure-quantum/environment.yml'
+    restoreKeys: | 
+      python | "$(Agent.OS)"
+      python
+    path: $(CONDA_CACHE_DIR)
+    cacheHitVar: CONDA_CACHE_RESTORED
+
+- script: conda env create --quiet --file ../azure-quantum/environment.yml
+  displayName: Create Anaconda environment
+  condition: eq(variables.CONDA_CACHE_RESTORED, 'false')
+
 - pwsh: ./bootstrap.ps1 azure-quantum
   displayName: Create azure-quantum conda environment
 - pwsh: build/build.ps1 azure-quantum
