@@ -15,3 +15,8 @@ steps:
 - script: conda env create --quiet --file azure-quantum/environment.yml
   displayName: Create Anaconda environment
   condition: eq(variables.CONDA_CACHE_RESTORED, 'false')
+
+- script: |
+    source activate azurequantum
+    pytest azure-quantum
+  displayName: Run unit tests
