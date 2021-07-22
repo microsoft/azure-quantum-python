@@ -40,45 +40,12 @@ class Target(abc.ABC):
         """
         pass
 
-    def _submit_encoded_input_data(
-        self,
-        input_data: bytes,
-        name: str,
-        blob_name: str = "inputData",
-        **kwargs
-    ) -> Job:
-        """Submit blob data to the Azure Quantum service
-
-        :param blob: Blob data to submit to Azure Quantum
-        :type blob: bytes
-        :param name: Job name
-        :type name: str
-        :param blob_name: Blob name
-        :type blob_name: str
-        :return: Job instance
-        :rtype: Job
-        """
-        job = Job.from_input_data(
-            workspace=self.workspace,
-            name=name,
-            target=self.target,
-            input_data=input_data,
-            blob_name=blob_name,
-            content_type=self.content_type,
-            encoding=self.encoding,
-            provider_id=self.provider_id,
-            input_data_format=self.input_data_format,
-            output_data_format=self.output_data_format,
-            **kwargs
-        )
-        job.submit()
-        return job
-
     def submit(
         self,
         input_data: Any,
         name: str = "azure-quantum-job",
-        input_params: Dict[str, Any] = None
+        input_params: Dict[str, Any] = None,
+        **kwargs
     ) -> Job:
         """Submit input data and return Job
 
@@ -93,8 +60,17 @@ class Target(abc.ABC):
         """
         input_params = input_params or {}
         blob = self._encode_input_data(data=input_data)
-        return self._submit_encoded_input_data(
-            input_data=blob,
+
+        return Job.from_input_data(
+            workspace=self.workspace,
             name=name,
-            input_params=input_params
+            target=self.target,
+            input_data=blob,
+            content_type=self.content_type,
+            encoding=self.encoding,
+            provider_id=self.provider_id,
+            input_data_format=self.input_data_format,
+            output_data_format=self.output_data_format,
+            input_params=input_params,
+            **kwargs
         )

@@ -61,15 +61,14 @@ class IonQ(Target):
         :return: Azure Quantum job
         :rtype: Job
         """
-        blob = self._encode_input_data(circuit)
         if input_params is None:
             input_params = {}
         if num_shots is not None:
             input_params = input_params.copy()
             input_params["shots"] = num_shots
 
-        return self._submit_encoded_input_data(
-            input_data=blob,
+        return super().submit(
+            input_data=circuit,
             name=name,
             input_params=input_params
         )
