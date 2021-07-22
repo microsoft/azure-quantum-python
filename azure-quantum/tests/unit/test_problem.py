@@ -9,18 +9,16 @@
 
 import unittest
 from unittest.mock import Mock
-from typing import TYPE_CHECKING
 from azure.quantum.optimization import Problem, Term
 import azure.quantum.optimization.problem
 from common import expected_terms
-import json
 import numpy
 import os
 
 class TestProblemClass(unittest.TestCase):
     def setUp(self):
         self.mock_ws = Mock()
-        self.mock_ws._get_linked_storage_sas_uri.return_value = Mock()
+        self.mock_ws.get_container_uri = Mock(return_value = "mock_container_uri/foo/bar")
 
         ## QUBO problem
         self.problem = Problem(name="test")

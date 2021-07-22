@@ -19,7 +19,7 @@ The best way to install all the Python pre-reqs packages is to create a new Cond
 Run at the root of the `azure-quantum` directory:
 
 ```bash
-conda env create -f environment.yml -n azure-quantum
+conda env create -f environment.yml
 ```
 
 Then to activate the environment:
@@ -31,7 +31,7 @@ conda activate azure-quantum
 In case you have created the conda environment a while ago, you can make sure you have the latest versions of all dependencies by updating your environment:
 
 ```bash
-conda env update -f environment.yml -n azure-quantum --prune
+conda env update -f environment.yml --prune
 ```
 
 ### Install the local development package ###

@@ -53,6 +53,7 @@ class QuantumTestBase(ReplayableTest):
         recording_processors = [
             regex_replacer,
             AccessTokenReplacer(),
+            InteractiveAccessTokenReplacer(),
             SubscriptionRecordingProcessor(ZERO_UID),     
             AuthenticationMetadataFilter(),
             OAuthRequestResponsesFilter(),
@@ -101,6 +102,9 @@ class QuantumTestBase(ReplayableTest):
             r"jobs/([a-f0-9]+[-]){4}[a-f0-9]+", "jobs/" + ZERO_UID
         )
         regex_replacer.register_regex(
+            r"job-([a-f0-9]+[-]){4}[a-f0-9]+", "job-" + ZERO_UID
+        )
+        regex_replacer.register_regex(
             r"\d{8}-\d{6}", "20210101-000000"
         )        
         regex_replacer.register_regex(
@@ -122,11 +126,16 @@ class QuantumTestBase(ReplayableTest):
         regex_replacer.register_regex(
             r"/workspaces/[a-z0-9-]+/", f'/workspaces/{WORKSPACE}/'
         )
-        
+
         regex_replacer.register_regex(r"sig=[0-9a-zA-Z%]+\&", "sig=PLACEHOLDER&")
         regex_replacer.register_regex(r"sv=[^&]+\&", "sv=PLACEHOLDER&")
         regex_replacer.register_regex(r"se=[^&]+\&", "se=PLACEHOLDER&")
-
+        regex_replacer.register_regex(r"client_id=[^&]+\&", "client_id=PLACEHOLDER&")
+        regex_replacer.register_regex(r"claims=[^&]+\&", "claims=PLACEHOLDER&")
+        regex_replacer.register_regex(r"code_verifier=[^&]+\&", "code_verifier=PLACEHOLDER&")
+        regex_replacer.register_regex(r"code=[^&]+\&", "code_verifier=PLACEHOLDER&")
+        regex_replacer.register_regex(r"code=[^&]+\&", "code_verifier=PLACEHOLDER&")
+        
     def setUp(self):
         super(QuantumTestBase, self).setUp()
         # mitigation for issue https://github.com/kevin1024/vcrpy/issues/533
@@ -195,7 +204,9 @@ class CustomRecordingProcessor(RecordingProcessor):
 
     ALLOW_HEADERS = [
         "connection",
+        "content-disposition",
         "content-length",
+        "content-range",
         "content-type",
         "accept",
         "accept-encoding",
@@ -233,25 +244,27 @@ class CustomRecordingProcessor(RecordingProcessor):
                                          flags=re.IGNORECASE | re.MULTILINE),
                              new))
 
+    def regex_replace_all(self, value: str):
+        for oldRegex, new in self._regexes:
+            value = oldRegex.sub(new, value)
+        return value
+
     def process_request(self, request):
         headers = {}
         for key in request.headers:
             if key.lower() in self.ALLOW_HEADERS:
-                headers[key] = request.headers[key]
+                headers[key] = self.regex_replace_all(request.headers[key])
         request.headers = headers
 
-        for oldRegex, new in self._regexes:
-            request.uri = oldRegex.sub(new, request.uri)
+        request.uri = self.regex_replace_all(request.uri)
 
         if _get_content_type(request) == "application/x-www-form-urlencoded":
             body = request.body.decode("utf-8")
-            for oldRegex, new in self._regexes:
-                body = oldRegex.sub(new, body)
+            body = self.regex_replace_all(body)
             request.body = body.encode("utf-8")
         else:
             body = str(request.body)
-            for oldRegex, new in self._regexes:
-                body = oldRegex.sub(new, body)
+            body = self.regex_replace_all(body)
             request.body = body
 
         return request
@@ -277,7 +290,11 @@ class CustomRecordingProcessor(RecordingProcessor):
         headers = {}
         for key in response["headers"]:
             if key.lower() in self.ALLOW_HEADERS:
-                headers[key.lower()] = response["headers"][key]
+                new_header_values = []
+                for old_header_value in response["headers"][key]:
+                    new_header_value = self.regex_replace_all(old_header_value)
+                    new_header_values.append(new_header_value)
+                headers[key] = new_header_values
         response["headers"] = headers
 
         content_type = self._get_content_type(response)
@@ -287,8 +304,7 @@ class CustomRecordingProcessor(RecordingProcessor):
             if not isinstance(body, six.string_types):
                 body = body.decode("utf-8")
             if body:
-                for oldRegex, new in self._regexes:
-                    body = oldRegex.sub(new, body)
+                body = self.regex_replace_all(body)
                 response["body"]["string"] = body
 
         return response
@@ -313,6 +329,29 @@ class AuthenticationMetadataFilter(RecordingProcessor):
         if "/.well-known/openid-configuration" in request.uri or "/common/discovery/instance" in request.uri:
             return None
         return request
+
+
+class InteractiveAccessTokenReplacer(RecordingProcessor):
+    """Replace the access token for interactive authentication in a response body."""
+
+    def __init__(self, replacement='fake_token'):
+        self._replacement = replacement
+
+    def process_response(self, response):
+        import json
+        try:
+            body = json.loads(response['body']['string'])
+            if 'access_token' in body:
+                body['access_token'] = self._replacement
+                for property in ('scope', 'refresh_token',
+                                'foci', 'client_info',
+                                'id_token'):
+                    if property in body:
+                        del body[property]
+        except (KeyError, ValueError):
+            return response
+        response['body']['string'] = json.dumps(body)
+        return response
 
 
 def expected_terms():
