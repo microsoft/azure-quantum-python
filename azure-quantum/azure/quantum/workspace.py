@@ -157,6 +157,7 @@ class Workspace:
         # See _DefaultAzureCredential documentation for more info.
         if credential is None:
             credential = _DefaultAzureCredential(exclude_interactive_browser_credential=False,
+                                                 exclude_shared_token_cache_credential=True,
                                                  subscription_id=subscription_id,
                                                  arm_base_url=ARM_BASE_URL)
 
