@@ -85,7 +85,7 @@ class _DefaultAzureCredential(_ChainedTokenCredential):
 
         self.exclude_environment_credential = kwargs.pop("exclude_environment_credential", False)
         self.exclude_managed_identity_credential = kwargs.pop("exclude_managed_identity_credential", False)
-        self.exclude_shared_token_cache_credential = kwargs.pop("exclude_shared_token_cache_credential", False)
+        self.exclude_shared_token_cache_credential = kwargs.pop("exclude_shared_token_cache_credential", True)
         self.exclude_visual_studio_code_credential = kwargs.pop("exclude_visual_studio_code_credential", False)
         self.exclude_cli_credential = kwargs.pop("exclude_cli_credential", False)
         self.exclude_interactive_browser_credential = kwargs.pop("exclude_interactive_browser_credential", True)
