@@ -25,7 +25,7 @@ if ($null -eq $PackageDirs) {
 
 foreach ($PackageDir in $PackageDirs) {
     # Check if environment already exists
-    $EnvName = $PackageDir.replace("-", "")
+    $EnvName = $PackageDir
     $EnvExists = conda env list | Select-String -Pattern "$EnvName " | Measure-Object | Select-Object -Exp Count
     # if it exists, skip creation
     if ($EnvExists -eq "1") {
