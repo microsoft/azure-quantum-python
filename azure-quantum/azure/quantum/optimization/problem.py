@@ -189,8 +189,7 @@ class Problem:
         encoding = "gzip" if compress else ""
         blob = self.to_blob(compress=compress)
         if container_uri is None:
-            container_uri = Job.create_container(
-                workspace=workspace,
+            container_uri = workspace.get_container_uri(
                 container_name=container_name
             )
         input_data_uri = Job.upload_input_data(

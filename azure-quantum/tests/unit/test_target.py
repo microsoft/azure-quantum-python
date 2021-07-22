@@ -41,6 +41,12 @@ class TestIonQ(QuantumTestBase):
         }
 
     def test_job_submit_ionq(self):
+        self._test_job_submit_ionq(num_shots=None)
+
+    def test_job_submit_ionq_100_shots(self):
+        self._test_job_submit_ionq(num_shots=100)
+
+    def _test_job_submit_ionq(self, num_shots):
 
         with unittest.mock.patch.object(
             Job,
@@ -50,8 +56,30 @@ class TestIonQ(QuantumTestBase):
             workspace = self.create_workspace()
             circuit = self._3_qubit_ghz()
             target = IonQ(workspace=workspace)
-            job = target.submit(circuit)
-            # results = job.get_results()
-            # assert "histogram" in results
-            # assert results["histogram"]["0"] == 0.5
-            # assert results["histogram"]["7"] == 0.5
+            job = target.submit(
+                circuit=circuit,
+                name="ionq-3ghz-job",
+                num_shots=num_shots
+            )
+
+            # Make sure the job is completed before fetching the results
+            # playback currently does not work for repeated calls
+            if not self.is_playback:
+                self.assertEqual(False, job.has_completed())
+                if self.in_recording:
+                    import time
+                    time.sleep(3)
+                job.refresh()
+                job.wait_until_completed()
+                self.assertEqual(True, job.has_completed())
+                job = workspace.get_job(job.id)
+                self.assertEqual(True, job.has_completed())
+
+            results = job.get_results()
+            assert "histogram" in results
+            assert results["histogram"]["0"] == 0.5
+            assert results["histogram"]["7"] == 0.5
+            if num_shots:
+                assert job.details.input_params.get("shots") == num_shots
+            else:
+                assert job.details.input_params.get("shots") is None

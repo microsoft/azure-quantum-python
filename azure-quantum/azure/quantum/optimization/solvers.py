@@ -134,13 +134,6 @@ class Solver:
                 input_params=self.params
             )
 
-        logger.info(
-            f"Submitting problem '{name}'. \
-                Using payload from: '{job.details.input_data_uri}'"
-        )
-
-        logger.debug(f"==> submitting: {job.details}")
-        job.submit()
         return job
 
     def optimize(self, problem: Union[str, Problem]):

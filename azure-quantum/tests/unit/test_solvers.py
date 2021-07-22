@@ -18,6 +18,7 @@ class TestSolvers(unittest.TestCase):
     def setUp(self):
         self.mock_ws = Mock(spec=Workspace)
         self.mock_ws.storage = "mock_storage"
+        self.mock_ws.get_container_uri = Mock(return_value="mock_container_uri/foo/bar")
         # self.mock_ws.submit_job = Mock(return_value = )
         self.testsolver = Solver(
             self.mock_ws, "Microsoft", "SimulatedAnnealing", "json", "json"
@@ -25,9 +26,7 @@ class TestSolvers(unittest.TestCase):
 
     def test_submit_problem(self):
         problem = Problem(name="test", terms = [])
-        with patch("azure.quantum.job.base_job.get_container_uri") as mock, \
-            patch("azure.quantum.job.base_job.upload_blob") as mock_upload:
-            mock.return_value = "mock_container_uri/foo/bar"
+        with patch("azure.quantum.job.base_job.upload_blob") as mock_upload:
             job = self.testsolver.submit(problem)
         mock_upload.assert_called_once()
         self.testsolver.workspace.submit_job.assert_called_once()
@@ -36,13 +35,8 @@ class TestSolvers(unittest.TestCase):
         # Arrange
         o_problem = OnlineProblem(name="test", blob_uri="mock_blob_uri")
         # Act
-        azure.quantum.storage.get_container_uri = Mock(
-            return_value="mock_container_uri"
-        )
-        with patch("azure.quantum.job.base_job.get_container_uri") as mock:
-            mock.return_value = "mock_container_uri"
-            _ = self.testsolver.submit(o_problem)
-            # Assert
+        _ = self.testsolver.submit(o_problem)
+        # Assert
         self.testsolver.workspace.submit_job.assert_called_once()
 
     def test_number_of_solutions_set(self):
