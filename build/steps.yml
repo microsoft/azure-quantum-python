@@ -10,7 +10,6 @@ steps:
     restoreKeys: | 
       python | "$(Agent.OS)"
       python
-    path: $(CONDA_CACHE_DIR)
     cacheHitVar: CONDA_CACHE_RESTORED
 
 - script: conda env create --quiet --file azure-quantum/environment.yml
@@ -18,6 +17,7 @@ steps:
   condition: eq(variables.CONDA_CACHE_RESTORED, 'false')
 
 - script: |
+    conda create -n test
     conda info --envs
     source activate azurequantum
     pytest azure-quantum
