@@ -216,7 +216,12 @@ class GroupedTerm(GenTerm):
         self.validate()
     
     def validate(self):
-        if self.type is GroupType.squared_linear_combination:
+        if self.type is GroupType.combination:
+            raise ValueError(
+                "Error - type {} GroupTerm is not enabled;"
+                + "formulate list of ungrouped Term monomials instead.".format(self.type)
+            )
+        elif self.type is GroupType.squared_linear_combination:
             # Check linearity of terms and that like terms are combined
             seen = set()
             for term in self.terms:
