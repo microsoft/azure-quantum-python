@@ -1,63 +1,18 @@
 # Add conda to system path
 steps:
-- pwsh: build/build.ps1 qdk
-  displayName: Install qdk package in env
-  inputs:
-    key: 'conda | "$(Agent.OS)" | qdk/environment.yml'
-    restoreKeys: | 
-      python | "$(Agent.OS)"
-      python
-    path: $(CONDA_CACHE_DIR)
-    cacheHitVar: CONDA_CACHE_RESTORED_QDK
-- pwsh: build/pack.ps1 qdk
-  displayName: Pack qdk
-  inputs:
-    key: 'conda | "$(Agent.OS)" | qdk/environment.yml'
-    restoreKeys: | 
-      python | "$(Agent.OS)"
-      python
-    path: $(CONDA_CACHE_DIR)
-    cacheHitVar: CONDA_CACHE_RESTORED_QDK
-- pwsh: build/test.ps1 qdk
-  displayName: Test qdk
-  inputs:
-    key: 'conda | "$(Agent.OS)" | qdk/environment.yml'
-    restoreKeys: | 
-      python | "$(Agent.OS)"
-      python
-    path: $(CONDA_CACHE_DIR)
-    cacheHitVar: CONDA_CACHE_RESTORED_QDK
-- pwsh: ./bootstrap.ps1 qdk
-  displayName: Create qdk conda environment
-  condition: eq(variables.CONDA_CACHE_RESTORED_QDK, 'false')
+- script: echo "##vso[task.prependpath]$CONDA/bin"
+  displayName: Add conda to PATH
 
-- pwsh: build/build.ps1 azure-quantum
-  displayName: Install azure-quantum package in env
+- task: Cache@2
+  displayName: Use cached Anaconda environment
   inputs:
     key: 'conda | "$(Agent.OS)" | azure-quantum/environment.yml'
     restoreKeys: | 
       python | "$(Agent.OS)"
       python
     path: $(CONDA_CACHE_DIR)
-    cacheHitVar: CONDA_CACHE_RESTORED_AQ
-- pwsh: build/pack.ps1 azure-quantum
-  displayName: Pack azure-quantum
-  inputs:
-    key: 'conda | "$(Agent.OS)" | azure-quantum/environment.yml'
-    restoreKeys: | 
-      python | "$(Agent.OS)"
-      python
-    path: $(CONDA_CACHE_DIR)
-    cacheHitVar: CONDA_CACHE_RESTORED_AQ
-- pwsh: build/test.ps1 azure-quantum
-  displayName: Test azure-quantum
-  inputs:
-    key: 'conda | "$(Agent.OS)" | azure-quantum/environment.yml'
-    restoreKeys: | 
-      python | "$(Agent.OS)"
-      python
-    path: $(CONDA_CACHE_DIR)
-    cacheHitVar: CONDA_CACHE_RESTORED_AQ
-- pwsh: ./bootstrap.ps1 azure-quantum
-  displayName: Create azure-quantum conda environment
-  condition: eq(variables.CONDA_CACHE_RESTORED_AQ, 'false')
+    cacheHitVar: CONDA_CACHE_RESTORED
+
+- script: conda env create --quiet --file azure-quantum/environment.yml
+  displayName: Create Anaconda environment
+  condition: eq(variables.CONDA_CACHE_RESTORED, 'false')
