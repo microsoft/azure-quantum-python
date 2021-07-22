@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 ##
 import io
+from typing import Any, Dict
 
 from azure.quantum.target.target import Target
 from azure.quantum.job.job import Job
@@ -41,7 +42,8 @@ class Honeywell(Target):
     def submit(
         self,
         circuit: str,
-        name: str = "honeywell-job"
+        name: str = "honeywell-job",
+        input_params: Dict[str, Any] = None
     ) -> Job:
         """Submit a Honeywell program (QASM format)
 
@@ -49,8 +51,14 @@ class Honeywell(Target):
         :type circuit: str
         :param name: Job name
         :type name: str
+        :param input_params: Optional input params dict
+        :type input_params: Dict[str, Any]
         :return: Azure Quantum job
         :rtype: Job
         """
         blob = self._encode_input_data(circuit)
-        return self._submit_encoded_input_data(input_data=blob, name=name)
+        return super().submit(
+            input_data=circuit,
+            name=name,
+            input_params=input_params
+        )

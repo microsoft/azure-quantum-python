@@ -46,8 +46,8 @@ class BaseJob(abc.ABC):
         name: str,
         target: str,
         input_data: bytes,
-        blob_name: str,
         content_type: str,
+        blob_name: str = "inputData",
         encoding: str = "",
         job_id: str = None,
         container_name: str = None,
@@ -67,7 +67,7 @@ class BaseJob(abc.ABC):
         :type target: str
         :param input_data: Raw input data to submit
         :type input_data: bytes
-        :param blob_name: Input data blob name
+        :param blob_name: Input data blob name, defaults to "inputData"
         :type blob_name: str
         :param content_type: Content type, e.g. "application/json"
         :type content_type: str
@@ -110,7 +110,7 @@ class BaseJob(abc.ABC):
             encoding=encoding
         )
 
-        # Create job
+        # Create and submit job
         return cls.from_storage_uri(
             workspace=workspace,
             job_id=job_id,
@@ -188,7 +188,17 @@ class BaseJob(abc.ABC):
             target=target,
             input_params=input_params
         )
-        return cls(workspace, details, **kwargs)
+        job = cls(workspace, details, **kwargs)
+
+        logger.info(
+            f"Submitting problem '{name}'. \
+                Using payload from: '{job.details.input_data_uri}'"
+        )
+
+        logger.debug(f"==> submitting: {job.details}")
+        job.submit()
+
+        return job
 
     @staticmethod
     def upload_input_data(
