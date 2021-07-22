@@ -6,14 +6,14 @@ steps:
 - task: Cache@2
   displayName: Use cached Anaconda environment
   inputs:
-    key: 'conda | "$(Agent.OS)" | ../qdk/environment.yml'
+    key: 'conda | "$(Agent.OS)" | qdk/environment.yml'
     restoreKeys: | 
       python | "$(Agent.OS)"
       python
     path: $(CONDA_CACHE_DIR)
     cacheHitVar: CONDA_CACHE_RESTORED
 
-- script: conda env create --quiet --file ../qdk/environment.yml
+- script: conda env create --quiet --file qdk/environment.yml
   displayName: Create Anaconda environment
   condition: eq(variables.CONDA_CACHE_RESTORED, 'false')
 
@@ -29,14 +29,14 @@ steps:
 - task: Cache@2
   displayName: Use cached Anaconda environment
   inputs:
-    key: 'conda | "$(Agent.OS)" | ../azure-quantum/environment.yml'
+    key: 'conda | "$(Agent.OS)" | azure-quantum/environment.yml'
     restoreKeys: | 
       python | "$(Agent.OS)"
       python
     path: $(CONDA_CACHE_DIR)
     cacheHitVar: CONDA_CACHE_RESTORED
 
-- script: conda env create --quiet --file ../azure-quantum/environment.yml
+- script: conda env create --quiet --file azure-quantum/environment.yml
   displayName: Create Anaconda environment
   condition: eq(variables.CONDA_CACHE_RESTORED, 'false')
 
