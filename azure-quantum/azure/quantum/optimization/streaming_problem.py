@@ -179,12 +179,6 @@ class StreamingProblem(object):
                     "Cannot add terms after problem has been uploaded"
                 )
 
-            term_couplings = [len(term.ids) for term in terms]
-            max_coupling = max(term_couplings)
-            min_coupling = min(term_couplings)
-            self.__n_couplers += sum(term_couplings)
-            self.stats["num_terms"] += len(terms)
-
             for term in terms:
                 if isinstance(term, Term):
                     n = len(term.ids)

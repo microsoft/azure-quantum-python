@@ -223,7 +223,7 @@ class GroupedTerm(GenTerm):
                 if len(term.ids) > 1:
                     # Nonlinear term
                     raise ValueError(
-                        "Error - nonlinear term in Term with type {}".format(self.type)
+                        "Error - terms must be linear in type {} GroupedTerm".format(self.type)
                     )
                 elif len(term.ids) == 1:
                     # Linear term
@@ -233,7 +233,7 @@ class GroupedTerm(GenTerm):
                     id = -1
                 if id in seen:
                     raise ValueError(
-                        "Error - uncombined like terms in Term with type {}".format(self.type)
+                        "Error - like terms must be combined in type {} GroupedTerm".format(self.type)
                     )
                 else:
                     seen.add(id)

@@ -128,17 +128,18 @@ class Problem:
         self.uploaded_blob_uri = None
 
     def add_terms(self, terms: List[Term],
-                  type: Optional[GroupType] = None, c: Union[int, float] = 1):
+                  type: GroupType=GroupType.combination, c: Union[int, float]=1):
         """Adds an optionally grouped list of monomial terms 
         to the `Problem` representation
 
         :param terms: The list of terms to add to the problem
-        :param type: Type of grouped term being added, if applicable
+        :param type: Type of grouped term being added
+            If GroupType.combination, terms will be added as ungrouped monomials.
         :param c: Weight of grouped term, if applicable
         """
-        if type is None:
-            # List of ungrouped monomial terms
-            self.terms += terms
+        if type is GroupType.combination:
+            # Cast as list of ungrouped monomial terms
+            self.terms += [Term(term.ids, c=c*term.c) for term in terms]
         else:
             # Grouped term
             self.terms.append(GroupedTerm(type, terms, c=c))
