@@ -46,7 +46,8 @@ class IonQ(Target):
         circuit: Dict[str, Any],
         name: str = "ionq-job",
         num_shots: int = None,
-        input_params: Dict[str, Any] = None
+        input_params: Dict[str, Any] = None,
+        **kwargs
     ) -> Job:
         """Submit an IonQ circuit (JSON format)
 
@@ -70,5 +71,6 @@ class IonQ(Target):
         return super().submit(
             input_data=circuit,
             name=name,
-            input_params=input_params
+            input_params=input_params,
+            **kwargs
         )

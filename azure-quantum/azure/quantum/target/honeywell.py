@@ -44,7 +44,8 @@ class Honeywell(Target):
         circuit: str,
         name: str = "honeywell-job",
         num_shots: int = None,
-        input_params: Dict[str, Any] = None
+        input_params: Dict[str, Any] = None,
+        **kwargs
     ) -> Job:
         """Submit a Honeywell program (QASM format)
 
@@ -68,5 +69,6 @@ class Honeywell(Target):
         return super().submit(
             input_data=circuit,
             name=name,
-            input_params=input_params
+            input_params=input_params,
+            **kwargs
         )
