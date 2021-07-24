@@ -5,7 +5,6 @@
 
 from __future__ import annotations
 import logging
-import uuid
 import io
 import gzip
 import json
@@ -19,7 +18,7 @@ from azure.quantum.storage import (
     upload_blob,
     ContainerClient,
     download_blob,
-    BlobClient
+    BlobClient,
 )
 
 logger = logging.getLogger(__name__)
@@ -100,16 +99,12 @@ class Problem:
         result = json.loads(problem_as_json)
         problem = Problem(
             name=name,
-            terms=[
-                Term.from_dict(t) for t in result["cost_function"]["terms"]
-            ],
+            terms=[Term.from_dict(t) for t in result["cost_function"]["terms"]],
             problem_type=ProblemType[result["cost_function"]["type"]],
         )
 
         if "initial_configuration" in result["cost_function"]:
-            problem.init_config = result["cost_function"][
-                "initial_configuration"
-            ]
+            problem.init_config = result["cost_function"]["initial_configuration"]
 
         return problem
 
@@ -172,12 +167,8 @@ class Problem:
 
         if not workspace.storage:
             # No storage account is passed, use the linked one
-            container_uri = workspace._get_linked_storage_sas_uri(
-                container_name
-            )
-            container_client = ContainerClient.from_container_url(
-                container_uri
-            )
+            container_uri = workspace._get_linked_storage_sas_uri(container_name)
+            container_client = ContainerClient.from_container_url(container_uri)
             self.uploaded_blob_uri = upload_blob(
                 container_client,
                 blob_name,
@@ -252,9 +243,7 @@ class Problem:
             problem_type=self.problem_type,
         )
 
-    def evaluate(
-        self, configuration: Union[Dict[int, int], Dict[str, int]]
-    ) -> float:
+    def evaluate(self, configuration: Union[Dict[int, int], Dict[str, int]]) -> float:
         """Given a configuration/variable assignment,
         return the cost function value of this problem.
 
@@ -288,25 +277,21 @@ class Problem:
             and len(self.terms) >= Problem.NUM_TERMS_LARGE
         )
 
-    def download(self, workspace:"Workspace"):
+    def download(self, workspace: "Workspace"):
         """Downloads the uploaded problem as an instance of `Problem`"""
         if not self.uploaded_blob_uri:
-            raise Exception(
-                "Problem may not be downloaded before it is uploaded"
-            )
+            raise Exception("Problem may not be downloaded before it is uploaded")
         blob_client = BlobClient.from_blob_url(self.uploaded_blob_uri)
         container_client = ContainerClient.from_container_url(
-            workspace._get_linked_storage_sas_uri(
-                blob_client.container_name
-            )
+            workspace._get_linked_storage_sas_uri(blob_client.container_name)
         )
         blob_name = blob_client.blob_name
         blob = container_client.get_blob_client(blob_name)
         contents = download_blob(blob.url)
         return Problem.deserialize(contents, self.name)
 
-    def get_terms(self, id:int) -> List[Term]:
-        """ Given an index the function will return
+    def get_terms(self, id: int) -> List[Term]:
+        """Given an index the function will return
         a list of terms with that index
         """
         terms = []
@@ -316,15 +301,18 @@ class Problem:
                     terms.append(term)
             return terms
         else:
-            raise Exception("There are currently no terms in this problem. \
+            raise Exception(
+                "There are currently no terms in this problem. \
                 Please download the problem on the client or add terms to the \
-                    problem to perform this operation")
+                    problem to perform this operation"
+            )
 
-    def is_valid_npz(self, 
+    def is_valid_npz(
+        self,
         files: List[str],
         indices_column_names: List[str] = ["arr_0", "arr_1"],
-        c_column_name: str = "arr_2"
-        ) -> bool:
+        c_column_name: str = "arr_2",
+    ) -> bool:
         """Determines if the supplied npz has expected column names.
         If none are supplied, checks default naming.
         Otherwise, it checks user-supplied naming.
@@ -339,19 +327,20 @@ class Problem:
 
         all_columns = indices_column_names + [c_column_name]
 
-        if (len(files) != len(all_columns)):
+        if len(files) != len(all_columns):
             return False
-        
-        if(sorted(files) != sorted(all_columns)):
+
+        if sorted(files) != sorted(all_columns):
             return False
 
         return True
 
-    def terms_from_npz(self,
-        file_path = str,
+    def terms_from_npz(
+        self,
+        file_path=str,
         indices_column_names: List[str] = ["arr_0", "arr_1"],
-        c_column_name: str = "arr_2"
-        ) -> List[Term]:
+        c_column_name: str = "arr_2",
+    ) -> List[Term]:
         """Reads a user supplied npz file and converts it to a list of `Term`.
         An NPZ file contains several arrays (or columns), which can specify
         the indices of a problem term, along with the coefficient.
@@ -371,11 +360,17 @@ class Problem:
             problem_file = numpy.load(file_path)
 
             # Check the default or user-supplied columns are present
-            if not(self.is_valid_npz(problem_file.files, indices_column_names, c_column_name)):
-                raise Exception("Error in validating NPZ file. \
+            if not (
+                self.is_valid_npz(
+                    problem_file.files, indices_column_names, c_column_name
+                )
+            ):
+                raise Exception(
+                    "Error in validating NPZ file. \
                     Please check that the names of the arrays match the default \
-                        or user-supplied namings.")
-            
+                        or user-supplied namings."
+                )
+
             # For each of the indices column names, extract the associated indices column data
             problem_ids = [list(problem_file[id]) for id in indices_column_names]
 
@@ -389,5 +384,7 @@ class Problem:
                 terms.append(Term(c=c, indices=indices))
             return terms
         else:
-            raise Exception("Unable to read NPZ file. \
-                Please check the file path supplied is correct.")
+            raise Exception(
+                "Unable to read NPZ file. \
+                Please check the file path supplied is correct."
+            )
