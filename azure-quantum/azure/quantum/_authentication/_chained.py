@@ -20,8 +20,8 @@ if TYPE_CHECKING:
 
 _LOGGER = logging.getLogger(__name__)
 
-import logging
 import sys
+
 
 def filter_credential_warnings(record):
     """Suppress warnings from credentials other than DefaultAzureCredential"""
@@ -29,6 +29,7 @@ def filter_credential_warnings(record):
         message = record.getMessage()
         return "DefaultAzureCredential" in message
     return True
+
 
 def _get_error_message(history):
     attempts = []
@@ -76,13 +77,21 @@ class _ChainedTokenCredential(object):
             for credential in self.credentials:
                 try:
                     token = credential.get_token(*scopes, **kwargs)
-                    _LOGGER.info("%s acquired a token from %s", self.__class__.__name__, credential.__class__.__name__)
+                    _LOGGER.info(
+                        "%s acquired a token from %s",
+                        self.__class__.__name__,
+                        credential.__class__.__name__,
+                    )
                     self._successful_credential = credential
                     return token
                 except CredentialUnavailableError as ex:
                     # credential didn't attempt authentication because it lacks required data or state -> continue
                     history.append((credential, ex.message))
-                    _LOGGER.info("%s - %s is unavailable", self.__class__.__name__, credential.__class__.__name__)
+                    _LOGGER.info(
+                        "%s - %s is unavailable",
+                        self.__class__.__name__,
+                        credential.__class__.__name__,
+                    )
                 except Exception as ex:  # pylint: disable=broad-except
                     # credential failed to authenticate, or something unexpectedly raised -> break
                     history.append((credential, str(ex)))
@@ -103,6 +112,10 @@ class _ChainedTokenCredential(object):
 
         # if all attempts failed, only then we log a warning and raise an error
         attempts = _get_error_message(history)
-        message = self.__class__.__name__ + " failed to retrieve a token from the included credentials." + attempts
+        message = (
+            self.__class__.__name__
+            + " failed to retrieve a token from the included credentials."
+            + attempts
+        )
         _LOGGER.warning(message)
         raise ClientAuthenticationError(message=message)
