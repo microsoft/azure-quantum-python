@@ -44,14 +44,13 @@ class IonQBackend(Backend):
             content_type="application/json",
             provider_id="ionq",
             input_data_format="ionq.circuit.v1",
-            output_data_format="ionq.quantum-results.v1"
+            output_data_format="ionq.quantum-results.v1",
+            metadata={ "qubits": str(circuit.num_qubits) }
         )
 
-        logger.info(f"Submitting job with id '{job.id()}' for circuit '{circuit.name}':")
+        logger.info(f"Submitted job with id '{job.id()}' for circuit '{circuit.name}':")
         logger.info(input_data)
 
-        job._azure_job.details.metadata = { "qubits": str(circuit.num_qubits) }
-        job.submit()
         return job
 
 
