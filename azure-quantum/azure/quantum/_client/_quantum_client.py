@@ -10,6 +10,12 @@ from typing import TYPE_CHECKING
 
 from azure.mgmt.core import ARMPipelineClient
 from msrest import Deserializer, Serializer
+from ._configuration import QuantumClientConfiguration
+from .operations import JobsOperations
+from .operations import ProvidersOperations
+from .operations import StorageOperations
+from .operations import QuotasOperations
+from . import models
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -17,13 +23,6 @@ if TYPE_CHECKING:
 
     from azure.core.credentials import TokenCredential
     from azure.core.pipeline.transport import HttpRequest, HttpResponse
-
-from ._configuration import QuantumClientConfiguration
-from .operations import JobsOperations
-from .operations import ProvidersOperations
-from .operations import StorageOperations
-from .operations import QuotasOperations
-from . import models
 
 
 class QuantumClient(object):
@@ -59,23 +58,33 @@ class QuantumClient(object):
     ):
         # type: (...) -> None
         if not base_url:
-            base_url = 'https://quantum.azure.com'
-        self._config = QuantumClientConfiguration(credential, subscription_id, resource_group_name, workspace_name, **kwargs)
-        self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+            base_url = "https://quantum.azure.com"
+        self._config = QuantumClientConfiguration(
+            credential, subscription_id, resource_group_name, workspace_name, **kwargs
+        )
+        self._client = ARMPipelineClient(
+            base_url=base_url, config=self._config, **kwargs
+        )
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        client_models = {
+            k: v for k, v in models.__dict__.items() if isinstance(v, type)
+        }
         self._serialize = Serializer(client_models)
         self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
 
         self.jobs = JobsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.providers = ProvidersOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.storage = StorageOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.quotas = QuotasOperations(
-            self._client, self._config, self._serialize, self._deserialize)
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
     def _send_request(self, http_request, **kwargs):
         # type: (HttpRequest, Any) -> HttpResponse
@@ -88,13 +97,25 @@ class QuantumClient(object):
         :rtype: ~azure.core.pipeline.transport.HttpResponse
         """
         path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-            'resourceGroupName': self._serialize.url("self._config.resource_group_name", self._config.resource_group_name, 'str'),
-            'workspaceName': self._serialize.url("self._config.workspace_name", self._config.workspace_name, 'str'),
+            "subscriptionId": self._serialize.url(
+                "self._config.subscription_id", self._config.subscription_id, "str"
+            ),
+            "resourceGroupName": self._serialize.url(
+                "self._config.resource_group_name",
+                self._config.resource_group_name,
+                "str",
+            ),
+            "workspaceName": self._serialize.url(
+                "self._config.workspace_name", self._config.workspace_name, "str"
+            ),
         }
-        http_request.url = self._client.format_url(http_request.url, **path_format_arguments)
+        http_request.url = self._client.format_url(
+            http_request.url, **path_format_arguments
+        )
         stream = kwargs.pop("stream", True)
-        pipeline_response = self._client._pipeline.run(http_request, stream=stream, **kwargs)
+        pipeline_response = self._client._pipeline.run(
+            http_request, stream=stream, **kwargs
+        )
         return pipeline_response.http_response
 
     def close(self):

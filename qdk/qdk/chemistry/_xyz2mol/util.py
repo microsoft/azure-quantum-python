@@ -234,7 +234,7 @@ def chiral_stereo_check(mol):
     """
     Find and embed chiral information into the model based on the coordinates
     args:
-        mol - rdkit molecule, with embeded conformer
+        mol - rdkit molecule, with embedded conformer
     """
     Chem.SanitizeMol(mol)
     Chem.DetectBondStereochemistry(mol, -1)

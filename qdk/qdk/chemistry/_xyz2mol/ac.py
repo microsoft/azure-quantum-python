@@ -152,7 +152,7 @@ def xyz2AC_huckel(atomicNumList, xyz, charge):
 
 def AC2BO(AC, atoms, charge, allow_charged_fragments=True, use_graph=True):
     """
-    implemenation of algorithm shown in Figure 2
+    implementation of algorithm shown in Figure 2
     UA: unsaturated atoms
     DU: degree of unsaturation (u matrix in Figure)
     best_BO: Bcurr in Figure
