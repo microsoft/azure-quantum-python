@@ -21,7 +21,7 @@ simulator_backend = provider.get_backend("ionq.simulator")
 
 # Create a Quantum Circuit acting on the q register
 circuit = QuantumCircuit(2, 2)
-circuit.name = "Qiskit Sample - C1"
+circuit.name = "Qiskit Sample - Bell circuit"
 circuit.h(0)
 circuit.cx(0, 1)
 circuit.measure([0,1], [0, 1])
@@ -48,6 +48,6 @@ print("Results histogram", histogram)
 plot_results(job)
 
 
-# fetch an existing job and show the results:
-job = provider.get_job('256f02ca-e934-11eb-87f9-2816a847b9a3')
-plot_results(job)
+# # fetch an existing job and show the results:
+# job = provider.get_job('256f02ca-e934-11eb-87f9-2816a847b9a3')
+# plot_results(job)
