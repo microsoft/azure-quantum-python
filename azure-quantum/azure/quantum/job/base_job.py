@@ -138,7 +138,6 @@ class BaseJob(abc.ABC):
         container_uri: str = None,
         job_id: str = None,
         input_params: Dict[str, Any] = None,
-        submit_job: bool = True,
         **kwargs
     ) -> "BaseJob":
         """Create new Job from URI if input data is already uploaded
@@ -199,9 +198,8 @@ class BaseJob(abc.ABC):
                 Using payload from: '{job.details.input_data_uri}'"
         )
 
-        if submit_job:
-            logger.debug(f"==> submitting: {job.details}")
-            job.submit()
+        logger.debug(f"==> submitting: {job.details}")
+        job.submit()
 
         return job
 

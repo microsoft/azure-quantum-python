@@ -3,7 +3,6 @@
 # Licensed under the MIT License.
 ##
 import io
-import json
 from typing import Any, Dict
 
 from azure.quantum.target.target import Target
@@ -11,17 +10,17 @@ from azure.quantum.job.job import Job
 from azure.quantum.workspace import Workspace
 
 
-class IonQ(Target):
-    """IonQ target."""
+class Honeywell(Target):
+    """Honeywell target."""
 
     def __init__(
         self,
         workspace: Workspace,
-        target: str = "ionq.simulator",
-        input_data_format: str = "ionq.circuit.v1",
-        output_data_format: str = "ionq.quantum-results.v1",
-        provider_id: str = "IonQ",
-        content_type: str = "application/json",
+        target: str = "honeywell.hqs-lt-s1-apival",
+        input_data_format: str = "honeywell.openqasm.v1",
+        output_data_format: str = "honeywell.quantum-results.v1",
+        provider_id: str = "honeywell",
+        content_type: str = "application/qasm",
         encoding: str = ""
     ):
         super().__init__(
@@ -35,24 +34,23 @@ class IonQ(Target):
         )
 
     @staticmethod
-    def _encode_input_data(data: Dict[Any, Any]) -> bytes:
+    def _encode_input_data(data: str) -> bytes:
         stream = io.BytesIO()
-        data = json.dumps(data)
         stream.write(data.encode())
         return stream.getvalue()
 
     def submit(
         self,
-        circuit: Dict[str, Any],
-        name: str = "ionq-job",
+        circuit: str,
+        name: str = "honeywell-job",
         num_shots: int = None,
         input_params: Dict[str, Any] = None,
         **kwargs
     ) -> Job:
-        """Submit an IonQ circuit (JSON format)
+        """Submit a Honeywell program (QASM format)
 
-        :param circuit: Quantum circuit in IonQ JSON format
-        :type circuit: Dict[str, Any]
+        :param circuit: Quantum circuit in Honeywell QASM format
+        :type circuit: str
         :param name: Job name
         :type name: str
         :param num_shots: Number of shots, defaults to None
@@ -66,7 +64,7 @@ class IonQ(Target):
             input_params = {}
         if num_shots is not None:
             input_params = input_params.copy()
-            input_params["shots"] = num_shots
+            input_params["count"] = num_shots
 
         return super().submit(
             input_data=circuit,
