@@ -138,6 +138,7 @@ class BaseJob(abc.ABC):
         container_uri: str = None,
         job_id: str = None,
         input_params: Dict[str, Any] = None,
+        submit_job: bool = True,
         **kwargs
     ) -> "BaseJob":
         """Create new Job from URI if input data is already uploaded
@@ -163,7 +164,9 @@ class BaseJob(abc.ABC):
         :type job_id: str
         :param input_params: Input parameters, defaults to None
         :type input_params: Dict[str, Any], optional
-        :return: Job instsance
+        :param submit_job: If job should be submitted to the service, defaults to True
+        :type submit_job: bool
+        :return: Job instance
         :rtype: Job
         """
         # Generate job_id, input_params, data formats and provider ID if not specified
@@ -186,7 +189,8 @@ class BaseJob(abc.ABC):
             input_data_uri=input_data_uri,
             provider_id=provider_id,
             target=target,
-            input_params=input_params
+            input_params=input_params,
+            **kwargs
         )
         job = cls(workspace, details, **kwargs)
 
@@ -195,8 +199,9 @@ class BaseJob(abc.ABC):
                 Using payload from: '{job.details.input_data_uri}'"
         )
 
-        logger.debug(f"==> submitting: {job.details}")
-        job.submit()
+        if submit_job:
+            logger.debug(f"==> submitting: {job.details}")
+            job.submit()
 
         return job
 
