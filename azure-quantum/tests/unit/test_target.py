@@ -147,7 +147,7 @@ class TestHoneywell(QuantumTestBase):
                         time.sleep(3)
                     job.refresh()
                     try:
-                        job.wait_until_completed(timeout=5*60) # Set a timeout for Honeywell recording
+                        job.wait_until_completed(timeout=60) # Set a timeout for Honeywell recording
                     except TimeoutError:
                         warnings.warn("Honeywell execution exceeded timeout. Skipping fetching results.")
                     else:
