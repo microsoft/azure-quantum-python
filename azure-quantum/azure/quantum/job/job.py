@@ -56,18 +56,23 @@ class Job(BaseJob, FilteredJob):
             or self.details.status == "Cancelled"
         )
 
-    def wait_until_completed(self, max_poll_wait_secs=30) -> None:
+    def wait_until_completed(self, max_poll_wait_secs=30, timeout=None) -> None:
         """Keeps refreshing the Job's details
         until it reaches a finished status."""
         self.refresh()
         poll_wait = 0.2
+        total_time = 0.
         while not self.has_completed():
+            if timeout is not None and total_time >= timeout:
+                raise TimeoutError(f"The wait time has exceeded {timeout} seconds.")
+ 
             logger.debug(
                 f"Waiting for job {self.id},"
                 + f"it is in status '{self.details.status}'"
             )
             print(".", end="", flush=True)
             time.sleep(poll_wait)
+            total_time += poll_wait
             self.refresh()
             poll_wait = (
                 max_poll_wait_secs
