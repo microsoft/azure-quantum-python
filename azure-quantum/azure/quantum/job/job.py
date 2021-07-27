@@ -9,7 +9,7 @@ import json
 from typing import TYPE_CHECKING
 
 from azure.quantum._client.models import JobDetails
-from azure.quantum.job.base_job import BaseJob
+from azure.quantum.job.base_job import BaseJob, DEFAULT_TIMEOUT
 from azure.quantum.job.filtered_job import FilteredJob
 
 __all__ = ["Job"]
@@ -56,7 +56,7 @@ class Job(BaseJob, FilteredJob):
             or self.details.status == "Cancelled"
         )
 
-    def wait_until_completed(self, max_poll_wait_secs=30, timeout_secs=None) -> None:
+    def wait_until_completed(self, max_poll_wait_secs=30, timeout_secs=DEFAULT_TIMEOUT) -> None:
         """Keeps refreshing the Job's details
         until it reaches a finished status.
 
@@ -87,10 +87,12 @@ class Job(BaseJob, FilteredJob):
                 else poll_wait * 1.5
             )
 
-    def get_results(self) -> dict:
+    def get_results(self, timeout_secs: float=DEFAULT_TIMEOUT) -> dict:
         """Get job results by downloading the results blob from the
         storage container linked via the workspace.
 
+        :param timeout_secs: Timeout in seconds, defaults to 60
+        :type timeout_secs: int
         :raises RuntimeError: [description]
         :return: [description]
         :rtype: dict
@@ -99,7 +101,7 @@ class Job(BaseJob, FilteredJob):
             return self.results
 
         if not self.has_completed():
-            self.wait_until_completed()
+            self.wait_until_completed(timeout_secs=timeout_secs)
 
         if not self.details.status == "Succeeded":
             raise RuntimeError(

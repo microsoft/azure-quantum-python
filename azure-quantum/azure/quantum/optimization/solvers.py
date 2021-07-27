@@ -3,18 +3,12 @@
 # Licensed under the MIT License.
 ##
 import logging
-import azure.quantum
 
 from typing import List, Union, Any, Optional
 from enum import Enum
 from azure.quantum import Workspace, Job
-from azure.quantum._client.models import JobDetails
+from azure.quantum.job.base_job import DEFAULT_TIMEOUT
 from azure.quantum.optimization import Problem
-from azure.quantum.storage import (
-    ContainerClient,
-    create_container_using_client,
-    remove_sas_token,
-)
 
 logger = logging.getLogger(__name__)
 
@@ -136,14 +130,19 @@ class Solver:
 
         return job
 
-    def optimize(self, problem: Union[str, Problem]):
-        """Submits the Problem to the associated
+    def optimize(self, problem: Union[str, Problem], timeout_secs: int=DEFAULT_TIMEOUT):
+        """[Submits the Problem to the associated
             Azure Quantum Workspace and get the results.
 
         :param problem:
             The Problem to solve. It can be an instance of a Problem,
             or the URL of an Azure Storage Blob where the serialized version
             of a Problem has been uploaded.
+        :type problem: Union[str, Problem]
+        :param timeout_secs: Timeout in seconds, defaults to 60
+        :type timeout_secs: int
+        :return: Job results
+        :rtype: dict
         """
         if not isinstance(problem, str):
             self.check_submission_warnings(problem)
@@ -151,7 +150,7 @@ class Solver:
         job = self.submit(problem)
         logger.info(f"Submitted job: '{job.id}'")
 
-        return job.get_results()
+        return job.get_results(timeout_secs=timeout_secs)
 
     def set_one_param(self, name: str, value: Any):
         if value is not None:
