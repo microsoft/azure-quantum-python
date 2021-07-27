@@ -6,7 +6,7 @@ import re
 import abc
 
 from typing import Optional
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 
 from azure.quantum._client.models import JobStatus
 
@@ -32,7 +32,16 @@ class FilteredJob(abc.ABC):
         if status is not None and self.details.status != status.value:
             return False
         
-        if created_after is not None and self.details.creation_time.replace(tzinfo=timezone.utc) < created_after.replace(tzinfo=timezone.utc):
-            return False
+        if created_after is not None:
+            # if supplied date is date we must convert to datetime first
+            if type(created_after) is date:
+                created_after = datetime(created_after.year, created_after.month, created_after.day)
+            
+            # if supplied date is naive, assume local and convert to timezone aware object
+            if created_after.tzinfo is None:
+                created_after = created_after.astimezone()
+            
+            if self.details.creation_time.replace(tzinfo=timezone.utc) < created_after:
+                return False
 
         return True

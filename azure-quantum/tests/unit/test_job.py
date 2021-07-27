@@ -12,7 +12,7 @@ import time
 import os
 import functools
 import pytest
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta
 
 from common import QuantumTestBase, ZERO_UID
 from azure.quantum import Job
