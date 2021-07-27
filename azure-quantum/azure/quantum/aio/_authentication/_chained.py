@@ -5,6 +5,7 @@
 import logging
 from azure.core.exceptions import ClientAuthenticationError
 from azure.identity import CredentialUnavailableError
+from azure.identity import InteractiveBrowserCredential, DeviceCodeCredential
 
 from azure.quantum._authentication._chained import filter_credential_warnings, _get_error_message
 
@@ -56,7 +57,11 @@ class _ChainedTokenCredential(object):
         try:
             for credential in self.credentials:
                 try:
-                    token = await credential.get_token(*scopes, **kwargs)
+                    if isinstance(credential, (InteractiveBrowserCredential, DeviceCodeCredential)):
+                        # InteractiveCredentials aren't async.
+                        token = credential.get_token(*scopes, **kwargs)
+                    else:
+                        token = await credential.get_token(*scopes, **kwargs)
                     _LOGGER.info("%s acquired a token from %s", self.__class__.__name__, credential.__class__.__name__)
                     self._successful_credential = credential
                     return token
