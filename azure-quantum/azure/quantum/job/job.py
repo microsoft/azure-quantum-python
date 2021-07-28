@@ -56,7 +56,7 @@ class Job(BaseJob, FilteredJob):
             or self.details.status == "Cancelled"
         )
 
-    def wait_until_completed(self, max_poll_wait_secs=30, timeout_secs=DEFAULT_TIMEOUT) -> None:
+    def wait_until_completed(self, max_poll_wait_secs=30, timeout_secs=None) -> None:
         """Keeps refreshing the Job's details
         until it reaches a finished status.
 
@@ -91,7 +91,7 @@ class Job(BaseJob, FilteredJob):
         """Get job results by downloading the results blob from the
         storage container linked via the workspace.
 
-        :param timeout_secs: Timeout in seconds, defaults to 60
+        :param timeout_secs: Timeout in seconds, defaults to 300
         :type timeout_secs: int
         :raises RuntimeError: [description]
         :return: [description]

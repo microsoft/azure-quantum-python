@@ -139,7 +139,7 @@ class Solver:
             or the URL of an Azure Storage Blob where the serialized version
             of a Problem has been uploaded.
         :type problem: Union[str, Problem]
-        :param timeout_secs: Timeout in seconds, defaults to 60
+        :param timeout_secs: Timeout in seconds, defaults to 300
         :type timeout_secs: int
         :return: Job results
         :rtype: dict
