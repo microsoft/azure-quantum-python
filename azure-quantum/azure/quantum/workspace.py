@@ -173,6 +173,8 @@ class Workspace:
         # "West US" should be converted to "westus".
         self.location = "".join(location.split()).lower()
 
+        # Create QuantumClient
+        self._client = self._create_client()
 
     def _create_client(self) -> QuantumClient:
         base_url = BASE_URL(self.location)
@@ -190,13 +192,11 @@ class Workspace:
         )
         return client
 
-    def _create_jobs_client(self) -> JobsOperations:
-        client = self._create_client().jobs
-        return client
+    def _get_jobs_client(self) -> JobsOperations:
+        return self._client.jobs
 
-    def _create_workspace_storage_client(self) -> StorageOperations:
-        client = self._create_client().storage
-        return client
+    def _get_workspace_storage_client(self) -> StorageOperations:
+        return self._client.storage
 
     def _custom_headers(self):
         return {"x-ms-azurequantum-sdk-version": __version__}
@@ -207,7 +207,7 @@ class Workspace:
         """
         Calls the service and returns a container sas url
         """
-        client = self._create_workspace_storage_client()
+        client = self._get_workspace_storage_client()
         blob_details = BlobDetails(
             container_name=container_name, blob_name=blob_name
         )
@@ -217,21 +217,21 @@ class Workspace:
         return container_uri.sas_uri
 
     def submit_job(self, job: Job) -> Job:
-        client = self._create_jobs_client()
+        client = self._get_jobs_client()
         details = client.create(
             job.details.id, job.details
         )
         return Job(self, details)
 
     def cancel_job(self, job: Job) -> Job:
-        client = self._create_jobs_client()
+        client = self._get_jobs_client()
         client.cancel(job.details.id)
         details = client.get(job.id)
         return Job(self, details)
 
     def get_job(self, job_id: str) -> Job:
         """Returns the job corresponding to the given id."""
-        client = self._create_jobs_client()
+        client = self._get_jobs_client()
         details = client.get(job_id)
         return Job(self, details)
 
@@ -246,7 +246,7 @@ class Workspace:
             :param status: filter by job status
             :param created_after: filter jobs after time of job creation
         """
-        client = self._create_jobs_client()
+        client = self._get_jobs_client()
         jobs = client.list()
 
         result = []
