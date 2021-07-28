@@ -629,7 +629,6 @@ class PopulationAnnealing(Solver):
         precision support for the coupler weights.
 
         This solver is CPU only.
-        It currently does not support parameter-free invocation.
 
         :param alpha:
             Ratio to trigger a restart. Must be larger than 1.
@@ -691,7 +690,6 @@ class SubstochasticMonteCarlo(Solver):
         precision support for the coupler weights.
 
         This solver is CPU only.
-        It currently does not support parameter-free invocation.
 
         :param alpha:
             Evolution of alpha (chance to step) over time.
