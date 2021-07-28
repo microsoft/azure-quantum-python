@@ -7,7 +7,7 @@ import logging
 import os
 import re
 
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 from deprecated import deprecated
 
 # Temporarily replacing the DefaultAzureCredential with
@@ -269,6 +269,14 @@ class Workspace:
                 target.id for target in provider.targets
             ] for provider in self._client.providers.get_status()
         }
+
+    def get_job_quotas(self) -> List[Dict[str, Any]]:
+        """Get a list of job quotas for the given workspace.
+
+        :return: Job quotas
+        :rtype: List[Dict[str, Any]]
+        """
+        return [q.as_dict() for q in self._client.quotas.list()]
 
     @deprecated(version='0.17.2105', reason="This method is deprecated and no longer necessary to be called")
     def login(self, refresh: bool = False) -> object:
