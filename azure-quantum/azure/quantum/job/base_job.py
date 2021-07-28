@@ -21,7 +21,7 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-DEFAULT_TIMEOUT = 180 # Default timeout for waiting for job to complete
+DEFAULT_TIMEOUT = 300 # Default timeout for waiting for job to complete
 
 
 class BaseJob(abc.ABC):
