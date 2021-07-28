@@ -13,7 +13,7 @@ import sys
 
 from typing import List, Tuple, Union, Dict, Optional, Type
 from azure.quantum import Workspace
-from azure.quantum.optimization import GenTerm, Term, GroupType, GroupedTerm, Problem, ProblemType
+from azure.quantum.optimization import TermBase, Term, GroupType, GroupedTerm, Problem, ProblemType
 from azure.quantum.storage import (
     StreamedBlob,
     ContainerClient,
@@ -39,7 +39,7 @@ class StreamingProblem(object):
     :param name: Problem name
     :type name: str
     :param terms: Problem terms, depending on solver. Defaults to None
-    :type terms: Optional[List[GenTerm]], optional
+    :type terms: Optional[List[TermBase]], optional
     :param init_config: Optional configuration details,
      depending on solver. Defaults to None
     :type init_config: Optional[Dict[str,int]], optional
@@ -52,7 +52,7 @@ class StreamingProblem(object):
         self,
         workspace: Workspace,
         name: str = "Optimization Problem",
-        terms: Optional[List[GenTerm]] = None,
+        terms: Optional[List[TermBase]] = None,
         init_config: Optional[Dict[str, int]] = None,
         problem_type: ProblemType = ProblemType.ising,
         metadata: Dict[str, str] = {},
@@ -98,9 +98,11 @@ class StreamingProblem(object):
         """
         self.add_terms([Term(indices=indices, c=c)])
 
-    def add_slc_term(self,
-                     terms: List[Tuple[Union[int, float], Union[int, Type[None]]]],
-                     c: Union[int, float] = 1):
+    def add_slc_term(
+        self,
+        terms: List[Tuple[Union[int, float], Union[int, Type[None]]]],
+        c: Union[int, float] = 1
+    ):
         """Adds a squared linear combination term to the `Problem`
         representation and queues it to be uploaded
         
@@ -110,10 +112,12 @@ class StreamingProblem(object):
         :param c: Weight of SLC term
         """
         self.add_terms([
-            GroupedTerm(GroupType.squared_linear_combination,
-                        [Term([index], c=tc) if index is not None else Term([], c=tc)
-                         for tc,index in terms],
-                        c=c)
+            GroupedTerm(
+                GroupType.squared_linear_combination,
+                [Term([index], c=tc) if index is not None else Term([], c=tc) 
+                for tc,index in terms],
+                c=c
+            )
         ])
 
     def _get_upload_coords(self):
@@ -140,27 +144,36 @@ class StreamingProblem(object):
 
         return {"blob_name": blob_name, "container_client": container_client}
 
-    def add_terms(self, terms: List[GenTerm],
-                  type: str = None, c: Union[int, float] = 1):
+    def add_terms(
+        self,
+        terms: List[TermBase],
+        term_type: Union[GroupType, str] = None,
+        c: Union[int, float] = 1
+    ):
         """Adds a list of terms to the `Problem`
          representation and queues them to be uploaded
          These are optionally grouped into a special term.
 
         :param terms: The list of terms to add to the problem
-        :param type: Type of grouped term being added, if applicable
+        :param term_type: Type of grouped term being added, if applicable
         :param c: Weight of grouped term, if applicable
         """
         if self.uploaded_uri is not None:
             raise Exception("Cannot add terms after problem has been uploaded")
 
-        if type:
+        if term_type:
             # Wrap terms into a GroupedTerm object
-            if type == 'na':
-                gtype = GroupType.combination
-            elif type == 'slc':
-                gtype = GroupType.squared_linear_combination
+            if isinstance(term_type, str):
+                if term_type == 'na':
+                    gtype = GroupType.combination
+                elif term_type == 'slc':
+                    gtype = GroupType.squared_linear_combination
+                else:
+                    raise Exception("Unsupported term_type {}.".format(term_type))
+            elif isinstance(term_type, GroupType):
+                gtype = term_type
             else:
-                raise Exception("Unsupported group type {}.".format(type))
+                raise TypeError('Invalid type {} of GroupedTerm'.format(term_type))
             terms = [GroupedTerm(gtype, terms, c=c)]
         if terms is not None:
             if self.uploader is None:
@@ -212,7 +225,7 @@ class StreamingProblem(object):
                         )
                 else:
                     raise Exception(
-                        "Unsupported statistics for GenTerm subclass {}.".format(type(term))
+                        "Unsupported statistics for TermBase subclass {}.".format(type(term))
                     )
                         
             self.stats["avg_coupling"] = (

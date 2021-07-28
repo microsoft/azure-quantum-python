@@ -13,7 +13,7 @@ import os
 
 from typing import List, Tuple, Union, Dict, Optional, Type, TYPE_CHECKING
 from enum import Enum
-from azure.quantum.optimization import GenTerm, Term, GroupType, GroupedTerm
+from azure.quantum.optimization import TermBase, Term, GroupType, GroupedTerm
 from azure.quantum.storage import (
     upload_blob,
     ContainerClient,
@@ -41,7 +41,7 @@ class Problem:
     :type name: str
     :param terms: Problem terms, depending on solver.
         Defaults to None
-    :type terms: Optional[List[GenTerm]], optional
+    :type terms: Optional[List[TermBase]], optional
     :param init_config: Optional configuration details, depending on solver.
         Defaults to None
     :type init_config: Optional[Dict[str,int]], optional
@@ -53,7 +53,7 @@ class Problem:
     def __init__(
         self,
         name: str,
-        terms: Optional[List[GenTerm]] = None,
+        terms: Optional[List[TermBase]] = None,
         init_config: Optional[Dict[str, int]] = None,
         problem_type: ProblemType = ProblemType.ising,
     ):
@@ -101,7 +101,7 @@ class Problem:
         problem = Problem(
             name=name,
             terms=[
-                GroupedTerm.from_dict(t) if "type" in t
+                GroupedTerm.from_dict(t) if GroupedTerm.is_grouped_term(t)
                 else Term.from_dict(t)
                 for t in result["cost_function"]["terms"]
             ],
@@ -124,28 +124,34 @@ class Problem:
         self.terms.append(Term(indices=indices, c=c))
         self.uploaded_blob_uri = None
 
-    def add_terms(self, terms: List[Term],
-                  type: GroupType=GroupType.combination, c: Union[int, float]=1):
+    def add_terms(
+        self, 
+        terms: List[Term],
+        term_type: GroupType=GroupType.combination,
+        c: Union[int, float]=1
+    ):
         """Adds an optionally grouped list of monomial terms 
         to the `Problem` representation
 
         :param terms: The list of terms to add to the problem
-        :param type: Type of grouped term being added
+        :param term_type: Type of grouped term being added
             If GroupType.combination, terms will be added as ungrouped monomials.
         :param c: Weight of grouped term, if applicable
         """
-        if type is GroupType.combination:
+        if term_type is GroupType.combination:
             # Cast as list of ungrouped monomial terms
             self.terms += [Term(term.ids, c=c*term.c) for term in terms]
         else:
             # Grouped term
-            self.terms.append(GroupedTerm(type, terms, c=c))
+            self.terms.append(GroupedTerm(term_type, terms, c=c))
         self.uploaded_blob_uri = None
     
-    def add_slc_term(self,
-                     terms: Union[List[Tuple[Union[int, float], Optional[int]]],
-                                  List[Term]],
-                     c: Union[int, float] = 1):
+    def add_slc_term(
+        self,
+        terms: Union[List[Tuple[Union[int, float], Optional[int]]],
+                     List[Term]],
+        c: Union[int, float] = 1
+    ):
         """Adds a squared linear combination term
         to the `Problem` representation
         
@@ -335,7 +341,7 @@ class Problem:
         contents = download_blob(blob.url)
         return Problem.deserialize(contents, self.name)
 
-    def get_terms(self, id:nint) -> List[GenTerm]:
+    def get_terms(self, id: int) -> List[TermBase]:
         """Given an index the function will return
         a list of terms with that index
         """

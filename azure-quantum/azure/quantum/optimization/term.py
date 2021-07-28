@@ -7,8 +7,9 @@ from __future__ import annotations
 import numpy as np
 from typing import List, Dict, Union, Optional
 from enum import Enum
+from abc import ABC
 
-__all__ = ["GenTerm", "Term", "GroupType", "GroupedTerm"]
+__all__ = ["TermBase", "Term", "GroupType", "GroupedTerm"]
 
 try:
     import numpy.typing as npt
@@ -70,9 +71,9 @@ except ImportError:
         return param
 
 
-class GenTerm:
+class TermBase(ABC):
     """
-    Generic term class; rarely to be directly initialized.
+    Term base class; this class is not directly initialized
     """
     def __init__(
         self,
@@ -102,27 +103,25 @@ class GenTerm:
     def to_dict(self):
         return self.__dict__
 
-    @staticmethod
-    def from_dict(obj):
-        return GenTerm(c=obj["c"])
+    @classmethod
+    def from_dict(cls, obj):
+        return cls(c=obj.get("c"))
 
-    def evaluate(self, configuration: Dict[int, int]) -> float:
+    def evaluate(self, *args, **kwargs) -> float:
         """Given a variable configuration, evaluate the value of the term.
         :param configuration:
             The dictionary of variable ids to their assigned value
         """
         return self.c
 
-    def reduce_by_variable_state(
-        self, fixed_variables: Dict[int, int]
-    ) -> Optional[GenTerm]:
+    def reduce_by_variable_state(self, *args, **kwargs) -> Optional[TermBase]:
         """Given some fixed variable states,
             transform the existing term into new term.
         Returns None if the new term is effectively 0
         :param fixed_variables:
             The dictionary of variable ids and their fixed state
         """
-        return GenTerm(c=self.c)
+        return TermBase(c=self.c) if self.c != 0 else None
 
     def __repr__(self):
         return str(self.__dict__)
@@ -133,9 +132,9 @@ class GenTerm:
         else:
             return False
 
-class Term(GenTerm):
+class Term(TermBase):
     """
-    Monomial term class
+    Class describing a single (monomial) term.
     """
     def __init__(
         self,
@@ -143,12 +142,12 @@ class Term(GenTerm):
         w: Optional[WArray] = None,
         c: Optional[WArray] = None,
     ):
-        GenTerm.__init__(self, w=w, c=c)
+        TermBase.__init__(self, w=w, c=c)
         self.ids = indices
     
-    @staticmethod
-    def from_dict(obj):
-        return Term(indices=obj["ids"], c=obj["c"])
+    @classmethod
+    def from_dict(cls, obj: dict):
+        return cls(indices=obj.get("ids"), c=obj.get("c"))
     
     def evaluate(self, configuration: Dict[int, int]) -> float:
         """Given a variable configuration, evaluate the value of the term.
@@ -199,36 +198,43 @@ class GroupType(str, Enum):
     combination = "na"
     squared_linear_combination = "slc"
 
-class GroupedTerm(GenTerm):
+class GroupedTerm(TermBase):
     """
     Grouped term class featuring a particular combination type of monomial terms.
     """
     def __init__(
         self,
-        type: GroupType,
+        term_type: GroupType,
         terms: List[Term],
-        w: Optional[WArray] = None,
-        c: Optional[WArray] = None,
+        c: Optional[WArray] = 1.0,
     ):
-        GenTerm.__init__(self, w=w, c=c)
-        self.type = type
+        TermBase.__init__(self, c=c)
+        self.term_type = term_type
         self.terms = terms
         self.validate()
     
+    @staticmethod
+    def is_grouped_term(term_dict: dict):
+        return "type" in term_dict
+    
     def validate(self):
-        if self.type is GroupType.combination:
+        """
+        Check for and raise errors in GroupedTerm formulation.
+        """
+        if self.term_type is GroupType.combination:
+            # Disabled GroupType
             raise ValueError(
-                "Error - type {} GroupTerm is not enabled;"
-                + "formulate list of ungrouped Term monomials instead.".format(self.type)
+                "Error - type {} GroupedTerm is not enabled;"
+                + "formulate list of Term objects instead.".format(self.term_type)
             )
-        elif self.type is GroupType.squared_linear_combination:
+        elif self.term_type is GroupType.squared_linear_combination:
             # Check linearity of terms and that like terms are combined
             seen = set()
             for term in self.terms:
                 if len(term.ids) > 1:
                     # Nonlinear term
                     raise ValueError(
-                        "Error - terms must be linear in type {} GroupedTerm".format(self.type)
+                        "Error - terms must be linear in type {} GroupedTerm".format(self.term_type)
                     )
                 elif len(term.ids) == 1:
                     # Linear term
@@ -238,7 +244,7 @@ class GroupedTerm(GenTerm):
                     id = -1
                 if id in seen:
                     raise ValueError(
-                        "Error - like terms must be combined in type {} GroupedTerm".format(self.type)
+                        "Error - like terms must be combined in type {} GroupedTerm".format(self.term_type)
                     )
                 else:
                     seen.add(id)
@@ -246,18 +252,24 @@ class GroupedTerm(GenTerm):
             pass
 
     def to_dict(self):
+        """
+        Return dictionary format of GroupedTerm for solver input
+        """
         return {
-            'type': self.type,
+            'type': self.term_type,
             'c': self.c,
             'terms': [monomial_term.to_dict() for monomial_term in self.terms],
         }
     
-    @staticmethod
-    def from_dict(obj):
+    @classmethod
+    def from_dict(cls, obj: dict):
+        """
+        Create GroupedTerm from dictionary with keys "type", "terms" and "c"
+        """
         if obj["type"] == "na":
-            type = GroupType.combination
+            term_type = GroupType.combination
         elif obj["type"] == "slc":
-            type = GroupType.squared_linear_combination
+            term_type = GroupType.squared_linear_combination
         else:
             print(
                 "Error - unknown grouped term type {0}".format(
@@ -273,28 +285,28 @@ class GroupedTerm(GenTerm):
                 "Error - grouped list of terms missing or errant."
             )
             raise
-
-        return GroupedTerm(type=type, terms=terms, c=obj["c"])
+        return cls(term_type=term_type, terms=terms, c=obj["c"])
     
     def evaluate(self, configuration: Dict[int, int]) -> float:
         """Given a variable configuration, evaluate the value of the grouped term.
         :param configuration:
-            The dictionary of variable ids to their assigned value
+            Dictionary in which each key is a variable id;
+            each value is the variable assignment (usually -1, 0, or 1)
         """
-        if self.type is GroupType.combination:
+        if self.term_type is GroupType.combination:
             combination_eval = 0.0
-            for monomial in self.terms:
-                combination_eval += monomial.evaluate(configuration)
+            for term in self.terms:
+                combination_eval += term.evaluate(configuration)
             eval = combination_eval
-        elif self.type is GroupType.squared_linear_combination:
+        elif self.term_type is GroupType.squared_linear_combination:
             combination_eval = 0.0
-            for monomial in self.terms:
-                combination_eval += monomial.evaluate(configuration)
+            for term in self.terms:
+                combination_eval += term.evaluate(configuration)
             eval = self.c * combination_eval**2
         else:
             print(
                 "Error - evaluate not handled for GroupType {0}".format(
-                    self.type
+                    self.term_type
                 )
             )
             raise
@@ -302,8 +314,9 @@ class GroupedTerm(GenTerm):
         return eval
     
     def reduce_by_variable_state(
-        self, fixed_variables: Dict[int, int]
-    ) -> Optional[GenTerm]:
+        self,
+        fixed_variables: Dict[int, int]
+    ) -> Optional[TermBase]:
         """Given some fixed variable states,
             transform the existing grouped term into new term.
         Returns None if the new term is effectively 0
@@ -324,16 +337,18 @@ class GroupedTerm(GenTerm):
             return None
 
         # GroupType simplifications when new_terms has a single element
-        # Further simplifications require knowledge of binary vs. spin setting
+        # Further simplifications require knowledge of binary vs. spin setting,
+        # such as simplifying an SLC term consisting of a single variable
         if len(new_terms) == 1:
             term = new_terms[0]
-            if self.type is GroupType.combination:
+            if self.term_type is GroupType.combination:
                 return Term(indices=term.ids, c=self.c * term.c)
-            elif self.type is GroupType.squared_linear_combination:
-                #return Term(indices=term.ids + term.ids, c=self.c * term.c**2)
+            elif self.term_type is GroupType.squared_linear_combination:
                 if len(term.ids) == 0:
-                    return Term(indices=term.ids, c=self.c * term.c**2)
+                    # Simplify SLC term consisting of a single constant
+                    # For example, C(k)^2 as a GroupedTerm to Ck^2 as a Term
+                    return Term(indices=[], c=self.c * term.c**2)
             else:
                 pass
         
-        return GroupedTerm(type=self.type, terms=new_terms, c=self.c)
+        return GroupedTerm(term_type=self.term_type, terms=new_terms, c=self.c)
