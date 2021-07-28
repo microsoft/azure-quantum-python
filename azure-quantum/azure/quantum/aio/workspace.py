@@ -124,23 +124,19 @@ class Workspace:
         # "West US" should be converted to "westus".
         self.location = "".join(location.split()).lower()
 
-
-    def _create_client(self) -> QuantumClient:
         base_url = BASE_URL(self.location)
         logger.debug(
             f"Creating client for: subs:{self.subscription_id},"
             + f"rg={self.resource_group}, ws={self.name}, frontdoor={base_url}"
         )
 
-        client = QuantumClient(
+        self._client = QuantumClient(
             credential=self.credentials,
             subscription_id=self.subscription_id,
             resource_group_name=self.resource_group,
             workspace_name=self.name,
             base_url=base_url,
         )
-        return client
-
 
     async def _get_linked_storage_sas_uri(
         self, container_name: str, blob_name: str = None
@@ -148,31 +144,27 @@ class Workspace:
         """
         Calls the service and returns a container sas url
         """
-        async with self._create_client() as client:
-            blob_details = BlobDetails(
-                container_name=container_name, blob_name=blob_name
-            )
-            container_uri = await client.storage.sas_uri(blob_details=blob_details)
-            logger.debug(f"Container URI from service: {container_uri}")
+        blob_details = BlobDetails(
+            container_name=container_name, blob_name=blob_name
+        )
+        container_uri = await self._client.storage.sas_uri(blob_details=blob_details)
+        logger.debug(f"Container URI from service: {container_uri}")
         return container_uri.sas_uri
 
     async def submit_job(self, job: Job) -> Job:
-        async with self._create_client() as client:
-            details = await client.jobs.create(
-                job.details.id, job.details
-            )
+        details = await self._client.jobs.create(
+            job.details.id, job.details
+        )
         return Job(self, details)
 
     async def cancel_job(self, job: Job) -> Job:
-        async with self._create_client() as client:
-            await client.jobs.cancel(job.details.id)
-            details = await client.jobs.get(job.id)
+        await self._client.jobs.cancel(job.details.id)
+        details = await self._client.jobs.get(job.id)
         return Job(self, details)
 
     async def get_job(self, job_id: str) -> Job:
         """Returns the job corresponding to the given id."""
-        async with self._create_client() as client:
-            details = await client.jobs.get(job_id)
+        details = await self._client.jobs.get(job_id)
         return Job(self, details)
 
     async def list_jobs(
@@ -186,8 +178,7 @@ class Workspace:
             :param status: filter by job status
             :param created_after: filter jobs after time of job creation
         """
-        async with self._create_client() as client:
-            jobs = client.jobs.list()
+        jobs = self._client.jobs.list()
 
         result = []
         async for j in jobs:
