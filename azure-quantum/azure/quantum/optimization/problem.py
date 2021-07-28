@@ -148,6 +148,7 @@ class Problem:
         return data.getvalue()
     
     def _blob_name(self):
+        import uuid
         return "{}-{}".format(self.name, uuid.uuid1())
 
     def upload(
