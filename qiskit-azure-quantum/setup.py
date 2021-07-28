@@ -59,7 +59,7 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/microsoft/qdk-python",
-    packages=setuptools.find_namespace_packages(include=["azure.*"]),
+    packages=setuptools.find_namespace_packages(include=["qiskit_azure_quantum*"]),
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
