@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 ##
 from qiskit import QuantumCircuit
-from azure.quantum_qiskit import AzureQuantumProvider
+from qiskit_azure_quantum import AzureQuantumProvider
 
 from utils import plot_results
 

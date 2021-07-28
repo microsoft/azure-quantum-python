@@ -16,14 +16,14 @@ import distutils
 # VERSION INFORMATION #
 # Our build process sets the PYTHON_VERSION environment variable to a version
 # string that is compatible with PEP 440, and so we inherit that version number
-# here and propagate that to qsharp/version.py.
+# here and propagate that to version.py.
 #
 # To make sure that local builds still work without the same environment
 # variables, we'll default to 0.0.0.1 as a development version.
 
 version = os.environ.get("PYTHON_VERSION", "0.0.0.1")
 
-with open("./azure/quantum_qiskit/version.py", "w") as f:
+with open("./qiskit_azure_quantum/version.py", "w") as f:
     f.write(
         f"""# Auto-generated file, do not edit.
 ##
@@ -52,7 +52,7 @@ with open("./requirements.txt", "r") as fh:
 
 # SETUPTOOLS INVOCATION #
 setuptools.setup(
-    name="azure-quantum-qiskit",
+    name="qiskit-azure-quantum",
     version=version,
     author="Microsoft",
     description="Azure Quantum Provider for Qiskit",
