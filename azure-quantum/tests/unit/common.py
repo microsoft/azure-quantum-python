@@ -43,11 +43,11 @@ class QuantumTestBase(ReplayableTest):
     def __init__(self, method_name):
         self._client_id = os.environ.get("AZURE_CLIENT_ID", ZERO_UID)
         self._client_secret = os.environ.get("AZURE_CLIENT_SECRET", PLACEHOLDER)
-        self._location = os.environ.get("LOCATION", LOCATION)
         self._tenant_id = os.environ.get("AZURE_TENANT_ID", TENANT_ID)
-        self._resource_group = os.environ.get("RESOURCE_GROUP", RESOURCE_GROUP)
-        self._subscription_id = os.environ.get("SUBSCRIPTION_ID", ZERO_UID)
-        self._workspace_name = os.environ.get("WORKSPACE_NAME", WORKSPACE)
+        self._resource_group = os.environ.get("AZUREQUANTUM_WORKSPACE_RG", RESOURCE_GROUP)
+        self._subscription_id = os.environ.get("AZUREQUANTUM_SUBSCRIPTION_ID", ZERO_UID)
+        self._workspace_name = os.environ.get("AZUREQUANTUM_WORKSPACE_NAME", WORKSPACE)
+        self._location = os.environ.get("AZUREQUANTUM_WORKSPACE_LOCATION", LOCATION)
 
         regex_replacer = CustomRecordingProcessor()
         recording_processors = [
