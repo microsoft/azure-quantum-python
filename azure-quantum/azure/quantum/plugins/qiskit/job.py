@@ -2,8 +2,14 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 ##
-from qiskit.providers import JobV1, JobStatus
-from qiskit.result import Result
+try:
+    from qiskit.providers import JobV1, JobStatus
+    from qiskit.result import Result
+except ImportError:
+    raise ImportError(
+        "Missing optional 'qiskit' dependencies. \
+To install run: pip install azure-quantum[qiskit]"
+    )
 
 from azure.quantum import Job
 

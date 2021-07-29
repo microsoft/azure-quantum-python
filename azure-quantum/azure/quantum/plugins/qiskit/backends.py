@@ -3,17 +3,20 @@
 # Licensed under the MIT License.
 ##
 import json
-from azure.storage import blob
-from .version import __version__
+from azure.quantum import __version__
 from .job import AzureQuantumJob
 
-from azure.quantum import Job
+try:
+    from qiskit.providers import BackendV1 as Backend
+    from qiskit.providers.models import BackendConfiguration
+    from qiskit.providers import Options
 
-from qiskit.providers import BackendV1 as Backend
-from qiskit.providers.models import BackendConfiguration
-from qiskit.providers import Options
-
-from qiskit_ionq.helpers import ionq_basis_gates, qiskit_circ_to_ionq_circ
+    from qiskit_ionq.helpers import ionq_basis_gates, qiskit_circ_to_ionq_circ
+except ImportError:
+    raise ImportError(
+    "Missing optional 'qiskit' dependencies. \
+To install run: pip install azure-quantum[qiskit]"
+)
 
 import logging
 logger = logging.getLogger(__name__)

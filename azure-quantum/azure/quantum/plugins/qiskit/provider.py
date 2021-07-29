@@ -2,7 +2,13 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 ##
-from qiskit.providers import ProviderV1 as Provider
+try:
+    from qiskit.providers import ProviderV1 as Provider
+except ImportError:
+    raise ImportError(
+    "Missing optional 'qiskit' dependencies. \
+To install run: pip install azure-quantum[qiskit]"
+    )
 
 from azure.quantum import Workspace
 

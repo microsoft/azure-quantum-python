@@ -79,4 +79,14 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     install_requires=requirements,
+    extras_require={
+        "qiskit": [
+            "qiskit-ionq>=0.1.4",
+            "qiskit-terra>=0.18.0"
+        ],
+        "cirq": [
+            "cirq>=0.11.0",
+            "cirq-ionq>=0.12.0.dev20210728232936"
+        ]
+    }
 )
