@@ -93,7 +93,7 @@ class TestWorkspace(QuantumTestBase):
     
     def test_workspace_job_quotas(self):
         ws = self.create_workspace()
-        quotas = ws.get_job_quotas()
+        quotas = ws.get_quotas()
         assert len(quotas) > 0
         assert "dimension" in quotas[0]
         assert "scope" in quotas [0]

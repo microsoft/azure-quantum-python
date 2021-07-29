@@ -16,7 +16,11 @@ from deprecated import deprecated
 from azure.quantum._authentication import _DefaultAzureCredential
 
 from azure.quantum._client import QuantumClient
-from azure.quantum._client.operations import JobsOperations, StorageOperations
+from azure.quantum._client.operations import (
+    JobsOperations,
+    StorageOperations,
+    QuotasOperations
+)
 from azure.quantum._client.models import BlobDetails, JobStatus
 from azure.quantum import Job
 
@@ -198,6 +202,9 @@ class Workspace:
     def _get_workspace_storage_client(self) -> StorageOperations:
         return self._client.storage
 
+    def _get_quotas_client(self) -> QuotasOperations:
+        return self._client.quotas
+
     def _custom_headers(self):
         return {"x-ms-azurequantum-sdk-version": __version__}
 
@@ -270,13 +277,14 @@ class Workspace:
             ] for provider in self._client.providers.get_status()
         }
 
-    def get_job_quotas(self) -> List[Dict[str, Any]]:
+    def get_quotas(self) -> List[Dict[str, Any]]:
         """Get a list of job quotas for the given workspace.
 
         :return: Job quotas
         :rtype: List[Dict[str, Any]]
         """
-        return [q.as_dict() for q in self._client.quotas.list()]
+        client = self._get_quotas_client()
+        return [q.as_dict() for q in client.list()]
 
     @deprecated(version='0.17.2105', reason="This method is deprecated and no longer necessary to be called")
     def login(self, refresh: bool = False) -> object:
