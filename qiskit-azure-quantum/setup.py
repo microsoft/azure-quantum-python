@@ -49,7 +49,7 @@ with open("./README.md", "r") as fh:
 # Get list of requirements from requirements.txt
 with open("./requirements.txt", "r") as fh:
     requirements = fh.readlines()
-    requirements.append(f"azure-quantum>={version}")
+    requirements.append(f"azure-quantum=={version}")
 
 # SETUPTOOLS INVOCATION #
 setuptools.setup(
