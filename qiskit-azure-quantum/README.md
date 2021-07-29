@@ -1,7 +1,6 @@
 # Python SDK for Azure Quantum #
 
-The `azure-quantum` package for Python provides functionality for interacting with Azure Quantum workspaces,
-including creating jobs, listing jobs, and retrieving job results.
+The `qiskit-azure-quantum` package 
 
 For details on how to get started with Azure Quantum, please visit https://azure.com/quantum.
 
@@ -10,7 +9,7 @@ You can also try our [Quantum Computing Fundamentals](https://aka.ms/learnqc) le
 ## Installing with pip ##
 
 ```bash
-pip install azure-quantum
+pip install qiskit-azure-quantum
 ```
 
 ## Development ##
