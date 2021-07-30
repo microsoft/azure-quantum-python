@@ -141,7 +141,7 @@ class TestJob(QuantumTestBase):
             input_data_uri = problem.upload(
                 workspace=workspace,
                 blob_name="inputData",
-                compress=False,
+                compress=True,
                 container_name=f"qc-test-{self.get_test_job_id()}"
             )
 
