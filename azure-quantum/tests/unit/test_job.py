@@ -36,8 +36,8 @@ SOLVER_TYPES = [
 ]
 
 def get_solver_types():
-    one_qbit_enabled = os.environ.get("AZURE_QUANTUM_1QBIT", "") == "1"
-    toshiba_enabled = os.environ.get("AZURE_QUANTUM_TOSHIBA", "") == "1"
+    one_qbit_enabled = os.environ.get("AZUREQUANTUM_1QBIT", "") == "1"
+    toshiba_enabled = os.environ.get("AZUREQUANTUM_TOSHIBA", "") == "1"
     
     solver_types = []
     for solver_type in SOLVER_TYPES:
@@ -156,25 +156,25 @@ class TestJob(QuantumTestBase):
                 # Submit the blob data URI and run job
                 job = solver.submit(input_data_uri)
 
-    @pytest.mark.skipif(not(os.environ.get("AZURE_QUANTUM_1QBIT", "") == "1"), reason="1Qbit tests not enabled")
+    @pytest.mark.skipif(not(os.environ.get("AZUREQUANTUM_1QBIT", "") == "1"), reason="1Qbit tests not enabled")
     def test_job_submit_oneqbit_tabu_search(self):
         solver_type = functools.partial(oneqbit.TabuSearch, improvement_cutoff=10)
         solver_name = "TabuSearch"
         self._test_job_submit(solver_name, solver_type)
 
-    @pytest.mark.skipif(not(os.environ.get("AZURE_QUANTUM_1QBIT", "") == "1"), reason="1Qbit tests not enabled")
+    @pytest.mark.skipif(not(os.environ.get("AZUREQUANTUM_1QBIT", "") == "1"), reason="1Qbit tests not enabled")
     def test_job_submit_oneqbit_pticm_solver(self):
         solver_type = functools.partial(oneqbit.PticmSolver, num_sweeps_per_run=99)
         solver_name = "PticmSolver"
         self._test_job_submit(solver_name, solver_type)
 
-    @pytest.mark.skipif(not(os.environ.get("AZURE_QUANTUM_1QBIT", "") == "1"), reason="1Qbit tests not enabled")
+    @pytest.mark.skipif(not(os.environ.get("AZUREQUANTUM_1QBIT", "") == "1"), reason="1Qbit tests not enabled")
     def test_job_submit_oneqbit_path_relinking_solver(self):
         solver_type = functools.partial(oneqbit.PathRelinkingSolver, distance_scale=0.44)
         solver_name = "PathRelinkingSolver"
         self._test_job_submit(solver_name, solver_type)
 
-    @pytest.mark.skipif(not(os.environ.get("AZURE_QUANTUM_TOSHIBA", "") == "1"), reason="Toshiba tests not enabled")
+    @pytest.mark.skipif(not(os.environ.get("AZUREQUANTUM_TOSHIBA", "") == "1"), reason="Toshiba tests not enabled")
     def test_job_submit_toshiba_simulated_bifurcation_machine(self):
         solver_type = functools.partial(toshiba.SimulatedBifurcationMachine, loops=10)
         solver_name = "SimulatedBifurcationMachine"
