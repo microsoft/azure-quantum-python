@@ -7,7 +7,7 @@ import logging
 import os
 import re
 
-from typing import List, Optional
+from typing import Any, Dict, List, Optional
 from deprecated import deprecated
 
 # Temporarily replacing the DefaultAzureCredential with
@@ -16,7 +16,11 @@ from deprecated import deprecated
 from azure.quantum._authentication import _DefaultAzureCredential
 
 from azure.quantum._client import QuantumClient
-from azure.quantum._client.operations import JobsOperations, StorageOperations
+from azure.quantum._client.operations import (
+    JobsOperations,
+    StorageOperations,
+    QuotasOperations
+)
 from azure.quantum._client.models import BlobDetails, JobStatus
 from azure.quantum import Job
 from azure.quantum.storage import create_container_using_client, get_container_uri, ContainerClient
@@ -161,6 +165,7 @@ class Workspace:
         # See _DefaultAzureCredential documentation for more info.
         if credential is None:
             credential = _DefaultAzureCredential(exclude_interactive_browser_credential=False,
+                                                 exclude_shared_token_cache_credential=True,
                                                  subscription_id=subscription_id,
                                                  arm_base_url=ARM_BASE_URL)
 
@@ -178,6 +183,8 @@ class Workspace:
 
         self._user_agent = kwargs.pop('user_agent', None)
 
+        # Create QuantumClient
+        self._client = self._create_client()
 
     def _create_client(self) -> QuantumClient:
         base_url = BASE_URL(self.location)
@@ -196,13 +203,14 @@ class Workspace:
         )
         return client
 
-    def _create_jobs_client(self) -> JobsOperations:
-        client = self._create_client().jobs
-        return client
+    def _get_jobs_client(self) -> JobsOperations:
+        return self._client.jobs
 
-    def _create_workspace_storage_client(self) -> StorageOperations:
-        client = self._create_client().storage
-        return client
+    def _get_workspace_storage_client(self) -> StorageOperations:
+        return self._client.storage
+
+    def _get_quotas_client(self) -> QuotasOperations:
+        return self._client.quotas
 
     def _custom_headers(self):
         return {"x-ms-azurequantum-sdk-version": __version__}
@@ -213,7 +221,7 @@ class Workspace:
         """
         Calls the service and returns a container sas url
         """
-        client = self._create_workspace_storage_client()
+        client = self._get_workspace_storage_client()
         blob_details = BlobDetails(
             container_name=container_name, blob_name=blob_name
         )
@@ -223,21 +231,21 @@ class Workspace:
         return container_uri.sas_uri
 
     def submit_job(self, job: Job) -> Job:
-        client = self._create_jobs_client()
+        client = self._get_jobs_client()
         details = client.create(
             job.details.id, job.details
         )
         return Job(self, details)
 
     def cancel_job(self, job: Job) -> Job:
-        client = self._create_jobs_client()
+        client = self._get_jobs_client()
         client.cancel(job.details.id)
         details = client.get(job.id)
         return Job(self, details)
 
     def get_job(self, job_id: str) -> Job:
         """Returns the job corresponding to the given id."""
-        client = self._create_jobs_client()
+        client = self._get_jobs_client()
         details = client.get(job_id)
         return Job(self, details)
 
@@ -252,7 +260,7 @@ class Workspace:
             :param status: filter by job status
             :param created_after: filter jobs after time of job creation
         """
-        client = self._create_jobs_client()
+        client = self._get_jobs_client()
         jobs = client.list()
 
         result = []
@@ -262,6 +270,28 @@ class Workspace:
                 result.append(deserialized_job)
 
         return result
+
+    def get_targets(self) -> Dict[str, List[str]]:
+        """Returns a dictionary of provider IDs and lists of targets
+        that are available.
+
+        :return: Targets, keyed by provider IDs
+        :rtype: Dict[str, List[str]]
+        """
+        return {
+            provider.id: [
+                target.id for target in provider.targets
+            ] for provider in self._client.providers.get_status()
+        }
+
+    def get_quotas(self) -> List[Dict[str, Any]]:
+        """Get a list of job quotas for the given workspace.
+
+        :return: Job quotas
+        :rtype: List[Dict[str, Any]]
+        """
+        client = self._get_quotas_client()
+        return [q.as_dict() for q in client.list()]
 
     @deprecated(version='0.17.2105', reason="This method is deprecated and no longer necessary to be called")
     def login(self, refresh: bool = False) -> object:

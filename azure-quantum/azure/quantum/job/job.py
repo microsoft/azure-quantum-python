@@ -56,7 +56,7 @@ class Job(BaseJob, FilteredJob):
             or self.details.status == "Cancelled"
         )
 
-    def wait_until_completed(self, max_poll_wait_secs=30) -> None:
+    def wait_until_completed(self, max_poll_wait_secs=30, print_progress=True):
         """Keeps refreshing the Job's details
         until it reaches a finished status."""
         self.refresh()
@@ -66,7 +66,8 @@ class Job(BaseJob, FilteredJob):
                 f"Waiting for job {self.id},"
                 + f"it is in status '{self.details.status}'"
             )
-            print(".", end="", flush=True)
+            if print_progress:
+                print(".", end="", flush=True)
             time.sleep(poll_wait)
             self.refresh()
             poll_wait = (
