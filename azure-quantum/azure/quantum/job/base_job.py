@@ -21,7 +21,7 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-DEFAULT_TIMEOUT = 100
+DEFAULT_TIMEOUT = 300 # Default timeout for waiting for job to complete
 
 
 class BaseJob(abc.ABC):
@@ -138,6 +138,7 @@ class BaseJob(abc.ABC):
         container_uri: str = None,
         job_id: str = None,
         input_params: Dict[str, Any] = None,
+        submit_job: bool = True,
         **kwargs
     ) -> "BaseJob":
         """Create new Job from URI if input data is already uploaded
@@ -198,8 +199,9 @@ class BaseJob(abc.ABC):
                 Using payload from: '{job.details.input_data_uri}'"
         )
 
-        logger.debug(f"==> submitting: {job.details}")
-        job.submit()
+        if submit_job:
+            logger.debug(f"==> submitting: {job.details}")
+            job.submit()
 
         return job
 

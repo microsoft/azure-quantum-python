@@ -196,6 +196,7 @@ class Problem:
             content_type="application/json"
         )
         self.uploaded_blob_params = blob_params
+        self.uploaded_blob_uri = input_data_uri
         return input_data_uri
 
     def set_fixed_variables(
