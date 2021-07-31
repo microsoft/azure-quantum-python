@@ -257,8 +257,8 @@ class TestJob(QuantumTestBase):
                 job = workspace.get_job(job.id)
                 self.assertEqual(True, job.has_completed())
             
-            assert job.has_completed()
-            assert job.details.status == "Succeeded"
+                assert job.has_completed()
+                assert job.details.status == "Succeeded"
 
 
     def create_problem(
