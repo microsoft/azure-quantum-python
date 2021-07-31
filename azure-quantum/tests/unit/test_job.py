@@ -6,7 +6,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 ##
-from azure.quantum.optimization.solvers import Solver
 import unittest
 import time
 import os
@@ -141,7 +140,7 @@ class TestJob(QuantumTestBase):
             input_data_uri = problem.upload(
                 workspace=workspace,
                 blob_name="inputData",
-                compress=False,
+                compress=True,
                 container_name=f"qc-test-{self.get_test_job_id()}"
             )
 
@@ -196,11 +195,13 @@ class TestJob(QuantumTestBase):
             self.assertEqual(False, job.matches_filter(name_match="Test1"))
             self.assertEqual(True, job.matches_filter(name_match="Test-"))
             self.assertEqual(True, job.matches_filter(name_match="Test.+"))
-
-            self.assertEqual(False, job.matches_filter(created_after=datetime.now()))  
+            # There is a few hundred ms difference in time between local machine
+            # and server, so add one second to take that into account
+            after_time = datetime.now() + timedelta(seconds=1)
+            self.assertEqual(False, job.matches_filter(created_after=after_time))
 
             before_time = datetime.now() - timedelta(days=100)
-            self.assertEqual(True, job.matches_filter(created_after=before_time))    
+            self.assertEqual(True, job.matches_filter(created_after=before_time))
 
             # test behaviour of datetime.date object
             before_date = date.today() - timedelta(days=100)
@@ -256,6 +257,9 @@ class TestJob(QuantumTestBase):
 
                 job = workspace.get_job(job.id)
                 self.assertEqual(True, job.has_completed())
+            
+                assert job.has_completed()
+                assert job.details.status == "Succeeded"
 
 
     def create_problem(
