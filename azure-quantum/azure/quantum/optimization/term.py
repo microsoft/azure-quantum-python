@@ -88,7 +88,7 @@ class TermBase(ABC):
         coeff = _convert_if_numpy_type(coeff)
         if type(coeff) != int and type(coeff) != float:
             raise RuntimeError(
-                f"{parameter_name_used} must be a float or int value, \
+                f"c must be a float or int value, \
                     or a NumPy value that can be converted to those."
             )
         self.c = coeff
@@ -139,24 +139,20 @@ class Term(TermBase):
             # Legacy support if 'w' is used to specify
             # term instead of the expected 'c'.
             coeff = w
-            self.parameter_name_used = "w"
-        else:
+            parameter_name_used = "w"
+        elif c is not None:
             coeff = c
-            self.parameter_name_used = "c"
+            parameter_name_used = "c"
+        else:
+            raise RuntimeError("Cost should be provided for each term.")
+        coeff = _convert_if_numpy_type(coeff)
+        if type(coeff) != int and type(coeff) != float:
+            raise RuntimeError(
+                f"{parameter_name_used} must be a float or int value, \
+                    or a NumPy value that can be converted to those."
+            )
         TermBase.__init__(self, c=coeff)
         self.ids = indices
-
-    def __repr__(self):
-        return str(self.to_dict())
-
-    def to_dict(self):
-        """
-        Return dictionary format of Term for solver input
-        """
-        return {
-            self.parameter_name_used: self.c,
-            'ids': self.ids,
-        }
     
     @classmethod
     def from_dict(cls, obj: dict):
