@@ -119,6 +119,13 @@ class StreamingProblem(object):
                 c=c
             )
         ])
+        self.problem_type_to_grouped()
+    
+    def problem_type_to_grouped(self):
+        if self.problem_type == ProblemType.pubo:
+            self.problem_type = ProblemType.pubo_grouped
+        elif self.problem_type == ProblemType.ising:
+            self.problem_type = ProblemType.ising_grouped
 
     def _get_upload_coords(self):
         blob_name = self.id
@@ -200,6 +207,7 @@ class StreamingProblem(object):
                     self.__n_couplers += n
                     self.stats["num_terms"] += 1
                 elif isinstance(term, GroupedTerm):
+                    self.problem_type_to_grouped()
                     sub_couplings = [len(subterm.ids) for subterm in term.terms]
                     self.stats["num_terms"] += len(sub_couplings)
                     if term.type is GroupType.combination:

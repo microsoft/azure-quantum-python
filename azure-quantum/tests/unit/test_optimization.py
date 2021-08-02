@@ -120,7 +120,7 @@ class TestProblem(QuantumTestBase):
             name="test", terms=terms, problem_type=ProblemType.pubo
         )
 
-        self.assertEqual(ProblemType.pubo, problem.problem_type)
+        self.assertEqual(ProblemType.pubo_grouped, problem.problem_type)
         self.assertEqual(count+1, len(problem.terms))
         self.assertEqual(Term(c=1, indices=[1, 2]), problem.terms[1])
 
@@ -165,7 +165,7 @@ class TestProblem(QuantumTestBase):
             {
                 "cost_function": {
                     "version": "1.0",
-                    "type": "ising",
+                    "type": "ising_grouped",
                     "terms": [
                         {"c": 0, "ids": [0, 1]},
                         {"c": 1, "ids": [1, 2]},

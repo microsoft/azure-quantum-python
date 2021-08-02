@@ -9,7 +9,7 @@ from typing import List, Union, Any, Optional
 from enum import Enum
 from azure.quantum import Workspace, Job
 from azure.quantum._client.models import JobDetails
-from azure.quantum.optimization import Problem
+from azure.quantum.optimization import Problem, ProblemType
 from azure.quantum.storage import (
     ContainerClient,
     create_container_using_client,
@@ -123,6 +123,7 @@ class Solver:
             name = "Optimization problem"
             problem_uri = problem
         elif isinstance(problem, Problem):
+            self.check_valid_problem(problem)
             name = problem.name
             problem_uri = problem.upload(
                 self.workspace,
@@ -216,6 +217,23 @@ class Solver:
                         Otherwise, consider cancelling the job \
                         and resubmitting with a lower timeout."
                 )
+
+    def check_valid_problem(self, problem):
+        # Evaluate Problem and Solver compatibility.
+        if problem.problem_type in {ProblemType.pubo_grouped, ProblemType.ising_grouped}:
+            if not self.supports_grouped_terms():
+                raise ValueError(
+                    f"Solver type is not compatible"
+                    f"with problem type {problem.problem_type};"
+                    f"Try PopulationAnnealing or SubstochasticMonteCarlo."
+                )
+
+    def supports_grouped_terms(self):
+        """
+        Return whether or not the Solver class supported grouped terms in the cost function.
+        This should be overridden by Solver subclasses which do support grouped terms.
+        """
+        return False
 
     class ScheduleEvolution(Enum):
         INCREASING = 1
@@ -689,6 +707,9 @@ class PopulationAnnealing(Solver):
                 lower_bound_exclusive=0)
         self.check_set_positive_int("timeout", timeout)
 
+    def supports_grouped_terms(self):
+        return True
+
 
 class SubstochasticMonteCarlo(Solver):
     def __init__(
@@ -755,3 +776,6 @@ class SubstochasticMonteCarlo(Solver):
                 "beta", beta, evolution=self.ScheduleEvolution.INCREASING,
                 lower_bound_exclusive=0)
         self.check_set_positive_int("timeout", timeout)
+    
+    def supports_grouped_terms(self):
+        return True

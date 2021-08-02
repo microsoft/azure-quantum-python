@@ -32,6 +32,8 @@ if TYPE_CHECKING:
 class ProblemType(str, Enum):
     pubo = 0
     ising = 1
+    pubo_grouped = 2
+    ising_grouped = 3
 
 
 class Problem:
@@ -60,6 +62,7 @@ class Problem:
         self.name = name
         self.terms = terms.copy() if terms is not None else []
         self.problem_type = problem_type
+        self.check_for_grouped_term()
         self.init_config = init_config
         self.uploaded_blob_uri = None
         self.uploaded_blob_params = None
@@ -144,6 +147,7 @@ class Problem:
         else:
             # Grouped term
             self.terms.append(GroupedTerm(term_type, terms, c=c))
+            self.problem_type_to_grouped()
         self.uploaded_blob_uri = None
     
     def add_slc_term(
@@ -169,7 +173,20 @@ class Problem:
         self.terms.append(
             GroupedTerm(GroupType.squared_linear_combination, gterms, c=c)
         )
+        self.problem_type_to_grouped()
         self.uploaded_blob_uri = None
+
+    def check_for_grouped_term(self):
+        for term in self.terms:
+            if isinstance(term, GroupedTerm):
+                self.problem_type_to_grouped()
+                break
+    
+    def problem_type_to_grouped(self):
+        if self.problem_type == ProblemType.pubo:
+            self.problem_type = ProblemType.pubo_grouped
+        elif self.problem_type == ProblemType.ising:
+            self.problem_type = ProblemType.ising_grouped
 
     def upload(
         self,

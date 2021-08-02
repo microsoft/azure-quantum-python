@@ -10,7 +10,7 @@
 import unittest
 from unittest.mock import Mock
 from typing import TYPE_CHECKING
-from azure.quantum.optimization import Problem, Term, GroupedTerm
+from azure.quantum.optimization import Problem, ProblemType, Term, GroupedTerm
 import azure.quantum.optimization.problem
 from common import expected_terms
 import json
@@ -115,6 +115,18 @@ class TestProblemClass(unittest.TestCase):
         test_prob = Problem(name="random")
         with self.assertRaises(Exception):
             test_prob.get_terms(id=0)
+    
+    def test_grouped_type(self):
+        problem = Problem(name="test_pubo_grouped", problem_type=ProblemType.pubo)
+        problem.terms = [
+            Term(c=3, indices=[1, 0, 1]),
+            Term(c=5, indices=[2, 0, 0]),
+            Term(c=-1, indices=[1, 0, 0]),
+            Term(c=4, indices=[0, 2, 1])
+        ]
+        assert problem.problem_type is ProblemType.pubo
+        problem.add_slc_term([(3,0), (2,1), (-1,None)])
+        assert problem.problem_type is ProblemType.pubo_grouped
 
     def test_create_npz_file_default(self):
         # When no keywords are supplied, columns have default names

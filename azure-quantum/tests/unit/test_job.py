@@ -16,7 +16,7 @@ from datetime import date, datetime, timedelta
 
 from common import QuantumTestBase, ZERO_UID
 from azure.quantum import Job
-from azure.quantum.optimization import Problem, Term, ProblemType
+from azure.quantum.optimization import Problem, ProblemType, Term, GroupedTerm, GroupType
 import azure.quantum.optimization as microsoft
 import azure.quantum.optimization.oneqbit as oneqbit
 import azure.quantum.optimization.toshiba as toshiba
@@ -98,26 +98,36 @@ class TestJob(QuantumTestBase):
         solver_type = functools.partial(microsoft.SimulatedAnnealing, beta_start=0)
         self._test_job_submit(solver_type)
         self._test_job_filter(solver_type)
+        with self.assertRaises(ValueError):
+            self._test_job_submit(solver_type, test_grouped=True)
 
     def test_job_submit_microsoft_parallel_tempering(self):
         solver_type = functools.partial(microsoft.ParallelTempering, sweeps=100)
         self._test_job_submit(solver_type)
+        with self.assertRaises(ValueError):
+            self._test_job_submit(solver_type, test_grouped=True)
 
     def test_job_submit_microsoft_tabu(self):
         solver_type = functools.partial(microsoft.Tabu, sweeps=100)
         self._test_job_submit(solver_type)
+        with self.assertRaises(ValueError):
+            self._test_job_submit(solver_type, test_grouped=True)
 
     def test_job_submit_microsoft_quantum_monte_carlo(self):
         solver_type = functools.partial(microsoft.QuantumMonteCarlo, trotter_number=1)
         self._test_job_submit(solver_type)
+        with self.assertRaises(ValueError):
+            self._test_job_submit(solver_type, test_grouped=True)
 
     def test_job_submit_microsoft_population_annealing(self):
         solver_type = functools.partial(microsoft.PopulationAnnealing, sweeps=200)
         self._test_job_submit(solver_type)
+        self._test_job_submit(solver_type, test_grouped=True)
 
     def test_job_submit_microsoft_substochastic_monte_carlo(self):
         solver_type = functools.partial(microsoft.SubstochasticMonteCarlo, step_limit=280)
         self._test_job_submit(solver_type)
+        self._test_job_submit(solver_type, test_grouped=True)
 
     @pytest.mark.skipif(not(os.environ.get("AZUREQUANTUM_1QBIT", "") == "1"), reason="1Qbit tests not enabled")
     def test_job_submit_oneqbit_tabu_search(self):
@@ -165,7 +175,7 @@ class TestJob(QuantumTestBase):
             before_date = date.today() - timedelta(days=100)
             self.assertEqual(True, job.matches_filter(created_after=before_date))
 
-    def _test_job_submit(self, solver_type):
+    def _test_job_submit(self, solver_type, test_grouped=False):
         """Tests the job submission and its lifecycle for a given solver.
 
         :param solver_type:
@@ -178,7 +188,7 @@ class TestJob(QuantumTestBase):
 
         problem_name = f'Test-{type(solver).__name__}-{datetime.now():"%Y%m%d-%H%M%S"}'
 
-        problem = self.create_problem(name=problem_name)
+        problem = self.create_problem(name=problem_name, test_grouped=test_grouped)
 
         with unittest.mock.patch.object(
             Job,
@@ -211,6 +221,7 @@ class TestJob(QuantumTestBase):
             name: str,
             init: bool = False,
             problem_type: ProblemType = ProblemType.pubo,
+            test_grouped = False,
         ) -> Problem:
         """Create optimization problem with some default terms
 
@@ -227,6 +238,12 @@ class TestJob(QuantumTestBase):
             Term(w=-4, indices=[3, 1]),
             Term(w=4, indices=[3, 2]),
         ]
+        if test_grouped:
+            terms.append(GroupedTerm(
+                c=1,
+                term_type=GroupType.squared_linear_combination,
+                terms=[Term(c=i+2, indices=[i]) for i in range(3)]
+            ))
 
         initial_config = {"1": 0, "0": 1, "2": 0, "3": 1} if init \
                          else None
