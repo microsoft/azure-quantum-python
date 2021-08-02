@@ -77,18 +77,11 @@ class TermBase(ABC):
     """
     def __init__(
         self,
-        w: Optional[WArray] = None,
         c: Optional[WArray] = None,
     ):
-        if w is not None:
-            # Legacy support if 'w' is used to specify
-            # term instead of the expected 'c'.
-            coeff = w
-            parameter_name_used = "w"
-        elif c is not None:
+        if c is not None:
             # Current intended specification of term.
             coeff = c
-            parameter_name_used = "c"
         else:
             raise RuntimeError("Cost should be provided for each term.")
 
@@ -142,8 +135,28 @@ class Term(TermBase):
         w: Optional[WArray] = None,
         c: Optional[WArray] = None,
     ):
-        TermBase.__init__(self, w=w, c=c)
+        if w is not None:
+            # Legacy support if 'w' is used to specify
+            # term instead of the expected 'c'.
+            coeff = w
+            self.parameter_name_used = "w"
+        else:
+            coeff = c
+            self.parameter_name_used = "c"
+        TermBase.__init__(self, c=coeff)
         self.ids = indices
+
+    def __repr__(self):
+        return str(self.to_dict())
+
+    def to_dict(self):
+        """
+        Return dictionary format of Term for solver input
+        """
+        return {
+            self.parameter_name_used: self.c,
+            'ids': self.ids,
+        }
     
     @classmethod
     def from_dict(cls, obj: dict):
