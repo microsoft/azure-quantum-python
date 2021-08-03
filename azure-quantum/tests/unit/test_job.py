@@ -12,7 +12,7 @@ import time
 import os
 import functools
 import pytest
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta
 
 from common import QuantumTestBase, ZERO_UID
 from azure.quantum import Job
@@ -35,8 +35,8 @@ SOLVER_TYPES = [
 ]
 
 def get_solver_types():
-    one_qbit_enabled = os.environ.get("AZURE_QUANTUM_1QBIT", "") == "1"
-    toshiba_enabled = os.environ.get("AZURE_QUANTUM_TOSHIBA", "") == "1"
+    one_qbit_enabled = os.environ.get("AZUREQUANTUM_1QBIT", "") == "1"
+    toshiba_enabled = os.environ.get("AZUREQUANTUM_TOSHIBA", "") == "1"
     
     solver_types = []
     for solver_type in SOLVER_TYPES:
@@ -119,22 +119,22 @@ class TestJob(QuantumTestBase):
         solver_type = functools.partial(microsoft.SubstochasticMonteCarlo, step_limit=280)
         self._test_job_submit(solver_type)
 
-    @pytest.mark.skipif(not(os.environ.get("AZURE_QUANTUM_1QBIT", "") == "1"), reason="1Qbit tests not enabled")
+    @pytest.mark.skipif(not(os.environ.get("AZUREQUANTUM_1QBIT", "") == "1"), reason="1Qbit tests not enabled")
     def test_job_submit_oneqbit_tabu_search(self):
         solver_type = functools.partial(oneqbit.TabuSearch, improvement_cutoff=10)
         self._test_job_submit(solver_type)
 
-    @pytest.mark.skipif(not(os.environ.get("AZURE_QUANTUM_1QBIT", "") == "1"), reason="1Qbit tests not enabled")
+    @pytest.mark.skipif(not(os.environ.get("AZUREQUANTUM_1QBIT", "") == "1"), reason="1Qbit tests not enabled")
     def test_job_submit_oneqbit_pticm_solver(self):
         solver_type = functools.partial(oneqbit.PticmSolver, num_sweeps_per_run=99)
         self._test_job_submit(solver_type)
 
-    @pytest.mark.skipif(not(os.environ.get("AZURE_QUANTUM_1QBIT", "") == "1"), reason="1Qbit tests not enabled")
+    @pytest.mark.skipif(not(os.environ.get("AZUREQUANTUM_1QBIT", "") == "1"), reason="1Qbit tests not enabled")
     def test_job_submit_oneqbit_path_relinking_solver(self):
         solver_type = functools.partial(oneqbit.PathRelinkingSolver, distance_scale=0.44)
         self._test_job_submit(solver_type)
 
-    @pytest.mark.skipif(not(os.environ.get("AZURE_QUANTUM_TOSHIBA", "") == "1"), reason="Toshiba tests not enabled")
+    @pytest.mark.skipif(not(os.environ.get("AZUREQUANTUM_TOSHIBA", "") == "1"), reason="Toshiba tests not enabled")
     def test_job_submit_toshiba_simulated_bifurcation_machine(self):
         solver_type = functools.partial(toshiba.SimulatedBifurcationMachine, loops=10)
         self._test_job_submit(solver_type)
@@ -160,6 +160,10 @@ class TestJob(QuantumTestBase):
 
             before_time = datetime.now() - timedelta(days=100)
             self.assertEqual(True, job.matches_filter(created_after=before_time))    
+
+            # test behaviour of datetime.date object
+            before_date = date.today() - timedelta(days=100)
+            self.assertEqual(True, job.matches_filter(created_after=before_date))
 
     def _test_job_submit(self, solver_type):
         """Tests the job submission and its lifecycle for a given solver.

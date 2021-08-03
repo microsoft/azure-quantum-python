@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 ##
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 import logging
 import time
 import json
@@ -51,7 +51,7 @@ class Job:
             or self.details.status == "Cancelled"
         )
 
-    def wait_until_completed(self, max_poll_wait_secs=30):
+    def wait_until_completed(self, max_poll_wait_secs=30, print_progress=True):
         """Keeps refreshing the Job's details
         until it reaches a finished status."""
         self.refresh()
@@ -61,7 +61,8 @@ class Job:
                 f"Waiting for job {self.id},"
                 + f"it is in status '{self.details.status}'"
             )
-            print(".", end="", flush=True)
+            if print_progress:
+                print(".", end="", flush=True)
             time.sleep(poll_wait)
             self.refresh()
             poll_wait = (
@@ -119,8 +120,17 @@ class Job:
         if status is not None and self.details.status != status.value:
             return False
         
-        if created_after is not None and self.details.creation_time.replace(tzinfo=timezone.utc) < created_after.replace(tzinfo=timezone.utc):
-            return False
+        if created_after is not None:
+            # if supplied date is date we must convert to datetime first
+            if type(created_after) is date:
+                created_after = datetime(created_after.year, created_after.month, created_after.day)
+            
+            # if supplied date is naive, assume local and convert to timezone aware object
+            if created_after.tzinfo is None:
+                created_after = created_after.astimezone()
+            
+            if self.details.creation_time.replace(tzinfo=timezone.utc) < created_after:
+                return False
 
         return True
 
