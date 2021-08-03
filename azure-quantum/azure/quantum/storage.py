@@ -42,12 +42,9 @@ def create_container(
 
 def create_container_using_client(container_client: ContainerClient):
     """
-    Creates and initializes a container.
+    Creates the container if it doesn't already exist.
     """
-    try:
-        container_client.get_container_properties()
-        logger.debug(f'{"  - uploading to existing container"}')
-    except Exception:
+    if not container_client.exists():
         logger.debug(
             f'{"  - uploading to **new** container:"}'
             f"{container_client.container_name}"

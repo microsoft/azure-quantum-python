@@ -84,3 +84,21 @@ class TestWorkspace(QuantumTestBase):
 
         with pytest.raises(ValueError):
             Workspace(storage=storage)
+
+    def test_workspace_get_targets(self):
+        ws = self.create_workspace()
+        targets = ws.get_targets()
+        assert "Microsoft" in targets
+        assert "microsoft.paralleltempering.cpu" in targets["Microsoft"]
+    
+    def test_workspace_job_quotas(self):
+        ws = self.create_workspace()
+        quotas = ws.get_quotas()
+        assert len(quotas) > 0
+        assert "dimension" in quotas[0]
+        assert "scope" in quotas [0]
+        assert "provider_id" in quotas [0]
+        assert "utilization" in quotas [0]
+        assert "holds" in quotas [0]
+        assert "limit" in quotas [0]
+        assert "period" in quotas [0]
