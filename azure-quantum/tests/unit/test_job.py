@@ -242,6 +242,7 @@ class TestJob(QuantumTestBase):
             # TODO: also test solver.optimize(problem)
 
             # TODO: Fix recording such that playback works with repeated calls
+            # See: https://github.com/microsoft/qdk-python/issues/118
             if not self.is_playback:
                 self.assertEqual(False, job.has_completed())
                 if self.in_recording:

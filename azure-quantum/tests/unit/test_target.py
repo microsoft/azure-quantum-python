@@ -67,6 +67,7 @@ class TestIonQ(QuantumTestBase):
 
             # Make sure the job is completed before fetching the results
             # playback currently does not work for repeated calls
+            # See: https://github.com/microsoft/qdk-python/issues/118
             if not self.is_playback:
                 self.assertEqual(False, job.has_completed())
                 if self.in_recording:
