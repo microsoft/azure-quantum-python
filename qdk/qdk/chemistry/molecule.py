@@ -22,7 +22,11 @@ from qdk.chemistry.solvers.util import num_electrons
 
 import basis_set_exchange as bse
 
-from rdkit.Chem import AllChem as Chem
+try:
+    from rdkit.Chem import AllChem as Chem
+except ImportError as e:
+    raise ImportError("Missing dependency: rdkit. \
+Install with Conda: conda install -c rdkit rdkit")
 
 _log = logging.getLogger(__name__)
 
