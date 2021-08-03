@@ -136,6 +136,9 @@ class TestHoneywell(QuantumTestBase):
             try:
                 job = target.submit(circuit)
             except HttpResponseError as e:
+                if "InvalidJobDefinition" not in e.message \
+                and "The provider specified does not exist" not in e.message:
+                    raise(e)
                 warnings.warn(e.message)
             else:
                 # Make sure the job is completed before fetching the results
