@@ -154,6 +154,13 @@ class TestJob(QuantumTestBase):
                 # Submit the blob data URI and run job
                 job = solver.submit(input_data_uri)
 
+                # Check if job succeeded during live tests
+                if not self.is_playback:
+                    job.refresh()
+                    job.get_results()
+                    assert job.has_completed()
+                    assert job.details.status == "Succeeded"
+
     @pytest.mark.skipif(not(os.environ.get("AZUREQUANTUM_1QBIT", "") == "1"), reason="1Qbit tests not enabled")
     def test_job_submit_oneqbit_tabu_search(self):
         solver_type = functools.partial(oneqbit.TabuSearch, improvement_cutoff=10)
@@ -249,9 +256,6 @@ class TestJob(QuantumTestBase):
                     time.sleep(3)
 
                 job.refresh()
-
-                job.wait_until_completed()
-
                 job.get_results()
                 self.assertEqual(True, job.has_completed())
 
