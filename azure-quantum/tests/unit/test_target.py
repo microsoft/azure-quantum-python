@@ -146,17 +146,13 @@ class TestHoneywell(QuantumTestBase):
                 # playback currently does not work for repeated calls
                 if not self.is_playback:
                     self.assertEqual(False, job.has_completed())
-                    if self.in_recording:
-                        import time
-                        time.sleep(3)
-                    job.refresh()
                     try:
-                        job.wait_until_completed(timeout=60) # Set a timeout for Honeywell recording
+                        # Set a timeout for Honeywell recording
+                        job.wait_until_completed(timeout=60)
                     except TimeoutError:
                         warnings.warn("Honeywell execution exceeded timeout. Skipping fetching results.")
                     else:
-                        self.assertEqual(True, job.has_completed())
-                        job = workspace.get_job(job.id)
+                        # Check if job succeeded
                         self.assertEqual(True, job.has_completed())
                         assert job.details.status == "Succeeded"
 
