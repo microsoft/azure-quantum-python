@@ -157,6 +157,7 @@ class TestHoneywell(QuantumTestBase):
                         self.assertEqual(True, job.has_completed())
                         job = workspace.get_job(job.id)
                         self.assertEqual(True, job.has_completed())
+                        assert job.details.status == "Succeeded"
 
                 if job.has_completed():
                     results = job.get_results()
