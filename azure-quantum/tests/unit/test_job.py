@@ -140,7 +140,6 @@ class TestJob(QuantumTestBase):
             input_data_uri = problem.upload(
                 workspace=workspace,
                 blob_name="inputData",
-                compress=True,
                 container_name=f"qc-test-{self.get_test_job_id()}"
             )
 
@@ -196,8 +195,8 @@ class TestJob(QuantumTestBase):
             self.assertEqual(True, job.matches_filter(name_match="Test-"))
             self.assertEqual(True, job.matches_filter(name_match="Test.+"))
             # There is a few hundred ms difference in time between local machine
-            # and server, so add one second to take that into account
-            after_time = datetime.now() + timedelta(seconds=1)
+            # and server, so add 2 seconds to take that into account
+            after_time = datetime.now() + timedelta(seconds=2)
             self.assertEqual(False, job.matches_filter(created_after=after_time))
 
             before_time = datetime.now() - timedelta(days=100)
