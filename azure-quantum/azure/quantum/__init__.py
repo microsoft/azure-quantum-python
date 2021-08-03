@@ -5,7 +5,7 @@
 import logging
 from .version import __version__
 
-from .job import *
+from .job.job import *
 from .workspace import *
 
 from ._client.models._quantum_client_enums import JobStatus

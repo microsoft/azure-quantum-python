@@ -26,7 +26,7 @@ class TestWorkspace(QuantumTestBase):
         assert ws.subscription_id == self.subscription_id
         assert ws.resource_group == self.resource_group
         assert ws.name == self.workspace_name
-        assert ws.location == self.location
+        assert ws.location.lower() == self.location.lower()
 
         ws = Workspace(
             subscription_id=self.subscription_id,
