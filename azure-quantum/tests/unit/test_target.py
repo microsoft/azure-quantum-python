@@ -67,6 +67,7 @@ class TestIonQ(QuantumTestBase):
 
             # Make sure the job is completed before fetching the results
             # playback currently does not work for repeated calls
+            # See: https://github.com/microsoft/qdk-python/issues/118
             if not self.is_playback:
                 self.assertEqual(False, job.has_completed())
                 if self.in_recording:
@@ -135,24 +136,24 @@ class TestHoneywell(QuantumTestBase):
             try:
                 job = target.submit(circuit)
             except HttpResponseError as e:
+                if "InvalidJobDefinition" not in e.message \
+                and "The provider specified does not exist" not in e.message:
+                    raise(e)
                 warnings.warn(e.message)
             else:
                 # Make sure the job is completed before fetching the results
                 # playback currently does not work for repeated calls
                 if not self.is_playback:
                     self.assertEqual(False, job.has_completed())
-                    if self.in_recording:
-                        import time
-                        time.sleep(3)
-                    job.refresh()
                     try:
-                        job.wait_until_completed(timeout=60) # Set a timeout for Honeywell recording
+                        # Set a timeout for Honeywell recording
+                        job.wait_until_completed(timeout=60)
                     except TimeoutError:
                         warnings.warn("Honeywell execution exceeded timeout. Skipping fetching results.")
                     else:
+                        # Check if job succeeded
                         self.assertEqual(True, job.has_completed())
-                        job = workspace.get_job(job.id)
-                        self.assertEqual(True, job.has_completed())
+                        assert job.details.status == "Succeeded"
 
                 if job.has_completed():
                     results = job.get_results()

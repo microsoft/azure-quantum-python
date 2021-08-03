@@ -140,7 +140,6 @@ class TestJob(QuantumTestBase):
             input_data_uri = problem.upload(
                 workspace=workspace,
                 blob_name="inputData",
-                compress=True,
                 container_name=f"qc-test-{self.get_test_job_id()}"
             )
 
@@ -154,6 +153,13 @@ class TestJob(QuantumTestBase):
             ):
                 # Submit the blob data URI and run job
                 job = solver.submit(input_data_uri)
+
+                # Check if job succeeded during live tests
+                if not self.is_playback:
+                    job.refresh()
+                    job.get_results()
+                    assert job.has_completed()
+                    assert job.details.status == "Succeeded"
 
     @pytest.mark.skipif(not(os.environ.get("AZUREQUANTUM_1QBIT", "") == "1"), reason="1Qbit tests not enabled")
     def test_job_submit_oneqbit_tabu_search(self):
@@ -196,8 +202,8 @@ class TestJob(QuantumTestBase):
             self.assertEqual(True, job.matches_filter(name_match="Test-"))
             self.assertEqual(True, job.matches_filter(name_match="Test.+"))
             # There is a few hundred ms difference in time between local machine
-            # and server, so add one second to take that into account
-            after_time = datetime.now() + timedelta(seconds=1)
+            # and server, so add 2 seconds to take that into account
+            after_time = datetime.now() + timedelta(seconds=2)
             self.assertEqual(False, job.matches_filter(created_after=after_time))
 
             before_time = datetime.now() - timedelta(days=100)
@@ -243,15 +249,13 @@ class TestJob(QuantumTestBase):
             # TODO: also test solver.optimize(problem)
 
             # TODO: Fix recording such that playback works with repeated calls
+            # See: https://github.com/microsoft/qdk-python/issues/118
             if not self.is_playback:
                 self.assertEqual(False, job.has_completed())
                 if self.in_recording:
                     time.sleep(3)
 
                 job.refresh()
-
-                job.wait_until_completed()
-
                 job.get_results()
                 self.assertEqual(True, job.has_completed())
 
