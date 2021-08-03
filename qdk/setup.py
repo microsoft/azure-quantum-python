@@ -39,6 +39,8 @@ setuptools.setup(
         'ruamel-yaml',
         'basis_set_exchange',
         'jupyter_nbextensions_configurator',
-        'pygments>=2.7.4'
+        'pygments>=2.7.4',
+        'azure-quantum==' + version,
+        'azure-cli>=2.23.0',
     ]
 )
