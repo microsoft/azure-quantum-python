@@ -7,7 +7,6 @@
 # Licensed under the MIT License.
 ##
 
-import pytest
 import json
 from typing import List
 
@@ -17,7 +16,7 @@ from azure.quantum.aio.optimization import (
     StreamingProblem
 )
 from azure.quantum.optimization import Term
-from common import QuantumTestBase
+from aio_common import QuantumTestBase
 
 
 class TestStreamingProblem(QuantumTestBase):
@@ -86,29 +85,23 @@ class TestStreamingProblem(QuantumTestBase):
 
         return default
 
-    @pytest.mark.asyncio
-    async def test_streaming_problem_small_chunks(self):
-        await self.__test_upload_problem(4, 1, 1, False)
+    def test_streaming_problem_small_chunks(self):
+        self.get_async_result(self.__test_upload_problem(4, 1, 1, False))
 
-    @pytest.mark.asyncio
-    async def test_streaming_problem_large_chunks(self):
-        await self.__test_upload_problem(4, 1000, 10e6, False)
+    def test_streaming_problem_large_chunks(self):
+        self.get_async_result(self.__test_upload_problem(4, 1000, 10e6, False))
 
-    @pytest.mark.asyncio
-    async def test_streaming_problem_small_chunks_compressed(self):
-        await self.__test_upload_problem(4, 1, 1, True)
+    def test_streaming_problem_small_chunks_compressed(self):
+        self.get_async_result(self.__test_upload_problem(4, 1, 1, True))
 
-    @pytest.mark.asyncio
-    async def test_streaming_problem_large_chunks_compressed(self):
-        await self.__test_upload_problem(4, 1000, 10e6, True)
+    def test_streaming_problem_large_chunks_compressed(self):
+        self.get_async_result(self.__test_upload_problem(4, 1000, 10e6, True))
 
-    @pytest.mark.asyncio
-    async def test_streaming_problem_pubo(self):
-        await self.__test_upload_problem(4, 1, 1, False, ProblemType.pubo)
+    def test_streaming_problem_pubo(self):
+        self.get_async_result(self.__test_upload_problem(4, 1, 1, False, ProblemType.pubo))
 
-    @pytest.mark.asyncio
-    async def test_streaming_problem_initial_terms(self):
-        await self.__test_upload_problem(
+    def test_streaming_problem_initial_terms(self):
+        self.get_async_result( self.__test_upload_problem(
             4,
             1,
             1,
@@ -119,12 +112,12 @@ class TestStreamingProblem(QuantumTestBase):
             ],
             avg_coupling=(4 * 2 + 6) / 6,
             max_coupling=3,
-        )
+        ) )
 
-    async def check_all(self):
-        await self.test_streaming_problem_small_chunks()
-        await self.test_streaming_problem_large_chunks()
-        await self.test_streaming_problem_small_chunks_compressed()
-        await self.test_streaming_problem_large_chunks_compressed()
-        await self.test_streaming_problem_pubo()
-        await self.test_streaming_problem_initial_terms()
+    def check_all(self):
+        self.test_streaming_problem_small_chunks()
+        self.test_streaming_problem_large_chunks()
+        self.test_streaming_problem_small_chunks_compressed()
+        self.test_streaming_problem_large_chunks_compressed()
+        self.test_streaming_problem_pubo()
+        self.test_streaming_problem_initial_terms()

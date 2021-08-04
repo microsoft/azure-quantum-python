@@ -6,7 +6,7 @@ from datetime import datetime
 import logging
 import re
 
-from typing import List, Optional
+from typing import List, Optional, Dict, Any
 
 from azure.quantum.aio._authentication._default import _DefaultAzureCredential
 from azure.quantum._client.aio import QuantumClient
@@ -188,6 +188,28 @@ class Workspace:
             if deserialized_job.matches_filter(name_match, status, created_after):
                 result.append(deserialized_job)
         return result
+
+
+    async def get_targets(self) -> Dict[str, List[str]]:
+        """Returns a dictionary of provider IDs and lists of targets
+        that are available.
+
+        :return: Targets, keyed by provider IDs
+        :rtype: Dict[str, List[str]]
+        """
+        return {
+            provider.id: [
+                target.id for target in provider.targets
+            ] async for provider in self._client.providers.get_status()
+        }
+
+    async def get_quotas(self) -> List[Dict[str, Any]]:
+        """Get a list of job quotas for the given workspace.
+
+        :return: Job quotas
+        :rtype: List[Dict[str, Any]]
+        """
+        return [q.as_dict() async for q in self._client.quotas.list()]
 
     async def get_container_uri(
         self,

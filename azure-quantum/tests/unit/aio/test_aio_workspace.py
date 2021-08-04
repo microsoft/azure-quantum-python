@@ -7,9 +7,8 @@
 # Licensed under the MIT License.
 ##
 import pytest
-
 from azure.quantum import Workspace
-from common import QuantumTestBase
+from aio_common import QuantumTestBase
 
 
 class TestWorkspace(QuantumTestBase):
@@ -87,13 +86,13 @@ class TestWorkspace(QuantumTestBase):
 
     def test_workspace_get_targets(self):
         ws = self.create_workspace()
-        targets = ws.get_targets()
+        targets = self.get_async_result(ws.get_targets())
         assert "Microsoft" in targets
         assert "microsoft.paralleltempering.cpu" in targets["Microsoft"]
     
     def test_workspace_job_quotas(self):
         ws = self.create_workspace()
-        quotas = ws.get_quotas()
+        quotas = self.get_async_result(ws.get_quotas())
         assert len(quotas) > 0
         assert "dimension" in quotas[0]
         assert "scope" in quotas [0]

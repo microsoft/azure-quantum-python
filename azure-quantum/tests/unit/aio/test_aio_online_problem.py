@@ -7,16 +7,16 @@
 # Licensed under the MIT License.
 ##
 import pytest
-from unittest.mock import Mock, patch
+from asyncmock import AsyncMock, patch
 from azure.quantum.aio.optimization import Problem, OnlineProblem
 import azure.quantum.aio.optimization.problem
-from common import expected_terms, QuantumTestBase
+from aio_common import expected_terms, QuantumTestBase
 
 
 class TestOnlineProblemClass(QuantumTestBase):
     def setUp(self):
-        self.mock_ws = Mock()
-        self.mock_ws._get_linked_storage_sas_uri.return_value = Mock()
+        self.mock_ws = AsyncMock()
+        self.mock_ws._get_linked_storage_sas_uri.return_value = AsyncMock()
         self.o_problem = OnlineProblem(name="test", blob_uri="mock_blob_uri")
 
     # TODO: instead of using mock, connect to a live service and record the responses

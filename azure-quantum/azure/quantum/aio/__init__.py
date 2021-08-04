@@ -5,9 +5,10 @@
 import logging
 from azure.quantum.version import __version__
 
-from .job import *
+from .job.job import *
 from .workspace import *
-from .storage import *
+
+from azure.quantum._client.models._quantum_client_enums import JobStatus
 
 logger = logging.getLogger(__name__)
 logger.info(f"version: {__version__}")

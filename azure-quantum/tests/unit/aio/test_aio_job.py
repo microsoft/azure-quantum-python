@@ -15,7 +15,7 @@ from datetime import date, datetime, timedelta
 
 from typing import List, Type
 
-from common import QuantumTestBase, ZERO_UID
+from aio_common import QuantumTestBase, ZERO_UID
 from azure.quantum.aio import Job
 from azure.quantum.aio.optimization import Problem, ProblemType, Solver
 from azure.quantum.optimization import Term

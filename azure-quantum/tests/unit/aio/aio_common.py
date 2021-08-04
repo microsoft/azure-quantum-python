@@ -10,6 +10,7 @@
 import os
 import re
 import six
+import pytest
 
 from azure.quantum.aio import Workspace
 from azure.identity.aio import DefaultAzureCredential, ClientSecretCredential
@@ -33,6 +34,7 @@ WORKSPACE = "myworkspace"
 LOCATION = "eastus"
 STORAGE = "mystorage"
 
+@pytest.mark.usefixtures("event_loop_instance")
 class QuantumTestBase(ReplayableTest):
     """QuantumTestBase
 
@@ -173,6 +175,9 @@ class QuantumTestBase(ReplayableTest):
     @property
     def workspace_name(self):
         return self._workspace_name
+
+    def get_async_result(self, coro):
+        return self.event_loop.run_until_complete(coro)
 
     def create_workspace(self) -> Workspace:
         """Create workspace using credentials passed via OS Environment Variables

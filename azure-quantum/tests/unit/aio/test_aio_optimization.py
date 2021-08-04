@@ -8,7 +8,6 @@
 ##
 
 import json
-import unittest
 from azure.quantum.aio.optimization import Problem, ProblemType
 from azure.quantum.optimization import Term
 from azure.quantum.aio.optimization.solvers import (
@@ -20,7 +19,7 @@ from azure.quantum.aio.optimization.solvers import (
     QuantumMonteCarlo,
     SubstochasticMonteCarlo,
 )
-from common import QuantumTestBase
+from aio_common import QuantumTestBase
 
 
 class TestProblem(QuantumTestBase):

@@ -8,17 +8,17 @@
 ##
 
 import pytest
-from unittest.mock import Mock, patch
 from azure.quantum.aio import Workspace
 from azure.quantum.aio.optimization import Solver, Problem
 from azure.quantum.optimization import OnlineProblem
+from asyncmock import AsyncMock, patch
+
 
 @pytest.fixture
 def testsolver():
-    mock_ws = Mock(spec=Workspace)
+    mock_ws = AsyncMock(spec=Workspace)
     mock_ws.storage = "mock_storage"
-    mock_ws.get_container_uri = Mock(return_value="mock_container_uri/foo/bar")
-    # self.mock_ws.submit_job = Mock(return_value = )
+    mock_ws.get_container_uri = AsyncMock(return_value="mock_container_uri/foo/bar")
     testsolver = Solver(
         mock_ws, "Microsoft", "SimulatedAnnealing", "json", "json"
     )

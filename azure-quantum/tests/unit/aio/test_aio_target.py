@@ -1,13 +1,12 @@
 import unittest
 import warnings
-import pytest
 
 from azure.core.exceptions import HttpResponseError
 from azure.quantum.aio.job.job import Job
 from azure.quantum.aio.target import IonQ
 from azure.quantum.aio.target.honeywell import Honeywell
 
-from common import QuantumTestBase, ZERO_UID
+from aio_common import QuantumTestBase, ZERO_UID
 
 
 class TestIonQ(QuantumTestBase):
@@ -44,13 +43,11 @@ class TestIonQ(QuantumTestBase):
             ]
         }
 
-    @pytest.mark.asyncio
-    async def test_job_submit_ionq(self):
-        await self._test_job_submit_ionq(num_shots=None)
+    def test_job_submit_ionq(self):
+        self.get_async_result(self._test_job_submit_ionq(num_shots=None))
 
-    @pytest.mark.asyncio
-    async def test_job_submit_ionq_100_shots(self):
-        await self._test_job_submit_ionq(num_shots=100)
+    def test_job_submit_ionq_100_shots(self):
+        self.get_async_result(self._test_job_submit_ionq(num_shots=100))
 
     async def _test_job_submit_ionq(self, num_shots):
 
@@ -127,8 +124,7 @@ class TestHoneywell(QuantumTestBase):
         measure q[1] -> c1[2];
         """
 
-    @pytest.mark.asyncio
-    async def test_job_submit_honeywell(self):
+    def test_job_submit_honeywell(self):
 
         with unittest.mock.patch.object(
             Job,
@@ -139,7 +135,7 @@ class TestHoneywell(QuantumTestBase):
             circuit = self._teleport()
             target = Honeywell(workspace=workspace)
             try:
-                job = await target.submit(circuit)
+                job = self.get_async_result( target.submit(circuit) )
             except HttpResponseError as e:
                 if "InvalidJobDefinition" not in e.message \
                 and "The provider specified does not exist" not in e.message:
@@ -152,7 +148,7 @@ class TestHoneywell(QuantumTestBase):
                     self.assertEqual(False, job.has_completed())
                     try:
                         # Set a timeout for Honeywell recording
-                        await job.wait_until_completed(max_poll_wait_secs=60)
+                        self.get_async_result( job.wait_until_completed(max_poll_wait_secs=60) )
                     except TimeoutError:
                         warnings.warn("Honeywell execution exceeded timeout. Skipping fetching results.")
                     else:
@@ -161,6 +157,6 @@ class TestHoneywell(QuantumTestBase):
                         assert job.details.status == "Succeeded"
 
                 if job.has_completed():
-                    results = await job.get_results()
+                    results = self.get_async_result( job.get_results() )
                     assert results["c0"] == ["0"]
                     assert results["c1"] == ["000"]
