@@ -15,11 +15,11 @@ from typing import List, Union, Dict, Optional, TYPE_CHECKING
 from enum import Enum
 from azure.quantum.optimization import Term
 from azure.quantum.aio.storage import (
-    upload_blob,
     ContainerClient,
     download_blob,
     BlobClient
 )
+from azure.quantum.aio.job.job import Job
 
 logger = logging.getLogger(__name__)
 
@@ -131,76 +131,77 @@ class Problem:
         self.terms += terms
         self.uploaded_blob_uri = None
 
+    def to_blob(self, compress: bool = False) -> bytes:
+        """Convert problem data to a binary blob.
+
+        :param compress: Compress the blob using gzip, defaults to None
+        :type compress: bool, optional
+        :return: Blob data
+        :rtype: bytes
+        """
+        problem_json = self.serialize()
+        logger.debug("Problem json: " + problem_json)
+        data = io.BytesIO()
+
+        if compress:
+            with gzip.GzipFile(fileobj=data, mode="w") as fo:
+                fo.write(problem_json.encode())
+        else:
+            data.write(problem_json.encode())
+
+        return data.getvalue()
+    
+    def _blob_name(self):
+        import uuid
+        return "{}-{}".format(self.name, uuid.uuid1())
+
     async def upload(
         self,
         workspace: "Workspace",
         container_name: str = "qio-problems",
         blob_name: str = "inputData",
         compress: bool = True,
+        container_uri: str = None
     ):
         """Uploads an optimization problem instance to
         the cloud storage linked with the Workspace.
 
         :param workspace: interaction terms of the problem.
         :type workspace: Workspace
-        :param container_name: [description], defaults to "qio-problems"
+        :param container_name: Container name, defaults to "qio-problems"
         :type container_name: str, optional
-        :param blob_name: [description], defaults to None
+        :param blob_name: Blob name, defaults to None
         :type blob_name: str, optional
-        :param compress: [description], defaults to True
+        :param compress: Flag to compress the payload, defaults to True
         :type compress: bool, optional
+        :param container_uri: Optional container URI
+        :type container_uri: str
         :return: uri of the uploaded problem
-        :rtype: [type]
+        :rtype: str
         """
         blob_params = [workspace, container_name, blob_name, compress]
         if self.uploaded_blob_uri and self.uploaded_blob_params == blob_params:
             return self.uploaded_blob_uri
 
-        problem_json = self.serialize()
-        logger.debug("Problem json: " + problem_json)
+        if blob_name is None:
+            blob_name = self._blob_name()
 
-        content_type = "application/json"
-        encoding = ""
-        data = io.BytesIO()
-        if compress:
-            encoding = "gzip"
-            with gzip.GzipFile(fileobj=data, mode="w") as fo:
-                fo.write(problem_json.encode())
-        else:
-            data.write(problem_json.encode())
-
-        if not workspace.storage:
-            # No storage account is passed, use the linked one
-            container_uri = await workspace._get_linked_storage_sas_uri(
-                container_name
+        encoding = "gzip" if compress else ""
+        blob = self.to_blob(compress=compress)
+        if container_uri is None:
+            container_uri = await workspace.get_container_uri(
+                container_name=container_name
             )
-            container_client = ContainerClient.from_container_url(
-                container_uri
-            )
-            self.uploaded_blob_uri = await upload_blob(
-                container_client,
-                blob_name,
-                content_type,
-                encoding,
-                data.getvalue(),
-                return_sas_token=False,
-            )
-        else:
-            # Use the specified storage account
-            container_client = ContainerClient.from_connection_string(
-                workspace.storage, container_name
-            )
-            self.uploaded_blob_uri = await upload_blob(
-                container_client,
-                blob_name,
-                content_type,
-                encoding,
-                data.getvalue(),
-                return_sas_token=True,
-            )
-
+        input_data_uri = await Job.upload_input_data(
+            input_data=blob,
+            blob_name=blob_name,
+            container_uri=container_uri,
+            encoding=encoding,
+            content_type="application/json"
+        )
         self.uploaded_blob_params = blob_params
-        return self.uploaded_blob_uri
+        self.uploaded_blob_uri = input_data_uri
+        return input_data_uri
 
     def set_fixed_variables(
         self, fixed_variables: Union[Dict[int, int], Dict[str, int]]

@@ -9,9 +9,9 @@
 
 import pytest
 from unittest.mock import Mock, patch
-from azure.quantum import Workspace
-from azure.quantum.optimization import Solver, OnlineProblem, Problem
-
+from azure.quantum.aio import Workspace
+from azure.quantum.aio.optimization import Solver, Problem
+from azure.quantum.optimization import OnlineProblem
 
 @pytest.fixture
 def testsolver():
@@ -24,21 +24,24 @@ def testsolver():
     )
     return testsolver
 
-def test_submit_problem(testsolver):
+@pytest.mark.asyncio
+async def test_submit_problem(testsolver):
     problem = Problem(name="test", terms = [])
-    with patch("azure.quantum.job.base_job.upload_blob") as mock_upload:
-        job = testsolver.submit(problem)
+    with patch("azure.quantum.aio.job.base_job.upload_blob") as mock_upload:
+        job = await testsolver.submit(problem)
     mock_upload.assert_called_once()
     testsolver.workspace.submit_job.assert_called_once()
 
-def test_submit_online_problem(testsolver):
+@pytest.mark.asyncio
+async def test_submit_online_problem(testsolver):
     # Arrange
     o_problem = OnlineProblem(name="test", blob_uri="mock_blob_uri")
     # Act
-    _ = testsolver.submit(o_problem)
+    _ = await testsolver.submit(o_problem)
     # Assert
     testsolver.workspace.submit_job.assert_called_once()
 
+@pytest.mark.asyncio
 def test_number_of_solutions_set(testsolver):
     param_name = "number_of_solutions"
     testsolver.set_number_of_solutions(100)

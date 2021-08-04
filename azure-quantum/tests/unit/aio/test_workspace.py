@@ -1,18 +1,18 @@
 #!/bin/env python
 # -*- coding: utf-8 -*-
 ##
-# test_aio_workspace.py: Checks correctness of azure.quantum.optimization module.
+# test_workspace.py: Checks correctness of azure.quantum.optimization module.
 ##
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 ##
 import pytest
 
-from azure.quantum.aio import Workspace
+from azure.quantum import Workspace
 from common import QuantumTestBase
 
 
-class TestAIOWorkspace(QuantumTestBase):
+class TestWorkspace(QuantumTestBase):
 
     def test_create_workspace_instance_valid(self):
         storage = "strg"
@@ -26,7 +26,7 @@ class TestAIOWorkspace(QuantumTestBase):
         assert ws.subscription_id == self.subscription_id
         assert ws.resource_group == self.resource_group
         assert ws.name == self.workspace_name
-        assert ws.location == self.location
+        assert ws.location.lower() == self.location.lower()
 
         ws = Workspace(
             subscription_id=self.subscription_id,
@@ -84,3 +84,21 @@ class TestAIOWorkspace(QuantumTestBase):
 
         with pytest.raises(ValueError):
             Workspace(storage=storage)
+
+    def test_workspace_get_targets(self):
+        ws = self.create_workspace()
+        targets = ws.get_targets()
+        assert "Microsoft" in targets
+        assert "microsoft.paralleltempering.cpu" in targets["Microsoft"]
+    
+    def test_workspace_job_quotas(self):
+        ws = self.create_workspace()
+        quotas = ws.get_quotas()
+        assert len(quotas) > 0
+        assert "dimension" in quotas[0]
+        assert "scope" in quotas [0]
+        assert "provider_id" in quotas [0]
+        assert "utilization" in quotas [0]
+        assert "holds" in quotas [0]
+        assert "limit" in quotas [0]
+        assert "period" in quotas [0]
