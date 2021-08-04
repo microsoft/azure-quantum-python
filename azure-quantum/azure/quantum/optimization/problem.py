@@ -11,7 +11,7 @@ import json
 import numpy
 import os
 
-from typing import List, Tuple, Union, Dict, Optional, TYPE_CHECKING
+from typing import List, Union, Dict, Optional, TYPE_CHECKING
 from enum import Enum
 from azure.quantum.optimization import Term
 from azure.quantum.storage import (
@@ -127,7 +127,7 @@ class Problem:
         self.terms += terms
         self.uploaded_blob_uri = None
 
-    def to_blob(self, compress: bool = False) -> Tuple[bytes, str]:
+    def to_blob(self, compress: bool = False) -> bytes:
         """Convert problem data to a binary blob.
 
         :param compress: Compress the blob using gzip, defaults to None
