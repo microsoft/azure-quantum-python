@@ -3,7 +3,6 @@
 # Licensed under the MIT License.
 ##
 import logging
-import azure.quantum
 
 from typing import List, Union, Any, Optional
 from enum import Enum
@@ -14,6 +13,7 @@ from azure.quantum.storage import (
     ContainerClient,
     create_container_using_client,
 )
+from azure.quantum.job.base_job import DEFAULT_TIMEOUT
 
 logger = logging.getLogger(__name__)
 
@@ -124,45 +124,61 @@ class Solver:
             problem_uri = problem
         elif isinstance(problem, Problem):
             self.check_valid_problem(problem)
+            # Create job from input data
             name = problem.name
-            problem_uri = problem.upload(
-                self.workspace,
-                compress=compress,
-                container_name=container_name,
+            blob = problem.to_blob(compress=compress)
+            job = Job.from_input_data(
+                workspace=self.workspace,
+                name=name,
+                target=self.target,
+                input_data=blob,
                 blob_name="inputData",
+                content_type="application/json",
+                provider_id=self.provider,
+                input_data_format=self.input_data_format,
+                output_data_format=self.output_data_format,
+                input_params=self.params,
             )
+        
         else:
-            name = problem.name
-            problem_uri = problem.uploaded_blob_uri
+            if hasattr(problem, "uploaded_blob_uri"):
+                name = problem.name
+                problem_uri = problem.uploaded_blob_uri
 
-        logger.info(
-            f"Submitting problem '{name}'. Using payload from: '{problem_uri}'"
-        )
+            elif isinstance(problem, str):
+                name = "Optimization problem"
+                problem_uri = problem
+            
+            else:
+                raise ValueError("Cannot submit problem: should be of type str, Problem or have uploaded_blob_uri attribute.")
 
-        details = JobDetails(
-            id=job_id,
-            name=name,
-            container_uri=container_uri,
-            input_data_format=self.input_data_format,
-            output_data_format=self.output_data_format,
-            input_data_uri=problem_uri,
-            provider_id=self.provider,
-            target=self.target,
-            input_params=self.params,
-        )
+            # Create job from storage URI
+            job = Job.from_storage_uri(
+                workspace=self.workspace,
+                name=name,
+                target=self.target,
+                input_data_uri=problem_uri,
+                provider_id=self.provider,
+                input_data_format=self.input_data_format,
+                output_data_format=self.output_data_format,
+                input_params=self.params
+            )
 
-        logger.debug(f"==> submitting: {details}")
-        job = self.workspace.submit_job(Job(self.workspace, details))
         return job
 
-    def optimize(self, problem: Union[str, Problem]):
-        """Submits the Problem to the associated
+    def optimize(self, problem: Union[str, Problem], timeout_secs: int=DEFAULT_TIMEOUT):
+        """[Submits the Problem to the associated
             Azure Quantum Workspace and get the results.
 
         :param problem:
             The Problem to solve. It can be an instance of a Problem,
             or the URL of an Azure Storage Blob where the serialized version
             of a Problem has been uploaded.
+        :type problem: Union[str, Problem]
+        :param timeout_secs: Timeout in seconds, defaults to 300
+        :type timeout_secs: int
+        :return: Job results
+        :rtype: dict
         """
         if not isinstance(problem, str):
             self.check_submission_warnings(problem)
@@ -170,7 +186,7 @@ class Solver:
         job = self.submit(problem)
         logger.info(f"Submitted job: '{job.id}'")
 
-        return job.get_results()
+        return job.get_results(timeout_secs=timeout_secs)
 
     def set_one_param(self, name: str, value: Any):
         if value is not None:
