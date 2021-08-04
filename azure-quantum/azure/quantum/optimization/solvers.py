@@ -12,6 +12,8 @@ from azure.quantum.optimization import Problem, ProblemType
 from azure.quantum.storage import (
     ContainerClient,
     create_container_using_client,
+    remove_sas_token,
+    get_container_uri
 )
 from azure.quantum.job.base_job import DEFAULT_TIMEOUT
 
@@ -92,37 +94,7 @@ class Solver:
             Whether or not to compress the problem when uploading it
             the Blob Storage.
         """
-        # Create a container URL:
-        job_id = Job.create_job_id()
-        logger.info(f"Submitting job with id: {job_id}")
-
-        container_name = f"job-{job_id}"
-
-        if not self.workspace.storage:
-            # No storage account is passed, in this
-            # case, get linked account from the service
-            container_uri = self.workspace._get_linked_storage_sas_uri(
-                container_name
-            )
-            container_client = ContainerClient.from_container_url(
-                container_uri
-            )
-            create_container_using_client(container_client)
-            container_uri = azure.quantum.storage.remove_sas_token(
-                container_uri
-            )
-        else:
-            # Storage account is passed, use it to generate a container_uri
-            container_uri = azure.quantum.storage.get_container_uri(
-                self.workspace.storage, container_name
-            )
-
-        logger.debug(f"Container URI: {container_uri}")
-
-        if isinstance(problem, str):
-            name = "Optimization problem"
-            problem_uri = problem
-        elif isinstance(problem, Problem):
+        if isinstance(problem, Problem):
             self.check_valid_problem(problem)
             # Create job from input data
             name = problem.name
@@ -139,7 +111,7 @@ class Solver:
                 output_data_format=self.output_data_format,
                 input_params=self.params,
             )
-        
+
         else:
             if hasattr(problem, "uploaded_blob_uri"):
                 name = problem.name

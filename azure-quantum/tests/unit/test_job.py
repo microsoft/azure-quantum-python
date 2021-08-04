@@ -100,7 +100,7 @@ class TestJob(QuantumTestBase):
         self._test_job_submit(solver_name, solver_type)
         self._test_job_filter(solver_type)
         with self.assertRaises(ValueError):
-            self._test_job_submit(solver_type, test_grouped=True)
+            self._test_job_submit(solver_name, solver_type, test_grouped=True)
 
     def test_job_submit_microsoft_parallel_tempering(self):
         solver_type = functools.partial(microsoft.ParallelTempering, sweeps=100)
@@ -133,7 +133,7 @@ class TestJob(QuantumTestBase):
         solver_type = functools.partial(microsoft.SubstochasticMonteCarlo, step_limit=280)
         solver_name = "SubstochasticMonteCarlo"
         self._test_job_submit(solver_name, solver_type)
-        self._test_job_submit(soler_name, solver_type, test_grouped=True)
+        self._test_job_submit(solver_name, solver_type, test_grouped=True)
 
     def test_job_upload_and_run_solvers(self):
         problem_name = f'Test-problem-{datetime.now():"%Y%m%d-%H%M%S"}'
