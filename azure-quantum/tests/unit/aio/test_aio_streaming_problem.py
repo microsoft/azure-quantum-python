@@ -42,8 +42,9 @@ class TestStreamingProblem(QuantumTestBase):
         ws = self.create_workspace()
 
         sProblem = StreamingProblem(
-            ws, name="test", problem_type=problem_type, terms=initial_terms
+            ws, name="test", problem_type=problem_type
         )
+        await sProblem.add_terms(initial_terms)
         rProblem = Problem(
             "test", problem_type=problem_type, terms=initial_terms
         )

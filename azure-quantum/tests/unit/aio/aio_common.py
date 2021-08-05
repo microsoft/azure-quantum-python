@@ -13,7 +13,7 @@ import six
 import pytest
 
 from azure.quantum.aio import Workspace
-from azure.identity.aio import DefaultAzureCredential, ClientSecretCredential
+from azure.identity.aio import ClientSecretCredential
 from azure_devtools.scenario_tests.base import ReplayableTest
 from azure_devtools.scenario_tests.recording_processors import (
     RecordingProcessor,

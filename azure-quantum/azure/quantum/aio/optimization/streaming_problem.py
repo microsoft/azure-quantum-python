@@ -48,11 +48,10 @@ class StreamingProblem(object):
     :type problem_type: ProblemType, optional
     """
 
-    async def __init__(
+    def __init__(
         self,
         workspace: Workspace,
         name: str = "Optimization Problem",
-        terms: Optional[List[Term]] = None,
         init_config: Optional[Dict[str, int]] = None,
         problem_type: ProblemType = ProblemType.ising,
         metadata: Dict[str, str] = {},
@@ -80,8 +79,6 @@ class StreamingProblem(object):
         self.upload_size_threshold = 10e6
         self.upload_terms_threshold = 1000
         self.metadata = metadata
-        if terms is not None and len(terms) > 0:
-            await self.add_terms(terms.copy())
 
     @property
     def id(self):

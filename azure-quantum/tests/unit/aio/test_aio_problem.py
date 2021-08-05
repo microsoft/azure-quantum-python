@@ -8,7 +8,7 @@
 ##
 
 import pytest
-from asyncmock import AsyncMock, patch
+from asyncmock import AsyncMock, patch, Mock
 from azure.quantum.aio.optimization import Problem
 from azure.quantum.optimization import Term
 import azure.quantum.aio.optimization.problem
@@ -88,7 +88,7 @@ def pubo_problem():
     pubo_problem.j = numpy.array([0, 0, 0, 2])
     pubo_problem.k = numpy.array([1, 0, 0, 1])
     pubo_problem.c = numpy.array([3, 5, -1, 4])
-
+    return pubo_problem
 
 @pytest.fixture
 def default_pubo_problem(pubo_problem):
@@ -124,21 +124,21 @@ async def test_upload(mock_ws, pubo_problem):
     with patch("azure.quantum.aio.optimization.problem.BlobClient") as mock_blob_client, \
         patch("azure.quantum.aio.optimization.problem.ContainerClient") as mock_container_client, \
         patch("azure.quantum.aio.job.base_job.upload_blob") as mock_upload:
-        mock_blob_client.from_blob_url.return_value = AsyncMock()
-        mock_container_client.from_container_url.return_value = AsyncMock()
+        mock_blob_client.from_blob_url.return_value = Mock()
+        mock_container_client.from_container_url.return_value = Mock()
         assert(pubo_problem.uploaded_blob_uri == None)
         actual_result = await pubo_problem.upload(mock_ws)
         mock_upload.get_blob_uri_with_sas_token = AsyncMock()
         azure.quantum.aio.job.base_job.upload_blob.assert_called_once()
 
 @pytest.mark.asyncio
-async def test_download():
+async def test_download(problem, mock_ws):
     with patch("azure.quantum.aio.optimization.problem.download_blob") as mock_download_blob,\
         patch("azure.quantum.aio.optimization.problem.BlobClient") as mock_blob_client,\
         patch("azure.quantum.aio.optimization.problem.ContainerClient") as mock_container_client:
         mock_download_blob.return_value=expected_terms()
-        mock_blob_client.from_blob_url.return_value = AsyncMock()
-        mock_container_client.from_container_url.return_value = AsyncMock()
+        mock_blob_client.from_blob_url.return_value = Mock()
+        mock_container_client.from_container_url.return_value = Mock()
         actual_result = await problem.download(mock_ws)
         assert actual_result.name == "test"
         azure.quantum.aio.optimization.problem.download_blob.assert_called_once()
