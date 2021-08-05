@@ -188,7 +188,7 @@ class Problem:
         elif self.problem_type == ProblemType.ising:
             self.problem_type = ProblemType.ising_grouped
             
-    def to_blob(self, compress: bool = False) -> Tuple[bytes, str]:
+    def to_blob(self, compress: bool = False) -> bytes:
         """Convert problem data to a binary blob.
 
         :param compress: Compress the blob using gzip, defaults to None
