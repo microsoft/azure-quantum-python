@@ -264,7 +264,14 @@ class CustomRecordingProcessor(RecordingProcessor):
         request.uri = self.regex_replace_all(request.uri)
 
         if _get_content_type(request) == "application/x-www-form-urlencoded":
-            body = request.body.decode("utf-8")
+            if isinstance(request.body, bytes):
+                body = request.body.decode("utf-8")
+            elif isinstance(request.body, str):
+                body = request.body
+            elif isinstance(request.body, dict):
+                body = json.dumps(request.body)
+            else:
+                raise NotImplementedError("Haven't implemented this type?")
             body = self.regex_replace_all(body)
             request.body = body.encode("utf-8")
         else:
