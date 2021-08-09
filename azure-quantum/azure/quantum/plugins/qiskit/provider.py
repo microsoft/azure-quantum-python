@@ -45,6 +45,7 @@ class AzureQuantumProvider(Provider):
         return [backend for backend in self._backends if backend.name() == name]
 
     def get_job(self, job_id) -> AzureQuantumJob:
+        """ Returns the Job instance associated with the given id."""
         azure_job = self._workspace.get_job(job_id)
         backend = self.get_backend(azure_job.details.target)
         return AzureQuantumJob(backend, azure_job)

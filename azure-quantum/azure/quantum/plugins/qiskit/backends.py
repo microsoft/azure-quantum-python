@@ -27,15 +27,30 @@ class IonQBackend(Backend):
 
     @classmethod
     def _default_options(cls):
-        return Options(shots=1024)
+        return Options(shots=500)
 
-    def run(self, circuit, **options):
+    def _job_metadata(self, circuit):
+        return {
+            "qiskit": True,
+            "name": circuit.name,
+            "num_qubits": circuit.num_qubits,
+        }
+
+    def run(self, circuit, **kwargs):
         """Submits the given circuit for execution on an IonQ target."""
         ionq_circ, _, _ = qiskit_circ_to_ionq_circ(circuit)
         input_data = json.dumps({
             "qubits": circuit.num_qubits,
             "circuit": ionq_circ,
         })
+
+        # Options are mapped to input_params
+        # Take also into consideration options passed in the kwargs, as the take precedence
+        # over default values:
+        input_params = vars(self.options)
+        for opt in kwargs.copy():
+            if opt in input_params:
+                input_params[opt] = kwargs.pop(opt)
 
         logger.info(f"Submitting new job for backend {self.name()}")
         job = AzureQuantumJob(
@@ -48,7 +63,9 @@ class IonQBackend(Backend):
             provider_id="ionq",
             input_data_format="ionq.circuit.v1",
             output_data_format="ionq.quantum-results.v1",
-            metadata={ "qubits": str(circuit.num_qubits) }
+            input_params = input_params,
+            metadata= self._job_metadata(circuit),
+            **kwargs
         )
 
         logger.info(f"Submitted job with id '{job.id()}' for circuit '{circuit.name}':")
@@ -56,9 +73,14 @@ class IonQBackend(Backend):
 
         return job
 
+    def retrieve_job(self, job_id) -> AzureQuantumJob:
+        """ Returns the Job instance associated with the given id."""
+        return self._provider.get_job(job_id)
+
 
 class IonQSimulatorBackend(IonQBackend):
     def __init__(self, provider):
+        """Base class for interfacing with an IonQ Simulator backend"""
         config = BackendConfiguration.from_dict(
             {
                 "backend_name": "ionq.simulator",
@@ -83,7 +105,7 @@ class IonQSimulatorBackend(IonQBackend):
 
 class IonQQPUBackend(IonQBackend):
     def __init__(self, provider):
-        """Base class for interfacing with an IonQ backend"""
+        """Base class for interfacing with an IonQ QPU backend"""
         config = BackendConfiguration.from_dict(
             {
                 "backend_name": "ionq.qpu",

@@ -3,9 +3,10 @@
 # Licensed under the MIT License.
 ##
 from qiskit import QuantumCircuit
-from qiskit_azure_quantum import AzureQuantumProvider
+from qiskit.visualization import plot_histogram
+from qiskit.tools.monitor import job_monitor
 
-from utils import plot_results
+from azure.quantum.plugins.qiskit import AzureQuantumProvider
 
 # Azure Quantum Provider
 provider = AzureQuantumProvider(
@@ -31,23 +32,33 @@ print("================== Running circuit: ==================")
 print(circuit.draw())
 print("======================================================")
 
-
 # Submit the circuit to run on Azure Quantum
-job = simulator_backend.run(circuit, shots=250)
+job = simulator_backend.run(circuit, shots=1024)
 id = job.id()
 print("Job id", id)
-#exit()
 
-# Get the job results (this method waits for the Job to complete):
+# Monitor job progress and wait until complete:
+job_monitor(job)
+
+# Get the job results (this method also waits for the Job to complete):
 result = job.result()
-histogram = result.results['histogram']
-print()
-print("Results histogram", histogram)
-
-# Show the histogram as a plot:
-plot_results(job)
-
+print(result)
+counts = result.get_counts(circuit)
+print(counts)
+plot_histogram(counts)
 
 # # fetch an existing job and show the results:
-# job = provider.get_job('256f02ca-e934-11eb-87f9-2816a847b9a3')
-# plot_results(job)
+# job = provider.get_job('75379b1e-f676-11eb-ac02-f01dbc9fb65d') # qiskit sim
+# job = provider.get_job('89ab5eab-9dca-4cc7-9406-196190a55d98') # iq#
+# job = provider.get_job('3bfad3a8-f67b-11eb-a6ee-f01dbc9fb65d') # qiskit qpu
+# # Optionally, get the job from the backend:
+# job =simulator_backend.retrieve_job('75379b1e-f676-11eb-ac02-f01dbc9fb65d') # qiskit sim
+# print(job._azure_job.details)
+# result = job.result()
+# print('------------------------')
+# print(result)
+# counts=result.get_counts()
+# print('------------------------')
+# print(counts)
+# plot_histogram(counts)
+
