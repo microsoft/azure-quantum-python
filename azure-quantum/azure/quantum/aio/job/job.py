@@ -86,7 +86,7 @@ class Job(BaseJob, FilteredJob):
             )
             if print_progress:
                 print(".", end="", flush=True)
-            asyncio.sleep(poll_wait)
+            await asyncio.sleep(poll_wait)
             total_time += poll_wait
             await self.refresh()
             poll_wait = (
