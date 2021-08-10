@@ -1,7 +1,7 @@
 #!/bin/env python
 # -*- coding: utf-8 -*-
 ##
-# test_solvers.py: Checks correctness of azure.quantum.optimization module.
+# test_problem.py: Checks correctness of azure.quantum.optimization module.
 ##
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
@@ -9,7 +9,8 @@
 
 import unittest
 from unittest.mock import Mock, patch
-from azure.quantum.optimization import Problem, Term
+from typing import TYPE_CHECKING
+from azure.quantum.optimization import Problem, ProblemType, Term, GroupedTerm
 import azure.quantum.optimization.problem
 from common import expected_terms
 import numpy
@@ -111,6 +112,18 @@ class TestProblemClass(unittest.TestCase):
         test_prob = Problem(name="random")
         with self.assertRaises(Exception):
             test_prob.get_terms(id=0)
+    
+    def test_grouped_type(self):
+        problem = Problem(name="test_pubo_grouped", problem_type=ProblemType.pubo)
+        problem.terms = [
+            Term(c=3, indices=[1, 0, 1]),
+            Term(c=5, indices=[2, 0, 0]),
+            Term(c=-1, indices=[1, 0, 0]),
+            Term(c=4, indices=[0, 2, 1])
+        ]
+        assert problem.problem_type is ProblemType.pubo
+        problem.add_slc_term([(3,0), (2,1), (-1,None)])
+        assert problem.problem_type is ProblemType.pubo_grouped
 
     def test_create_npz_file_default(self):
         # When no keywords are supplied, columns have default names
