@@ -11,9 +11,9 @@ import json
 import numpy
 import os
 
-from typing import List, Tuple, Union, Dict, Optional, TYPE_CHECKING
+from typing import List, Tuple, Union, Dict, Optional, Type, TYPE_CHECKING
 from enum import Enum
-from azure.quantum.optimization import Term
+from azure.quantum.optimization import TermBase, Term, GroupType, GroupedTerm
 from azure.quantum.storage import (
     ContainerClient,
     download_blob,
@@ -32,6 +32,8 @@ if TYPE_CHECKING:
 class ProblemType(str, Enum):
     pubo = 0
     ising = 1
+    pubo_grouped = 2
+    ising_grouped = 3
 
 
 class Problem:
@@ -41,7 +43,7 @@ class Problem:
     :type name: str
     :param terms: Problem terms, depending on solver.
         Defaults to None
-    :type terms: Optional[List[Term]], optional
+    :type terms: Optional[List[TermBase]], optional
     :param init_config: Optional configuration details, depending on solver.
         Defaults to None
     :type init_config: Optional[Dict[str,int]], optional
@@ -53,13 +55,14 @@ class Problem:
     def __init__(
         self,
         name: str,
-        terms: Optional[List[Term]] = None,
+        terms: Optional[List[TermBase]] = None,
         init_config: Optional[Dict[str, int]] = None,
         problem_type: ProblemType = ProblemType.ising,
     ):
         self.name = name
         self.terms = terms.copy() if terms is not None else []
         self.problem_type = problem_type
+        self.check_for_grouped_term()
         self.init_config = init_config
         self.uploaded_blob_uri = None
         self.uploaded_blob_params = None
@@ -97,9 +100,14 @@ class Problem:
         :type name: str
         """
         result = json.loads(problem_as_json)
+
         problem = Problem(
             name=name,
-            terms=[Term.from_dict(t) for t in result["cost_function"]["terms"]],
+            terms=[
+                GroupedTerm.from_dict(t) if GroupedTerm.is_grouped_term(t)
+                else Term.from_dict(t)
+                for t in result["cost_function"]["terms"]
+            ],
             problem_type=ProblemType[result["cost_function"]["type"]],
         )
 
@@ -109,7 +117,7 @@ class Problem:
         return problem
 
     def add_term(self, c: Union[int, float], indices: List[int]):
-        """Adds a single term to the `Problem` representation
+        """Adds a single monomial term to the `Problem` representation
 
         :param c: The cost or weight of this term
         :type c: int, float
@@ -119,15 +127,68 @@ class Problem:
         self.terms.append(Term(indices=indices, c=c))
         self.uploaded_blob_uri = None
 
-    def add_terms(self, terms: List[Term]):
-        """Adds a list of terms to the `Problem` representation
+    def add_terms(
+        self, 
+        terms: List[Term],
+        term_type: GroupType=GroupType.combination,
+        c: Union[int, float]=1
+    ):
+        """Adds an optionally grouped list of monomial terms 
+        to the `Problem` representation
 
         :param terms: The list of terms to add to the problem
+        :param term_type: Type of grouped term being added
+            If GroupType.combination, terms will be added as ungrouped monomials.
+        :param c: Weight of grouped term, if applicable
         """
-        self.terms += terms
+        if term_type is GroupType.combination:
+            # Cast as list of ungrouped monomial terms
+            self.terms += [Term(term.ids, c=c*term.c) for term in terms]
+        else:
+            # Grouped term
+            self.terms.append(GroupedTerm(term_type, terms, c=c))
+            self.problem_type_to_grouped()
+        self.uploaded_blob_uri = None
+    
+    def add_slc_term(
+        self,
+        terms: Union[List[Tuple[Union[int, float], Optional[int]]],
+                     List[Term]],
+        c: Union[int, float] = 1
+    ):
+        """Adds a squared linear combination term
+        to the `Problem` representation
+        
+        :param terms: List of monomial terms, with each represented by a pair.
+            The first entry represents the monomial term weight.
+            The second entry is the monomial term variable index or None.
+            Alternatively, a list of Term objects may be input.
+        :param c: Weight of SLC term
+        """
+        if all(isinstance(term, Term) for term in terms):
+            gterms = terms
+        else:
+            gterms = [Term([index], c=tc) if index is not None else Term([], c=tc)
+                      for tc,index in terms]
+        self.terms.append(
+            GroupedTerm(GroupType.squared_linear_combination, gterms, c=c)
+        )
+        self.problem_type_to_grouped()
         self.uploaded_blob_uri = None
 
-    def to_blob(self, compress: bool = False) -> Tuple[bytes, str]:
+    def check_for_grouped_term(self):
+        for term in self.terms:
+            if isinstance(term, GroupedTerm):
+                self.problem_type_to_grouped()
+                break
+    
+    def problem_type_to_grouped(self):
+        if self.problem_type == ProblemType.pubo:
+            self.problem_type = ProblemType.pubo_grouped
+        elif self.problem_type == ProblemType.ising:
+            self.problem_type = ProblemType.ising_grouped
+            
+    def to_blob(self, compress: bool = False) -> bytes:
         """Convert problem data to a binary blob.
 
         :param compress: Compress the blob using gzip, defaults to None
@@ -224,7 +285,7 @@ class Problem:
         for term in self.terms:
             reduced_term = term.reduce_by_variable_state(fixed_transformed)
             if reduced_term:
-                if len(reduced_term.ids) > 0:
+                if isinstance(reduced_term, GroupedTerm) or len(reduced_term.ids) > 0:
                     new_terms.append(reduced_term)
                 else:
                     # reduced to a constant term
@@ -274,12 +335,19 @@ class Problem:
         """
 
         set_vars = set()
+        total_term_count = 0
         for term in self.terms:
-            set_vars.update(term.ids)
-
+            if isinstance(term, Term):
+                set_vars.update(term.ids)
+                total_term_count += 1
+            elif isinstance(term, GroupedTerm):
+                for subterm in term.terms:
+                    set_vars.update(subterm.ids)
+                    total_term_count += 1
+        
         return (
             len(set_vars) >= Problem.NUM_VARIABLES_LARGE
-            and len(self.terms) >= Problem.NUM_TERMS_LARGE
+            and total_term_count >= Problem.NUM_TERMS_LARGE
         )
 
     def download(self, workspace: "Workspace"):
@@ -295,15 +363,21 @@ class Problem:
         contents = download_blob(blob.url)
         return Problem.deserialize(contents, self.name)
 
-    def get_terms(self, id: int) -> List[Term]:
+    def get_terms(self, id: int) -> List[TermBase]:
         """Given an index the function will return
         a list of terms with that index
         """
         terms = []
         if self.terms != []:
             for term in self.terms:
-                if id in term.ids:
-                    terms.append(term)
+                if isinstance(term, Term):
+                    if id in term.ids:
+                        terms.append(term)
+                elif isinstance(term, GroupedTerm):
+                    for subterm in term.terms:
+                        if id in subterm.ids:
+                            terms.append(term)
+                            break
             return terms
         else:
             raise Exception(
