@@ -6,3 +6,4 @@
 
 from ._chained import *
 from ._default import _DefaultAzureCredential
+from ._token import _AzureQuantumTokenCredential
