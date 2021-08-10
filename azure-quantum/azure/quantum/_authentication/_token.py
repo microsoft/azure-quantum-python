@@ -67,7 +67,7 @@ class _TokenFileCredential(object):
             raise CredentialUnavailableError(message="Failed to parse token file: " + str(e))
 
         if token.expires_on <= time.time():
-            raise CredentialUnavailableError(message="Token already expired at {}".format(time.asctime(time.localtime(token.expires_on))))
+            raise CredentialUnavailableError(message="Token already expired at {}".format(time.asctime(time.gmtime(token.expires_on))))
 
         return token
     
