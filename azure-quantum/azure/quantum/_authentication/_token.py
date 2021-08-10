@@ -34,7 +34,7 @@ class _AzureQuantumTokenCredential(object):
     It will only use the local file if the AZUREQUANTUM_TOKEN_FILE environment variable is set, and references
     an existing json file that contains the access_token and expires_on timestamp in milliseconds.
 
-    If the environment variable is not set, the file does not exist, or the token is invalid in any way (expires or close to expiring),
+    If the environment variable is not set, the file does not exist, or the token is invalid in any way (expired, for example),
     then the credential will throw CredentialUnavailableError, so that _ChainedTokenCredential can fallback to other methods.
     """
     def __init__(self, **kwargs):
@@ -71,8 +71,8 @@ class _AzureQuantumTokenCredential(object):
         except Exception as e:
             raise CredentialUnavailableError(message="Failed to parse token file: " + str(e))
 
-        if token.expires_on - time.time() < 300:
-            raise CredentialUnavailableError(message="Token already expired or too close to expiring at {}".format(time.asctime(time.localtime(token.expires_on))))
+        if token.expires_on <= time.time():
+            raise CredentialUnavailableError(message="Token already expired at {}".format(time.asctime(time.localtime(token.expires_on))))
 
         return token
     

@@ -87,7 +87,7 @@ class TestWorkspace(QuantumTestBase):
             with pytest.raises(CredentialUnavailableError) as exception:
                 credential.get_token(_AZURE_QUANTUM_SCOPE)
             
-            assert "Token already expired or too close to expiring at Mon Aug  9 14:05:25 2021" in str(exception.value)
+            assert "Token already expired at Mon Aug  9 14:05:25 2021" in str(exception.value)
 
     def test_azure_quantum_token_credential_file_valid_token(self):
         one_hour_ahead = time.time() + 60*60
