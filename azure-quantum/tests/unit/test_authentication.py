@@ -15,7 +15,7 @@ import pytest
 from unittest.mock import patch
 
 from azure.identity import CredentialUnavailableError
-from azure.quantum._authentication import _AzureQuantumTokenCredential
+from azure.quantum._authentication import _TokenFileCredential
 from common import QuantumTestBase
 
 _AZURE_QUANTUM_SCOPE = "https://quantum.microsoft.com/.default"
@@ -24,14 +24,14 @@ _AZURE_QUANTUM_SCOPE = "https://quantum.microsoft.com/.default"
 class TestWorkspace(QuantumTestBase):
 
     def test_azure_quantum_token_credential_file_unsupported_scope(self):
-        credential = _AzureQuantumTokenCredential()
+        credential = _TokenFileCredential()
         with pytest.raises(CredentialUnavailableError) as exception:
             credential.get_token("invalid scope")
 
-        assert "AzureQuantumTokenCredential only supports https://quantum.microsoft.com/.default scope." in str(exception.value)
+        assert "TokenFileCredential only supports https://quantum.microsoft.com/.default scope." in str(exception.value)
 
     def test_azure_quantum_token_credential_file_not_set(self):
-        credential = _AzureQuantumTokenCredential()
+        credential = _TokenFileCredential()
         with pytest.raises(CredentialUnavailableError) as exception:
             credential.get_token(_AZURE_QUANTUM_SCOPE)
 
@@ -41,7 +41,7 @@ class TestWorkspace(QuantumTestBase):
         with patch.dict(os.environ, { "AZUREQUANTUM_TOKEN_FILE": "fake_file_path" }, clear=True):
             with patch('os.path.isfile') as mock_isfile:
                 mock_isfile.return_value = False
-                credential = _AzureQuantumTokenCredential()                
+                credential = _TokenFileCredential()                
                 with pytest.raises(CredentialUnavailableError) as exception:
                     credential.get_token(_AZURE_QUANTUM_SCOPE)
                 
@@ -52,7 +52,7 @@ class TestWorkspace(QuantumTestBase):
         file = Path(tmpdir) / "token.json"
         file.write_text("not a json")
         with patch.dict(os.environ, { "AZUREQUANTUM_TOKEN_FILE": str(file.resolve()) }, clear=True):
-            credential = _AzureQuantumTokenCredential()                
+            credential = _TokenFileCredential()                
             with pytest.raises(CredentialUnavailableError) as exception:
                 credential.get_token(_AZURE_QUANTUM_SCOPE)
             
@@ -67,7 +67,7 @@ class TestWorkspace(QuantumTestBase):
         file = Path(tmpdir) / "token.json"
         file.write_text(json.dumps(content))
         with patch.dict(os.environ, { "AZUREQUANTUM_TOKEN_FILE": str(file.resolve()) }, clear=True):
-            credential = _AzureQuantumTokenCredential()                
+            credential = _TokenFileCredential()                
             with pytest.raises(CredentialUnavailableError) as exception:
                 credential.get_token(_AZURE_QUANTUM_SCOPE)
             
@@ -83,7 +83,7 @@ class TestWorkspace(QuantumTestBase):
         file = Path(tmpdir) / "token.json"
         file.write_text(json.dumps(content))
         with patch.dict(os.environ, { "AZUREQUANTUM_TOKEN_FILE": str(file.resolve()) }, clear=True):
-            credential = _AzureQuantumTokenCredential()                
+            credential = _TokenFileCredential()                
             with pytest.raises(CredentialUnavailableError) as exception:
                 credential.get_token(_AZURE_QUANTUM_SCOPE)
             
@@ -100,7 +100,7 @@ class TestWorkspace(QuantumTestBase):
         file = Path(tmpdir) / "token.json"
         file.write_text(json.dumps(content))
         with patch.dict(os.environ, { "AZUREQUANTUM_TOKEN_FILE": str(file.resolve()) }, clear=True):
-            credential = _AzureQuantumTokenCredential()                
+            credential = _TokenFileCredential()                
             token = credential.get_token(_AZURE_QUANTUM_SCOPE)
         
         assert token.token == "fake_token"

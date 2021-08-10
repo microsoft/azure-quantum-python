@@ -27,7 +27,7 @@ _TOKEN_FILE_ENV_VARIABLE="AZUREQUANTUM_TOKEN_FILE"
 _AZURE_QUANTUM_SCOPE = "https://quantum.microsoft.com/.default"
 
 
-class _AzureQuantumTokenCredential(object):
+class _TokenFileCredential(object):
     """
     Implements a custom TokenCredential to use a local file as the source for an AzureQuantum token.
 
@@ -54,7 +54,7 @@ class _AzureQuantumTokenCredential(object):
           `message` attribute with the error message.
         """
         if scopes != (_AZURE_QUANTUM_SCOPE,):
-            raise CredentialUnavailableError(message="AzureQuantumTokenCredential only supports {} scope.".format(_AZURE_QUANTUM_SCOPE))
+            raise CredentialUnavailableError(message="TokenFileCredential only supports {} scope.".format(_AZURE_QUANTUM_SCOPE))
 
         if not self.token_file:
             raise CredentialUnavailableError(message="Token file location not set.")
