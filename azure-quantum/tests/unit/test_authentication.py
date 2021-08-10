@@ -22,14 +22,6 @@ _AZURE_QUANTUM_SCOPE = "https://quantum.microsoft.com/.default"
 
 
 class TestWorkspace(QuantumTestBase):
-
-    def test_azure_quantum_token_credential_file_unsupported_scope(self):
-        credential = _TokenFileCredential()
-        with pytest.raises(CredentialUnavailableError) as exception:
-            credential.get_token("invalid scope")
-
-        assert "TokenFileCredential only supports https://quantum.microsoft.com/.default scope." in str(exception.value)
-
     def test_azure_quantum_token_credential_file_not_set(self):
         credential = _TokenFileCredential()
         with pytest.raises(CredentialUnavailableError) as exception:

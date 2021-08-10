@@ -24,8 +24,6 @@ if TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 _TOKEN_FILE_ENV_VARIABLE="AZUREQUANTUM_TOKEN_FILE"
-_AZURE_QUANTUM_SCOPE = "https://quantum.microsoft.com/.default"
-
 
 class _TokenFileCredential(object):
     """
@@ -53,9 +51,6 @@ class _TokenFileCredential(object):
         :raises ~azure.identity.CredentialUnavailableError: when failing to get token. The exception has a
           `message` attribute with the error message.
         """
-        if scopes != (_AZURE_QUANTUM_SCOPE,):
-            raise CredentialUnavailableError(message="TokenFileCredential only supports {} scope.".format(_AZURE_QUANTUM_SCOPE))
-
         if not self.token_file:
             raise CredentialUnavailableError(message="Token file location not set.")
 
