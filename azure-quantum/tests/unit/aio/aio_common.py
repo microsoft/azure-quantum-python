@@ -319,6 +319,7 @@ class CustomRecordingProcessor(RecordingProcessor):
                 body = self.regex_replace_all(body)
                 response["body"]["string"] = body
 
+        response['url'] = self.regex_replace_all(response['url'])
         return response
 
 
