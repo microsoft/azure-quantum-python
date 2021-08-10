@@ -76,6 +76,7 @@ class TestJobForSolver:
     Similar issue here: https://stackoverflow.com/questions/63978287/missing-1-required-positional-argument-error-for-fixture-when-softest-testcase-i
     """
 
+    @pytest.mark.asyncio
     @pytest.mark.skip(reason="Temporarily disabling generation of parametrized test cases due to \
                               compatibility issues with VCR")
     async def test_job_submit(self, solver_type: Type[Solver]):
@@ -97,45 +98,41 @@ class TestJob(QuantumTestBase):
         return ZERO_UID if self.is_playback \
                else Job.create_job_id()
 
-    @pytest.mark.asyncio
-    async def test_job_submit_microsoft_simulated_annealing(self):
+    def test_job_submit_microsoft_simulated_annealing(self):
         solver_type = functools.partial(microsoft.SimulatedAnnealing, beta_start=0)
         solver_name = "SimulatedAnnealing"
-        await self._test_job_submit(solver_name, solver_type)
+        self.get_async_result(self._test_job_submit(solver_name, solver_type))
         self._test_job_filter(solver_type)
 
-    @pytest.mark.asyncio
-    async def test_job_submit_microsoft_parallel_tempering(self):
+    def test_job_submit_microsoft_parallel_tempering(self):
         solver_type = functools.partial(microsoft.ParallelTempering, sweeps=100)
         solver_name = "ParallelTempering"
-        await self._test_job_submit(solver_name, solver_type)
+        self.get_async_result(self._test_job_submit(solver_name, solver_type))
 
-    @pytest.mark.asyncio
-    async def test_job_submit_microsoft_tabu(self):
+    def test_job_submit_microsoft_tabu(self):
         solver_type = functools.partial(microsoft.Tabu, sweeps=100)
         solver_name = "Tabu"
-        await self._test_job_submit(solver_name, solver_type)
+        self.get_async_result(self._test_job_submit(solver_name, solver_type))
 
-    @pytest.mark.asyncio
-    async def test_job_submit_microsoft_quantum_monte_carlo(self):
+    def test_job_submit_microsoft_quantum_monte_carlo(self):
         solver_type = functools.partial(microsoft.QuantumMonteCarlo, trotter_number=1)
         solver_name = "QuantumMonteCarlo"
-        await self._test_job_submit(solver_name, solver_type)
+        self.get_async_result(self._test_job_submit(solver_name, solver_type))
 
-    @pytest.mark.asyncio
-    async def test_job_submit_microsoft_population_annealing(self):
+    def test_job_submit_microsoft_population_annealing(self):
         solver_type = functools.partial(microsoft.PopulationAnnealing, sweeps=200)
         solver_name = "PopulationAnnealing"
-        await self._test_job_submit(solver_name, solver_type)
+        self.get_async_result(self._test_job_submit(solver_name, solver_type))
 
-    @pytest.mark.asyncio
-    async def test_job_submit_microsoft_substochastic_monte_carlo(self):
+    def test_job_submit_microsoft_substochastic_monte_carlo(self):
         solver_type = functools.partial(microsoft.SubstochasticMonteCarlo, step_limit=280)
         solver_name = "SubstochasticMonteCarlo"
-        await self._test_job_submit(solver_name, solver_type)
+        self.get_async_result(self._test_job_submit(solver_name, solver_type))
 
-    @pytest.mark.asyncio
-    async def test_job_upload_and_run_solvers(self):
+    def test_job_upload_and_run_solvers(self):
+        self.get_async_result(self._test_job_upload_and_run_solvers())
+
+    async def _test_job_upload_and_run_solvers(self):
         problem_name = f'Test-problem-{datetime.now():"%Y%m%d-%H%M%S"}'
         problem = self.create_problem(name=problem_name)
         workspace = self.create_workspace()
@@ -171,33 +168,29 @@ class TestJob(QuantumTestBase):
                     assert job.has_completed()
                     assert job.details.status == "Succeeded"
 
-    @pytest.mark.asyncio
     @pytest.mark.skipif(not(os.environ.get("AZUREQUANTUM_1QBIT", "") == "1"), reason="1Qbit tests not enabled")
-    async def test_job_submit_oneqbit_tabu_search(self):
+    def test_job_submit_oneqbit_tabu_search(self):
         solver_type = functools.partial(oneqbit.TabuSearch, improvement_cutoff=10)
         solver_name = "TabuSearch"
-        await self._test_job_submit(solver_name, solver_type)
+        self.get_async_result(self._test_job_submit(solver_name, solver_type))
 
-    @pytest.mark.asyncio
     @pytest.mark.skipif(not(os.environ.get("AZUREQUANTUM_1QBIT", "") == "1"), reason="1Qbit tests not enabled")
-    async def test_job_submit_oneqbit_pticm_solver(self):
+    def test_job_submit_oneqbit_pticm_solver(self):
         solver_type = functools.partial(oneqbit.PticmSolver, num_sweeps_per_run=99)
         solver_name = "PticmSolver"
-        await self._test_job_submit(solver_name, solver_type)
+        self.get_async_result(self._test_job_submit(solver_name, solver_type))
 
-    @pytest.mark.asyncio
     @pytest.mark.skipif(not(os.environ.get("AZUREQUANTUM_1QBIT", "") == "1"), reason="1Qbit tests not enabled")
-    async def test_job_submit_oneqbit_path_relinking_solver(self):
+    def test_job_submit_oneqbit_path_relinking_solver(self):
         solver_type = functools.partial(oneqbit.PathRelinkingSolver, distance_scale=0.44)
         solver_name = "PathRelinkingSolver"
-        await self._test_job_submit(solver_name, solver_type)
+        self.get_async_result(self._test_job_submit(solver_name, solver_type))
 
-    @pytest.mark.asyncio
     @pytest.mark.skipif(not(os.environ.get("AZUREQUANTUM_TOSHIBA", "") == "1"), reason="Toshiba tests not enabled")
-    async def test_job_submit_toshiba_simulated_bifurcation_machine(self):
+    def test_job_submit_toshiba_simulated_bifurcation_machine(self):
         solver_type = functools.partial(toshiba.SimulatedBifurcationMachine, loops=10)
         solver_name = "SimulatedBifurcationMachine"
-        await self._test_job_submit(solver_name, solver_type)
+        self.get_async_result(self._test_job_submit(solver_name, solver_type))
 
     def _test_job_filter(self, solver_type):
         workspace = self.create_workspace()
