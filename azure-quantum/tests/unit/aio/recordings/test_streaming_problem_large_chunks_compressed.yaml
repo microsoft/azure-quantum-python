@@ -1,29 +1,30 @@
 interactions:
 - request:
-    body: '{"client_id": "00000000-0000-0000-0000-000000000000", "client_secret":
-      "PLACEHOLDER", "grant_type": "client_credentials", "scope": "https://quantum.microsoft.com/.default"}'
+    body: 'b''{"containerName": "dcccf0fc-fa44-11eb-87ca-68fef703fb2a"}'''
     headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '57'
       Content-Type:
-      - application/x-www-form-urlencoded
+      - application/json
       User-Agent:
-      - azsdk-python-identity/1.6.0 Python/3.7.10 (Linux-5.10.16.3-microsoft-standard-WSL2-x86_64-with-debian-bullseye-sid)
+      - azsdk-python-quantum/0.0.0.1 Python/3.7.10 (Darwin-20.6.0-x86_64-i386-64bit)
     method: POST
-    uri: https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token
+    uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/storage/sasUri
   response:
     body:
-      string: '{"error": "unauthorized_client", "error_description": "AADSTS700038:
-        00000000-0000-0000-0000-000000000000 is not a valid application identifier.\r\nTrace
-        ID: 8066d1d0-7b9f-4607-9468-65fbaceb7f00\r\nCorrelation ID: ecfee8e1-6aab-4a4b-a900-73143386846f\r\nTimestamp:
-        2021-08-10 00:00:56Z", "error_codes": [700038], "timestamp": "2021-08-10 00:00:56Z",
-        "trace_id": "8066d1d0-7b9f-4607-9468-65fbaceb7f00", "correlation_id": "ecfee8e1-6aab-4a4b-a900-73143386846f",
+      string: '{"sasUri": "https://mystorage.blob.core.windows.net/dcccf0fc-fa44-11eb-87ca-68fef703fb2a?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
         "access_token": "fake_token"}'
     headers:
       content-length:
-      - '448'
+      - '211'
       content-type:
       - application/json; charset=utf-8
+      transfer-encoding:
+      - chunked
     status:
-      code: 400
-      message: Bad Request
-    url: https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/v2.0/token
+      code: 200
+      message: OK
+    url: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/storage/sasUri
 version: 1

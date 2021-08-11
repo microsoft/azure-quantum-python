@@ -34,6 +34,7 @@ WORKSPACE = "myworkspace"
 LOCATION = "eastus"
 STORAGE = "mystorage"
 
+
 @pytest.mark.usefixtures("event_loop_instance")
 class QuantumTestBase(ReplayableTest):
     """QuantumTestBase

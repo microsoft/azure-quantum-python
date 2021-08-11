@@ -20,7 +20,8 @@ from azure.quantum.aio.storage import (
     BlobClient,
     download_blob,
 )
-from queue import Queue, Empty
+from asyncio import Queue, create_task
+from queue import Empty
 
 logger = logging.getLogger(__name__)
 
@@ -139,7 +140,7 @@ class StreamingProblem(object):
                     upload_size_threshold=self.upload_size_threshold,
                     upload_term_threshold=self.upload_terms_threshold,
                 )
-                await self.uploader.start()
+                uploader_task = create_task(self.uploader.start())
 
             term_couplings = [len(term.ids) for term in terms]
             max_coupling = max(term_couplings)
@@ -153,7 +154,9 @@ class StreamingProblem(object):
                 self.stats["max_coupling"] = max_coupling
             if self.stats["min_coupling"] > min_coupling:
                 self.stats["min_coupling"] = min_coupling
-            self.terms_queue.put(terms)
+            self.terms_queue.put_nowait(terms)
+            await uploader_task
+
 
     async def download(self):
         """Downloads the uploaded problem as an instance of `Problem`"""
@@ -262,9 +265,7 @@ class JsonStreamingProblemUploader:
         terms = []
         while continue_processing:
             try:
-                new_terms = self.problem.terms_queue.get(
-                    block=True, timeout=self.__queue_wait_timeout
-                )
+                new_terms = await self.problem.terms_queue.get()
                 if new_terms is None:
                     continue_processing = False
                 else:

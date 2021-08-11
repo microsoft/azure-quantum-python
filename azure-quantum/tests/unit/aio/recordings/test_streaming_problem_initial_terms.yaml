@@ -1,29 +1,54 @@
 interactions:
 - request:
-    body: '{"client_id": "00000000-0000-0000-0000-000000000000", "client_secret":
-      "PLACEHOLDER", "grant_type": "client_credentials", "scope": "https://quantum.microsoft.com/.default"}'
+    body: '{"grant_type": "refresh_token", "refresh_token": "0.ARoAv4j5cvGGr0GRqy180BHbR_rZLIcf0-BFnqtuRgoC0fEaANU.AgABAAAAAAD--DLA3VO7QrddgJg7WevrAgDs_wQA9P9Cf2_0imDz8IUPT37bwatK3Bl_ysD-QnIbMA5fGy4V58RF6YSRPlrIbNu33MamMBPpRjrBwv56IVWDom4t5AhcUnnLHSVpCUWrPI3p-jVoRhUlkuTbiteOoG9CxvrDOES63GVjzXTAVkwzgq8AeCfBGZjNjaOA2c9sPr1IDPnn-mhLn_JRADsSddMSeGYZigU--8XRjgmyQu77qWlxizL-NZNNFm-MKL57GkvJGR5jmCG4fYg9lEZ3n5L8NFYPG6kf-HeTQdbFF422KlPBRcBct3XTgzEjdxIE0dfqmTlF5PLjk29w_eR30saFSPYjpUEAQeDv88f2_itoMzrOChU0bhiW7fOUf1FDcl4klZ_xDZ0NQulG8GEyoK9vz_Mv1ZIc9Hk_ZpfH-bTqZTh0wEliH4N3x7VY8IHJjY5MBF4IaJpon4gXOsr1dhmHLWdkOtofdSROzV-gJNIw15EerJFzlA0caQzm6lV9qucrjrJBtlzmvMskeM9KwaPNVQg4FDRBiUCh_ROrJ7CytyxL2ERiI7FLvYvOM3gKFlyH68B43tYh-Rl2VblCL941QEBVbjhO9QfT2CCvXmaG3BtcPxJNeuCtKWEWocn-H-vMjw4YWUCQUbzyjSUi1NovJPexMmzQasns2ZcbMuvRMoTG3L5oQVcUD-5fiX3MWrm_Tc9xG2IH93_jfLizJV7gWMJcRSBy3pqtCFdjFENsRIaiB4-BDvXwaKVycOR_szGcKWX4mPXgwWfEY5sXYjqV_EBw5T-NCPX0df-9rLq4dV_-6P1SfbGv6vrWly2OalObw4GriHHjtjPG67yt_Fr2zjQ1MGQMKoc10_bUMgLUEs2tced69C0849wLcyJeLlwRVmmv3I5McNapH9PADfR8Bi3WHmvhKMUvmbzbOVEXbLVXCFWyCNT_-v4gLSMTw6G1EKMxuG8NyeX95_q8dQnh5DVda2rcfw4rAFICFZbZFsbtuXriaQ6EaWk7nMZSzLDB9MoQ5YwbPM5f4sFCGL_-nYlhKlCI4o35_sOWTGffIENKhAfzRLqckKMQxnV_SQTNSGrW5deJ87bGOuHkEAAr6JXVi1e_wiqutWx7kGrIKrX8KVoaeqavYeMggk8wy6rFTWGW-EU2T6uOasAgLEmLCAoV2RkKxkYgCgyBVqopjV3lF5mNge9n53U9q24uUMLji-RvAnSSXqB2dXHwrUFQv0hcxShSNFWG0T4tlXbEuMv-omuTU3lQSyLr5K91spPW6FU6OVIOFcnpq9IIYZ1sdeayMN9v6iowqwCrfiMH3w6_-znGH9MiOA19aTZITuanD0Hy6cFEqk09lEoej_ix1dcJduRLYMw_t0DgAM21p8oYRXkuj8FuociuSYAJEw",
+      "scope": "https://quantum.microsoft.com/.default", "client_id": "04b07795-8ddb-461a-bbee-02f9e1bf7b46",
+      "client_info": 1}'
     headers:
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - azsdk-python-identity/1.6.0 Python/3.7.10 (Linux-5.10.16.3-microsoft-standard-WSL2-x86_64-with-debian-bullseye-sid)
+      - azsdk-python-identity/1.6.0 Python/3.7.10 (Darwin-20.6.0-x86_64-i386-64bit)
     method: POST
-    uri: https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token
+    uri: https://login.microsoftonline.com/organizations/oauth2/v2.0/token
   response:
     body:
-      string: '{"error": "unauthorized_client", "error_description": "AADSTS700038:
-        00000000-0000-0000-0000-000000000000 is not a valid application identifier.\r\nTrace
-        ID: 44cc9776-fde2-4260-84fb-191f22889e00\r\nCorrelation ID: cdf1116e-5de2-4cc7-ab9a-0a876c2f6cf2\r\nTimestamp:
-        2021-08-10 00:00:56Z", "error_codes": [700038], "timestamp": "2021-08-10 00:00:56Z",
-        "trace_id": "44cc9776-fde2-4260-84fb-191f22889e00", "correlation_id": "cdf1116e-5de2-4cc7-ab9a-0a876c2f6cf2",
+      string: '{"token_type": "Bearer", "expires_in": 3599, "ext_expires_in": 3599,
         "access_token": "fake_token"}'
     headers:
       content-length:
-      - '448'
+      - '5483'
       content-type:
       - application/json; charset=utf-8
     status:
-      code: 400
-      message: Bad Request
-    url: https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/v2.0/token
+      code: 200
+      message: OK
+    url: https://login.microsoftonline.com/organizations/oauth2/v2.0/token
+- request:
+    body: 'b''{"containerName": "cd64df8a-fa44-11eb-87ca-68fef703fb2a"}'''
+    headers:
+      Accept:
+      - application/json
+      Content-Length:
+      - '57'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-quantum/0.0.0.1 Python/3.7.10 (Darwin-20.6.0-x86_64-i386-64bit)
+    method: POST
+    uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/storage/sasUri
+  response:
+    body:
+      string: '{"sasUri": "https://mystorage.blob.core.windows.net/cd64df8a-fa44-11eb-87ca-68fef703fb2a?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "access_token": "fake_token"}'
+    headers:
+      content-length:
+      - '215'
+      content-type:
+      - application/json; charset=utf-8
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
+    url: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/storage/sasUri
 version: 1
