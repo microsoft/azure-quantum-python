@@ -99,12 +99,14 @@ class Solver:
             # Create job from input data
             name = problem.name
             blob = problem.to_blob(compress=compress)
+            encoding = "gzip" if compress else ""
             job = Job.from_input_data(
                 workspace=self.workspace,
                 name=name,
                 target=self.target,
                 input_data=blob,
                 blob_name="inputData",
+                encoding=encoding,
                 content_type="application/json",
                 provider_id=self.provider,
                 input_data_format=self.input_data_format,
