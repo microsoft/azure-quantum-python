@@ -21,7 +21,7 @@ class TestIonQ(QuantumTestBase):
     def get_test_job_id(self):
         return ZERO_UID if self.is_playback \
                else Job.create_job_id()
-    
+
     def _3_qubit_ghz(self):
         return {
             "qubits": 3,
@@ -43,13 +43,36 @@ class TestIonQ(QuantumTestBase):
             ]
         }
 
+    def _3_qubit_ghz_cirq(self):
+        import cirq
+
+        # Create qubits
+        q0 = cirq.LineQubit(0)
+        q1 = cirq.LineQubit(1)
+        q2 = cirq.LineQubit(2)
+
+        # Create a circuit
+        circuit = cirq.Circuit(
+            cirq.H(q0),  # H gate
+            cirq.CNOT(q0, q1),
+            cirq.CNOT(q1, q2),
+            cirq.measure(q0, key='q0'),
+            cirq.measure(q1, key='q1'),
+            cirq.measure(q2, key='q2'),
+        )
+
+        return circuit
+
     def test_job_submit_ionq(self):
         self._test_job_submit_ionq(num_shots=None)
+
+    def test_job_submit_ionq_cirq(self):
+        self._test_job_submit_ionq(num_shots=None, circuit=self._3_qubit_ghz_cirq())
 
     def test_job_submit_ionq_100_shots(self):
         self._test_job_submit_ionq(num_shots=100)
 
-    def _test_job_submit_ionq(self, num_shots):
+    def _test_job_submit_ionq(self, num_shots, circuit=None):
 
         with unittest.mock.patch.object(
             Job,
@@ -57,7 +80,8 @@ class TestIonQ(QuantumTestBase):
             return_value=self.get_test_job_id(),
         ):
             workspace = self.create_workspace()
-            circuit = self._3_qubit_ghz()
+            if circuit is None:
+                circuit = self._3_qubit_ghz()
             target = IonQ(workspace=workspace)
             job = target.submit(
                 circuit=circuit,

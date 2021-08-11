@@ -6,6 +6,59 @@ You can also try our [Quantum Computing Fundamentals](https://aka.ms/learnqc) le
 
 This folder contains plug-ins to the Python SDKD for Azure Quantum.
 
+### Installing with pip ###
+
+To use all plugins, run
+
+```bash
+pip install azure-quantum[cirq,qiskit]
+```
+
+## The `cirq` plugin ##
+
+This plugin lets you submit a `cirq` dependency to the Azure Quantum targets.
+
+### Example usage ###
+
+```python
+from azure.quantum import Workspace
+from azure.quantum.targets import IonQ
+import cirq
+
+# Create qubits
+q0 = cirq.LineQubit(0)
+q1 = cirq.LineQubit(1)
+q2 = cirq.LineQubit(2)
+
+# Create a circuit
+circuit = cirq.Circuit(
+    cirq.H(q0),  # H gate
+    cirq.CNOT(q0, q1),
+    cirq.CNOT(q1, q2),
+    cirq.measure(q0, key='q0'),
+    cirq.measure(q1, key='q1'),
+    cirq.measure(q2, key='q2'),
+)
+
+workspace = Workspace(
+  resource_id="",
+  location=""
+)
+target = IonQ(workspace=workspace)
+job = target.submit(
+    circuit=circuit,
+    name="ionq-3ghz-job",
+    num_shots=100
+)
+results = job.get_results()
+```
+
+### Installing with pip ###
+
+```bash
+pip install azure-quantum[cirq]
+```
+
 ## The `qiskit` plugin ##
 
 This package implements an `AzureQuantumProvider` class that supports submitting Qiskit circuits to Azure Quantum hardware targets.
@@ -59,19 +112,19 @@ The best way to install all the Python pre-reqs packages is to create a new Cond
 Run at the root of the `azure-quantum` directory:
 
 ```bash
-conda env create -f environment-qiskit.yml
+conda env create -f environment.yml
 ```
 
 Then to activate the environment:
 
 ```bash
-conda activate azure-quantum-qiskit
+conda activate azurequantum
 ```
 
 In case you have created the conda environment a while ago, you can make sure you have the latest versions of all dependencies by updating your environment:
 
 ```bash
-conda env update -f environment-qiskit.yml --prune
+conda env update -f environment.yml --prune
 ```
 
 #### Install the local development package ####
