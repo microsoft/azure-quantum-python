@@ -4,7 +4,7 @@
 ##
 import json
 from azure.quantum import __version__
-from .job import AzureQuantumJob
+from azure.quantum.plugins.qiskit.job import AzureQuantumJob
 
 try:
     from qiskit.providers import BackendV1 as Backend
@@ -20,6 +20,8 @@ To install run: pip install azure-quantum[qiskit]"
 
 import logging
 logger = logging.getLogger(__name__)
+
+__all__ = ["IonQBackend", "IonQQPUBackend", "IonQSimulatorBackend"]
 
 
 class IonQBackend(Backend):
@@ -126,5 +128,3 @@ class IonQQPUBackend(IonQBackend):
         )
         logger.info("Initializing IonQQPUBackend")
         super().__init__(configuration=config, provider=provider)
-
-__all__ = ["IonQBackend", "IonQQPUBackend", "IonQSimulatorBackend"]
