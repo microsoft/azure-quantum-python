@@ -89,7 +89,7 @@ class TestWorkspace(QuantumTestBase):
         ws = self.create_workspace()
         targets = ws.get_targets()
         assert "Microsoft" in targets
-        assert "microsoft.paralleltempering.cpu" in targets["Microsoft"]
+        assert "microsoft.paralleltempering.cpu" in [t["id"] for t in targets["Microsoft"]]
     
     def test_workspace_job_quotas(self):
         ws = self.create_workspace()
