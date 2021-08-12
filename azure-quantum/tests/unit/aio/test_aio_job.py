@@ -102,7 +102,7 @@ class TestJob(QuantumTestBase):
         solver_type = functools.partial(microsoft.SimulatedAnnealing, beta_start=0)
         solver_name = "SimulatedAnnealing"
         self.get_async_result(self._test_job_submit(solver_name, solver_type))
-        self._test_job_filter(solver_type)
+        self.get_async_result(self._test_job_filter(solver_type))
 
     def test_job_submit_microsoft_parallel_tempering(self):
         solver_type = functools.partial(microsoft.ParallelTempering, sweeps=100)
@@ -192,7 +192,7 @@ class TestJob(QuantumTestBase):
         solver_name = "SimulatedBifurcationMachine"
         self.get_async_result(self._test_job_submit(solver_name, solver_type))
 
-    def _test_job_filter(self, solver_type):
+    async def _test_job_filter(self, solver_type):
         workspace = self.create_workspace()
         solver = solver_type(workspace)
         problem = self.create_problem(name="Test-Job-Filtering")
@@ -202,7 +202,7 @@ class TestJob(QuantumTestBase):
             self.mock_create_job_id_name,
             return_value=self.get_test_job_id()
         ):
-            job = solver.submit(problem)
+            job = await solver.submit(problem)
 
             self.assertEqual(True, job.matches_filter()) # test no filters
             self.assertEqual(False, job.matches_filter(name_match="Test1"))
