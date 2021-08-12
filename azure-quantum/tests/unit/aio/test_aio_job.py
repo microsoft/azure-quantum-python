@@ -15,7 +15,7 @@ from datetime import date, datetime, timedelta
 
 from typing import List, Type
 
-from aio_common import QuantumTestBase, ZERO_UID
+from ..common import QuantumTestBase, ZERO_UID
 from azure.quantum.aio import Job
 from azure.quantum.aio.optimization import Problem, ProblemType, Solver
 from azure.quantum.optimization import Term
@@ -135,14 +135,14 @@ class TestJob(QuantumTestBase):
     async def _test_job_upload_and_run_solvers(self):
         problem_name = f'Test-problem-{datetime.now():"%Y%m%d-%H%M%S"}'
         problem = self.create_problem(name=problem_name)
-        workspace = self.create_workspace()
+        workspace = self.create_async_workspace()
 
         with unittest.mock.patch.object(
             Job,
             self.mock_create_job_id_name,
             return_value=self.get_test_job_id(),
         ):
-            workspace = self.create_workspace()
+            workspace = self.create_async_workspace()
             # Upload the blob data
             input_data_uri = await problem.upload(
                 workspace=workspace,
@@ -193,7 +193,7 @@ class TestJob(QuantumTestBase):
         self.get_async_result(self._test_job_submit(solver_name, solver_type))
 
     async def _test_job_filter(self, solver_type):
-        workspace = self.create_workspace()
+        workspace = self.create_async_workspace()
         solver = solver_type(workspace)
         problem = self.create_problem(name="Test-Job-Filtering")
 
@@ -242,7 +242,7 @@ class TestJob(QuantumTestBase):
             The problem to submit
         """
 
-        workspace = self.create_workspace()
+        workspace = self.create_async_workspace()
 
         solver: Solver = solver_type(workspace)
 

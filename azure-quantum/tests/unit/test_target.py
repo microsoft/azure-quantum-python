@@ -6,7 +6,7 @@ from azure.quantum.job.job import Job
 from azure.quantum.target import IonQ
 from azure.quantum.target.honeywell import Honeywell
 
-from common import QuantumTestBase, ZERO_UID
+from .common import QuantumTestBase, ZERO_UID
 
 
 class TestIonQ(QuantumTestBase):

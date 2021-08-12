@@ -10,7 +10,7 @@ from unittest.mock import Mock, patch
 from typing import TYPE_CHECKING
 from azure.quantum.optimization import Problem, Term, OnlineProblem
 import azure.quantum.optimization.problem
-from common import expected_terms, QuantumTestBase
+from .common import expected_terms, QuantumTestBase
 import json
 
 

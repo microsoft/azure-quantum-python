@@ -19,7 +19,7 @@ from azure.quantum.aio.optimization.solvers import (
     QuantumMonteCarlo,
     SubstochasticMonteCarlo,
 )
-from aio_common import QuantumTestBase
+from ..common import QuantumTestBase
 
 
 class TestProblem(QuantumTestBase):
@@ -247,13 +247,13 @@ class TestProblem(QuantumTestBase):
 
 class TestSolvers(QuantumTestBase):
     def test_available_solvers(self):
-        ws = self.create_workspace()
+        ws = self.create_async_workspace()
 
         self.assertIsNotNone(SimulatedAnnealing(ws))
         self.assertIsNotNone(ParallelTempering(ws))
 
     def test_input_params(self):
-        ws = self.create_workspace()
+        ws = self.create_async_workspace()
 
         s2_params = SimulatedAnnealing(ws).params
         self.assertEqual({}, s2_params["params"])
@@ -275,7 +275,7 @@ class TestSolvers(QuantumTestBase):
         )
 
     def test_ParallelTempering_input_params(self):
-        ws = self.create_workspace()
+        ws = self.create_async_workspace()
 
         good = ParallelTempering(ws, timeout=1011)
         self.assertIsNotNone(good)
@@ -315,7 +315,7 @@ class TestSolvers(QuantumTestBase):
             )
 
     def test_SimulatedAnnealing_input_params(self):
-        ws = self.create_workspace()
+        ws = self.create_async_workspace()
 
         good = SimulatedAnnealing(ws, timeout=1011, seed=4321)
         self.assertIsNotNone(good)
@@ -350,7 +350,7 @@ class TestSolvers(QuantumTestBase):
         self.assertEqual({"beta_start": 21}, good.params["params"])
 
     def test_QuantumMonteCarlo_input_params(self):
-        ws = self.create_workspace()
+        ws = self.create_async_workspace()
         good = QuantumMonteCarlo(ws, trotter_number=100, seed=4321)
         self.assertIsNotNone(good)
         self.assertEqual("microsoft.qmc.cpu", good.target)
@@ -359,7 +359,7 @@ class TestSolvers(QuantumTestBase):
         )
 
     def test_PopulationAnnealing_input_params(self):
-        ws = self.create_workspace()
+        ws = self.create_async_workspace()
         beta = RangeSchedule("linear", 0.8, 5.8)
         good = PopulationAnnealing(
             ws,
@@ -381,7 +381,7 @@ class TestSolvers(QuantumTestBase):
         )
 
     def test_SubstochasticMonteCarlo_input_params(self):
-        ws = self.create_workspace()
+        ws = self.create_async_workspace()
         beta = RangeSchedule("linear", 2.8, 15.8)
         alpha = RangeSchedule("geometric", 2.8, 1.8)
         good = SubstochasticMonteCarlo(
@@ -409,7 +409,7 @@ class TestSolvers(QuantumTestBase):
         )
     
     def test_SubstochasticMonteCarlo_parameter_free(self):
-        ws = self.create_workspace()
+        ws = self.create_async_workspace()
         good = SubstochasticMonteCarlo(
             ws,
             timeout=10,
@@ -428,7 +428,7 @@ class TestSolvers(QuantumTestBase):
         self.assertTrue(bad_range is None)
         beta = 1
         alpha = 2
-        ws = self.create_workspace()
+        ws = self.create_async_workspace()
         bad_solver = None
         with self.assertRaises(ValueError) as context:
             bad_solver = SubstochasticMonteCarlo(
@@ -569,7 +569,7 @@ class TestSolvers(QuantumTestBase):
         self.assertTrue(bad_solver is None)
 
     def test_PopulationAnnealing_parameter_free(self):
-        ws = self.create_workspace()
+        ws = self.create_async_workspace()
         good = PopulationAnnealing(
             ws,
             timeout=8,
@@ -580,7 +580,7 @@ class TestSolvers(QuantumTestBase):
 
     def test_PA_bad_input_params(self):
         beta = 1
-        ws = self.create_workspace()
+        ws = self.create_async_workspace()
         bad_solver = None
         with self.assertRaises(ValueError) as context:
             bad_solver = PopulationAnnealing(

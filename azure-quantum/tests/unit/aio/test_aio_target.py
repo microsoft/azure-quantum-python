@@ -6,7 +6,7 @@ from azure.quantum.aio.job.job import Job
 from azure.quantum.aio.target import IonQ
 from azure.quantum.aio.target.honeywell import Honeywell
 
-from aio_common import QuantumTestBase, ZERO_UID
+from ..common import QuantumTestBase, ZERO_UID
 
 
 class TestIonQ(QuantumTestBase):
@@ -56,7 +56,7 @@ class TestIonQ(QuantumTestBase):
             self.mock_create_job_id_name,
             return_value=self.get_test_job_id(),
         ):
-            workspace = self.create_workspace()
+            workspace = self.create_async_workspace()
             circuit = self._3_qubit_ghz()
             target = IonQ(workspace=workspace)
             job = await target.submit(
@@ -131,7 +131,7 @@ class TestHoneywell(QuantumTestBase):
             self.mock_create_job_id_name,
             return_value=self.get_test_job_id(),
         ):
-            workspace = self.create_workspace()
+            workspace = self.create_async_workspace()
             circuit = self._teleport()
             target = Honeywell(workspace=workspace)
             try:

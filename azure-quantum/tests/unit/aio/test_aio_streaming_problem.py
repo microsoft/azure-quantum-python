@@ -16,7 +16,7 @@ from azure.quantum.aio.optimization import (
     StreamingProblem
 )
 from azure.quantum.optimization import Term
-from aio_common import QuantumTestBase
+from ..common import QuantumTestBase
 
 
 class TestStreamingProblem(QuantumTestBase):
@@ -39,7 +39,7 @@ class TestStreamingProblem(QuantumTestBase):
             print("Skipping this test in playback mode")
             return
 
-        ws = self.create_workspace()
+        ws = self.create_async_workspace()
 
         sProblem = StreamingProblem(
             ws, name="test", problem_type=problem_type

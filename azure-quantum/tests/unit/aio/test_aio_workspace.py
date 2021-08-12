@@ -8,12 +8,12 @@
 ##
 import pytest
 from azure.quantum import Workspace
-from aio_common import QuantumTestBase
+from ..common import QuantumTestBase
 
 
 class TestWorkspace(QuantumTestBase):
 
-    def test_create_workspace_instance_valid(self):
+    def test_create_async_workspace_instance_valid(self):
         storage = "strg"
 
         ws = Workspace(
@@ -45,7 +45,7 @@ class TestWorkspace(QuantumTestBase):
         ws = Workspace(resource_id=resource_id, storage=storage, location=self.location)
         assert ws.storage == storage
 
-    def test_create_workspace_locations(self):
+    def test_create_async_workspace_locations(self):
         # location is mandatory
         with self.assertRaises(Exception) as context:
             Workspace(
@@ -65,7 +65,7 @@ class TestWorkspace(QuantumTestBase):
         )
         assert ws.location == "eastus"
 
-    def test_create_workspace_instance_invalid(self):
+    def test_create_async_workspace_instance_invalid(self):
         storage = "invalid_storage"
 
         with pytest.raises(ValueError):
@@ -85,13 +85,13 @@ class TestWorkspace(QuantumTestBase):
             Workspace(storage=storage)
 
     def test_workspace_get_targets(self):
-        ws = self.create_workspace()
+        ws = self.create_async_workspace()
         targets = self.get_async_result(ws.get_targets())
         assert "Microsoft" in targets
         assert "microsoft.paralleltempering.cpu" in targets["Microsoft"]
     
     def test_workspace_job_quotas(self):
-        ws = self.create_workspace()
+        ws = self.create_async_workspace()
         quotas = self.get_async_result(ws.get_quotas())
         assert len(quotas) > 0
         assert "dimension" in quotas[0]
