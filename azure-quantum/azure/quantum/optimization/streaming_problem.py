@@ -199,6 +199,8 @@ class StreamingProblem(object):
                     "Cannot add terms after problem has been uploaded"
                 )
 
+            max_coupling = -sys.float_info.max
+            min_coupling = sys.float_info.max
             for term in terms:
                 if isinstance(term, Term):
                     n = len(term.ids)
