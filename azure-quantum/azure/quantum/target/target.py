@@ -14,7 +14,7 @@ class Target(abc.ABC):
     def __init__(
         self,
         workspace: Workspace,
-        target: str,
+        name: str,
         input_data_format: str = "",
         output_data_format: str = "",
         provider_id: str = "",
@@ -22,7 +22,7 @@ class Target(abc.ABC):
         encoding: str = ""
     ):
         self.workspace = workspace
-        self.target = target
+        self.name = name
         self.input_data_format = input_data_format
         self.output_data_format = output_data_format
         self.provider_id = provider_id
@@ -64,7 +64,7 @@ class Target(abc.ABC):
         return Job.from_input_data(
             workspace=self.workspace,
             name=name,
-            target=self.target,
+            target=self.name,
             input_data=blob,
             content_type=self.content_type,
             encoding=self.encoding,

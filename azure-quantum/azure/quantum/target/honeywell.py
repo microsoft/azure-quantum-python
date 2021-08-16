@@ -16,7 +16,7 @@ class Honeywell(Target):
     def __init__(
         self,
         workspace: Workspace,
-        target: str = "honeywell.hqs-lt-s1-apival",
+        name: str = "honeywell.hqs-lt-s1-apival",
         input_data_format: str = "honeywell.openqasm.v1",
         output_data_format: str = "honeywell.quantum-results.v1",
         provider_id: str = "honeywell",
@@ -25,7 +25,7 @@ class Honeywell(Target):
     ):
         super().__init__(
             workspace=workspace,
-            target=target,
+            name=name,
             input_data_format=input_data_format,
             output_data_format=output_data_format,
             provider_id=provider_id,
