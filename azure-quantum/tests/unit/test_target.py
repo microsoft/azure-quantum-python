@@ -3,7 +3,7 @@ import warnings
 
 from azure.core.exceptions import HttpResponseError
 from azure.quantum.job.job import Job
-from azure.quantum.target import IonQ, FleetManagement
+from azure.quantum.target import IonQ, MicrosoftFleetManagement
 from azure.quantum.target.honeywell import Honeywell
 
 from common import QuantumTestBase, ZERO_UID
@@ -161,7 +161,7 @@ class TestHoneywell(QuantumTestBase):
                     assert results["c0"] == ["0"]
                     assert results["c1"] == ["000"]
 
-class TestFleetManagement(QuantumTestBase):
+class TestMicrosoftFleetManagement(QuantumTestBase):
     mock_create_job_id_name = "create_job_id"
     create_job_id = Job.create_job_id
 
@@ -188,7 +188,7 @@ class TestFleetManagement(QuantumTestBase):
                 }
             }
 
-            target = FleetManagement(workspace=workspace)
+            target = MicrosoftFleetManagement(workspace=workspace)
             try:
                 job = target.submit(input=input, input_params=input_params)
             except HttpResponseError as e:
@@ -202,7 +202,7 @@ class TestFleetManagement(QuantumTestBase):
                         # Set a timeout for Honeywell recording
                         job.wait_until_completed(timeout_secs=60)
                     except TimeoutError:
-                        warnings.warn("FleetManagement execution exceeded timeout. Skipping fetching results.")
+                        warnings.warn("MicrosoftFleetManagement execution exceeded timeout. Skipping fetching results.")
                     else:
                         # Check if job succeeded
                         self.assertEqual(True, job.has_completed())
