@@ -181,9 +181,16 @@ class TestFleetManagement(QuantumTestBase):
         ):
             workspace = self.create_workspace()
             input = self.get_input()
+            input_params = {    
+                "params": {        
+                    "solver": "stack",        
+                    "depot_allowed": True    
+                }
+            }
+
             target = FleetManagement(workspace=workspace)
             try:
-                job = target.submit(input)
+                job = target.submit(input=input, input_params=input_params)
             except HttpResponseError as e:
                     raise(e)
             else:
@@ -201,10 +208,10 @@ class TestFleetManagement(QuantumTestBase):
                         self.assertEqual(True, job.has_completed())
                         assert job.details.status == "Succeeded"
 
-                if job.has_completed():
-                    results = job.get_results()
-                    assert results["c0"] == ["0"]
-                    assert results["c1"] == ["000"]
+                job.refresh()
+                assert job.has_completed() == True
+                results = job.get_results()
+                assert len(results["vehicles"]) == 5
 
     def get_input(self):
         return '{"instance":{"problem":{"type":"routing","data":{"distances":{"num_nodes":2,"values":[[0.0,23.249],[23.249,0.0]]},"fleet":{"num_vehicles":1,"vehicles":[{"model":"large","number":5,"starting_node":0,"ending_node":0,"capacity":{"quantity":200.0},"starting_time":1519804800,"ending_time":1519848000,"base_cost":50.0,"cost_per_sec":0.004722222222222222,"cost_per_km":0.5}],"vehicle_start_points":null,"vehicle_end_points":null},"requests":[{"id":"1","name":null,"source":0,"source_type":"0","loading_time":0,"earliest_load_time":1519804800,"latest_load_time":1519847880,"destination":1,"destination_lat":47.443501,"destination_long":-122.302594,"destination_type":"1","unloading_time":120.0,"earliest_unload_time":1519804800,"latest_unload_time":1519847880,"requirement":{"quantity":1.0},"available_hubs":null,"priority":0}],"times":[[0.0,23.249],[23.249,0.0]]}}}}'
