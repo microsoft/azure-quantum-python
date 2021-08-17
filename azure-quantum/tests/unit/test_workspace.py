@@ -104,6 +104,10 @@ class TestWorkspace(QuantumTestBase):
         assert target.average_queue_time is not None
         assert target.current_availability is not None
 
+        with pytest.raises(ValueError):
+            target.name = "foo"
+            target.refresh()
+
     def test_workspace_job_quotas(self):
         ws = self.create_workspace()
         quotas = ws.get_quotas()
