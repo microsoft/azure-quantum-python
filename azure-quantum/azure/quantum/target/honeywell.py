@@ -21,7 +21,8 @@ class Honeywell(Target):
         output_data_format: str = "honeywell.quantum-results.v1",
         provider_id: str = "honeywell",
         content_type: str = "application/qasm",
-        encoding: str = ""
+        encoding: str = "",
+        **kwargs
     ):
         super().__init__(
             workspace=workspace,
@@ -30,7 +31,8 @@ class Honeywell(Target):
             output_data_format=output_data_format,
             provider_id=provider_id,
             content_type=content_type,
-            encoding=encoding
+            encoding=encoding,
+            **kwargs
         )
 
     @staticmethod

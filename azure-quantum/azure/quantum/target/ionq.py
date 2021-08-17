@@ -22,7 +22,8 @@ class IonQ(Target):
         output_data_format: str = "ionq.quantum-results.v1",
         provider_id: str = "IonQ",
         content_type: str = "application/json",
-        encoding: str = ""
+        encoding: str = "",
+        **kwargs
     ):
         super().__init__(
             workspace=workspace,
@@ -31,7 +32,8 @@ class IonQ(Target):
             output_data_format=output_data_format,
             provider_id=provider_id,
             content_type=content_type,
-            encoding=encoding
+            encoding=encoding,
+            **kwargs
         )
 
     @staticmethod
