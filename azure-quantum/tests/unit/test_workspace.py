@@ -88,9 +88,22 @@ class TestWorkspace(QuantumTestBase):
     def test_workspace_get_targets(self):
         ws = self.create_workspace()
         targets = ws.get_targets()
-        assert "Microsoft" in targets
-        assert "microsoft.paralleltempering.cpu" in [t["id"] for t in targets["Microsoft"]]
-    
+        assert sorted([t.name for t in targets]) == [
+            'honeywell.hqs-lt-s1',
+            'honeywell.hqs-lt-s1-apival',
+            'honeywell.hqs-lt-s1-sim',
+            'ionq.qpu',
+            'ionq.simulator'
+        ]
+
+        target = ws.get_target("ionq.qpu")
+        assert target.average_queue_time is not None
+        assert target.current_availability is not None
+        assert target.name == "ionq.qpu"
+        target.refresh()
+        assert target.average_queue_time is not None
+        assert target.current_availability is not None
+
     def test_workspace_job_quotas(self):
         ws = self.create_workspace()
         quotas = ws.get_quotas()
