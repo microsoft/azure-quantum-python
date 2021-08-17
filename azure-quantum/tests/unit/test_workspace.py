@@ -96,7 +96,7 @@ class TestWorkspace(QuantumTestBase):
             'ionq.simulator'
         ]
 
-        target = ws.get_target("ionq.qpu")
+        target = ws.get_targets("ionq.qpu")
         assert target.average_queue_time is not None
         assert target.current_availability is not None
         assert target.name == "ionq.qpu"

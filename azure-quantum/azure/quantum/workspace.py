@@ -7,7 +7,7 @@ import logging
 import os
 import re
 
-from typing import Any, Dict, Iterable, List, Optional, TYPE_CHECKING, Tuple
+from typing import Any, Dict, Iterable, List, Optional, TYPE_CHECKING, Tuple, Union
 from functools import reduce
 from deprecated import deprecated
 
@@ -275,7 +275,7 @@ class Workspace:
                 and (name is None or target.id == name.lower())
         ]
 
-    def get_targets(self, name: str = None, provider_id: str = None) -> Iterable["Target"]:
+    def get_targets(self, name: str = None, provider_id: str = None) -> Union["Target", Iterable["Target"]]:
         """Returns all available targets for this workspace.
         
         :param name: Optional target name to filter by, defaults to None
@@ -286,25 +286,17 @@ class Workspace:
         :rtype: Iterable[Target]
         """
         from azure.quantum.target import ALL_TARGETS
-        targets = self._get_target_status(name, provider_id)
+        target_statuses = self._get_target_status(name, provider_id)
 
-        return [
+        targets = [
             ALL_TARGETS.get(provider_id).from_target_status(self, target)
-            for provider_id, target in targets
+            for provider_id, target in target_statuses
             if provider_id in ALL_TARGETS
         ]
 
-    def get_target(self, name: str) -> "Target":
-        """Get target with a given name, e.g. "ionq.qpu"
-
-        :param name: Target name
-        :type name: str
-        :return: Azure Quantum Target
-        :rtype: Target
-        """
-        targets = self.get_targets(name)
-        if len(targets) > 0:
+        if len(targets) == 1:
             return targets[0]
+        return targets
 
     def get_quotas(self) -> List[Dict[str, Any]]:
         """Get a list of job quotas for the given workspace.
