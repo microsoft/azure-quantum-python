@@ -36,7 +36,8 @@ class Target(abc.ABC):
         self._current_availability = current_availability
 
     def __repr__(self):
-        return f"""<Target name="{self.name}", avg. queue time={self._average_queue_time} s, {self._current_availability}>"""
+        return f"<Target name=\"{self.name}\", \
+avg. queue time={self._average_queue_time} s, {self._current_availability}>"
 
     @classmethod
     def from_target_status(cls, workspace: Workspace, status: TargetStatus):
