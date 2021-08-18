@@ -57,8 +57,8 @@ class TabuSearch(Solver):
         """
         super().__init__(
             workspace=workspace,
-            provider="1qbit",
-            target="1qbit.tabu",
+            provider_id="1qbit",
+            name="1qbit.tabu",
             input_data_format="microsoft.qio.v2",
             output_data_format="microsoft.qio-results.v1",
             nested_params=False,
@@ -185,8 +185,8 @@ class PticmSolver(Solver):
         """
         super().__init__(
             workspace=workspace,
-            provider="1qbit",
-            target="1qbit.pticm",
+            provider_id="1qbit",
+            name="1qbit.pticm",
             input_data_format="microsoft.qio.v2",
             output_data_format="microsoft.qio-results.v1",
             nested_params=False,
@@ -260,8 +260,8 @@ class PathRelinkingSolver(Solver):
         """
         super().__init__(
             workspace=workspace,
-            provider="1qbit",
-            target="1qbit.pathrelinking",
+            provider_id="1qbit",
+            name="1qbit.pathrelinking",
             input_data_format="microsoft.qio.v2",
             output_data_format="microsoft.qio-results.v1",
             nested_params=False,

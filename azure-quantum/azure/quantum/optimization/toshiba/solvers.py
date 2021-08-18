@@ -102,8 +102,8 @@ class SimulatedBifurcationMachine(Solver):
         """
         super().__init__(
             workspace=workspace,
-            provider="toshiba",
-            target="toshiba.sbm.ising",
+            provider_id="toshiba",
+            name="toshiba.sbm.ising",
             input_data_format="microsoft.qio.v2",
             output_data_format="microsoft.qio-results.v2",
             nested_params=False,

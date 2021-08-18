@@ -7,15 +7,9 @@ import logging
 from typing import List, Union, Any, Optional
 from enum import Enum
 from azure.quantum import Workspace, Job
-from azure.quantum._client.models import JobDetails
 from azure.quantum.optimization import Problem, ProblemType
-from azure.quantum.storage import (
-    ContainerClient,
-    create_container_using_client,
-    remove_sas_token,
-    get_container_uri
-)
 from azure.quantum.job.base_job import DEFAULT_TIMEOUT
+from azure.quantum.target.target import Target
 
 logger = logging.getLogger(__name__)
 
@@ -55,30 +49,40 @@ class RangeSchedule:
             )
 
 
-class Solver:
+class Solver(Target):
     def __init__(
         self,
         workspace: Workspace,
-        provider: str,
-        target: str,
+        provider_id: str,
+        name: str,
         input_data_format: str,
         output_data_format: str,
         nested_params: bool = True,
         force_str_params: bool = False,
     ):
-        self.workspace = workspace
-        self.target = target
-        self.provider = provider
-        self.input_data_format = input_data_format
-        self.output_data_format = output_data_format
+        self.provider_id = provider_id
         self.nested_params = nested_params
         self.force_str_params = force_str_params
         self.params = {"params": {}} if nested_params else {}
+
+        super().__init__(
+            workspace=workspace,
+            name=name,
+            input_data_format=input_data_format,
+            output_data_format=output_data_format,
+            provider_id=provider_id,
+            content_type="application/json",
+            encoding="gzip"
+        )
 
     """Constants that define thresholds for submission warnings
     """
     SWEEPS_WARNING = 10000
     TIMEOUT_WARNING = 600
+
+    @staticmethod
+    def _encode_input_data(data: Problem) -> bytes:
+        return data.to_blob(compress=True)
 
     def submit(
         self, problem: Union[str, Problem], compress: bool = True
@@ -92,26 +96,21 @@ class Solver:
             of a Problem has been uploaded.
         :param compress:
             Whether or not to compress the problem when uploading it
-            the Blob Storage.
+            the Blob Storage. This input param is not used and will be
+            deprecated.
         """
+        if compress == False:
+            import warnings
+            warnings.warn("The service no longer accepts payloads that \
+are not compressed with gzip encoding. Ignoring compress flag.")
+
         if isinstance(problem, Problem):
             self.check_valid_problem(problem)
-            # Create job from input data
-            name = problem.name
-            blob = problem.to_blob(compress=compress)
-            encoding = "gzip" if compress else ""
-            job = Job.from_input_data(
-                workspace=self.workspace,
-                name=name,
-                target=self.target,
-                input_data=blob,
-                blob_name="inputData",
-                encoding=encoding,
-                content_type="application/json",
-                provider_id=self.provider,
-                input_data_format=self.input_data_format,
-                output_data_format=self.output_data_format,
+            return super().submit(
+                input_data=problem,
+                name=problem.name,
                 input_params=self.params,
+                blob_name="inputData"
             )
 
         else:
@@ -130,9 +129,9 @@ class Solver:
             job = Job.from_storage_uri(
                 workspace=self.workspace,
                 name=name,
-                target=self.target,
+                target=self.name,
                 input_data_uri=problem_uri,
-                provider_id=self.provider,
+                provider_id=self.provider_id,
                 input_data_format=self.input_data_format,
                 output_data_format=self.output_data_format,
                 input_params=self.params
@@ -432,8 +431,8 @@ class ParallelTempering(Solver):
 
         super().__init__(
             workspace=workspace,
-            provider="Microsoft",
-            target=target,
+            provider_id="Microsoft",
+            name=target,
             input_data_format="microsoft.qio.v2",
             output_data_format="microsoft.qio-results.v2",
         )
@@ -514,8 +513,8 @@ class SimulatedAnnealing(Solver):
 
         super().__init__(
             workspace=workspace,
-            provider="Microsoft",
-            target=target,
+            provider_id="Microsoft",
+            name=target,
             input_data_format="microsoft.qio.v2",
             output_data_format="microsoft.qio-results.v2",
         )
@@ -571,8 +570,8 @@ class Tabu(Solver):
 
         super().__init__(
             workspace=workspace,
-            provider="Microsoft",
-            target=target,
+            provider_id="Microsoft",
+            name=target,
             input_data_format="microsoft.qio.v2",
             output_data_format="microsoft.qio-results.v2",
         )
@@ -624,8 +623,8 @@ class QuantumMonteCarlo(Solver):
         target = "microsoft.qmc.cpu"
         super().__init__(
             workspace=workspace,
-            provider="Microsoft",
-            target=target,
+            provider_id="Microsoft",
+            name=target,
             input_data_format="microsoft.qio.v2",
             output_data_format="microsoft.qio-results.v2",
         )
@@ -682,8 +681,8 @@ class PopulationAnnealing(Solver):
             target = "microsoft.populationannealing-parameterfree.cpu"
         super().__init__(
             workspace=workspace,
-            provider="Microsoft",
-            target=target,
+            provider_id="Microsoft",
+            name=target,
             input_data_format="microsoft.qio.v2",
             output_data_format="microsoft.qio-results.v2",
         )
@@ -750,8 +749,8 @@ class SubstochasticMonteCarlo(Solver):
             target = "microsoft.substochasticmontecarlo-parameterfree.cpu"
         super().__init__(
             workspace=workspace,
-            provider="Microsoft",
-            target=target,
+            provider_id="Microsoft",
+            name=target,
             input_data_format="microsoft.qio.v2",
             output_data_format="microsoft.qio-results.v2",
         )
