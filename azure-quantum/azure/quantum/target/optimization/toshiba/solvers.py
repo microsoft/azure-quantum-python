@@ -5,7 +5,7 @@
 import logging
 from typing import Union, Optional
 from azure.quantum import Workspace
-from azure.quantum.optimization import Problem, Solver
+from azure.quantum.target.optimization import Problem, Solver
 from azure.quantum import Job
 
 logger = logging.getLogger(__name__)

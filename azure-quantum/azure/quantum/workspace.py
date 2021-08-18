@@ -290,21 +290,10 @@ class Workspace:
         :return: Targets
         :rtype: Iterable[Target]
         """
-        from azure.quantum.target import get_all_targets
+        from azure.quantum.target.utils import TargetFactory
         target_statuses = self._get_target_status(name, provider_id)
-        all_targets = get_all_targets()
-
-        targets = [
-            all_targets.get(_provider_id).from_target_status(self, status, **kwargs)
-            for _provider_id, status in target_statuses
-            if _provider_id in all_targets
-        ]
-
-        if None in targets:
-            targets = [target for target in targets if target is not None]
-
-        if len(targets) == 1:
-            return targets[0]
+        target_factory = TargetFactory(workspace=self)
+        targets = target_factory.from_target_status(*target_statuses, **kwargs)
 
         return targets
 

@@ -13,7 +13,7 @@ import os
 
 from typing import List, Tuple, Union, Dict, Optional, Type, TYPE_CHECKING
 from enum import Enum
-from azure.quantum.optimization import TermBase, Term, GroupType, GroupedTerm
+from azure.quantum.target.optimization import TermBase, Term, GroupType, GroupedTerm
 from azure.quantum.storage import (
     ContainerClient,
     download_blob,

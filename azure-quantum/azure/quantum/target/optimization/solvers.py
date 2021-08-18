@@ -7,7 +7,7 @@ import logging
 from typing import List, Union, Any, Optional
 from enum import Enum
 from azure.quantum import Workspace, Job
-from azure.quantum.optimization import Problem, ProblemType
+from azure.quantum.target.optimization.problem import Problem, ProblemType
 from azure.quantum.job.base_job import DEFAULT_TIMEOUT
 from azure.quantum.target.target import Target
 
@@ -391,6 +391,11 @@ class HardwarePlatform(Enum):
 
 
 class ParallelTempering(Solver):
+    target_names = (
+        "microsoft.paralleltempering.fpga",
+        "microsoft.paralleltempering.cpu",
+        "microsoft.paralleltempering-parameterfree.cpu",
+    )
     def __init__(
         self,
         workspace: Workspace,
@@ -458,6 +463,12 @@ class ParallelTempering(Solver):
 
 
 class SimulatedAnnealing(Solver):
+    target_names = [
+        "microsoft.simulatedannealing-parameterfree.fpga",
+        "microsoft.simulatedannealing.fpga",
+        "microsoft.simulatedannealing.cpu",
+        "microsoft.simulatedannealing-parameterfree.cpu",
+    ]
     def __init__(
         self,
         workspace: Workspace,
@@ -529,6 +540,10 @@ class SimulatedAnnealing(Solver):
 
 
 class Tabu(Solver):
+    target_names = (
+        "microsoft.tabu.cpu",
+        "microsoft.tabu-parameterfree.cpu",
+    )
     def __init__(
         self,
         workspace: Workspace,
@@ -581,6 +596,9 @@ class Tabu(Solver):
 
 
 class QuantumMonteCarlo(Solver):
+    target_names = (
+        "microsoft.qmc.cpu",
+    )
     def __init__(
         self,
         workspace: Workspace,
@@ -637,6 +655,10 @@ class QuantumMonteCarlo(Solver):
 
 
 class PopulationAnnealing(Solver):
+    target_names = (
+        "microsoft.populationannealing.cpu",
+        "microsoft.populationannealing-parameterfree.cpu",
+    )
     def __init__(
         self,
         workspace: Workspace,
@@ -702,6 +724,10 @@ class PopulationAnnealing(Solver):
 
 
 class SubstochasticMonteCarlo(Solver):
+    target_names = (
+        "microsoft.substochasticmontecarlo.cpu",
+        "microsoft.substochasticmontecarlo-parameterfree.cpu",
+    )
     def __init__(
         self,
         workspace: Workspace,

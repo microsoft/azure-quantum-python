@@ -13,6 +13,7 @@ from azure.quantum.workspace import Workspace
 
 class IonQ(Target):
     """IonQ target."""
+    provider_id = "ionq"
 
     def __init__(
         self,

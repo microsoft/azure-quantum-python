@@ -13,7 +13,7 @@ import sys
 
 from typing import List, Tuple, Union, Dict, Optional, Type
 from azure.quantum import Workspace
-from azure.quantum.optimization import TermBase, Term, GroupType, GroupedTerm, Problem, ProblemType
+from azure.quantum.target.optimization import TermBase, Term, GroupType, GroupedTerm, Problem, ProblemType
 from azure.quantum.storage import (
     StreamedBlob,
     ContainerClient,

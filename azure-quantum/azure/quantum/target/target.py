@@ -12,6 +12,9 @@ from azure.quantum.job.job import Job
 
 class Target(abc.ABC):
     """Azure Quantum Target."""
+    # Target IDs that are compatible with this Target class.
+    target_names = ()
+    provider_id = ""
     def __init__(
         self,
         workspace: Workspace,

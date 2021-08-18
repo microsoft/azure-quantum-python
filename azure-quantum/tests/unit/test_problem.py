@@ -1,7 +1,7 @@
 #!/bin/env python
 # -*- coding: utf-8 -*-
 ##
-# test_problem.py: Checks correctness of azure.quantum.optimization module.
+# test_problem.py: Checks correctness of azure.quantum.target.optimization module.
 ##
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
@@ -10,8 +10,8 @@
 import unittest
 from unittest.mock import Mock, patch
 from typing import TYPE_CHECKING
-from azure.quantum.optimization import Problem, ProblemType, Term, GroupedTerm
-import azure.quantum.optimization.problem
+from azure.quantum.target.optimization import Problem, ProblemType, Term, GroupedTerm
+import azure.quantum.target.optimization.problem
 from common import expected_terms
 import numpy
 import os
@@ -83,8 +83,8 @@ class TestProblemClass(unittest.TestCase):
         )
               
     def test_upload(self):
-        with patch("azure.quantum.optimization.problem.BlobClient") as mock_blob_client, \
-            patch("azure.quantum.optimization.problem.ContainerClient") as mock_container_client, \
+        with patch("azure.quantum.target.optimization.problem.BlobClient") as mock_blob_client, \
+            patch("azure.quantum.target.optimization.problem.ContainerClient") as mock_container_client, \
             patch("azure.quantum.job.base_job.upload_blob") as mock_upload:
             mock_blob_client.from_blob_url.return_value = Mock()
             mock_container_client.from_container_url.return_value = Mock()
@@ -94,15 +94,15 @@ class TestProblemClass(unittest.TestCase):
             azure.quantum.job.base_job.upload_blob.assert_called_once()
 
     def test_download(self):
-        with patch("azure.quantum.optimization.problem.download_blob") as mock_download_blob,\
-            patch("azure.quantum.optimization.problem.BlobClient") as mock_blob_client,\
-            patch("azure.quantum.optimization.problem.ContainerClient") as mock_container_client:
+        with patch("azure.quantum.target.optimization.problem.download_blob") as mock_download_blob,\
+            patch("azure.quantum.target.optimization.problem.BlobClient") as mock_blob_client,\
+            patch("azure.quantum.target.optimization.problem.ContainerClient") as mock_container_client:
             mock_download_blob.return_value=expected_terms()
             mock_blob_client.from_blob_url.return_value = Mock()
             mock_container_client.from_container_url.return_value = Mock()
             actual_result = self.problem.download(self.mock_ws)
             assert actual_result.name == "test"
-            azure.quantum.optimization.problem.download_blob.assert_called_once()
+            azure.quantum.target.optimization.problem.download_blob.assert_called_once()
 
     def test_get_term(self):
         terms = self.problem.get_terms(0)

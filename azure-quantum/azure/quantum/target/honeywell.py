@@ -12,6 +12,7 @@ from azure.quantum.workspace import Workspace
 
 class Honeywell(Target):
     """Honeywell target."""
+    provider_id = "honeywell"
 
     def __init__(
         self,
