@@ -290,19 +290,14 @@ class Workspace:
         :return: Targets
         :rtype: Iterable[Target]
         """
+        from azure.quantum.target import get_all_targets
         target_statuses = self._get_target_status(name, provider_id)
-        from azure.quantum.target import IonQ, Honeywell
-        from azure.quantum.target.microsoft import MicrosoftOptimization
-        ALL_TARGETS = {
-            "ionq": IonQ,
-            "honeywell": Honeywell,
-            "Microsoft": MicrosoftOptimization
-        }
+        all_targets = get_all_targets()
 
         targets = [
-            ALL_TARGETS.get(_provider_id).from_target_status(self, status, **kwargs)
+            all_targets.get(_provider_id).from_target_status(self, status, **kwargs)
             for _provider_id, status in target_statuses
-            if _provider_id in ALL_TARGETS
+            if _provider_id in all_targets
         ]
 
         if None in targets:
