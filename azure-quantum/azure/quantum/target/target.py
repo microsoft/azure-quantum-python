@@ -4,7 +4,6 @@
 ##
 import abc
 from typing import Any, Dict
-from azure.quantum import target
 
 from azure.quantum._client.models import TargetStatus
 from azure.quantum.workspace import Workspace

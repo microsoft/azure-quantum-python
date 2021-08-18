@@ -676,7 +676,7 @@ class PopulationAnnealing(Solver):
             will trigger the parameter free population annealing solver.
         """
 
-        if timeout is None:
+        if timeout is not None:
             name = "microsoft.populationannealing-parameterfree.cpu"
 
         super().__init__(
@@ -746,7 +746,7 @@ class SubstochasticMonteCarlo(Solver):
             will trigger the parameter free substochastic monte carlo solver.
         """
 
-        if timeout is None:
+        if timeout is not None:
             name = "microsoft.substochasticmontecarlo-parameterfree.cpu"
         super().__init__(
             workspace=workspace,

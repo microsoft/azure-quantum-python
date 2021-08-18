@@ -93,7 +93,13 @@ class TestWorkspace(QuantumTestBase):
             'honeywell.hqs-lt-s1-apival',
             'honeywell.hqs-lt-s1-sim',
             'ionq.qpu',
-            'ionq.simulator'
+            'ionq.simulator',
+            'microsoft.paralleltempering-parameterfree.cpu',
+            'microsoft.populationannealing.cpu',
+            'microsoft.qmc.cpu',
+            'microsoft.simulatedannealing-parameterfree.cpu',
+            'microsoft.substochasticmontecarlo.cpu',
+            'microsoft.tabu-parameterfree.cpu'
         ]
 
         target = ws.get_targets("ionq.qpu")

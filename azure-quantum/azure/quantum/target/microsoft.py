@@ -29,6 +29,7 @@ MICROSOFT_QIO_SOLVERS = {
     "microsoft.substochasticmontecarlo-parameterfree.cpu": None,
 }
 
+
 class MicrosoftOptimization(Solver):
     """Microsoft Optimization Solver.
     Initializes a default solver for a given target name.
