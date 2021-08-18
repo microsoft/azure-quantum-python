@@ -26,6 +26,7 @@ __all__ = ["IonQBackend", "IonQQPUBackend", "IonQSimulatorBackend"]
 
 class IonQBackend(Backend):
     """Base class for interfacing with an IonQ backend in Azure Quantum"""
+    backend_name = None
 
     @classmethod
     def _default_options(cls):
@@ -81,11 +82,13 @@ class IonQBackend(Backend):
 
 
 class IonQSimulatorBackend(IonQBackend):
+    backend_name = "ionq.simulator"
+
     def __init__(self, provider):
         """Base class for interfacing with an IonQ Simulator backend"""
         config = BackendConfiguration.from_dict(
             {
-                "backend_name": "ionq.simulator",
+                "backend_name": self.backend_name,
                 "backend_version": __version__,
                 "simulator": True,
                 "local": False,
@@ -106,11 +109,12 @@ class IonQSimulatorBackend(IonQBackend):
 
 
 class IonQQPUBackend(IonQBackend):
+    backend_name = "ionq.qpu"
     def __init__(self, provider):
         """Base class for interfacing with an IonQ QPU backend"""
         config = BackendConfiguration.from_dict(
             {
-                "backend_name": "ionq.qpu",
+                "backend_name": self.backend_name,
                 "backend_version": __version__,
                 "simulator": False,
                 "local": False,

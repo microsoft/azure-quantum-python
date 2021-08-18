@@ -11,7 +11,9 @@ To install run: pip install azure-quantum[qiskit]"
     )
 
 from azure.quantum import Workspace
-from azure.quantum.plugins.qiskit.backends.honeywell import HoneywellSimulatorBackend
+from azure.quantum.plugins.qiskit.backends.honeywell import (
+    HoneywellSimulatorBackend
+)
 
 from azure.quantum.plugins.qiskit.job import AzureQuantumJob
 from azure.quantum.plugins.qiskit.backends import (
@@ -57,10 +59,17 @@ class AzureQuantumProvider(Provider):
         return AzureQuantumJob(backend, azure_job)
 
     def _init_backends(self):
+        backends = [
+            IonQSimulatorBackend,
+            IonQQPUBackend,
+            HoneywellQPUBackend,
+            HoneywellAPIValidatorBackend,
+            HoneywellSimulatorBackend
+        ]
+
+        targets = [
+            target.get("id") for targets in self._workspace.get_targets().values()
+            for target in targets]
         self._backends = [
-            IonQSimulatorBackend(self),
-            IonQQPUBackend(self),
-            HoneywellQPUBackend(self),
-            HoneywellAPIValidatorBackend(self),
-            HoneywellSimulatorBackend(self)
+            cls(self) for cls in backends if cls.backend_name in targets
         ]

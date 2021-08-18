@@ -273,7 +273,7 @@ class Workspace:
         """
         return {
             provider.id: [
-                target.id for target in provider.targets
+                target.as_dict() for target in provider.targets
             ] for provider in self._client.providers.get_status()
         }
 

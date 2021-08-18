@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 ##
-import json
 from azure.quantum.version import __version__
 from azure.quantum.plugins.qiskit.job import AzureQuantumJob
 
@@ -86,10 +85,12 @@ class HoneywellBackend(Backend):
 
 
 class HoneywellAPIValidatorBackend(HoneywellBackend):
+    backend_name = "honeywell.hqs-lt-s1-apival"
+
     def __init__(self, provider):
         config = BackendConfiguration.from_dict(
             {
-                "backend_name": "honeywell.hqs-lt-s1-apival",
+                "backend_name": self.backend_name,
                 "backend_version": __version__,
                 "simulator": True,
                 "local": False,
@@ -110,10 +111,12 @@ class HoneywellAPIValidatorBackend(HoneywellBackend):
 
 
 class HoneywellSimulatorBackend(HoneywellBackend):
+    backend_name = "honeywell.hqs-lt-s1-sim"
+
     def __init__(self, provider):
         config = BackendConfiguration.from_dict(
             {
-                "backend_name": "honeywell.hqs-lt-s1-sim",
+                "backend_name": self.backend_name,
                 "backend_version": __version__,
                 "simulator": True,
                 "local": False,
@@ -134,11 +137,13 @@ class HoneywellSimulatorBackend(HoneywellBackend):
 
 
 class HoneywellQPUBackend(HoneywellBackend):
+    backend_name = "honeywell.hqs-lt-s1"
+
     def __init__(self, provider):
         """Base class for interfacing with an Honeywell backend"""
         config = BackendConfiguration.from_dict(
             {
-                "backend_name": "honeywell.hqs-lt-s1",
+                "backend_name": self.backend_name,
                 "backend_version": __version__,
                 "simulator": False,
                 "local": False,
