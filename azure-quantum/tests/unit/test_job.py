@@ -127,15 +127,13 @@ class TestJob(QuantumTestBase):
         solver_type = functools.partial(microsoft.PopulationAnnealing, sweeps=200)
         solver_name = "PopulationAnnealing"
         self._test_job_submit(solver_name, solver_type)
-        # todo - re-enable once grouped model is live
-        #self._test_job_submit(solver_name, solver_type, test_grouped=True)
+        self._test_job_submit(solver_name, solver_type, test_grouped=True)
 
     def test_job_submit_microsoft_substochastic_monte_carlo(self):
         solver_type = functools.partial(microsoft.SubstochasticMonteCarlo, step_limit=280)
         solver_name = "SubstochasticMonteCarlo"
         self._test_job_submit(solver_name, solver_type)
-        # todo - re-enable once grouped model is live
-        #self._test_job_submit(solver_name, solver_type, test_grouped=True)
+        self._test_job_submit(solver_name, solver_type, test_grouped=True)
 
     def test_job_upload_and_run_solvers(self):
         problem_name = f'Test-problem-{datetime.now():"%Y%m%d-%H%M%S"}'

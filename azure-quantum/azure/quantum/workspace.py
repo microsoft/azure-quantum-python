@@ -54,10 +54,6 @@ if sdk_environment("dogfood"):
         or f"https://{location}.quantum-test.azure.com/"
     )
     ARM_BASE_URL = "https://api-dogfood.resources.windows-int.net/"
-    # Microsoft Quantum Development Kit
-    AAD_CLIENT_ID = "46a998aa-43d0-4281-9cbb-5709a507ac36"
-    AAD_SCOPES = ["api://dogfood.azure-quantum/Jobs.ReadWrite"]
-
 else:
     if sdk_environment("canary"):
         logger.info("Using CANARY configuration.")
@@ -72,9 +68,6 @@ else:
             or f"https://{location}.quantum.azure.com/"
         )
     ARM_BASE_URL = "https://management.azure.com/"
-    # Microsoft Quantum Development Kit
-    AAD_CLIENT_ID = "84ba0947-6c53-4dd2-9ca9-b3694761521b"
-    AAD_SCOPES = ["https://quantum.microsoft.com/Jobs.ReadWrite"]
 
 class Workspace:
     """Represents an Azure Quantum workspace.
