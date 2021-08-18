@@ -9,3 +9,4 @@ from .problem import *
 from .solvers import *
 from .streaming_problem import *
 from .online_problem import *
+from .microsoft_optimization import MicrosoftOptimization

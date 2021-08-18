@@ -59,6 +59,7 @@ class Solver(Target):
         output_data_format: str,
         nested_params: bool = True,
         force_str_params: bool = False,
+        **kwargs
     ):
         self.provider_id = provider_id
         self.nested_params = nested_params
@@ -72,7 +73,8 @@ class Solver(Target):
             output_data_format=output_data_format,
             provider_id=provider_id,
             content_type="application/json",
-            encoding="gzip"
+            encoding="gzip",
+            **kwargs
         )
 
     """Constants that define thresholds for submission warnings
@@ -340,12 +342,13 @@ are not compressed with gzip encoding. Ignoring compress flag.")
             if not (isinstance(parameter_value, float) or
                     isinstance(parameter_value, int)):
                 raise ValueError(f"{parameter_name} must be a float!")
-            self.check_limit(
-                    parameter_name=parameter_name,
-                    parameter_value=parameter_value,
-                    lower_bound_exclusive=lower_bound_exclusive,
-                    lower_bound_inclusive=lower_bound_inclusive)
-            self.set_one_param(parameter_name, parameter_value)
+            else:
+                self.check_limit(
+                        parameter_name=parameter_name,
+                        parameter_value=parameter_value,
+                        lower_bound_exclusive=lower_bound_exclusive,
+                        lower_bound_inclusive=lower_bound_inclusive)
+                self.set_one_param(parameter_name, parameter_value)
 
     def check_limit(
         self,
@@ -391,11 +394,13 @@ class ParallelTempering(Solver):
     def __init__(
         self,
         workspace: Workspace,
+        name: str = "microsoft.paralleltempering.cpu",
         sweeps: Optional[int] = None,
         replicas: Optional[int] = None,
         all_betas: Optional[List[int]] = None,
         timeout: Optional[int] = None,
         seed: Optional[int] = None,
+        **kwargs
     ):
         """The constructor of a Parallel Tempering solver.
 
@@ -421,20 +426,17 @@ class ParallelTempering(Solver):
         param_free = sweeps is None and replicas is None and all_betas is None
         platform = HardwarePlatform.CPU
         if platform == HardwarePlatform.FPGA:
-            target = "microsoft.paralleltempering.fpga"
-        else:
-            target = (
-                "microsoft.paralleltempering-parameterfree.cpu"
-                if param_free
-                else "microsoft.paralleltempering.cpu"
-            )
-
+            name = "microsoft.paralleltempering.fpga"
+        elif param_free:
+            name = "microsoft.paralleltempering-parameterfree.cpu"
+ 
         super().__init__(
             workspace=workspace,
             provider_id="Microsoft",
-            name=target,
+            name=name,
             input_data_format="microsoft.qio.v2",
             output_data_format="microsoft.qio-results.v2",
+            **kwargs
         )
 
         self.set_one_param("sweeps", sweeps)
@@ -459,6 +461,7 @@ class SimulatedAnnealing(Solver):
     def __init__(
         self,
         workspace: Workspace,
+        name: str = "microsoft.simulatedannealing.cpu",
         beta_start: Optional[float] = None,
         beta_stop: Optional[float] = None,
         sweeps: Optional[int] = None,
@@ -466,6 +469,7 @@ class SimulatedAnnealing(Solver):
         timeout: Optional[int] = None,
         seed: Optional[int] = None,
         platform: Optional[HardwarePlatform] = HardwarePlatform.CPU,
+        **kwargs
     ):
         """The constructor of an Simulated Annealing solver.
 
@@ -499,24 +503,21 @@ class SimulatedAnnealing(Solver):
         )
 
         if platform == HardwarePlatform.FPGA:
-            target = (
+            name = (
                 "microsoft.simulatedannealing-parameterfree.fpga"
                 if param_free
                 else "microsoft.simulatedannealing.fpga"
             )
-        else:
-            target = (
-                "microsoft.simulatedannealing-parameterfree.cpu"
-                if param_free
-                else "microsoft.simulatedannealing.cpu"
-            )
+        elif param_free:
+            name = "microsoft.simulatedannealing-parameterfree.cpu"
 
         super().__init__(
             workspace=workspace,
             provider_id="Microsoft",
-            name=target,
+            name=name,
             input_data_format="microsoft.qio.v2",
             output_data_format="microsoft.qio-results.v2",
+            **kwargs
         )
 
         self.set_one_param("beta_start", beta_start)
@@ -531,11 +532,13 @@ class Tabu(Solver):
     def __init__(
         self,
         workspace: Workspace,
+        name: str = "microsoft.tabu.cpu",
         sweeps: Optional[int] = None,
         tabu_tenure: Optional[int] = None,
         timeout: Optional[int] = None,
         seed: Optional[int] = None,
         restarts: Optional[int] = None,
+        **kwargs
     ):
         """The constructor of an Tabu Search solver.
 
@@ -558,22 +561,16 @@ class Tabu(Solver):
         :param seed:
             specifies a random seed value.
         """
-        param_free = (
-            sweeps is None and tabu_tenure is None and restarts is None
-        )
-
-        target = (
-            "microsoft.tabu-parameterfree.cpu"
-            if param_free
-            else "microsoft.tabu.cpu"
-        )
+        if sweeps is None and tabu_tenure is None and restarts is None:
+            name = "microsoft.tabu-parameterfree.cpu"
 
         super().__init__(
             workspace=workspace,
             provider_id="Microsoft",
-            name=target,
+            name=name,
             input_data_format="microsoft.qio.v2",
             output_data_format="microsoft.qio-results.v2",
+            **kwargs
         )
 
         self.set_one_param("sweeps", sweeps)
@@ -587,6 +584,7 @@ class QuantumMonteCarlo(Solver):
     def __init__(
         self,
         workspace: Workspace,
+        name: str = "microsoft.qmc.cpu",
         trotter_number: Optional[int] = None,
         seed: Optional[int] = None,
         transverse_field_start: Optional[float] = None,
@@ -594,6 +592,7 @@ class QuantumMonteCarlo(Solver):
         restarts: Optional[int] = None,
         sweeps: Optional[int] = None,
         beta_start: Optional[float] = None,
+        **kwargs
     ):
         """The constructor of Simulated Qunatum Annelaing Search solver.
 
@@ -620,13 +619,13 @@ class QuantumMonteCarlo(Solver):
             Number of simulation runs
         """
 
-        target = "microsoft.qmc.cpu"
         super().__init__(
             workspace=workspace,
             provider_id="Microsoft",
-            name=target,
+            name=name,
             input_data_format="microsoft.qio.v2",
             output_data_format="microsoft.qio-results.v2",
+            **kwargs
         )
         self.set_one_param("sweeps", sweeps)
         self.set_one_param("trotter_number", trotter_number)
@@ -641,12 +640,14 @@ class PopulationAnnealing(Solver):
     def __init__(
         self,
         workspace: Workspace,
+        name: str = "microsoft.populationannealing.cpu",
         alpha: Optional[float] = None,
         seed: Optional[int] = None,
         population: Optional[int] = None,
         sweeps: Optional[int] = None,
         beta: Optional[RangeSchedule] = None,
         timeout: Optional[int] = None,
+        **kwargs
     ):
         """Constructor of the Population Annealing solver.
 
@@ -676,15 +677,15 @@ class PopulationAnnealing(Solver):
         """
 
         if timeout is None:
-            target = "microsoft.populationannealing.cpu" 
-        else:
-            target = "microsoft.populationannealing-parameterfree.cpu"
+            name = "microsoft.populationannealing-parameterfree.cpu"
+
         super().__init__(
             workspace=workspace,
             provider_id="Microsoft",
-            name=target,
+            name=name,
             input_data_format="microsoft.qio.v2",
             output_data_format="microsoft.qio-results.v2",
+            **kwargs
         )
 
         self.check_set_float("alpha", alpha, lower_bound_exclusive=1.0)
@@ -704,6 +705,7 @@ class SubstochasticMonteCarlo(Solver):
     def __init__(
         self,
         workspace: Workspace,
+        name: str = "microsoft.substochasticmontecarlo.cpu",
         alpha: Optional[RangeSchedule] = None,
         seed: Optional[int] = None,
         target_population: Optional[int] = None,
@@ -711,6 +713,7 @@ class SubstochasticMonteCarlo(Solver):
         beta: Optional[RangeSchedule] = None,
         steps_per_walker: Optional[int] = None,
         timeout: Optional[int] = None,
+        **kwargs
     ):
         """Constructor of Substochastic Monte Carlo solver.
 
@@ -744,15 +747,14 @@ class SubstochasticMonteCarlo(Solver):
         """
 
         if timeout is None:
-            target = "microsoft.substochasticmontecarlo.cpu"
-        else:
-            target = "microsoft.substochasticmontecarlo-parameterfree.cpu"
+            name = "microsoft.substochasticmontecarlo-parameterfree.cpu"
         super().__init__(
             workspace=workspace,
             provider_id="Microsoft",
-            name=target,
+            name=name,
             input_data_format="microsoft.qio.v2",
             output_data_format="microsoft.qio-results.v2",
+            **kwargs
         )
         self.set_one_param("seed", seed)
         self.check_set_positive_int("steps_per_walker", steps_per_walker)

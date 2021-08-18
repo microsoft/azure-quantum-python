@@ -40,12 +40,24 @@ class Target(abc.ABC):
 avg. queue time={self._average_queue_time} s, {self._current_availability}>"
 
     @classmethod
-    def from_target_status(cls, workspace: Workspace, status: TargetStatus):
+    def from_target_status(
+        cls, workspace: Workspace, status: TargetStatus, **kwargs
+    ):
+        """Create a Target instance from a given workspace and target status.
+
+        :param workspace: Associated workspace
+        :type workspace: Workspace
+        :param status: Target status with availability and current queue time
+        :type status: TargetStatus
+        :return: Target instance
+        :rtype: Target
+        """
         return cls(
             workspace=workspace,
             name=status.id,
             average_queue_time=status.average_queue_time,
-            current_availability=status.current_availability
+            current_availability=status.current_availability,
+            **kwargs
         )
     
     def refresh(self):

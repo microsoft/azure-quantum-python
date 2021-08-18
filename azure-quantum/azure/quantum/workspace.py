@@ -271,11 +271,16 @@ class Workspace:
             (provider.id, target)
             for provider in self._client.providers.get_status()
             for target in provider.targets
-            if (provider_id is None or provider.id == provider_id.lower())
-                and (name is None or target.id == name.lower())
+            if (provider_id is None or provider.id.lower() == provider_id.lower())
+                and (name is None or target.id.lower() == name.lower())
         ]
 
-    def get_targets(self, name: str = None, provider_id: str = None) -> Union["Target", Iterable["Target"]]:
+    def get_targets(
+        self, 
+        name: str = None, 
+        provider_id: str = None,
+        **kwargs
+    ) -> Union["Target", Iterable["Target"]]:
         """Returns all available targets for this workspace.
         
         :param name: Optional target name to filter by, defaults to None
@@ -289,13 +294,17 @@ class Workspace:
         target_statuses = self._get_target_status(name, provider_id)
 
         targets = [
-            ALL_TARGETS.get(provider_id).from_target_status(self, target)
-            for provider_id, target in target_statuses
-            if provider_id in ALL_TARGETS
+            ALL_TARGETS.get(_provider_id).from_target_status(self, status, **kwargs)
+            for _provider_id, status in target_statuses
+            if _provider_id in ALL_TARGETS
         ]
+
+        if None in targets:
+            targets = [target for target in targets if target is not None]
 
         if len(targets) == 1:
             return targets[0]
+
         return targets
 
     def get_quotas(self) -> List[Dict[str, Any]]:
