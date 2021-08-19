@@ -291,8 +291,12 @@ class Workspace:
         :rtype: Iterable[Target]
         """
         from azure.quantum.target.target_factory import TargetFactory
-        target_factory = TargetFactory(workspace=self)
-        return target_factory.get_targets(name=name, provider_id=provider_id)
+        target_factory = TargetFactory()
+        return target_factory.get_targets(
+            workspace=self,
+            name=name,
+            provider_id=provider_id
+        )
 
     def get_quotas(self) -> List[Dict[str, Any]]:
         """Get a list of job quotas for the given workspace.

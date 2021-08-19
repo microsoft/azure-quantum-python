@@ -26,5 +26,7 @@ from .fleet_management import MicrosoftFleetManagement
 DEFAULT_TARGETS = {
     "ionq": IonQ,
     "honeywell": Honeywell,
-    "Microsoft": Solver
+    "Microsoft": Solver,
+    "toshiba": Solver,
+    "1qbit": Solver,
 }
