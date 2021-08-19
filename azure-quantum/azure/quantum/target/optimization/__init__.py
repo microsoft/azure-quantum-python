@@ -7,5 +7,6 @@
 from .term import *
 from .problem import *
 from .solvers import *
+from .microsoft import *
 from .streaming_problem import *
 from .online_problem import *

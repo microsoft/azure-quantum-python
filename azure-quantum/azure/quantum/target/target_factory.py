@@ -67,7 +67,9 @@ https://github.com/microsoft/qdk-python/issues.")
         if cls is not None:
             return cls.from_target_status(self.workspace, status, **kwargs)
 
-    def get_targets(self, name: str, provider_id: str, **kwargs) -> Union[Target, List[Target]]:
+    def get_targets(
+        self, name: str, provider_id: str, **kwargs
+    ) -> Union[Target, List[Target]]:
         """Create targets that are available to this workspace
         filtered by name and provider ID.
 

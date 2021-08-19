@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 ##
 import io
+import json
 from typing import Any, Dict
 
 from azure.quantum.target.target import Target
@@ -10,18 +11,17 @@ from azure.quantum.job.job import Job
 from azure.quantum.workspace import Workspace
 
 
-class Honeywell(Target):
-    """Honeywell target."""
-    provider_id = "honeywell"
+class IonQ(Target):
+    """IonQ target."""
 
     def __init__(
         self,
         workspace: Workspace,
-        name: str = "honeywell.hqs-lt-s1-apival",
-        input_data_format: str = "honeywell.openqasm.v1",
-        output_data_format: str = "honeywell.quantum-results.v1",
-        provider_id: str = "honeywell",
-        content_type: str = "application/qasm",
+        name: str = "ionq.simulator",
+        input_data_format: str = "ionq.circuit.v1",
+        output_data_format: str = "ionq.quantum-results.v1",
+        provider_id: str = "IonQ",
+        content_type: str = "application/json",
         encoding: str = "",
         **kwargs
     ):
@@ -37,23 +37,24 @@ class Honeywell(Target):
         )
 
     @staticmethod
-    def _encode_input_data(data: str) -> bytes:
+    def _encode_input_data(data: Dict[Any, Any]) -> bytes:
         stream = io.BytesIO()
+        data = json.dumps(data)
         stream.write(data.encode())
         return stream.getvalue()
 
     def submit(
         self,
-        circuit: str,
-        name: str = "honeywell-job",
+        circuit: Dict[str, Any],
+        name: str = "ionq-job",
         num_shots: int = None,
         input_params: Dict[str, Any] = None,
         **kwargs
     ) -> Job:
-        """Submit a Honeywell program (QASM format)
+        """Submit an IonQ circuit (JSON format)
 
-        :param circuit: Quantum circuit in Honeywell QASM format
-        :type circuit: str
+        :param circuit: Quantum circuit in IonQ JSON format
+        :type circuit: Dict[str, Any]
         :param name: Job name
         :type name: str
         :param num_shots: Number of shots, defaults to None
@@ -67,7 +68,7 @@ class Honeywell(Target):
             input_params = {}
         if num_shots is not None:
             input_params = input_params.copy()
-            input_params["count"] = num_shots
+            input_params["shots"] = num_shots
 
         return super().submit(
             input_data=circuit,

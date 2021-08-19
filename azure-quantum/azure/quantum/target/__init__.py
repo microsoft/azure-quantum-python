@@ -1,8 +1,8 @@
-from azure.quantum.target.target import Target
-from azure.quantum.target.ionq import IonQ
-from azure.quantum.target.honeywell import Honeywell
-from azure.quantum.target.optimization import (
-    Solver,
+from .target import Target
+from .quantum_computing.ionq import IonQ
+from .quantum_computing.honeywell import Honeywell
+from .optimization import Solver
+from .optimization.microsoft import (
     ParallelTempering,
     SimulatedAnnealing,
     Tabu,
@@ -10,12 +10,12 @@ from azure.quantum.target.optimization import (
     PopulationAnnealing,
     SubstochasticMonteCarlo,
 )
-from azure.quantum.target.optimization.oneqbit import (
+from .optimization.oneqbit import (
     TabuSearch,
     PticmSolver,
     PathRelinkingSolver,
 )
-from azure.quantum.target.optimization.toshiba import (
+from .optimization.toshiba import (
     SimulatedBifurcationMachine
 )
 
