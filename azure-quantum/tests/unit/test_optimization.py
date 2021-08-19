@@ -1,7 +1,7 @@
 #!/bin/env python
 # -*- coding: utf-8 -*-
 ##
-# test_optimization.py: Checks correctness of azure.quantum.target.optimization module.
+# test_optimization.py: Checks correctness of azure.quantum.optimization module.
 ##
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
@@ -9,13 +9,12 @@
 
 import json
 import unittest
-from azure.quantum.target.optimization import Problem, ProblemType, Term, GroupType, GroupedTerm
-from azure.quantum.target.optimization import (
+from azure.quantum.optimization import Problem, ProblemType, Term, GroupType, GroupedTerm
+from azure.quantum.target.solvers import HardwarePlatform, RangeSchedule
+from azure.quantum.target import (
     ParallelTempering,
     PopulationAnnealing,
-    RangeSchedule,
     SimulatedAnnealing,
-    HardwarePlatform,
     QuantumMonteCarlo,
     SubstochasticMonteCarlo,
 )

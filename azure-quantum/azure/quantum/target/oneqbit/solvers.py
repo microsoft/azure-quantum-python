@@ -6,7 +6,7 @@ import logging
 
 from typing import Optional, List
 from azure.quantum import Workspace
-from azure.quantum.target.optimization import Solver
+from azure.quantum.target import Solver
 
 logger = logging.getLogger(__name__)
 

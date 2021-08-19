@@ -1,7 +1,7 @@
 #!/bin/env python
 # -*- coding: utf-8 -*-
 ##
-# test_solvers.py: Checks correctness of azure.quantum.target.optimization module.
+# test_solvers.py: Checks correctness of azure.quantum.optimization module.
 ##
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
@@ -10,7 +10,7 @@
 import unittest
 from unittest.mock import Mock, patch
 from azure.quantum import Workspace, storage
-from azure.quantum.target.optimization import Solver, OnlineProblem, Problem
+from azure.quantum.optimization import Solver, OnlineProblem, Problem
 import azure.quantum.storage
 
 

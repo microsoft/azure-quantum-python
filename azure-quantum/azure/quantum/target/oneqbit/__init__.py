@@ -4,4 +4,8 @@
 # Licensed under the MIT License.
 ##
 
-from .solvers import *
+from .solvers import (
+    TabuSearch,
+    PticmSolver,
+    PathRelinkingSolver,
+)

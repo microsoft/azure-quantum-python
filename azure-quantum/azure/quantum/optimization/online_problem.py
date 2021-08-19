@@ -1,6 +1,6 @@
 import logging
 from typing import TYPE_CHECKING
-from azure.quantum.target.optimization import Problem
+from azure.quantum.optimization import Problem
 
 logger = logging.getLogger(__name__)
 

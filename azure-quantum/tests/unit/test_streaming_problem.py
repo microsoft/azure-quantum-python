@@ -11,7 +11,7 @@ import unittest
 import json
 from typing import List
 
-from azure.quantum.target.optimization import (
+from azure.quantum.optimization import (
     StreamingProblem,
     Problem,
     ProblemType,

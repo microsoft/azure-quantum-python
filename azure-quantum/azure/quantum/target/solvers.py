@@ -4,12 +4,14 @@
 ##
 import logging
 
-from typing import List, Union, Any, Optional
+from typing import TYPE_CHECKING, Union, Any, Optional
 from enum import Enum
 from azure.quantum import Workspace, Job
-from azure.quantum.target.optimization.problem import Problem, ProblemType
 from azure.quantum.job.base_job import DEFAULT_TIMEOUT
 from azure.quantum.target.target import Target
+
+if TYPE_CHECKING:
+    from azure.quantum.optimization.problem import Problem
 
 logger = logging.getLogger(__name__)
 
@@ -18,6 +20,7 @@ __all__ = [
     "RangeSchedule",
     "Solver",
 ]
+
 
 class HardwarePlatform(Enum):
     CPU = 1
@@ -81,11 +84,11 @@ class Solver(Target):
     TIMEOUT_WARNING = 600
 
     @staticmethod
-    def _encode_input_data(data: Problem) -> bytes:
+    def _encode_input_data(data: "Problem") -> bytes:
         return data.to_blob(compress=True)
 
     def submit(
-        self, problem: Union[str, Problem], compress: bool = True
+        self, problem: Union[str, "Problem"], compress: bool = True
     ) -> Job:
         """Submits a job to execution to the associated
         Azure Quantum Workspace.
@@ -104,6 +107,7 @@ class Solver(Target):
             warnings.warn("The service no longer accepts payloads that \
 are not compressed with gzip encoding. Ignoring compress flag.")
 
+        from azure.quantum.optimization import Problem
         if isinstance(problem, Problem):
             self.check_valid_problem(problem)
             return super().submit(
@@ -139,7 +143,7 @@ are not compressed with gzip encoding. Ignoring compress flag.")
 
         return job
 
-    def optimize(self, problem: Union[str, Problem], timeout_secs: int=DEFAULT_TIMEOUT):
+    def optimize(self, problem: Union[str, "Problem"], timeout_secs: int=DEFAULT_TIMEOUT):
         """[Submits the Problem to the associated
             Azure Quantum Workspace and get the results.
 
@@ -179,7 +183,7 @@ are not compressed with gzip encoding. Ignoring compress flag.")
         """
         self.set_one_param("number_of_solutions", number_of_solutions)
 
-    def check_submission_warnings(self, problem: Problem):
+    def check_submission_warnings(self, problem: "Problem"):
         # print a warning if we suspect the job
         # may take long based on its configured properties.
         is_large_problem = problem.is_large()
@@ -209,6 +213,7 @@ are not compressed with gzip encoding. Ignoring compress flag.")
 
     def check_valid_problem(self, problem):
         # Evaluate Problem and Solver compatibility.
+        from azure.quantum.optimization.problem import ProblemType
         if problem.problem_type in {ProblemType.pubo_grouped, ProblemType.ising_grouped}:
             if not self.supports_grouped_terms():
                 raise ValueError(

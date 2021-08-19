@@ -3,10 +3,13 @@
 # Licensed under the MIT License.
 ##
 import logging
-from typing import Union, Optional
+from typing import TYPE_CHECKING, Union, Optional
 from azure.quantum import Workspace
-from azure.quantum.target.optimization import Problem, Solver
+from azure.quantum.target import Solver
 from azure.quantum import Job
+
+if TYPE_CHECKING:
+    from azure.quantum.optimization import Problem
 
 logger = logging.getLogger(__name__)
 __all__ = ["SimulatedBifurcationMachine"]
@@ -131,7 +134,7 @@ class SimulatedBifurcationMachine(Solver):
     # gzip files using the Blob Storage SDK
     # Issue: https://github.com/Azure/azure-storage-python/issues/548
     def submit(
-        self, problem: Union[str, Problem], compress: bool = True
+        self, problem: Union[str, "Problem"], compress: bool = True
     ) -> Job:
         """Submits a job to execution to
         the associated Azure Quantum Workspace.

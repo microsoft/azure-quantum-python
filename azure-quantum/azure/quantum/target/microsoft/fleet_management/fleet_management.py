@@ -11,7 +11,7 @@ from azure.quantum.job.job import Job
 from azure.quantum.workspace import Workspace
 
 
-class MicrosoftFleetManagement(Target):
+class FleetManagement(Target):
     """Microsoft Fleet Management target."""
 
     def __init__(

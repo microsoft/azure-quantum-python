@@ -1,8 +1,10 @@
+##
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+##
 from .target import Target
-from .quantum_computing.ionq import IonQ
-from .quantum_computing.honeywell import Honeywell
-from .optimization import Solver
-from .optimization.microsoft import (
+from .solvers import Solver
+from .microsoft.qio import (
     ParallelTempering,
     SimulatedAnnealing,
     Tabu,
@@ -10,16 +12,17 @@ from .optimization.microsoft import (
     PopulationAnnealing,
     SubstochasticMonteCarlo,
 )
-from .optimization.oneqbit import (
+from .oneqbit import (
     TabuSearch,
     PticmSolver,
     PathRelinkingSolver,
 )
-from .optimization.toshiba import (
+from .toshiba import (
     SimulatedBifurcationMachine
 )
-from .fleet_management import MicrosoftFleetManagement
-
+from .microsoft import FleetManagement
+from .ionq import IonQ
+from .honeywell import Honeywell
 
 # Default targets to use when there is no target class
 # associated with a given target ID

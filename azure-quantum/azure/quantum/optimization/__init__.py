@@ -4,13 +4,24 @@
 # Licensed under the MIT License.
 ##
 
-import warnings
-warnings.warn(
-    "Deprecation warning: azure.quantum.optimization will be deprecated. \
-Please use azure.quantum.target and azure.quantum.target.optimization instead.")
-
-from azure.quantum.target.optimization.term import *
-from azure.quantum.target.optimization.problem import *
-from azure.quantum.target.optimization.solvers import *
-from azure.quantum.target.optimization.streaming_problem import *
-from azure.quantum.target.optimization.online_problem import *
+from .term import *
+from .problem import *
+from .streaming_problem import *
+from .online_problem import *
+from azure.quantum.target import Solver
+from azure.quantum.target.microsoft.qio import (
+    ParallelTempering,
+    PopulationAnnealing,
+    QuantumMonteCarlo,
+    SimulatedAnnealing,
+    SubstochasticMonteCarlo,
+    Tabu,
+)
+from azure.quantum.target.toshiba.solvers import (
+    SimulatedBifurcationMachine
+)
+from azure.quantum.target.oneqbit.solvers import (
+    TabuSearch,
+    PticmSolver,
+    PathRelinkingSolver,
+)
