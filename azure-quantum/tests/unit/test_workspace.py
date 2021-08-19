@@ -1,7 +1,7 @@
 #!/bin/env python
 # -*- coding: utf-8 -*-
 ##
-# test_workspace.py: Checks correctness of azure.target.quantum.optimization module.
+# test_workspace.py: Checks correctness of azure.quantum.target.optimization module.
 ##
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
