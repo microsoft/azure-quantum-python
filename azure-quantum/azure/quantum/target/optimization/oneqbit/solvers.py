@@ -14,14 +14,19 @@ __all__ = ["TabuSearch", "PticmSolver", "PathRelinkingSolver"]
 
 
 class TabuSearch(Solver):
+    target_names = (
+        "1qbit.tabu",
+    )
     def __init__(
         self,
         workspace: Workspace,
+        name: str = "1qbit.tabu",
         improvement_cutoff: Optional[int] = None,
         improvement_tolerance: Optional[float] = None,
         tabu_tenure: Optional[int] = None,
         tabu_tenure_rand_max: Optional[int] = None,
         timeout: Optional[int] = None,
+        **kwargs
     ):
         """The constructor of a Tabu Search solver.
 
@@ -58,11 +63,12 @@ class TabuSearch(Solver):
         super().__init__(
             workspace=workspace,
             provider_id="1qbit",
-            name="1qbit.tabu",
+            name=name,
             input_data_format="microsoft.qio.v2",
             output_data_format="microsoft.qio-results.v1",
             nested_params=False,
             force_str_params=True,
+            **kwargs
         )
 
         self.set_one_param("improvement_cutoff", improvement_cutoff)
@@ -73,9 +79,13 @@ class TabuSearch(Solver):
 
 
 class PticmSolver(Solver):
+    target_names = (
+        "1qbit.pticm",
+    )
     def __init__(
         self,
         workspace: Workspace,
+        name: str = "1qbit.pticm",
         auto_set_temperatures: Optional[bool] = None,
         elite_threshold: Optional[float] = None,
         frac_icm_thermal_layers: Optional[float] = None,
@@ -95,6 +105,7 @@ class PticmSolver(Solver):
         perform_icm: Optional[bool] = None,
         scaling_type: Optional[str] = None,
         var_fixing_type: Optional[str] = None,
+        **kwargs
     ):
         """The constructor of a PTICM solver.
 
@@ -186,11 +197,12 @@ class PticmSolver(Solver):
         super().__init__(
             workspace=workspace,
             provider_id="1qbit",
-            name="1qbit.pticm",
+            name=name,
             input_data_format="microsoft.qio.v2",
             output_data_format="microsoft.qio-results.v1",
             nested_params=False,
             force_str_params=True,
+            **kwargs
         )
 
         self.set_one_param("auto_set_temperatures", auto_set_temperatures)
@@ -215,13 +227,18 @@ class PticmSolver(Solver):
 
 
 class PathRelinkingSolver(Solver):
+    target_names = (
+        "1qbit.pathrelinking",
+    )
     def __init__(
         self,
         workspace: Workspace,
+        name: str = "1qbit.pathrelinking",
         distance_scale: Optional[float] = None,
         greedy_path_relinking: Optional[bool] = None,
         ref_set_count: Optional[int] = None,
         timeout: Optional[int] = None,
+        **kwargs
     ):
         """The constructor of a Tabu Search solver.
 
@@ -261,11 +278,12 @@ class PathRelinkingSolver(Solver):
         super().__init__(
             workspace=workspace,
             provider_id="1qbit",
-            name="1qbit.pathrelinking",
+            name=name,
             input_data_format="microsoft.qio.v2",
             output_data_format="microsoft.qio-results.v1",
             nested_params=False,
             force_str_params=True,
+            **kwargs
         )
 
         self.set_one_param("distance_scale", distance_scale)

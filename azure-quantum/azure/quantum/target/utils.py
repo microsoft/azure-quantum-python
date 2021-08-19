@@ -2,115 +2,90 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 ##
-from typing import Dict, TYPE_CHECKING, Union
+import warnings
+from typing import Dict, List, TYPE_CHECKING, Union
+from azure.quantum.target import *
 
 if TYPE_CHECKING:
-    from azure.quantum.target import Target
     from azure.quantum import Workspace
+    from azure.quantum._client.models import TargetStatus
+
+# Target ID keyword for parameter-free solvers
+PARAMETER_FREE = "parameterfree"
 
 
-def get_all_targets() -> Dict[str, "Target"]:
-    """Get all target classes by provider ID"""
-    from azure.quantum.target import IonQ, Honeywell
-    from azure.quantum.target.optimization import Solver
-
-    class MicrosoftOptimization(Solver):
-        """Microsoft Optimization Solver.
-        Initializes a default solver for a given target name.
-        """
-        def __init__(
-            self,
-            workspace: "Workspace",
-            name: str,
-            input_data_format="microsoft.qio.v2",
-            output_data_format="microsoft.qio-results.v2",
-            provider_id: str = "Microsoft",
-            **kwargs
-        ):
-            super().__init__(
-                workspace=workspace,
-                name=name,
-                input_data_format=input_data_format,
-                output_data_format=output_data_format,
-                provider_id=provider_id,
-                **kwargs
-            )
-
-        @classmethod
-        def from_target_status(
-            cls, workspace, status, **kwargs
-        ) -> Union["MicrosoftOptimization", Solver]:
-            """Create a MicrosoftOptimization or Solver instance from a given workspace
-            and target status.
-
-            :param workspace: Associated workspace
-            :type workspace: Workspace
-            :param status: Target status with availability and current queue time
-            :type status: TargetStatus
-            :return: Target instance
-            :rtype: MicrosoftOptimization
-            """
-            from azure.quantum.target.optimization import (
-                Solver,
-                ParallelTempering,
-                SimulatedAnnealing,
-                Tabu,
-                QuantumMonteCarlo,
-                PopulationAnnealing,
-                SubstochasticMonteCarlo,
-            )
-
-            MICROSOFT_QIO_SOLVERS = {
-                "microsoft.paralleltempering.cpu": ParallelTempering,
-                "microsoft.simulatedannealing.cpu": SimulatedAnnealing,
-                "microsoft.tabu.cpu": Tabu,
-                "microsoft.qmc.cpu": QuantumMonteCarlo,
-                "microsoft.populationannealing.cpu": PopulationAnnealing,
-                "microsoft.substochasticmontecarlo.cpu": SubstochasticMonteCarlo,
-                "microsoft.paralleltempering-parameterfree.cpu": None,
-                "microsoft.simulatedannealing-parameterfree.cpu": None,
-                "microsoft.tabu-parameterfree.cpu": None,
-                "microsoft.qmc-parameterfree.cpu": None,
-                "microsoft.populationannealing-parameterfree.cpu": None,
-                "microsoft.substochasticmontecarlo-parameterfree.cpu": None,
-            }
-
-            name = status.id
-            if name in MICROSOFT_QIO_SOLVERS:
-                cls = MICROSOFT_QIO_SOLVERS.get(name)
-                if cls is not None:
-                    return cls.from_target_status(
-                        workspace=workspace, status=status, **kwargs
-                    )
-            else:
-                return super().from_target_status(
-                    workspace=workspace, status=status, **kwargs
-                )
-
-
+def get_all_target_cls() -> Dict[str, Target]:
+    """Get all target classes by target name"""
     return {
-        "ionq": IonQ,
-        "honeywell": Honeywell,
-        "Microsoft": MicrosoftOptimization
+        name: _t for t in Target.__subclasses__()
+        for _t in [t] + t.__subclasses__()
+        for name in _t.target_names
     }
 
 
 class TargetFactory:
+    """Factory class for generating a Target based on a provider and target name"""
     def __init__(self, workspace: "Workspace"):
         self.workspace = workspace
-
     
-    def _target_cls(self, name: str):
-        pass
+    @staticmethod
+    def _target_cls(provider_id: str, name: str):
+        all_targets = get_all_target_cls()
 
-    def from_target_status(self, *target_statuses, **kwargs):
-        all_targets = get_all_targets()
+        if name in all_targets:
+            return all_targets[name]
+
+        if provider_id in DEFAULT_TARGETS:
+            return DEFAULT_TARGETS[provider_id]
+ 
+        warnings.warn(
+            "No default target specified for provider {provider_id}. \
+Please check the provider name and try again or create an issue here: \
+https://github.com/microsoft/qdk-python/issues.")
+
+    def create_target(self, provider_id: str, name: str, **kwargs) -> Target:
+        """Create target from provider ID and target name.
+
+        :param provider_id: Provider name
+        :type provider_id: str
+        :param name: Target name
+        :type name: str
+        :return: Target instance
+        :rtype: Target
+        """
+        cls = self._target_cls(provider_id, name)
+        if cls is not None:
+            return cls(
+                workspace=self.workspace,
+                name=name,
+                provider_id=provider_id,
+                **kwargs
+            )
+
+    def from_target_status(self, provider_id: str, status: "TargetStatus", **kwargs):
+        cls = self._target_cls(provider_id, status.id)
+        if cls is not None:
+            return cls.from_target_status(self.workspace, status, **kwargs)
+
+    def get_targets(self, name: str, provider_id: str, **kwargs) -> Union[Target, List[Target]]:
+        """Create targets that are available to this workspace
+        filtered by name and provider ID.
+
+        :param name: Target name
+        :type name: str
+        :param provider_id: Provider name
+        :type provider_id: str
+        :return: One or more Target objects
+        :rtype: Union[Target, List[Target]]
+        """
+        target_statuses = self.workspace._get_target_status(name, provider_id)
+
         targets = [
-            all_targets.get(_provider_id).from_target_status(self.workspace, status, **kwargs)
+            self.from_target_status(_provider_id, status)
             for _provider_id, status in target_statuses
-            if _provider_id in all_targets
         ]
-        targets = [t for t in targets if t is not None]
+
         if len(targets) == 1:
             return targets[0]
+
         return targets

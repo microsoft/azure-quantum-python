@@ -10,3 +10,18 @@ from azure.quantum.target.optimization import (
     PopulationAnnealing,
     SubstochasticMonteCarlo,
 )
+from azure.quantum.target.optimization.oneqbit import (
+    TabuSearch,
+    PticmSolver,
+    PathRelinkingSolver,
+)
+from azure.quantum.target.optimization.toshiba import (
+    SimulatedBifurcationMachine
+)
+
+# Default targets to use when there is no associated target class
+DEFAULT_TARGETS = {
+    "ionq": IonQ,
+    "honeywell": Honeywell,
+    "Microsoft": Solver
+}

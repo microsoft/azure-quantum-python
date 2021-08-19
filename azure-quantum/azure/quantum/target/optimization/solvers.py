@@ -53,10 +53,10 @@ class Solver(Target):
     def __init__(
         self,
         workspace: Workspace,
-        provider_id: str,
         name: str,
-        input_data_format: str,
-        output_data_format: str,
+        provider_id: str = "Microsoft",
+        input_data_format="microsoft.qio.v2",
+        output_data_format="microsoft.qio-results.v2",
         nested_params: bool = True,
         force_str_params: bool = False,
         **kwargs
@@ -393,7 +393,7 @@ class HardwarePlatform(Enum):
 class ParallelTempering(Solver):
     target_names = (
         "microsoft.paralleltempering.fpga",
-        "microsoft.paralleltempering.cpu",
+        # "microsoft.paralleltempering.cpu",
         "microsoft.paralleltempering-parameterfree.cpu",
     )
     def __init__(
@@ -466,7 +466,7 @@ class SimulatedAnnealing(Solver):
     target_names = [
         "microsoft.simulatedannealing-parameterfree.fpga",
         "microsoft.simulatedannealing.fpga",
-        "microsoft.simulatedannealing.cpu",
+        # "microsoft.simulatedannealing.cpu",
         "microsoft.simulatedannealing-parameterfree.cpu",
     ]
     def __init__(
@@ -541,7 +541,7 @@ class SimulatedAnnealing(Solver):
 
 class Tabu(Solver):
     target_names = (
-        "microsoft.tabu.cpu",
+        # "microsoft.tabu.cpu",
         "microsoft.tabu-parameterfree.cpu",
     )
     def __init__(

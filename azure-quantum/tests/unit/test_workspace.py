@@ -89,17 +89,26 @@ class TestWorkspace(QuantumTestBase):
         ws = self.create_workspace()
         targets = ws.get_targets()
         assert sorted([t.name for t in targets]) == [
+            '1qbit.pathrelinking',
+            '1qbit.pticm',
+            '1qbit.tabu',
             'honeywell.hqs-lt-s1',
             'honeywell.hqs-lt-s1-apival',
             'honeywell.hqs-lt-s1-sim',
             'ionq.qpu',
             'ionq.simulator',
             'microsoft.paralleltempering-parameterfree.cpu',
+            'microsoft.paralleltempering.cpu',
+            'microsoft.populationannealing-parameterfree.cpu',
             'microsoft.populationannealing.cpu',
             'microsoft.qmc.cpu',
             'microsoft.simulatedannealing-parameterfree.cpu',
+            'microsoft.simulatedannealing.cpu',
+            'microsoft.substochasticmontecarlo-parameterfree.cpu',
             'microsoft.substochasticmontecarlo.cpu',
-            'microsoft.tabu-parameterfree.cpu'
+            'microsoft.tabu-parameterfree.cpu',
+            'microsoft.tabu.cpu',
+            'toshiba.sbm.ising'
         ]
 
         target = ws.get_targets("ionq.qpu")

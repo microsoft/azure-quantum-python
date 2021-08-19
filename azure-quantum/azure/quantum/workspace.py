@@ -281,7 +281,7 @@ class Workspace:
         provider_id: str = None,
         **kwargs
     ) -> Union["Target", Iterable["Target"]]:
-        """Returns all available targets for this workspace.
+        """Returns all available targets for this workspace filtered by name and provider ID.
         
         :param name: Optional target name to filter by, defaults to None
         :type name: str, optional
@@ -291,11 +291,8 @@ class Workspace:
         :rtype: Iterable[Target]
         """
         from azure.quantum.target.utils import TargetFactory
-        target_statuses = self._get_target_status(name, provider_id)
         target_factory = TargetFactory(workspace=self)
-        targets = target_factory.from_target_status(*target_statuses, **kwargs)
-
-        return targets
+        return target_factory.get_targets(name=name, provider_id=provider_id)
 
     def get_quotas(self) -> List[Dict[str, Any]]:
         """Get a list of job quotas for the given workspace.

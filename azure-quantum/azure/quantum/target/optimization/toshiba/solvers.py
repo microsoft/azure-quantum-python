@@ -13,9 +13,13 @@ __all__ = ["SimulatedBifurcationMachine"]
 
 
 class SimulatedBifurcationMachine(Solver):
+    target_names = (
+        "toshiba.sbm.ising",
+    )
     def __init__(
         self,
         workspace: Workspace,
+        name="toshiba.sbm.ising",
         steps: Optional[int] = None,
         loops: Optional[int] = None,
         target: Optional[float] = None,
@@ -25,6 +29,7 @@ class SimulatedBifurcationMachine(Solver):
         C: Optional[float] = None,
         algo: Optional[str] = None,
         auto: Optional[bool] = None,
+        **kwargs
     ):
         """The constructor of Toshiba's simulated bifurcation machine.
 
@@ -103,11 +108,12 @@ class SimulatedBifurcationMachine(Solver):
         super().__init__(
             workspace=workspace,
             provider_id="toshiba",
-            name="toshiba.sbm.ising",
+            name=name,
             input_data_format="microsoft.qio.v2",
             output_data_format="microsoft.qio-results.v2",
             nested_params=False,
             force_str_params=False,
+            **kwargs
         )
         self.set_one_param("steps", steps)
         self.set_one_param("loops", loops)
