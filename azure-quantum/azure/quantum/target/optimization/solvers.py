@@ -393,7 +393,7 @@ class HardwarePlatform(Enum):
 class ParallelTempering(Solver):
     target_names = (
         "microsoft.paralleltempering.fpga",
-        # "microsoft.paralleltempering.cpu",
+        "microsoft.paralleltempering.cpu",
         "microsoft.paralleltempering-parameterfree.cpu",
     )
     def __init__(
@@ -466,7 +466,7 @@ class SimulatedAnnealing(Solver):
     target_names = [
         "microsoft.simulatedannealing-parameterfree.fpga",
         "microsoft.simulatedannealing.fpga",
-        # "microsoft.simulatedannealing.cpu",
+        "microsoft.simulatedannealing.cpu",
         "microsoft.simulatedannealing-parameterfree.cpu",
     ]
     def __init__(
@@ -541,7 +541,7 @@ class SimulatedAnnealing(Solver):
 
 class Tabu(Solver):
     target_names = (
-        # "microsoft.tabu.cpu",
+        "microsoft.tabu.cpu",
         "microsoft.tabu-parameterfree.cpu",
     )
     def __init__(

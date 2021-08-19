@@ -290,7 +290,7 @@ class Workspace:
         :return: Targets
         :rtype: Iterable[Target]
         """
-        from azure.quantum.target.utils import TargetFactory
+        from azure.quantum.target.target_factory import TargetFactory
         target_factory = TargetFactory(workspace=self)
         return target_factory.get_targets(name=name, provider_id=provider_id)
 

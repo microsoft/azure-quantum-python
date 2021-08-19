@@ -98,16 +98,11 @@ class TestWorkspace(QuantumTestBase):
             'ionq.qpu',
             'ionq.simulator',
             'microsoft.paralleltempering-parameterfree.cpu',
-            'microsoft.paralleltempering.cpu',
-            'microsoft.populationannealing-parameterfree.cpu',
             'microsoft.populationannealing.cpu',
             'microsoft.qmc.cpu',
             'microsoft.simulatedannealing-parameterfree.cpu',
-            'microsoft.simulatedannealing.cpu',
-            'microsoft.substochasticmontecarlo-parameterfree.cpu',
             'microsoft.substochasticmontecarlo.cpu',
             'microsoft.tabu-parameterfree.cpu',
-            'microsoft.tabu.cpu',
             'toshiba.sbm.ising'
         ]
 

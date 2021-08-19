@@ -78,14 +78,15 @@ https://github.com/microsoft/qdk-python/issues.")
         :return: One or more Target objects
         :rtype: Union[Target, List[Target]]
         """
-        target_statuses = self.workspace._get_target_status(name, provider_id)
+        target_statuses = self.workspace._get_target_status(name, provider_id, **kwargs)
 
-        targets = [
-            self.from_target_status(_provider_id, status)
-            for _provider_id, status in target_statuses
-        ]
+        if len(target_statuses) == 1:
+            return self.from_target_status(*target_statuses[0])
 
-        if len(targets) == 1:
-            return targets[0]
-
-        return targets
+        else:
+            # Don't return redundant parameter-free targets
+            return [
+                self.from_target_status(_provider_id, status, **kwargs)
+                for _provider_id, status in target_statuses
+                if PARAMETER_FREE not in status.id
+            ]
