@@ -3,19 +3,26 @@
 # Licensed under the MIT License.
 ##
 import logging
-from typing import Union, Optional
+from typing import TYPE_CHECKING, Union, Optional
 from azure.quantum import Workspace
-from azure.quantum.optimization import Problem, Solver
+from azure.quantum.target import Solver
 from azure.quantum import Job
+
+if TYPE_CHECKING:
+    from azure.quantum.optimization import Problem
 
 logger = logging.getLogger(__name__)
 __all__ = ["SimulatedBifurcationMachine"]
 
 
 class SimulatedBifurcationMachine(Solver):
+    target_names = (
+        "toshiba.sbm.ising",
+    )
     def __init__(
         self,
         workspace: Workspace,
+        name="toshiba.sbm.ising",
         steps: Optional[int] = None,
         loops: Optional[int] = None,
         target: Optional[float] = None,
@@ -25,6 +32,7 @@ class SimulatedBifurcationMachine(Solver):
         C: Optional[float] = None,
         algo: Optional[str] = None,
         auto: Optional[bool] = None,
+        **kwargs
     ):
         """The constructor of Toshiba's simulated bifurcation machine.
 
@@ -102,12 +110,13 @@ class SimulatedBifurcationMachine(Solver):
         """
         super().__init__(
             workspace=workspace,
-            provider="toshiba",
-            target="toshiba.sbm.ising",
+            provider_id="toshiba",
+            name=name,
             input_data_format="microsoft.qio.v2",
             output_data_format="microsoft.qio-results.v2",
             nested_params=False,
             force_str_params=False,
+            **kwargs
         )
         self.set_one_param("steps", steps)
         self.set_one_param("loops", loops)
@@ -125,7 +134,7 @@ class SimulatedBifurcationMachine(Solver):
     # gzip files using the Blob Storage SDK
     # Issue: https://github.com/Azure/azure-storage-python/issues/548
     def submit(
-        self, problem: Union[str, Problem], compress: bool = True
+        self, problem: Union[str, "Problem"], compress: bool = True
     ) -> Job:
         """Submits a job to execution to
         the associated Azure Quantum Workspace.

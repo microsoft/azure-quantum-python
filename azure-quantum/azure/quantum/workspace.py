@@ -7,7 +7,8 @@ import logging
 import os
 import re
 
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Iterable, List, Optional, TYPE_CHECKING, Tuple, Union
+from functools import reduce
 from deprecated import deprecated
 
 # Temporarily replacing the DefaultAzureCredential with
@@ -26,6 +27,10 @@ from azure.quantum import Job
 from azure.quantum.storage import create_container_using_client, get_container_uri, ContainerClient
 
 from .version import __version__
+
+if TYPE_CHECKING:
+    from azure.quantum._client.models import TargetStatus
+    from azure.quantum.target import Target
 
 logger = logging.getLogger(__name__)
 
@@ -260,18 +265,38 @@ class Workspace:
 
         return result
 
-    def get_targets(self) -> Dict[str, List[str]]:
-        """Returns a dictionary of provider IDs and lists of targets
-        that are available.
+    def _get_target_status(self, name: str, provider_id: str) -> List[Tuple[str, "TargetStatus"]]:
+        """Get provider ID and status for targets"""
+        return [
+            (provider.id, target)
+            for provider in self._client.providers.get_status()
+            for target in provider.targets
+            if (provider_id is None or provider.id.lower() == provider_id.lower())
+                and (name is None or target.id.lower() == name.lower())
+        ]
 
-        :return: Targets, keyed by provider IDs
-        :rtype: Dict[str, List[str]]
+    def get_targets(
+        self, 
+        name: str = None, 
+        provider_id: str = None,
+        **kwargs
+    ) -> Union["Target", Iterable["Target"]]:
+        """Returns all available targets for this workspace filtered by name and provider ID.
+        
+        :param name: Optional target name to filter by, defaults to None
+        :type name: str, optional
+        :param provider_id: Optional provider Id to filter by, defaults to None
+        :type provider_id: str, optional
+        :return: Targets
+        :rtype: Iterable[Target]
         """
-        return {
-            provider.id: [
-                target.id for target in provider.targets
-            ] for provider in self._client.providers.get_status()
-        }
+        from azure.quantum.target.target_factory import TargetFactory
+        target_factory = TargetFactory()
+        return target_factory.get_targets(
+            workspace=self,
+            name=name,
+            provider_id=provider_id
+        )
 
     def get_quotas(self) -> List[Dict[str, Any]]:
         """Get a list of job quotas for the given workspace.
