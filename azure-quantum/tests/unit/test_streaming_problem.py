@@ -9,17 +9,14 @@
 
 import unittest
 import json
-import pytest
 from typing import List
 
-from azure.quantum import Workspace
 from azure.quantum.optimization import (
     StreamingProblem,
     Problem,
     ProblemType,
     Term,
 )
-from azure.quantum.storage import download_blob
 from common import QuantumTestBase
 
 

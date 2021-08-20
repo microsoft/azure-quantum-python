@@ -7,8 +7,7 @@
 # Licensed under the MIT License.
 ##
 from unittest.mock import Mock, patch
-from typing import TYPE_CHECKING
-from azure.quantum.optimization import Problem, Term, OnlineProblem
+from azure.quantum.optimization import Problem, OnlineProblem
 import azure.quantum.optimization.problem
 from common import expected_terms, QuantumTestBase
 import json

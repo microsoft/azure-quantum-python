@@ -11,13 +11,13 @@ from azure.quantum.job.job import Job
 from azure.quantum.workspace import Workspace
 
 
-class MicrosoftFleetManagement(Target):
+class FleetManagement(Target):
     """Microsoft Fleet Management target."""
 
     def __init__(
         self,
         workspace: Workspace,
-        target: str = "microsoft.fleetmanagement",
+        name: str = "microsoft.fleetmanagement",
         input_data_format: str = "microsoft.fleetmanagement.v1",
         output_data_format: str = "microsoft.fleetmanagement-results.v1",
         provider_id: str = "Microsoft.FleetManagement",
@@ -26,7 +26,7 @@ class MicrosoftFleetManagement(Target):
     ):
         super().__init__(
             workspace=workspace,
-            target=target,
+            name=name,
             input_data_format=input_data_format,
             output_data_format=output_data_format,
             provider_id=provider_id,
