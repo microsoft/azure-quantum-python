@@ -10,7 +10,7 @@
 import unittest
 from unittest.mock import Mock, patch
 from typing import TYPE_CHECKING
-from azure.quantum.optimization import Problem, ProblemType, Term, GroupedTerm
+from azure.quantum.optimization import Problem, ProblemType, Term, SlcTerm
 import azure.quantum.optimization.problem
 from common import expected_terms
 import numpy
