@@ -17,8 +17,8 @@ from common import QuantumTestBase, ZERO_UID
 from azure.quantum import Job
 from azure.quantum.optimization import Problem, ProblemType, Term, GroupedTerm, GroupType
 import azure.quantum.optimization as microsoft
-import azure.quantum.optimization.oneqbit as oneqbit
-import azure.quantum.optimization.toshiba as toshiba
+import azure.quantum.target.oneqbit as oneqbit
+import azure.quantum.target.toshiba as toshiba
 
 
 SOLVER_TYPES = [
@@ -42,7 +42,7 @@ def get_solver_types():
     for solver_type in SOLVER_TYPES:
         solver_type_name = f'{solver_type.func.__module__}.{solver_type.func.__qualname__}'
         
-        if (solver_type_name.startswith("azure.quantum.optimization.solvers.") # Microsoft solvers
+        if (solver_type_name.startswith("azure.quantum.target.solvers.") # Microsoft solvers
             or (solver_type_name.__contains__("toshiba") and toshiba_enabled)
             or (solver_type_name.__contains__("oneqbit") and one_qbit_enabled)):
             solver_types.append(solver_type)
