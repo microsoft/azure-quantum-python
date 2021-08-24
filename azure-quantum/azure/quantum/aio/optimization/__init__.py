@@ -5,6 +5,5 @@
 ##
 
 from .problem import *
-from .solvers import *
 from .online_problem import *
 from .streaming_problem import *

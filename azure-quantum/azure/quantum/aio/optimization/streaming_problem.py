@@ -4,23 +4,17 @@
 ##
 
 import logging
-import uuid
-import io
-import gzip
-import json
-import sys
 
-from typing import List, Union, Dict, Optional
-from azure.quantum.aio import Workspace
+from typing import List, Union
 from azure.quantum.optimization import Term
-from azure.quantum.aio.optimization import Problem, ProblemType
+from azure.quantum.aio.optimization import Problem
 from azure.quantum.aio.storage import (
-    StreamedBlob,
     ContainerClient,
     BlobClient,
     download_blob,
 )
-from asyncio import Queue, create_task
+from azure.quantum.optimization.streaming_problem import StreamingProblem as SyncStreamingProblem
+from asyncio import create_task
 from queue import Empty
 
 logger = logging.getLogger(__name__)
@@ -28,7 +22,7 @@ logger = logging.getLogger(__name__)
 __all__ = ["StreamingProblem"]
 
 
-class StreamingProblem(object):
+class StreamingProblem(SyncStreamingProblem):
     """Problem to be streamed to the service.
 
     Streaming problems are uploaded on the fly as terms are added,
@@ -48,43 +42,6 @@ class StreamingProblem(object):
      ProblemType.ising), defaults to ProblemType.ising
     :type problem_type: ProblemType, optional
     """
-
-    def __init__(
-        self,
-        workspace: Workspace,
-        name: str = "Optimization Problem",
-        init_config: Optional[Dict[str, int]] = None,
-        problem_type: ProblemType = ProblemType.ising,
-        metadata: Dict[str, str] = {},
-        **kw,
-    ):
-        super(StreamingProblem, self).__init__(**kw)
-        self.name = name
-        self._id = str(uuid.uuid1())
-        self.workspace = workspace
-        self.problem_type = problem_type
-        self.init_config = init_config
-        self.terms_queue = Queue()
-        self.uploaded_uri = None
-        self.upload_to_url = None
-        self.uploader = None
-        self.compress = True
-        self.__n_couplers = 0
-        self.stats = {
-            "type": problem_type.name,
-            "max_coupling": 0,
-            "avg_coupling": 0,
-            "min_coupling": sys.maxsize,
-            "num_terms": 0,
-        }
-        self.upload_size_threshold = 10e6
-        self.upload_terms_threshold = 1000
-        self.metadata = metadata
-
-    @property
-    def id(self):
-        return self._id
-
     async def add_term(self, c: Union[int, float], indices: List[int]):
         """Adds a single term to the `Problem`
         representation and queues it to be uploaded
@@ -170,31 +127,6 @@ class StreamingProblem(object):
         contents = await download_blob(blob.url)
         return Problem.deserialize(contents, self.name)
 
-    def upload(
-        self,
-        workspace,
-        container_name: str = "qio-problems",
-        blob_name: str = None,
-        compress: bool = True,
-    ):
-        """Uploads an optimization problem instance
-           to the cloud storage linked with the Workspace.
-
-        :param workspace: interaction terms of the problem.
-        :return: uri of the uploaded problem
-        """
-        if not self.uploaded_uri:
-            self.uploader.blob_properties = {
-                k: str(v) for k, v in {**self.stats, **self.metadata}.items()
-            }
-            self.terms_queue.put(None)
-            blob = self.uploader.join()
-            self.uploaded_uri = blob.getUri(not not self.workspace.storage)
-            self.uploader = None
-            self.terms_queue = None
-
-        return self.uploaded_uri
-
 
 class JsonStreamingProblemUploader:
     """Helper class for uploading json problem files in chunks.
@@ -210,55 +142,8 @@ class JsonStreamingProblemUploader:
      Once this many terms are ready to be uploaded, the chunk will be uploaded.
     :param blob_properties: Properties to set on the blob.
     """
-
-    def __init__(
-        self,
-        problem: StreamingProblem,
-        container: ContainerClient,
-        name: str,
-        compress: bool,
-        upload_size_threshold: int,
-        upload_term_threshold: int,
-        blob_properties: Dict[str, str] = None,
-    ):
-        self.problem = problem
-        self.started_upload = False
-        self.blob = StreamedBlob(
-            container,
-            name,
-            "application/json",
-            self._get_content_type(compress),
-        )
-        self.compressedStream = io.BytesIO() if compress else None
-        self.compressor = (
-            gzip.GzipFile(mode="wb", fileobj=self.compressedStream)
-            if compress
-            else None
-        )
-        self.uploaded_terms = 0
-        self.blob_properties = blob_properties
-        self.__queue_wait_timeout = 1
-        self.__upload_terms_threshold = upload_term_threshold
-        self.__upload_size_threshold = upload_size_threshold
-        self.__read_pos = 0
-
-    def _get_content_type(self, compress: bool):
-        if compress:
-            return "gzip"
-
-        return "identity"
-
     async def start(self):
         await self._run_queue()
-
-    def join(self, timeout: float = None) -> StreamedBlob:
-        """Joins the problem uploader thread -
-        returning when it completes or when `timeout` is hit
-
-        :param timeout: The the time to wait for the thread to complete.
-        If omitted, the method will wait until the thread completes
-        """
-        return self.blob
 
     async def _run_queue(self):
         continue_processing = True
@@ -293,60 +178,11 @@ class JsonStreamingProblemUploader:
             + self._get_terms_string(terms)
         )
 
-    def _get_initial_config_string(self):
-        if self.problem.init_config:
-            return (
-                f'{"initial_configuration":}'
-                + json.dumps(self.problem.init_config)
-                + ","
-            )
-        return ""
-
-    def _get_version(self):
-        return "1.1" if self.problem.init_config else "1.0"
-
-    def _get_terms_string(self, terms):
-        result = ("," if self.uploaded_terms > 0 else "") + ",".join(
-            [json.dumps(term.to_dict()) for term in terms]
-        )
-        self.uploaded_terms += len(terms)
-        return result
-
-    def _scrub(self, s):
-        if '"' in s:
-            raise "string should not contain a literal double quote '\"'"
-
-        return s
-
     async def _upload_next(self, terms):
         if not self.started_upload:
             await self._upload_start(terms)
         else:
             await self._upload_chunk(self._get_terms_string(terms))
-
-    def _maybe_compress_bits(self, chunk: bytes, is_final: bool):
-        if self.compressor is None:
-            return chunk
-
-        if self.__read_pos > 0:
-            self.compressedStream.truncate(0)
-            self.compressedStream.seek(0)
-
-        self.compressor.write(chunk)
-        if is_final:
-            self.compressor.flush()
-            self.compressor.close()
-        elif (
-            self.compressedStream.getbuffer().nbytes
-            < self.__upload_size_threshold
-        ):
-            self.__read_pos = 0
-            return
-
-        self.compressedStream.seek(0)
-        compressed = self.compressedStream.read(-1)
-        self.__read_pos = 0 if compressed is None else len(compressed)
-        return compressed
 
     async def _upload_chunk(self, chunk: str, is_final: bool = False):
         compressed = self._maybe_compress_bits(chunk.encode(), is_final)

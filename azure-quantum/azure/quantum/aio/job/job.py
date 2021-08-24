@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING
 
 from azure.quantum._client.models import JobDetails
 from azure.quantum.aio.job.base_job import BaseJob, DEFAULT_TIMEOUT
-from azure.quantum.aio.job.filtered_job import FilteredJob
+from azure.quantum.job.job import Job as SyncJob
 
 __all__ = ["Job"]
 
@@ -22,7 +22,7 @@ if TYPE_CHECKING:
 
 _log = logging.getLogger(__name__)
 
-class Job(BaseJob, FilteredJob):
+class Job(BaseJob, SyncJob):
     """Azure Quantum Job that is submitted to a given Workspace.
 
     :param workspace: Workspace instance to submit job to
@@ -31,13 +31,6 @@ class Job(BaseJob, FilteredJob):
             contains Job ID, name and other details
     :type job_details: JobDetails
     """
-
-    def __init__(self, workspace: "Workspace", job_details: JobDetails, **kwargs):
-        self.workspace = workspace
-        self.details = job_details
-        self.id = job_details.id
-        self.results = None
-    
     async def submit(self):
         """Submit a job to Azure Quantum."""
         _log.debug(f"Submitting job with ID {self.id}")
@@ -47,14 +40,6 @@ class Job(BaseJob, FilteredJob):
     async def refresh(self):
         """Refreshes the Job's details by querying the workspace."""
         self.details = (await self.workspace.get_job(self.id)).details
-
-    def has_completed(self) -> bool:
-        """Check if the job has completed."""
-        return (
-            self.details.status == "Succeeded"
-            or self.details.status == "Failed"
-            or self.details.status == "Cancelled"
-        )
 
     async def wait_until_completed(
         self,

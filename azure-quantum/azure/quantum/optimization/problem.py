@@ -101,7 +101,7 @@ class Problem:
         """
         result = json.loads(problem_as_json)
 
-        problem = Problem(
+        problem = cls(
             name=name,
             terms=[
                 GroupedTerm.from_dict(t) if GroupedTerm.is_grouped_term(t)

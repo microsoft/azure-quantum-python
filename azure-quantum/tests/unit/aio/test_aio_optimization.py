@@ -9,13 +9,12 @@
 
 import json
 from azure.quantum.aio.optimization import Problem, ProblemType
+from azure.quantum.target.solvers import HardwarePlatform, RangeSchedule
 from azure.quantum.optimization import Term
-from azure.quantum.aio.optimization.solvers import (
+from azure.quantum.aio.target.microsoft.qio import (
     ParallelTempering,
     PopulationAnnealing,
-    RangeSchedule,
     SimulatedAnnealing,
-    HardwarePlatform,
     QuantumMonteCarlo,
     SubstochasticMonteCarlo,
 )
@@ -280,14 +279,14 @@ class TestSolvers(QuantumTestBase):
         good = ParallelTempering(ws, timeout=1011)
         self.assertIsNotNone(good)
         self.assertEqual(
-            "microsoft.paralleltempering-parameterfree.cpu", good.target
+            "microsoft.paralleltempering-parameterfree.cpu", good.name
         )
         self.assertEqual({"timeout": 1011}, good.params["params"])
 
         good = ParallelTempering(ws, seed=20)
         self.assertIsNotNone(good)
         self.assertEqual(
-            "microsoft.paralleltempering-parameterfree.cpu", good.target
+            "microsoft.paralleltempering-parameterfree.cpu", good.name
         )
         self.assertEqual({"seed": 20}, good.params["params"])
 
@@ -295,7 +294,7 @@ class TestSolvers(QuantumTestBase):
             ws, sweeps=20, replicas=3, all_betas=[3, 5, 9]
         )
         self.assertIsNotNone(good)
-        self.assertEqual("microsoft.paralleltempering.cpu", good.target)
+        self.assertEqual("microsoft.paralleltempering.cpu", good.name)
         self.assertEqual(
             {"sweeps": 20, "replicas": 3, "all_betas": [3, 5, 9]},
             good.params["params"],
@@ -303,7 +302,7 @@ class TestSolvers(QuantumTestBase):
 
         good = ParallelTempering(ws, sweeps=20, all_betas=[3, 9])
         self.assertIsNotNone(good)
-        self.assertEqual("microsoft.paralleltempering.cpu", good.target)
+        self.assertEqual("microsoft.paralleltempering.cpu", good.name)
         self.assertEqual(
             {"sweeps": 20, "replicas": 2, "all_betas": [3, 9]},
             good.params["params"],
@@ -320,7 +319,7 @@ class TestSolvers(QuantumTestBase):
         good = SimulatedAnnealing(ws, timeout=1011, seed=4321)
         self.assertIsNotNone(good)
         self.assertEqual(
-            "microsoft.simulatedannealing-parameterfree.cpu", good.target
+            "microsoft.simulatedannealing-parameterfree.cpu", good.name
         )
         self.assertEqual(
             {"timeout": 1011, "seed": 4321}, good.params["params"]
@@ -331,7 +330,7 @@ class TestSolvers(QuantumTestBase):
         )
         self.assertIsNotNone(good)
         self.assertEqual(
-            "microsoft.simulatedannealing-parameterfree.fpga", good.target
+            "microsoft.simulatedannealing-parameterfree.fpga", good.name
         )
         self.assertEqual(
             {"timeout": 1011, "seed": 4321}, good.params["params"]
@@ -339,21 +338,21 @@ class TestSolvers(QuantumTestBase):
 
         good = SimulatedAnnealing(ws, beta_start=21)
         self.assertIsNotNone(good)
-        self.assertEqual("microsoft.simulatedannealing.cpu", good.target)
+        self.assertEqual("microsoft.simulatedannealing.cpu", good.name)
         self.assertEqual({"beta_start": 21}, good.params["params"])
 
         good = SimulatedAnnealing(
             ws, beta_start=21, platform=HardwarePlatform.FPGA
         )
         self.assertIsNotNone(good)
-        self.assertEqual("microsoft.simulatedannealing.fpga", good.target)
+        self.assertEqual("microsoft.simulatedannealing.fpga", good.name)
         self.assertEqual({"beta_start": 21}, good.params["params"])
 
     def test_QuantumMonteCarlo_input_params(self):
         ws = self.create_async_workspace()
         good = QuantumMonteCarlo(ws, trotter_number=100, seed=4321)
         self.assertIsNotNone(good)
-        self.assertEqual("microsoft.qmc.cpu", good.target)
+        self.assertEqual("microsoft.qmc.cpu", good.name)
         self.assertEqual(
             {"trotter_number": 100, "seed": 4321}, good.params["params"]
         )
@@ -370,7 +369,7 @@ class TestSolvers(QuantumTestBase):
             beta=beta,
         )
         self.assertIsNotNone(good)
-        self.assertEqual("microsoft.populationannealing.cpu", good.target)
+        self.assertEqual("microsoft.populationannealing.cpu", good.name)
         self.assertEqual(8888, good.params["params"]["seed"])
         self.assertEqual(100.0, good.params["params"]["alpha"])
         self.assertEqual(300, good.params["params"]["population"])
@@ -394,7 +393,7 @@ class TestSolvers(QuantumTestBase):
             beta=beta,
         )
         self.assertIsNotNone(good)
-        self.assertEqual("microsoft.substochasticmontecarlo.cpu", good.target)
+        self.assertEqual("microsoft.substochasticmontecarlo.cpu", good.name)
         self.assertEqual(1888, good.params["params"]["seed"])
         self.assertEqual(
             {"type": "geometric", "initial": 2.8, "final": 1.8},
@@ -415,7 +414,7 @@ class TestSolvers(QuantumTestBase):
             timeout=10,
         )
         self.assertIsNotNone(good)
-        self.assertEqual("microsoft.substochasticmontecarlo-parameterfree.cpu", good.target)
+        self.assertEqual("microsoft.substochasticmontecarlo-parameterfree.cpu", good.name)
         self.assertEqual(10, good.params["params"]["timeout"])
 
     def test_SSMC_bad_input_params(self):
@@ -575,7 +574,7 @@ class TestSolvers(QuantumTestBase):
             timeout=8,
         )
         self.assertIsNotNone(good)
-        self.assertEqual("microsoft.populationannealing-parameterfree.cpu", good.target)
+        self.assertEqual("microsoft.populationannealing-parameterfree.cpu", good.name)
         self.assertEqual(8, good.params["params"]["timeout"])
 
     def test_PA_bad_input_params(self):

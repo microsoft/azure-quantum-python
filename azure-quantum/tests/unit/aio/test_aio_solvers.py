@@ -9,8 +9,9 @@
 
 import pytest
 from azure.quantum.aio import Workspace
-from azure.quantum.aio.optimization import Solver, Problem
+from azure.quantum.aio.optimization import Problem
 from azure.quantum.optimization import OnlineProblem
+from azure.quantum.aio.target.solvers import Solver
 from asyncmock import AsyncMock, patch
 
 

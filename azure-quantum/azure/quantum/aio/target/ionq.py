@@ -17,7 +17,7 @@ class IonQ(Target):
     def __init__(
         self,
         workspace: Workspace,
-        target: str = "ionq.simulator",
+        name: str = "ionq.simulator",
         input_data_format: str = "ionq.circuit.v1",
         output_data_format: str = "ionq.quantum-results.v1",
         provider_id: str = "IonQ",
@@ -26,7 +26,7 @@ class IonQ(Target):
     ):
         super().__init__(
             workspace=workspace,
-            target=target,
+            name=name,
             input_data_format=input_data_format,
             output_data_format=output_data_format,
             provider_id=provider_id,
