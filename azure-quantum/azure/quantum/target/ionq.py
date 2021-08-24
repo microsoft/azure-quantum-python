@@ -17,21 +17,23 @@ class IonQ(Target):
     def __init__(
         self,
         workspace: Workspace,
-        target: str = "ionq.simulator",
+        name: str = "ionq.simulator",
         input_data_format: str = "ionq.circuit.v1",
         output_data_format: str = "ionq.quantum-results.v1",
         provider_id: str = "IonQ",
         content_type: str = "application/json",
-        encoding: str = ""
+        encoding: str = "",
+        **kwargs
     ):
         super().__init__(
             workspace=workspace,
-            target=target,
+            name=name,
             input_data_format=input_data_format,
             output_data_format=output_data_format,
             provider_id=provider_id,
             content_type=content_type,
-            encoding=encoding
+            encoding=encoding,
+            **kwargs
         )
 
     @staticmethod
