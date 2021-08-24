@@ -4,7 +4,7 @@
 # Licensed under the MIT License.
 ##
 import warnings
-warnings.warn("The azure.quantum.optimization.oneqbit namespace will be deprecated. \
+warnings.warn("The azure.quantum.optimization.oneqbit.solvers namespace will be deprecated. \
 Please use azure.quantum.target.oneqbit instead.")
 
 from azure.quantum.target.oneqbit.solvers import (
