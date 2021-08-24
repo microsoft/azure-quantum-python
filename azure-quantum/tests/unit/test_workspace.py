@@ -88,9 +88,36 @@ class TestWorkspace(QuantumTestBase):
     def test_workspace_get_targets(self):
         ws = self.create_workspace()
         targets = ws.get_targets()
-        assert "Microsoft" in targets
-        assert "microsoft.paralleltempering.cpu" in targets["Microsoft"]
-    
+        assert sorted([t.name for t in targets]) == [
+            '1qbit.pathrelinking',
+            '1qbit.pticm',
+            '1qbit.tabu',
+            'honeywell.hqs-lt-s1',
+            'honeywell.hqs-lt-s1-apival',
+            'honeywell.hqs-lt-s1-sim',
+            'ionq.qpu',
+            'ionq.simulator',
+            'microsoft.paralleltempering-parameterfree.cpu',
+            'microsoft.populationannealing.cpu',
+            'microsoft.qmc.cpu',
+            'microsoft.simulatedannealing-parameterfree.cpu',
+            'microsoft.substochasticmontecarlo.cpu',
+            'microsoft.tabu-parameterfree.cpu',
+            'toshiba.sbm.ising'
+        ]
+
+        target = ws.get_targets("ionq.qpu")
+        assert target.average_queue_time is not None
+        assert target.current_availability is not None
+        assert target.name == "ionq.qpu"
+        target.refresh()
+        assert target.average_queue_time is not None
+        assert target.current_availability is not None
+
+        with pytest.raises(ValueError):
+            target.name = "foo"
+            target.refresh()
+
     def test_workspace_job_quotas(self):
         ws = self.create_workspace()
         quotas = ws.get_quotas()
