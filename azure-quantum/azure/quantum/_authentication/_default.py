@@ -21,6 +21,7 @@ from azure.identity import (
     _credentials
 )
 from ._chained import _ChainedTokenCredential
+from ._token import _TokenFileCredential
 
 try:
     from typing import TYPE_CHECKING
@@ -39,7 +40,7 @@ class _DefaultAzureCredential(_ChainedTokenCredential):
     Based on Azure.Identity.DefaultAzureCredential from:
     https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/identity/azure-identity/azure/identity/_credentials/default.py
 
-    The two key differences are:
+    The three key differences are:
     1) Inherit from _ChainedTokenCredential, which has 
        more aggressive error handling than ChainedTokenCredential
     2) Instantiate the internal credentials the first time the get_token gets called
@@ -51,10 +52,11 @@ class _DefaultAzureCredential(_ChainedTokenCredential):
        We need the following parameters to enable auto-detection of tenant_id
        - subscription_id
        - arm_base_url (defaults to the production url "https://management.azure.com/")
+    3) Add custom TokenFileCredential as first method to attempt, which will look for a local access token.
     """
     def __init__(self, **kwargs):
         # type: (**Any) -> None
-        self._successfull_tenant_id = None
+        self._successful_tenant_id = None
 
         self.authority = kwargs.pop("authority", None)
         self.authority = normalize_authority(self.authority) if self.authority else get_default_authority()
@@ -83,9 +85,10 @@ class _DefaultAzureCredential(_ChainedTokenCredential):
             "visual_studio_code_tenant_id", os.environ.get(EnvironmentVariables.AZURE_TENANT_ID)
         )
 
+        self.exclude_token_file_credential = kwargs.pop("exclude_token_file_credential", False)
         self.exclude_environment_credential = kwargs.pop("exclude_environment_credential", False)
         self.exclude_managed_identity_credential = kwargs.pop("exclude_managed_identity_credential", False)
-        self.exclude_shared_token_cache_credential = kwargs.pop("exclude_shared_token_cache_credential", False)
+        self.exclude_shared_token_cache_credential = kwargs.pop("exclude_shared_token_cache_credential", True)
         self.exclude_visual_studio_code_credential = kwargs.pop("exclude_visual_studio_code_credential", False)
         self.exclude_cli_credential = kwargs.pop("exclude_cli_credential", False)
         self.exclude_interactive_browser_credential = kwargs.pop("exclude_interactive_browser_credential", True)
@@ -106,6 +109,8 @@ class _DefaultAzureCredential(_ChainedTokenCredential):
                 self.interactive_browser_tenant_id = self._get_tenant_id(arm_base_url=self.arm_base_url, subscription_id=self.subscription_id)
 
         credentials = []  # type: List[TokenCredential]
+        if not self.exclude_token_file_credential:
+            credentials.append(_TokenFileCredential())
         if not self.exclude_environment_credential:
             credentials.append(EnvironmentCredential(authority=self.authority))
         if not self.exclude_managed_identity_credential:
@@ -155,8 +160,8 @@ class _DefaultAzureCredential(_ChainedTokenCredential):
             raise ValueError("subscription_id is mandatory parameter")
 
         # returns the cached tenant_id if available
-        if self._successfull_tenant_id is not None:
-            return self._successfull_tenant_id
+        if self._successful_tenant_id is not None:
+            return self._successful_tenant_id
 
         try:
             uri = (
@@ -200,8 +205,8 @@ class _DefaultAzureCredential(_ChainedTokenCredential):
             )
 
             regex = re.compile(pattern=r"([a-f0-9]+[-]){4}[a-f0-9]+", flags=re.IGNORECASE)
-            self._successfull_tenant_id = regex.search(tenant_uri).group()
-            return self._successfull_tenant_id
+            self._successful_tenant_id = regex.search(tenant_uri).group()
+            return self._successful_tenant_id
 
         except Exception as e:
             _LOGGER.debug(

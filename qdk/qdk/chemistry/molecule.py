@@ -22,7 +22,11 @@ from qdk.chemistry.solvers.util import num_electrons
 
 import basis_set_exchange as bse
 
-from rdkit.Chem import AllChem as Chem
+try:
+    from rdkit.Chem import AllChem as Chem
+except ImportError as e:
+    raise ImportError("Missing dependency: rdkit. \
+Install with Conda: conda install -c rdkit rdkit")
 
 _log = logging.getLogger(__name__)
 
@@ -57,7 +61,9 @@ class Molecule(object):
         self.design_widget = None
         self._xyz = xyz
 
-        if mol:
+        if xyz:
+            self.widget = JsmolWidget.from_str(data=xyz)
+        elif mol:
             self.widget = JsmolWidget.from_mol(mol=mol, num_confs=num_confs)
         else:
             self.widget = None

@@ -3,17 +3,19 @@
 # Licensed under the MIT License.
 ##
 import logging
-import azure.quantum
 
 from typing import List, Union, Any, Optional
 from enum import Enum
 from azure.quantum import Workspace, Job
 from azure.quantum._client.models import JobDetails
-from azure.quantum.optimization import Problem
+from azure.quantum.optimization import Problem, ProblemType
 from azure.quantum.storage import (
     ContainerClient,
     create_container_using_client,
+    remove_sas_token,
+    get_container_uri
 )
+from azure.quantum.job.base_job import DEFAULT_TIMEOUT
 
 logger = logging.getLogger(__name__)
 
@@ -32,15 +34,15 @@ __all__ = [
 
 class RangeSchedule:
     def __init__(self, schedule_type: str, initial: float, final: float):
-        """The constructor of Range Scheduler for solver.
+        """Constructor of RangeSchedule for solvers.
 
         :param schedule_type:
-            specifies schedule_type of range scheduler,
-            currently only support 'linear' and 'geometric'.
+            str, type of the RangeSchedule
+            currently only supports 'linear' and 'geometric'.
         :param initial:
-            initial value of range schedule.
+            float, initial value of RangeSchedule
         :param final:
-            stop value of range schedule
+            float, final value of the RangeSchedule
         """
         self.schedule_type = schedule_type
         self.initial = initial
@@ -49,7 +51,7 @@ class RangeSchedule:
             self.schedule_type == "linear" or self.schedule_type == "geometric"
         ):
             raise ValueError(
-                '"schedule_type" can only be "linear" or "geometric"!'
+                '"schedule_type" must be "linear" or "geometric"!'
             )
 
 
@@ -92,76 +94,65 @@ class Solver:
             Whether or not to compress the problem when uploading it
             the Blob Storage.
         """
-        # Create a container URL:
-        job_id = Job.create_job_id()
-        logger.info(f"Submitting job with id: {job_id}")
-
-        container_name = f"job-{job_id}"
-
-        if not self.workspace.storage:
-            # No storage account is passed, in this
-            # case, get linked account from the service
-            container_uri = self.workspace._get_linked_storage_sas_uri(
-                container_name
-            )
-            container_client = ContainerClient.from_container_url(
-                container_uri
-            )
-            create_container_using_client(container_client)
-            container_uri = azure.quantum.storage.remove_sas_token(
-                container_uri
-            )
-        else:
-            # Storage account is passed, use it to generate a container_uri
-            container_uri = azure.quantum.storage.get_container_uri(
-                self.workspace.storage, container_name
-            )
-
-        logger.debug(f"Container URI: {container_uri}")
-
-        if isinstance(problem, str):
-            name = "Optimization problem"
-            problem_uri = problem
-        elif isinstance(problem, Problem):
+        if isinstance(problem, Problem):
+            self.check_valid_problem(problem)
+            # Create job from input data
             name = problem.name
-            problem_uri = problem.upload(
-                self.workspace,
-                compress=compress,
-                container_name=container_name,
+            blob = problem.to_blob(compress=compress)
+            encoding = "gzip" if compress else ""
+            job = Job.from_input_data(
+                workspace=self.workspace,
+                name=name,
+                target=self.target,
+                input_data=blob,
                 blob_name="inputData",
+                encoding=encoding,
+                content_type="application/json",
+                provider_id=self.provider,
+                input_data_format=self.input_data_format,
+                output_data_format=self.output_data_format,
+                input_params=self.params,
             )
+
         else:
-            name = problem.name
-            problem_uri = problem.uploaded_blob_uri
+            if hasattr(problem, "uploaded_blob_uri"):
+                name = problem.name
+                problem_uri = problem.uploaded_blob_uri
 
-        logger.info(
-            f"Submitting problem '{name}'. Using payload from: '{problem_uri}'"
-        )
+            elif isinstance(problem, str):
+                name = "Optimization problem"
+                problem_uri = problem
+            
+            else:
+                raise ValueError("Cannot submit problem: should be of type str, Problem or have uploaded_blob_uri attribute.")
 
-        details = JobDetails(
-            id=job_id,
-            name=name,
-            container_uri=container_uri,
-            input_data_format=self.input_data_format,
-            output_data_format=self.output_data_format,
-            input_data_uri=problem_uri,
-            provider_id=self.provider,
-            target=self.target,
-            input_params=self.params,
-        )
+            # Create job from storage URI
+            job = Job.from_storage_uri(
+                workspace=self.workspace,
+                name=name,
+                target=self.target,
+                input_data_uri=problem_uri,
+                provider_id=self.provider,
+                input_data_format=self.input_data_format,
+                output_data_format=self.output_data_format,
+                input_params=self.params
+            )
 
-        logger.debug(f"==> submitting: {details}")
-        job = self.workspace.submit_job(Job(self.workspace, details))
         return job
 
-    def optimize(self, problem: Union[str, Problem]):
-        """Submits the Problem to the associated
+    def optimize(self, problem: Union[str, Problem], timeout_secs: int=DEFAULT_TIMEOUT):
+        """[Submits the Problem to the associated
             Azure Quantum Workspace and get the results.
 
         :param problem:
             The Problem to solve. It can be an instance of a Problem,
             or the URL of an Azure Storage Blob where the serialized version
             of a Problem has been uploaded.
+        :type problem: Union[str, Problem]
+        :param timeout_secs: Timeout in seconds, defaults to 300
+        :type timeout_secs: int
+        :return: Job results
+        :rtype: dict
         """
         if not isinstance(problem, str):
             self.check_submission_warnings(problem)
@@ -169,7 +160,7 @@ class Solver:
         job = self.submit(problem)
         logger.info(f"Submitted job: '{job.id}'")
 
-        return job.get_results()
+        return job.get_results(timeout_secs=timeout_secs)
 
     def set_one_param(self, name: str, value: Any):
         if value is not None:
@@ -179,8 +170,11 @@ class Solver:
             params[name] = str(value) if self.force_str_params else value
 
     def set_number_of_solutions(self, number_of_solutions: int):
-        """Sets the number of solutions to return. Applies to all solvers. Default 1 if not supplied.
-        
+        """Sets the number of solutions to return.
+
+        Applies to all solvers.
+        Default value is 1 if not supplied.
+
         :param number_of_solutions:
             Number of solutions to return. Must be a positive integer.
         """
@@ -214,59 +208,179 @@ class Solver:
                         and resubmitting with a lower timeout."
                 )
 
-    def check_set_schedule(self, schedule: RangeSchedule, schedule_name: str):
-        """Check whether the schedule parameter is set well from RangeSchedule.
-        :param schedule:
-            schedule paramter to be checked whether is from RangeSchedule.
-        :param schedule_name:
-            name of the schedule parameter.
-        """
-        if not (schedule is None):
-            if not isinstance(schedule, RangeSchedule):
+    def check_valid_problem(self, problem):
+        # Evaluate Problem and Solver compatibility.
+        if problem.problem_type in {ProblemType.pubo_grouped, ProblemType.ising_grouped}:
+            if not self.supports_grouped_terms():
                 raise ValueError(
-                    f'{schedule_name} can only be from class "RangeSchedule"!'
+                    f"Solver type is not compatible"
+                    f"with problem type {problem.problem_type};"
+                    f"Try PopulationAnnealing or SubstochasticMonteCarlo."
+                )
+
+    def supports_grouped_terms(self):
+        """
+        Return whether or not the Solver class supported grouped terms in the cost function.
+        This should be overridden by Solver subclasses which do support grouped terms.
+        """
+        return False
+
+    class ScheduleEvolution(Enum):
+        INCREASING = 1
+        DECREASING = 2
+
+    def check_set_schedule(
+        self,
+        schedule_name: str,
+        schedule_value: RangeSchedule,
+        evolution: Optional[ScheduleEvolution] = None,
+        lower_bound_exclusive: Optional[float] = None,
+        lower_bound_inclusive: Optional[float] = None,
+    ):
+        """Set the parameter `schedule_name` from the value `schedule_value`
+        and check that it is of type `RangeSchedule` and each end satisfies
+        the specified bound.
+
+        :param schedule_name:
+            Name of the schedule parameter.
+        :param schedule_value:
+            Schedule value to be assigned and checked.
+        :param evolution
+            Expected schedule evolution (INCREASING or DECREASING)
+        :lower_bound_exclusive:
+            Exclusive lower bound for both ends of the schedule, optional.
+        :lower_bound_inclusive:
+            Inclusive lower bound for both ends of the schedule, optional.
+        """
+        if not (schedule_value is None):
+            if not isinstance(schedule_value, RangeSchedule):
+                raise ValueError(
+                    f"{schedule_name} must be of type RangeSchedule; found"
+                    f" type({schedule_name})={type(schedule_value).__name__}."
                 )
             schedule_param = {
-                "type": schedule.schedule_type,
-                "initial": schedule.initial,
-                "final": schedule.final,
+                "type": schedule_value.schedule_type,
+                "initial": schedule_value.initial,
+                "final": schedule_value.final,
             }
+            if evolution is not None:
+                if (evolution == self.ScheduleEvolution.INCREASING and
+                        schedule_value.initial > schedule_value.final):
+                    raise ValueError(
+                            f"Schedule for {schedule_name} must be increasing;"
+                            f" found {schedule_name}.initial"
+                            f"={schedule_value.initial}"
+                            f" > {schedule_value.final}"
+                            f"={schedule_name}.final."
+                    )
+                if (evolution == self.ScheduleEvolution.DECREASING and
+                        schedule_value.initial < schedule_value.final):
+                    raise ValueError(
+                            f"Schedule for {schedule_name} must be decreasing;"
+                            f" found {schedule_name}.initial"
+                            f"={schedule_value.initial}"
+                            f" < {schedule_value.final}"
+                            f"={schedule_name}.final."
+                    )
+            self.check_limit(
+                    f"{schedule_name}.initial",
+                    schedule_value.initial,
+                    lower_bound_exclusive=lower_bound_exclusive,
+                    lower_bound_inclusive=lower_bound_inclusive)
+            self.check_limit(
+                    f"{schedule_name}.final",
+                    schedule_value.final,
+                    lower_bound_exclusive=lower_bound_exclusive,
+                    lower_bound_inclusive=lower_bound_inclusive)
             self.set_one_param(schedule_name, schedule_param)
 
-    def check_set_positive_int(self, var: int, var_name: str):
-        """Check whether the var parameter is a positive integer.
-        :param var:
-            var paramter to be checked whether is a positive integer.
-        :param var_name:
-            name of the variable.
-        """
-        if not (var is None):
-            if not isinstance(var, int):
-                raise ValueError(f"{var_name} shall be int!")
-            if var <= 0:
-                raise ValueError(f"{var_name} must be positive!")
-            self.set_one_param(var_name, var)
+    def check_set_positive_int(
+            self,
+            parameter_name: str,
+            parameter_value: int):
+        """Set the parameter `parameter_name` from the value `parameter_value`
+        and check that it is a positive integer.
 
-    def check_set_float_limit(
-        self, var: float, var_name: str, var_limit: float
-    ):
-        """Check whether the var parameter is a float larger than var_limit.
-        :param var:
-            var paramter to be checked
-            whether is a float larger than var_limit.
-        :param var_name:
-            name of the variable.
-        :var_limit:
-            limit value of the variable to be checked.
+        :param parameter_name:
+            Name of the parameter.
+        :param parameter_value:
+            Value to be assigned and checked.
         """
-        if not (var is None):
-            if not (isinstance(var, float) or isinstance(var, int)):
-                raise ValueError(f"{var_name} shall be float!")
-            if var <= var_limit:
+        if not (parameter_value is None):
+            if not isinstance(parameter_value, int):
                 raise ValueError(
-                    f"{var_name} can not be smaller than {var_limit}!"
+                        f"{parameter_name} must be of type int; found"
+                        f"type({parameter_name})"
+                        f"={type(parameter_value).__name__}.")
+            if parameter_value <= 0:
+                raise ValueError(
+                        f"{parameter_name} must be positive; found "
+                        f"{parameter_name}={parameter_value}.")
+            self.set_one_param(parameter_name, parameter_value)
+
+    def check_set_float(
+        self,
+        parameter_name: str,
+        parameter_value: float,
+        lower_bound_exclusive: Optional[float] = None,
+        lower_bound_inclusive: Optional[float] = None,
+    ):
+        """Set the parameter `parameter_name` from the value `parameter_value`
+        and check that it has a float value satisfying bounds.
+
+        :param parameter_name:
+            Name of the parameter.
+        :param parameter_value:
+            Value to be assigned and checked.
+        :lower_bound_exclusive:
+            Exclusive lower bound to check parameter_value against, optional.
+        :lower_bound_inclusive:
+            Inclusive lower bound to check parameter_value against, optional.
+        """
+        if not (parameter_value is None):
+            if not (isinstance(parameter_value, float) or
+                    isinstance(parameter_value, int)):
+                raise ValueError(f"{parameter_name} must be a float!")
+            self.check_limit(
+                    parameter_name=parameter_name,
+                    parameter_value=parameter_value,
+                    lower_bound_exclusive=lower_bound_exclusive,
+                    lower_bound_inclusive=lower_bound_inclusive)
+            self.set_one_param(parameter_name, parameter_value)
+
+    def check_limit(
+        self,
+        parameter_name: str,
+        parameter_value: Optional[float],
+        lower_bound_exclusive: Optional[float] = None,
+        lower_bound_inclusive: Optional[float] = None,
+    ):
+        """Check whether `parameter_value` satisfies a lower bound.
+
+        :param parameter_name:
+            Name of the parameter.
+        :param parameter_value:
+            Value to be checked.
+        :lower_bound_exclusive:
+            Exclusive lower bound to check parameter_value against, optional.
+        :lower_bound_inclusive:
+            Inclusive lower bound to check parameter_value against, optional.
+        """
+        if not (parameter_value is None):
+            if (lower_bound_exclusive is not None and
+                    parameter_value <= lower_bound_exclusive):
+                raise ValueError(
+                    f"{parameter_name} must be greater than "
+                    f"{lower_bound_exclusive}; "
+                    f"found {parameter_name}={parameter_value}."
                 )
-            self.set_one_param(var_name, var)
+            if (lower_bound_inclusive is not None and
+                    parameter_value < lower_bound_inclusive):
+                raise ValueError(
+                    f"{parameter_name} must be greater equal "
+                    f"{lower_bound_inclusive}; found "
+                    f"{parameter_name}={parameter_value}."
+                )
 
 
 class HardwarePlatform(Enum):
@@ -533,32 +647,39 @@ class PopulationAnnealing(Solver):
         population: Optional[int] = None,
         sweeps: Optional[int] = None,
         beta: Optional[RangeSchedule] = None,
-        culling_fraction: Optional[float] = None,
+        timeout: Optional[int] = None,
     ):
-        """The constructor of Population Annealing Search solver.
+        """Constructor of the Population Annealing solver.
 
         Population Annealing Search solver for binary optimization problems
         with k-local interactions on an all-to-all graph topology with double
         precision support for the coupler weights.
 
-        This solver is CPU only, and not support parameter free now.
+        This solver is CPU only.
 
         :param alpha:
-            ratio to trigger a restart, must be larger than 1
+            Ratio to trigger a restart. Must be larger than 1.
         :param seed:
-            specifies a random seed value.
+            Specifies the random number generator seed value.
         :population:
-            size of target population, must be positive
+            Size of the population. Must be positive.
         :param sweeps:
-            Number of monte carlo sweeps
+            Number of Monte Carlo sweeps. Must be positive.
         :param beta:
-            beta value to control the annealing temperatures,
-            it must be a object of RangeSchedule
-        :param culling_fraction:
-            constant culling rate, must be larger than 0
+            Evolution of the inverse annealing temperature.
+            Must be an object of type RangeSchedule describing
+            an increasing evolution (0 < initial < final).
+        :param timeout:
+            specifies maximum number of seconds to run the core solver
+            loop. initialization time does not respect this value, so the
+            solver may run longer than the value specified. Setting this value
+            will trigger the parameter free population annealing solver.
         """
 
-        target = "microsoft.populationannealing.cpu"
+        if timeout is None:
+            target = "microsoft.populationannealing.cpu" 
+        else:
+            target = "microsoft.populationannealing-parameterfree.cpu"
         super().__init__(
             workspace=workspace,
             provider="Microsoft",
@@ -567,12 +688,17 @@ class PopulationAnnealing(Solver):
             output_data_format="microsoft.qio-results.v2",
         )
 
-        self.check_set_float_limit(alpha, "alpha", 1.0)
+        self.check_set_float("alpha", alpha, lower_bound_exclusive=1.0)
         self.set_one_param("seed", seed)
-        self.check_set_positive_int(population, "population")
-        self.check_set_positive_int(sweeps, "sweeps")
-        self.check_set_schedule(beta, "beta")
-        self.check_set_float_limit(culling_fraction, "culling_fraction", 0.0)
+        self.check_set_positive_int("population", population)
+        self.check_set_positive_int("sweeps", sweeps)
+        self.check_set_schedule(
+                "beta", beta, evolution=self.ScheduleEvolution.INCREASING,
+                lower_bound_exclusive=0)
+        self.check_set_positive_int("timeout", timeout)
+
+    def supports_grouped_terms(self):
+        return True
 
 
 class SubstochasticMonteCarlo(Solver):
@@ -585,29 +711,43 @@ class SubstochasticMonteCarlo(Solver):
         step_limit: Optional[int] = None,
         beta: Optional[RangeSchedule] = None,
         steps_per_walker: Optional[int] = None,
+        timeout: Optional[int] = None,
     ):
-        """The constructor of Substochastic Monte Carlo solver.
+        """Constructor of Substochastic Monte Carlo solver.
 
         Substochastic Monte Carlo solver for binary optimization problems
         with k-local interactions on an all-to-all graph topology with double
         precision support for the coupler weights.
 
-        This solver is CPU only, and not support parameter free now.
+        This solver is CPU only.
 
         :param alpha:
-            alpha (chance to step) values evolve over time
+            Evolution of alpha (chance to step) over time.
+            Must be an object of type RangeSchedule describing a
+            decreasing probability (1 >= initial > final >= 0).
         :param seed:
-            specifies a random seed value.
+            Specifies the random number generator seed value.
         :target_population:
-            size of target population, must be positive
+            Target size of the population. Must be positive.
         :param step_limit:
-            number of monte carlo steps, must be positive
+            Number of Monte Carlo steps (not sweeps!). Must be positive.
         :param beta:
-            beta (resampling factor) values evolve over time
+            Evolution of beta (resampling factor) over time.
+            Must be an object of type RangeSchedule describing
+            an increasing evolution (0 < initial < final)
         :param steps_per_walker:
-            number of steps to attempt for each walker, must be postive
+            Number of steps to attempt for each walker. Must be positive.
+        :param timeout:
+            Specifies maximum number of seconds to run the core solver
+            loop. Initialization time does not respect this value, so the
+            solver may run longer than the value specified. Setting this value
+            will trigger the parameter free substochastic monte carlo solver.
         """
-        target = "microsoft.substochasticmontecarlo.cpu"
+
+        if timeout is None:
+            target = "microsoft.substochasticmontecarlo.cpu"
+        else:
+            target = "microsoft.substochasticmontecarlo-parameterfree.cpu"
         super().__init__(
             workspace=workspace,
             provider="Microsoft",
@@ -616,8 +756,16 @@ class SubstochasticMonteCarlo(Solver):
             output_data_format="microsoft.qio-results.v2",
         )
         self.set_one_param("seed", seed)
-        self.check_set_schedule(beta, "beta")
-        self.check_set_schedule(alpha, "alpha")
-        self.check_set_positive_int(target_population, "target_population")
-        self.check_set_positive_int(steps_per_walker, "steps_per_walker")
-        self.check_set_positive_int(step_limit, "step_limit")
+        self.check_set_positive_int("steps_per_walker", steps_per_walker)
+        self.check_set_positive_int("target_population", target_population)
+        self.check_set_positive_int("step_limit", step_limit)
+        self.check_set_schedule(
+                "alpha", alpha, evolution=self.ScheduleEvolution.DECREASING,
+                lower_bound_inclusive=0)
+        self.check_set_schedule(
+                "beta", beta, evolution=self.ScheduleEvolution.INCREASING,
+                lower_bound_exclusive=0)
+        self.check_set_positive_int("timeout", timeout)
+    
+    def supports_grouped_terms(self):
+        return True

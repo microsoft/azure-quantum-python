@@ -1,7 +1,7 @@
 #!/bin/env python
 # -*- coding: utf-8 -*-
 ##
-# test_solvers.py: Checks correctness of azure.quantum.optimization module.
+# test_problem.py: Checks correctness of azure.quantum.optimization module.
 ##
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
@@ -12,16 +12,16 @@ import json
 import numpy
 import os
 import re
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 from typing import TYPE_CHECKING
-from azure.quantum.optimization import Problem, Term
+from azure.quantum.optimization import Problem, ProblemType, Term, GroupedTerm
 import azure.quantum.optimization.problem
 from common import expected_terms
 
 class TestProblemClass(unittest.TestCase):
     def setUp(self):
         self.mock_ws = Mock()
-        self.mock_ws._get_linked_storage_sas_uri.return_value = Mock()
+        self.mock_ws.get_container_uri = Mock(return_value = "mock_container_uri/foo/bar")
 
         ## QUBO problem
         self.problem = Problem(name="test")
@@ -83,7 +83,7 @@ class TestProblemClass(unittest.TestCase):
             k=self.pubo_problem.k,
             c=self.pubo_problem.c
         )
-        
+
     def test_problem_name_serialization(self):
         problem_names = ["test",
                          "my_problem"]
@@ -126,19 +126,29 @@ class TestProblemClass(unittest.TestCase):
         deserialized_problem = Problem.deserialize(problem_as_json=serialized_problem_without_name,
                                                    name=new_problem_name)
         assert new_problem_name == deserialized_problem.name
+              
+    def test_upload(self):
+        with patch("azure.quantum.optimization.problem.BlobClient") as mock_blob_client, \
+            patch("azure.quantum.optimization.problem.ContainerClient") as mock_container_client, \
+            patch("azure.quantum.job.base_job.upload_blob") as mock_upload:
+            mock_blob_client.from_blob_url.return_value = Mock()
+            mock_container_client.from_container_url.return_value = Mock()
+            assert(self.pubo_problem.uploaded_blob_uri == None)
+            actual_result = self.pubo_problem.upload(self.mock_ws)
+            mock_upload.get_blob_uri_with_sas_token = Mock()
+            azure.quantum.job.base_job.upload_blob.assert_called_once()
 
 
     def test_download(self):
-        azure.quantum.optimization.problem.download_blob = Mock(
-            return_value=expected_terms()
-        )
-        azure.quantum.optimization.problem.BlobClient = Mock()
-        azure.quantum.optimization.problem.BlobClient.from_blob_url.return_value = Mock()
-        azure.quantum.optimization.problem.ContainerClient = Mock()
-        azure.quantum.optimization.problem.ContainerClient.from_container_url.return_value = Mock()
-        acutal_result = self.problem.download(self.mock_ws)
-        assert acutal_result.name == "test"
-        azure.quantum.optimization.problem.download_blob.assert_called_once()
+        with patch("azure.quantum.optimization.problem.download_blob") as mock_download_blob,\
+            patch("azure.quantum.optimization.problem.BlobClient") as mock_blob_client,\
+            patch("azure.quantum.optimization.problem.ContainerClient") as mock_container_client:
+            mock_download_blob.return_value=expected_terms()
+            mock_blob_client.from_blob_url.return_value = Mock()
+            mock_container_client.from_container_url.return_value = Mock()
+            actual_result = self.problem.download(self.mock_ws)
+            assert actual_result.name == "test"
+            azure.quantum.optimization.problem.download_blob.assert_called_once()
 
     def test_get_term(self):
         terms = self.problem.get_terms(0)
@@ -148,6 +158,18 @@ class TestProblemClass(unittest.TestCase):
         test_prob = Problem(name="random")
         with self.assertRaises(Exception):
             test_prob.get_terms(id=0)
+    
+    def test_grouped_type(self):
+        problem = Problem(name="test_pubo_grouped", problem_type=ProblemType.pubo)
+        problem.terms = [
+            Term(c=3, indices=[1, 0, 1]),
+            Term(c=5, indices=[2, 0, 0]),
+            Term(c=-1, indices=[1, 0, 0]),
+            Term(c=4, indices=[0, 2, 1])
+        ]
+        assert problem.problem_type is ProblemType.pubo
+        problem.add_slc_term([(3,0), (2,1), (-1,None)])
+        assert problem.problem_type is ProblemType.pubo_grouped
 
     def test_create_npz_file_default(self):
         # When no keywords are supplied, columns have default names

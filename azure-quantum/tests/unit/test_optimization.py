@@ -1,7 +1,7 @@
 #!/bin/env python
 # -*- coding: utf-8 -*-
 ##
-# test_problem.py: Checks correctness of azure.quantum.optimization module.
+# test_optimization.py: Checks correctness of azure.quantum.optimization module.
 ##
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
@@ -9,8 +9,7 @@
 
 import json
 import unittest
-from azure.quantum import Workspace
-from azure.quantum.optimization import Problem, ProblemType, Term
+from azure.quantum.optimization import Problem, ProblemType, Term, GroupType, GroupedTerm
 from azure.quantum.optimization.solvers import (
     ParallelTempering,
     PopulationAnnealing,
@@ -67,12 +66,44 @@ class TestProblem(QuantumTestBase):
         self.assertEqual(Term(c=1, indices=[1, 2]), problem.terms[1])
 
         more = []
-        for i in range(count + 1):
-            more.append(Term(c=i, indices=[i, i - 1]))
+        for i in range(1,count+1):
+            more.append(Term(c=i, indices=[i-1, i]))
         problem.add_terms(more)
-        self.assertEqual((count * 2) + 1, len(problem.terms))
+        self.assertEqual(2*count, len(problem.terms))
         self.assertEqual(
-            Term(c=count, indices=[count, count - 1]), problem.terms[count * 2]
+            Term(c=count, indices=[count-1, count]), problem.terms[-1]
+        )
+
+        subterms = [Term(c=1, indices=[i]) for i in range(count)]
+        subterms.append(Term(c=-5, indices=[]))
+        problem.add_slc_term(terms=[(1, i) for i in range(count)] + [(-5, None)], c=2)
+        self.assertEqual(2*count + 1, len(problem.terms))
+        self.assertEqual(
+            GroupedTerm(GroupType.squared_linear_combination,
+                        subterms, c=2),
+            problem.terms[-1]
+        )
+
+        problem.add_terms(subterms, term_type=GroupType.squared_linear_combination, c=2)
+        self.assertEqual(2*count + 2, len(problem.terms))
+        self.assertEqual(
+            GroupedTerm(GroupType.squared_linear_combination,
+                        subterms, c=2),
+            problem.terms[-1]
+        )
+        problem.add_terms(subterms, term_type=GroupType.combination, c=0.5)
+        self.assertEqual(3*count + 3, len(problem.terms))
+        self.assertEqual(
+            [Term(subterm.ids, c=0.5*subterm.c) for subterm in subterms],
+            problem.terms[-len(subterms):]
+        )
+
+        problem.add_slc_term(subterms, c=3)
+        self.assertEqual(3*count + 4, len(problem.terms))
+        self.assertEqual(
+            GroupedTerm(GroupType.squared_linear_combination,
+                        subterms, c=3),
+            problem.terms[-1]
         )
 
     def test_provide_cterms(self):
@@ -80,34 +111,73 @@ class TestProblem(QuantumTestBase):
         terms = []
         for i in range(count):
             terms.append(Term(c=i, indices=[i, i + 1]))
+        terms.append(GroupedTerm(
+            GroupType.squared_linear_combination,
+            [Term(c=i/2, indices=[i+2]) for i in range(count)] + [Term(c=5, indices=[])],
+            c=1)
+        )
         problem = Problem(
             name="test", terms=terms, problem_type=ProblemType.pubo
         )
 
-        self.assertEqual(ProblemType.pubo, problem.problem_type)
-        self.assertEqual(count, len(problem.terms))
+        self.assertEqual(ProblemType.pubo_grouped, problem.problem_type)
+        self.assertEqual(count+1, len(problem.terms))
         self.assertEqual(Term(c=1, indices=[1, 2]), problem.terms[1])
+
+    def test_errant_grouped_terms(self):
+        with self.assertRaises(ValueError):
+            _ = GroupedTerm(
+                GroupType.combination,
+                [Term(c=i+2, indices=[i,i+1]) for i in range(2)], c=1
+            )
+        with self.assertRaises(ValueError):
+            _ = GroupedTerm(
+                GroupType.squared_linear_combination,
+                [Term(c=i+2, indices=[i%2]) for i in range(3)], c=1
+            )
+        with self.assertRaises(ValueError):
+            _ = GroupedTerm(
+                GroupType.squared_linear_combination,
+                [Term(c=i+1, indices=[i, i+1]) for i in range(2)], c=1
+            )
+        with self.assertRaises(ValueError):
+            _ = GroupedTerm(
+                GroupType.squared_linear_combination,
+                [Term(c=i, indices=[]) for i in range(1,3)], c=1
+            )
+        
 
     def test_serialization_cterms(self):
         count = 2
         terms = []
         for i in range(count):
             terms.append(Term(c=i, indices=[i, i + 1]))
+        terms.append(
+            GroupedTerm(
+                GroupType.squared_linear_combination,
+                [Term(c=0, indices=[0]), Term(c=1, indices=[1]), Term(c=-5, indices=[])],
+                c=1
+            )
+        )
         problem = Problem(name="test", terms=terms)
 
         expected = json.dumps(
             {
                 "cost_function": {
                     "version": "1.0",
-                    "type": "ising",
+                    "type": "ising_grouped",
                     "terms": [
                         {"c": 0, "ids": [0, 1]},
                         {"c": 1, "ids": [1, 2]},
+                        {"type": "slc", "c": 1, "terms": [
+                            {"c": 0, "ids": [0]},
+                            {"c": 1, "ids": [1]},
+                            {"c": -5, "ids": []}
+                        ]}
                     ],
                 }
             }
         )
-        print(problem.serialize())
         actual = problem.serialize()
         self.assertEqual(expected, actual)
 
@@ -140,14 +210,23 @@ class TestProblem(QuantumTestBase):
         terms = []
         for i in range(count):
             terms.append(Term(c=i, indices=[i, i + 1]))
+        subterms = [Term(c=1, indices=[i]) for i in range(3)]
+        subterms.append(Term(c=-2, indices=[]))
+        terms.append(
+            GroupedTerm(GroupType.squared_linear_combination, subterms, c=1)
+        )
         problem = Problem(name="test", terms=terms)
         deserialized = Problem.deserialize(problem.serialize(), problem.name)
         self.assertEqual(problem.name, deserialized.name)
         self.assertEqual(problem.problem_type, deserialized.problem_type)
-        self.assertEqual(count, len(deserialized.terms))
+        self.assertEqual(count + 1, len(deserialized.terms))
         self.assertEqual(problem.init_config, deserialized.init_config)
         self.assertEqual(Term(c=0, indices=[0, 1]), problem.terms[0])
         self.assertEqual(Term(c=1, indices=[1, 2]), problem.terms[1])
+        self.assertEqual(
+            GroupedTerm(GroupType.squared_linear_combination, subterms, c=1),
+            problem.terms[-1]
+        )
 
     def test_deserialize_init_config(self):
         count = 2
@@ -198,6 +277,22 @@ class TestProblem(QuantumTestBase):
         )
         self.assertEqual(10, problem.evaluate({}))
 
+        terms = [
+            Term(c=2, indices=[0, 1, 2]),
+            GroupedTerm(GroupType.squared_linear_combination, terms=[
+                Term(c=1, indices=[0]),
+                Term(c=1, indices=[1]),
+                Term(c=1, indices=[2]),
+                Term(c=-5, indices=[])
+            ], c=3)
+        ]
+        problem = Problem(
+            name="test", terms=terms, problem_type=ProblemType.pubo
+        )
+        self.assertEqual(27, problem.evaluate({"0": 0, "1": 1, "2": 1}))
+        self.assertEqual(14, problem.evaluate({"0": 1, "1": 1, "2": 1}))
+
+
     def test_problem_fixed_variables(self):
         terms = []
         problem = Problem(
@@ -223,6 +318,35 @@ class TestProblem(QuantumTestBase):
             problem.set_fixed_variables({"0": 1, "1": 1, "2": 1}).terms,
         )
 
+        # test grouped terms
+        terms = [
+            Term(c=1, indices=[]),
+            Term(c=2, indices=[0, 1, 2]),
+            GroupedTerm(GroupType.squared_linear_combination, terms=[
+                Term(c=1, indices=[0]),
+                Term(c=1, indices=[1]),
+                Term(c=-5, indices=[])
+            ], c=3)
+        ]
+        problem = Problem(
+            name="test", terms=terms, problem_type=ProblemType.pubo
+        )
+        self.assertEqual(
+            [Term(c=30, indices=[])],
+            problem.set_fixed_variables({"0": 1, "1": 1, "2": 1}).terms,
+        )
+        self.assertEqual(
+            [
+                Term(c=2, indices=[1]),
+                GroupedTerm(GroupType.squared_linear_combination, terms=[
+                    Term(c=-4, indices=[]),
+                    Term(c=1, indices=[1])
+                ], c=3),
+                Term(c=1, indices=[])
+            ],
+            problem.set_fixed_variables({"0": 1, "2": 1}).terms,
+        )
+
         # test init_config gets transferred
         problem = Problem(
             "My Problem", terms=terms, init_config={"0": 1, "1": 1, "2": 1}
@@ -243,6 +367,14 @@ class TestProblem(QuantumTestBase):
         problem.add_terms(
             [Term(indices=[9999], c=1.0)] * int(1e6)
         )  # create 1mil dummy terms
+        self.assertTrue(problem.is_large())
+
+        problem = Problem(name="test", terms=[GroupedTerm(
+            GroupType.squared_linear_combination, terms=[Term(indices=[9999], c=1)], c=1
+        ) for i in range(int(1e6))], problem_type=ProblemType.pubo)
+        self.assertTrue(not problem.is_large())
+
+        problem.add_slc_term([(1.0, i) for i in range(3000)])
         self.assertTrue(problem.is_large())
 
 
@@ -368,7 +500,6 @@ class TestSolvers(QuantumTestBase):
             seed=8888,
             population=300,
             sweeps=1000,
-            culling_fraction=0.5,
             beta=beta,
         )
         self.assertIsNotNone(good)
@@ -377,7 +508,6 @@ class TestSolvers(QuantumTestBase):
         self.assertEqual(100.0, good.params["params"]["alpha"])
         self.assertEqual(300, good.params["params"]["population"])
         self.assertEqual(1000, good.params["params"]["sweeps"])
-        self.assertEqual(0.5, good.params["params"]["culling_fraction"])
         self.assertEqual(
             {"type": "linear", "initial": 0.8, "final": 5.8},
             good.params["params"]["beta"],
@@ -386,7 +516,7 @@ class TestSolvers(QuantumTestBase):
     def test_SubstochasticMonteCarlo_input_params(self):
         ws = self.create_workspace()
         beta = RangeSchedule("linear", 2.8, 15.8)
-        alpha = RangeSchedule("geometric", 1.8, 2.8)
+        alpha = RangeSchedule("geometric", 2.8, 1.8)
         good = SubstochasticMonteCarlo(
             ws,
             alpha=alpha,
@@ -400,7 +530,7 @@ class TestSolvers(QuantumTestBase):
         self.assertEqual("microsoft.substochasticmontecarlo.cpu", good.target)
         self.assertEqual(1888, good.params["params"]["seed"])
         self.assertEqual(
-            {"type": "geometric", "initial": 1.8, "final": 2.8},
+            {"type": "geometric", "initial": 2.8, "final": 1.8},
             good.params["params"]["alpha"],
         )
         self.assertEqual(3000, good.params["params"]["target_population"])
@@ -410,13 +540,23 @@ class TestSolvers(QuantumTestBase):
             {"type": "linear", "initial": 2.8, "final": 15.8},
             good.params["params"]["beta"],
         )
+    
+    def test_SubstochasticMonteCarlo_parameter_free(self):
+        ws = self.create_workspace()
+        good = SubstochasticMonteCarlo(
+            ws,
+            timeout=10,
+        )
+        self.assertIsNotNone(good)
+        self.assertEqual("microsoft.substochasticmontecarlo-parameterfree.cpu", good.target)
+        self.assertEqual(10, good.params["params"]["timeout"])
 
     def test_SSMC_bad_input_params(self):
         bad_range = None
         with self.assertRaises(ValueError) as context:
             bad_range = RangeSchedule("nothing", 2.8, 15.8)
         self.assertTrue(
-            '"schedule_type" can only be' in str(context.exception)
+            '"schedule_type" must be' in str(context.exception)
         )
         self.assertTrue(bad_range is None)
         beta = 1
@@ -433,8 +573,10 @@ class TestSolvers(QuantumTestBase):
                 steps_per_walker=5,
                 beta=beta,
             )
+        print(str(context.exception))
         self.assertTrue(
-            'can only be from class "RangeSchedule"!' in str(context.exception)
+            ('alpha must be of type RangeSchedule; '
+             'found type(alpha)=int') in str(context.exception)
         )
         self.assertTrue(bad_solver is None)
 
@@ -446,8 +588,128 @@ class TestSolvers(QuantumTestBase):
                 step_limit=1000,
                 steps_per_walker=-1,
             )
-        self.assertTrue("must be positive" in str(context.exception))
+        self.assertTrue(
+                ("steps_per_walker must be positive; "
+                 "found steps_per_walker=-1") in str(context.exception))
         self.assertTrue(bad_solver is None)
+
+        alpha_increasing = RangeSchedule("linear", 1.0, 2.0)
+        with self.assertRaises(ValueError) as context:
+            bad_solver = SubstochasticMonteCarlo(
+                ws,
+                seed=1888,
+                target_population=3000,
+                step_limit=1000,
+                alpha=alpha_increasing,
+                beta=beta,
+            )
+        self.assertTrue(
+                ("alpha must be decreasing; "
+                 "found alpha.initial=1.0 < 2.0=alpha.final.")
+                in str(context.exception))
+        self.assertTrue(bad_solver is None)
+
+        alpha_negative = RangeSchedule("linear", 1.0, -1.0)
+        with self.assertRaises(ValueError) as context:
+            bad_solver = SubstochasticMonteCarlo(
+                ws,
+                seed=1888,
+                target_population=3000,
+                step_limit=1000,
+                alpha=alpha_negative,
+                beta=beta,
+            )
+        self.assertTrue(
+                ("alpha.final must be greater equal 0; "
+                 "found alpha.final=-1.") in str(context.exception))
+        self.assertTrue(bad_solver is None)
+
+        alpha_strictly_negative = RangeSchedule("linear", -1.0, -2.0)
+        with self.assertRaises(ValueError) as context:
+            bad_solver = SubstochasticMonteCarlo(
+                ws,
+                seed=1888,
+                target_population=3000,
+                step_limit=1000,
+                alpha=alpha_strictly_negative,
+                beta=beta,
+            )
+        self.assertTrue(
+                ("alpha.initial must be greater equal 0; "
+                 "found alpha.initial=-1.") in str(context.exception))
+        self.assertTrue(bad_solver is None)
+
+        alpha = RangeSchedule("linear", 1.0, 0.0)
+        beta_decreasing = RangeSchedule("linear", 2.0, 1.0)
+        with self.assertRaises(ValueError) as context:
+            bad_solver = SubstochasticMonteCarlo(
+                ws,
+                seed=1888,
+                target_population=3000,
+                step_limit=1000,
+                alpha=alpha,
+                beta=beta_decreasing,
+            )
+        self.assertTrue(
+                ("beta must be increasing; "
+                 "found beta.initial=2.0 > 1.0=beta.final.")
+                in str(context.exception))
+        self.assertTrue(bad_solver is None)
+
+        beta_zero = RangeSchedule("linear", 0.0, 1.0)
+        with self.assertRaises(ValueError) as context:
+            bad_solver = SubstochasticMonteCarlo(
+                ws,
+                seed=1888,
+                target_population=3000,
+                step_limit=1000,
+                alpha=alpha,
+                beta=beta_zero,
+            )
+        self.assertTrue(
+                ("beta.initial must be greater than 0; "
+                 "found beta.initial=0.") in str(context.exception))
+        self.assertTrue(bad_solver is None)
+
+        beta_negative = RangeSchedule("linear", -1.0, 1.0)
+        with self.assertRaises(ValueError) as context:
+            bad_solver = SubstochasticMonteCarlo(
+                ws,
+                seed=1888,
+                target_population=3000,
+                step_limit=1000,
+                alpha=alpha,
+                beta=beta_negative,
+            )
+        self.assertTrue(
+                ("beta.initial must be greater than 0; "
+                 "found beta.initial=-1.0") in str(context.exception))
+        self.assertTrue(bad_solver is None)
+
+        beta_strictly_negative = RangeSchedule("linear", -2.0, -1.0)
+        with self.assertRaises(ValueError) as context:
+            bad_solver = SubstochasticMonteCarlo(
+                ws,
+                seed=1888,
+                target_population=3000,
+                step_limit=1000,
+                alpha=alpha,
+                beta=beta_strictly_negative,
+            )
+        self.assertTrue(
+                ("beta.initial must be greater than 0; "
+                 "found beta.initial=-2.0") in str(context.exception))
+        self.assertTrue(bad_solver is None)
+
+    def test_PopulationAnnealing_parameter_free(self):
+        ws = self.create_workspace()
+        good = PopulationAnnealing(
+            ws,
+            timeout=8,
+        )
+        self.assertIsNotNone(good)
+        self.assertEqual("microsoft.populationannealing-parameterfree.cpu", good.target)
+        self.assertEqual(8, good.params["params"]["timeout"])
 
     def test_PA_bad_input_params(self):
         beta = 1
@@ -460,11 +722,11 @@ class TestSolvers(QuantumTestBase):
                 seed=8888,
                 population=300,
                 sweeps=1000,
-                culling_fraction=0.5,
                 beta=beta,
             )
         self.assertTrue(
-            'can only be from class "RangeSchedule"!' in str(context.exception)
+            ("beta must be of type RangeSchedule; "
+             "found type(beta)=int.") in str(context.exception)
         )
         self.assertTrue(bad_solver is None)
 
@@ -475,16 +737,78 @@ class TestSolvers(QuantumTestBase):
                 seed=8888,
                 population=-300,
                 sweeps=1000,
-                culling_fraction=0.5,
             )
         self.assertTrue("must be positive" in str(context.exception))
         self.assertTrue(bad_solver is None)
 
         with self.assertRaises(ValueError) as context:
             bad_solver = PopulationAnnealing(
-                ws, alpha=0.2, seed=8888, sweeps=1000, culling_fraction=0.5
+                ws, alpha=0.2, seed=8888, sweeps=1000,
             )
-        self.assertTrue("can not be smaller than" in str(context.exception))
+        self.assertTrue(
+                ("alpha must be greater than 1.0; "
+                 "found alpha=0.2.") in str(context.exception))
+        self.assertTrue(bad_solver is None)
+
+        beta_decreasing = RangeSchedule("linear", 2.0, 1.0)
+        with self.assertRaises(ValueError) as context:
+            bad_solver = PopulationAnnealing(
+                ws,
+                alpha=100,
+                seed=8888,
+                population=300,
+                sweeps=1000,
+                beta=beta_decreasing,
+            )
+        self.assertTrue(
+                ("beta must be increasing; "
+                 "found beta.initial=2.0 > 1.0=beta.final.")
+                in str(context.exception))
+        self.assertTrue(bad_solver is None)
+
+        beta_zero = RangeSchedule("linear", 0.0, 1.0)
+        with self.assertRaises(ValueError) as context:
+            bad_solver = PopulationAnnealing(
+                ws,
+                alpha=100,
+                seed=8888,
+                population=300,
+                sweeps=1000,
+                beta=beta_zero,
+            )
+        self.assertTrue(
+                ("beta.initial must be greater than 0; "
+                 "found beta.initial=0.") in str(context.exception))
+        self.assertTrue(bad_solver is None)
+
+        beta_negative = RangeSchedule("linear", -1.0, 1.0)
+        with self.assertRaises(ValueError) as context:
+            bad_solver = PopulationAnnealing(
+                ws,
+                alpha=100,
+                seed=8888,
+                population=300,
+                sweeps=1000,
+                beta=beta_negative,
+            )
+        self.assertTrue(
+                ("beta.initial must be greater than 0; "
+                 "found beta.initial=-1.0") in str(context.exception))
+        self.assertTrue(bad_solver is None)
+
+        beta_strictly_negative = RangeSchedule("linear", -2.0, -1.0)
+        with self.assertRaises(ValueError) as context:
+            bad_solver = PopulationAnnealing(
+                ws,
+                alpha=100,
+                seed=8888,
+                population=300,
+                sweeps=1000,
+                beta=beta_strictly_negative,
+            )
+        self.assertTrue(
+                ("beta.initial must be greater than 0; "
+                 "found beta.initial=-2.0") in str(context.exception))
         self.assertTrue(bad_solver is None)
 
 
