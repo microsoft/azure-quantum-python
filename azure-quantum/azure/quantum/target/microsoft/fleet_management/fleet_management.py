@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 ##
 import io
+import gzip
 from typing import Any, Dict
 
 from azure.quantum.target.target import Target
@@ -10,19 +11,18 @@ from azure.quantum.job.job import Job
 from azure.quantum.workspace import Workspace
 
 
-class Honeywell(Target):
-    """Honeywell target."""
+class FleetManagement(Target):
+    """Microsoft Fleet Management target."""
 
     def __init__(
         self,
         workspace: Workspace,
-        name: str = "honeywell.hqs-lt-s1-apival",
-        input_data_format: str = "honeywell.openqasm.v1",
-        output_data_format: str = "honeywell.quantum-results.v1",
-        provider_id: str = "honeywell",
-        content_type: str = "application/qasm",
-        encoding: str = "",
-        **kwargs
+        name: str = "microsoft.fleetmanagement",
+        input_data_format: str = "microsoft.fleetmanagement.v1",
+        output_data_format: str = "microsoft.fleetmanagement-results.v1",
+        provider_id: str = "Microsoft.FleetManagement",
+        content_type: str = "application/json",
+        encoding: str = "gzip"
     ):
         super().__init__(
             workspace=workspace,
@@ -31,32 +31,29 @@ class Honeywell(Target):
             output_data_format=output_data_format,
             provider_id=provider_id,
             content_type=content_type,
-            encoding=encoding,
-            **kwargs
+            encoding=encoding
         )
 
     @staticmethod
     def _encode_input_data(data: str) -> bytes:
         stream = io.BytesIO()
-        stream.write(data.encode())
+        with gzip.GzipFile(fileobj=stream, mode="w") as fo:
+            fo.write(data.encode())
         return stream.getvalue()
 
     def submit(
         self,
-        circuit: str,
-        name: str = "honeywell-job",
-        num_shots: int = None,
+        input: str,
+        name: str = "fleet-management-job",
         input_params: Dict[str, Any] = None,
         **kwargs
     ) -> Job:
-        """Submit a Honeywell program (QASM format)
+        """Submit a Fleet Management problem
 
-        :param circuit: Quantum circuit in Honeywell QASM format
-        :type circuit: str
+        :param input: Input in json format
+        :type input: str
         :param name: Job name
         :type name: str
-        :param num_shots: Number of shots, defaults to None
-        :type num_shots: int
         :param input_params: Optional input params dict
         :type input_params: Dict[str, Any]
         :return: Azure Quantum job
@@ -64,12 +61,9 @@ class Honeywell(Target):
         """
         if input_params is None:
             input_params = {}
-        if num_shots is not None:
-            input_params = input_params.copy()
-            input_params["count"] = num_shots
 
         return super().submit(
-            input_data=circuit,
+            input_data=input,
             name=name,
             input_params=input_params,
             **kwargs

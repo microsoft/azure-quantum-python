@@ -9,10 +9,8 @@
 
 import unittest
 import json
-import pytest
 from typing import List
 
-from azure.quantum import Workspace
 from azure.quantum.optimization import (
     StreamingProblem,
     Problem,
