@@ -102,7 +102,7 @@ class TestProblemClass(unittest.TestCase):
 
             # name is in the correct place in the json structure
             problem_json = json.loads(serialized_problem)
-            assert problem_json["name"] == problem_name
+            assert problem_json["metadata"]["name"] == problem_name
 
             # deserializes name
             deserialized_problem = Problem.deserialize(problem_as_json=serialized_problem)
@@ -126,7 +126,13 @@ class TestProblemClass(unittest.TestCase):
         deserialized_problem = Problem.deserialize(problem_as_json=serialized_problem_without_name,
                                                    name=new_problem_name)
         assert new_problem_name == deserialized_problem.name
-              
+
+        # test deserializing a problem that does not have a name but have a metadata in the json
+        # and leaving the name as None
+        serialized_problem_without_name = '{"metadata":{"somemetadata":123}, "cost_function": {"version": "1.0", "type": "ising", "terms": [{"c": 3, "ids": [1, 0]}, {"c": 5, "ids": [2, 0]}]}}'        
+        deserialized_problem = Problem.deserialize(problem_as_json=serialized_problem_without_name)
+        assert deserialized_problem.name is None
+
     def test_upload(self):
         with patch("azure.quantum.optimization.problem.BlobClient") as mock_blob_client, \
             patch("azure.quantum.optimization.problem.ContainerClient") as mock_container_client, \

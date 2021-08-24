@@ -76,7 +76,9 @@ class Problem:
     def serialize(self) -> str:
         """Serializes the problem to a JSON string"""
         result = {
-            "name": self.name,
+            "metadata": {
+                "name": self.name,
+            },
             "cost_function": {
                 "version": "1.1" if self.init_config else "1.0",
                 "type": self.problem_type.name,
@@ -109,7 +111,12 @@ class Problem:
         :type name: Optional[str]
         """
         result = json.loads(problem_as_json)
-        name = name if name else result.get("name")
+        
+        if (name == None):
+            metadata = result.get("metadata")
+            if (metadata != None):
+                name = metadata.get("name")
+            
         problem = Problem(
             name=name,
             terms=[
