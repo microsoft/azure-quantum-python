@@ -1,83 +1,43 @@
 interactions:
 - request:
-    body: None
+    body: '{''client_id'': ''00000000-0000-0000-0000-000000000000'', ''client_secret'':
+      ''PLACEHOLDER'', ''grant_type'': ''client_credentials'', ''scope'': ''https://quantum.microsoft.com/.default''}'
     headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python-requests/2.25.1
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000?api-version=2018-01-01
-  response:
-    body:
-      string: '{"error": {"code": "AuthenticationFailed", "message": "Authentication
-        failed. The ''Authorization'' header is missing."}, "access_token": "fake_token"}'
-    headers:
-      connection:
-      - close
-      content-length:
-      - '115'
-      content-type:
-      - application/json; charset=utf-8
-    status:
-      code: 401
-      message: Unauthorized
-    url: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000?api-version=2018-01-01
-- request:
-    body: client_id=PLACEHOLDER&grant_type=authorization_code&client_info=1&claims=PLACEHOLDER&code_verifier=PLACEHOLDER&code_verifier=PLACEHOLDER&redirect_uri=http%3A%2F%2Flocalhost%3A8400&scope=https%3A%2F%2Fquantum.microsoft.com%2F.default+offline_access+openid+profile
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '1467'
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - azsdk-python-identity/1.6.0 Python/3.7.10 (Linux-5.10.16.3-microsoft-standard-WSL2-x86_64-with-debian-bullseye-sid)
-      x-client-cpu:
-      - x64
-      x-client-current-telemetry:
-      - 4|832,0|
-      x-client-os:
-      - linux
-      x-client-sku:
-      - MSAL.Python
-      x-client-ver:
-      - 1.12.0
+      - azsdk-python-identity/1.6.0 Python/3.7.10 (Windows-10-10.0.19041-SP0)
     method: POST
     uri: https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token
   response:
     body:
-      string: '{"token_type": "Bearer", "expires_in": 3599, "ext_expires_in": 3599,
-        "access_token": "fake_token"}'
+      string: '{"error": "unauthorized_client", "error_description": "AADSTS700016:
+        Application with identifier ''00000000-0000-0000-0000-000000000000'' was not
+        found in the directory ''00000000-0000-0000-0000-000000000000''. This can
+        happen if the application has not been installed by the administrator of the
+        tenant or consented to by any user in the tenant. You may have sent your authentication
+        request to the wrong tenant.\r\nTrace ID: 2a6fb6e6-74fb-4bda-82d9-94b07da30800\r\nCorrelation
+        ID: 1d8ef5e4-5c12-4a28-859c-9448a77435b2\r\nTimestamp: 2021-08-25 19:11:49Z",
+        "error_codes": [700016], "timestamp": "2021-08-25 19:11:49Z", "trace_id":
+        "2a6fb6e6-74fb-4bda-82d9-94b07da30800", "correlation_id": "1d8ef5e4-5c12-4a28-859c-9448a77435b2",
+        "error_uri": "https://login.microsoftonline.com/error?code=700016", "access_token":
+        "fake_token"}'
     headers:
       content-length:
-      - '5818'
+      - '834'
       content-type:
       - application/json; charset=utf-8
     status:
-      code: 200
-      message: OK
+      code: 400
+      message: Bad Request
     url: https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token
 - request:
-    body: None
+    body: null
     headers:
       Accept:
       - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
       User-Agent:
-      - azsdk-python-quantum/0.0.0.1 Python/3.7.10 (Linux-5.10.16.3-microsoft-standard-WSL2-x86_64-with-debian-bullseye-sid)
+      - azsdk-python-quantum/0.0.0.1 Python/3.7.10 (Windows-10-10.0.19041-SP0)
     method: GET
     uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/providerStatus
   response:
@@ -100,7 +60,7 @@ interactions:
         "Available", "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.populationannealing-parameterfree.cpu",
         "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null}]},
         {"id": "ionq", "currentAvailability": "Available", "targets": [{"id": "ionq.qpu",
-        "currentAvailability": "Available", "averageQueueTime": 9781, "statusPage":
+        "currentAvailability": "Available", "averageQueueTime": 669, "statusPage":
         "https://status.ionq.co"}, {"id": "ionq.simulator", "currentAvailability":
         "Available", "averageQueueTime": 1, "statusPage": "https://status.ionq.co"}]},
         {"id": "1qbit", "currentAvailability": "Available", "targets": [{"id": "1qbit.tabu",
@@ -109,18 +69,192 @@ interactions:
         0, "statusPage": "http://status.1qbit.com/"}, {"id": "1qbit.pticm", "currentAvailability":
         "Available", "averageQueueTime": 0, "statusPage": "http://status.1qbit.com/"}]},
         {"id": "toshiba", "currentAvailability": "Available", "targets": [{"id": "toshiba.sbm.ising",
-        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null}]},
-        {"id": "honeywell", "currentAvailability": "Available", "targets": [{"id":
-        "honeywell.hqs-lt-s1", "currentAvailability": "Available", "averageQueueTime":
-        10780, "statusPage": "https://www.honeywell.com/en-us/company/quantum"}, {"id":
+        "currentAvailability": "Available", "averageQueueTime": 4, "statusPage": null}]},
+        {"id": "honeywell", "currentAvailability": "Degraded", "targets": [{"id":
+        "honeywell.hqs-lt-s1", "currentAvailability": "Unavailable", "averageQueueTime":
+        0, "statusPage": "https://www.honeywell.com/en-us/company/quantum"}, {"id":
         "honeywell.hqs-lt-s1-apival", "currentAvailability": "Available", "averageQueueTime":
-        17, "statusPage": "https://www.honeywell.com/en-us/company/quantum"}, {"id":
+        1, "statusPage": "https://www.honeywell.com/en-us/company/quantum"}, {"id":
         "honeywell.hqs-lt-s1-sim", "currentAvailability": "Available", "averageQueueTime":
-        6799, "statusPage": "https://www.honeywell.com/en-us/company/quantum"}]}],
-        "nextLink": null, "access_token": "fake_token"}'
+        6, "statusPage": "https://www.honeywell.com/en-us/company/quantum"}]}], "nextLink":
+        null, "access_token": "fake_token"}'
     headers:
       content-length:
-      - '2265'
+      - '2781'
+      content-type:
+      - application/json; charset=utf-8
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
+    url: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/providerStatus
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-quantum/0.0.0.1 Python/3.7.10 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/providerStatus
+  response:
+    body:
+      string: '{"value": [{"id": "Microsoft", "currentAvailability": "Available",
+        "targets": [{"id": "microsoft.paralleltempering-parameterfree.cpu", "currentAvailability":
+        "Available", "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.paralleltempering.cpu",
+        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null},
+        {"id": "microsoft.simulatedannealing-parameterfree.cpu", "currentAvailability":
+        "Available", "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.simulatedannealing.cpu",
+        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null},
+        {"id": "microsoft.tabu-parameterfree.cpu", "currentAvailability": "Available",
+        "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.tabu.cpu", "currentAvailability":
+        "Available", "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.qmc.cpu",
+        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null},
+        {"id": "microsoft.populationannealing.cpu", "currentAvailability": "Available",
+        "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.substochasticmontecarlo.cpu",
+        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null},
+        {"id": "microsoft.substochasticmontecarlo-parameterfree.cpu", "currentAvailability":
+        "Available", "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.populationannealing-parameterfree.cpu",
+        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null}]},
+        {"id": "ionq", "currentAvailability": "Available", "targets": [{"id": "ionq.qpu",
+        "currentAvailability": "Available", "averageQueueTime": 669, "statusPage":
+        "https://status.ionq.co"}, {"id": "ionq.simulator", "currentAvailability":
+        "Available", "averageQueueTime": 1, "statusPage": "https://status.ionq.co"}]},
+        {"id": "1qbit", "currentAvailability": "Available", "targets": [{"id": "1qbit.tabu",
+        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": "http://status.1qbit.com/"},
+        {"id": "1qbit.pathrelinking", "currentAvailability": "Available", "averageQueueTime":
+        0, "statusPage": "http://status.1qbit.com/"}, {"id": "1qbit.pticm", "currentAvailability":
+        "Available", "averageQueueTime": 0, "statusPage": "http://status.1qbit.com/"}]},
+        {"id": "toshiba", "currentAvailability": "Available", "targets": [{"id": "toshiba.sbm.ising",
+        "currentAvailability": "Available", "averageQueueTime": 4, "statusPage": null}]},
+        {"id": "honeywell", "currentAvailability": "Degraded", "targets": [{"id":
+        "honeywell.hqs-lt-s1", "currentAvailability": "Unavailable", "averageQueueTime":
+        0, "statusPage": "https://www.honeywell.com/en-us/company/quantum"}, {"id":
+        "honeywell.hqs-lt-s1-apival", "currentAvailability": "Available", "averageQueueTime":
+        1, "statusPage": "https://www.honeywell.com/en-us/company/quantum"}, {"id":
+        "honeywell.hqs-lt-s1-sim", "currentAvailability": "Available", "averageQueueTime":
+        6, "statusPage": "https://www.honeywell.com/en-us/company/quantum"}]}], "nextLink":
+        null, "access_token": "fake_token"}'
+    headers:
+      content-length:
+      - '2781'
+      content-type:
+      - application/json; charset=utf-8
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
+    url: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/providerStatus
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-quantum/0.0.0.1 Python/3.7.10 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/providerStatus
+  response:
+    body:
+      string: '{"value": [{"id": "Microsoft", "currentAvailability": "Available",
+        "targets": [{"id": "microsoft.paralleltempering-parameterfree.cpu", "currentAvailability":
+        "Available", "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.paralleltempering.cpu",
+        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null},
+        {"id": "microsoft.simulatedannealing-parameterfree.cpu", "currentAvailability":
+        "Available", "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.simulatedannealing.cpu",
+        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null},
+        {"id": "microsoft.tabu-parameterfree.cpu", "currentAvailability": "Available",
+        "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.tabu.cpu", "currentAvailability":
+        "Available", "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.qmc.cpu",
+        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null},
+        {"id": "microsoft.populationannealing.cpu", "currentAvailability": "Available",
+        "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.substochasticmontecarlo.cpu",
+        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null},
+        {"id": "microsoft.substochasticmontecarlo-parameterfree.cpu", "currentAvailability":
+        "Available", "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.populationannealing-parameterfree.cpu",
+        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null}]},
+        {"id": "ionq", "currentAvailability": "Available", "targets": [{"id": "ionq.qpu",
+        "currentAvailability": "Available", "averageQueueTime": 669, "statusPage":
+        "https://status.ionq.co"}, {"id": "ionq.simulator", "currentAvailability":
+        "Available", "averageQueueTime": 1, "statusPage": "https://status.ionq.co"}]},
+        {"id": "1qbit", "currentAvailability": "Available", "targets": [{"id": "1qbit.tabu",
+        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": "http://status.1qbit.com/"},
+        {"id": "1qbit.pathrelinking", "currentAvailability": "Available", "averageQueueTime":
+        0, "statusPage": "http://status.1qbit.com/"}, {"id": "1qbit.pticm", "currentAvailability":
+        "Available", "averageQueueTime": 0, "statusPage": "http://status.1qbit.com/"}]},
+        {"id": "toshiba", "currentAvailability": "Available", "targets": [{"id": "toshiba.sbm.ising",
+        "currentAvailability": "Available", "averageQueueTime": 4, "statusPage": null}]},
+        {"id": "honeywell", "currentAvailability": "Degraded", "targets": [{"id":
+        "honeywell.hqs-lt-s1", "currentAvailability": "Unavailable", "averageQueueTime":
+        0, "statusPage": "https://www.honeywell.com/en-us/company/quantum"}, {"id":
+        "honeywell.hqs-lt-s1-apival", "currentAvailability": "Available", "averageQueueTime":
+        1, "statusPage": "https://www.honeywell.com/en-us/company/quantum"}, {"id":
+        "honeywell.hqs-lt-s1-sim", "currentAvailability": "Available", "averageQueueTime":
+        6, "statusPage": "https://www.honeywell.com/en-us/company/quantum"}]}], "nextLink":
+        null, "access_token": "fake_token"}'
+    headers:
+      content-length:
+      - '2781'
+      content-type:
+      - application/json; charset=utf-8
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
+    url: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/providerStatus
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      User-Agent:
+      - azsdk-python-quantum/0.0.0.1 Python/3.7.10 (Windows-10-10.0.19041-SP0)
+    method: GET
+    uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/providerStatus
+  response:
+    body:
+      string: '{"value": [{"id": "Microsoft", "currentAvailability": "Available",
+        "targets": [{"id": "microsoft.paralleltempering-parameterfree.cpu", "currentAvailability":
+        "Available", "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.paralleltempering.cpu",
+        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null},
+        {"id": "microsoft.simulatedannealing-parameterfree.cpu", "currentAvailability":
+        "Available", "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.simulatedannealing.cpu",
+        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null},
+        {"id": "microsoft.tabu-parameterfree.cpu", "currentAvailability": "Available",
+        "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.tabu.cpu", "currentAvailability":
+        "Available", "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.qmc.cpu",
+        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null},
+        {"id": "microsoft.populationannealing.cpu", "currentAvailability": "Available",
+        "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.substochasticmontecarlo.cpu",
+        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null},
+        {"id": "microsoft.substochasticmontecarlo-parameterfree.cpu", "currentAvailability":
+        "Available", "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.populationannealing-parameterfree.cpu",
+        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null}]},
+        {"id": "ionq", "currentAvailability": "Available", "targets": [{"id": "ionq.qpu",
+        "currentAvailability": "Available", "averageQueueTime": 669, "statusPage":
+        "https://status.ionq.co"}, {"id": "ionq.simulator", "currentAvailability":
+        "Available", "averageQueueTime": 1, "statusPage": "https://status.ionq.co"}]},
+        {"id": "1qbit", "currentAvailability": "Available", "targets": [{"id": "1qbit.tabu",
+        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": "http://status.1qbit.com/"},
+        {"id": "1qbit.pathrelinking", "currentAvailability": "Available", "averageQueueTime":
+        0, "statusPage": "http://status.1qbit.com/"}, {"id": "1qbit.pticm", "currentAvailability":
+        "Available", "averageQueueTime": 0, "statusPage": "http://status.1qbit.com/"}]},
+        {"id": "toshiba", "currentAvailability": "Available", "targets": [{"id": "toshiba.sbm.ising",
+        "currentAvailability": "Available", "averageQueueTime": 4, "statusPage": null}]},
+        {"id": "honeywell", "currentAvailability": "Degraded", "targets": [{"id":
+        "honeywell.hqs-lt-s1", "currentAvailability": "Unavailable", "averageQueueTime":
+        0, "statusPage": "https://www.honeywell.com/en-us/company/quantum"}, {"id":
+        "honeywell.hqs-lt-s1-apival", "currentAvailability": "Available", "averageQueueTime":
+        1, "statusPage": "https://www.honeywell.com/en-us/company/quantum"}, {"id":
+        "honeywell.hqs-lt-s1-sim", "currentAvailability": "Available", "averageQueueTime":
+        6, "statusPage": "https://www.honeywell.com/en-us/company/quantum"}]}], "nextLink":
+        null, "access_token": "fake_token"}'
+    headers:
+      content-length:
+      - '2781'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
