@@ -19,7 +19,7 @@ from azure.quantum.target import (
     QuantumMonteCarlo,
     SubstochasticMonteCarlo,
 )
-from common import QuantumTestBase
+from .common import QuantumTestBase
 
 
 class TestProblem(QuantumTestBase):

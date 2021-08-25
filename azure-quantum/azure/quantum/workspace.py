@@ -73,6 +73,7 @@ else:
         )
     ARM_BASE_URL = "https://management.azure.com/"
 
+
 class Workspace:
     """Represents an Azure Quantum workspace.
 

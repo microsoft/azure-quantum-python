@@ -9,7 +9,7 @@
 import pytest
 import os
 from azure.quantum import Workspace
-from common import QuantumTestBase
+from .common import QuantumTestBase
 
 class TestWorkspace(QuantumTestBase):
 
