@@ -113,6 +113,9 @@ class Workspace:
 
         Defaults to \"DefaultAzureCredential\", which will attempt multiple 
         forms of authentication.
+
+    :param user_agent:
+        Add the specified value as a prefix to the HTTP User-Agent header when communicating to the Azure Quantum service.
     """
 
     credentials = None
@@ -126,6 +129,7 @@ class Workspace:
         resource_id: Optional[str] = None,
         location: Optional[str] = None,
         credential: Optional[object] = None,
+        user_agent: Optional[str] = None,
     ):
         if resource_id is not None:
             # A valid resource ID looks like:
@@ -171,6 +175,10 @@ class Workspace:
         self.resource_group = resource_group
         self.subscription_id = subscription_id
         self.storage = storage
+        self.user_agent = user_agent
+
+        if self.user_agent == None:
+            self.user_agent = os.environ.get("AZURE_QUANTUM_PYTHON_APPID")
 
         # Convert user-provided location into names
         # recognized by Azure resource manager.
@@ -194,6 +202,7 @@ class Workspace:
             resource_group_name=self.resource_group,
             workspace_name=self.name,
             base_url=base_url,
+            user_agent=self.user_agent
         )
         return client
 
