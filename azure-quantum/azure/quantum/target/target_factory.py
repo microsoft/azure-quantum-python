@@ -55,6 +55,8 @@ https://github.com/microsoft/qdk-python/issues.")
     ) -> Target:
         """Create target from provider ID and target name.
 
+        :param workspace: Workspace
+        :type workspace: Workspace
         :param provider_id: Provider name
         :type provider_id: str
         :param name: Target name
