@@ -75,6 +75,13 @@ python setup.py bdist_wheel
 By default, this will create a `azure-quantum` wheel in `dist/` with the version number set to 0.0.0.1.
 To provide a more useful version number, set the `PYTHON_VERSION` environment variable before running `setup.py`.
 
+## Environment Variables ##
+In addition to the [common Azure SDK environment variables](https://azure.github.io/azure-sdk/general_azurecore.html#environment-variables), you can also set the following environment variables to change the behaviour of the Azure Quantum SDK for Python:
+| Environment Variable             | Description                                                            |
+| -------------------------------- | ---------------------------------------------------------------------- |
+| AZURE_QUANTUM_PYTHON_APPID       | Prefixes the HTTP User-Agent header with the specified value           |
+
+
 ## Support and Q&A ##
 
 If you have questions about the Quantum Development Kit and the Q# language, or if you encounter issues while using any of the components of the kit, you can reach out to the quantum team and the community of users in [Stack Overflow](https://stackoverflow.com/questions/tagged/q%23) and in [Quantum Computing Stack Exchange](https://quantumcomputing.stackexchange.com/questions/tagged/q%23) tagging your questions with **q#**.
