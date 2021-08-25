@@ -16,6 +16,12 @@ class TargetFactory:
     """Factory class for generating a Target based on a
     provider and target name
     """
+    __instance = None
+    def __new__(cls, *args, **kwargs):
+        if cls.__instance is None:
+            cls.__instance = super().__new__(cls, *args, **kwargs)
+        return cls.__instance
+
     @staticmethod
     def _get_all_target_cls() -> Dict[str, Target]:
         """Get all target classes by target name"""

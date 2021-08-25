@@ -7,7 +7,7 @@
 # Licensed under the MIT License.
 ##
 import pytest
-from azure.quantum import Workspace
+from azure.quantum.aio import Workspace
 from ..common import QuantumTestBase
 
 
