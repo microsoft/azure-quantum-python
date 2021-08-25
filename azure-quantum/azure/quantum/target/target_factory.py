@@ -46,7 +46,7 @@ class TargetFactory:
             return DEFAULT_TARGETS[provider_id]
  
         warnings.warn(
-            "No default target specified for provider {provider_id}. \
+            f"No default target specified for provider {provider_id}. \
 Please check the provider name and try again or create an issue here: \
 https://github.com/microsoft/qdk-python/issues.")
 

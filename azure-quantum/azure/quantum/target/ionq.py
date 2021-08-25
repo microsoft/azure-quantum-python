@@ -13,6 +13,10 @@ from azure.quantum.workspace import Workspace
 
 class IonQ(Target):
     """IonQ target."""
+    target_names = (
+        "ionq.qpu",
+        "ionq.simulator",
+    )
 
     def __init__(
         self,

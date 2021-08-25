@@ -6,7 +6,7 @@ from datetime import datetime
 import logging
 import re
 
-from typing import List, Optional, Dict, Any, Tuple
+from typing import Iterable, List, Optional, Dict, Any, TYPE_CHECKING, Tuple, Union
 
 from azure.quantum.aio._authentication._default import _DefaultAzureCredential
 from azure.quantum._client.aio import QuantumClient
@@ -15,6 +15,10 @@ from azure.quantum.aio.job import Job
 from azure.quantum.aio.storage import create_container_using_client, get_container_uri, ContainerClient
 
 from azure.quantum.workspace import BASE_URL, ARM_BASE_URL
+
+if TYPE_CHECKING:
+    from azure.quantum.aio.target import Target
+    from azure.quantum._client.models import TargetStatus
 
 logger = logging.getLogger(__name__)
 
@@ -193,7 +197,7 @@ class Workspace:
         """Get provider ID and status for targets"""
         return [
             (provider.id, target)
-            for provider in await self._client.providers.get_status()
+            async for provider in self._client.providers.get_status()
             for target in provider.targets
             if (provider_id is None or provider.id.lower() == provider_id.lower())
                 and (name is None or target.id.lower() == name.lower())

@@ -9,37 +9,11 @@ from typing import Any, Dict
 from azure.quantum.aio.target.target import Target
 from azure.quantum.aio.job.job import Job
 from azure.quantum.aio.workspace import Workspace
+from azure.quantum.target import IonQ as SyncIonQ
 
 
-class IonQ(Target):
+class IonQ(Target, SyncIonQ):
     """IonQ target."""
-
-    def __init__(
-        self,
-        workspace: Workspace,
-        name: str = "ionq.simulator",
-        input_data_format: str = "ionq.circuit.v1",
-        output_data_format: str = "ionq.quantum-results.v1",
-        provider_id: str = "IonQ",
-        content_type: str = "application/json",
-        encoding: str = ""
-    ):
-        super().__init__(
-            workspace=workspace,
-            name=name,
-            input_data_format=input_data_format,
-            output_data_format=output_data_format,
-            provider_id=provider_id,
-            content_type=content_type,
-            encoding=encoding
-        )
-
-    @staticmethod
-    def _encode_input_data(data: Dict[Any, Any]) -> bytes:
-        stream = io.BytesIO()
-        data = json.dumps(data)
-        stream.write(data.encode())
-        return stream.getvalue()
 
     async def submit(
         self,
