@@ -94,6 +94,8 @@ https://github.com/microsoft/qdk-python/issues.")
 
         :param name: Target name
         :type name: str
+        :param workspace: Workspace
+        :type workspace: Workspace
         :param provider_id: Provider name
         :type provider_id: str
         :return: One or more Target objects
