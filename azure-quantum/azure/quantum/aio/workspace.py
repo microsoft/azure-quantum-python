@@ -6,7 +6,7 @@ from datetime import datetime
 import logging
 import re
 
-from typing import List, Optional, Dict, Any
+from typing import List, Optional, Dict, Any, Tuple
 
 from azure.quantum.aio._authentication._default import _DefaultAzureCredential
 from azure.quantum._client.aio import QuantumClient
@@ -188,20 +188,39 @@ class Workspace:
             if deserialized_job.matches_filter(name_match, status, created_after):
                 result.append(deserialized_job)
         return result
+    
+    async def _get_target_status(self, name: str, provider_id: str) -> List[Tuple[str, "TargetStatus"]]:
+        """Get provider ID and status for targets"""
+        return [
+            (provider.id, target)
+            for provider in await self._client.providers.get_status()
+            for target in provider.targets
+            if (provider_id is None or provider.id.lower() == provider_id.lower())
+                and (name is None or target.id.lower() == name.lower())
+        ]
 
-
-    async def get_targets(self) -> Dict[str, List[str]]:
-        """Returns a dictionary of provider IDs and lists of targets
-        that are available.
-
-        :return: Targets, keyed by provider IDs
-        :rtype: Dict[str, List[str]]
+    async def get_targets(
+        self, 
+        name: str = None, 
+        provider_id: str = None,
+        **kwargs
+    ) -> Union["Target", Iterable["Target"]]:
+        """Returns all available targets for this workspace filtered by name and provider ID.
+        
+        :param name: Optional target name to filter by, defaults to None
+        :type name: str, optional
+        :param provider_id: Optional provider Id to filter by, defaults to None
+        :type provider_id: str, optional
+        :return: Targets
+        :rtype: Iterable[Target]
         """
-        return {
-            provider.id: [
-                target.id for target in provider.targets
-            ] async for provider in self._client.providers.get_status()
-        }
+        from azure.quantum.aio.target.target_factory import TargetFactory
+        target_factory = TargetFactory()
+        return await target_factory.get_targets(
+            workspace=self,
+            name=name,
+            provider_id=provider_id
+        )
 
     async def get_quotas(self) -> List[Dict[str, Any]]:
         """Get a list of job quotas for the given workspace.

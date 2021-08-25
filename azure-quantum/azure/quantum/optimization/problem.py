@@ -11,7 +11,7 @@ import json
 import numpy
 import os
 
-from typing import List, Tuple, Union, Dict, Optional, Type, TYPE_CHECKING
+from typing import List, Tuple, Union, Dict, Optional, TYPE_CHECKING
 from enum import Enum
 from azure.quantum.optimization import TermBase, Term, GroupType, GroupedTerm
 from azure.quantum.storage import (
@@ -101,7 +101,7 @@ class Problem:
         """
         result = json.loads(problem_as_json)
 
-        problem = Problem(
+        problem = cls(
             name=name,
             terms=[
                 GroupedTerm.from_dict(t) if GroupedTerm.is_grouped_term(t)

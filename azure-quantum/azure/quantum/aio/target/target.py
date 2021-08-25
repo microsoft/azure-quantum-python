@@ -5,40 +5,15 @@
 import abc
 from typing import Any, Dict
 
-from azure.quantum.aio.workspace import Workspace
+
 from azure.quantum.aio.job.job import Job
+from azure.quantum.target import Target as SyncTarget
+from azure.quantum.workspace import Workspace
 
 
-class Target(abc.ABC):
+class Target(SyncTarget, abc.ABC):
     """Azure Quantum Target."""
-    def __init__(
-        self,
-        workspace: Workspace,
-        target: str,
-        input_data_format: str = "",
-        output_data_format: str = "",
-        provider_id: str = "",
-        content_type: str = "",
-        encoding: str = ""
-    ):
-        self.workspace = workspace
-        self.target = target
-        self.input_data_format = input_data_format
-        self.output_data_format = output_data_format
-        self.provider_id = provider_id
-        self.content_type = content_type
-        self.encoding = encoding
-
-    @abc.abstractstaticmethod
-    def _encode_input_data(data: Dict[Any, Any]) -> bytes:
-        """Implement abstract method to encode input data to bytes
-
-        :param data: Input data
-        :type data: Dict[Any, Any]
-        :return: Encoded input data
-        :rtype: bytes
-        """
-        pass
+    workspace: Workspace
 
     async def submit(
         self,
@@ -64,7 +39,7 @@ class Target(abc.ABC):
         return await Job.from_input_data(
             workspace=self.workspace,
             name=name,
-            target=self.target,
+            target=self.name,
             input_data=blob,
             content_type=self.content_type,
             encoding=self.encoding,

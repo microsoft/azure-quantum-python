@@ -3,26 +3,26 @@
 # Licensed under the MIT License.
 ##
 import io
-import json
+import gzip
 from typing import Any, Dict
 
-from azure.quantum.aio.target.target import Target
-from azure.quantum.aio.job.job import Job
-from azure.quantum.aio.workspace import Workspace
+from azure.quantum.target.target import Target
+from azure.quantum.job.job import Job
+from azure.quantum.workspace import Workspace
 
 
-class IonQ(Target):
-    """IonQ target."""
+class FleetManagement(Target):
+    """Microsoft Fleet Management target."""
 
     def __init__(
         self,
         workspace: Workspace,
-        name: str = "ionq.simulator",
-        input_data_format: str = "ionq.circuit.v1",
-        output_data_format: str = "ionq.quantum-results.v1",
-        provider_id: str = "IonQ",
+        name: str = "microsoft.fleetmanagement",
+        input_data_format: str = "microsoft.fleetmanagement.v1",
+        output_data_format: str = "microsoft.fleetmanagement-results.v1",
+        provider_id: str = "Microsoft.FleetManagement",
         content_type: str = "application/json",
-        encoding: str = ""
+        encoding: str = "gzip"
     ):
         super().__init__(
             workspace=workspace,
@@ -35,28 +35,25 @@ class IonQ(Target):
         )
 
     @staticmethod
-    def _encode_input_data(data: Dict[Any, Any]) -> bytes:
+    def _encode_input_data(data: str) -> bytes:
         stream = io.BytesIO()
-        data = json.dumps(data)
-        stream.write(data.encode())
+        with gzip.GzipFile(fileobj=stream, mode="w") as fo:
+            fo.write(data.encode())
         return stream.getvalue()
 
-    async def submit(
+    def submit(
         self,
-        circuit: Dict[str, Any],
-        name: str = "ionq-job",
-        num_shots: int = None,
+        input: str,
+        name: str = "fleet-management-job",
         input_params: Dict[str, Any] = None,
         **kwargs
     ) -> Job:
-        """Submit an IonQ circuit (JSON format)
+        """Submit a Fleet Management problem
 
-        :param circuit: Quantum circuit in IonQ JSON format
-        :type circuit: Dict[str, Any]
+        :param input: Input in json format
+        :type input: str
         :param name: Job name
         :type name: str
-        :param num_shots: Number of shots, defaults to None
-        :type num_shots: int
         :param input_params: Optional input params dict
         :type input_params: Dict[str, Any]
         :return: Azure Quantum job
@@ -64,12 +61,9 @@ class IonQ(Target):
         """
         if input_params is None:
             input_params = {}
-        if num_shots is not None:
-            input_params = input_params.copy()
-            input_params["shots"] = num_shots
 
-        return await super().submit(
-            input_data=circuit,
+        return super().submit(
+            input_data=input,
             name=name,
             input_params=input_params,
             **kwargs

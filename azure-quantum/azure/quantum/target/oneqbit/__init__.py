@@ -4,6 +4,8 @@
 # Licensed under the MIT License.
 ##
 
-from .problem import *
-from .online_problem import *
-from .streaming_problem import *
+from .solvers import (
+    TabuSearch,
+    PticmSolver,
+    PathRelinkingSolver,
+)

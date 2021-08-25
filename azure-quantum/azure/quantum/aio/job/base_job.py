@@ -13,6 +13,7 @@ from azure.storage.blob import BlobClient
 
 from azure.quantum.aio.storage import upload_blob, download_blob, ContainerClient
 from azure.quantum._client.models import JobDetails
+from azure.quantum.job.job import BaseJob as SyncBaseJob
 
 
 if TYPE_CHECKING:
@@ -24,21 +25,12 @@ logger = logging.getLogger(__name__)
 DEFAULT_TIMEOUT = 300 # Default timeout for waiting for job to complete
 
 
-class BaseJob(abc.ABC):
+class BaseJob(SyncBaseJob):
     # Optionally override these to create a Provider-specific Job subclass
     """
     Base job class with methods to create a job from raw blob data,
     upload blob data and download results.
     """
-    @staticmethod
-    def create_job_id() -> str:
-        """Create a unique id for a new job."""
-        return str(uuid.uuid1())
-
-    @property
-    def container_name(self):
-        return f"job-{self.id}"
-
     @classmethod
     async def from_input_data(
         cls,
