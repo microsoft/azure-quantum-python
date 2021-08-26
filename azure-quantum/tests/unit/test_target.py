@@ -68,20 +68,24 @@ class TestIonQ(QuantumTestBase):
             # playback currently does not work for repeated calls
             # See: https://github.com/microsoft/qdk-python/issues/118
             if not self.is_playback:
-                self.assertEqual(False, job.has_completed())
-                if self.in_recording:
-                    import time
-                    time.sleep(3)
-                job.refresh()
-                job.wait_until_completed()
-                self.assertEqual(True, job.has_completed())
-                job = workspace.get_job(job.id)
-                self.assertEqual(True, job.has_completed())
+                try:
+                    # Set a timeout for IonQ recording
+                    job.wait_until_completed(timeout_secs=60)
+                except TimeoutError:
+                    warnings.warn("IonQ execution exceeded timeout. Skipping fetching results.")
+                else:
+                    # Check if job succeeded
+                    self.assertEqual(True, job.has_completed())
+                    assert job.details.status == "Succeeded"
 
-            results = job.get_results()
-            assert "histogram" in results
-            assert results["histogram"]["0"] == 0.5
-            assert results["histogram"]["7"] == 0.5
+                    job = workspace.get_job(job.id)
+                    self.assertEqual(True, job.has_completed())
+
+            if job.has_completed():
+                results = job.get_results()
+                assert "histogram" in results
+                assert results["histogram"]["0"] == 0.5
+                assert results["histogram"]["7"] == 0.5
 
             if num_shots:
                 assert job.details.input_params.get("shots") == num_shots
@@ -154,6 +158,10 @@ class TestHoneywell(QuantumTestBase):
                         # Check if job succeeded
                         self.assertEqual(True, job.has_completed())
                         assert job.details.status == "Succeeded"
+
+                        job = workspace.get_job(job.id)
+                        self.assertEqual(True, job.has_completed())
+
 
                 if job.has_completed():
                     results = job.get_results()

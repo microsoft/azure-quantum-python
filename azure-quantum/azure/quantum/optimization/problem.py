@@ -13,7 +13,7 @@ import os
 
 from typing import List, Tuple, Union, Dict, Optional, TYPE_CHECKING
 from enum import Enum
-from azure.quantum.optimization import TermBase, Term, GroupType, GroupedTerm
+from azure.quantum.optimization import TermBase, Term, GroupType, SlcTerm
 from azure.quantum.storage import (
     ContainerClient,
     download_blob,
@@ -60,12 +60,24 @@ class Problem:
         problem_type: ProblemType = ProblemType.ising,
     ):
         self.name = name
-        self.terms = terms.copy() if terms is not None else []
         self.problem_type = problem_type
-        self.check_for_grouped_term()
         self.init_config = init_config
         self.uploaded_blob_uri = None
         self.uploaded_blob_params = None
+
+        # each type of term has its own section for quicker serialization
+        self.terms = []
+        self.terms_slc = []
+
+        # set the terms
+        if terms:
+            for term in terms:
+                if isinstance(term, SlcTerm):
+                    self.terms_slc.append(term)
+                else:
+                    self.terms.append(term)
+
+        self.check_for_grouped_term()
 
     """
     Constant thresholds used to determine if a problem is "large".
@@ -79,9 +91,12 @@ class Problem:
             "cost_function": {
                 "version": "1.1" if self.init_config else "1.0",
                 "type": self.problem_type.name,
-                "terms": [term.to_dict() for term in self.terms],
+                "terms": [term.to_dict() for term in self.terms]
             }
         }
+
+        if len(self.terms_slc) > 0:
+            result["cost_function"]["terms_slc"] = [term.to_dict() for term in self.terms_slc]
 
         if self.init_config:
             result["cost_function"]["initial_configuration"] = self.init_config
@@ -101,13 +116,13 @@ class Problem:
         """
         result = json.loads(problem_as_json)
 
+        terms = [Term.from_dict(t) for t in result["cost_function"]["terms"]] if "terms" in result["cost_function"] else []
+        if "terms_slc" in result["cost_function"]:
+            terms.append([SlcTerm.from_dict(t) for t in result["cost_function"]["terms_slc"]])
+
         problem = Problem(
             name=name,
-            terms=[
-                GroupedTerm.from_dict(t) if GroupedTerm.is_grouped_term(t)
-                else Term.from_dict(t)
-                for t in result["cost_function"]["terms"]
-            ],
+            terms=terms,
             problem_type=ProblemType[result["cost_function"]["type"]],
         )
 
@@ -139,14 +154,14 @@ class Problem:
         :param terms: The list of terms to add to the problem
         :param term_type: Type of grouped term being added
             If GroupType.combination, terms will be added as ungrouped monomials.
-        :param c: Weight of grouped term, if applicable
+        :param c: Weight of grouped term, only applicable for grouped terms that support it.
         """
         if term_type is GroupType.combination:
-            # Cast as list of ungrouped monomial terms
-            self.terms += [Term(term.ids, c=c*term.c) for term in terms]
+            # Default type is a group of monomials
+            self.terms += terms
         else:
-            # Grouped term
-            self.terms.append(GroupedTerm(term_type, terms, c=c))
+            # Slc term
+            self.terms_slc.append(SlcTerm(terms=terms, c=c))
             self.problem_type_to_grouped()
         self.uploaded_blob_uri = None
     
@@ -157,7 +172,7 @@ class Problem:
         c: Union[int, float] = 1
     ):
         """Adds a squared linear combination term
-        to the `Problem` representation
+        to the `Problem` representation. Helper function to construct terms list.
         
         :param terms: List of monomial terms, with each represented by a pair.
             The first entry represents the monomial term weight.
@@ -170,17 +185,15 @@ class Problem:
         else:
             gterms = [Term([index], c=tc) if index is not None else Term([], c=tc)
                       for tc,index in terms]
-        self.terms.append(
-            GroupedTerm(GroupType.squared_linear_combination, gterms, c=c)
+        self.terms_slc.append(
+            SlcTerm(gterms, c=c)
         )
         self.problem_type_to_grouped()
         self.uploaded_blob_uri = None
 
     def check_for_grouped_term(self):
-        for term in self.terms:
-            if isinstance(term, GroupedTerm):
-                self.problem_type_to_grouped()
-                break
+        if len(self.terms_slc) != 0:
+            self.problem_type_to_grouped()
     
     def problem_type_to_grouped(self):
         if self.problem_type == ProblemType.pubo:
@@ -282,14 +295,15 @@ class Problem:
         new_terms = []
 
         constant = 0
-        for term in self.terms:
-            reduced_term = term.reduce_by_variable_state(fixed_transformed)
-            if reduced_term:
-                if isinstance(reduced_term, GroupedTerm) or len(reduced_term.ids) > 0:
-                    new_terms.append(reduced_term)
-                else:
-                    # reduced to a constant term
-                    constant += reduced_term.c
+        for terms in [self.terms, self.terms_slc]:
+            for term in terms:
+                reduced_term = term.reduce_by_variable_state(fixed_transformed)
+                if reduced_term:
+                    if not isinstance(reduced_term, Term) or len(reduced_term.ids) > 0:
+                        new_terms.append(reduced_term)
+                    else:
+                        # reduced to a constant term
+                        constant += reduced_term.c
 
         if constant:
             new_terms.append(Term(c=constant, indices=[]))
@@ -309,6 +323,13 @@ class Problem:
             problem_type=self.problem_type,
         )
 
+    def _evaluate(self, configuration, term_list):
+        total = 0
+        if term_list:
+            for term in term_list:
+                total += term.evaluate(configuration)
+        return total
+
     def evaluate(self, configuration: Union[Dict[int, int], Dict[str, int]]) -> float:
         """Given a configuration/variable assignment,
         return the cost function value of this problem.
@@ -319,10 +340,10 @@ class Problem:
         configuration_transformed = {
             int(k): configuration[k] for k in configuration
         }  # if ids are given in string form, convert them to int
+
         total_cost = 0
-        if self.terms:
-            for term in self.terms:
-                total_cost += term.evaluate(configuration_transformed)
+        for terms in [self.terms, self.terms_slc]:
+            total_cost += self._evaluate(configuration_transformed, terms)
 
         return total_cost
 
@@ -336,14 +357,15 @@ class Problem:
 
         set_vars = set()
         total_term_count = 0
-        for term in self.terms:
-            if isinstance(term, Term):
-                set_vars.update(term.ids)
-                total_term_count += 1
-            elif isinstance(term, GroupedTerm):
-                for subterm in term.terms:
-                    set_vars.update(subterm.ids)
+        for terms in [self.terms, self.terms_slc]:
+            for term in terms:
+                if isinstance(term, Term):
+                    set_vars.update(term.ids)
                     total_term_count += 1
+                elif isinstance(term, SlcTerm):
+                    for subterm in term.terms:
+                        set_vars.update(subterm.ids)
+                        total_term_count += 1
         
         return (
             len(set_vars) >= Problem.NUM_VARIABLES_LARGE
@@ -368,16 +390,17 @@ class Problem:
         a list of terms with that index
         """
         terms = []
-        if self.terms != []:
-            for term in self.terms:
-                if isinstance(term, Term):
-                    if id in term.ids:
-                        terms.append(term)
-                elif isinstance(term, GroupedTerm):
-                    for subterm in term.terms:
-                        if id in subterm.ids:
+        if self.terms != [] or self.terms_slc != []:
+            for all_terms in [self.terms, self.terms_slc]:
+                for term in all_terms:
+                    if isinstance(term, Term):
+                        if id in term.ids:
                             terms.append(term)
-                            break
+                    elif isinstance(term, SlcTerm):
+                        for subterm in term.terms:
+                            if id in subterm.ids:
+                                terms.append(term)
+                                break
             return terms
         else:
             raise Exception(

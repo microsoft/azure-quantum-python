@@ -13,7 +13,7 @@ import sys
 
 from typing import List, Tuple, Union, Dict, Optional, Type
 from azure.quantum import Workspace
-from azure.quantum.optimization import TermBase, Term, GroupType, GroupedTerm, Problem, ProblemType
+from azure.quantum.optimization import Term, Problem, ProblemType
 from azure.quantum.storage import (
     StreamedBlob,
     ContainerClient,
@@ -52,7 +52,7 @@ class StreamingProblem(object):
         self,
         workspace: Workspace,
         name: str = "Optimization Problem",
-        terms: Optional[List[TermBase]] = None,
+        terms: Optional[List[Term]] = None,
         init_config: Optional[Dict[str, int]] = None,
         problem_type: ProblemType = ProblemType.ising,
         metadata: Dict[str, str] = {},
@@ -98,35 +98,6 @@ class StreamingProblem(object):
         """
         self.add_terms([Term(indices=indices, c=c)])
 
-    def add_slc_term(
-        self,
-        terms: List[Tuple[Union[int, float], Union[int, Type[None]]]],
-        c: Union[int, float] = 1
-    ):
-        """Adds a squared linear combination term to the `Problem`
-        representation and queues it to be uploaded
-        
-        :param terms: List of monomial terms, with each represented by a pair.
-            The first entry represents the monomial term weight.
-            The second entry is the monomial term variable index or None.
-        :param c: Weight of SLC term
-        """
-        self.add_terms([
-            GroupedTerm(
-                GroupType.squared_linear_combination,
-                [Term([index], c=tc) if index is not None else Term([], c=tc) 
-                for tc,index in terms],
-                c=c
-            )
-        ])
-        self.problem_type_to_grouped()
-    
-    def problem_type_to_grouped(self):
-        if self.problem_type == ProblemType.pubo:
-            self.problem_type = ProblemType.pubo_grouped
-        elif self.problem_type == ProblemType.ising:
-            self.problem_type = ProblemType.ising_grouped
-
     def _get_upload_coords(self):
         blob_name = self.id
         if self.upload_to_url:
@@ -153,35 +124,18 @@ class StreamingProblem(object):
 
     def add_terms(
         self,
-        terms: List[TermBase],
-        term_type: Union[GroupType, str] = None,
+        terms: List[Term],
         c: Union[int, float] = 1
     ):
         """Adds a list of terms to the `Problem`
-         representation and queues them to be uploaded
-         These are optionally grouped into a special term.
+         representation and queues them to be uploaded. Special terms are not supported.
 
         :param terms: The list of terms to add to the problem
-        :param term_type: Type of grouped term being added, if applicable
         :param c: Weight of grouped term, if applicable
         """
         if self.uploaded_uri is not None:
             raise Exception("Cannot add terms after problem has been uploaded")
 
-        if term_type:
-            # Wrap terms into a GroupedTerm object
-            if isinstance(term_type, str):
-                if term_type == 'na':
-                    gtype = GroupType.combination
-                elif term_type == 'slc':
-                    gtype = GroupType.squared_linear_combination
-                else:
-                    raise Exception("Unsupported term_type {}.".format(term_type))
-            elif isinstance(term_type, GroupType):
-                gtype = term_type
-            else:
-                raise TypeError('Invalid type {} of GroupedTerm'.format(term_type))
-            terms = [GroupedTerm(gtype, terms, c=c)]
         if terms is not None:
             if self.uploader is None:
                 upload_coords = self._get_upload_coords()
@@ -208,34 +162,9 @@ class StreamingProblem(object):
                     min_coupling = min(min_coupling, n)
                     self.__n_couplers += n
                     self.stats["num_terms"] += 1
-                elif isinstance(term, GroupedTerm):
-                    self.problem_type_to_grouped()
-                    sub_couplings = [len(subterm.ids) for subterm in term.terms]
-                    self.stats["num_terms"] += len(sub_couplings)
-                    if term.type is GroupType.combination:
-                        max_coupling = max(max_coupling, max(sub_couplings))
-                        min_coupling = min(min_coupling, min(sub_couplings))
-                        self.__n_couplers += sum(sub_couplings)
-                    elif term.type is GroupType.squared_linear_combination:
-                        if 1 in sub_couplings:
-                            max_coupling = max(max_coupling, 2)
-                        else:
-                            max_coupling = max(max_coupling, 0)
-                        if 0 in sub_couplings:
-                            min_coupling = min(min_coupling, 0)
-                        else:
-                            min_coupling = min(min_coupling, 2)
-                        # Counts couplings in expanded form of SLC term
-                        # Since SLC term has linear argument, sum(sub_couplings)
-                        # counts the number of non-constant terms
-                        self.__n_couplers += 2*len(sub_couplings)*sum(sub_couplings)
-                    else:
-                        raise Exception(
-                            "Unsupported statistics for GroupType {}.".format(term.type)
-                        )
                 else:
                     raise Exception(
-                        "Unsupported statistics for TermBase subclass {}.".format(type(term))
+                        "Unsupported statistics in streamingproblem for TermBase subclass {}.".format(type(term))
                     )
                         
             self.stats["avg_coupling"] = (
