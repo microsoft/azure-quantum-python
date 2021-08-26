@@ -7,7 +7,7 @@
 # Licensed under the MIT License.
 ##
 import pytest
-
+import os
 from azure.quantum import Workspace
 from common import QuantumTestBase
 
@@ -129,3 +129,37 @@ class TestWorkspace(QuantumTestBase):
         assert "holds" in quotas [0]
         assert "limit" in quotas [0]
         assert "period" in quotas [0]
+
+    def test_workspace_user_agent_appid(self):
+        ws = Workspace(
+            subscription_id=self.subscription_id,
+            resource_group=self.resource_group,
+            name=self.workspace_name,
+            location=self.location
+        )
+        assert ws.user_agent == os.environ.get("AZURE_QUANTUM_PYTHON_APPID")
+
+        user_agent = "MyUserAgent"
+        ws = Workspace(
+            subscription_id=self.subscription_id,
+            resource_group=self.resource_group,
+            name=self.workspace_name,
+            location=self.location,
+            user_agent=user_agent
+        )
+        assert ws.user_agent == user_agent
+
+        user_agent = "MyUserAgent123"
+        os.environ["AZURE_QUANTUM_PYTHON_APPID"] = user_agent
+        ws = Workspace(
+            subscription_id=self.subscription_id,
+            resource_group=self.resource_group,
+            name=self.workspace_name,
+            location=self.location,
+        )
+        assert ws.user_agent == user_agent
+
+
+
+
+
