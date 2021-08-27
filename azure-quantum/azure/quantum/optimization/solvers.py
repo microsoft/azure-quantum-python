@@ -16,4 +16,3 @@ from azure.quantum.target.microsoft.qio import (
     PopulationAnnealing,
     SubstochasticMonteCarlo,
 )
-from azure.quantum.target.microsoft.fleet_management import FleetManagement
