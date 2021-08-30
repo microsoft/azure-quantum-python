@@ -53,7 +53,7 @@ We recommend installing [Anaconda](https://www.anaconda.com/products/individual)
 First, install RDKit:
 
 ```bash
-conda install -c rdkit rdkit
+conda install -c conda-forge rdkit
 ```
 
 To install the `qdk` package, run
