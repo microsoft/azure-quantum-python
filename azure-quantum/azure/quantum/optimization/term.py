@@ -9,7 +9,7 @@ from typing import List, Dict, Union, Optional
 from enum import Enum
 from abc import ABC
 
-__all__ = ["TermBase", "Term", "GroupType", "GroupedTerm"]
+__all__ = ["TermBase", "Term", "GroupType", "SlcTerm"]
 
 try:
     import numpy.typing as npt
@@ -207,65 +207,46 @@ class GroupType(str, Enum):
     combination = "na"
     squared_linear_combination = "slc"
 
-class GroupedTerm(TermBase):
+class SlcTerm(TermBase):
     """
-    Grouped term class featuring a particular combination type of monomial terms.
+    Squared Linear Combination term class.
     """
     def __init__(
         self,
-        term_type: GroupType,
         terms: List[Term],
         c: Optional[WArray] = 1.0,
     ):
         TermBase.__init__(self, c=c)
-        self.term_type = term_type
         self.terms = terms
         self.validate()
     
-    @staticmethod
-    def is_grouped_term(term_dict: dict):
-        return "type" in term_dict
-    
     def validate(self):
         """
-        Check for and raise errors in GroupedTerm formulation.
+        Check for and raise errors in Squared Linear Combination formulation.
         """
-        if self.term_type is GroupType.combination:
-            # Disabled GroupType
-            raise ValueError(
-                "Error - type {} GroupedTerm is not enabled;"
-                + "formulate list of Term objects instead.".format(self.term_type)
-            )
-        elif self.term_type is GroupType.squared_linear_combination:
-            # Check linearity of terms and that like terms are combined
-            seen = set()
-            for term in self.terms:
-                if len(term.ids) > 1:
-                    # Nonlinear term
-                    raise ValueError(
-                        "Error - terms must be linear in type {} GroupedTerm".format(self.term_type)
-                    )
-                elif len(term.ids) == 1:
-                    # Linear term
-                    id = term.ids[0]
-                else:
-                    # Constant term
-                    id = -1
-                if id in seen:
-                    raise ValueError(
-                        "Error - like terms must be combined in type {} GroupedTerm".format(self.term_type)
-                    )
-                else:
-                    seen.add(id)
-        else:
-            pass
+        # Check linearity of terms and that like terms are combined
+        seen = set()
+        for term in self.terms:
+            if len(term.ids) > 1:
+                # Nonlinear term
+                raise ValueError("Error - terms must be linear in type SlcTerm")
+            elif len(term.ids) == 1:
+                # Linear term
+                id = term.ids[0]
+            else:
+                # Constant term
+                id = -1
+            if id in seen:
+                raise ValueError("Error - like terms must be combined in type SlcTerm")
+            else:
+                seen.add(id)
+
 
     def to_dict(self):
         """
-        Return dictionary format of GroupedTerm for solver input
+        Return dictionary format of SlcTerm for solver input
         """
         return {
-            'type': self.term_type,
             'c': self.c,
             'terms': [monomial_term.to_dict() for monomial_term in self.terms],
         }
@@ -273,52 +254,27 @@ class GroupedTerm(TermBase):
     @classmethod
     def from_dict(cls, obj: dict):
         """
-        Create GroupedTerm from dictionary with keys "type", "terms" and "c"
+        Create SlcTerm from dictionary with keys "terms" and "c"
         """
-        if obj["type"] == "na":
-            term_type = GroupType.combination
-        elif obj["type"] == "slc":
-            term_type = GroupType.squared_linear_combination
-        else:
-            print(
-                "Error - unknown grouped term type {0}".format(
-                    obj["type"]
-                )
-            )
-            raise
-        
         try:
             terms = [Term.from_dict(term_dict) for term_dict in obj["terms"]]
         except:
             print(
-                "Error - grouped list of terms missing or errant."
+                "Error - grouped list of terms missing or errant for squared linear combination type."
             )
             raise
-        return cls(term_type=term_type, terms=terms, c=obj["c"])
+        return cls(terms=terms, c=obj["c"])
     
     def evaluate(self, configuration: Dict[int, int]) -> float:
-        """Given a variable configuration, evaluate the value of the grouped term.
+        """Given a variable configuration, evaluate the value of the slc term.
         :param configuration:
             Dictionary in which each key is a variable id;
             each value is the variable assignment (usually -1, 0, or 1)
         """
-        if self.term_type is GroupType.combination:
-            combination_eval = 0.0
-            for term in self.terms:
-                combination_eval += term.evaluate(configuration)
-            eval = combination_eval
-        elif self.term_type is GroupType.squared_linear_combination:
-            combination_eval = 0.0
-            for term in self.terms:
-                combination_eval += term.evaluate(configuration)
-            eval = self.c * combination_eval**2
-        else:
-            print(
-                "Error - evaluate not handled for GroupType {0}".format(
-                    self.term_type
-                )
-            )
-            raise
+        combination_eval = 0.0
+        for term in self.terms:
+            combination_eval += term.evaluate(configuration)
+        eval = self.c * combination_eval**2
         
         return eval
     
@@ -345,19 +301,13 @@ class GroupedTerm(TermBase):
         if len(new_terms) == 0:
             return None
 
-        # GroupType simplifications when new_terms has a single element
-        # Further simplifications require knowledge of binary vs. spin setting,
+        # Slc simplifications when new_terms has a single constant element
         # such as simplifying an SLC term consisting of a single variable
         if len(new_terms) == 1:
             term = new_terms[0]
-            if self.term_type is GroupType.combination:
-                return Term(indices=term.ids, c=self.c * term.c)
-            elif self.term_type is GroupType.squared_linear_combination:
-                if len(term.ids) == 0:
-                    # Simplify SLC term consisting of a single constant
-                    # For example, C(k)^2 as a GroupedTerm to Ck^2 as a Term
-                    return Term(indices=[], c=self.c * term.c**2)
-            else:
-                pass
-        
-        return GroupedTerm(term_type=self.term_type, terms=new_terms, c=self.c)
+            if len(term.ids) == 0:
+                # Simplify SLC term consisting of a single constant
+                # For example, C(k)^2 as a GroupedTerm to Ck^2 as a Term
+                return Term(indices=[], c=self.c * term.c**2)
+
+        return SlcTerm(terms=new_terms, c=self.c)

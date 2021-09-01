@@ -9,10 +9,13 @@
 
 import os
 import re
+
 import six
+import pytest
+import asyncio
 
 from azure.quantum import Workspace
-from azure.identity import DefaultAzureCredential, ClientSecretCredential
+from azure.identity import ClientSecretCredential
 from azure_devtools.scenario_tests.base import ReplayableTest
 from azure_devtools.scenario_tests.recording_processors import (
     RecordingProcessor,
@@ -33,6 +36,7 @@ WORKSPACE = "myworkspace"
 LOCATION = "eastus"
 STORAGE = "mystorage"
 
+@pytest.mark.usefixtures("event_loop_instance")
 class QuantumTestBase(ReplayableTest):
     """QuantumTestBase
 
@@ -44,10 +48,10 @@ class QuantumTestBase(ReplayableTest):
         self._client_id = os.environ.get("AZURE_CLIENT_ID", ZERO_UID)
         self._client_secret = os.environ.get("AZURE_CLIENT_SECRET", PLACEHOLDER)
         self._tenant_id = os.environ.get("AZURE_TENANT_ID", TENANT_ID)
-        self._resource_group = os.environ.get("AZUREQUANTUM_WORKSPACE_RG", RESOURCE_GROUP)
-        self._subscription_id = os.environ.get("AZUREQUANTUM_SUBSCRIPTION_ID", ZERO_UID)
-        self._workspace_name = os.environ.get("AZUREQUANTUM_WORKSPACE_NAME", WORKSPACE)
-        self._location = os.environ.get("AZUREQUANTUM_WORKSPACE_LOCATION", LOCATION)
+        self._resource_group = os.environ.get("AZUREQUANTUM_WORKSPACE_RG", os.environ.get("RESOURCE_GROUP", RESOURCE_GROUP))
+        self._subscription_id = os.environ.get("AZUREQUANTUM_SUBSCRIPTION_ID", os.environ.get("SUBSCRIPTION_ID", ZERO_UID))
+        self._workspace_name = os.environ.get("AZUREQUANTUM_WORKSPACE_NAME")
+        self._location = os.environ.get("AZUREQUANTUM_WORKSPACE_LOCATION", os.environ.get("LOCATION", LOCATION))
 
         regex_replacer = CustomRecordingProcessor()
         recording_processors = [
@@ -127,7 +131,7 @@ class QuantumTestBase(ReplayableTest):
             r"/workspaces/[a-z0-9-]+/", f'/workspaces/{WORKSPACE}/'
         )
 
-        regex_replacer.register_regex(r"sig=[0-9a-zA-Z%]+\&", "sig=PLACEHOLDER&")
+        regex_replacer.register_regex(r"sig=[^&]+\&", "sig=PLACEHOLDER&")
         regex_replacer.register_regex(r"sv=[^&]+\&", "sv=PLACEHOLDER&")
         regex_replacer.register_regex(r"se=[^&]+\&", "se=PLACEHOLDER&")
         regex_replacer.register_regex(r"client_id=[^&]+\&", "client_id=PLACEHOLDER&")
@@ -199,12 +203,15 @@ class QuantumTestBase(ReplayableTest):
 
         return workspace
 
+    def get_async_result(self, coro):
+        return asyncio.get_event_loop().run_until_complete(coro)
+
+
 
 class CustomRecordingProcessor(RecordingProcessor):
 
     ALLOW_HEADERS = [
         "connection",
-        "content-disposition",
         "content-length",
         "content-range",
         "content-type",
@@ -257,15 +264,19 @@ class CustomRecordingProcessor(RecordingProcessor):
         request.headers = headers
 
         request.uri = self.regex_replace_all(request.uri)
+        content_type = self._get_content_type(request)
 
-        if _get_content_type(request) == "application/x-www-form-urlencoded":
-            body = request.body.decode("utf-8")
-            body = self.regex_replace_all(body)
-            request.body = body.encode("utf-8")
-        else:
-            body = str(request.body)
-            body = self.regex_replace_all(body)
-            request.body = body
+        body = request.body
+        if body is not None:
+            if ((content_type == "application/x-www-form-urlencoded") and
+                (isinstance(body, bytes) or isinstance(body, bytearray))):
+                body = body.decode("utf-8")
+                body = self.regex_replace_all(body)
+                request.body = body.encode("utf-8")
+            else:
+                body = str(body)
+                body = self.regex_replace_all(body)
+                request.body = body
 
         return request
 
@@ -297,15 +308,18 @@ class CustomRecordingProcessor(RecordingProcessor):
                 headers[key] = new_header_values
         response["headers"] = headers
 
-        content_type = self._get_content_type(response)
+        if "url" in response:
+            response["url"] = self.regex_replace_all(response["url"])
 
+        content_type = self._get_content_type(response)
         if is_text_payload(response) or "application/octet-stream" == content_type:
             body = response["body"]["string"]
-            if not isinstance(body, six.string_types):
-                body = body.decode("utf-8")
-            if body:
-                body = self.regex_replace_all(body)
-                response["body"]["string"] = body
+            if body is not None:
+                if not isinstance(body, six.string_types):
+                    body = body.decode("utf-8")
+                if body:
+                    body = self.regex_replace_all(body)
+                    response["body"]["string"] = body
 
         return response
 

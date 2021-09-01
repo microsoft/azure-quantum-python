@@ -67,9 +67,7 @@ class AzureQuantumProvider(Provider):
             HoneywellSimulatorBackend
         ]
 
-        targets = [
-            target.get("id") for targets in self._workspace.get_targets().values()
-            for target in targets]
+        targets = [target.name for target in self._workspace.get_targets()]
         self._backends = [
             cls(self) for cls in backends if cls.backend_name in targets
         ]
