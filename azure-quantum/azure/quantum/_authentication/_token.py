@@ -23,13 +23,13 @@ if TYPE_CHECKING:
 
 _LOGGER = logging.getLogger(__name__)
 
-_TOKEN_FILE_ENV_VARIABLE="AZUREQUANTUM_TOKEN_FILE"
+_TOKEN_FILE_ENV_VARIABLE="AZURE_QUANTUM_TOKEN_FILE"
 
 class _TokenFileCredential(object):
     """
     Implements a custom TokenCredential to use a local file as the source for an AzureQuantum token.
 
-    It will only use the local file if the AZUREQUANTUM_TOKEN_FILE environment variable is set, and references
+    It will only use the local file if the AZURE_QUANTUM_TOKEN_FILE environment variable is set, and references
     an existing json file that contains the access_token and expires_on timestamp in milliseconds.
 
     If the environment variable is not set, the file does not exist, or the token is invalid in any way (expired, for example),
