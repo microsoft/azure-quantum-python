@@ -3,14 +3,10 @@ from qiskit import QuantumCircuit
 
 from azure.quantum.job.job import Job
 from azure.quantum.plugins.qiskit import AzureQuantumProvider
+from azure.quantum.plugins.cirq import AzureQuantumService
 
 from common import QuantumTestBase, ZERO_UID
-import os
-os.environ["AZUREQUANTUM_WORKSPACE_RG"] = "e2e-scenarios"
-os.environ["AZUREQUANTUM_SUBSCRIPTION_ID"] = "916dfd6d-030c-4bd9-b579-7bb6d1926e97"
-os.environ["AZUREQUANTUM_WORKSPACE_NAME"] = "e2e-qsharp-tests"
-os.environ["AZUREQUANTUM_WORKSPACE_LOCATION"] = "WestUS2"
-os.environ["AZUREQUANTUM_WORKSPACE_STORAGE"] = "e2etests"
+
 class TestQiskit(QuantumTestBase):
     """TestIonq
 
@@ -154,3 +150,92 @@ class TestQiskit(QuantumTestBase):
             result = qiskit_job.result()
             assert result.data()["counts"] == {'000': 500}
             assert result.data()["probabilities"] == {'000': 1.0}
+
+
+class TestCirq(QuantumTestBase):
+    mock_create_job_id_name = "create_job_id"
+    def get_test_job_id(self):
+        return ZERO_UID if self.is_playback \
+               else Job.create_job_id()
+
+    def _3_qubit_ghz_cirq(self):
+        import cirq
+
+        # Create qubits
+        q0 = cirq.LineQubit(0)
+        q1 = cirq.LineQubit(1)
+        q2 = cirq.LineQubit(2)
+
+        # Create a circuit
+        circuit = cirq.Circuit(
+            cirq.H(q0),  # H gate
+            cirq.CNOT(q0, q1),
+            cirq.CNOT(q1, q2),
+            cirq.measure(q0, key='q0'),
+            cirq.measure(q1, key='q1'),
+            cirq.measure(q2, key='q2'),
+        )
+
+        return circuit
+
+    def test_plugins_ionq_cirq(self):
+        with unittest.mock.patch.object(
+            Job,
+            self.mock_create_job_id_name,
+            return_value=self.get_test_job_id(),
+        ):
+            workspace = self.create_workspace()
+            service = AzureQuantumService(workspace=workspace)
+            job = service.run(
+                circuit=self._3_qubit_ghz_cirq(),
+                repetitions=None,
+                target="ionq.simulator"
+            )
+
+            # Make sure the job is completed before fetching the results
+            # playback currently does not work for repeated calls
+            # See: https://github.com/microsoft/qdk-python/issues/118
+            if not self.is_playback:
+                self.assertEqual(False, job.has_completed())
+                if self.in_recording:
+                    import time
+                    time.sleep(3)
+                job.refresh()
+                job.wait_until_completed()
+                self.assertEqual(True, job.has_completed())
+
+            results = job.get_results()
+            assert "histogram" in results
+            assert results["histogram"]["0"] == 0.5
+            assert results["histogram"]["7"] == 0.5
+    
+    def test_plugins_honeywell_cirq(self):
+        with unittest.mock.patch.object(
+            Job,
+            self.mock_create_job_id_name,
+            return_value=self.get_test_job_id(),
+        ):
+            workspace = self.create_workspace()
+            service = AzureQuantumService(workspace=workspace)
+            job = service.run(
+                circuit=self._3_qubit_ghz_cirq(),
+                repetitions=None,
+                target="honeywell.hqs-lt-s1-apival"
+            )
+
+            # Make sure the job is completed before fetching the results
+            # playback currently does not work for repeated calls
+            # See: https://github.com/microsoft/qdk-python/issues/118
+            if not self.is_playback:
+                self.assertEqual(False, job.has_completed())
+                if self.in_recording:
+                    import time
+                    time.sleep(3)
+                job.refresh()
+                job.wait_until_completed()
+                self.assertEqual(True, job.has_completed())
+
+            results = job.get_results()
+            assert results["m_q0"] == ["0"]
+            assert results["m_q1"] == ["0"]
+            assert results["m_q2"] == ["0"]
