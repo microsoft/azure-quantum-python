@@ -44,7 +44,9 @@ function Invoke-Tests() {
   Use-CondaEnv $EnvName
   # Install testing deps
   python -m pip install --upgrade pip
-  pip install pytest pytest-azurepipelines pytest-cov
+  pip install pytest pytest-azurepipelines pytest-cov pylint
+  # Run pylint
+  pylint $AbsPackageDir
   # Run tests
   pytest --cov-report term --cov=$PkgName $AbsPackageDir
 }
