@@ -5,7 +5,12 @@ from azure.quantum.job.job import Job
 from azure.quantum.plugins.qiskit import AzureQuantumProvider
 
 from common import QuantumTestBase, ZERO_UID
-
+import os
+os.environ["AZUREQUANTUM_WORKSPACE_RG"] = "e2e-scenarios"
+os.environ["AZUREQUANTUM_SUBSCRIPTION_ID"] = "916dfd6d-030c-4bd9-b579-7bb6d1926e97"
+os.environ["AZUREQUANTUM_WORKSPACE_NAME"] = "e2e-qsharp-tests"
+os.environ["AZUREQUANTUM_WORKSPACE_LOCATION"] = "WestUS2"
+os.environ["AZUREQUANTUM_WORKSPACE_STORAGE"] = "e2etests"
 class TestQiskit(QuantumTestBase):
     """TestIonq
 
@@ -30,9 +35,16 @@ class TestQiskit(QuantumTestBase):
         return circuit
 
     def test_plugins_submit_qiskit_to_ionq(self):
-        self._test_qiskit_submit_ionq(num_shots=None)
+        circuit = self._3_qubit_ghz()
+        self._test_qiskit_submit_ionq(circuit=circuit, num_shots=None, num_shots_actual=500)
+    
+    def test_plugins_submit_qiskit_qobj_to_ionq(self):
+        from qiskit import assemble
+        circuit = self._3_qubit_ghz()
+        qobj = assemble(circuit)
+        self._test_qiskit_submit_ionq(circuit=qobj, num_shots=None, num_shots_actual=1024)
 
-    def _test_qiskit_submit_ionq(self, num_shots):
+    def _test_qiskit_submit_ionq(self, circuit, num_shots, num_shots_actual):
 
         with unittest.mock.patch.object(
             Job,
@@ -42,10 +54,10 @@ class TestQiskit(QuantumTestBase):
             workspace = self.create_workspace()
             provider = AzureQuantumProvider(workspace=workspace)
             backend = provider.get_backend("ionq.simulator")
-            circuit = self._3_qubit_ghz()
+            
             qiskit_job = backend.run(
                 circuit=circuit,
-                num_shots=num_shots
+                shots=num_shots
             )
 
             # Make sure the job is completed before fetching the results
@@ -64,8 +76,10 @@ class TestQiskit(QuantumTestBase):
                 self.assertEqual(True, job.has_completed())
 
             result = qiskit_job.result()
-            assert result.data()["counts"] == {'0': 250, '7': 250}
-            assert result.data()["probabilities"] == {'0': 0.5, '7': 0.5}
+            assert result.data()["counts"] == {
+                '000': num_shots_actual//2, '111': num_shots_actual//2
+            }
+            assert result.data()["probabilities"] == {'000': 0.5, '111': 0.5}
             counts = result.get_counts()
             assert counts == result.data()["counts"]
     

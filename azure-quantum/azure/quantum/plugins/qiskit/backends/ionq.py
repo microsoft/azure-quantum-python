@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 ##
 import json
+from typing import Any, Dict, List
 from azure.quantum import __version__
 from azure.quantum.plugins.qiskit.job import AzureQuantumJob
 
@@ -10,6 +11,7 @@ try:
     from qiskit.providers import BackendV1 as Backend
     from qiskit.providers.models import BackendConfiguration
     from qiskit.providers import Options
+    from qiskit.qobj import Qobj, QasmQobj
 
     from qiskit_ionq.helpers import ionq_basis_gates, qiskit_circ_to_ionq_circ
 except ImportError:
@@ -32,16 +34,28 @@ class IonQBackend(Backend):
     def _default_options(cls):
         return Options(shots=500)
 
-    def _job_metadata(self, circuit):
+    def _job_metadata(self, circuit, meas_map):
         return {
             "qiskit": True,
             "name": circuit.name,
             "num_qubits": circuit.num_qubits,
+            "meas_map": meas_map,
         }
 
     def run(self, circuit, **kwargs):
-        """Submits the given circuit for execution on an IonQ target."""
-        ionq_circ, _, _ = qiskit_circ_to_ionq_circ(circuit)
+        """Submits the given circuit for execution on an IonQ target."""        
+        # If the circuit was created using qiskit.assemble,
+        # disassemble into QASM here
+        if isinstance(circuit, QasmQobj) or isinstance(circuit, Qobj):
+            from qiskit.assembler import disassemble
+            circuits, run, _ = disassemble(circuit)
+            circuit = circuits[0]
+            if kwargs.get("shots") is None:
+                # Note that the default number of shots for QObj is 1024
+                # unless the user specifies the backend.
+                kwargs["shots"] = run["shots"]
+
+        ionq_circ, _, meas_map = qiskit_circ_to_ionq_circ(circuit)
         input_data = json.dumps({
             "qubits": circuit.num_qubits,
             "circuit": ionq_circ,
@@ -67,7 +81,7 @@ class IonQBackend(Backend):
             input_data_format="ionq.circuit.v1",
             output_data_format="ionq.quantum-results.v1",
             input_params = input_params,
-            metadata= self._job_metadata(circuit),
+            metadata= self._job_metadata(circuit=circuit, meas_map=meas_map),
             **kwargs
         )
 

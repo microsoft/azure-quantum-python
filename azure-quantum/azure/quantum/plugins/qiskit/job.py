@@ -22,6 +22,7 @@ AzureJobStatusMap = {
     "Executing": JobStatus.RUNNING,
     "Failed": JobStatus.ERROR,
     "Cancelled": JobStatus.CANCELLED,
+    "Finishing": JobStatus.RUNNING
 }
 
 # Constants for output data format:
@@ -135,14 +136,24 @@ class AzureQuantumJob(JobV1):
         """ Translate IonQ's histogram data into a format that can be consumed by qiskit libraries. """
         az_result = self._azure_job.get_results()
         shots = int(self._azure_job.details.input_params['shots']) if 'shots' in self._azure_job.details.input_params else self._backend.options.get('shots')
+        meas_map = self.metadata["metadata"]["meas_map"]
+        num_qubits = self.metadata["metadata"]["num_qubits"]
 
         if not 'histogram' in az_result:
             raise "Histogram missing from IonQ Job results"
 
-        histogram = az_result['histogram']
+        def _to_bitstring(k):
+            # flip bitstring to convert to little Endian
+            bitstring = format(int(k), f"0{num_qubits}b")[::-1]
+            # flip bitstring to convert back to big Endian
+            return "".join([bitstring[n] for n in meas_map])[::-1]
+
         counts = {}
-        for key in histogram:
-            counts[key] = int(shots * histogram[key])
+        histogram = {}
+        for key, value in az_result['histogram'].items():
+            bitstring = _to_bitstring(key)
+            counts[bitstring] = int(shots * value)
+            histogram[bitstring] = value
 
         return {"counts": counts, "probabilities": histogram}
 

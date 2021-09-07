@@ -5,10 +5,18 @@
 from azure.quantum.version import __version__
 from azure.quantum.plugins.qiskit.job import AzureQuantumJob
 
-from qiskit import QuantumCircuit
-from qiskit.providers import BackendV1 as Backend
-from qiskit.providers.models import BackendConfiguration
-from qiskit.providers import Options
+try:
+    from qiskit import QuantumCircuit
+    from qiskit.providers import BackendV1 as Backend
+    from qiskit.providers.models import BackendConfiguration
+    from qiskit.providers import Options
+    from qiskit.qobj import Qobj, QasmQobj
+
+except ImportError:
+    raise ImportError(
+    "Missing optional 'qiskit' dependencies. \
+To install run: pip install azure-quantum[qiskit]"
+)
 
 import logging
 logger = logging.getLogger(__name__)
@@ -52,6 +60,17 @@ class HoneywellBackend(Backend):
 
     def run(self, circuit: QuantumCircuit, **kwargs):
         """Submits the given circuit for execution on an Honeywell target."""
+        # If the circuit was created using qiskit.assemble,
+        # disassemble into QASM here
+        if isinstance(circuit, QasmQobj) or isinstance(circuit, Qobj):
+            from qiskit.assembler import disassemble
+            circuits, run, _ = disassemble(circuit)
+            circuit = circuits[0]
+            if kwargs.get("count") is None:
+                # Note that the default number of shots for QObj is 1024
+                # unless the user specifies the backend.
+                kwargs["count"] = run["shots"]
+
         input_data = circuit.qasm()
 
         # Options are mapped to input_params
