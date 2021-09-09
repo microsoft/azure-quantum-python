@@ -41,7 +41,12 @@ class AzureQuantumService:
             HoneywellQPUTarget,
         ]
 
-        targets = [target.name for target in self._workspace.get_targets()]
+        targets = [
+            status.id for _, status in self._workspace._get_target_status(
+                name=None,
+                provider_id=None
+            )
+        ]
         self._target_cls = {
             cls.target_name: cls for cls in all_target_cls if cls.target_name in targets
         }
