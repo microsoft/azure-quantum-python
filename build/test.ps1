@@ -46,7 +46,7 @@ function Invoke-Tests() {
   python -m pip install --upgrade pip
   pip install pytest pytest-azurepipelines pytest-cov pylint
   # Run pylint
-  pylint -f msvs $AbsPackageDir
+  pylint -f msvs --fail-under=8 $AbsPackageDir
   # Run tests
   pytest --cov-report term --cov=$PkgName $AbsPackageDir
 }
