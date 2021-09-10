@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 <#
@@ -6,9 +6,9 @@
         Bootstrap: set up a Python environment using Anaconda
 #>
 
-$packageDir = Split-Path -parent $PSScriptRoot;
-$rootDir = Split-Path -parent $packageDir;
-Import-Module (Join-Path $rootDir "build" "conda-utils.psm1");
+$PackageDir = Split-Path -parent $PSScriptRoot;
+$RootDir = Split-Path -parent $PackageDir;
+Import-Module (Join-Path $RootDir "build" "conda-utils.psm1");
 
 # Enable conda hook
 Enable-Conda
@@ -21,8 +21,8 @@ if ($EnvExists -eq "1") {
     Write-Host "##[info]Skipping creating $EnvName; env already exists."
 } else {
     # if it doese not exist, create env
-    & (Join-Path $rootDir build create-env.ps1) -PackageDirs $PackageDir
+    & (Join-Path $RootDir build create-env.ps1) -PackageDirs $PackageDir
 }
 
 # Install package from source
-& (Join-Path $rootDir build build.ps1) -PackageDirs $PackageDir
+& (Join-Path $RootDir build build.ps1) -PackageDirs $PackageDir
