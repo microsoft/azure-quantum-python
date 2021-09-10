@@ -152,8 +152,3 @@ class TestWorkspace(QuantumTestBase):
             location=self.location,
         )
         assert ws.user_agent == user_agent
-
-
-
-
-
