@@ -20,5 +20,6 @@ if ($True -eq $SkipInstall) {
     & (Join-Path $PSScriptRoot Install-Artifacts.ps1)
 }
 
+# Copy unit tests without recordings and run Pytest
 Copy-Item -Path (Join-Path $PackageDir "tests" "unit" "*.py") -Destination $PSScriptRoot;
 python -m pytest --junitxml=junit/test-results.xml
