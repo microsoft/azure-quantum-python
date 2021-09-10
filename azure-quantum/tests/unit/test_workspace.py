@@ -95,6 +95,8 @@ class TestWorkspace(QuantumTestBase):
             'honeywell.hqs-lt-s1',
             'honeywell.hqs-lt-s1-apival',
             'honeywell.hqs-lt-s1-sim',
+            'honeywell.hqs-lt-s2',
+            'honeywell.hqs-lt-s2-apival',
             'ionq.qpu',
             'ionq.simulator',
             'microsoft.paralleltempering-parameterfree.cpu',
