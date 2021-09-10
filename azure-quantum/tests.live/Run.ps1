@@ -19,3 +19,6 @@ if ($True -eq $SkipInstall) {
 } else {
     & (Join-Path $PSScriptRoot Install-Artifacts.ps1)
 }
+
+Copy-Item -Path (Join-Path $PackageDir "tests" "unit" "*.py") -Destination $PSScriptRoot;
+python -m pytest --junitxml=junit/test-results.xml
