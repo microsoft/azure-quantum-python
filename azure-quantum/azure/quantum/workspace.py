@@ -130,7 +130,6 @@ class Workspace:
         location: Optional[str] = None,
         credential: Optional[object] = None,
         user_agent: Optional[str] = None,
-        **kwargs
     ):
         if resource_id is not None:
             # A valid resource ID looks like:
@@ -187,8 +186,6 @@ class Workspace:
         # "West US" should be converted to "westus".
         self.location = "".join(location.split()).lower()
 
-        self._user_agent = kwargs.pop('user_agent', None)
-
         # Create QuantumClient
         self._client = self._create_client()
 
@@ -205,7 +202,7 @@ class Workspace:
             resource_group_name=self.resource_group,
             workspace_name=self.name,
             base_url=base_url,
-            user_agent=self._user_agent
+            user_agent=self.user_agent
         )
         return client
 
