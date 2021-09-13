@@ -6,11 +6,11 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 ##
+from azure.identity._credentials.client_secret import ClientSecretCredential
 import pytest
 import os
 from azure.quantum import Workspace
 from common import QuantumTestBase
-
 
 class TestWorkspace(QuantumTestBase):
 
@@ -152,3 +152,17 @@ class TestWorkspace(QuantumTestBase):
             location=self.location,
         )
         assert ws.user_agent == user_agent
+
+    def test_workspace_from_name(self):
+        credential = None
+        if self.is_playback:
+            credential = ClientSecretCredential(
+                self.tenant_id, self.client_id, self.client_secret)
+        ws = Workspace.from_name(
+            self.workspace_name,
+            subscription_id=self.subscription_id, # Set subscription ID to match recording
+            credential=credential
+        )
+        assert ws.subscription_id == self.subscription_id
+        assert ws.resource_group == self.resource_group
+        assert ws.location == self.location.lower()

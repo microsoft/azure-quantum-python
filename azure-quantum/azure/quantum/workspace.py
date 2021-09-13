@@ -8,8 +8,10 @@ import os
 import re
 
 from typing import Any, Dict, Iterable, List, Optional, TYPE_CHECKING, Tuple, Union
-from functools import reduce
 from deprecated import deprecated
+from collections import namedtuple
+
+from azure.mgmt.resource import SubscriptionClient, ResourceManagementClient
 
 # Temporarily replacing the DefaultAzureCredential with
 # a custom _DefaultAzureCredential
@@ -37,6 +39,7 @@ logger = logging.getLogger(__name__)
 __all__ = ["Workspace"]
 
 DEFAULT_CONTAINER_NAME_FORMAT = "job-{job_id}"
+RESOURCE_TYPE = "Microsoft.Quantum/Workspaces"
 
 
 def sdk_environment(name):
@@ -149,12 +152,26 @@ class Workspace:
                 name = match.group(3)
 
         if not subscription_id or not resource_group or not name:
-            raise ValueError(
-                "Azure Quantum workspace not fully specified."
-                + "Please specify either a valid resource ID "
-                + "or a valid combination of subscription ID,"
-                + "resource group name, and workspace name."
-            )
+            if name:
+                # Find workspace by name, optionally filter on
+                # subscription ID and resource group
+                return Workspace.from_name(
+                    name=name,
+                    subscription_id=subscription_id,
+                    resource_group=resource_group,
+                    storage=storage,
+                    location=location,
+                    credential=credential,
+                    user_agent=user_agent
+                )
+            else:
+                raise ValueError(
+                    "Azure Quantum workspace not fully specified."
+                    + "Please specify either a valid resource ID, "
+                    + "a valid workspace name or a valid combination "
+                    + "of subscription ID, resource group name, and "
+                    + "workspace name."
+                )
 
         if not location:
             raise ValueError(
@@ -188,6 +205,93 @@ class Workspace:
 
         # Create QuantumClient
         self._client = self._create_client()
+
+    @classmethod
+    def from_name(
+        cls,
+        name: str,
+        resource_group: str = None,
+        subscription_id: str = None,
+        **kwargs
+    ) -> "Workspace":
+        """Factory method for creating a Workspace from its name.
+        This method finds the first workspace available with the
+        specified name in the subscriptions that are available to
+        authenticated Azure account.
+        Optionally pass a resource group and/or subscription ID to
+        narrow down the results.
+        
+        :param name: Workspace name
+        :type name: str
+        :param resource_group: Resource group ID, defaults to None
+        :type resource_group: str
+        :param subscription_id: Subscription ID, defaults to None
+        :type subscription_id: str
+        :return: Workspace instance with specified name
+        :rtype: Workspace
+        """
+        credential = kwargs.get("credential")
+        if credential is None:
+            credential = _DefaultAzureCredential(
+                exclude_interactive_browser_credential=False,
+                exclude_shared_token_cache_credential=True,
+                arm_base_url=ARM_BASE_URL
+            )
+        if resource_group is not None and subscription_id is not None:
+            return cls(
+                name=name,
+                resource_group=resource_group,
+                subscription_id=subscription_id
+            )
+        elif subscription_id is None:
+            subs = cls._get_subs(credential)
+        else:
+            # Create a stub namedtuple with attribute subscription_id
+            Sub = namedtuple("Sub", ["subscription_id"])
+            subs = [Sub(subscription_id=subscription_id)]
+
+        filter = f"Name eq '{name}' and resourceType eq '{RESOURCE_TYPE}'"
+        for sub in subs:
+            resources = cls._get_resources(
+                subscription_id=sub.subscription_id,
+                filter=filter,
+                resource_group=resource_group,
+                credential=credential
+            )
+            for resource in resources:
+                return cls(
+                    resource_id=resource.id,
+                    location=kwargs.pop("location", resource.location),
+                    **kwargs
+                )
+
+    @staticmethod
+    def _get_subs(credential):
+        """Get all subscriptions for the authenticated AAD account"""
+        sub_client = SubscriptionClient(credential=credential)
+        return sub_client.subscriptions.list()
+
+    @staticmethod
+    def _get_resources(
+        subscription_id: str,
+        filter: str,
+        credential: Any,
+        resource_group: str = None
+    ) -> List[str]:
+        """Get all resources for a given subscription ID (and 
+        optionally resource_group) using a filter."""
+        resource_client = ResourceManagementClient(
+            credential=credential,
+            subscription_id=subscription_id
+        )
+
+        if resource_group is None:
+            return resource_client.resources.list(filter=filter)
+        else:
+            return resource_client.resources.list_by_resource_group(
+                resource_group,
+                filter=filter
+            )
 
     def _create_client(self) -> QuantumClient:
         base_url = BASE_URL(self.location)
