@@ -13,7 +13,7 @@ You can also try our [Quantum Computing Fundamentals](https://aka.ms/learnqc) le
 
 ### Installation and getting started
 
-We recommend installing [Anaconda](https://www.anaconda.com/products/individual) or [Miniconda](https://docs.conda.io/en/latest/miniconda.html). 
+We recommend installing [Anaconda](https://www.anaconda.com/products/individual) or [Miniconda](https://docs.conda.io/en/latest/miniconda.html).
 
 To install the `azure-quantum` package, run
 
@@ -53,7 +53,7 @@ We recommend installing [Anaconda](https://www.anaconda.com/products/individual)
 First, install RDKit:
 
 ```bash
-conda install -c rdkit rdkit
+conda install -c conda-forge rdkit
 ```
 
 To install the `qdk` package, run

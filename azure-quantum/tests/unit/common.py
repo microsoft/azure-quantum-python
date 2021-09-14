@@ -9,10 +9,13 @@
 
 import os
 import re
+
 import six
+import pytest
+import asyncio
 
 from azure.quantum import Workspace
-from azure.identity import DefaultAzureCredential, ClientSecretCredential
+from azure.identity import ClientSecretCredential
 from azure_devtools.scenario_tests.base import ReplayableTest
 from azure_devtools.scenario_tests.recording_processors import (
     RecordingProcessor,
@@ -33,6 +36,7 @@ WORKSPACE = "myworkspace"
 LOCATION = "eastus"
 STORAGE = "mystorage"
 
+@pytest.mark.usefixtures("event_loop_instance")
 class QuantumTestBase(ReplayableTest):
     """QuantumTestBase
 
@@ -43,16 +47,17 @@ class QuantumTestBase(ReplayableTest):
     def __init__(self, method_name):
         self._client_id = os.environ.get("AZURE_CLIENT_ID", ZERO_UID)
         self._client_secret = os.environ.get("AZURE_CLIENT_SECRET", PLACEHOLDER)
-        self._location = os.environ.get("LOCATION", LOCATION)
         self._tenant_id = os.environ.get("AZURE_TENANT_ID", TENANT_ID)
-        self._resource_group = os.environ.get("RESOURCE_GROUP", RESOURCE_GROUP)
-        self._subscription_id = os.environ.get("SUBSCRIPTION_ID", ZERO_UID)
-        self._workspace_name = os.environ.get("WORKSPACE_NAME", WORKSPACE)
+        self._resource_group = os.environ.get("AZURE_QUANTUM_WORKSPACE_RG", os.environ.get("RESOURCE_GROUP", RESOURCE_GROUP))
+        self._subscription_id = os.environ.get("AZURE_QUANTUM_SUBSCRIPTION_ID", os.environ.get("SUBSCRIPTION_ID", ZERO_UID))
+        self._workspace_name = os.environ.get("AZURE_QUANTUM_WORKSPACE_NAME")
+        self._location = os.environ.get("AZURE_QUANTUM_WORKSPACE_LOCATION", os.environ.get("LOCATION", LOCATION))
 
         regex_replacer = CustomRecordingProcessor()
         recording_processors = [
             regex_replacer,
             AccessTokenReplacer(),
+            InteractiveAccessTokenReplacer(),
             SubscriptionRecordingProcessor(ZERO_UID),     
             AuthenticationMetadataFilter(),
             OAuthRequestResponsesFilter(),
@@ -101,6 +106,9 @@ class QuantumTestBase(ReplayableTest):
             r"jobs/([a-f0-9]+[-]){4}[a-f0-9]+", "jobs/" + ZERO_UID
         )
         regex_replacer.register_regex(
+            r"job-([a-f0-9]+[-]){4}[a-f0-9]+", "job-" + ZERO_UID
+        )
+        regex_replacer.register_regex(
             r"\d{8}-\d{6}", "20210101-000000"
         )        
         regex_replacer.register_regex(
@@ -122,11 +130,16 @@ class QuantumTestBase(ReplayableTest):
         regex_replacer.register_regex(
             r"/workspaces/[a-z0-9-]+/", f'/workspaces/{WORKSPACE}/'
         )
-        
-        regex_replacer.register_regex(r"sig=[0-9a-zA-Z%]+\&", "sig=PLACEHOLDER&")
+
+        regex_replacer.register_regex(r"sig=[^&]+\&", "sig=PLACEHOLDER&")
         regex_replacer.register_regex(r"sv=[^&]+\&", "sv=PLACEHOLDER&")
         regex_replacer.register_regex(r"se=[^&]+\&", "se=PLACEHOLDER&")
-
+        regex_replacer.register_regex(r"client_id=[^&]+\&", "client_id=PLACEHOLDER&")
+        regex_replacer.register_regex(r"claims=[^&]+\&", "claims=PLACEHOLDER&")
+        regex_replacer.register_regex(r"code_verifier=[^&]+\&", "code_verifier=PLACEHOLDER&")
+        regex_replacer.register_regex(r"code=[^&]+\&", "code_verifier=PLACEHOLDER&")
+        regex_replacer.register_regex(r"code=[^&]+\&", "code_verifier=PLACEHOLDER&")
+        
     def setUp(self):
         super(QuantumTestBase, self).setUp()
         # mitigation for issue https://github.com/kevin1024/vcrpy/issues/533
@@ -190,12 +203,17 @@ class QuantumTestBase(ReplayableTest):
 
         return workspace
 
+    def get_async_result(self, coro):
+        return asyncio.get_event_loop().run_until_complete(coro)
+
+
 
 class CustomRecordingProcessor(RecordingProcessor):
 
     ALLOW_HEADERS = [
         "connection",
         "content-length",
+        "content-range",
         "content-type",
         "accept",
         "accept-encoding",
@@ -233,26 +251,32 @@ class CustomRecordingProcessor(RecordingProcessor):
                                          flags=re.IGNORECASE | re.MULTILINE),
                              new))
 
+    def regex_replace_all(self, value: str):
+        for oldRegex, new in self._regexes:
+            value = oldRegex.sub(new, value)
+        return value
+
     def process_request(self, request):
         headers = {}
         for key in request.headers:
             if key.lower() in self.ALLOW_HEADERS:
-                headers[key] = request.headers[key]
+                headers[key] = self.regex_replace_all(request.headers[key])
         request.headers = headers
 
-        for oldRegex, new in self._regexes:
-            request.uri = oldRegex.sub(new, request.uri)
+        request.uri = self.regex_replace_all(request.uri)
+        content_type = self._get_content_type(request)
 
-        if _get_content_type(request) == "application/x-www-form-urlencoded":
-            body = request.body.decode("utf-8")
-            for oldRegex, new in self._regexes:
-                body = oldRegex.sub(new, body)
-            request.body = body.encode("utf-8")
-        else:
-            body = str(request.body)
-            for oldRegex, new in self._regexes:
-                body = oldRegex.sub(new, body)
-            request.body = body
+        body = request.body
+        if body is not None:
+            if ((content_type == "application/x-www-form-urlencoded") and
+                (isinstance(body, bytes) or isinstance(body, bytearray))):
+                body = body.decode("utf-8")
+                body = self.regex_replace_all(body)
+                request.body = body.encode("utf-8")
+            else:
+                body = str(body)
+                body = self.regex_replace_all(body)
+                request.body = body
 
         return request
 
@@ -277,19 +301,25 @@ class CustomRecordingProcessor(RecordingProcessor):
         headers = {}
         for key in response["headers"]:
             if key.lower() in self.ALLOW_HEADERS:
-                headers[key.lower()] = response["headers"][key]
+                new_header_values = []
+                for old_header_value in response["headers"][key]:
+                    new_header_value = self.regex_replace_all(old_header_value)
+                    new_header_values.append(new_header_value)
+                headers[key] = new_header_values
         response["headers"] = headers
 
-        content_type = self._get_content_type(response)
+        if "url" in response:
+            response["url"] = self.regex_replace_all(response["url"])
 
+        content_type = self._get_content_type(response)
         if is_text_payload(response) or "application/octet-stream" == content_type:
             body = response["body"]["string"]
-            if not isinstance(body, six.string_types):
-                body = body.decode("utf-8")
-            if body:
-                for oldRegex, new in self._regexes:
-                    body = oldRegex.sub(new, body)
-                response["body"]["string"] = body
+            if body is not None:
+                if not isinstance(body, six.string_types):
+                    body = body.decode("utf-8")
+                if body:
+                    body = self.regex_replace_all(body)
+                    response["body"]["string"] = body
 
         return response
 
@@ -313,6 +343,29 @@ class AuthenticationMetadataFilter(RecordingProcessor):
         if "/.well-known/openid-configuration" in request.uri or "/common/discovery/instance" in request.uri:
             return None
         return request
+
+
+class InteractiveAccessTokenReplacer(RecordingProcessor):
+    """Replace the access token for interactive authentication in a response body."""
+
+    def __init__(self, replacement='fake_token'):
+        self._replacement = replacement
+
+    def process_response(self, response):
+        import json
+        try:
+            body = json.loads(response['body']['string'])
+            if 'access_token' in body:
+                body['access_token'] = self._replacement
+                for property in ('scope', 'refresh_token',
+                                'foci', 'client_info',
+                                'id_token'):
+                    if property in body:
+                        del body[property]
+        except (KeyError, ValueError):
+            return response
+        response['body']['string'] = json.dumps(body)
+        return response
 
 
 def expected_terms():

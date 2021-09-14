@@ -6,8 +6,10 @@
 from __future__ import annotations
 import numpy as np
 from typing import List, Dict, Union, Optional
+from enum import Enum
+from abc import ABC
 
-__all__ = ["Term"]
+__all__ = ["TermBase", "Term", "GroupType", "SlcTerm"]
 
 try:
     import numpy.typing as npt
@@ -69,7 +71,64 @@ except ImportError:
         return param
 
 
-class Term:
+class TermBase(ABC):
+    """
+    Term base class; this class is not directly initialized
+    """
+    def __init__(
+        self,
+        c: Optional[WArray] = None,
+    ):
+        if c is not None:
+            # Current intended specification of term.
+            coeff = c
+        else:
+            raise RuntimeError("Cost should be provided for each term.")
+
+        coeff = _convert_if_numpy_type(coeff)
+        if type(coeff) != int and type(coeff) != float:
+            raise RuntimeError(
+                f"c must be a float or int value, \
+                    or a NumPy value that can be converted to those."
+            )
+        self.c = coeff
+
+    def to_dict(self):
+        return self.__dict__
+
+    @classmethod
+    def from_dict(cls, obj):
+        return cls(c=obj.get("c"))
+
+    def evaluate(self, *args, **kwargs) -> float:
+        """Given a variable configuration, evaluate the value of the term.
+        :param configuration:
+            The dictionary of variable ids to their assigned value
+        """
+        return self.c
+
+    def reduce_by_variable_state(self, *args, **kwargs) -> Optional[TermBase]:
+        """Given some fixed variable states,
+            transform the existing term into new term.
+        Returns None if the new term is effectively 0
+        :param fixed_variables:
+            The dictionary of variable ids and their fixed state
+        """
+        return TermBase(c=self.c) if self.c != 0 else None
+
+    def __repr__(self):
+        return str(self.__dict__)
+
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            return self.__dict__ == other.__dict__
+        else:
+            return False
+
+class Term(TermBase):
+    """
+    Class describing a single (monomial) term.
+    """
     def __init__(
         self,
         indices: List[int] = None,
@@ -82,29 +141,23 @@ class Term:
             coeff = w
             parameter_name_used = "w"
         elif c is not None:
-            # Current intended specification of term.
             coeff = c
             parameter_name_used = "c"
         else:
             raise RuntimeError("Cost should be provided for each term.")
-
         coeff = _convert_if_numpy_type(coeff)
         if type(coeff) != int and type(coeff) != float:
             raise RuntimeError(
                 f"{parameter_name_used} must be a float or int value, \
                     or a NumPy value that can be converted to those."
             )
-        self.c = coeff
-
+        TermBase.__init__(self, c=coeff)
         self.ids = indices
-
-    def to_dict(self):
-        return self.__dict__
-
-    @staticmethod
-    def from_dict(obj):
-        return Term(indices=obj["ids"], c=obj["c"])
-
+    
+    @classmethod
+    def from_dict(cls, obj: dict):
+        return cls(indices=obj.get("ids"), c=obj.get("c"))
+    
     def evaluate(self, configuration: Dict[int, int]) -> float:
         """Given a variable configuration, evaluate the value of the term.
         :param configuration:
@@ -126,7 +179,7 @@ class Term:
             raise
 
         return multiplier * self.c
-
+    
     def reduce_by_variable_state(
         self, fixed_variables: Dict[int, int]
     ) -> Optional[Term]:
@@ -149,11 +202,112 @@ class Term:
 
         return Term(indices=new_ids, c=new_c)
 
-    def __repr__(self):
-        return str(self.__dict__)
 
-    def __eq__(self, other):
-        if isinstance(other, self.__class__):
-            return self.__dict__ == other.__dict__
-        else:
-            return False
+class GroupType(str, Enum):
+    combination = "na"
+    squared_linear_combination = "slc"
+
+class SlcTerm(TermBase):
+    """
+    Squared Linear Combination term class.
+    """
+    def __init__(
+        self,
+        terms: List[Term],
+        c: Optional[WArray] = 1.0,
+    ):
+        TermBase.__init__(self, c=c)
+        self.terms = terms
+        self.validate()
+    
+    def validate(self):
+        """
+        Check for and raise errors in Squared Linear Combination formulation.
+        """
+        # Check linearity of terms and that like terms are combined
+        seen = set()
+        for term in self.terms:
+            if len(term.ids) > 1:
+                # Nonlinear term
+                raise ValueError("Error - terms must be linear in type SlcTerm")
+            elif len(term.ids) == 1:
+                # Linear term
+                id = term.ids[0]
+            else:
+                # Constant term
+                id = -1
+            if id in seen:
+                raise ValueError("Error - like terms must be combined in type SlcTerm")
+            else:
+                seen.add(id)
+
+
+    def to_dict(self):
+        """
+        Return dictionary format of SlcTerm for solver input
+        """
+        return {
+            'c': self.c,
+            'terms': [monomial_term.to_dict() for monomial_term in self.terms],
+        }
+    
+    @classmethod
+    def from_dict(cls, obj: dict):
+        """
+        Create SlcTerm from dictionary with keys "terms" and "c"
+        """
+        try:
+            terms = [Term.from_dict(term_dict) for term_dict in obj["terms"]]
+        except:
+            print(
+                "Error - grouped list of terms missing or errant for squared linear combination type."
+            )
+            raise
+        return cls(terms=terms, c=obj["c"])
+    
+    def evaluate(self, configuration: Dict[int, int]) -> float:
+        """Given a variable configuration, evaluate the value of the slc term.
+        :param configuration:
+            Dictionary in which each key is a variable id;
+            each value is the variable assignment (usually -1, 0, or 1)
+        """
+        combination_eval = 0.0
+        for term in self.terms:
+            combination_eval += term.evaluate(configuration)
+        eval = self.c * combination_eval**2
+        
+        return eval
+    
+    def reduce_by_variable_state(
+        self,
+        fixed_variables: Dict[int, int]
+    ) -> Optional[TermBase]:
+        """Given some fixed variable states,
+            transform the existing grouped term into new term.
+        Returns None if the new term is effectively 0
+        :param fixed_variables:
+            The dictionary of variable ids and their fixed state
+        """
+        new_terms_dict = dict()
+        for monomial in self.terms:
+            new_monomial = monomial.reduce_by_variable_state(fixed_variables)
+            if new_monomial:
+                ids = tuple(sorted(new_monomial.ids))
+                try:
+                    new_terms_dict[ids] += new_monomial.c
+                except:
+                    new_terms_dict[ids] = new_monomial.c
+        new_terms = [Term(indices=list(ids), c=c) for ids,c in new_terms_dict.items()]
+        if len(new_terms) == 0:
+            return None
+
+        # Slc simplifications when new_terms has a single constant element
+        # such as simplifying an SLC term consisting of a single variable
+        if len(new_terms) == 1:
+            term = new_terms[0]
+            if len(term.ids) == 0:
+                # Simplify SLC term consisting of a single constant
+                # For example, C(k)^2 as a GroupedTerm to Ck^2 as a Term
+                return Term(indices=[], c=self.c * term.c**2)
+
+        return SlcTerm(terms=new_terms, c=self.c)

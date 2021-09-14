@@ -11,7 +11,7 @@ import json
 import threading
 import sys
 
-from typing import List, Union, Dict, Optional
+from typing import List, Tuple, Union, Dict, Optional, Type
 from azure.quantum import Workspace
 from azure.quantum.optimization import Term, Problem, ProblemType
 from azure.quantum.storage import (
@@ -39,7 +39,7 @@ class StreamingProblem(object):
     :param name: Problem name
     :type name: str
     :param terms: Problem terms, depending on solver. Defaults to None
-    :type terms: Optional[List[Term]], optional
+    :type terms: Optional[List[TermBase]], optional
     :param init_config: Optional configuration details,
      depending on solver. Defaults to None
     :type init_config: Optional[Dict[str,int]], optional
@@ -88,7 +88,7 @@ class StreamingProblem(object):
         return self._id
 
     def add_term(self, c: Union[int, float], indices: List[int]):
-        """Adds a single term to the `Problem`
+        """Adds a single monomial term to the `Problem`
         representation and queues it to be uploaded
 
         :param c: The cost or weight of this term
@@ -122,11 +122,16 @@ class StreamingProblem(object):
 
         return {"blob_name": blob_name, "container_client": container_client}
 
-    def add_terms(self, terms: List[Term]):
+    def add_terms(
+        self,
+        terms: List[Term],
+        c: Union[int, float] = 1
+    ):
         """Adds a list of terms to the `Problem`
-         representation and queues them to be uploaded
+         representation and queues them to be uploaded. Special terms are not supported.
 
         :param terms: The list of terms to add to the problem
+        :param c: Weight of grouped term, if applicable
         """
         if self.uploaded_uri is not None:
             raise Exception("Cannot add terms after problem has been uploaded")
@@ -148,11 +153,20 @@ class StreamingProblem(object):
                     "Cannot add terms after problem has been uploaded"
                 )
 
-            term_couplings = [len(term.ids) for term in terms]
-            max_coupling = max(term_couplings)
-            min_coupling = min(term_couplings)
-            self.__n_couplers += sum(term_couplings)
-            self.stats["num_terms"] += len(terms)
+            max_coupling = -sys.float_info.max
+            min_coupling = sys.float_info.max
+            for term in terms:
+                if isinstance(term, Term):
+                    n = len(term.ids)
+                    max_coupling = max(max_coupling, n)
+                    min_coupling = min(min_coupling, n)
+                    self.__n_couplers += n
+                    self.stats["num_terms"] += 1
+                else:
+                    raise Exception(
+                        "Unsupported statistics in streamingproblem for TermBase subclass {}.".format(type(term))
+                    )
+                        
             self.stats["avg_coupling"] = (
                 self.__n_couplers / self.stats["num_terms"]
             )

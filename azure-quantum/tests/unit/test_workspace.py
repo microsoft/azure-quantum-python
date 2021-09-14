@@ -7,7 +7,7 @@
 # Licensed under the MIT License.
 ##
 import pytest
-
+import os
 from azure.quantum import Workspace
 from common import QuantumTestBase
 
@@ -26,7 +26,7 @@ class TestWorkspace(QuantumTestBase):
         assert ws.subscription_id == self.subscription_id
         assert ws.resource_group == self.resource_group
         assert ws.name == self.workspace_name
-        assert ws.location == self.location
+        assert ws.location.lower() == self.location.lower()
 
         ws = Workspace(
             subscription_id=self.subscription_id,
@@ -84,3 +84,71 @@ class TestWorkspace(QuantumTestBase):
 
         with pytest.raises(ValueError):
             Workspace(storage=storage)
+
+    def test_workspace_get_targets(self):
+        ws = self.create_workspace()
+        targets = ws.get_targets()
+        test_targets = set([
+            'honeywell.hqs-lt-s1-apival',
+            'ionq.simulator',
+            'microsoft.paralleltempering-parameterfree.cpu',
+            'microsoft.populationannealing.cpu',
+            'microsoft.qmc.cpu',
+            'microsoft.simulatedannealing-parameterfree.cpu',
+            'microsoft.substochasticmontecarlo.cpu',
+            'microsoft.tabu-parameterfree.cpu',
+        ])
+        assert test_targets.issubset(set([t.name for t in targets]))
+
+        target = ws.get_targets("ionq.qpu")
+        assert target.average_queue_time is not None
+        assert target.current_availability is not None
+        assert target.name == "ionq.qpu"
+        target.refresh()
+        assert target.average_queue_time is not None
+        assert target.current_availability is not None
+
+        with pytest.raises(ValueError):
+            target.name = "foo"
+            target.refresh()
+
+    def test_workspace_job_quotas(self):
+        ws = self.create_workspace()
+        quotas = ws.get_quotas()
+        assert len(quotas) > 0
+        assert "dimension" in quotas[0]
+        assert "scope" in quotas [0]
+        assert "provider_id" in quotas [0]
+        assert "utilization" in quotas [0]
+        assert "holds" in quotas [0]
+        assert "limit" in quotas [0]
+        assert "period" in quotas [0]
+
+    def test_workspace_user_agent_appid(self):
+        ws = Workspace(
+            subscription_id=self.subscription_id,
+            resource_group=self.resource_group,
+            name=self.workspace_name,
+            location=self.location
+        )
+        assert ws.user_agent == os.environ.get("AZURE_QUANTUM_PYTHON_APPID")
+
+        user_agent = "MyUserAgent"
+        ws = Workspace(
+            subscription_id=self.subscription_id,
+            resource_group=self.resource_group,
+            name=self.workspace_name,
+            location=self.location,
+            user_agent=user_agent
+        )
+        assert ws.user_agent == user_agent
+
+        user_agent = "MyUserAgent123"
+        os.environ["AZURE_QUANTUM_PYTHON_APPID"] = user_agent
+        ws = Workspace(
+            subscription_id=self.subscription_id,
+            resource_group=self.resource_group,
+            name=self.workspace_name,
+            location=self.location,
+        )
+        assert ws.user_agent == user_agent

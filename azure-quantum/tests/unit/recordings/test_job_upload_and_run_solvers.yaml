@@ -1,0 +1,200 @@
+interactions:
+- request:
+    body: client_id=PLACEHOLDER&grant_type=client_credentials&client_info=1&client_secret=PLACEHOLDER&scope=https%3A%2F%2Fquantum.microsoft.com%2F.default
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '192'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      User-Agent:
+      - azsdk-python-identity/1.6.0 Python/3.7.8 (Windows-10-10.0.19041-SP0)
+      x-client-cpu:
+      - x64
+      x-client-current-telemetry:
+      - 4|730,0|
+      x-client-os:
+      - win32
+      x-client-sku:
+      - MSAL.Python
+      x-client-ver:
+      - 1.13.0
+    method: POST
+    uri: https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token
+  response:
+    body:
+      string: '{"token_type": "Bearer", "expires_in": 86399, "ext_expires_in": 86399,
+        "access_token": "fake_token"}'
+    headers:
+      content-length:
+      - '1722'
+      content-type:
+      - application/json; charset=utf-8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: 'b''{"containerName": "qc-test-d23a7f2e-069e-11ec-8497-2816a847b9a3"}'''
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '65'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - azsdk-python-quantum/0.0.0.1 Python/3.7.8 (Windows-10-10.0.19041-SP0)
+    method: POST
+    uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/storage/sasUri
+  response:
+    body:
+      string: '{"sasUri": "https://mystorage.blob.core.windows.net/qc-test-d23a7f2e-069e-11ec-8497-2816a847b9a3?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "access_token": "fake_token"}'
+    headers:
+      content-length:
+      - '215'
+      content-type:
+      - application/json; charset=utf-8
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-blob/12.8.1 Python/3.7.8 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Thu, 26 Aug 2021 18:52:56 GMT
+      x-ms-version:
+      - '2020-06-12'
+    method: GET
+    uri: https://mystorage.blob.core.windows.net/qc-test-d23a7f2e-069e-11ec-8497-2816a847b9a3?restype=container&sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerNotFound</Code><Message>The
+        specified container does not exist.\nRequestId:ffecbd9c-c01e-0086-7eab-9a5354000000\nTime:2021-08-26T18:52:56.7726165Z</Message></Error>"
+    headers:
+      content-length:
+      - '225'
+      content-type:
+      - application/xml
+      x-ms-version:
+      - '2020-06-12'
+    status:
+      code: 404
+      message: The specified container does not exist.
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-blob/12.8.1 Python/3.7.8 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Thu, 26 Aug 2021 18:52:56 GMT
+      x-ms-version:
+      - '2020-06-12'
+    method: PUT
+    uri: https://mystorage.blob.core.windows.net/qc-test-d23a7f2e-069e-11ec-8497-2816a847b9a3?restype=container&sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      x-ms-version:
+      - '2020-06-12'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-blob/12.8.1 Python/3.7.8 (Windows-10-10.0.19041-SP0)
+      x-ms-date:
+      - Thu, 26 Aug 2021 18:52:56 GMT
+      x-ms-version:
+      - '2020-06-12'
+    method: GET
+    uri: https://mystorage.blob.core.windows.net/qc-test-d23a7f2e-069e-11ec-8497-2816a847b9a3?restype=container&sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      x-ms-lease-state:
+      - available
+      x-ms-lease-status:
+      - unlocked
+      x-ms-version:
+      - '2020-06-12'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: b'\x1f\x8b\x08\x00\x06\xe3\'a\x02\xffU\xcbA\n\x80 \x10\x05\xd0\xab\xc8\xac5RkQW\t\t2\x83\x16e\xa4\x05!\xde=\xab\x85\xcdj\xe6\xff\xc7\x0f\xa0\xad\xf3\xfdt\xac\xda\xcfv\x85\x96\x048\xcd\xee\xbe\x1fxQ\x02%\xe0\xaf\xcd<q;\x06\xfbf\xb3/.\x15]\x00\x9d\x0e\x93\xa9\x9b\xc7\xb7\xe1\x94\x94*R\xf2I\x9dA
+      h\x10\xf0\x0c"\x83D\x0bV!\xf9M0\x08\x15U\x8c7\xc4,d\x84\xd8\x00\x00\x00'
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '125'
+      Content-Type:
+      - application/octet-stream
+      User-Agent:
+      - azsdk-python-storage-blob/12.8.1 Python/3.7.8 (Windows-10-10.0.19041-SP0)
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-date:
+      - Thu, 26 Aug 2021 18:52:57 GMT
+      x-ms-version:
+      - '2020-06-12'
+    method: PUT
+    uri: https://mystorage.blob.core.windows.net/qc-test-d23a7f2e-069e-11ec-8497-2816a847b9a3/inputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      x-ms-version:
+      - '2020-06-12'
+    status:
+      code: 201
+      message: Created
+version: 1
