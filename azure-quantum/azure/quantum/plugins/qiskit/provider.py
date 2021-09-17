@@ -10,18 +10,12 @@ except ImportError:
 To install run: pip install azure-quantum[qiskit]"
     )
 
+from typing import Dict, Iterable
 from azure.quantum import Workspace
-from azure.quantum.plugins.qiskit.backends.honeywell import (
-    HoneywellSimulatorBackend
-)
 
 from azure.quantum.plugins.qiskit.job import AzureQuantumJob
-from azure.quantum.plugins.qiskit.backends import (
-    IonQSimulatorBackend,
-    IonQQPUBackend,
-    HoneywellQPUBackend,
-    HoneywellAPIValidatorBackend
-)
+from azure.quantum.plugins.qiskit.backends import *
+
 
 class AzureQuantumProvider(Provider):
     def __init__(self, workspace = None, **kwargs):
@@ -35,7 +29,7 @@ class AzureQuantumProvider(Provider):
     def get_workspace(self) -> Workspace:
         return self._workspace
 
-    def backends(self, name=None, **kwargs):
+    def backends(self, name=None, provider_id=None, **kwargs):
         """Return a list of backends matching the specified filtering.
         Args:
             name (str): name of the backend.
@@ -44,30 +38,37 @@ class AzureQuantumProvider(Provider):
             list[Backend]: a list of Backends that match the filtering
                 criteria.
         """
-        if not self._backends:
-            self._init_backends()
+        from azure.quantum.target.target_factory import TargetFactory
+        from qiskit.providers import BackendV1 as Backend
+        from azure.quantum.plugins.qiskit.backends import DEFAULT_TARGETS
 
-        if not name:
-            return [backend for backend in self._backends]
+        all_targets = {
+            _t.backend_name: _t for t in Backend.__subclasses__()
+            for _t in [t] + t.__subclasses__()
+            if hasattr(_t, "backend_name")
+        }
 
-        return [backend for backend in self._backends if backend.name() == name]
+        target_factory = TargetFactory(
+            base_cls=Backend,
+            workspace=self._workspace,
+            default_targets=DEFAULT_TARGETS,
+            all_targets=all_targets
+        )
+
+        targets = target_factory.get_targets(
+            name=name,
+            provider_id=provider_id,
+            provider=self,
+            **kwargs
+        )
+
+        # Always return an iterable
+        if isinstance(targets, Iterable):
+            return targets
+        return [targets]
 
     def get_job(self, job_id) -> AzureQuantumJob:
         """ Returns the Job instance associated with the given id."""
         azure_job = self._workspace.get_job(job_id)
         backend = self.get_backend(azure_job.details.target)
         return AzureQuantumJob(backend, azure_job)
-
-    def _init_backends(self):
-        backends = [
-            IonQSimulatorBackend,
-            IonQQPUBackend,
-            HoneywellQPUBackend,
-            HoneywellAPIValidatorBackend,
-            HoneywellSimulatorBackend
-        ]
-
-        targets = [target.name for target in self._workspace.get_targets()]
-        self._backends = [
-            cls(self) for cls in backends if cls.backend_name in targets
-        ]

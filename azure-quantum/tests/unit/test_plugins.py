@@ -1,9 +1,12 @@
 import unittest
+import warnings
+
 from qiskit import QuantumCircuit
 
 from azure.quantum.job.job import Job
 from azure.quantum.plugins.qiskit import AzureQuantumProvider
 from azure.quantum.plugins.cirq import AzureQuantumService
+from azure.quantum.plugins.cirq.targets.target import Target
 
 from common import QuantumTestBase, ZERO_UID
 
@@ -178,6 +181,15 @@ class TestCirq(QuantumTestBase):
 
         return circuit
 
+    def test_plugins_cirq_get_targets(self):
+        workspace = self.create_workspace()
+        service = AzureQuantumService(workspace=workspace)
+        targets = service.targets()
+        target_names = [t.name for t in targets]
+        assert all([isinstance(t, Target) for t in targets])
+        assert "honeywell.hqs-lt-s1-apival" in target_names
+        assert "ionq.simulator" in target_names
+
     def test_plugins_ionq_cirq(self):
         with unittest.mock.patch.object(
             Job,
@@ -186,29 +198,42 @@ class TestCirq(QuantumTestBase):
         ):
             workspace = self.create_workspace()
             service = AzureQuantumService(workspace=workspace)
-            job = service.run(
-                circuit=self._3_qubit_ghz_cirq(),
-                repetitions=None,
-                target="ionq.simulator"
-            )
+            try:
+                result = service.run(
+                    program=self._3_qubit_ghz_cirq(),
+                    repetitions=500,
+                    target="ionq.simulator",
+                    timeout_seconds=60
+                )
 
-            # Make sure the job is completed before fetching the results
-            # playback currently does not work for repeated calls
-            # See: https://github.com/microsoft/qdk-python/issues/118
-            if not self.is_playback:
-                self.assertEqual(False, job.has_completed())
-                if self.in_recording:
-                    import time
-                    time.sleep(3)
-                job.refresh()
-                job.wait_until_completed()
-                self.assertEqual(True, job.has_completed())
+            except TimeoutError as e:
+                # Pass on timeout
+                warnings.warn("IonQ execution exceeded timeout. \
+                    Skipping fetching results.")
+                if self.is_playback:
+                    raise e
 
-            results = job.get_results()
-            assert "histogram" in results
-            assert results["histogram"]["0"] == 0.5
-            assert results["histogram"]["7"] == 0.5
-    
+            except RuntimeError as e:
+                # cirq_ionq currently throws a RuntimeError both if the job 
+                # failed and on timeout.
+                # See: https://github.com/quantumlib/Cirq/issues/4507
+                if 'Job failed' in str(e) or self.is_playback:
+                    warnings.warn(f"IonQ job execution failed: {str(e)}")
+                    raise e
+                else:
+                    warnings.warn("IonQ execution exceeded timeout. \
+                        Skipping fetching results.")
+
+            else:
+                assert "q0" in result.measurements
+                assert "q1" in result.measurements
+                assert "q2" in result.measurements
+                assert len(result.measurements["q0"]) == 500
+                assert len(result.measurements["q1"]) == 500
+                assert len(result.measurements["q2"]) == 500
+                assert result.measurements["q0"].sum() == result.measurements["q1"].sum()
+                assert result.measurements["q1"].sum() == result.measurements["q2"].sum()
+
     def test_plugins_honeywell_cirq(self):
         with unittest.mock.patch.object(
             Job,
@@ -217,25 +242,38 @@ class TestCirq(QuantumTestBase):
         ):
             workspace = self.create_workspace()
             service = AzureQuantumService(workspace=workspace)
-            job = service.run(
-                circuit=self._3_qubit_ghz_cirq(),
-                repetitions=None,
-                target="honeywell.hqs-lt-s1-apival"
-            )
+            try:
+                result = service.run(
+                    program=self._3_qubit_ghz_cirq(),
+                    repetitions=500,
+                    target="honeywell.hqs-lt-s1-apival",
+                    timeout_seconds=60
+                )
 
-            # Make sure the job is completed before fetching the results
-            # playback currently does not work for repeated calls
-            # See: https://github.com/microsoft/qdk-python/issues/118
-            if not self.is_playback:
-                self.assertEqual(False, job.has_completed())
-                if self.in_recording:
-                    import time
-                    time.sleep(3)
-                job.refresh()
-                job.wait_until_completed()
-                self.assertEqual(True, job.has_completed())
+            except TimeoutError as e:
+                # Pass on timeout
+                warnings.warn("Honeywell execution exceeded timeout. \
+                    Skipping fetching results.")
+                if self.is_playback:
+                    raise e
 
-            results = job.get_results()
-            assert results["m_q0"] == ["0"]
-            assert results["m_q1"] == ["0"]
-            assert results["m_q2"] == ["0"]
+            except RuntimeError as e:
+                # cirq_ionq currently throws a RuntimeError both if the job 
+                # failed and on timeout.
+                # See: https://github.com/quantumlib/Cirq/issues/4507
+                if 'Job failed' in str(e) or self.is_playback:
+                    warnings.warn(f"Honeywell job execution failed: {str(e)}")
+                    raise e
+                else:
+                    warnings.warn("Honeywell execution exceeded timeout. \
+                    Skipping fetching results.")
+
+            else:
+                assert "q0" in result.measurements
+                assert "q1" in result.measurements
+                assert "q2" in result.measurements
+                assert len(result.measurements["q0"]) == 500
+                assert len(result.measurements["q1"]) == 500
+                assert len(result.measurements["q2"]) == 500
+                assert result.measurements["q0"].sum() == result.measurements["q1"].sum()
+                assert result.measurements["q1"].sum() == result.measurements["q2"].sum()

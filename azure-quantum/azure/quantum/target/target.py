@@ -3,21 +3,26 @@
 # Licensed under the MIT License.
 ##
 import abc
-from typing import Any, Dict
+from typing import TYPE_CHECKING, Any, Dict
 
 from azure.quantum._client.models import TargetStatus
-from azure.quantum.workspace import Workspace
 from azure.quantum.job.job import Job
+
+if TYPE_CHECKING:
+    from azure.quantum import Workspace
 
 
 class Target(abc.ABC):
     """Azure Quantum Target."""
     # Target IDs that are compatible with this Target class.
+    # This variable is used by TargetFactory. To set the default
+    # target class for a given provider, specify the
+    # default_targets constructor argument.
     target_names = ()
-    provider_id = ""
+
     def __init__(
         self,
-        workspace: Workspace,
+        workspace: "Workspace",
         name: str,
         input_data_format: str = "",
         output_data_format: str = "",
@@ -43,7 +48,7 @@ avg. queue time={self._average_queue_time} s, {self._current_availability}>"
 
     @classmethod
     def from_target_status(
-        cls, workspace: Workspace, status: TargetStatus, **kwargs
+        cls, workspace: "Workspace", status: TargetStatus, **kwargs
     ):
         """Create a Target instance from a given workspace and target status.
 

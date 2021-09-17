@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 ##
 import warnings
-from typing import Dict, List, TYPE_CHECKING, Union
+from typing import Any, Dict, List, TYPE_CHECKING, Union
 from azure.quantum.target import *
 
 if TYPE_CHECKING:
@@ -18,30 +18,57 @@ class TargetFactory:
     """Factory class for generating a Target based on a
     provider and target name
     """
-    __instance = None
-    def __new__(cls, *args, **kwargs):
-        if cls.__instance is None:
-            cls.__instance = super().__new__(cls, *args, **kwargs)
-        return cls.__instance
+    __instances = {}
 
-    @staticmethod
-    def _get_all_target_cls() -> Dict[str, Target]:
+    def __new__(cls, *args, **kwargs):
+        base_cls = kwargs.get("base_cls")
+        if cls.__instances.get(base_cls) is None:
+            cls.__instances[base_cls] = super().__new__(cls)
+        return cls.__instances[base_cls]
+
+    def __init__(
+        self,
+        base_cls: Target,
+        workspace: "Workspace",
+        default_targets: Dict[str, Any] = DEFAULT_TARGETS,
+        all_targets: Dict[str, Any] = None
+    ):
+        """Target factory class for creating targets
+        based on a name and/or provider ID.
+
+        :param base_cls: Base class for findng first and second 
+            generation child classes.
+        :type base_cls: Target
+        :param workspace: Azure Quantum Workspace
+        :type workspace: Workspace
+        :param default_targets: Dictionary of default target classes keyed
+            by provider ID, defaults to DEFAULT_TARGETS
+        :type default_targets: Dict[str, Any], optional
+        :param all_targets: Dictionary of all target classes by name,
+            optional. Defaults to finding all first and second degree 
+            subclasses of base_cls by name via cls.target_names.
+        :type all_targets: Dict[str, Any]
+        """
+        self._workspace = workspace
+        self._base_cls = base_cls
+        self._default_targets = default_targets
+        self._all_targets = all_targets or self._get_all_target_cls()
+
+    def _get_all_target_cls(self) -> Dict[str, Target]:
         """Get all target classes by target name"""
         return {
-            name: _t for t in Target.__subclasses__()
+            name: _t for t in self._base_cls.__subclasses__()
             for _t in [t] + t.__subclasses__()
+            if hasattr(_t, "target_names")
             for name in _t.target_names
         }
-
-    def __init__(self):
-        self._all_targets = self._get_all_target_cls()
 
     def _target_cls(self, provider_id: str, name: str):
         if name in self._all_targets:
             return self._all_targets[name]
 
-        if provider_id in DEFAULT_TARGETS:
-            return DEFAULT_TARGETS[provider_id]
+        if provider_id in self._default_targets:
+            return self._default_targets[provider_id]
  
         warnings.warn(
             "No default target specified for provider {provider_id}. \
@@ -49,7 +76,7 @@ Please check the provider name and try again or create an issue here: \
 https://github.com/microsoft/qdk-python/issues.")
 
     def create_target(
-        self, workspace: "Workspace", provider_id: str, name: str, **kwargs
+        self, provider_id: str, name: str, **kwargs
     ) -> Target:
         """Create target from provider ID and target name.
 
@@ -63,7 +90,7 @@ https://github.com/microsoft/qdk-python/issues.")
         cls = self._target_cls(provider_id, name)
         if cls is not None:
             return cls(
-                workspace=workspace,
+                workspace=self._workspace,
                 name=name,
                 provider_id=provider_id,
                 **kwargs
@@ -71,18 +98,18 @@ https://github.com/microsoft/qdk-python/issues.")
 
     def from_target_status(
         self,
-        workspace: "Workspace",
         provider_id: str,
         status: "TargetStatus",
         **kwargs
     ):
         cls = self._target_cls(provider_id, status.id)
-        if cls is not None:
-            return cls.from_target_status(workspace, status, **kwargs)
+        if hasattr(cls, "from_target_status"):
+            return cls.from_target_status(self._workspace, status, **kwargs)
+        elif cls is not None:
+            return cls(**kwargs)
 
     def get_targets(
         self,
-        workspace: "Workspace",
         name: str,
         provider_id: str,
         **kwargs
@@ -97,15 +124,19 @@ https://github.com/microsoft/qdk-python/issues.")
         :return: One or more Target objects
         :rtype: Union[Target, List[Target]]
         """
-        target_statuses = workspace._get_target_status(name, provider_id, **kwargs)
+        target_statuses = self._workspace._get_target_status(name, provider_id)
 
         if len(target_statuses) == 1:
-            return self.from_target_status(workspace, *target_statuses[0])
+            return self.from_target_status(*target_statuses[0], **kwargs)
 
         else:
             # Don't return redundant parameter-free targets
             return [
-                self.from_target_status(workspace, _provider_id, status, **kwargs)
+                self.from_target_status(_provider_id, status, **kwargs)
                 for _provider_id, status in target_statuses
                 if PARAMETER_FREE not in status.id
+                and (
+                    _provider_id in self._default_targets
+                    or status.id in self._all_targets
+                )
             ]

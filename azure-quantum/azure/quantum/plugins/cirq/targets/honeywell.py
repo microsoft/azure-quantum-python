@@ -2,21 +2,27 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 ##
-from typing import TYPE_CHECKING
+import numpy as np
+
+from typing import TYPE_CHECKING, Any, Dict
+
 from azure.quantum.target import Honeywell
-from azure.quantum.plugins.cirq.targets.cirq_target import _CirqTargetMixin
+from azure.quantum.plugins.cirq.targets.target import Target as CirqTarget
+from azure.quantum.plugins.cirq.job import Job as CirqJob
 
 if TYPE_CHECKING:
+    import cirq
     from azure.quantum import Workspace
+    from azure.quantum import Job as AzureJob
 
-class HoneywellTarget(_CirqTargetMixin, Honeywell):
+
+class HoneywellTarget(Honeywell, CirqTarget):
     """Base class for interfacing with an Honeywell backend in Azure Quantum"""
-    target_name: str = None
 
     def __init__(
         self,
         workspace: "Workspace",
-        name: str = None,
+        name: str,
         input_data_format: str = "honeywell.openqasm.v1",
         output_data_format: str = "honeywell.quantum-results.v1",
         provider_id: str = "honeywell",
@@ -26,7 +32,7 @@ class HoneywellTarget(_CirqTargetMixin, Honeywell):
     ):
         super().__init__(
             workspace=workspace,
-            name=name or self.target_name,
+            name=name,
             input_data_format=input_data_format,
             output_data_format=output_data_format,
             provider_id=provider_id,
@@ -39,18 +45,48 @@ class HoneywellTarget(_CirqTargetMixin, Honeywell):
     def _translate_cirq_circuit(circuit) -> str:
         """Translate Cirq circuit to Honeywell QASM."""
         return circuit.to_qasm()
+    
+    @staticmethod
+    def _to_cirq_result(result: Dict[str, Any], param_resolver, **kwargs):
+        from cirq import Result
+        measurements = {
+            key.lstrip("m_"): np.array([[int(_v)] for _v in value])
+            for key, value in result.items()
+            if key.startswith("m_")
+        }
+        return Result(params=param_resolver, measurements=measurements)
 
+    def submit(
+        self,
+        program: "cirq.Circuit",
+        name: str = "cirq-job",
+        repetitions: int = 500,
+        **kwargs
+    ) -> "CirqJob":
+        """Submit a Cirq quantum circuit
 
-class HoneywellAPIValidatorTarget(HoneywellTarget):
-    """Class for interfacing with a Honeywell API validator target"""
-    target_name = "honeywell.hqs-lt-s1-apival"
-
-
-class HoneywellSimulatorTarget(HoneywellTarget):
-    """Class for interfacing with a Honeywell Simulator target"""
-    target_name = "honeywell.hqs-lt-s1-sim"
-
-
-class HoneywellQPUTarget(HoneywellTarget):
-    """Class for interfacing with a Honeywell QPU target"""
-    target_name = "honeywell.hqs-lt-s1"
+        :param program: Quantum program
+        :type program: cirq.Circuit
+        :param name: Job name
+        :type name: str
+        :param repetitions: Number of shots, defaults to 
+            provider default value
+        :type repetitions: int
+        :return: Azure Quantum job
+        :rtype: Job
+        """
+        serialized_program = self._translate_circuit(program)
+        metadata = {
+            "qubits": len(program.all_qubits()),
+            "repetitions": repetitions
+        }
+        # Override metadata with value from kwargs
+        metadata.update(kwargs.get("metadata", {}))
+        azure_job = super().submit(
+            circuit=serialized_program,
+            name=name,
+            num_shots=repetitions,
+            metadata=metadata,
+            **kwargs
+        )
+        return CirqJob(azure_job=azure_job, program=program)

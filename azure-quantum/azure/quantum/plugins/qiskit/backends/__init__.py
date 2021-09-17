@@ -10,7 +10,15 @@ from azure.quantum.plugins.qiskit.backends.ionq import (
 )
 
 from azure.quantum.plugins.qiskit.backends.honeywell import (
+    HoneywellBackend,
     HoneywellQPUBackend,
     HoneywellAPIValidatorBackend,
     HoneywellSimulatorBackend
 )
+
+# Default targets to use when there is no target class
+# associated with a given target ID
+DEFAULT_TARGETS = {
+    "ionq": IonQBackend,
+    "honeywell": HoneywellBackend
+}

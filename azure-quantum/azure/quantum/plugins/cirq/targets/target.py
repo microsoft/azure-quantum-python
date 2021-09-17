@@ -3,15 +3,16 @@
 # Licensed under the MIT License.
 ##
 import abc
-import cirq
 
 from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
-    from azure.quantum import Job
+    import cirq
+    from azure.quantum.plugins.cirq.job import Job as CirqJob
 
 
-class _CirqTargetMixin(abc.ABC):
+class Target(abc.ABC):
+    """Abstract base class for Cirq targets"""
     @abc.abstractstaticmethod
     def _translate_cirq_circuit(circuit):
         """Translate Cirq circuit to native provider format."""
@@ -26,17 +27,23 @@ class _CirqTargetMixin(abc.ABC):
             raise ValueError(
                 f"Cannot translate circuit of type {circuit.__class__}: {e}")
 
+    @abc.abstractstaticmethod
+    def _to_cirq_result(result: Any) -> "cirq.Result":
+        """Convert native hardware result to cirq.Result"""
+        pass
+
+    @abc.abstractmethod
     def submit(
         self,
-        circuit: cirq.Circuit,
+        program: "cirq.Circuit",
         name: str = "cirq-job",
-        repetitions: int = None,
+        repetitions: int = 500,
         **kwargs
-    ) -> "Job":
+    ) -> "CirqJob":
         """Submit a Cirq quantum circuit
 
-        :param circuit: Quantum circuit in IonQ JSON format
-        :type circuit: Union[Dict[str, Any], CirqCircuit]
+        :param program: Quantum program
+        :type program: cirq.Circuit
         :param name: Job name
         :type name: str
         :param repetitions: Number of shots, defaults to 
@@ -45,10 +52,4 @@ class _CirqTargetMixin(abc.ABC):
         :return: Azure Quantum job
         :rtype: Job
         """
-        data = self._translate_circuit(circuit)
-        return super().submit(
-            circuit=data,
-            name=name,
-            num_shots=repetitions,
-            **kwargs
-        )
+        pass
