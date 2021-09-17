@@ -59,9 +59,7 @@ class Problem:
         init_config: Optional[Dict[str, int]] = None,
         problem_type: ProblemType = ProblemType.ising,
     ):
-        if name is None:
-            name = "problem"
-        self.name = name
+        self.name = name or "problem"
         self.problem_type = problem_type
         self.init_config = init_config
         self.uploaded_blob_uri = None
