@@ -127,9 +127,9 @@ class Problem:
         """
         result = json.loads(problem_as_json)
         
-        if (name == None):
+        if name == None:
             metadata = result.get("metadata")
-            if (metadata != None):
+            if metadata != None:
                 name = metadata.get("name")
             
         terms = [Term.from_dict(t) for t in result["cost_function"]["terms"]] if "terms" in result["cost_function"] else []
