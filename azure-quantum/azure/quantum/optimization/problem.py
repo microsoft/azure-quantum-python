@@ -40,7 +40,8 @@ class Problem:
     """Problem to submit to the service.
 
     :param name: Problem name
-    :type name: str
+    :type name: Optional[str]
+        Defaults to "problem", even when passing None
     :param terms: Problem terms, depending on solver.
         Defaults to None
     :type terms: Optional[List[TermBase]], optional
@@ -54,7 +55,7 @@ class Problem:
 
     def __init__(
         self,
-        name: str,
+        name: Optional[str] = "problem",
         terms: Optional[List[TermBase]] = None,
         init_config: Optional[Dict[str, int]] = None,
         problem_type: ProblemType = ProblemType.ising,
