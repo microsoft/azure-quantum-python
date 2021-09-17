@@ -48,10 +48,10 @@ class QuantumTestBase(ReplayableTest):
         self._client_id = os.environ.get("AZURE_CLIENT_ID", ZERO_UID)
         self._client_secret = os.environ.get("AZURE_CLIENT_SECRET", PLACEHOLDER)
         self._tenant_id = os.environ.get("AZURE_TENANT_ID", TENANT_ID)
-        self._resource_group = os.environ.get("AZUREQUANTUM_WORKSPACE_RG", os.environ.get("RESOURCE_GROUP", RESOURCE_GROUP))
-        self._subscription_id = os.environ.get("AZUREQUANTUM_SUBSCRIPTION_ID", os.environ.get("SUBSCRIPTION_ID", ZERO_UID))
-        self._workspace_name = os.environ.get("AZUREQUANTUM_WORKSPACE_NAME")
-        self._location = os.environ.get("AZUREQUANTUM_WORKSPACE_LOCATION", os.environ.get("LOCATION", LOCATION))
+        self._resource_group = os.environ.get("AZURE_QUANTUM_WORKSPACE_RG", os.environ.get("RESOURCE_GROUP", RESOURCE_GROUP))
+        self._subscription_id = os.environ.get("AZURE_QUANTUM_SUBSCRIPTION_ID", os.environ.get("SUBSCRIPTION_ID", ZERO_UID))
+        self._workspace_name = os.environ.get("AZURE_QUANTUM_WORKSPACE_NAME")
+        self._location = os.environ.get("AZURE_QUANTUM_WORKSPACE_LOCATION", os.environ.get("LOCATION", LOCATION))
 
         regex_replacer = CustomRecordingProcessor()
         recording_processors = [

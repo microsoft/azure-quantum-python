@@ -9,7 +9,8 @@
 
 import json
 import unittest
-from azure.quantum.optimization import Problem, ProblemType, Term, GroupType, GroupedTerm
+
+from azure.quantum.optimization import Problem, ProblemType, Term, GroupType, SlcTerm
 from azure.quantum.target.solvers import HardwarePlatform, RangeSchedule
 from azure.quantum.target import (
     ParallelTempering,
@@ -76,33 +77,34 @@ class TestProblem(QuantumTestBase):
         subterms = [Term(c=1, indices=[i]) for i in range(count)]
         subterms.append(Term(c=-5, indices=[]))
         problem.add_slc_term(terms=[(1, i) for i in range(count)] + [(-5, None)], c=2)
-        self.assertEqual(2*count + 1, len(problem.terms))
+        self.assertEqual(2*count, len(problem.terms))
+        self.assertEqual(1, len(problem.terms_slc))
         self.assertEqual(
-            GroupedTerm(GroupType.squared_linear_combination,
-                        subterms, c=2),
-            problem.terms[-1]
+            SlcTerm(subterms, c=2),
+            problem.terms_slc[-1]
         )
 
         problem.add_terms(subterms, term_type=GroupType.squared_linear_combination, c=2)
-        self.assertEqual(2*count + 2, len(problem.terms))
+        self.assertEqual(2*count, len(problem.terms))
+        self.assertEqual(2, len(problem.terms_slc))
         self.assertEqual(
-            GroupedTerm(GroupType.squared_linear_combination,
-                        subterms, c=2),
-            problem.terms[-1]
+            SlcTerm(subterms, c=2),
+            problem.terms_slc[-1]
         )
+
         problem.add_terms(subterms, term_type=GroupType.combination, c=0.5)
-        self.assertEqual(3*count + 3, len(problem.terms))
+        self.assertEqual(3*count + 1, len(problem.terms))
         self.assertEqual(
-            [Term(subterm.ids, c=0.5*subterm.c) for subterm in subterms],
+            [Term(subterm.ids, c=subterm.c) for subterm in subterms],
             problem.terms[-len(subterms):]
         )
 
         problem.add_slc_term(subterms, c=3)
-        self.assertEqual(3*count + 4, len(problem.terms))
+        self.assertEqual(3*count + 1, len(problem.terms))
+        self.assertEqual(3, len(problem.terms_slc))
         self.assertEqual(
-            GroupedTerm(GroupType.squared_linear_combination,
-                        subterms, c=3),
-            problem.terms[-1]
+            SlcTerm(subterms, c=3),
+            problem.terms_slc[-1]
         )
 
     def test_provide_cterms(self):
@@ -110,8 +112,7 @@ class TestProblem(QuantumTestBase):
         terms = []
         for i in range(count):
             terms.append(Term(c=i, indices=[i, i + 1]))
-        terms.append(GroupedTerm(
-            GroupType.squared_linear_combination,
+        terms.append(SlcTerm(
             [Term(c=i/2, indices=[i+2]) for i in range(count)] + [Term(c=5, indices=[])],
             c=1)
         )
@@ -120,28 +121,21 @@ class TestProblem(QuantumTestBase):
         )
 
         self.assertEqual(ProblemType.pubo_grouped, problem.problem_type)
-        self.assertEqual(count+1, len(problem.terms))
+        self.assertEqual(count, len(problem.terms))
+        self.assertEqual(1, len(problem.terms_slc))
         self.assertEqual(Term(c=1, indices=[1, 2]), problem.terms[1])
 
     def test_errant_grouped_terms(self):
         with self.assertRaises(ValueError):
-            _ = GroupedTerm(
-                GroupType.combination,
-                [Term(c=i+2, indices=[i,i+1]) for i in range(2)], c=1
-            )
-        with self.assertRaises(ValueError):
-            _ = GroupedTerm(
-                GroupType.squared_linear_combination,
+            _ = SlcTerm(
                 [Term(c=i+2, indices=[i%2]) for i in range(3)], c=1
             )
         with self.assertRaises(ValueError):
-            _ = GroupedTerm(
-                GroupType.squared_linear_combination,
+            _ = SlcTerm(
                 [Term(c=i+1, indices=[i, i+1]) for i in range(2)], c=1
             )
         with self.assertRaises(ValueError):
-            _ = GroupedTerm(
-                GroupType.squared_linear_combination,
+            _ = SlcTerm(
                 [Term(c=i, indices=[]) for i in range(1,3)], c=1
             )
         
@@ -152,8 +146,7 @@ class TestProblem(QuantumTestBase):
         for i in range(count):
             terms.append(Term(c=i, indices=[i, i + 1]))
         terms.append(
-            GroupedTerm(
-                GroupType.squared_linear_combination,
+            SlcTerm(
                 [Term(c=0, indices=[0]), Term(c=1, indices=[1]), Term(c=-5, indices=[])],
                 c=1
             )
@@ -167,13 +160,15 @@ class TestProblem(QuantumTestBase):
                     "type": "ising_grouped",
                     "terms": [
                         {"c": 0, "ids": [0, 1]},
-                        {"c": 1, "ids": [1, 2]},
-                        {"type": "slc", "c": 1, "terms": [
+                        {"c": 1, "ids": [1, 2]}
+                    ],
+                    "terms_slc":[
+                        {"c": 1, "terms": [
                             {"c": 0, "ids": [0]},
                             {"c": 1, "ids": [1]},
                             {"c": -5, "ids": []}
                         ]}
-                    ],
+                    ]
                 }
             }
         )
@@ -212,7 +207,7 @@ class TestProblem(QuantumTestBase):
         subterms = [Term(c=1, indices=[i]) for i in range(3)]
         subterms.append(Term(c=-2, indices=[]))
         terms.append(
-            GroupedTerm(GroupType.squared_linear_combination, subterms, c=1)
+            SlcTerm(subterms, c=1)
         )
         problem = Problem(name="test", terms=terms)
         deserialized = Problem.deserialize(problem.serialize(), problem.name)
@@ -223,8 +218,8 @@ class TestProblem(QuantumTestBase):
         self.assertEqual(Term(c=0, indices=[0, 1]), problem.terms[0])
         self.assertEqual(Term(c=1, indices=[1, 2]), problem.terms[1])
         self.assertEqual(
-            GroupedTerm(GroupType.squared_linear_combination, subterms, c=1),
-            problem.terms[-1]
+            SlcTerm(subterms, c=1),
+            problem.terms_slc[-1]
         )
 
     def test_deserialize_init_config(self):
@@ -278,7 +273,7 @@ class TestProblem(QuantumTestBase):
 
         terms = [
             Term(c=2, indices=[0, 1, 2]),
-            GroupedTerm(GroupType.squared_linear_combination, terms=[
+            SlcTerm(terms=[
                 Term(c=1, indices=[0]),
                 Term(c=1, indices=[1]),
                 Term(c=1, indices=[2]),
@@ -321,7 +316,7 @@ class TestProblem(QuantumTestBase):
         terms = [
             Term(c=1, indices=[]),
             Term(c=2, indices=[0, 1, 2]),
-            GroupedTerm(GroupType.squared_linear_combination, terms=[
+            SlcTerm(terms=[
                 Term(c=1, indices=[0]),
                 Term(c=1, indices=[1]),
                 Term(c=-5, indices=[])
@@ -334,16 +329,21 @@ class TestProblem(QuantumTestBase):
             [Term(c=30, indices=[])],
             problem.set_fixed_variables({"0": 1, "1": 1, "2": 1}).terms,
         )
+
         self.assertEqual(
             [
                 Term(c=2, indices=[1]),
-                GroupedTerm(GroupType.squared_linear_combination, terms=[
-                    Term(c=-4, indices=[]),
-                    Term(c=1, indices=[1])
-                ], c=3),
                 Term(c=1, indices=[])
             ],
             problem.set_fixed_variables({"0": 1, "2": 1}).terms,
+        )
+
+        self.assertEqual(
+            [SlcTerm(terms=[
+                Term(c=-4, indices=[]),
+                Term(c=1, indices=[1])
+            ], c=3)],
+            problem.set_fixed_variables({"0": 1, "2": 1}).terms_slc,
         )
 
         # test init_config gets transferred
@@ -368,8 +368,8 @@ class TestProblem(QuantumTestBase):
         )  # create 1mil dummy terms
         self.assertTrue(problem.is_large())
 
-        problem = Problem(name="test", terms=[GroupedTerm(
-            GroupType.squared_linear_combination, terms=[Term(indices=[9999], c=1)], c=1
+        problem = Problem(name="test", terms=[SlcTerm(
+            terms=[Term(indices=[9999], c=1)], c=1
         ) for i in range(int(1e6))], problem_type=ProblemType.pubo)
         self.assertTrue(not problem.is_large())
 

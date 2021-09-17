@@ -13,6 +13,12 @@ from collections import namedtuple
 from IPython.display import display
 from typing import List, Dict
 
+try:
+    from rdkit.Chem import AllChem as Chem
+except ImportError as e:
+    raise ImportError("Missing dependency: rdkit. \
+Install with Conda: \n\n\tconda install -c conda-forge rdkit")
+
 from qdk.chemistry.widgets.jsmol_widget import JsmolWidget
 from qdk.chemistry.widgets.jsme_widget import JsmeWidget
 from qdk.chemistry.geometry import Geometry
@@ -21,12 +27,6 @@ from qdk.chemistry._xyz2mol import xyz2mol, read_xyz_file
 from qdk.chemistry.solvers.util import num_electrons
 
 import basis_set_exchange as bse
-
-try:
-    from rdkit.Chem import AllChem as Chem
-except ImportError as e:
-    raise ImportError("Missing dependency: rdkit. \
-Install with Conda: conda install -c rdkit rdkit")
 
 _log = logging.getLogger(__name__)
 

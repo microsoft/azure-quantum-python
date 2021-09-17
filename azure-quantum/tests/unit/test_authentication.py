@@ -30,7 +30,7 @@ class TestWorkspace(QuantumTestBase):
         assert "Token file location not set." in str(exception.value)
 
     def test_azure_quantum_token_credential_file_not_exists(self):
-        with patch.dict(os.environ, { "AZUREQUANTUM_TOKEN_FILE": "fake_file_path" }, clear=True):
+        with patch.dict(os.environ, { "AZURE_QUANTUM_TOKEN_FILE": "fake_file_path" }, clear=True):
             with patch('os.path.isfile') as mock_isfile:
                 mock_isfile.return_value = False
                 credential = _TokenFileCredential()                
@@ -43,7 +43,7 @@ class TestWorkspace(QuantumTestBase):
         tmpdir = self.create_temp_dir()
         file = Path(tmpdir) / "token.json"
         file.write_text("not a json")
-        with patch.dict(os.environ, { "AZUREQUANTUM_TOKEN_FILE": str(file.resolve()) }, clear=True):
+        with patch.dict(os.environ, { "AZURE_QUANTUM_TOKEN_FILE": str(file.resolve()) }, clear=True):
             credential = _TokenFileCredential()                
             with pytest.raises(CredentialUnavailableError) as exception:
                 credential.get_token(_AZURE_QUANTUM_SCOPE)
@@ -58,7 +58,7 @@ class TestWorkspace(QuantumTestBase):
         tmpdir = self.create_temp_dir()
         file = Path(tmpdir) / "token.json"
         file.write_text(json.dumps(content))
-        with patch.dict(os.environ, { "AZUREQUANTUM_TOKEN_FILE": str(file.resolve()) }, clear=True):
+        with patch.dict(os.environ, { "AZURE_QUANTUM_TOKEN_FILE": str(file.resolve()) }, clear=True):
             credential = _TokenFileCredential()                
             with pytest.raises(CredentialUnavailableError) as exception:
                 credential.get_token(_AZURE_QUANTUM_SCOPE)
@@ -74,7 +74,7 @@ class TestWorkspace(QuantumTestBase):
         tmpdir = self.create_temp_dir()
         file = Path(tmpdir) / "token.json"
         file.write_text(json.dumps(content))
-        with patch.dict(os.environ, { "AZUREQUANTUM_TOKEN_FILE": str(file.resolve()) }, clear=True):
+        with patch.dict(os.environ, { "AZURE_QUANTUM_TOKEN_FILE": str(file.resolve()) }, clear=True):
             credential = _TokenFileCredential()                
             with pytest.raises(CredentialUnavailableError) as exception:
                 credential.get_token(_AZURE_QUANTUM_SCOPE)
@@ -91,7 +91,7 @@ class TestWorkspace(QuantumTestBase):
         tmpdir = self.create_temp_dir()
         file = Path(tmpdir) / "token.json"
         file.write_text(json.dumps(content))
-        with patch.dict(os.environ, { "AZUREQUANTUM_TOKEN_FILE": str(file.resolve()) }, clear=True):
+        with patch.dict(os.environ, { "AZURE_QUANTUM_TOKEN_FILE": str(file.resolve()) }, clear=True):
             credential = _TokenFileCredential()                
             token = credential.get_token(_AZURE_QUANTUM_SCOPE)
         

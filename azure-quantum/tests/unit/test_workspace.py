@@ -7,7 +7,7 @@
 # Licensed under the MIT License.
 ##
 import pytest
-
+import os
 from azure.quantum import Workspace
 from common import QuantumTestBase
 
@@ -88,14 +88,8 @@ class TestWorkspace(QuantumTestBase):
     def test_workspace_get_targets(self):
         ws = self.create_workspace()
         targets = ws.get_targets()
-        assert sorted([t.name for t in targets]) == [
-            '1qbit.pathrelinking',
-            '1qbit.pticm',
-            '1qbit.tabu',
-            'honeywell.hqs-lt-s1',
+        test_targets = set([
             'honeywell.hqs-lt-s1-apival',
-            'honeywell.hqs-lt-s1-sim',
-            'ionq.qpu',
             'ionq.simulator',
             'microsoft.paralleltempering-parameterfree.cpu',
             'microsoft.populationannealing.cpu',
@@ -103,8 +97,8 @@ class TestWorkspace(QuantumTestBase):
             'microsoft.simulatedannealing-parameterfree.cpu',
             'microsoft.substochasticmontecarlo.cpu',
             'microsoft.tabu-parameterfree.cpu',
-            'toshiba.sbm.ising'
-        ]
+        ])
+        assert test_targets.issubset(set([t.name for t in targets]))
 
         target = ws.get_targets("ionq.qpu")
         assert target.average_queue_time is not None
@@ -129,3 +123,32 @@ class TestWorkspace(QuantumTestBase):
         assert "holds" in quotas [0]
         assert "limit" in quotas [0]
         assert "period" in quotas [0]
+
+    def test_workspace_user_agent_appid(self):
+        ws = Workspace(
+            subscription_id=self.subscription_id,
+            resource_group=self.resource_group,
+            name=self.workspace_name,
+            location=self.location
+        )
+        assert ws.user_agent == os.environ.get("AZURE_QUANTUM_PYTHON_APPID")
+
+        user_agent = "MyUserAgent"
+        ws = Workspace(
+            subscription_id=self.subscription_id,
+            resource_group=self.resource_group,
+            name=self.workspace_name,
+            location=self.location,
+            user_agent=user_agent
+        )
+        assert ws.user_agent == user_agent
+
+        user_agent = "MyUserAgent123"
+        os.environ["AZURE_QUANTUM_PYTHON_APPID"] = user_agent
+        ws = Workspace(
+            subscription_id=self.subscription_id,
+            resource_group=self.resource_group,
+            name=self.workspace_name,
+            location=self.location,
+        )
+        assert ws.user_agent == user_agent
