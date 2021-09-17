@@ -59,6 +59,8 @@ class Problem:
         init_config: Optional[Dict[str, int]] = None,
         problem_type: ProblemType = ProblemType.ising,
     ):
+        if name is None:
+            name = "problem"
         self.name = name
         self.problem_type = problem_type
         self.init_config = init_config
@@ -126,12 +128,12 @@ class Problem:
         :type name: Optional[str]
         """
         result = json.loads(problem_as_json)
-        
-        if name == None:
+
+        if name is None:
             metadata = result.get("metadata")
-            if metadata != None:
+            if metadata is not None:
                 name = metadata.get("name")
-            
+
         terms = [Term.from_dict(t) for t in result["cost_function"]["terms"]] if "terms" in result["cost_function"] else []
         if "terms_slc" in result["cost_function"]:
             terms.append([SlcTerm.from_dict(t) for t in result["cost_function"]["terms_slc"]])
