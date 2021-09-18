@@ -41,6 +41,7 @@ class Problem:
 
     :param name: Problem name
     :type name: str
+        When passing None, it will default to "Optimization problem"
     :param terms: Problem terms, depending on solver.
         Defaults to None
     :type terms: Optional[List[TermBase]], optional
@@ -59,7 +60,7 @@ class Problem:
         init_config: Optional[Dict[str, int]] = None,
         problem_type: ProblemType = ProblemType.ising,
     ):
-        self.name = name
+        self.name = name or "Optimization problem"
         self.problem_type = problem_type
         self.init_config = init_config
         self.uploaded_blob_uri = None
@@ -88,6 +89,9 @@ class Problem:
     def serialize(self) -> str:
         """Serializes the problem to a JSON string"""
         result = {
+            "metadata": {
+                "name": self.name,
+            },
             "cost_function": {
                 "version": "1.1" if self.init_config else "1.0",
                 "type": self.problem_type.name,
@@ -104,17 +108,30 @@ class Problem:
         return json.dumps(result)
 
     @classmethod
-    def deserialize(cls, problem_as_json: str, name: str):
+    def deserialize(
+            cls, 
+            problem_as_json: str, 
+            name: Optional[str] = None
+        ):
         """Deserializes the problem from a
             JSON string serialized with Problem.serialize()
 
         :param problem_as_json:
             The string to be deserialized to a `Problem` instance
         :type problem_as_json: str
-        :param name: The name of the problem
-        :type name: str
+        :param name: 
+            The name of the problem is optional, since it will try 
+            to read the serialized name from the json payload.
+            If this parameter is not empty, it will use it as the
+            problem name ignoring the serialized value.
+        :type name: Optional[str]
         """
         result = json.loads(problem_as_json)
+
+        if name is None:
+            metadata = result.get("metadata")
+            if metadata is not None:
+                name = metadata.get("name")
 
         terms = [Term.from_dict(t) for t in result["cost_function"]["terms"]] if "terms" in result["cost_function"] else []
         if "terms_slc" in result["cost_function"]:

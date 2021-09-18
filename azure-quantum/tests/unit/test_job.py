@@ -7,7 +7,7 @@
 # Licensed under the MIT License.
 ##
 import unittest
-import time
+import json
 import os
 import functools
 import pytest
@@ -15,7 +15,7 @@ from datetime import date, datetime, timedelta
 
 from common import QuantumTestBase, ZERO_UID
 from azure.quantum import Job
-from azure.quantum.optimization import Problem, ProblemType, Term, SlcTerm, GroupType
+from azure.quantum.optimization import Problem, ProblemType, Term, SlcTerm
 import azure.quantum.optimization as microsoft
 import azure.quantum.target.oneqbit as oneqbit
 import azure.quantum.target.toshiba as toshiba
@@ -166,12 +166,16 @@ class TestJob(QuantumTestBase):
                 # Submit the blob data URI and run job
                 job = solver.submit(input_data_uri)
 
-                # Check if job succeeded during live tests
-                if not self.is_playback:
-                    job.refresh()
-                    job.get_results()
-                    assert job.has_completed()
-                    assert job.details.status == "Succeeded"
+                # For recording purposes, we only want to record and
+                # and resume recording when the job has completed
+                self.pause_recording()
+                job.wait_until_completed()
+                self.resume_recording()
+
+                job.refresh()
+                job.get_results()
+                assert job.has_completed()
+                assert job.details.status == "Succeeded"
 
     @pytest.mark.skipif(not(os.environ.get("AZURE_QUANTUM_1QBIT", "") == "1"), reason="1Qbit tests not enabled")
     def test_job_submit_oneqbit_tabu_search(self):
@@ -259,22 +263,48 @@ class TestJob(QuantumTestBase):
             job = solver.submit(problem)
             # TODO: also test solver.optimize(problem)
 
-            # TODO: Fix recording such that playback works with repeated calls
-            # See: https://github.com/microsoft/qdk-python/issues/118
-            if not self.is_playback:
-                self.assertEqual(False, job.has_completed())
-                if self.in_recording:
-                    time.sleep(3)
+            self.assertEqual(False, job.has_completed())
 
-                job.refresh()
-                job.get_results()
-                self.assertEqual(True, job.has_completed())
+            # For recording purposes, we only want to record and
+            # and resume recording when the job has completed
+            self.pause_recording()
+            job.wait_until_completed()
+            self.resume_recording()
 
-                job = workspace.get_job(job.id)
-                self.assertEqual(True, job.has_completed())
-            
-                assert job.has_completed()
-                assert job.details.status == "Succeeded"
+            job.refresh()
+            self.assertEqual(True, job.has_completed())
+
+            job.get_results()
+            self.assertEqual(True, job.has_completed())
+
+            job = workspace.get_job(job.id)
+            self.assertEqual(True, job.has_completed())
+
+            assert job.details.status == "Succeeded"
+
+
+    def test_problem_upload_download(self):
+        solver_type = functools.partial(microsoft.SimulatedAnnealing, beta_start=0)
+        solver_name = "SimulatedAnnealing"
+        workspace = self.create_workspace()
+        solver = solver_type(workspace)
+        with unittest.mock.patch.object(
+            Job,
+            self.mock_create_job_id_name,
+            return_value=self.get_test_job_id(),
+        ):
+            problem_name = f'Test-{solver_name}-{datetime.now():"%Y%m%d-%H%M%S"}'
+            if self.is_playback:
+                problem_name = f'Test-{solver_name}-"20210101-000000"'
+            problem = self.create_problem(name=problem_name)
+            job = solver.submit(problem)
+            # Check if problem can be successfully downloaded and deserialized
+            problem_as_json = job.download_data(job.details.input_data_uri)
+            downloaded_problem = Problem.deserialize(problem_as_json=problem_as_json)
+
+            actual = downloaded_problem.serialize()
+            expected = problem.serialize()
+            self.assertEqual(expected, actual)
 
 
     def create_problem(
@@ -282,7 +312,7 @@ class TestJob(QuantumTestBase):
             name: str,
             init: bool = False,
             problem_type: ProblemType = ProblemType.pubo,
-            test_grouped = False,
+            test_grouped: bool = False,
         ) -> Problem:
         """Create optimization problem with some default terms
 
