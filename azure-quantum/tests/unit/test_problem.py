@@ -118,7 +118,7 @@ class TestProblemClass(unittest.TestCase):
         # and leaving the name as None
         serialized_problem_without_name = '{"cost_function": {"version": "1.0", "type": "ising", "terms": [{"c": 3, "ids": [1, 0]}, {"c": 5, "ids": [2, 0]}]}}'        
         deserialized_problem = Problem.deserialize(problem_as_json=serialized_problem_without_name)
-        assert deserialized_problem.name is None
+        assert deserialized_problem.name == "Optimization problem"
 
         # test deserializing a problem that does not have a name in the json
         # and using the name parameter
@@ -131,7 +131,7 @@ class TestProblemClass(unittest.TestCase):
         # and leaving the name as None
         serialized_problem_without_name = '{"metadata":{"somemetadata":123}, "cost_function": {"version": "1.0", "type": "ising", "terms": [{"c": 3, "ids": [1, 0]}, {"c": 5, "ids": [2, 0]}]}}'        
         deserialized_problem = Problem.deserialize(problem_as_json=serialized_problem_without_name)
-        assert deserialized_problem.name is None
+        assert deserialized_problem.name == "Optimization problem"
 
     def test_upload(self):
         with patch("azure.quantum.optimization.problem.BlobClient") as mock_blob_client, \
