@@ -53,12 +53,14 @@ class QuantumTestBase(ReplayableTest):
         self._workspace_name = os.environ.get("AZURE_QUANTUM_WORKSPACE_NAME")
         self._location = os.environ.get("AZURE_QUANTUM_WORKSPACE_LOCATION", os.environ.get("LOCATION", LOCATION))
 
+        self._pause_recording_processor = PauseRecordingProcessor()
         regex_replacer = CustomRecordingProcessor()
         recording_processors = [
+            self._pause_recording_processor,
             regex_replacer,
             AccessTokenReplacer(),
             InteractiveAccessTokenReplacer(),
-            SubscriptionRecordingProcessor(ZERO_UID),     
+            SubscriptionRecordingProcessor(ZERO_UID),
             AuthenticationMetadataFilter(),
             OAuthRequestResponsesFilter(),
             RequestUrlNormalizer()
@@ -139,7 +141,13 @@ class QuantumTestBase(ReplayableTest):
         regex_replacer.register_regex(r"code_verifier=[^&]+\&", "code_verifier=PLACEHOLDER&")
         regex_replacer.register_regex(r"code=[^&]+\&", "code_verifier=PLACEHOLDER&")
         regex_replacer.register_regex(r"code=[^&]+\&", "code_verifier=PLACEHOLDER&")
-        
+
+    def pause_recording(self):
+        self._pause_recording_processor.pause_recording()
+
+    def resume_recording(self):
+        self._pause_recording_processor.resume_recording()
+
     def setUp(self):
         super(QuantumTestBase, self).setUp()
         # mitigation for issue https://github.com/kevin1024/vcrpy/issues/533
@@ -206,6 +214,26 @@ class QuantumTestBase(ReplayableTest):
     def get_async_result(self, coro):
         return asyncio.get_event_loop().run_until_complete(coro)
 
+
+class PauseRecordingProcessor(RecordingProcessor):
+    def __init__(self):
+        self.is_paused = False
+
+    def pause_recording(self):
+        self.is_paused = True
+
+    def resume_recording(self):
+        self.is_paused = False
+
+    def process_request(self, request):
+        if self.is_paused:
+            return None
+        return request
+
+    def process_response(self, response):
+        if self.is_paused:
+            return None
+        return response
 
 
 class CustomRecordingProcessor(RecordingProcessor):
