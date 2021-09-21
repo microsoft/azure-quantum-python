@@ -29,6 +29,8 @@ class Target:
         average_queue_time: float = None,
         current_availability: str = ""
     ):
+        if not provider_id and "." in name:
+            provider_id = name.split(".")[0]
         self.workspace = workspace
         self.name = name
         self.input_data_format = input_data_format
