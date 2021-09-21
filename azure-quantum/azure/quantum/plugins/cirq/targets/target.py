@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     import cirq
+    from azure.quantum import Job as AzureJob
     from azure.quantum.plugins.cirq.job import Job as CirqJob
 
 
@@ -30,6 +31,11 @@ class Target(abc.ABC):
     @abc.abstractstaticmethod
     def _to_cirq_result(result: Any) -> "cirq.Result":
         """Convert native hardware result to cirq.Result"""
+        pass
+
+    @abc.abstractmethod
+    def _to_cirq_job(self, azure_job: "AzureJob", *args, **kwargs):
+        """Convert Azure job to Cirq job"""
         pass
 
     @abc.abstractmethod

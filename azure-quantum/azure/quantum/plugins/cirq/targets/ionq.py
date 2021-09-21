@@ -2,11 +2,11 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 ##
-from typing import TYPE_CHECKING, Union, cast
+from typing import TYPE_CHECKING, Any, Dict, Union
 
 try:
     import cirq
-    from cirq_ionq import Job as CirqJob
+    from cirq_ionq import Job as CirqIonqJob
     from cirq_ionq.results import QPUResult, SimulatorResult
 except ImportError:
     raise ImportError(
@@ -100,7 +100,7 @@ class IonQTarget(IonQ, CirqTarget):
         )
 
     @staticmethod
-    def _translate_cirq_circuit(circuit):
+    def _translate_cirq_circuit(circuit) -> Dict[str, Any]:
         """Translate Cirq circuit to IonQ JSON. If dependencies \
     are not installed, throw error with installation instructions."""
         try:
@@ -113,14 +113,19 @@ class IonQTarget(IonQ, CirqTarget):
 
         else:
             return Serializer().serialize(circuit)
-    
+
+    def _to_cirq_job(self, azure_job: "AzureJob") -> "CirqIonqJob":
+        """Convert Azure job to Cirq job"""
+        job_dict = self._client._create_job_dict(azure_job)
+        return CirqIonqJob(client=self._client, job_dict=job_dict)
+
     def submit(
         self,
         program: "cirq.Circuit",
         name: str = "cirq-job",
         repetitions: int = 500,
         **kwargs
-    ) -> "CirqJob":
+    ) -> "CirqIonqJob":
         """Submit a Cirq quantum circuit
 
         :param program: Cirq circuit
@@ -146,8 +151,7 @@ class IonQTarget(IonQ, CirqTarget):
             **kwargs
         )
         # Get Job shim to process results using cirq.Result
-        job_dict = self._client._create_job_dict(azure_job)
-        return CirqJob(client=self._client, job_dict=job_dict)
+        return self._to_cirq_job(azure_job=azure_job)
     
     @staticmethod
     def _to_cirq_result(

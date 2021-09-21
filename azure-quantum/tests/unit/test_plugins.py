@@ -2,6 +2,7 @@ import unittest
 import warnings
 
 from qiskit import QuantumCircuit
+from cirq import ParamResolver
 
 from azure.quantum.job.job import Job
 from azure.quantum.plugins.qiskit import AzureQuantumProvider
@@ -199,7 +200,7 @@ class TestCirq(QuantumTestBase):
             workspace = self.create_workspace()
             service = AzureQuantumService(workspace=workspace)
             try:
-                result = service.run(
+                run_result = service.run(
                     program=self._3_qubit_ghz_cirq(),
                     repetitions=500,
                     target="ionq.simulator",
@@ -225,14 +226,17 @@ class TestCirq(QuantumTestBase):
                         Skipping fetching results.")
 
             else:
-                assert "q0" in result.measurements
-                assert "q1" in result.measurements
-                assert "q2" in result.measurements
-                assert len(result.measurements["q0"]) == 500
-                assert len(result.measurements["q1"]) == 500
-                assert len(result.measurements["q2"]) == 500
-                assert result.measurements["q0"].sum() == result.measurements["q1"].sum()
-                assert result.measurements["q1"].sum() == result.measurements["q2"].sum()
+                job = service.get_job(self.get_test_job_id())
+                job_result = job.results().to_cirq_result()
+                for result in [run_result, job_result]:
+                    assert "q0" in result.measurements
+                    assert "q1" in result.measurements
+                    assert "q2" in result.measurements
+                    assert len(result.measurements["q0"]) == 500
+                    assert len(result.measurements["q1"]) == 500
+                    assert len(result.measurements["q2"]) == 500
+                    assert result.measurements["q0"].sum() == result.measurements["q1"].sum()
+                    assert result.measurements["q1"].sum() == result.measurements["q2"].sum()
 
     def test_plugins_honeywell_cirq(self):
         with unittest.mock.patch.object(
@@ -242,9 +246,10 @@ class TestCirq(QuantumTestBase):
         ):
             workspace = self.create_workspace()
             service = AzureQuantumService(workspace=workspace)
+            program = self._3_qubit_ghz_cirq()
             try:
-                result = service.run(
-                    program=self._3_qubit_ghz_cirq(),
+                run_result = service.run(
+                    program=program,
                     repetitions=500,
                     target="honeywell.hqs-lt-s1-apival",
                     timeout_seconds=60
@@ -269,11 +274,21 @@ class TestCirq(QuantumTestBase):
                     Skipping fetching results.")
 
             else:
-                assert "q0" in result.measurements
-                assert "q1" in result.measurements
-                assert "q2" in result.measurements
-                assert len(result.measurements["q0"]) == 500
-                assert len(result.measurements["q1"]) == 500
-                assert len(result.measurements["q2"]) == 500
-                assert result.measurements["q0"].sum() == result.measurements["q1"].sum()
-                assert result.measurements["q1"].sum() == result.measurements["q2"].sum()
+                job_no_program = service.get_job(self.get_test_job_id())
+                job_with_program = service.get_job(
+                    self.get_test_job_id(), program=program)
+                target = service._target_factory.create_target(
+                    provider_id="honeywell", name="honeywell.hqs-lt-s1-apival")
+                job_result1 = target._to_cirq_result(
+                    result=job_no_program.results(), param_resolver=ParamResolver({}))
+                job_result2 = target._to_cirq_result(
+                    result=job_with_program.results(), param_resolver=ParamResolver({}))
+                for result in [run_result, job_result1, job_result2]:
+                    assert "q0" in result.measurements
+                    assert "q1" in result.measurements
+                    assert "q2" in result.measurements
+                    assert len(result.measurements["q0"]) == 500
+                    assert len(result.measurements["q1"]) == 500
+                    assert len(result.measurements["q2"]) == 500
+                    assert result.measurements["q0"].sum() == result.measurements["q1"].sum()
+                    assert result.measurements["q1"].sum() == result.measurements["q2"].sum()

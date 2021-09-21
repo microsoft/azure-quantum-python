@@ -86,7 +86,8 @@ setuptools.setup(
         ],
         "cirq": [
             "cirq>=0.11.0",
-            "cirq-ionq>=0.12.0.dev20210728232936"
+            "cirq-ionq>=0.12.0",
+            "ply==3.4"
         ]
     }
 )

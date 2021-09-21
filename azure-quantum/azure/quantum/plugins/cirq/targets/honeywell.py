@@ -55,6 +55,16 @@ class HoneywellTarget(Honeywell, CirqTarget):
             if key.startswith("m_")
         }
         return Result(params=param_resolver, measurements=measurements)
+    
+    def _to_cirq_job(self, azure_job: "AzureJob", program: "cirq.Circuit" = None):
+        """Convert Azure job to Cirq job"""
+        if program is None:
+            # Download QASM and convert to Cirq circuit
+            from cirq.contrib.qasm_import import circuit_from_qasm
+            uri = azure_job.details.input_data_uri
+            qasm = azure_job.download_data(uri).decode("utf8")
+            program = circuit_from_qasm(qasm)
+        return CirqJob(azure_job=azure_job, program=program)
 
     def submit(
         self,
@@ -89,4 +99,4 @@ class HoneywellTarget(Honeywell, CirqTarget):
             metadata=metadata,
             **kwargs
         )
-        return CirqJob(azure_job=azure_job, program=program)
+        return self._to_cirq_job(azure_job=azure_job, program=program)

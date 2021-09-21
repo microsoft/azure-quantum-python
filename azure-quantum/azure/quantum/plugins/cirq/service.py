@@ -12,15 +12,14 @@ To install run: pip install azure-quantum[cirq]"
 
 from azure.quantum import Workspace
 from azure.quantum.job.base_job import DEFAULT_TIMEOUT
-from azure.quantum.plugins.cirq.targets import *
+from azure.quantum.plugins.cirq.targets import * 
 
 from typing import Optional, Union, List, TYPE_CHECKING
 
 if TYPE_CHECKING:
-    import cirq_ionq
     from azure.quantum.plugins.cirq.targets import Target as CirqTarget
-    from azure.quantum.target import Target
     from azure.quantum.plugins.cirq.job import Job as CirqJob
+    from cirq_ionq import Job as CirqIonqJob
 
 DEFAULT_JOB_NAME = "cirq-job"
 
@@ -49,6 +48,19 @@ class AzureQuantumService:
         self._workspace = workspace
         self._workspace.user_agent = kwargs.pop("user-agent", "azure-quantum-cirq")
         self._default_target = default_target
+    
+    @property
+    def _target_factory(self):
+        from azure.quantum.target.target_factory import TargetFactory
+        from azure.quantum.plugins.cirq.targets import Target, DEFAULT_TARGETS
+
+        target_factory = TargetFactory(
+            base_cls=Target,
+            workspace=self._workspace,
+            default_targets=DEFAULT_TARGETS
+        )
+
+        return target_factory
 
     def targets(
         self,
@@ -63,16 +75,7 @@ class AzureQuantumService:
         :return: Target instance or list thereof
         :rtype: Union[Target, List[Target]]
         """
-        from azure.quantum.target.target_factory import TargetFactory
-        from azure.quantum.plugins.cirq.targets import Target, DEFAULT_TARGETS
-
-        target_factory = TargetFactory(
-            base_cls=Target,
-            workspace=self._workspace,
-            default_targets=DEFAULT_TARGETS
-        )
-
-        return target_factory.get_targets(
+        return self._target_factory.get_targets(
             name=name,
             provider_id=provider_id
         )
@@ -86,6 +89,17 @@ class AzureQuantumService:
         :rtype: CirqTarget
         """
         return self.targets(name=name, **kwargs)
+    
+    def get_job(self, job_id: str, *args, **kwargs) -> Union["CirqJob", "CirqIonqJob"]:
+        """
+        Get Cirq Job by Job ID
+        """
+        job = self._workspace.get_job(job_id=job_id)
+        target : CirqTarget = self._target_factory.create_target(
+            provider_id=job.details.provider_id,
+            name=job.details.target
+        )
+        return target._to_cirq_job(azure_job=job, *args, **kwargs)
 
     def create_job(
         self,
@@ -94,7 +108,7 @@ class AzureQuantumService:
         name: str = DEFAULT_JOB_NAME,
         target: str = None,
         param_resolver: cirq.ParamResolverOrSimilarType = cirq.ParamResolver({})
-    ) -> Union["CirqJob", "cirq_ionq.Job"]:
+    ) -> Union["CirqJob", "CirqIonqJob"]:
         """Create job using a Cirq program
 
         :param program: Cirq program or circuit
@@ -169,7 +183,15 @@ class AzureQuantumService:
             param_resolver=param_resolver
         )
         # Get raw job results
-        result = job.results(timeout_seconds=timeout_seconds)
+        try:
+            result = job.results(timeout_seconds=timeout_seconds)
+        except RuntimeError as e:
+            # Catch errors from cirq_ionq.Job.results
+            if "Job was not completed successful. Instead had status: " in str(e):
+                raise TimeoutError(f"The wait time has exceeded {timeout_seconds} seconds. \
+Job status: '{job.status()}'.")
+            else:
+                raise e
 
         # Convert to Cirq Result
         return target._to_cirq_result(
