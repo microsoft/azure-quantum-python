@@ -108,6 +108,9 @@ class TestWorkspace(QuantumTestBase):
         target.refresh()
         assert target.average_queue_time is not None
         assert target.current_availability is not None
+        # target lookup is case insensitive
+        target1 = ws.get_targets("IonQ.QPU")
+        assert target.name == target1.name
 
         with pytest.raises(ValueError):
             target.name = "foo"
