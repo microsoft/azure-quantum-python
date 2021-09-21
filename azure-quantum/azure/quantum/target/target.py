@@ -3,6 +3,8 @@
 # Licensed under the MIT License.
 ##
 import abc
+import io
+import json
 from typing import Any, Dict
 
 from azure.quantum._client.models import TargetStatus
@@ -22,7 +24,7 @@ class Target(abc.ABC):
         input_data_format: str = "",
         output_data_format: str = "",
         provider_id: str = "",
-        content_type: str = "",
+        content_type: str = "application/json",
         encoding: str = "",
         average_queue_time: float = None,
         current_availability: str = ""
@@ -83,16 +85,19 @@ target '{self.name}' of provider '{self.provider_id}' not found."
     def average_queue_time(self):
         return self._average_queue_time
 
-    @abc.abstractstaticmethod
+    @staticmethod
     def _encode_input_data(data: Dict[Any, Any]) -> bytes:
-        """Implement abstract method to encode input data to bytes
+        """Encode input data to bytes
 
         :param data: Input data
         :type data: Dict[Any, Any]
         :return: Encoded input data
         :rtype: bytes
         """
-        pass
+        stream = io.BytesIO()
+        data = json.dumps(data)
+        stream.write(data.encode())
+        return stream.getvalue()
 
     def submit(
         self,
@@ -101,7 +106,10 @@ target '{self.name}' of provider '{self.provider_id}' not found."
         input_params: Dict[str, Any] = None,
         **kwargs
     ) -> Job:
-        """Submit input data and return Job
+        """Submit input data and return Job.
+
+        Provide input_data_format and output_data_format keyword 
+        arguments to override default values.
 
         :param input_data: Input data
         :type input_data: Any
@@ -114,6 +122,8 @@ target '{self.name}' of provider '{self.provider_id}' not found."
         """
         input_params = input_params or {}
         blob = self._encode_input_data(data=input_data)
+        input_data_format = kwargs.pop("input_data_format")
+        output_data_format = kwargs.pop("output_data_format")
 
         return Job.from_input_data(
             workspace=self.workspace,
@@ -123,8 +133,8 @@ target '{self.name}' of provider '{self.provider_id}' not found."
             content_type=self.content_type,
             encoding=self.encoding,
             provider_id=self.provider_id,
-            input_data_format=self.input_data_format,
-            output_data_format=self.output_data_format,
+            input_data_format=input_data_format or self.input_data_format,
+            output_data_format=output_data_format or self.output_data_format,
             input_params=input_params,
             **kwargs
         )

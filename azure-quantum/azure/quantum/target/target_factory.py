@@ -40,13 +40,14 @@ class TargetFactory:
         if name in self._all_targets:
             return self._all_targets[name]
 
-        if provider_id in DEFAULT_TARGETS:
-            return DEFAULT_TARGETS[provider_id]
+        # case insensitive lookup
+        default_targets = {k.lower(): v for k, v in DEFAULT_TARGETS.items()}
+        if provider_id.lower() in default_targets:
+            return default_targets[provider_id.lower()]
  
         warnings.warn(
-            "No default target specified for provider {provider_id}. \
-Please check the provider name and try again or create an issue here: \
-https://github.com/microsoft/qdk-python/issues.")
+            f"No default Target class exists for provider {provider_id}. Returning stub Target instance.")
+        return Target
 
     def create_target(
         self, workspace: "Workspace", provider_id: str, name: str, **kwargs
