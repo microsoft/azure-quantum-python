@@ -12,7 +12,7 @@ from azure.quantum.workspace import Workspace
 from azure.quantum.job.job import Job
 
 
-class Target(abc.ABC):
+class Target:
     """Azure Quantum Target."""
     # Target IDs that are compatible with this Target class.
     target_names = ()
@@ -24,7 +24,7 @@ class Target(abc.ABC):
         input_data_format: str = "",
         output_data_format: str = "",
         provider_id: str = "",
-        content_type: str = "application/json",
+        content_type: str = "",
         encoding: str = "",
         average_queue_time: float = None,
         current_availability: str = ""
@@ -86,18 +86,23 @@ target '{self.name}' of provider '{self.provider_id}' not found."
         return self._average_queue_time
 
     @staticmethod
-    def _encode_input_data(data: Dict[Any, Any]) -> bytes:
-        """Encode input data to bytes
+    def _encode_input_data(data: Any) -> bytes:
+        """Encode input data to bytes.
+        If the data is already in bytes format, return it.
 
         :param data: Input data
-        :type data: Dict[Any, Any]
+        :type data: Any
         :return: Encoded input data
         :rtype: bytes
         """
-        stream = io.BytesIO()
-        data = json.dumps(data)
-        stream.write(data.encode())
-        return stream.getvalue()
+        if isinstance(data, bytes):
+            return data
+        else:
+            stream = io.BytesIO()
+            if isinstance(data, dict):
+                data = json.dumps(data)
+            stream.write(data.encode())
+            return stream.getvalue()
 
     def submit(
         self,
@@ -108,8 +113,8 @@ target '{self.name}' of provider '{self.provider_id}' not found."
     ) -> Job:
         """Submit input data and return Job.
 
-        Provide input_data_format and output_data_format keyword 
-        arguments to override default values.
+        Provide input_data_format, output_data_format and content_type
+        keyword arguments to override default values.
 
         :param input_data: Input data
         :type input_data: Any
@@ -121,20 +126,22 @@ target '{self.name}' of provider '{self.provider_id}' not found."
         :rtype: Job
         """
         input_params = input_params or {}
+        input_data_format = kwargs.pop("input_data_format", self.input_data_format)
+        output_data_format = kwargs.pop("output_data_format", self.output_data_format)
+        content_type = kwargs.pop("content_type", self.content_type)
+        encoding = kwargs.pop("encoding", self.encoding)
         blob = self._encode_input_data(data=input_data)
-        input_data_format = kwargs.pop("input_data_format")
-        output_data_format = kwargs.pop("output_data_format")
 
         return Job.from_input_data(
             workspace=self.workspace,
             name=name,
             target=self.name,
             input_data=blob,
-            content_type=self.content_type,
-            encoding=self.encoding,
+            content_type=content_type,
+            encoding=encoding,
             provider_id=self.provider_id,
-            input_data_format=input_data_format or self.input_data_format,
-            output_data_format=output_data_format or self.output_data_format,
+            input_data_format=input_data_format,
+            output_data_format=output_data_format,
             input_params=input_params,
             **kwargs
         )

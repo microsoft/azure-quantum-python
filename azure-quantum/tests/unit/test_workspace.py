@@ -88,6 +88,7 @@ class TestWorkspace(QuantumTestBase):
     def test_workspace_get_targets(self):
         ws = self.create_workspace()
         targets = ws.get_targets()
+        assert None not in targets
         test_targets = set([
             'honeywell.hqs-lt-s1-apival',
             'ionq.simulator',
