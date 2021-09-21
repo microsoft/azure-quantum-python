@@ -28,7 +28,7 @@ class TargetFactory:
     def _get_all_target_cls() -> Dict[str, Target]:
         """Get all target classes by target name"""
         return {
-            name: _t for t in Target.__subclasses__()
+            name.lower(): _t for t in Target.__subclasses__()
             for _t in [t] + t.__subclasses__()
             for name in _t.target_names
         }
@@ -38,7 +38,7 @@ class TargetFactory:
 
     def _target_cls(self, provider_id: str, name: str):
         if name in self._all_targets:
-            return self._all_targets[name]
+            return self._all_targets[name.lower()]
 
         # case insensitive lookup
         default_targets = {k.lower(): v for k, v in DEFAULT_TARGETS.items()}
