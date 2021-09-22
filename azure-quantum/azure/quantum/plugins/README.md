@@ -6,19 +6,15 @@ You can also try our [Quantum Computing Fundamentals](https://aka.ms/learnqc) le
 
 This folder contains plug-ins to the Python SDK for Azure Quantum.
 
-### Installing with pip ###
-
-To install all plugins, run:
-
-```bash
-pip install azure-quantum[cirq,qiskit]
-```
-
-this will install the plugins along with their optional dependencies.
-
 ## The `cirq` plugin ##
 
 This plugin lets you use Azure Quantum as a service in  `cirq` to run quantum programs.
+
+### Installing with pip ###
+
+```bash
+pip install azure-quantum[cirq]
+```
 
 ### Example usage ###
 
@@ -46,15 +42,15 @@ service = aq.AzureQuantumService(resource_id="", location="")
 result = service.run(circuit, repetitions=1000, target="ionq.simulator")
 ```
 
-### Installing with pip ###
-
-```bash
-pip install azure-quantum[cirq]
-```
-
 ## The `qiskit` plugin ##
 
 This package implements an `AzureQuantumProvider` class that supports submitting `qiskit` circuits to Azure Quantum targets.
+
+### Installing with pip ###
+
+```bash
+pip install azure-quantum[qiskit]
+```
 
 ### Example usage ###
 
@@ -65,10 +61,7 @@ from azure.quantum.qiskit import AzureQuantumProvider
 
 # Azure Quantum Provider
 # Find your resource ID via portal.azure.com
-provider = AzureQuantumProvider(
-  resource_id="",
-  location=""
-)
+provider = AzureQuantumProvider(resource_id="", location="")
 
 # Show all current supported backends in this workspace:
 print([backend.name() for backend in provider.backends()])
@@ -96,13 +89,7 @@ print(counts)
 plot_histogram(counts)
 ```
 
-### Installing with pip ###
-
-```bash
-pip install azure-quantum[qiskit]
-```
-
-### Development ###
+## Development ###
 
 The best way to install all the Python pre-reqs packages is to create a new Conda environment.
 Run at the root of the `azure-quantum` directory:
@@ -123,12 +110,12 @@ In case you have created the conda environment a while ago, you can make sure yo
 conda env update -f environment.yml --prune
 ```
 
-#### Install the local development package ####
+### Install the local development package ####
 
 To install the package in development mode, run the following in the repo's root directory:
 
 ```bash
-pip install -e azure-quantum[qiskit]
+pip install -e azure-quantum[qiskit,cirq]
 ```
 
 ## Support and Q&A ##

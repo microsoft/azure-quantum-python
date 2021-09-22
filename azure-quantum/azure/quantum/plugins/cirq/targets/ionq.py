@@ -102,17 +102,9 @@ class IonQTarget(IonQ, CirqTarget):
     @staticmethod
     def _translate_cirq_circuit(circuit) -> Dict[str, Any]:
         """Translate Cirq circuit to IonQ JSON. If dependencies \
-    are not installed, throw error with installation instructions."""
-        try:
-            from cirq_ionq import Serializer
-
-        except ImportError:
-            raise ImportError(
-                "Missing optional 'cirq_ionq' dependency. \
-    To install run: pip install azure-quantum[cirq]")
-
-        else:
-            return Serializer().serialize(circuit)
+are not installed, throw error with installation instructions."""
+        from cirq_ionq import Serializer
+        return Serializer().serialize(circuit)
 
     def _to_cirq_job(self, azure_job: "AzureJob") -> "CirqIonqJob":
         """Convert Azure job to Cirq job"""

@@ -13,7 +13,6 @@ class Job:
     """
     Thin wrapper around an Azure Quantum Job that supports
     returning results in Cirq format.
-    Implements public methods simlar to cirq_ionq.Job.
     """
     def __init__(self, azure_job: "AzureJob", program: "cirq.Circuit"):
         """Construct a Job."""
