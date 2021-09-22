@@ -4,19 +4,21 @@ For details on how to get started with Azure Quantum, please visit [azure.com/qu
 
 You can also try our [Quantum Computing Fundamentals](https://aka.ms/learnqc) learning path to get familiar with the basic concepts of quantum computing, build quantum programs, and identify the kind of problems that can be solved.
 
-This folder contains plug-ins to the Python SDKD for Azure Quantum.
+This folder contains plug-ins to the Python SDK for Azure Quantum.
 
 ### Installing with pip ###
 
-To use all plugins, run
+To install all plugins, run:
 
 ```bash
 pip install azure-quantum[cirq,qiskit]
 ```
 
+this will install the plugins along with their optional dependencies.
+
 ## The `cirq` plugin ##
 
-This plugin lets you submit a `cirq` dependency to the Azure Quantum targets.
+This plugin lets you use Azure Quantum as a service in  `cirq` to run quantum programs.
 
 ### Example usage ###
 
@@ -52,7 +54,7 @@ pip install azure-quantum[cirq]
 
 ## The `qiskit` plugin ##
 
-This package implements an `AzureQuantumProvider` class that supports submitting Qiskit circuits to Azure Quantum hardware targets.
+This package implements an `AzureQuantumProvider` class that supports submitting `qiskit` circuits to Azure Quantum targets.
 
 ### Example usage ###
 

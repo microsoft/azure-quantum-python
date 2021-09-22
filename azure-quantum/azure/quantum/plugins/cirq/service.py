@@ -37,7 +37,7 @@ class AzureQuantumService:
     ):
         """AzureQuantumService class
 
-        :param workspace: Azure Quantum workspace, defaults to None
+        :param workspace: Azure Quantum workspace. If missing it will create a new Workspace passing `kwargs` to the constructor. Defaults to None. 
         :type workspace: Workspace, optional
         :param default_target: Default target name, defaults to None
         :type default_target: Optional[str], optional
@@ -68,7 +68,7 @@ class AzureQuantumService:
         provider_id: str = None,
         **kwargs
     ) -> Union["CirqTarget", List["CirqTarget"]]:
-        """Get all targets available in the Azure Quantum.
+        """Get all quantum computing targets available in the Azure Quantum Workspace.
 
         :param name: Target name, defaults to None
         :type name: str, optional
@@ -92,7 +92,7 @@ class AzureQuantumService:
     
     def get_job(self, job_id: str, *args, **kwargs) -> Union["CirqJob", "CirqIonqJob"]:
         """
-        Get Cirq Job by Job ID
+        Get Cirq Job by job ID
         """
         job = self._workspace.get_job(job_id=job_id)
         target : CirqTarget = self._target_factory.create_target(
@@ -109,7 +109,7 @@ class AzureQuantumService:
         target: str = None,
         param_resolver: cirq.ParamResolverOrSimilarType = cirq.ParamResolver({})
     ) -> Union["CirqJob", "CirqIonqJob"]:
-        """Create job using a Cirq program
+        """Create job to run the given `cirq` program in Azure Quantum
 
         :param program: Cirq program or circuit
         :type program: cirq.Circuit
@@ -150,7 +150,7 @@ class AzureQuantumService:
         seed: cirq.RANDOM_STATE_OR_SEED_LIKE = None,
         timeout_seconds: int = DEFAULT_TIMEOUT,
     ) -> cirq.Result:
-        """Run Cirq circuit on specified target, if target not specified run on default target
+        """Run Cirq circuit on specified target, if target not specified then it runs on the default target
 
         :param program: Cirq program or circuit
         :type program: cirq.Circuit

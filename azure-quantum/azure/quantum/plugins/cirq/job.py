@@ -16,7 +16,7 @@ class Job:
     Implements public methods simlar to cirq_ionq.Job.
     """
     def __init__(self, azure_job: "AzureJob", program: "cirq.Circuit"):
-        """Construct an IonQJob."""
+        """Construct a Job."""
         self._azure_job = azure_job
         self._program = program
 
@@ -30,7 +30,7 @@ class Job:
         return self._azure_job.details.status
 
     def target(self) -> str:
-        """Returns the target where the job is to be run, or was run."""
+        """Returns the target where the job was run."""
         return self._azure_job.details.target
 
     def name(self) -> str:

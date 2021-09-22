@@ -165,6 +165,6 @@ class IonQTarget(IonQ, CirqTarget):
             return result.to_cirq_result(params=cirq.ParamResolver(param_resolver), seed=seed)
 
         raise ValueError("Result {result} not supported. \
-            Please pass either a cirq_ionq.results.QPUResult \
+            Expecting either a cirq_ionq.results.QPUResult \
                 or cirq_ionq.results.SimulatorResult.")
  

@@ -46,7 +46,7 @@ class IonQBackend(Backend):
         }
 
     def run(self, circuit, **kwargs):
-        """Submits the given circuit for execution on an IonQ target."""        
+        """Submits the given circuit to run on an IonQ target."""        
         # If the circuit was created using qiskit.assemble,
         # disassemble into QASM here
         if isinstance(circuit, QasmQobj) or isinstance(circuit, Qobj):
