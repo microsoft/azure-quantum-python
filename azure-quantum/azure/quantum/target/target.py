@@ -3,6 +3,8 @@
 # Licensed under the MIT License.
 ##
 import abc
+import io
+import json
 from typing import Any, Dict
 
 from azure.quantum._client.models import TargetStatus
@@ -10,7 +12,7 @@ from azure.quantum.workspace import Workspace
 from azure.quantum.job.job import Job
 
 
-class Target(abc.ABC):
+class Target:
     """Azure Quantum Target."""
     # Target IDs that are compatible with this Target class.
     target_names = ()
@@ -27,6 +29,8 @@ class Target(abc.ABC):
         average_queue_time: float = None,
         current_availability: str = ""
     ):
+        if not provider_id and "." in name:
+            provider_id = name.split(".")[0]
         self.workspace = workspace
         self.name = name
         self.input_data_format = input_data_format
@@ -83,16 +87,24 @@ target '{self.name}' of provider '{self.provider_id}' not found."
     def average_queue_time(self):
         return self._average_queue_time
 
-    @abc.abstractstaticmethod
-    def _encode_input_data(data: Dict[Any, Any]) -> bytes:
-        """Implement abstract method to encode input data to bytes
+    @staticmethod
+    def _encode_input_data(data: Any) -> bytes:
+        """Encode input data to bytes.
+        If the data is already in bytes format, return it.
 
         :param data: Input data
-        :type data: Dict[Any, Any]
+        :type data: Any
         :return: Encoded input data
         :rtype: bytes
         """
-        pass
+        if isinstance(data, bytes):
+            return data
+        else:
+            stream = io.BytesIO()
+            if isinstance(data, dict):
+                data = json.dumps(data)
+            stream.write(data.encode())
+            return stream.getvalue()
 
     def submit(
         self,
@@ -101,7 +113,10 @@ target '{self.name}' of provider '{self.provider_id}' not found."
         input_params: Dict[str, Any] = None,
         **kwargs
     ) -> Job:
-        """Submit input data and return Job
+        """Submit input data and return Job.
+
+        Provide input_data_format, output_data_format and content_type
+        keyword arguments to override default values.
 
         :param input_data: Input data
         :type input_data: Any
@@ -113,6 +128,10 @@ target '{self.name}' of provider '{self.provider_id}' not found."
         :rtype: Job
         """
         input_params = input_params or {}
+        input_data_format = kwargs.pop("input_data_format", self.input_data_format)
+        output_data_format = kwargs.pop("output_data_format", self.output_data_format)
+        content_type = kwargs.pop("content_type", self.content_type)
+        encoding = kwargs.pop("encoding", self.encoding)
         blob = self._encode_input_data(data=input_data)
 
         return Job.from_input_data(
@@ -120,11 +139,11 @@ target '{self.name}' of provider '{self.provider_id}' not found."
             name=name,
             target=self.name,
             input_data=blob,
-            content_type=self.content_type,
-            encoding=self.encoding,
+            content_type=content_type,
+            encoding=encoding,
             provider_id=self.provider_id,
-            input_data_format=self.input_data_format,
-            output_data_format=self.output_data_format,
+            input_data_format=input_data_format,
+            output_data_format=output_data_format,
             input_params=input_params,
             **kwargs
         )

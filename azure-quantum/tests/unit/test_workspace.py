@@ -88,6 +88,7 @@ class TestWorkspace(QuantumTestBase):
     def test_workspace_get_targets(self):
         ws = self.create_workspace()
         targets = ws.get_targets()
+        assert None not in targets
         test_targets = set([
             'honeywell.hqs-lt-s1-apival',
             'ionq.simulator',
@@ -107,6 +108,9 @@ class TestWorkspace(QuantumTestBase):
         target.refresh()
         assert target.average_queue_time is not None
         assert target.current_availability is not None
+        # target lookup is case insensitive
+        target1 = ws.get_targets("IonQ.QPU")
+        assert target.name == target1.name
 
         with pytest.raises(ValueError):
             target.name = "foo"
