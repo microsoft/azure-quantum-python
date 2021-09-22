@@ -21,9 +21,8 @@ This plugin lets you submit a `cirq` dependency to the Azure Quantum targets.
 ### Example usage ###
 
 ```python
-from azure.quantum import Workspace
-from azure.quantum.targets import IonQ
 import cirq
+import azure.quantum.cirq as aq
 
 # Create qubits
 q0 = cirq.LineQubit(0)
@@ -40,17 +39,9 @@ circuit = cirq.Circuit(
     cirq.measure(q2, key='q2'),
 )
 
-workspace = Workspace(
-  resource_id="",
-  location=""
-)
-target = IonQ(workspace=workspace)
-job = target.submit(
-    circuit=circuit,
-    name="ionq-3ghz-job",
-    num_shots=100
-)
-results = job.get_results()
+# Enter your Azure Quantum workspace details here
+service = aq.AzureQuantumService(resource_id="", location="")
+result = service.run(circuit, repetitions=1000, target="ionq.simulator")
 ```
 
 ### Installing with pip ###
@@ -67,13 +58,14 @@ This package implements an `AzureQuantumProvider` class that supports submitting
 
 ```python
 from qiskit import QuantumCircuit
+from qiskit.visualization import plot_histogram
 from azure.quantum.qiskit import AzureQuantumProvider
 
 # Azure Quantum Provider
 # Find your resource ID via portal.azure.com
 provider = AzureQuantumProvider(
   resource_id="",
-  location="westus"
+  location=""
 )
 
 # Show all current supported backends in this workspace:
@@ -95,9 +87,11 @@ job_id = job.id()
 print("Job id", id)
 
 # Get the job results (this method waits for the Job to complete):
-result = job.result()
-histogram = result.results['histogram']
-print("Results histogram", histogram)
+counts = result.get_counts(circuit)
+print(counts)
+
+# Plot histogram
+plot_histogram(counts)
 ```
 
 ### Installing with pip ###
