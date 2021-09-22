@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 ##
+from typing import TYPE_CHECKING
 from azure.quantum.version import __version__
 from azure.quantum.plugins.qiskit.job import AzureQuantumJob
 
@@ -17,6 +18,9 @@ except ImportError:
     "Missing optional 'qiskit' dependencies. \
 To install run: pip install azure-quantum[qiskit]"
 )
+
+if TYPE_CHECKING:
+    from azure.quantum.plugins.qiskit import AzureQuantumProvider
 
 import logging
 logger = logging.getLogger(__name__)
@@ -104,12 +108,20 @@ class HoneywellBackend(Backend):
 
 
 class HoneywellAPIValidatorBackend(HoneywellBackend):
-    backend_name = "honeywell.hqs-lt-s1-apival"
+    backend_names = (
+        "honeywell.hqs-lt-s1-apival",
+        "honeywell.hqs-lt-s2-apival"
+    )
 
-    def __init__(self, provider):
-        config = BackendConfiguration.from_dict(
+    def __init__(
+        self,
+        name: str,
+        provider: "AzureQuantumProvider",
+        **kwargs
+    ):
+        default_config = BackendConfiguration.from_dict(
             {
-                "backend_name": self.backend_name,
+                "backend_name": name,
                 "backend_version": __version__,
                 "simulator": True,
                 "local": False,
@@ -125,17 +137,27 @@ class HoneywellAPIValidatorBackend(HoneywellBackend):
                 "gates": [{"name": "TODO", "parameters": [], "qasm_def": "TODO"}],
             }
         )
+        configuration: BackendConfiguration = kwargs.pop("configuration", default_config)
         logger.info("Initializing HoneywellAPIValidatorBackend")
-        super().__init__(configuration=config, provider=provider)
+        super().__init__(configuration=configuration, provider=provider, **kwargs)
 
 
 class HoneywellSimulatorBackend(HoneywellBackend):
-    backend_name = "honeywell.hqs-lt-s1-sim"
+    backend_names = (
+        "honeywell.hqs-lt-s1-sim",
+        "honeywell.hqs-lt-s2-sim"
+    )
 
-    def __init__(self, provider):
-        config = BackendConfiguration.from_dict(
+    def __init__(
+        self,
+        name: str,
+        provider: "AzureQuantumProvider",
+        **kwargs
+    ):
+        configuration: BackendConfiguration = kwargs.pop("configuration", None)
+        default_config = BackendConfiguration.from_dict(
             {
-                "backend_name": self.backend_name,
+                "backend_name": name,
                 "backend_version": __version__,
                 "simulator": True,
                 "local": False,
@@ -151,18 +173,26 @@ class HoneywellSimulatorBackend(HoneywellBackend):
                 "gates": [{"name": "TODO", "parameters": [], "qasm_def": "TODO"}],
             }
         )
+        configuration: BackendConfiguration = kwargs.pop("configuration", default_config)
         logger.info("Initializing HoneywellAPIValidatorBackend")
-        super().__init__(configuration=config, provider=provider)
+        super().__init__(configuration=configuration, provider=provider, **kwargs)
 
 
 class HoneywellQPUBackend(HoneywellBackend):
-    backend_name = "honeywell.hqs-lt-s1"
+    backend_names = (
+        "honeywell.hqs-lt-s1",
+        "honeywell.hqs-lt-s2"
+    )
 
-    def __init__(self, provider):
-        """Base class for interfacing with an Honeywell backend"""
-        config = BackendConfiguration.from_dict(
+    def __init__(
+        self,
+        name: str,
+        provider: "AzureQuantumProvider",
+        **kwargs
+    ):
+        default_config = BackendConfiguration.from_dict(
             {
-                "backend_name": self.backend_name,
+                "backend_name": name,
                 "backend_version": __version__,
                 "simulator": False,
                 "local": False,
@@ -178,5 +208,6 @@ class HoneywellQPUBackend(HoneywellBackend):
                 "gates": [{"name": "TODO", "parameters": [], "qasm_def": "TODO"}],
             }
         )
+        configuration: BackendConfiguration = kwargs.pop("configuration", default_config)
         logger.info("Initializing HoneywellQPUBackend")
-        super().__init__(configuration=config, provider=provider)
+        super().__init__(configuration=configuration, provider=provider, **kwargs)

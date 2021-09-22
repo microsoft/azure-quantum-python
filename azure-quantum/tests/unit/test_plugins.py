@@ -127,8 +127,8 @@ class TestQiskit(QuantumTestBase):
             workspace = self.create_workspace()
             provider = AzureQuantumProvider(workspace=workspace)
             backend = provider.get_backend("honeywell.hqs-lt-s1-apival")
-            assert backend.backend_name == "honeywell.hqs-lt-s1-apival"
-            assert backend.backend_name in [t.name for t in workspace.get_targets(provider_id="honeywell")]
+            assert "honeywell.hqs-lt-s1-apival" in backend.backend_names
+            assert backend.backend_names[0] in [t.name for t in workspace.get_targets(provider_id="honeywell")]
             circuit = self._3_qubit_ghz()
             qiskit_job = backend.run(
                 circuit=circuit,

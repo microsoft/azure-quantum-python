@@ -106,7 +106,7 @@ https://github.com/microsoft/qdk-python/issues.")
         if hasattr(cls, "from_target_status"):
             return cls.from_target_status(self._workspace, status, **kwargs)
         elif cls is not None:
-            return cls(**kwargs)
+            return cls(name=status.id, **kwargs)
 
     def get_targets(
         self,

@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 ##
 import json
-from typing import Any, Dict, List
+from typing import TYPE_CHECKING
 from azure.quantum import __version__
 from azure.quantum.plugins.qiskit.job import AzureQuantumJob
 
@@ -19,6 +19,9 @@ except ImportError:
     "Missing optional 'qiskit' dependencies. \
 To install run: pip install azure-quantum[qiskit]"
 )
+
+if TYPE_CHECKING:
+    from azure.quantum.plugins.qiskit import AzureQuantumProvider
 
 import logging
 logger = logging.getLogger(__name__)
@@ -96,13 +99,18 @@ class IonQBackend(Backend):
 
 
 class IonQSimulatorBackend(IonQBackend):
-    backend_name = "ionq.simulator"
+    backend_names = ("ionq.simulator",)
 
-    def __init__(self, provider):
+    def __init__(
+        self,
+        name: str,
+        provider: "AzureQuantumProvider",
+        **kwargs
+    ):
         """Base class for interfacing with an IonQ Simulator backend"""
-        config = BackendConfiguration.from_dict(
+        default_config = BackendConfiguration.from_dict(
             {
-                "backend_name": self.backend_name,
+                "backend_name": name,
                 "backend_version": __version__,
                 "simulator": True,
                 "local": False,
@@ -119,16 +127,23 @@ class IonQSimulatorBackend(IonQBackend):
             }
         )
         logger.info("Initializing IonQSimulatorBackend")
-        super().__init__(configuration=config, provider=provider)
+        configuration: BackendConfiguration = kwargs.pop("configuration", default_config)
+        super().__init__(configuration=configuration, provider=provider, **kwargs)
 
 
 class IonQQPUBackend(IonQBackend):
-    backend_name = "ionq.qpu"
-    def __init__(self, provider):
+    backend_names = ("ionq.qpu",)
+
+    def __init__(
+        self,
+        name: str,
+        provider: "AzureQuantumProvider",
+        **kwargs
+    ):
         """Base class for interfacing with an IonQ QPU backend"""
-        config = BackendConfiguration.from_dict(
+        default_config = BackendConfiguration.from_dict(
             {
-                "backend_name": self.backend_name,
+                "backend_name": name,
                 "backend_version": __version__,
                 "simulator": False,
                 "local": False,
@@ -145,4 +160,5 @@ class IonQQPUBackend(IonQBackend):
             }
         )
         logger.info("Initializing IonQQPUBackend")
-        super().__init__(configuration=config, provider=provider)
+        configuration: BackendConfiguration = kwargs.pop("configuration", default_config)
+        super().__init__(configuration=configuration, provider=provider, **kwargs)

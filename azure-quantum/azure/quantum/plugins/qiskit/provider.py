@@ -43,9 +43,10 @@ class AzureQuantumProvider(Provider):
         from azure.quantum.plugins.qiskit.backends import DEFAULT_TARGETS
 
         all_targets = {
-            _t.backend_name: _t for t in Backend.__subclasses__()
+            name: _t for t in Backend.__subclasses__()
             for _t in [t] + t.__subclasses__()
-            if hasattr(_t, "backend_name")
+            if hasattr(_t, "backend_names")
+            for name in _t.backend_names
         }
 
         target_factory = TargetFactory(
