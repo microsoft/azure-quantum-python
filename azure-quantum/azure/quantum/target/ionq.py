@@ -4,7 +4,8 @@
 ##
 import io
 import json
-from typing import Any, Dict
+
+from typing import Any, Dict, Union
 
 from azure.quantum.target.target import Target
 from azure.quantum.job.job import Job
@@ -45,7 +46,7 @@ class IonQ(Target):
 
     def submit(
         self,
-        circuit: Dict[str, Any],
+        circuit: Union[Dict[str, Any]],
         name: str = "ionq-job",
         num_shots: int = None,
         input_params: Dict[str, Any] = None,
@@ -53,7 +54,8 @@ class IonQ(Target):
     ) -> Job:
         """Submit an IonQ circuit (JSON format)
 
-        :param circuit: Quantum circuit in IonQ JSON format
+        :param circuit: Quantum circuit in IonQ JSON format (for examples,
+            see: https://docs.ionq.com/#section/Sample-JSON-Circuits)
         :type circuit: Dict[str, Any]
         :param name: Job name
         :type name: str

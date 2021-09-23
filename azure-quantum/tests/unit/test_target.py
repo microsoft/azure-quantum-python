@@ -20,7 +20,7 @@ class TestIonQ(QuantumTestBase):
     def get_test_job_id(self):
         return ZERO_UID if self.is_playback \
                else Job.create_job_id()
-    
+
     def _3_qubit_ghz(self):
         return {
             "qubits": 3,
@@ -48,7 +48,7 @@ class TestIonQ(QuantumTestBase):
     def test_job_submit_ionq_100_shots(self):
         self._test_job_submit_ionq(num_shots=100)
 
-    def _test_job_submit_ionq(self, num_shots):
+    def _test_job_submit_ionq(self, num_shots, circuit=None):
 
         with unittest.mock.patch.object(
             Job,
@@ -56,7 +56,8 @@ class TestIonQ(QuantumTestBase):
             return_value=self.get_test_job_id(),
         ):
             workspace = self.create_workspace()
-            circuit = self._3_qubit_ghz()
+            if circuit is None:
+                circuit = self._3_qubit_ghz()
             target = IonQ(workspace=workspace)
             job = target.submit(
                 circuit=circuit,

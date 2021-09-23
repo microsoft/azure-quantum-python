@@ -11,7 +11,6 @@ import os
 from azure.quantum import Workspace
 from common import QuantumTestBase
 
-
 class TestWorkspace(QuantumTestBase):
 
     def test_create_workspace_instance_valid(self):

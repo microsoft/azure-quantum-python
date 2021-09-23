@@ -8,7 +8,6 @@ import os
 import re
 
 from typing import Any, Dict, Iterable, List, Optional, TYPE_CHECKING, Tuple, Union
-from functools import reduce
 from deprecated import deprecated
 
 # Temporarily replacing the DefaultAzureCredential with
@@ -300,9 +299,14 @@ class Workspace:
         :rtype: Iterable[Target]
         """
         from azure.quantum.target.target_factory import TargetFactory
-        target_factory = TargetFactory()
+        from azure.quantum.target import Target
+
+        target_factory = TargetFactory(
+            base_cls=Target,
+            workspace=self
+        )
+
         return target_factory.get_targets(
-            workspace=self,
             name=name,
             provider_id=provider_id
         )
