@@ -91,8 +91,12 @@ class AzureQuantumService:
         return self.targets(name=name, **kwargs)
     
     def get_job(self, job_id: str, *args, **kwargs) -> Union["CirqJob", "CirqIonqJob"]:
-        """
-        Get Cirq Job by job ID
+        """Get Cirq Job by job ID
+
+        :param job_id: Job ID
+        :type job_id: str
+        :return: Job
+        :rtype: azure.quantum.cirq.Job or cirq_ionq.Job
         """
         job = self._workspace.get_job(job_id=job_id)
         target : CirqTarget = self._target_factory.create_target(

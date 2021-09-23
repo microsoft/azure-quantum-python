@@ -108,4 +108,4 @@ class HoneywellTarget(Honeywell, CirqTarget):
             metadata=metadata,
             **kwargs
         )
-        return self._to_cirq_job(azure_job=azure_job, program=program)
+        return self._to_cirq_job(azure_job=azure_job)
