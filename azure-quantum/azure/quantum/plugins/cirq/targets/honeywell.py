@@ -4,7 +4,7 @@
 ##
 import numpy as np
 
-from typing import TYPE_CHECKING, Any, Dict
+from typing import TYPE_CHECKING, Any, Dict, Sequence
 
 from azure.quantum.target import Honeywell
 from azure.quantum.plugins.cirq.targets.target import Target as CirqTarget
@@ -58,13 +58,21 @@ class HoneywellTarget(Honeywell, CirqTarget):
     
     def _to_cirq_job(self, azure_job: "AzureJob", program: "cirq.Circuit" = None):
         """Convert Azure job to Cirq job"""
-        if program is None:
-            # Download QASM and convert to Cirq circuit
-            from cirq.contrib.qasm_import import circuit_from_qasm
-            uri = azure_job.details.input_data_uri
-            qasm = azure_job.download_data(uri).decode("utf8")
-            program = circuit_from_qasm(qasm)
-        return CirqJob(azure_job=azure_job, program=program)
+        if "measurement_dict" not in azure_job.details.metadata and program is None:
+            raise ValueError("Parameter 'measurement_dict' not found in job metadata.")
+        measurement_dict = azure_job.details.metadata.get("measurement_dict")
+        return CirqJob(azure_job=azure_job, program=program, measurement_dict=measurement_dict)
+
+    @staticmethod
+    def _measurement_dict(program) -> Dict[str, Sequence[int]]:
+        """Returns a dictionary of measurement keys to target qubit index."""
+        from cirq import MeasurementGate
+        measurements = [
+            op for op in program.all_operations() if isinstance(op.gate, MeasurementGate)
+        ]
+        return {
+            meas.gate.key: [q.x for q in meas.qubits] for meas in measurements
+        }
 
     def submit(
         self,
@@ -88,7 +96,8 @@ class HoneywellTarget(Honeywell, CirqTarget):
         serialized_program = self._translate_circuit(program)
         metadata = {
             "qubits": len(program.all_qubits()),
-            "repetitions": repetitions
+            "repetitions": repetitions,
+            "measurement_dict": self._measurement_dict(program)
         }
         # Override metadata with value from kwargs
         metadata.update(kwargs.get("metadata", {}))

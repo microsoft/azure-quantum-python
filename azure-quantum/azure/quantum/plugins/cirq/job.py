@@ -14,10 +14,16 @@ class Job:
     Thin wrapper around an Azure Quantum Job that supports
     returning results in Cirq format.
     """
-    def __init__(self, azure_job: "AzureJob", program: "cirq.Circuit"):
+    def __init__(
+        self,
+        azure_job: "AzureJob",
+        program: "cirq.Circuit",
+        measurement_dict: dict = None
+    ):
         """Construct a Job."""
         self._azure_job = azure_job
         self._program = program
+        self._measurement_dict = measurement_dict
 
     def job_id(self) -> str:
         """Returns the job id (UID) for the job."""
@@ -46,11 +52,13 @@ class Job:
 
     def measurement_dict(self) -> Dict[str, Sequence[int]]:
         """Returns a dictionary of measurement keys to target qubit index."""
-        from cirq import MeasurementGate
-        measurements = [op for op in self._program.all_operations() if isinstance(op.gate, MeasurementGate)]
-        return {
-            meas.gate.key: [q.x for q in meas.qubits] for meas in measurements
-        }
+        if self._measurement_dict is None:
+            from cirq import MeasurementGate
+            measurements = [op for op in self._program.all_operations() if isinstance(op.gate, MeasurementGate)]
+            self._measurement_dict = {
+                meas.gate.key: [q.x for q in meas.qubits] for meas in measurements
+            }
+        return self._measurement_dict
 
     def results(self, timeout_seconds: int = 7200) -> "cirq.Result":
         """Poll the Azure Quantum API for results."""

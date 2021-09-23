@@ -4,6 +4,8 @@ import warnings
 from qiskit import QuantumCircuit
 from cirq import ParamResolver
 
+from qiskit.providers import JobStatus
+
 from azure.quantum.job.job import Job
 from azure.quantum.plugins.qiskit import AzureQuantumProvider
 from azure.quantum.plugins.cirq import AzureQuantumService
@@ -36,13 +38,27 @@ class TestQiskit(QuantumTestBase):
 
     def test_plugins_submit_qiskit_to_ionq(self):
         circuit = self._3_qubit_ghz()
-        self._test_qiskit_submit_ionq(circuit=circuit, num_shots=None, num_shots_actual=500)
+        self._test_qiskit_submit_ionq(circuit=circuit, num_shots=500, num_shots_actual=500)
     
     def test_plugins_submit_qiskit_qobj_to_ionq(self):
         from qiskit import assemble
         circuit = self._3_qubit_ghz()
         qobj = assemble(circuit)
-        self._test_qiskit_submit_ionq(circuit=qobj, num_shots=None, num_shots_actual=1024)
+        self._test_qiskit_submit_ionq(circuit=qobj, num_shots=1024, num_shots_actual=1024)
+    
+    def _qiskit_wait_to_complete(self, qiskit_job, provider):
+        job = qiskit_job._azure_job
+        self.pause_recording()
+        try:
+            job.wait_until_completed(timeout_secs=60)
+        except TimeoutError:
+            self.resume_recording()
+            warnings.warn(f"Qiskit Job {job.id} exceeded timeout. Skipping fetching results.")
+        else:
+            self.resume_recording()
+            self.assertEqual(JobStatus.DONE, qiskit_job.status())
+            qiskit_job = provider.get_job(job.id)
+            self.assertEqual(JobStatus.DONE, qiskit_job.status())
 
     def _test_qiskit_submit_ionq(self, circuit, num_shots, num_shots_actual):
 
@@ -63,25 +79,17 @@ class TestQiskit(QuantumTestBase):
             # Make sure the job is completed before fetching the results
             # playback currently does not work for repeated calls
             # See: https://github.com/microsoft/qdk-python/issues/118
-            if not self.is_playback:
-                job = qiskit_job._azure_job
-                self.assertEqual(False, job.has_completed())
-                if self.in_recording:
-                    import time
-                    time.sleep(3)
-                job.refresh()
-                job.wait_until_completed()
-                self.assertEqual(True, job.has_completed())
-                job = provider.get_job(job.id)._azure_job
-                self.assertEqual(True, job.has_completed())
+            if self.in_recording:
+                self._qiskit_wait_to_complete(qiskit_job, provider)
 
-            result = qiskit_job.result()
-            assert result.data()["counts"] == {
-                '000': num_shots_actual//2, '111': num_shots_actual//2
-            }
-            assert result.data()["probabilities"] == {'000': 0.5, '111': 0.5}
-            counts = result.get_counts()
-            assert counts == result.data()["counts"]
+            if JobStatus.DONE == qiskit_job.status():
+                result = qiskit_job.result()
+                assert result.data()["counts"] == {
+                    '000': num_shots_actual//2, '111': num_shots_actual//2
+                }
+                assert result.data()["probabilities"] == {'000': 0.5, '111': 0.5}
+                counts = result.get_counts()
+                assert counts == result.data()["counts"]
     
     def test_plugins_retrieve_job(self):
         with unittest.mock.patch.object(
@@ -97,22 +105,16 @@ class TestQiskit(QuantumTestBase):
                 circuit=circuit,
                 num_shots=100
             )
-            job = qiskit_job._azure_job
 
-            # Make sure the job is completed before fetching the job
-            if not self.is_playback:
-                self.assertEqual(False, job.has_completed())
-                if self.in_recording:
-                    import time
-                    time.sleep(3)
-                job.refresh()
-                job.wait_until_completed()
-                self.assertEqual(True, job.has_completed())
-                job = workspace.get_job(job.id)
-                self.assertEqual(True, job.has_completed())
+            # Make sure the job is completed before fetching the results
+            # playback currently does not work for repeated calls
+            # See: https://github.com/microsoft/qdk-python/issues/118
+            if self.in_recording:
+                self._qiskit_wait_to_complete(qiskit_job, provider)
 
-            fetched_job = backend.retrieve_job(qiskit_job.id())
-            assert fetched_job.id() == qiskit_job.id()
+            if JobStatus.DONE == qiskit_job.status():
+                fetched_job = backend.retrieve_job(qiskit_job.id())
+                assert fetched_job.id() == qiskit_job.id()
 
     def test_plugins_submit_qiskit_to_honeywell(self):
         self._test_qiskit_submit_honeywell(num_shots=None)
@@ -134,26 +136,17 @@ class TestQiskit(QuantumTestBase):
                 circuit=circuit,
                 num_shots=num_shots
             )
-
-            job = qiskit_job._azure_job
-
+   
             # Make sure the job is completed before fetching the results
             # playback currently does not work for repeated calls
             # See: https://github.com/microsoft/qdk-python/issues/118
-            if not self.is_playback:
-                self.assertEqual(False, job.has_completed())
-                if self.in_recording:
-                    import time
-                    time.sleep(3)
-                job.refresh()
-                job.wait_until_completed()
-                self.assertEqual(True, job.has_completed())
-                job = workspace.get_job(job.id)
-                self.assertEqual(True, job.has_completed())
+            if self.in_recording:
+                self._qiskit_wait_to_complete(qiskit_job, provider)
 
-            result = qiskit_job.result()
-            assert result.data()["counts"] == {'000': 500}
-            assert result.data()["probabilities"] == {'000': 1.0}
+            if JobStatus.DONE == qiskit_job.status():
+                result = qiskit_job.result()
+                assert result.data()["counts"] == {'000': 500}
+                assert result.data()["probabilities"] == {'000': 1.0}
 
 
 class TestCirq(QuantumTestBase):
