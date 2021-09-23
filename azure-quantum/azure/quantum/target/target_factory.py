@@ -51,7 +51,8 @@ class TargetFactory:
         """
         self._workspace = workspace
         self._base_cls = base_cls
-        self._default_targets = default_targets
+        # case insensitive lookup
+        self._default_targets = {k.lower(): v for k, v in default_targets.items()}
         self._all_targets = all_targets or self._get_all_target_cls()
 
     def _get_all_target_cls(self) -> Dict[str, Target]:
@@ -67,9 +68,7 @@ class TargetFactory:
         if name in self._all_targets:
             return self._all_targets[name.lower()]
 
-        # case insensitive lookup
-        default_targets = {k.lower(): v for k, v in DEFAULT_TARGETS.items()}
-        if provider_id.lower() in default_targets:
+        if provider_id.lower() in self._default_targets:
             return self._default_targets[provider_id.lower()]
  
         warnings.warn(
@@ -137,7 +136,7 @@ class TargetFactory:
                 for _provider_id, status in target_statuses
                 if PARAMETER_FREE not in status.id
                 and (
-                    _provider_id in self._default_targets
+                    _provider_id.lower() in self._default_targets
                     or status.id in self._all_targets
                 )
             ]
