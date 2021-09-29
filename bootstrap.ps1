@@ -7,31 +7,22 @@
 #>
 
 param(
-  [string[]] $PackageDirs
+  [string] $PackageDir,
+  [string] $EnvSuffix,
+  [bool] $FromSource
 )
 
-& (Join-Path $PSScriptRoot "build" "set-env.ps1");
+# Set env vars
+& (Join-Path (Join-Path $PSScriptRoot "build") "set-env.ps1");
 
-Import-Module (Join-Path $PSScriptRoot "build" "conda-utils.psm1");
+# Import Conda utils
+Import-Module (Join-Path (Join-Path $PSScriptRoot "build") "conda-utils.psm1");
 
 # Enable conda hook
 Enable-Conda
 
-# Get default value for PackageDirs by searching for environment.yml files
-if ($null -eq $PackageDirs) {
-  $PackageDirs = Get-ChildItem -Path $PSScriptRoot -Recurse -Filter "environment.yml" | Select-Object -ExpandProperty Directory | Split-Path -Leaf
-  Write-Host "##[info]No PackageDir. Setting to default '$PackageDirs'"
-}
+# Create environment
+& (Join-Path (Join-Path $PSScriptRoot build) create-env.ps1) -PackageDir $PackageDir -EnvSuffix $EnvSuffix
 
-foreach ($PackageDir in $PackageDirs) {
-    # Check if environment already exists
-    $EnvName = $PackageDir.replace("-", "")
-    $EnvExists = conda env list | Select-String -Pattern "$EnvName " | Measure-Object | Select-Object -Exp Count
-    # if it exists, skip creation
-    if ($EnvExists -eq "1") {
-        Write-Host "##[info]Skipping creating $EnvName; env already exists."
-    } else {
-        # if it doese not exist, create env
-        & (Join-Path $PSScriptRoot build create-env.ps1) -PackageDirs $PackageDir
-    }
-}
+# Install package in environment
+& (Join-Path (Join-Path $PSScriptRoot build) install.ps1) -PackageDirs $PackageDir -EnvNames $PackageDir$EnvSuffix -FromSource $FromSource

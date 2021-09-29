@@ -7,8 +7,7 @@
 #>
 
 param (
-  [string[]] $PackageDirs,
-  [string[]] $EnvNames,
+  [string] $PackageDir,
   [string] $OutDir
 )
 
@@ -16,25 +15,18 @@ param (
 
 Import-Module (Join-Path $PSScriptRoot "conda-utils.psm1");
 
-if ($null -eq $PackageDirs) {
+if ('' -eq $PackageDir) {
+  # If no package dir is specified, find all packages that contain an environment.yml file
   $parentPath = Split-Path -parent $PSScriptRoot
   $PackageDirs = Get-ChildItem -Path $parentPath -Recurse -Filter "environment.yml" | Select-Object -ExpandProperty Directory | Split-Path -Leaf
   Write-Host "##[info]No PackageDir. Setting to default '$PackageDirs'"
-}
-
-if ($null -eq $EnvNames) {
-  $EnvNames = $PackageDirs | ForEach-Object {$_.replace("-", "")}
-  Write-Host "##[info]No EnvNames. Setting to default '$EnvNames'"
+} else {
+  $PackageDirs = @($PackageDir);
 }
 
 if ($OutDir -eq "") {
   Write-Host "##[info]No OutDir. Setting to env var $Env:PYTHON_OUTDIR"
   $OutDir = $Env:PYTHON_OUTDIR
-}
-
-# Check that input is valid
-if ($EnvNames.length -ne $PackageDirs.length) {
-  throw "Cannot run build script: '$EnvNames' and '$PackageDirs' lengths don't match"
 }
 
 $script:all_ok = $True
@@ -73,9 +65,10 @@ if ($Env:ENABLE_PYTHON -eq "false") {
     python --version
     $parentPath = Split-Path -parent $PSScriptRoot
 
-    for ($i=0; $i -le $PackageDirs.length-1; $i++) {
-      $PackageDir = Join-Path $parentPath $PackageDirs[$i]
-      Write-Host "##[info]Packing Python wheel in env '$EnvNames[$i]' for '$PackageDir' to '$OutDir'..."
-      Create-Wheel -EnvName $EnvNames[$i] -Path $PackageDir -OutDir $OutDir
+    foreach ($PackageDir in $PackageDirs) {
+      $EnvName = $PackageDir.replace("-", "")
+      $AbsPath = Join-Path $parentPath $PackageDir
+      Write-Host "##[info]Packing Python wheel in env '$EnvName' for '$PackageDir' to '$OutDir'..."
+      Create-Wheel -EnvName $EnvName -Path $AbsPath -OutDir $OutDir
     }
 }
