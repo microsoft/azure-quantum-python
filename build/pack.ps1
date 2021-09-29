@@ -7,7 +7,7 @@
 #>
 
 param (
-  [string] $PackageDir,
+  [string] $PackageName,
   [string] $OutDir
 )
 
@@ -15,13 +15,13 @@ param (
 
 Import-Module (Join-Path $PSScriptRoot "conda-utils.psm1");
 
-if ('' -eq $PackageDir) {
+if ('' -eq $PackageName) {
   # If no package dir is specified, find all packages that contain an environment.yml file
   $parentPath = Split-Path -parent $PSScriptRoot
-  $PackageDirs = Get-ChildItem -Path $parentPath -Recurse -Filter "environment.yml" | Select-Object -ExpandProperty Directory | Split-Path -Leaf
-  Write-Host "##[info]No PackageDir. Setting to default '$PackageDirs'"
+  $PackageNames = Get-ChildItem -Path $parentPath -Recurse -Filter "environment.yml" | Select-Object -ExpandProperty Directory | Split-Path -Leaf
+  Write-Host "##[info]No PackageDir. Setting to default '$PackageNames'"
 } else {
-  $PackageDirs = @($PackageDir);
+  $PackageNames = @($PackageName);
 }
 
 if ($OutDir -eq "") {
@@ -65,10 +65,10 @@ if ($Env:ENABLE_PYTHON -eq "false") {
     python --version
     $parentPath = Split-Path -parent $PSScriptRoot
 
-    foreach ($PackageDir in $PackageDirs) {
-      $EnvName = $PackageDir.replace("-", "")
-      $AbsPath = Join-Path $parentPath $PackageDir
-      Write-Host "##[info]Packing Python wheel in env '$EnvName' for '$PackageDir' to '$OutDir'..."
+    foreach ($PackageName in $PackageNames) {
+      $EnvName = $PackageName.replace("-", "")
+      $AbsPath = Join-Path $parentPath $PackageName
+      Write-Host "##[info]Packing Python wheel in env '$EnvName' for '$PackageName' to '$OutDir'..."
       Create-Wheel -EnvName $EnvName -Path $AbsPath -OutDir $OutDir
     }
 }

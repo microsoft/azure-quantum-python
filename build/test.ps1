@@ -7,31 +7,31 @@
 #>
 
 param (
-  [string] $PackageDir,
-  [string] $EnvSuffix
+  [string] $PackageName,
+  [string] $CondaEnvironmentSuffix
 )
 
 & (Join-Path $PSScriptRoot "set-env.ps1");
 
 Import-Module (Join-Path $PSScriptRoot "conda-utils.psm1");
 
-if ('' -eq $PackageDir) {
-  # If no package dir is specified, find all packages that contain an environment.yml file
+if ('' -eq $PackageName) {
+  # If no package name is specified, find all packages that contain an environment.yml file
   $parentPath = Split-Path -parent $PSScriptRoot
-  $PackageDirs = Get-ChildItem -Path $parentPath -Recurse -Filter "environment.yml" | Select-Object -ExpandProperty Directory | Split-Path -Leaf
-  Write-Host "##[info]No PackageDir. Setting to default '$PackageDirs'"
+  $PackageNames = Get-ChildItem -Path $parentPath -Recurse -Filter "environment.yml" | Select-Object -ExpandProperty Directory | Split-Path -Leaf
+  Write-Host "##[info]No PackageDir. Setting to default '$PackageNames'"
 } else {
-  $PackageDirs = @($PackageDir);
+  $PackageNames = @($PackageName);
 }
 
 function Invoke-Tests() {
   param(
-    [string] $PackageDir,
+    [string] $PackageName,
     [string] $EnvName
   )
-  $PkgName = $PackageDir.replace("-", ".")
+  $PkgName = $PackageName.replace("-", ".")
   $ParentPath = Split-Path -parent $PSScriptRoot
-  $AbsPackageDir = Join-Path $ParentPath $PackageDir
+  $AbsPackageDir = Join-Path $ParentPath $PackageName
   $EnvName = $EnvName.replace("-", "")
   Write-Host "##[info]Test package $AbsPackageDir and run tests for env $EnvName"
   # Activate env
@@ -46,8 +46,8 @@ function Invoke-Tests() {
 if ($Env:ENABLE_PYTHON -eq "false") {
   Write-Host "##vso[task.logissue type=warning;]Skipping testing Python packages. Env:ENABLE_PYTHON was set to 'false'."
 } else {
-  foreach ($PackageDir in $PackageDirs) {
-    $EnvName = ($PackageDir + $EnvSuffix).replace("-", "")
-    Invoke-Tests -PackageDir $PackageDir -EnvName $EnvName
+  foreach ($PackageName in $PackageNames) {
+    $EnvName = ($PackageName + $CondaEnvironmentSuffix).replace("-", "")
+    Invoke-Tests -PackageName $PackageName -EnvName $EnvName
   }
 }

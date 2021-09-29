@@ -4,31 +4,31 @@
 <#
     .SYNOPSIS
         Create Conda environment(s) for given package directories
-        Optionally, use EnvSuffix to specify a special environment file with name environment<EnvSuffix>.yml.
+        Optionally, use CondaEnvironmentSuffix to specify a special environment file with name environment<CondaEnvironmentSuffix>.yml.
 #>
 
 param(
-  [string] $PackageDir,
-  [string] $EnvSuffix
+  [string] $PackageName,
+  [string] $CondaEnvironmentSuffix
 )
 
-if ('' -eq $PackageDir) {
+if ('' -eq $PackageName) {
   # If no package dir is specified, find all packages that contain an environment.yml file
   $parentPath = Split-Path -parent $PSScriptRoot
-  $PackageDirs = Get-ChildItem -Path $parentPath -Recurse -Filter "environment.yml" | Select-Object -ExpandProperty Directory | Split-Path -Leaf
-  Write-Host "##[info]No PackageDir. Setting to default '$PackageDirs'"
+  $PackageNames = Get-ChildItem -Path $parentPath -Recurse -Filter "environment.yml" | Select-Object -ExpandProperty Directory | Split-Path -Leaf
+  Write-Host "##[info]No PackageDir. Setting to default '$PackageNames'"
 } else {
-  $PackageDirs = @($PackageDir);
+  $PackageNames = @($PackageName);
 }
 
-foreach ($PackageDir in $PackageDirs) {
+foreach ($PackageName in $PackageNames) {
   $parentPath = Split-Path -parent $PSScriptRoot
-  if ('' -ne $EnvSuffix) {
-    $EnvPath = (Join-Path (Join-Path $parentPath $PackageDir) "environment$EnvSuffix.yml")
-    $EnvName = ($PackageDir + $EnvSuffix).replace("-", "")
+  if ('' -ne $CondaEnvironmentSuffix) {
+    $EnvPath = (Join-Path (Join-Path $parentPath $PackageName) "environment$CondaEnvironmentSuffix.yml")
+    $EnvName = ($PackageName + $CondaEnvironmentSuffix).replace("-", "")
   } else {
-    $EnvPath = (Join-Path (Join-Path $parentPath $PackageDir) "environment.yml")
-    $EnvName = $PackageDir.replace("-", "")
+    $EnvPath = (Join-Path (Join-Path $parentPath $PackageName) "environment.yml")
+    $EnvName = $PackageName.replace("-", "")
   }
 
   # Check if environment already exists
