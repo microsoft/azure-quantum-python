@@ -26,10 +26,10 @@ foreach ($PackageName in $PackageNames) {
   if ('' -ne $CondaEnvironmentSuffix) {
     $EnvPath = (Join-Path (Join-Path $parentPath $PackageName) "environment$CondaEnvironmentSuffix.yml")
     $EnvName = ($PackageName + $CondaEnvironmentSuffix).replace("-", "")
-  } else {
+} else {
     $EnvPath = (Join-Path (Join-Path $parentPath $PackageName) "environment.yml")
     $EnvName = $PackageName.replace("-", "")
-  }
+}
 
   # Check if environment already exists
   $EnvExists = conda env list | Select-String -Pattern "$EnvName " | Measure-Object | Select-Object -Exp Count
@@ -39,8 +39,8 @@ foreach ($PackageName in $PackageNames) {
       Write-Host "##[info]Skipping creating $EnvName; env already exists."
 
   } else {
-      # If it does not exist, create conda environment
-      Write-Host "##[info]Build '$EnvPath' Conda environment"
-      conda env create --quiet --file $EnvPath
+    # If it does not exist, create conda environment
+    Write-Host "##[info]Build '$EnvPath' Conda environment"
+    conda env create --quiet --file $EnvPath
   }    
 }

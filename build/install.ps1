@@ -9,8 +9,8 @@
 
 
 param (
-  [string[]] $PackageNames,
-  [string[]] $EnvNames,
+  [string] $PackageName,
+  [string] $CondaEnvironmentSuffix,
   [bool] $FromSource
 )
 
@@ -20,28 +20,18 @@ Write-Host "##[info]FromSource: '$FromSource'".
 
 Import-Module (Join-Path $PSScriptRoot "conda-utils.psm1");
 
-if ($null -eq $PackageNames) {
-  $ParentPath = Split-Path -parent $PSScriptRoot
-  $PackageNames = Get-ChildItem -Path $ParentPath -Recurse -Filter "environment.yml" | Select-Object -ExpandProperty Directory | Split-Path -Leaf
-  Write-Host "##[info]No PackageName. Setting to default '$PackageNames'"
-}
-
-if ($null -eq $EnvNames) {
-  $EnvNames = $PackageNames | ForEach-Object {$_.replace("-", "")}
-  Write-Host "##[info]No EnvNames. Setting to default '$EnvNames'"
+if ('' -eq $PackageName) {
+  # If no package dir is specified, find all packages that contain an environment.yml file
+  $parentPath = Split-Path -parent $PSScriptRoot
+  $PackageNames = Get-ChildItem -Path $parentPath -Recurse -Filter "environment.yml" | Select-Object -ExpandProperty Directory | Split-Path -Leaf
+  Write-Host "##[info]No PackageDir. Setting to default '$PackageNames'"
 } else {
-  $EnvNames = $EnvNames | ForEach-Object {$_.replace("-", "")}
-  Write-Host "##[info]Using EnvNames '$EnvNames'"
+  $PackageNames = @($PackageName);
 }
 
 if ($null -eq $FromSource) {
   $FromSource = $True
   Write-Host "##[info]No FromSource. Setting to default '$FromSource'"
-}
-
-# Check that input is valid
-if ($EnvNames.length -ne $PackageNames.length) {
-  throw "Cannot run build script: '$EnvNames' and '$PackageNames' lengths don't match"
 }
 
 function Install-Package() {
@@ -66,7 +56,8 @@ function Install-Package() {
 if ($Env:ENABLE_PYTHON -eq "false") {
   Write-Host "##vso[task.logissue type=warning;]Skipping installing Python packages. Env:ENABLE_PYTHON was set to 'false'."
 } else {
-  for ($i=0; $i -le $PackageNames.length-1; $i++) {
-    Install-Package -EnvName $EnvNames[$i] -PackageName $PackageNames[$i]
+  foreach ($PackageName in $PackageNames) {
+    $EnvName = ($PackageName + $CondaEnvironmentSuffix).replace("-", "")
+    Install-Package -EnvName $EnvName -PackageName $PackageName
   }
 }

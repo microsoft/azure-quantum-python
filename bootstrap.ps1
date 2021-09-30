@@ -25,4 +25,4 @@ Enable-Conda
 & (Join-Path (Join-Path $PSScriptRoot build) create-env.ps1) -PackageName $PackageName -CondaEnvironmentSuffix $CondaEnvironmentSuffix
 
 # Install package in environment
-& (Join-Path (Join-Path $PSScriptRoot build) install.ps1) -PackageNames $PackageName -EnvNames $PackageName$CondaEnvironmentSuffix -FromSource $FromSource
+& (Join-Path (Join-Path $PSScriptRoot build) install.ps1) -PackageName $PackageName -CondaEnvironmentSuffix $CondaEnvironmentSuffix -FromSource $FromSource
