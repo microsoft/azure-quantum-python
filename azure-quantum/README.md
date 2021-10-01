@@ -17,13 +17,13 @@ The package is released on PyPI and can be installed via `pip`:
 pip install azure-quantum
 ```
 
-To use `azure-quantum` for submitting quantum circuits expressed with [Qiskit](https://pypi.org/project/qiskit) or [Cirq](https://pypi.org/project/cirq), install the respective optional dependencies:
+To use `azure-quantum` for submitting quantum circuits expressed with [Qiskit](https://pypi.org/project/qiskit), install with optional dependencies:
 
 ```bash
 pip install azure-quantum[qiskit]
 ```
 
-or
+To use `azure-quantum` for submitting quantum circuits expressed with [Cirq](https://pypi.org/project/cirq), install with optional dependencies:
 
 ```bash
 pip install azure-quantum[cirq]
