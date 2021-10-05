@@ -13,16 +13,16 @@ param(
 )
 
 # Set env vars
-& (Join-Path (Join-Path $PSScriptRoot "build") "set-env.ps1");
+& (Join-Path $PSScriptRoot "build" "set-env.ps1");
 
 # Import Conda utils
-Import-Module (Join-Path (Join-Path $PSScriptRoot "build") "package-utils.psm1");
+Import-Module (Join-Path $PSScriptRoot "build" "package-utils.psm1");
 
 # Enable conda hook
 Enable-Conda
 
 # Create environment
-New-Conda-Environment PackageName $PackageName -CondaEnvironmentSuffix $CondaEnvironmentSuffix
+New-CondaEnvironment -PackageName $PackageName -CondaEnvironmentSuffix $CondaEnvironmentSuffix
 
 # Install package in environment
-Install-Package-In-Env -PackageName $PackageName -CondaEnvironmentSuffix $CondaEnvironmentSuffix -FromSource $FromSource
+Install-PackageInEnv -PackageName $PackageName -CondaEnvironmentSuffix $CondaEnvironmentSuffix -FromSource $FromSource

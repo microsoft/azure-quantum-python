@@ -35,7 +35,7 @@ function Install-Package() {
     }
 }
 
-function Install-Package-In-Env {
+function Install-PackageInEnv {
     param (
         [string] $PackageName,
         [string] $CondaEnvironmentSuffix,
@@ -54,7 +54,7 @@ function Install-Package-In-Env {
     }
 }
 
-function New-Conda-Environment {
+function New-CondaEnvironment {
     param(
         [string] $PackageName,
         [string] $CondaEnvironmentSuffix
@@ -67,11 +67,11 @@ function New-Conda-Environment {
 
     $PackageNames = PackagesList -PackageName $PackageName
     foreach ($PackageName in $PackageNames) {
-        New-Conda-Env-For-Package -PackageName $PackageName -CondaEnvironmentSuffix $CondaEnvironmentSuffix
+        NewCondaEnvForPackage -PackageName $PackageName -CondaEnvironmentSuffix $CondaEnvironmentSuffix
     }
 }
 
-function New-Conda-Env-For-Package {
+function NewCondaEnvForPackage {
     param(
         [string] $PackageName,
         [string] $CondaEnvironmentSuffix
