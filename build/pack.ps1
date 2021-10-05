@@ -3,7 +3,9 @@
 
 <#
     .SYNOPSIS
-        Pack: create wheels for given packages in given environments, output to directory
+        Pack: create wheels for given packages in given environments, output to directory.
+        If no PackageName is specified, this script searches the root directory and runs
+        the wheel packaging for all packages.
 #>
 
 param (

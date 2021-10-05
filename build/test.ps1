@@ -3,7 +3,9 @@
 
 <#
     .SYNOPSIS
-        Test: Run unit tests for given packages/environments
+        Test: Run unit tests for given packages/environments.
+        If no PackageName is specified, this script searches the root directory and runs
+        the tests for all packages.
 #>
 
 param (

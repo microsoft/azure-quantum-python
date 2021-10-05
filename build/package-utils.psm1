@@ -63,6 +63,7 @@ function New-CondaEnvironment {
         .SYNOPSIS
             Create Conda environment(s) for given package directories
             Optionally, use CondaEnvironmentSuffix to specify a special environment file with name environment<CondaEnvironmentSuffix>.yml.
+            If PackageName is not specified, get all packages in the root directory.
     #>
 
     $PackageNames = PackagesList -PackageName $PackageName
