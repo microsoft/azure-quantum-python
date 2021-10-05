@@ -1,4 +1,4 @@
-![Azure Quantum logo](https://raw.githubusercontent.com/microsoft/qdk-python/guenp/update-readme/azure-quantum/Azure-Quantum-logo.png)
+![Azure Quantum logo](https://raw.githubusercontent.com/microsoft/qdk-python/main/azure-quantum/Azure-Quantum-logo.png)
 
 # Azure Quantum #
 
