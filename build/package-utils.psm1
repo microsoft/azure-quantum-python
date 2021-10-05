@@ -35,6 +35,14 @@ function Install-Package() {
     }
 }
 
+function GetEnvName {
+    param (
+        [string] $PackageName,
+        [string] $CondaEnvironmentSuffix
+    )
+    return ($PackageName + $CondaEnvironmentSuffix).replace("-", "")
+}
+
 function Install-PackageInEnv {
     param (
         [string] $PackageName,
@@ -49,7 +57,7 @@ function Install-PackageInEnv {
 
     $PackageNames = PackagesList -PackageName $PackageName
     foreach ($PackageName in $PackageNames) {
-        $EnvName = ($PackageName + $CondaEnvironmentSuffix).replace("-", "")
+        $EnvName = GetEnvName -PackageName $PackageName -CondaEnvironmentSuffix $CondaEnvironmentSuffix
         Install-Package -EnvName $EnvName -PackageName $PackageName
     }
 }
@@ -84,8 +92,8 @@ function NewCondaEnvForPackage {
     #>
 
     $parentPath = Split-Path -parent $PSScriptRoot
-    $EnvPath = (Join-Path (Join-Path $parentPath $PackageName) "environment$CondaEnvironmentSuffix.yml")
-    $EnvName = ($PackageName + $CondaEnvironmentSuffix).replace("-", "")
+    $EnvPath = Join-Path $parentPath $PackageName "environment$CondaEnvironmentSuffix.yml"
+    $EnvName = GetEnvName -PackageName $PackageName -CondaEnvironmentSuffix $CondaEnvironmentSuffix
 
     # Check if environment already exists
     $EnvExists = conda env list | Select-String -Pattern "$EnvName " | Measure-Object | Select-Object -Exp Count
@@ -135,10 +143,8 @@ function Invoke-Tests() {
         [string] $PackageName,
         [string] $EnvName
     )
-    $PkgName = $PackageName.replace("-", ".")
     $ParentPath = Split-Path -parent $PSScriptRoot
     $AbsPackageDir = Join-Path $ParentPath $PackageName
-    $EnvName = $EnvName.replace("-", "")
     Write-Host "##[info]Test package $AbsPackageDir and run tests for env $EnvName"
     # Activate env
     Use-CondaEnv $EnvName
@@ -146,5 +152,6 @@ function Invoke-Tests() {
     python -m pip install --upgrade pip
     pip install pytest pytest-azurepipelines pytest-cov
     # Run tests
+    $PkgName = $PackageName.replace("-", ".")
     pytest --cov-report term --cov=$PkgName $AbsPackageDir
 }

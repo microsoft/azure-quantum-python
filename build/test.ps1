@@ -22,7 +22,7 @@ if ($Env:ENABLE_PYTHON -eq "false") {
 } else {
   $PackageNames = PackagesList -PackageName $PackageName
   foreach ($PackageName in $PackageNames) {
-    $EnvName = ($PackageName + $CondaEnvironmentSuffix).replace("-", "")
+    $EnvName = GetEnvName -PackageName $PackageName -CondaEnvironmentSuffix $CondaEnvironmentSuffix
     Invoke-Tests -PackageName $PackageName -EnvName $EnvName
   }
 }
