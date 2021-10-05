@@ -55,7 +55,7 @@ pytest -k test_job_refresh
 
 #### Recordings ####
 
-To read more about how to create and update recordings for testing code that interacts with a live API, see the [Unit tests README](../tests/README.md).
+To read more about how to create and update recordings for testing code that interacts with a live API, see the [Azure Quantum Unit tests README](./azure-quantum/tests/README.md).
 
 ### Building the `azure-quantum` Package wheel ###
 
