@@ -19,7 +19,8 @@ function PackagesList{
 function Install-Package() {
     param(
         [string] $EnvName,
-        [string] $PackageName
+        [string] $PackageName,
+        [bool] $FromSource
     )
     # Activate env
     Use-CondaEnv $EnvName
@@ -58,7 +59,7 @@ function Install-PackageInEnv {
     $PackageNames = PackagesList -PackageName $PackageName
     foreach ($PackageName in $PackageNames) {
         $EnvName = GetEnvName -PackageName $PackageName -CondaEnvironmentSuffix $CondaEnvironmentSuffix
-        Install-Package -EnvName $EnvName -PackageName $PackageName
+        Install-Package -EnvName $EnvName -PackageName $PackageName -FromSource $FromSource
     }
 }
 
