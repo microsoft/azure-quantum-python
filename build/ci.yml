@@ -26,7 +26,21 @@ jobs:
 - job: "QDKPython"
   pool: 
     vmImage: 'ubuntu-latest'
+  strategy:
+    matrix:
+      qdk:
+        PackageName: 'qdk'
+        CondaEnvironmentSuffix: ''
+      azure-quantum:
+        PackageName: 'azure-quantum'
+        CondaEnvironmentSuffix: ''
+      azure-quantum-cirq-beta:
+        PackageName: 'azure-quantum'
+        CondaEnvironmentSuffix: '-cirq-beta'
   steps:
   - template: steps.yml
+    parameters:
+      PackageName: $(PackageName)
+      CondaEnvironmentSuffix: $(CondaEnvironmentSuffix)
   - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
     displayName: 'Component detection'

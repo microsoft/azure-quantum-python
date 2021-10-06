@@ -3,35 +3,38 @@
 
 <#
     .SYNOPSIS
-        Bootstrap: set up a Python environment using Anaconda
+        Bootstrap: set up a Python environment using Anaconda using the corresponding
+        environment.yml file. Install the specified package in the environment,
+        either from Source or from PyPI. Takes optional input arguments PackageName,
+        CondaEnvironmentSuffix and FromSource:
+        
+          If no PackageName is specified, this script searches the root directory and runs
+        bootstrap for all packages.
+          
+          The CondaEnvironmentSuffix is used to find an alternate environment yml, for
+        instance environment<CondaEnvironmentSuffix>.yml.
+          
+          FromSource determines if the package is installed from source using
+        <pip install -e> and defaults to True.
 #>
 
 param(
-  [string[]] $PackageDirs
+  [string] $PackageName,
+  [string] $CondaEnvironmentSuffix,
+  [bool] $FromSource
 )
 
+# Set env vars
 & (Join-Path $PSScriptRoot "build" "set-env.ps1");
 
-Import-Module (Join-Path $PSScriptRoot "build" "conda-utils.psm1");
+# Import Conda utils
+Import-Module (Join-Path $PSScriptRoot "build" "package-utils.psm1");
 
 # Enable conda hook
 Enable-Conda
 
-# Get default value for PackageDirs by searching for environment.yml files
-if ($null -eq $PackageDirs) {
-  $PackageDirs = Get-ChildItem -Path $PSScriptRoot -Recurse -Filter "environment.yml" | Select-Object -ExpandProperty Directory | Split-Path -Leaf
-  Write-Host "##[info]No PackageDir. Setting to default '$PackageDirs'"
-}
+# Create environment
+New-CondaEnvironment -PackageName $PackageName -CondaEnvironmentSuffix $CondaEnvironmentSuffix
 
-foreach ($PackageDir in $PackageDirs) {
-    # Check if environment already exists
-    $EnvName = $PackageDir.replace("-", "")
-    $EnvExists = conda env list | Select-String -Pattern "$EnvName " | Measure-Object | Select-Object -Exp Count
-    # if it exists, skip creation
-    if ($EnvExists -eq "1") {
-        Write-Host "##[info]Skipping creating $EnvName; env already exists."
-    } else {
-        # if it doese not exist, create env
-        & (Join-Path $PSScriptRoot build create-env.ps1) -PackageDirs $PackageDir
-    }
-}
+# Install package in environment
+Install-PackageInEnv -PackageName $PackageName -CondaEnvironmentSuffix $CondaEnvironmentSuffix -FromSource $FromSource
