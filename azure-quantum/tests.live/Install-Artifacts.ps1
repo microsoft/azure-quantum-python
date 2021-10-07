@@ -9,41 +9,12 @@
 $PackageDir = Split-Path -parent $PSScriptRoot;
 $RootDir = Split-Path -parent $PackageDir;
 Import-Module (Join-Path $RootDir "build" "conda-utils.psm1");
-
-<# 
-    Install From Source
-#>
-function Install-FromSource() {
-    & (Join-Path $RootDir build build.ps1) -PackageDirs $PackageDir
-}
-
-<# 
-    Install From Build Artifacts
-#>
-function Install-FromBuild() {
-    Push-Location $Env:PYTHON_OUTDIR
-        "Installing $PackageDir wheels from $Env:PYTHON_OUTDIR" | Write-Verbose
-        Get-ChildItem $PackageDir*.whl `
-        | ForEach-Object {
-            "Installing $_.Name" | Write-Verbose
-            pip install --verbose --verbose $_.Name
-        }
-    Pop-Location
-}
+Import-Module (Join-Path $RootDir "build" "package-utils.psm1");
 
 # Enable conda hook
 Enable-Conda
 
-# Check if environment already exists
-$EnvName = $PackageDir.replace("-", "")
-$EnvExists = conda env list | Select-String -Pattern "$EnvName " | Measure-Object | Select-Object -Exp Count
-# if it exists, skip creation
-if ($EnvExists -eq "1") {
-    Write-Host "##[info]Skipping creating $EnvName; env already exists."
-} else {
-    # if it doese not exist, create env
-    & (Join-Path $RootDir build create-env.ps1) -PackageDirs $PackageDir
-}
+NewCondaEnvForPackage -PackageName $PackageDir
 
 if (-not $Env:PYTHON_OUTDIR) {
     "" | Write-Host
@@ -51,7 +22,7 @@ if (-not $Env:PYTHON_OUTDIR) {
     "== We will install $PackageDir from source." | Write-Host
     "" | Write-Host
 
-    Install-FromSource
+    Install-PackageInEnv -PackageName $PackageDir -FromSource $FromSource
 
     "" | Write-Host
     "== $PackageDir installed from source. ==" | Write-Host
@@ -66,7 +37,7 @@ if (-not $Env:PYTHON_OUTDIR) {
     "== Preparing environment to use artifacts with version '$Env:PYTHON_VERSION' " | Write-Host
     "== from '$Env:PYTHON_OUTDIR'" | Write-Host
     
-    Install-FromBuild
+    Install-PackageInEnv -PackageName $PackageDir -FromSource $False -BuildArtifactPath $Env:PYTHON_OUTDIR
     
     "" | Write-Host
     "== $PackageDir installed from build artifacts. ==" | Write-Host

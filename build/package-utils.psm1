@@ -20,7 +20,8 @@ function Install-Package() {
     param(
         [string] $EnvName,
         [string] $PackageName,
-        [bool] $FromSource
+        [bool] $FromSource,
+        [string] $BuildArtifactPath
     )
     # Activate env
     Use-CondaEnv $EnvName
@@ -30,6 +31,15 @@ function Install-Package() {
         $AbsPackageName = Join-Path $ParentPath $PackageName
         Write-Host "##[info]Install package $AbsPackageName in development mode for env $EnvName"
         pip install -e $AbsPackageName
+    } elseif ("" -ne $BuildArtifactPath) {
+        Write-Host "##[info]Installing $PackageName wheels from $BuildArtifactPath"
+        Push-Location $BuildArtifactPath
+            Get-ChildItem $PackageName*.whl `
+            | ForEach-Object {
+                "Installing $_.Name" | Write-Verbose
+                pip install --verbose --verbose $_.Name
+            }
+        Pop-Location
     } else {
         Write-Host "##[info]Install package $PackageName for env $EnvName"
         pip install $PackageName
@@ -48,7 +58,8 @@ function Install-PackageInEnv {
     param (
         [string] $PackageName,
         [string] $CondaEnvironmentSuffix,
-        [bool] $FromSource
+        [bool] $FromSource,
+        [string] $BuildArtifactPath
     )
 
     if ($null -eq $FromSource) {
@@ -59,7 +70,7 @@ function Install-PackageInEnv {
     $PackageNames = PackagesList -PackageName $PackageName
     foreach ($PackageName in $PackageNames) {
         $EnvName = GetEnvName -PackageName $PackageName -CondaEnvironmentSuffix $CondaEnvironmentSuffix
-        Install-Package -EnvName $EnvName -PackageName $PackageName -FromSource $FromSource
+        Install-Package -EnvName $EnvName -PackageName $PackageName -FromSource $FromSource -BuildArtifactPath $BuildArtifactPath
     }
 }
 
