@@ -33,8 +33,10 @@ function Install-Package() {
         pip install -e $AbsPackageName
     } elseif ("" -ne $BuildArtifactPath) {
         Write-Host "##[info]Installing $PackageName wheels from $BuildArtifactPath"
+        # Replace - with _ for wheel name
+        $PackageWhlName = $PackageName.replace("-", "_")
         Push-Location $BuildArtifactPath
-            Get-ChildItem $PackageName*.whl `
+            Get-ChildItem $PackageWhlName*.whl `
             | ForEach-Object {
                 "Installing $_.Name" | Write-Verbose
                 pip install --verbose --verbose $_.Name
