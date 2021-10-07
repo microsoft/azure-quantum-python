@@ -11,6 +11,7 @@ param (
 )
 
 $PackageDir = Split-Path -parent $PSScriptRoot;
+$PackageName = $PackageDir | Split-Path -Leaf;
 $RootDir = Split-Path -parent $PackageDir;
 Import-Module (Join-Path $RootDir "build" "conda-utils.psm1");
 
@@ -21,7 +22,7 @@ if ($True -eq $SkipInstall) {
 }
 
 # Activate env
-$EnvName = GetEnvName -PackageName $PackageDir
+$EnvName = GetEnvName -PackageName $PackageName
 Use-CondaEnv $EnvName
 
 # Copy unit tests without recordings and run Pytest
