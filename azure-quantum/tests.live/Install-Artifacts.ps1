@@ -7,6 +7,7 @@
 #>
 
 $PackageDir = Split-Path -parent $PSScriptRoot;
+$PackageName = $PackageDir | Split-Path -Leaf;
 $RootDir = Split-Path -parent $PackageDir;
 Import-Module (Join-Path $RootDir "build" "conda-utils.psm1");
 Import-Module (Join-Path $RootDir "build" "package-utils.psm1");
@@ -14,18 +15,18 @@ Import-Module (Join-Path $RootDir "build" "package-utils.psm1");
 # Enable conda hook
 Enable-Conda
 
-NewCondaEnvForPackage -PackageName $PackageDir
+NewCondaEnvForPackage -PackageName $PackageName
 
 if (-not $Env:PYTHON_OUTDIR) {
     "" | Write-Host
     "== Environment variable $Env:PYTHON_OUTDIR is not set. " | Write-Host
-    "== We will install $PackageDir from source." | Write-Host
+    "== We will install $PackageName from source." | Write-Host
     "" | Write-Host
 
-    Install-PackageInEnv -PackageName $PackageDir -FromSource $FromSource
+    Install-PackageInEnv -PackageName $PackageName -FromSource $FromSource
 
     "" | Write-Host
-    "== $PackageDir installed from source. ==" | Write-Host
+    "== $PackageName installed from source. ==" | Write-Host
     "" | Write-Host
 } elseif (-not (Test-Path $Env:PYTHON_OUTDIR)) {
     "" | Write-Warning
@@ -37,9 +38,9 @@ if (-not $Env:PYTHON_OUTDIR) {
     "== Preparing environment to use artifacts with version '$Env:PYTHON_VERSION' " | Write-Host
     "== from '$Env:PYTHON_OUTDIR'" | Write-Host
     
-    Install-PackageInEnv -PackageName $PackageDir -FromSource $False -BuildArtifactPath $Env:PYTHON_OUTDIR
+    Install-PackageInEnv -PackageName $PackageName -FromSource $False -BuildArtifactPath $Env:PYTHON_OUTDIR
     
     "" | Write-Host
-    "== $PackageDir installed from build artifacts. ==" | Write-Host
+    "== $PackageName installed from build artifacts. ==" | Write-Host
     "" | Write-Host
 }
