@@ -1,4 +1,4 @@
-![Azure Quantum logo](https://raw.githubusercontent.com/microsoft/qdk-python/guenp/update-readme/azure-quantum/Azure-Quantum-logo.png)
+![Azure Quantum logo](https://raw.githubusercontent.com/microsoft/qdk-python/main/azure-quantum/Azure-Quantum-logo.png)
 
 # Azure Quantum #
 
@@ -37,7 +37,7 @@ To get started, visit the following Quickstart guides:
 
 - [Quickstart: Submit a circuit with Qiskit](https://docs.microsoft.com/en-us/azure/quantum/quickstart-microsoft-qiskit)
 - [Quickstart: Submit a circuit with Cirq](https://docs.microsoft.com/azure/quantum/quickstart-microsoft-qiskit)
-- [Quickstart: Submit a circuit with a provider-specitic format](https://docs.microsoft.com/azure/quantum/quickstart-microsoft-provider-format).
+- [Quickstart: Submit a circuit with a provider-specific format](https://docs.microsoft.com/azure/quantum/quickstart-microsoft-provider-format).
 - [Quickstart: Solve a simple optimization problem](https://docs.microsoft.com/azure/quantum/quickstart-microsoft-qio?pivots=platform-microsoft#express-a-simple-problem).
 
 ## General usage ##
