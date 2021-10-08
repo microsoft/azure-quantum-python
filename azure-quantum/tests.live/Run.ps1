@@ -42,6 +42,8 @@ function PyTestMarkString() {
     if ($AzureQuantumCapabilities -contains "submit.toshiba") {
         $MarkString += " toshiba"
     }
+
+    return $MarkString
 }
 
 # Copy unit tests without recordings and run Pytest
