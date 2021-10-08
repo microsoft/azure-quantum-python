@@ -29,7 +29,7 @@ function PyTestMarkExpr() {
     param (
         [string[]] $AzureQuantumCapabilities
     )
-    $MarkExpr = "livetests";
+    $MarkExpr = "live_test";
     if ($AzureQuantumCapabilities -notcontains "submit.ionq") {
         $MarkExpr += " and not ionq"
     }
@@ -55,7 +55,7 @@ if (Test-Path Env:AZURE_QUANTUM_CAPABILITIES) {
     $MarkExpr = PyTestMarkExpr -AzureQuantumCapabilities $AzureQuantumCapabilities;
 } else {
     Write-Host "##[info]Missing AZURE_QUANTUM_CAPABILITIES env variable. Will run all live tests."
-    $MarkExpr = "livetest"
+    $MarkExpr = "live_test"
 }
 
 python -m pytest --junitxml=junit/test-results.xml -v -m $MarkExpr
