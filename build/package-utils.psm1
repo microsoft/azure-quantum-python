@@ -32,15 +32,12 @@ function Install-Package() {
         Write-Host "##[info]Install package $AbsPackageName in development mode for env $EnvName"
         pip install -e $AbsPackageName
     } elseif ("" -ne $BuildArtifactPath) {
-        Write-Host "##[info]Installing $PackageName wheels from $BuildArtifactPath"
-        # Replace - with _ for wheel name
-        $PackageWhlName = $PackageName.replace("-", "_")
+        Write-Host "##[info]Installing $PackageName from $BuildArtifactPath"
         Push-Location $BuildArtifactPath
-            Get-ChildItem $PackageWhlName*.whl `
-            | ForEach-Object {
-                "Installing $_.Name" | Write-Verbose
-                pip install --verbose --verbose $_.Name
-            }
+            # Uninstall in case it is already installed
+            pip uninstall $PackageName
+            pip install $PackageName --no-index --find-links $BuildArtifactPath
+            if ($LASTEXITCODE -ne 0) { throw "Error installing qsharp-core wheel" }
         Pop-Location
     } else {
         Write-Host "##[info]Install package $PackageName for env $EnvName"
@@ -142,15 +139,15 @@ function New-Wheel() {
         Write-Host "##vso[task.logissue type=error;]Failed to build $Path."
         $script:all_ok = $False
         } else {
-        if ($OutDir -ne "") { 
-            Write-Host "##[info]Copying wheel to '$OutDir'"
-            Copy-Item "dist/*.whl" $OutDir/
-            Copy-Item "dist/*.tar.gz" $OutDir/
-        }
+            if ($OutDir -ne "") { 
+                Write-Host "##[info]Copying wheel to '$OutDir'"
+                Copy-Item "dist/*.whl" $OutDir/
+                Copy-Item "dist/*.tar.gz" $OutDir/
+            }
         }
     Pop-Location
 }
-  
+
 
 function Invoke-Tests() {
     param(
