@@ -25,25 +25,25 @@ if ($True -eq $SkipInstall) {
 $EnvName = GetEnvName -PackageName $PackageName
 Use-CondaEnv $EnvName
 
-function PyTestMarkString() {
+function PyTestMarkExpr() {
     param (
         [string[]] $AzureQuantumCapabilities
     )
-    $MarkString = "";
-    if ($AzureQuantumCapabilities -contains "submit.ionq") {
-        $MarkString += " ionq"
+    $MarkExpr = "livetests";
+    if ($AzureQuantumCapabilities -notcontains "submit.ionq") {
+        $MarkExpr += " and not ionq"
     }
-    if ($AzureQuantumCapabilities -contains "submit.honeywell") {
-        $MarkString += " honeywell"
+    if ($AzureQuantumCapabilities -notcontains "submit.honeywell") {
+        $MarkExpr += " and not honeywell"
     }
-    if ($AzureQuantumCapabilities -contains "submit.1qbit") {
-        $MarkString += " oneqbit"
+    if ($AzureQuantumCapabilities -notcontains "submit.1qbit") {
+        $MarkExpr += " and not oneqbit"
     }
-    if ($AzureQuantumCapabilities -contains "submit.toshiba") {
-        $MarkString += " toshiba"
+    if ($AzureQuantumCapabilities -notcontains "submit.toshiba") {
+        $MarkExpr += " and not toshiba"
     }
 
-    return $MarkString
+    return $MarkExpr
 }
 
 # Copy unit tests without recordings and run Pytest
@@ -52,10 +52,10 @@ if (Test-Path Env:AZURE_QUANTUM_CAPABILITIES) {
     Write-Host "##[info]Using AZURE_QUANTUM_CAPABILITIES env variable: $Env:AZURE_QUANTUM_CAPABILITIES"
     $AzureQuantumCapabilities = $Env:AZURE_QUANTUM_CAPABILITIES -Split ";" | ForEach-Object { $_.trim() }
     # Create marks based on capabilities in test environment
-    $MarkString = PyTestMarkString -AzureQuantumCapabilities $AzureQuantumCapabilities;
+    $MarkExpr = PyTestMarkExpr -AzureQuantumCapabilities $AzureQuantumCapabilities;
 } else {
     Write-Host "##[info]Missing AZURE_QUANTUM_CAPABILITIES env variable. Will run all live tests."
-    $MarkString = "livetest"
+    $MarkExpr = "livetest"
 }
 
-python -m pytest --junitxml=junit/test-results.xml -v -m $MarkString
+python -m pytest --junitxml=junit/test-results.xml -v -m $MarkExpr
