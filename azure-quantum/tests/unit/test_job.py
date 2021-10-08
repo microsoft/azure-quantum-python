@@ -94,6 +94,7 @@ class TestJob(QuantumTestBase):
         return ZERO_UID if self.is_playback \
                else Job.create_job_id()
 
+    @pytest.mark.live_test
     def test_job_submit_microsoft_simulated_annealing(self):
         solver_type = functools.partial(microsoft.SimulatedAnnealing, beta_start=0)
         solver_name = "SimulatedAnnealing"
@@ -102,6 +103,7 @@ class TestJob(QuantumTestBase):
         with self.assertRaises(ValueError):
             self._test_job_submit(solver_name, solver_type, test_grouped=True)
 
+    @pytest.mark.live_test
     def test_job_submit_microsoft_parallel_tempering(self):
         solver_type = functools.partial(microsoft.ParallelTempering, sweeps=100)
         solver_name = "ParallelTempering"
@@ -109,6 +111,7 @@ class TestJob(QuantumTestBase):
         with self.assertRaises(ValueError):
             self._test_job_submit(solver_name, solver_type, test_grouped=True)
 
+    @pytest.mark.live_test
     def test_job_submit_microsoft_tabu(self):
         solver_type = functools.partial(microsoft.Tabu, sweeps=100)
         solver_name = "Tabu"
@@ -116,6 +119,7 @@ class TestJob(QuantumTestBase):
         with self.assertRaises(ValueError):
             self._test_job_submit(solver_name, solver_type, test_grouped=True)
 
+    @pytest.mark.live_test
     def test_job_submit_microsoft_quantum_monte_carlo(self):
         solver_type = functools.partial(microsoft.QuantumMonteCarlo, trotter_number=1)
         solver_name = "QuantumMonteCarlo"
@@ -123,6 +127,7 @@ class TestJob(QuantumTestBase):
         with self.assertRaises(ValueError):
             self._test_job_submit(solver_name, solver_type, test_grouped=True)
 
+    @pytest.mark.live_test
     def test_job_submit_microsoft_population_annealing(self):
         solver_type = functools.partial(microsoft.PopulationAnnealing, sweeps=200)
         solver_name = "PopulationAnnealing"
@@ -130,6 +135,7 @@ class TestJob(QuantumTestBase):
         # renable after schema change is deployed
         #self._test_job_submit(solver_name, solver_type, test_grouped=True)
 
+    @pytest.mark.live_test
     def test_job_submit_microsoft_substochastic_monte_carlo(self):
         solver_type = functools.partial(microsoft.SubstochasticMonteCarlo, step_limit=280)
         solver_name = "SubstochasticMonteCarlo"
@@ -137,6 +143,7 @@ class TestJob(QuantumTestBase):
         # renable after schema change is deployed
         #self._test_job_submit(solver_name, solver_type, test_grouped=True)
 
+    @pytest.mark.live_test
     def test_job_upload_and_run_solvers(self):
         problem_name = f'Test-problem-{datetime.now():"%Y%m%d-%H%M%S"}'
         problem = self.create_problem(name=problem_name)
@@ -178,24 +185,32 @@ class TestJob(QuantumTestBase):
                 assert job.details.status == "Succeeded"
 
     @pytest.mark.skipif(not(os.environ.get("AZURE_QUANTUM_1QBIT", "") == "1"), reason="1Qbit tests not enabled")
+    @pytest.mark.oneqbit
+    @pytest.mark.live_test
     def test_job_submit_oneqbit_tabu_search(self):
         solver_type = functools.partial(oneqbit.TabuSearch, improvement_cutoff=10)
         solver_name = "TabuSearch"
         self._test_job_submit(solver_name, solver_type)
 
     @pytest.mark.skipif(not(os.environ.get("AZURE_QUANTUM_1QBIT", "") == "1"), reason="1Qbit tests not enabled")
+    @pytest.mark.oneqbit
+    @pytest.mark.live_test
     def test_job_submit_oneqbit_pticm_solver(self):
         solver_type = functools.partial(oneqbit.PticmSolver, num_sweeps_per_run=99)
         solver_name = "PticmSolver"
         self._test_job_submit(solver_name, solver_type)
 
     @pytest.mark.skipif(not(os.environ.get("AZURE_QUANTUM_1QBIT", "") == "1"), reason="1Qbit tests not enabled")
+    @pytest.mark.oneqbit
+    @pytest.mark.live_test
     def test_job_submit_oneqbit_path_relinking_solver(self):
         solver_type = functools.partial(oneqbit.PathRelinkingSolver, distance_scale=0.44)
         solver_name = "PathRelinkingSolver"
         self._test_job_submit(solver_name, solver_type)
 
     @pytest.mark.skipif(not(os.environ.get("AZURE_QUANTUM_TOSHIBA", "") == "1"), reason="Toshiba tests not enabled")
+    @pytest.mark.toshiba
+    @pytest.mark.live_test
     def test_job_submit_toshiba_simulated_bifurcation_machine(self):
         solver_type = functools.partial(toshiba.SimulatedBifurcationMachine, loops=10)
         solver_name = "SimulatedBifurcationMachine"
@@ -283,6 +298,7 @@ class TestJob(QuantumTestBase):
             assert job.details.status == "Succeeded"
 
 
+    @pytest.mark.live_test
     def test_problem_upload_download(self):
         solver_type = functools.partial(microsoft.SimulatedAnnealing, beta_start=0)
         solver_name = "SimulatedAnnealing"

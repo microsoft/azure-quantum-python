@@ -84,6 +84,9 @@ class TestWorkspace(QuantumTestBase):
         with pytest.raises(ValueError):
             Workspace(storage=storage)
 
+    @pytest.mark.ionq
+    @pytest.mark.honeywell
+    @pytest.mark.live_test
     def test_workspace_get_targets(self):
         ws = self.create_workspace()
         targets = ws.get_targets()
@@ -115,6 +118,7 @@ class TestWorkspace(QuantumTestBase):
             target.name = "foo"
             target.refresh()
 
+    @pytest.mark.live_test
     def test_workspace_job_quotas(self):
         ws = self.create_workspace()
         quotas = ws.get_quotas()
