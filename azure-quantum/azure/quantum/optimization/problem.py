@@ -173,11 +173,11 @@ class Problem:
         return proto_messages
     
     @classmethod
-    def deserialize(cls, problem_str: Union([],str), name:Optional[str] = None):
-        if type(problem_str) == str :
-            return deserialize_from_json(cls, problem_str, name)
-        else:
-            return deserialize_proto_problem(cls, problem_str, name) 
+    def deserialize(cls, problem_str: Union(list,str), name:Optional[str] = None, content_type = None):
+        if content_type == "application/x-protobuf" or type(problem_str) == str :
+            deserialize_proto_problem(cls, problem_str,name) 
+            else :
+                serialize_to_json(cls,problem_str,name)
 
     @classmethod
     def deserialize_from_json(
@@ -222,7 +222,7 @@ class Problem:
     @classmethod
     def deserialize_proto_problem(
         cls,
-        problem_as_str:[],
+        problem_as_str: list,
         name: Optional[str] = None
     ):
     msg_count = 0
@@ -519,7 +519,8 @@ class Problem:
         blob_name = blob_client.blob_name
         blob = container_client.get_blob_client(blob_name)
         contents = download_blob(blob.url)
-        return Problem.deserialize(contents, self.name)
+        content_type = download_blob_properties(blob.url).content_type
+        return Problem.deserialize(contents, self.name, content_type)
 
     def get_terms(self, id: int) -> List[TermBase]:
         """Given an index the function will return
