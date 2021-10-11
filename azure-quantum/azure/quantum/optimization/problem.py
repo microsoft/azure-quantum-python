@@ -102,7 +102,7 @@ class Problem:
         )
         return provider == "Microsoft" and target in target_names and len(self.terms_slc) == 0
 
-    def serialize(self, provider = None, target = None) -> Union(str, list):
+    def serialize(self, provider = None, target = None) -> Union[str, list]:
         """Wrapper function for serialzing. It may serialize to json or protobuf
         For MS solvers the default will be protobuf except if type is pubo grouped or ising grouped. 
         These will also be protobuf in the next iteration. 
@@ -175,7 +175,7 @@ class Problem:
     @classmethod
     def deserialize(
         cls, 
-        problem_str: Union(list,str), 
+        problem_str: Union[list,str], 
         name:Optional[str] = None, 
         content_type = None):
         """Deserializes the problem from a
@@ -229,7 +229,7 @@ class Problem:
     @classmethod
     def deserialize_proto_problem(
         cls,
-        problem_as_str: list,
+        problem_as_str: Union[list,str],
         name: Optional[str] = None
     ):
     msg_count = 0
