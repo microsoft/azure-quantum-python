@@ -87,14 +87,20 @@ class Problem:
     """
     NUM_VARIABLES_LARGE = 2500
     NUM_TERMS_LARGE = 1e6
-    def is_valid_proto_target(target=None):
+
+    def is_valid_proto_problem(provider = None, target=None):
+        """
+        Provider = Microsoft
+        QIOTE Targets
+        No SLC terms
+        """
         target_names = (
         "microsoft.substochasticmontecarlo.cpu",
         "microsoft.substochasticmontecarlo-parameterfree.cpu",
         "microsoft.populationannealing.cpu",
         "microsoft.populationannealing-parameterfree.cpu",
         )
-        return target in target_names
+        return provider == "Microsoft" and target in target_names and len(self.terms_slc) == 0
 
     def serialize(self, provider = None, target = None) -> Union(str, List):
         """Wrapper function for serialzing. It may serialize to json or protobuf
@@ -102,7 +108,7 @@ class Problem:
         These will also be protobuf in the next iteration. 
         For all external solvers it will be json till the partners choose to support protobuf
         """ 
-        return serialize_to_proto(self) if (provider == "Microsoft" and is_valid_proto_target(target)) else serialize_to_json(self)
+        return serialize_to_proto(self) if is_valid_proto_target(provider, target) else serialize_to_json(self)
 
     def serialize_to_json(self) -> str:
         """Serializes the problem to a JSON string"""
@@ -165,9 +171,16 @@ class Problem:
             proto_messages.append(proto_problem.SerializeToString())
         
         return proto_messages
+    
+    @classmethod
+    def deserialize(cls, problem_str: Union([],str), name:Optional[str] = None):
+        if type(problem_str) == str :
+            return deserialize_from_json(cls, problem_str, name)
+        else:
+            return deserialize_proto_problem(cls, problem_str, name) 
 
     @classmethod
-    def deserialize(
+    def deserialize_from_json(
             cls, 
             problem_as_json: str, 
             name: Optional[str] = None
@@ -206,6 +219,32 @@ class Problem:
             problem.init_config = result["cost_function"]["initial_configuration"]
 
         return problem
+    @classmethod
+    def deserialize_proto_problem(
+        cls,
+        problem_as_str:[],
+        name: Optional[str] = None
+    ):
+    msg_count = 0
+    problem = Problem(
+        name = name
+    )
+    for msg in problem_as_str:
+
+        proto_problem = problem_pb2.Problem()
+        proto_problem.ParseFromString(msg)
+        if msg_count == 0:
+            problem.type = proto_problem.type
+        for msg_term in proto_problem.terms:
+            term = Term(
+                c = msg_term.c
+            )
+            for msg_term_id in msg_term.ids:
+                term.ids.append(msg_term_id)
+            problem.terms.append(term)
+    
+    return problem
+
 
     def add_term(self, c: Union[int, float], indices: List[int]):
         """Adds a single monomial term to the `Problem` representation
@@ -291,7 +330,7 @@ class Problem:
         logger.debug("Input Problem: " + input_problem)
         data = io.BytesIO()
 
-        if provider == "Microsoft" and is_valid_proto_target(target):
+        if is_valid_proto_problem(provide, target):
             # Write to a series of files to folder and compress
             file_count = 0
             with tarfile.open(fileobj = data, mode = 'w:gz') as tar:
@@ -353,7 +392,7 @@ class Problem:
             blob_name = self._blob_name()
 
         encoding = "gzip" if compress else ""
-        content_type = "application/x-protobuf" if provider == "Microsoft" and is_valid_proto_target(target) else "application/json"
+        content_type = "application/x-protobuf" if is_valid_proto_problem(provider, target) else "application/json"
         blob = self.to_blob(compress=compress)
         if container_uri is None:
             container_uri = workspace.get_container_uri(
