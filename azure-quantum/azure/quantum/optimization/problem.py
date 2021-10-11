@@ -10,6 +10,8 @@ import gzip
 import json
 import numpy
 import os
+import tarfile
+import problem_pb2
 
 from typing import List, Tuple, Union, Dict, Optional, TYPE_CHECKING
 from enum import Enum
@@ -20,6 +22,7 @@ from azure.quantum.storage import (
     BlobClient,
 )
 from azure.quantum.job.job import Job
+from azure.quantum.target.target import Target
 
 logger = logging.getLogger(__name__)
 
@@ -27,7 +30,6 @@ __all__ = ["Problem", "ProblemType"]
 
 if TYPE_CHECKING:
     from azure.quantum.workspace import Workspace
-
 
 class ProblemType(str, Enum):
     pubo = 0
@@ -86,7 +88,15 @@ class Problem:
     NUM_VARIABLES_LARGE = 2500
     NUM_TERMS_LARGE = 1e6
 
-    def serialize(self) -> str:
+    def serialize(self, provider = None) -> Union(str, List):
+        """Wrapper function for serialzing. It may serialize to json or protobuf
+        For MS solvers the default will be protobuf except if type is pubo grouped or ising grouped. 
+        These will also be protobuf in the next iteration. 
+        For all external solvers it will be json till the partners choose to support protobuf
+        """
+        return provider = "Microsoft" ? serialize_to_proto(self) : serialize_to_json(self)
+
+    def serialize_to_json(self) -> str:
         """Serializes the problem to a JSON string"""
         result = {
             "metadata": {
@@ -106,6 +116,47 @@ class Problem:
             result["cost_function"]["initial_configuration"] = self.init_config
 
         return json.dumps(result)
+    
+    def serialize_to_proto(self) -> List:
+        """Serializes a problem to a list serialized protobuf messages
+        Every problem is built into a series of protobuf messages 
+        each with 1000 terms and added to a list of proto messages.
+        In this version only ising and pubo are supported. The grouped terms will be added in the
+        subsquent PR.
+        Every message in the list is a byte string
+        """
+        proto_messages = List()
+        proto_types = {
+            ProblemType.ISING, problem_pb2.Problem.ProblemType.ISING,
+            ProblemType.PUBO, problem_pb2.Problem.ProblemType.PUBO, 
+        }
+        msg_count = 0
+        terms_remaining = len(self.terms)
+        while terms_remaining > 0:   
+            proto_problem = problem_pb2.Problem()
+            cost_function = proto_problem.cost_function()
+            if msg_count == 0:
+                cost_function.version = self.version
+                cost_function.type = proto_types[self.type]
+            # add 1000 terms per proto message
+            if terms_remaining - 1000 > 0: 
+                for i in range (1000):
+                    term = cost_function.terms.add()
+                    term.c = self.terms[i].c
+                    for j in range (len(self.terms[i].ids)):
+                        term.ids.append(self.terms[i].ids[j])
+            else:
+                # add the remaining terms to the last message
+                for i in range(terms_remaining):
+                    term = cost_function.terms.add()
+                    term.c = self.terms[i].c
+                    for j in range (len(self.terms[i].ids)):
+                        term.ids.append(self.terms[i].ids[j])
+            msg_count += 1
+            terms_remaining -= 1000
+            proto_messages.append(proto_problem.SerializeToString())
+        
+        return proto_messages
 
     @classmethod
     def deserialize(
@@ -218,23 +269,50 @@ class Problem:
         elif self.problem_type == ProblemType.ising:
             self.problem_type = ProblemType.ising_grouped
             
-    def to_blob(self, compress: bool = False) -> bytes:
+    def to_blob(self, compress: bool = False, provider = None) -> bytes:
         """Convert problem data to a binary blob.
 
         :param compress: Compress the blob using gzip, defaults to None
         :type compress: bool, optional
+        :param provider: The provider to which the problem is being submitted, defaults to None
+        :type provider: str, optional
         :return: Blob data
         :rtype: bytes
         """
-        problem_json = self.serialize()
-        logger.debug("Problem json: " + problem_json)
+        input_problem = self.serialize(target)
+        logger.debug("Input Problem: " + input_problem)
         data = io.BytesIO()
 
-        if compress:
+        if provider == "Microsoft":
+            # Write to a series of files to folder and compress
+            file_like_obj = io.BytesIO(bytearray(input_problem))
+            tar = tarfile.open(fileobj = file_like_obj, mode = "w:gz", filename = self.name)
+
+            tar = tarfile.open(self.name, "w:gz")
+            file_count = 0
+            for msg in prob_list:
+                file_name = self.name + "_pb_"+str(file_count)+".pb"
+                with open(file_name, "wb") as f:
+                    f.write(msg)
+                    tar.add(file_name)
+                    file_count += 1
+            tar.close()
+            """
+            file_count = 0
+            for msg in input_problem:
+                file_name = self.name + "_pb"+file_count+".pb"
+                with open(file_name, "w"):
+                    file_name.write(msg)
+                    tar.add(file_name)
+                    tar.close()
+            """
+
+    
+        elif compress:
             with gzip.GzipFile(fileobj=data, mode="w") as fo:
-                fo.write(problem_json.encode())
+                fo.write(input_problem.encode())
         else:
-            data.write(problem_json.encode())
+            data.write(input_problem.encode())
 
         return data.getvalue()
     
@@ -248,7 +326,8 @@ class Problem:
         container_name: str = "qio-problems",
         blob_name: str = "inputData",
         compress: bool = True,
-        container_uri: str = None
+        container_uri: str = None,
+        provider: str = None
     ):
         """Uploads an optimization problem instance to
         the cloud storage linked with the Workspace.
@@ -274,6 +353,7 @@ class Problem:
             blob_name = self._blob_name()
 
         encoding = "gzip" if compress else ""
+        content_type = "application/x-protobuf" if provider == "Microsoft" else "application/json"
         blob = self.to_blob(compress=compress)
         if container_uri is None:
             container_uri = workspace.get_container_uri(
@@ -284,7 +364,7 @@ class Problem:
             blob_name=blob_name,
             container_uri=container_uri,
             encoding=encoding,
-            content_type="application/json"
+            content_type= content_type
         )
         self.uploaded_blob_params = blob_params
         self.uploaded_blob_uri = input_data_uri
