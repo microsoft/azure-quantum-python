@@ -88,7 +88,7 @@ class Problem:
     NUM_VARIABLES_LARGE = 2500
     NUM_TERMS_LARGE = 1e6
 
-    def is_valid_proto_problem(provider = None, target=None):
+    def is_valid_proto_problem(self, provider = None, target=None):
         """
         Provider = Microsoft
         QIOTE Targets
@@ -102,7 +102,7 @@ class Problem:
         )
         return provider == "Microsoft" and target in target_names and len(self.terms_slc) == 0
 
-    def serialize(self, provider = None, target = None) -> Union(str, List):
+    def serialize(self, provider = None, target = None) -> Union(str, list):
         """Wrapper function for serialzing. It may serialize to json or protobuf
         For MS solvers the default will be protobuf except if type is pubo grouped or ising grouped. 
         These will also be protobuf in the next iteration. 
@@ -131,7 +131,7 @@ class Problem:
 
         return json.dumps(result)
     
-    def serialize_to_proto(self) -> List:
+    def serialize_to_proto(self) -> list:
         """Serializes a problem to a list serialized protobuf messages
         Every problem is built into a series of protobuf messages 
         each with 1000 terms and added to a list of proto messages.
@@ -139,7 +139,7 @@ class Problem:
         subsquent PR.
         Every message in the list is a byte string
         """
-        proto_messages = List()
+        proto_messages = []
         proto_types = {
             ProblemType.ISING, problem_pb2.Problem.ProblemType.ISING,
             ProblemType.PUBO, problem_pb2.Problem.ProblemType.PUBO, 
@@ -173,8 +173,26 @@ class Problem:
         return proto_messages
     
     @classmethod
-    def deserialize(cls, problem_str: Union(list,str), name:Optional[str] = None, content_type = None):
-        if content_type == "application/x-protobuf" or type(problem_str) == str :
+    def deserialize(
+        cls, 
+        problem_str: Union(list,str), 
+        name:Optional[str] = None, 
+        content_type = None):
+        """Deserializes the problem from a
+        JSON string or protobuf messages serialized with Problem.serialize()
+        Also used to deserialize the messages downloaded from the blob
+
+        :param problem_str:
+            The string to be deserialized to a `Problem` instance
+        :type problem_str: str
+        :param name: 
+            The name of the problem is optional, since it will try 
+            to read the serialized name from the json payload.
+            If this parameter is not empty, it will use it as the
+            problem name ignoring the serialized value.
+        :type name: Optional[str]
+        """
+        if content_type == "application/x-protobuf" or type(problem_str) == list :
             deserialize_proto_problem(cls, problem_str,name) 
             else :
                 serialize_to_json(cls,problem_str,name)
@@ -185,19 +203,7 @@ class Problem:
             problem_as_json: str, 
             name: Optional[str] = None
         ):
-        """Deserializes the problem from a
-            JSON string serialized with Problem.serialize()
 
-        :param problem_as_json:
-            The string to be deserialized to a `Problem` instance
-        :type problem_as_json: str
-        :param name: 
-            The name of the problem is optional, since it will try 
-            to read the serialized name from the json payload.
-            If this parameter is not empty, it will use it as the
-            problem name ignoring the serialized value.
-        :type name: Optional[str]
-        """
         result = json.loads(problem_as_json)
 
         if name is None:
@@ -219,6 +225,7 @@ class Problem:
             problem.init_config = result["cost_function"]["initial_configuration"]
 
         return problem
+    
     @classmethod
     def deserialize_proto_problem(
         cls,
