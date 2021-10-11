@@ -285,29 +285,16 @@ class Problem:
 
         if provider == "Microsoft":
             # Write to a series of files to folder and compress
-            file_like_obj = io.BytesIO(bytearray(input_problem))
-            tar = tarfile.open(fileobj = file_like_obj, mode = "w:gz", filename = self.name)
-
-            tar = tarfile.open(self.name, "w:gz")
             file_count = 0
-            for msg in prob_list:
-                file_name = self.name + "_pb_"+str(file_count)+".pb"
-                with open(file_name, "wb") as f:
-                    f.write(msg)
-                    tar.add(file_name)
+            with tarfile.open(fileobj = data, mode = 'w:gz') as tar:
+                for msg in input_problem:
+                    file_name = self.name + "_pb_"+str(file_count)+".pb"
+                    info = tarfile.TarInfo(name=file_name)
+                    info.size = len(msg)
+                    msg_data = io.BytesIO(msg)
+                    tar.addfile(info, msg_data)
                     file_count += 1
-            tar.close()
-            """
-            file_count = 0
-            for msg in input_problem:
-                file_name = self.name + "_pb"+file_count+".pb"
-                with open(file_name, "w"):
-                    file_name.write(msg)
-                    tar.add(file_name)
-                    tar.close()
-            """
 
-    
         elif compress:
             with gzip.GzipFile(fileobj=data, mode="w") as fo:
                 fo.write(input_problem.encode())
