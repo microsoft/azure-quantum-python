@@ -87,14 +87,22 @@ class Problem:
     """
     NUM_VARIABLES_LARGE = 2500
     NUM_TERMS_LARGE = 1e6
+    def is_valid_proto_target(target=None):
+        target_names = (
+        "microsoft.substochasticmontecarlo.cpu",
+        "microsoft.substochasticmontecarlo-parameterfree.cpu",
+        "microsoft.populationannealing.cpu",
+        "microsoft.populationannealing-parameterfree.cpu",
+        )
+        return target in target_names
 
-    def serialize(self, provider = None) -> Union(str, List):
+    def serialize(self, provider = None, target = None) -> Union(str, List):
         """Wrapper function for serialzing. It may serialize to json or protobuf
         For MS solvers the default will be protobuf except if type is pubo grouped or ising grouped. 
         These will also be protobuf in the next iteration. 
         For all external solvers it will be json till the partners choose to support protobuf
-        """
-        return provider = "Microsoft" ? serialize_to_proto(self) : serialize_to_json(self)
+        """ 
+        return serialize_to_proto(self) if (provider == "Microsoft" and is_valid_proto_target(target)) else serialize_to_json(self)
 
     def serialize_to_json(self) -> str:
         """Serializes the problem to a JSON string"""
@@ -269,7 +277,7 @@ class Problem:
         elif self.problem_type == ProblemType.ising:
             self.problem_type = ProblemType.ising_grouped
             
-    def to_blob(self, compress: bool = False, provider = None) -> bytes:
+    def to_blob(self, compress: bool = False, provider = None, target = None) -> bytes:
         """Convert problem data to a binary blob.
 
         :param compress: Compress the blob using gzip, defaults to None
@@ -283,7 +291,7 @@ class Problem:
         logger.debug("Input Problem: " + input_problem)
         data = io.BytesIO()
 
-        if provider == "Microsoft":
+        if provider == "Microsoft" and is_valid_proto_target(target):
             # Write to a series of files to folder and compress
             file_count = 0
             with tarfile.open(fileobj = data, mode = 'w:gz') as tar:
@@ -314,7 +322,8 @@ class Problem:
         blob_name: str = "inputData",
         compress: bool = True,
         container_uri: str = None,
-        provider: str = None
+        provider: str = None, 
+        target: str = None
     ):
         """Uploads an optimization problem instance to
         the cloud storage linked with the Workspace.
@@ -329,6 +338,10 @@ class Problem:
         :type compress: bool, optional
         :param container_uri: Optional container URI
         :type container_uri: str
+        :param provider: Optional provder to which the problem is submitted
+        :type provider: str
+        :param target: Optional target to which the problem is submitted
+        :type provider: str
         :return: uri of the uploaded problem
         :rtype: str
         """
@@ -340,7 +353,7 @@ class Problem:
             blob_name = self._blob_name()
 
         encoding = "gzip" if compress else ""
-        content_type = "application/x-protobuf" if provider == "Microsoft" else "application/json"
+        content_type = "application/x-protobuf" if provider == "Microsoft" and is_valid_proto_target(target) else "application/json"
         blob = self.to_blob(compress=compress)
         if container_uri is None:
             container_uri = workspace.get_container_uri(
