@@ -42,6 +42,9 @@ function PyTestMarkExpr() {
     if ($AzureQuantumCapabilities -notcontains "submit.toshiba") {
         $MarkExpr += " and not toshiba"
     }
+    if ($AzureQuantumCapabilities -notcontains "submit.microsoft") {
+        $MarkExpr += " and not qio"
+    }
 
     return $MarkExpr
 }
@@ -50,7 +53,7 @@ function PyTestMarkExpr() {
 Copy-Item -Path (Join-Path $PackageDir "tests" "unit" "*.py") -Destination $PSScriptRoot;
 if (Test-Path Env:AZURE_QUANTUM_CAPABILITIES) {
     Write-Host "##[info]Using AZURE_QUANTUM_CAPABILITIES env variable: $Env:AZURE_QUANTUM_CAPABILITIES"
-    $AzureQuantumCapabilities = $Env:AZURE_QUANTUM_CAPABILITIES -Split ";" | ForEach-Object { $_.trim() }
+    $AzureQuantumCapabilities = $Env:AZURE_QUANTUM_CAPABILITIES -Split ";" | ForEach-Object { $_.trim().ToLower() }
     # Create marks based on capabilities in test environment
     $MarkExpr = PyTestMarkExpr -AzureQuantumCapabilities $AzureQuantumCapabilities;
 } else {
