@@ -95,6 +95,7 @@ class TestJob(QuantumTestBase):
                else Job.create_job_id()
 
     @pytest.mark.live_test
+    @pytest.mark.qio
     def test_job_submit_microsoft_simulated_annealing(self):
         solver_type = functools.partial(microsoft.SimulatedAnnealing, beta_start=0)
         solver_name = "SimulatedAnnealing"
@@ -104,6 +105,7 @@ class TestJob(QuantumTestBase):
             self._test_job_submit(solver_name, solver_type, test_grouped=True)
 
     @pytest.mark.live_test
+    @pytest.mark.qio
     def test_job_submit_microsoft_parallel_tempering(self):
         solver_type = functools.partial(microsoft.ParallelTempering, sweeps=100)
         solver_name = "ParallelTempering"
@@ -112,6 +114,7 @@ class TestJob(QuantumTestBase):
             self._test_job_submit(solver_name, solver_type, test_grouped=True)
 
     @pytest.mark.live_test
+    @pytest.mark.qio
     def test_job_submit_microsoft_tabu(self):
         solver_type = functools.partial(microsoft.Tabu, sweeps=100)
         solver_name = "Tabu"
@@ -120,6 +123,7 @@ class TestJob(QuantumTestBase):
             self._test_job_submit(solver_name, solver_type, test_grouped=True)
 
     @pytest.mark.live_test
+    @pytest.mark.qio
     def test_job_submit_microsoft_quantum_monte_carlo(self):
         solver_type = functools.partial(microsoft.QuantumMonteCarlo, trotter_number=1)
         solver_name = "QuantumMonteCarlo"
@@ -128,6 +132,7 @@ class TestJob(QuantumTestBase):
             self._test_job_submit(solver_name, solver_type, test_grouped=True)
 
     @pytest.mark.live_test
+    @pytest.mark.qio
     def test_job_submit_microsoft_population_annealing(self):
         solver_type = functools.partial(microsoft.PopulationAnnealing, sweeps=200)
         solver_name = "PopulationAnnealing"
@@ -136,6 +141,7 @@ class TestJob(QuantumTestBase):
         #self._test_job_submit(solver_name, solver_type, test_grouped=True)
 
     @pytest.mark.live_test
+    @pytest.mark.qio
     def test_job_submit_microsoft_substochastic_monte_carlo(self):
         solver_type = functools.partial(microsoft.SubstochasticMonteCarlo, step_limit=280)
         solver_name = "SubstochasticMonteCarlo"
@@ -144,6 +150,7 @@ class TestJob(QuantumTestBase):
         #self._test_job_submit(solver_name, solver_type, test_grouped=True)
 
     @pytest.mark.live_test
+    @pytest.mark.qio
     def test_job_upload_and_run_solvers(self):
         problem_name = f'Test-problem-{datetime.now():"%Y%m%d-%H%M%S"}'
         problem = self.create_problem(name=problem_name)
@@ -299,6 +306,7 @@ class TestJob(QuantumTestBase):
 
 
     @pytest.mark.live_test
+    @pytest.mark.qio
     def test_problem_upload_download(self):
         solver_type = functools.partial(microsoft.SimulatedAnnealing, beta_start=0)
         solver_name = "SimulatedAnnealing"
