@@ -17,6 +17,7 @@ from typing import TYPE_CHECKING
 from azure.quantum.optimization import Problem, ProblemType, Term, SlcTerm
 import azure.quantum.optimization.problem
 from common import expected_terms
+import problem_pb2
 
 class TestProblemClass(unittest.TestCase):
     def setUp(self):
@@ -345,6 +346,33 @@ class TestProblemClass(unittest.TestCase):
             self.pubo_problem.terms
         )
 
+    def test_serialzie_proto_problem(self):
+        problem_msgs = self.problem.serialize(provider = "Microsoft", target = "microsoft.substochasticmontecarlo.cpu")
+        self.assertEqual(
+            len(problem_msgs), 1
+        )
+        proto_problem = problem_msgs[0].ParseFromString()
+        self.assertEqual(
+            proto_problem.type, 
+            problem_pb2.Problem.ProblemType.ISING
+        )
+
+""""    
+    def test_deserialzie_proto_problem(self):
+        problem_msgs = self.problem.serialize(provide = "Microsoft", target = "microsoft.substochasticmontecarlo.cpu")
+        problem = Problem.deserialize(problem_msgs, "proto_problem")
+        self.assertEqual(
+            problem.type, Problem.ProblemType.ising
+        )
+        self.assertEqual(
+            problem.
+        )
+
+    def test_download_proto_problem(self):
+        return
+    
+    def test_upload_proto_problem(self):
+        return
 
     def tearDown(self):
         test_files = [
@@ -357,3 +385,4 @@ class TestProblemClass(unittest.TestCase):
         for test_file in test_files:
             if os.path.isfile(test_file):
                 os.remove(test_file)
+"""

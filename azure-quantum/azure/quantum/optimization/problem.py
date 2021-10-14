@@ -148,7 +148,7 @@ class Problem:
         terms_remaining = len(self.terms)
         while terms_remaining > 0:   
             proto_problem = problem_pb2.Problem()
-            cost_function = proto_problem.cost_function()
+            cost_function = proto_problem.cost_function
             if msg_count == 0:
                 cost_function.version = self.version
                 cost_function.type = proto_types[self.type]
@@ -247,7 +247,7 @@ class Problem:
                 c = msg_term.c
             )
             for msg_term_id in msg_term.ids:
-                term.ids.append(msg_term_id)
+                term.indices.append(msg_term_id)
             problem.terms.append(term)
     
     return problem
@@ -339,15 +339,19 @@ class Problem:
 
         if is_valid_proto_problem(provide, target):
             # Write to a series of files to folder and compress
+            # QIOTE expects all files to be names "gzipinputfile_pb_{file_count}.pb" at this time
+            folder_name = "gzipinputfile_pb"
             file_count = 0
             with tarfile.open(fileobj = data, mode = 'w:gz') as tar:
                 for msg in input_problem:
-                    file_name = self.name + "_pb_"+str(file_count)+".pb"
+                    file_name = folder_name+"_"+str(file_count)+".pb"
                     info = tarfile.TarInfo(name=file_name)
                     info.size = len(msg)
                     msg_data = io.BytesIO(msg)
                     tar.addfile(info, msg_data)
                     file_count += 1
+            return data.getvalue() 
+                    
 
         elif compress:
             with gzip.GzipFile(fileobj=data, mode="w") as fo:
