@@ -51,17 +51,19 @@ class QuantumTestBase(ReplayableTest):
         self._client_id = os.environ.get("AZURE_CLIENT_ID", ZERO_UID)
         self._client_secret = os.environ.get("AZURE_CLIENT_SECRET", PLACEHOLDER)
         self._tenant_id = os.environ.get("AZURE_TENANT_ID", TENANT_ID)
-        self._resource_group = os.environ.get("AZUREQUANTUM_WORKSPACE_RG", os.environ.get("RESOURCE_GROUP", RESOURCE_GROUP))
-        self._subscription_id = os.environ.get("AZUREQUANTUM_SUBSCRIPTION_ID", os.environ.get("SUBSCRIPTION_ID", ZERO_UID))
-        self._workspace_name = os.environ.get("AZUREQUANTUM_WORKSPACE_NAME")
-        self._location = os.environ.get("AZUREQUANTUM_WORKSPACE_LOCATION", os.environ.get("LOCATION", LOCATION))
+        self._resource_group = os.environ.get("AZURE_QUANTUM_WORKSPACE_RG", os.environ.get("RESOURCE_GROUP", RESOURCE_GROUP))
+        self._subscription_id = os.environ.get("AZURE_QUANTUM_SUBSCRIPTION_ID", os.environ.get("SUBSCRIPTION_ID", ZERO_UID))
+        self._workspace_name = os.environ.get("AZURE_QUANTUM_WORKSPACE_NAME")
+        self._location = os.environ.get("AZURE_QUANTUM_WORKSPACE_LOCATION", os.environ.get("LOCATION", LOCATION))
 
+        self._pause_recording_processor = PauseRecordingProcessor()
         regex_replacer = CustomRecordingProcessor()
         recording_processors = [
+            self._pause_recording_processor,
             regex_replacer,
             AccessTokenReplacer(),
             InteractiveAccessTokenReplacer(),
-            SubscriptionRecordingProcessor(ZERO_UID),     
+            SubscriptionRecordingProcessor(ZERO_UID),
             AuthenticationMetadataFilter(),
             OAuthRequestResponsesFilter(),
             RequestUrlNormalizer()
@@ -142,7 +144,13 @@ class QuantumTestBase(ReplayableTest):
         regex_replacer.register_regex(r"code_verifier=[^&]+\&", "code_verifier=PLACEHOLDER&")
         regex_replacer.register_regex(r"code=[^&]+\&", "code_verifier=PLACEHOLDER&")
         regex_replacer.register_regex(r"code=[^&]+\&", "code_verifier=PLACEHOLDER&")
-        
+
+    def pause_recording(self):
+        self._pause_recording_processor.pause_recording()
+
+    def resume_recording(self):
+        self._pause_recording_processor.resume_recording()
+
     def setUp(self):
         super(QuantumTestBase, self).setUp()
         # mitigation for issue https://github.com/kevin1024/vcrpy/issues/533
@@ -233,6 +241,26 @@ class QuantumTestBase(ReplayableTest):
         )
 
         return workspace
+
+class PauseRecordingProcessor(RecordingProcessor):
+    def __init__(self):
+        self.is_paused = False
+
+    def pause_recording(self):
+        self.is_paused = True
+
+    def resume_recording(self):
+        self.is_paused = False
+
+    def process_request(self, request):
+        if self.is_paused:
+            return None
+        return request
+
+    def process_response(self, response):
+        if self.is_paused:
+            return None
+        return response
 
 
 class CustomRecordingProcessor(RecordingProcessor):

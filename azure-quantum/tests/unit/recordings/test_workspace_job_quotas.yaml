@@ -1,33 +1,6 @@
 interactions:
 - request:
-    body: None
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python-requests/2.25.1
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000?api-version=2018-01-01
-  response:
-    body:
-      string: '{"error": {"code": "AuthenticationFailed", "message": "Authentication
-        failed. The ''Authorization'' header is missing."}, "access_token": "fake_token"}'
-    headers:
-      connection:
-      - close
-      content-length:
-      - '115'
-      content-type:
-      - application/json; charset=utf-8
-    status:
-      code: 401
-      message: Unauthorized
-- request:
-    body: client_id=PLACEHOLDER&grant_type=authorization_code&client_info=1&claims=PLACEHOLDER&code_verifier=PLACEHOLDER&code_verifier=PLACEHOLDER&redirect_uri=http%3A%2F%2Flocalhost%3A8400&scope=https%3A%2F%2Fquantum.microsoft.com%2F.default+offline_access+openid+profile
+    body: client_id=PLACEHOLDER&grant_type=client_credentials&client_info=1&client_secret=PLACEHOLDER&scope=https%3A%2F%2Fquantum.microsoft.com%2F.default
     headers:
       Accept:
       - application/json
@@ -36,37 +9,37 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '1467'
+      - '192'
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - azsdk-python-identity/1.6.0 Python/3.7.10 (Linux-5.10.16.3-microsoft-standard-WSL2-x86_64-with-debian-bullseye-sid)
+      - azsdk-python-identity/1.6.0 Python/3.7.8 (Windows-10-10.0.19041-SP0)
       x-client-cpu:
       - x64
       x-client-current-telemetry:
-      - 4|832,0|
+      - 4|730,0|
       x-client-os:
-      - linux
+      - win32
       x-client-sku:
       - MSAL.Python
       x-client-ver:
-      - 1.12.0
+      - 1.13.0
     method: POST
     uri: https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token
   response:
     body:
-      string: '{"token_type": "Bearer", "expires_in": 3598, "ext_expires_in": 3598,
+      string: '{"token_type": "Bearer", "expires_in": 86399, "ext_expires_in": 86399,
         "access_token": "fake_token"}'
     headers:
       content-length:
-      - '5839'
+      - '1722'
       content-type:
       - application/json; charset=utf-8
     status:
       code: 200
       message: OK
 - request:
-    body: None
+    body: null
     headers:
       Accept:
       - application/json
@@ -75,15 +48,15 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-quantum/0.0.0.1 Python/3.7.10 (Linux-5.10.16.3-microsoft-standard-WSL2-x86_64-with-debian-bullseye-sid)
+      - azsdk-python-quantum/0.0.0.1 Python/3.7.8 (Windows-10-10.0.19041-SP0)
     method: GET
     uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/quotas
   response:
     body:
       string: '{"value": [{"dimension": "combined_job_hours", "scope": "Workspace",
-        "providerId": "Microsoft", "utilization": 1.8295543132500005, "holds": 0.0,
-        "limit": 5.0, "period": "Monthly"}, {"dimension": "combined_job_hours", "scope":
-        "Subscription", "providerId": "Microsoft", "utilization": 3.1679003659722214,
+        "providerId": "Microsoft", "utilization": 6.644292725611141, "holds": 0.0,
+        "limit": 25.0, "period": "Monthly"}, {"dimension": "combined_job_hours", "scope":
+        "Subscription", "providerId": "Microsoft", "utilization": 6.664660787194475,
         "holds": 0.0, "limit": 1000.0, "period": "Monthly"}, {"dimension": "concurrent_cpu_jobs",
         "scope": "Workspace", "providerId": "Microsoft", "utilization": 0.0, "holds":
         0.0, "limit": 5.0, "period": "None"}, {"dimension": "fpga_job_hours", "scope":
@@ -95,7 +68,7 @@ interactions:
         0.0, "limit": 1.0, "period": "None"}], "nextLink": null, "access_token": "fake_token"}'
     headers:
       content-length:
-      - '904'
+      - '903'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
