@@ -25,7 +25,7 @@ class TestWorkspace(QuantumTestBase):
         assert ws.subscription_id == self.subscription_id
         assert ws.resource_group == self.resource_group
         assert ws.name == self.workspace_name
-        assert ws.location.lower() == self.location.lower()
+        assert ws.location.lower().replace(" ", "") == self.location.lower().replace(" ", "")
 
         ws = Workspace(
             subscription_id=self.subscription_id,
@@ -105,7 +105,7 @@ class TestWorkspace(QuantumTestBase):
             'toshiba.sbm.ising'
         ]
 
-        target = self.get_async_result(ws.get_targets("ionq.qpu"))
+        target = self.get_async_result(ws.get_targets(name="ionq.qpu"))
         assert target.average_queue_time is not None
         assert target.current_availability is not None
         assert target.name == "ionq.qpu"

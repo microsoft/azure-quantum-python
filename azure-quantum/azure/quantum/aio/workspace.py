@@ -219,7 +219,13 @@ class Workspace:
         :rtype: Iterable[Target]
         """
         from azure.quantum.aio.target.target_factory import TargetFactory
-        target_factory = TargetFactory()
+        from azure.quantum.aio.target import Target
+
+        target_factory = TargetFactory(
+            base_cls=Target,
+            workspace=self
+        )
+
         return await target_factory.get_targets(
             workspace=self,
             name=name,

@@ -55,12 +55,18 @@ class TargetFactory(SyncTargetFactory):
         target_statuses = await workspace._get_target_status(name, provider_id, **kwargs)
 
         if len(target_statuses) == 1:
-            return self.from_target_status(workspace, *target_statuses[0])
+            _, status = target_statuses[0]
+            return self.from_target_status(workspace, status=status)
 
         else:
             # Don't return redundant parameter-free targets
             return [
-                self.from_target_status(workspace, _provider_id, status, **kwargs)
+                self.from_target_status(_provider_id, status, **kwargs)
                 for _provider_id, status in target_statuses
                 if PARAMETER_FREE not in status.id
+                and (
+                    _provider_id.lower() in self._default_targets
+                    or status.id in self._all_targets
+                )
             ]
+
