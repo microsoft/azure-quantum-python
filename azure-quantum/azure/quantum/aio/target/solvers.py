@@ -72,7 +72,7 @@ class Solver(Target, SyncSolver):
                 name=name,
                 target=self.name,
                 input_data_uri=problem_uri,
-                provider_id=self.provider,
+                provider_id=self.provider_id,
                 input_data_format=self.input_data_format,
                 output_data_format=self.output_data_format,
                 input_params=self.params
