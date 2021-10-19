@@ -11,7 +11,7 @@ from azure.quantum.plugins.qiskit import AzureQuantumProvider
 from azure.quantum.plugins.cirq import AzureQuantumService
 from azure.quantum.plugins.cirq.targets.target import Target
 
-from common import QuantumTestBase, ZERO_UID
+from .common import QuantumTestBase, ZERO_UID
 
 class TestQiskit(QuantumTestBase):
     """TestIonq
