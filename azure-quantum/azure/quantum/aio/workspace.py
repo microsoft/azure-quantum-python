@@ -5,6 +5,7 @@
 from datetime import datetime
 import logging
 import re
+import os
 
 from typing import Iterable, List, Optional, Dict, Any, TYPE_CHECKING, Tuple, Union
 
@@ -79,6 +80,7 @@ class Workspace:
         resource_id: Optional[str] = None,
         location: Optional[str] = None,
         credential: Optional[object] = None,
+        user_agent: Optional[str] = None,
     ):
         if resource_id is not None:
             # A valid resource ID looks like:
@@ -123,6 +125,10 @@ class Workspace:
         self.resource_group = resource_group
         self.subscription_id = subscription_id
         self.storage = storage
+        self.user_agent = user_agent
+
+        if self.user_agent == None:
+            self.user_agent = os.environ.get("AZURE_QUANTUM_PYTHON_APPID", "azure-quantum-async")
 
         # Convert user-provided location into names
         # recognized by Azure resource manager.
@@ -142,6 +148,7 @@ class Workspace:
             resource_group_name=self.resource_group,
             workspace_name=self.name,
             base_url=base_url,
+            user_agent=self.user_agent
         )
 
     async def _get_linked_storage_sas_uri(
