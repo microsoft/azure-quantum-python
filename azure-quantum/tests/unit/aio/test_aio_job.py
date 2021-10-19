@@ -11,7 +11,7 @@ import time
 import os
 import functools
 import pytest
-from datetime import date, datetime, timedelta
+from datetime import date, datetime, timedelta, timezone
 
 from typing import List, Type
 
@@ -211,7 +211,7 @@ class TestJob(QuantumTestBase):
             self.assertEqual(True, job.matches_filter(name_match="Test.+"))
             # There is a few hundred ms difference in time between local machine
             # and server, so add 2 seconds to take that into account
-            after_time = datetime.now() + timedelta(seconds=2)
+            after_time = datetime.now(tz=timezone.utc) + timedelta(seconds=2)
             self.assertEqual(False, job.matches_filter(created_after=after_time))
 
             before_time = datetime.now() - timedelta(days=100)
