@@ -8,6 +8,7 @@ from typing import Union
 from enum import Enum
 from azure.quantum.aio import Workspace, Job
 from azure.quantum.aio.optimization import Problem
+from azure.quantum.aio.target.target import Target
 from azure.quantum.target.solvers import Solver as SyncSolver
 from azure.quantum.aio.job.base_job import DEFAULT_TIMEOUT
 
@@ -18,7 +19,7 @@ __all__ = [
 ]
 
 
-class Solver(SyncSolver):
+class Solver(Target, SyncSolver):
 
     workspace: Workspace
 
@@ -71,7 +72,7 @@ class Solver(SyncSolver):
                 name=name,
                 target=self.name,
                 input_data_uri=problem_uri,
-                provider_id=self.provider,
+                provider_id=self.provider_id,
                 input_data_format=self.input_data_format,
                 output_data_format=self.output_data_format,
                 input_params=self.params

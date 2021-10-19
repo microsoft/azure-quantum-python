@@ -95,6 +95,9 @@ class TestProblem(QuantumTestBase):
 
         expected = json.dumps(
             {
+                "metadata": {
+                    "name": "test"
+                },
                 "cost_function": {
                     "version": "1.0",
                     "type": "ising",
@@ -119,6 +122,9 @@ class TestProblem(QuantumTestBase):
 
         expected = json.dumps(
             {
+                "metadata": {
+                    "name": "test"
+                },
                 "cost_function": {
                     "version": "1.1",
                     "type": "ising",

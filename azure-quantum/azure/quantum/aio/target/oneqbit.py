@@ -3,7 +3,7 @@ from azure.quantum.target.oneqbit import (
     PticmSolver as SyncPticmSolver,
     PathRelinkingSolver as SyncPathRelinkingSolver,
 )
-from azure.quantum.target.solvers import Solver
+from azure.quantum.aio.target.solvers import Solver
 
 
 class TabuSearch(SyncTabuSearch, Solver):

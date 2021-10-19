@@ -19,7 +19,6 @@ from .oneqbit import (
 from .toshiba import (
     SimulatedBifurcationMachine
 )
-from .microsoft import FleetManagement
 from .ionq import IonQ
 from .honeywell import Honeywell
 

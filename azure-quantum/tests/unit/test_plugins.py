@@ -11,7 +11,7 @@ from azure.quantum.plugins.qiskit import AzureQuantumProvider
 from azure.quantum.plugins.cirq import AzureQuantumService
 from azure.quantum.plugins.cirq.targets.target import Target
 
-from common import QuantumTestBase, ZERO_UID
+from .common import QuantumTestBase, ZERO_UID
 
 class TestQiskit(QuantumTestBase):
     """TestIonq
@@ -115,6 +115,7 @@ class TestQiskit(QuantumTestBase):
             if JobStatus.DONE == qiskit_job.status():
                 fetched_job = backend.retrieve_job(qiskit_job.id())
                 assert fetched_job.id() == qiskit_job.id()
+                result = fetched_job.result()
 
     def test_plugins_submit_qiskit_to_honeywell(self):
         self._test_qiskit_submit_honeywell(num_shots=None)

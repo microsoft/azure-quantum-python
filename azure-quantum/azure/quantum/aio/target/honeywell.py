@@ -7,37 +7,11 @@ from typing import Any, Dict
 
 from azure.quantum.aio.target.target import Target
 from azure.quantum.aio.job.job import Job
-from azure.quantum.aio.workspace import Workspace
+from azure.quantum.target import Honeywell as SyncHoneywell
 
 
-class Honeywell(Target):
+class Honeywell(Target, SyncHoneywell):
     """Honeywell target."""
-
-    def __init__(
-        self,
-        workspace: Workspace,
-        name: str = "honeywell.hqs-lt-s1-apival",
-        input_data_format: str = "honeywell.openqasm.v1",
-        output_data_format: str = "honeywell.quantum-results.v1",
-        provider_id: str = "honeywell",
-        content_type: str = "application/qasm",
-        encoding: str = ""
-    ):
-        super().__init__(
-            workspace=workspace,
-            name=name,
-            input_data_format=input_data_format,
-            output_data_format=output_data_format,
-            provider_id=provider_id,
-            content_type=content_type,
-            encoding=encoding
-        )
-
-    @staticmethod
-    def _encode_input_data(data: str) -> bytes:
-        stream = io.BytesIO()
-        stream.write(data.encode())
-        return stream.getvalue()
 
     async def submit(
         self,

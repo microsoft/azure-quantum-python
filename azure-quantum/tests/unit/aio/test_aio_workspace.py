@@ -7,7 +7,7 @@
 # Licensed under the MIT License.
 ##
 import pytest
-from azure.quantum import Workspace
+from azure.quantum.aio import Workspace
 from ..common import QuantumTestBase
 
 
@@ -25,7 +25,7 @@ class TestWorkspace(QuantumTestBase):
         assert ws.subscription_id == self.subscription_id
         assert ws.resource_group == self.resource_group
         assert ws.name == self.workspace_name
-        assert ws.location.lower() == self.location.lower()
+        assert ws.location.lower().replace(" ", "") == self.location.lower().replace(" ", "")
 
         ws = Workspace(
             subscription_id=self.subscription_id,
@@ -87,8 +87,35 @@ class TestWorkspace(QuantumTestBase):
     def test_workspace_get_targets(self):
         ws = self.create_async_workspace()
         targets = self.get_async_result(ws.get_targets())
-        assert "Microsoft" in targets
-        assert "microsoft.paralleltempering.cpu" in targets["Microsoft"]
+        assert sorted([t.name for t in targets]) == [
+            '1qbit.pathrelinking',
+            '1qbit.pticm',
+            '1qbit.tabu',
+            'honeywell.hqs-lt-s1',
+            'honeywell.hqs-lt-s1-apival',
+            'honeywell.hqs-lt-s1-sim',
+            'ionq.qpu',
+            'ionq.simulator',
+            'microsoft.paralleltempering-parameterfree.cpu',
+            'microsoft.populationannealing.cpu',
+            'microsoft.qmc.cpu',
+            'microsoft.simulatedannealing-parameterfree.cpu',
+            'microsoft.substochasticmontecarlo.cpu',
+            'microsoft.tabu-parameterfree.cpu',
+            'toshiba.sbm.ising'
+        ]
+
+        target = self.get_async_result(ws.get_targets(name="ionq.qpu"))
+        assert target.average_queue_time is not None
+        assert target.current_availability is not None
+        assert target.name == "ionq.qpu"
+        self.get_async_result(target.refresh())
+        assert target.average_queue_time is not None
+        assert target.current_availability is not None
+
+        with pytest.raises(ValueError):
+            target.name = "foo"
+            self.get_async_result(target.refresh())
     
     def test_workspace_job_quotas(self):
         ws = self.create_async_workspace()
