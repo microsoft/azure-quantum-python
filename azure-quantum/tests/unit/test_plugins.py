@@ -196,6 +196,13 @@ class TestCirq(QuantumTestBase):
 
         return circuit
 
+    def test_plugins_cirq_user_agent(self):
+        with self.set_user_agent("test-user-agent"):
+            workspace = self.create_workspace()
+            service = AzureQuantumService(workspace=workspace)
+            assert "test-user-agent" in service._workspace.user_agent
+            assert "-azure-quantum-cirq" in service._workspace.user_agent
+
     @pytest.mark.honeywell
     @pytest.mark.ionq
     @pytest.mark.live_test
