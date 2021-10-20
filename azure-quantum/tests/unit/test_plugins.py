@@ -69,6 +69,7 @@ class TestQiskit(QuantumTestBase):
         ):
             workspace = self.create_workspace()
             provider = AzureQuantumProvider(workspace=workspace)
+            assert "azure-quantum-qiskit" in provider._workspace.user_agent
             backend = provider.get_backend("ionq.simulator")
             
             qiskit_job = backend.run(
@@ -178,6 +179,7 @@ class TestCirq(QuantumTestBase):
     def test_plugins_cirq_get_targets(self):
         workspace = self.create_workspace()
         service = AzureQuantumService(workspace=workspace)
+        assert "azure-quantum-cirq" in service._workspace.user_agent
         targets = service.targets()
         target_names = [t.name for t in targets]
         assert all([isinstance(t, Target) for t in targets])
