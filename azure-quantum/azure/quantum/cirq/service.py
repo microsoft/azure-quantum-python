@@ -12,13 +12,13 @@ To install run: pip install azure-quantum[cirq]"
 
 from azure.quantum import Workspace
 from azure.quantum.job.base_job import DEFAULT_TIMEOUT
-from azure.quantum.plugins.cirq.targets import * 
+from azure.quantum.cirq.targets import * 
 
 from typing import Optional, Union, List, TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from azure.quantum.plugins.cirq.targets import Target as CirqTarget
-    from azure.quantum.plugins.cirq.job import Job as CirqJob
+    from azure.quantum.cirq.targets import Target as CirqTarget
+    from azure.quantum.cirq.job import Job as CirqJob
     from cirq_ionq import Job as CirqIonqJob
 
 DEFAULT_JOB_NAME = "cirq-job"
@@ -52,7 +52,7 @@ class AzureQuantumService:
     @property
     def _target_factory(self):
         from azure.quantum.target.target_factory import TargetFactory
-        from azure.quantum.plugins.cirq.targets import Target, DEFAULT_TARGETS
+        from azure.quantum.cirq.targets import Target, DEFAULT_TARGETS
 
         target_factory = TargetFactory(
             base_cls=Target,
@@ -126,7 +126,7 @@ class AzureQuantumService:
         :param param_resolver: Parameter resolver for cirq program
         :type param_resolver: cirq.ParamResolverOrSimilarType
         :return: Job
-        :rtype: azure.quantum.plugins.cirq.Job
+        :rtype: azure.quantum.cirq.Job
         """
         # Get target
         if target is None:

@@ -8,9 +8,9 @@ from cirq import ParamResolver
 from qiskit.providers import JobStatus
 
 from azure.quantum.job.job import Job
-from azure.quantum.plugins.qiskit import AzureQuantumProvider
-from azure.quantum.plugins.cirq import AzureQuantumService
-from azure.quantum.plugins.cirq.targets.target import Target
+from azure.quantum.qiskit import AzureQuantumProvider
+from azure.quantum.cirq import AzureQuantumService
+from azure.quantum.cirq.targets.target import Target
 
 from .common import QuantumTestBase, ZERO_UID
 

@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING, Any
 if TYPE_CHECKING:
     import cirq
     from azure.quantum import Job as AzureJob
-    from azure.quantum.plugins.cirq.job import Job as CirqJob
+    from azure.quantum.cirq.job import Job as CirqJob
 
 
 class Target(abc.ABC):

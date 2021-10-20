@@ -14,7 +14,7 @@ except ImportError:
 To install run: pip install azure-quantum[cirq]")
 
 from azure.quantum.target import IonQ
-from azure.quantum.plugins.cirq.targets.target import Target as CirqTarget
+from azure.quantum.cirq.targets.target import Target as CirqTarget
 
 if TYPE_CHECKING:
     from azure.quantum import Workspace
