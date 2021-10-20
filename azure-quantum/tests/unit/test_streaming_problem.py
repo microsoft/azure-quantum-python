@@ -10,6 +10,7 @@
 import unittest
 import json
 from typing import List
+import pytest
 
 from azure.quantum.optimization import (
     StreamingProblem,
@@ -87,25 +88,31 @@ class TestStreamingProblem(QuantumTestBase):
         return default
 
 
+    @pytest.mark.live_test
     def test_streaming_problem_small_chunks(self):
         self.__test_upload_problem(4, 1, 1, False)
 
 
+    @pytest.mark.live_test
     def test_streaming_problem_large_chunks(self):
         self.__test_upload_problem(4, 1000, 10e6, False)
 
 
+    @pytest.mark.live_test
     def test_streaming_problem_small_chunks_compressed(self):
         self.__test_upload_problem(4, 1, 1, True)
 
 
+    @pytest.mark.live_test
     def test_streaming_problem_large_chunks_compressed(self):
         self.__test_upload_problem(4, 1000, 10e6, True)
 
 
+    @pytest.mark.live_test
     def test_streaming_problem_pubo(self):
         self.__test_upload_problem(4, 1, 1, False, ProblemType.pubo)
 
+    @pytest.mark.live_test
     def test_streaming_problem_initial_terms(self):
         self.__test_upload_problem(
             4,

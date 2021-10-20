@@ -84,13 +84,36 @@ class TestWorkspace(QuantumTestBase):
         with pytest.raises(ValueError):
             Workspace(storage=storage)
 
-    def test_workspace_get_targets(self):
+    @pytest.mark.ionq
+    @pytest.mark.live_test
+    def test_workspace_get_targets_ionq(self):
         ws = self.create_workspace()
         targets = ws.get_targets()
         assert None not in targets
         test_targets = set([
             'honeywell.hqs-lt-s1-apival',
-            'ionq.simulator',
+            'ionq.simulator'
+        ])
+        assert test_targets.issubset(set([t.name for t in targets]))
+    
+    @pytest.mark.honeywell
+    @pytest.mark.live_test
+    def test_workspace_get_targets_honeywell(self):
+        ws = self.create_workspace()
+        targets = ws.get_targets()
+        assert None not in targets
+        test_targets = set([
+            'honeywell.hqs-lt-s1-apival'
+        ])
+        assert test_targets.issubset(set([t.name for t in targets]))
+    
+    @pytest.mark.qio
+    @pytest.mark.live_test
+    def test_workspace_get_targets_qio(self):
+        ws = self.create_workspace()
+        targets = ws.get_targets()
+        assert None not in targets
+        test_targets = set([
             'microsoft.paralleltempering-parameterfree.cpu',
             'microsoft.populationannealing.cpu',
             'microsoft.qmc.cpu',
@@ -100,6 +123,10 @@ class TestWorkspace(QuantumTestBase):
         ])
         assert test_targets.issubset(set([t.name for t in targets]))
 
+    @pytest.mark.ionq
+    @pytest.mark.live_test
+    def test_workspace_get_target_ionq(self):
+        ws = self.create_workspace()
         target = ws.get_targets("ionq.qpu")
         assert target.average_queue_time is not None
         assert target.current_availability is not None
@@ -115,6 +142,7 @@ class TestWorkspace(QuantumTestBase):
             target.name = "foo"
             target.refresh()
 
+    @pytest.mark.live_test
     def test_workspace_job_quotas(self):
         ws = self.create_workspace()
         quotas = ws.get_quotas()
