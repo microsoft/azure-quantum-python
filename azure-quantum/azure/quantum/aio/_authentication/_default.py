@@ -19,6 +19,7 @@ from azure.identity.aio import (
     VisualStudioCodeCredential,
 )
 from ._chained import _ChainedTokenCredential
+from ._token import _TokenFileCredential
 
 try:
     from typing import TYPE_CHECKING
@@ -81,6 +82,7 @@ class _DefaultAzureCredential(_ChainedTokenCredential):
             "visual_studio_code_tenant_id", os.environ.get(EnvironmentVariables.AZURE_TENANT_ID)
         )
 
+        self.exclude_token_file_credential = kwargs.pop("exclude_token_file_credential", False)
         self.exclude_environment_credential = kwargs.pop("exclude_environment_credential", False)
         self.exclude_managed_identity_credential = kwargs.pop("exclude_managed_identity_credential", False)
         self.exclude_shared_token_cache_credential = kwargs.pop("exclude_shared_token_cache_credential", False)
@@ -104,6 +106,8 @@ class _DefaultAzureCredential(_ChainedTokenCredential):
                 self.interactive_browser_tenant_id = self._get_tenant_id(arm_base_url=self.arm_base_url, subscription_id=self.subscription_id)
 
         credentials = []  # type: List[AsyncTokenCredential]
+        if not self.exclude_token_file_credential:
+            credentials.append(_TokenFileCredential())
         if not self.exclude_environment_credential:
             credentials.append(EnvironmentCredential(authority=self.authority))
         if not self.exclude_managed_identity_credential:

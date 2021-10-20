@@ -7,6 +7,7 @@ from json.decoder import JSONDecodeError
 import logging
 import os
 import time
+from aiofile import async_open
 
 from azure.identity import CredentialUnavailableError
 from azure.core.credentials import AccessToken
@@ -43,7 +44,7 @@ class _TokenFileCredential(object):
         else:
             _LOGGER.debug("No token file location provided for {} environment variable.".format(_TOKEN_FILE_ENV_VARIABLE))
 
-    def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
+    async def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
         # type: (*str, **Any) -> AccessToken
         """Request an access token for `scopes`.
         This method is called automatically by Azure SDK clients.
@@ -58,7 +59,7 @@ class _TokenFileCredential(object):
             raise CredentialUnavailableError(message="Token file at {} does not exist.".format(self.token_file))
 
         try:
-            token = self._parse_token_file(self.token_file)
+            token = await self._parse_token_file(self.token_file)
         except JSONDecodeError:
             raise CredentialUnavailableError(message="Failed to parse token file: Invalid JSON.")
         except KeyError as e:
@@ -71,9 +72,9 @@ class _TokenFileCredential(object):
 
         return token
 
-    def _parse_token_file(self, path):
+    async def _parse_token_file(self, path):
         # type: (*str) -> AccessToken
-        with open(path, "r") as file:
+        async with async_open(path, "r") as file:
             data = json.load(file)
             expires_on = int(data["expires_on"]) / 1000  # Convert ms to seconds, since python time.time only handles epoch time in seconds
             token = AccessToken(data["access_token"],  expires_on)
