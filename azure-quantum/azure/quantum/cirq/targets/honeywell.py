@@ -7,8 +7,8 @@ import numpy as np
 from typing import TYPE_CHECKING, Any, Dict, Sequence
 
 from azure.quantum.target import Honeywell
-from azure.quantum.plugins.cirq.targets.target import Target as CirqTarget
-from azure.quantum.plugins.cirq.job import Job as CirqJob
+from azure.quantum.cirq.targets.target import Target as CirqTarget
+from azure.quantum.cirq.job import Job as CirqJob
 
 if TYPE_CHECKING:
     import cirq

@@ -1,5 +1,10 @@
 ##
-# Copyright (c) Microsoft Corporation.
+# Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 ##
-from .service import AzureQuantumService
+import warnings
+warnings.warn(
+    "The azure.quantum.plugins package will be deprecated. \
+Please use azure.quantum.cirq instead.")
+
+from azure.quantum.cirq import AzureQuantumService
