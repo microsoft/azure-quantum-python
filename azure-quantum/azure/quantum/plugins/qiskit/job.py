@@ -11,6 +11,7 @@ except ImportError:
 To install run: pip install azure-quantum[qiskit]"
     )
 
+import json
 from azure.quantum import Job
 
 import logging
@@ -136,8 +137,10 @@ class AzureQuantumJob(JobV1):
         """ Translate IonQ's histogram data into a format that can be consumed by qiskit libraries. """
         az_result = self._azure_job.get_results()
         shots = int(self._azure_job.details.input_params['shots']) if 'shots' in self._azure_job.details.input_params else self._backend.options.get('shots')
-        meas_map = self.metadata["metadata"]["meas_map"]
-        num_qubits = self.metadata["metadata"]["num_qubits"]
+        if "meas_map" not in self._azure_job.details.metadata or "num_qubits" not in self._azure_job.details.metadata:
+            raise ValueError(f"Job with ID {self.id()} does not have the required metadata to format IonQ results.")
+        meas_map = json.loads(self._azure_job.details.metadata.get("meas_map"))
+        num_qubits = self._azure_job.details.metadata.get("num_qubits")
 
         if not 'histogram' in az_result:
             raise "Histogram missing from IonQ Job results"

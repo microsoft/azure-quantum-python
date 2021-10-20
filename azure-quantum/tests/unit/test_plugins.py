@@ -122,6 +122,17 @@ class TestQiskit(QuantumTestBase):
             if JobStatus.DONE == qiskit_job.status():
                 fetched_job = backend.retrieve_job(qiskit_job.id())
                 assert fetched_job.id() == qiskit_job.id()
+                result = fetched_job.result()
+                assert result.data() == {
+                    'counts': {
+                        '000': 250,
+                        '111': 250
+                    }, 
+                    'probabilities': {
+                        '000': 0.5,
+                        '111': 0.5
+                    }
+                }
 
     @pytest.mark.honeywell
     @pytest.mark.live_test
