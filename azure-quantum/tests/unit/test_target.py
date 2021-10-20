@@ -1,5 +1,6 @@
 import unittest
 import warnings
+import pytest
 
 from azure.core.exceptions import HttpResponseError
 from azure.quantum.job.job import Job
@@ -42,9 +43,13 @@ class TestIonQ(QuantumTestBase):
             ]
         }
 
+    @pytest.mark.ionq
+    @pytest.mark.live_test
     def test_job_submit_ionq(self):
         self._test_job_submit_ionq(num_shots=None)
 
+    @pytest.mark.ionq
+    @pytest.mark.live_test
     def test_job_submit_ionq_100_shots(self):
         self._test_job_submit_ionq(num_shots=100)
 
@@ -128,6 +133,8 @@ class TestHoneywell(QuantumTestBase):
         measure q[1] -> c1[2];
         """
 
+    @pytest.mark.honeywell
+    @pytest.mark.live_test
     def test_job_submit_honeywell(self):
 
         with unittest.mock.patch.object(

@@ -1,5 +1,6 @@
 import unittest
 import warnings
+import pytest
 
 from qiskit import QuantumCircuit
 from cirq import ParamResolver
@@ -36,10 +37,14 @@ class TestQiskit(QuantumTestBase):
 
         return circuit
 
+    @pytest.mark.ionq
+    @pytest.mark.live_test
     def test_plugins_submit_qiskit_to_ionq(self):
         circuit = self._3_qubit_ghz()
         self._test_qiskit_submit_ionq(circuit=circuit, num_shots=500, num_shots_actual=500)
     
+    @pytest.mark.ionq
+    @pytest.mark.live_test
     def test_plugins_submit_qiskit_qobj_to_ionq(self):
         from qiskit import assemble
         circuit = self._3_qubit_ghz()
@@ -92,6 +97,8 @@ class TestQiskit(QuantumTestBase):
                 counts = result.get_counts()
                 assert counts == result.data()["counts"]
     
+    @pytest.mark.ionq
+    @pytest.mark.live_test
     def test_plugins_retrieve_job(self):
         with unittest.mock.patch.object(
             Job,
@@ -116,7 +123,20 @@ class TestQiskit(QuantumTestBase):
             if JobStatus.DONE == qiskit_job.status():
                 fetched_job = backend.retrieve_job(qiskit_job.id())
                 assert fetched_job.id() == qiskit_job.id()
+                result = fetched_job.result()
+                assert result.data() == {
+                    'counts': {
+                        '000': 250,
+                        '111': 250
+                    }, 
+                    'probabilities': {
+                        '000': 0.5,
+                        '111': 0.5
+                    }
+                }
 
+    @pytest.mark.honeywell
+    @pytest.mark.live_test
     def test_plugins_submit_qiskit_to_honeywell(self):
         self._test_qiskit_submit_honeywell(num_shots=None)
 
@@ -176,6 +196,9 @@ class TestCirq(QuantumTestBase):
 
         return circuit
 
+    @pytest.mark.honeywell
+    @pytest.mark.ionq
+    @pytest.mark.live_test
     def test_plugins_cirq_get_targets(self):
         workspace = self.create_workspace()
         service = AzureQuantumService(workspace=workspace)
@@ -186,6 +209,8 @@ class TestCirq(QuantumTestBase):
         assert "honeywell.hqs-lt-s1-apival" in target_names
         assert "ionq.simulator" in target_names
 
+    @pytest.mark.ionq
+    @pytest.mark.live_test
     def test_plugins_ionq_cirq(self):
         with unittest.mock.patch.object(
             Job,
@@ -233,6 +258,8 @@ class TestCirq(QuantumTestBase):
                     assert result.measurements["q0"].sum() == result.measurements["q1"].sum()
                     assert result.measurements["q1"].sum() == result.measurements["q2"].sum()
 
+    @pytest.mark.honeywell
+    @pytest.mark.live_test
     def test_plugins_honeywell_cirq(self):
         with unittest.mock.patch.object(
             Job,
