@@ -53,7 +53,7 @@ class QuantumTestBase(ReplayableTest):
         self._subscription_id = os.environ.get("AZURE_QUANTUM_SUBSCRIPTION_ID", os.environ.get("SUBSCRIPTION_ID", ZERO_UID))
         self._workspace_name = os.environ.get("AZURE_QUANTUM_WORKSPACE_NAME")
         self._location = os.environ.get("AZURE_QUANTUM_WORKSPACE_LOCATION", os.environ.get("LOCATION", LOCATION))
-        self._user_agent = os.environ.get("AZURE_QUANTUM_PYTHON_APPID", "")
+        self._user_agent = os.environ.get("AZURE_QUANTUM_PYTHON_APPID")
 
         self._pause_recording_processor = PauseRecordingProcessor()
         regex_replacer = CustomRecordingProcessor()
@@ -222,11 +222,25 @@ class QuantumTestBase(ReplayableTest):
         return asyncio.get_event_loop().run_until_complete(coro)
     
     @contextmanager
-    def set_user_agent(self, value):
-        old_value = self._user_agent
-        self._user_agent = value
+    def set_user_agent(self, value, as_environ_var = False):
+        app_id_value = self._user_agent
+        app_id_env_value = os.environ.get("AZURE_QUANTUM_PYTHON_APPID")
+
+        if as_environ_var:
+            os.environ["AZURE_QUANTUM_PYTHON_APPID"] = value
+            self._user_agent = None # Force load from env var
+        else:
+            self._user_agent = value
+
         yield
-        self._user_agent = old_value
+
+        self._user_agent = app_id_value
+
+        if as_environ_var:
+            if app_id_env_value:
+                os.environ["AZURE_QUANTUM_PYTHON_APPID"] = app_id_env_value
+            else:
+                os.environ.pop("AZURE_QUANTUM_PYTHON_APPID")
 
 
 class PauseRecordingProcessor(RecordingProcessor):
