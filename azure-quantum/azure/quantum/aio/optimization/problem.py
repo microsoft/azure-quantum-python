@@ -87,7 +87,7 @@ class Problem(SyncProblem):
         self.uploaded_blob_uri = input_data_uri
         return input_data_uri
 
-    async def download(self, workspace:"Workspace"):
+    async def download(self, workspace: "Workspace"):
         """Downloads the uploaded problem as an instance of `Problem`"""
         if not self.uploaded_blob_uri:
             raise Exception(
