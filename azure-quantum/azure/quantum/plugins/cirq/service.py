@@ -48,7 +48,7 @@ class AzureQuantumService:
 
         # Append user agent info if already set
         if workspace.user_agent:
-            workspace.user_agent += f" {CIRQ_USER_AGENT}"
+            workspace.user_agent += f"-{CIRQ_USER_AGENT}"
         else:
             workspace.user_agent = CIRQ_USER_AGENT
 

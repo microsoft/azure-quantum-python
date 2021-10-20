@@ -27,7 +27,7 @@ class AzureQuantumProvider(Provider):
 
         # Append user agent info if already set
         if workspace.user_agent:
-            workspace.user_agent += f" {QISKIT_USER_AGENT}"
+            workspace.user_agent += f"-{QISKIT_USER_AGENT}"
         else:
             workspace.user_agent = QISKIT_USER_AGENT
 
