@@ -1,9 +1,10 @@
-"""Azure Quantum Qiskit Provider"""
+##
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+##
+import warnings
+warnings.warn(
+    "The azure.quantum.plugins package will be deprecated. \
+Please use azure.quantum.qiskit instead.")
 
-from .provider import AzureQuantumProvider
-from azure.quantum import __version__
-
-__all__ = [
-    "AzureQuantumProvider",
-    "__version__"
-]
+from azure.quantum.qiskit import AzureQuantumProvider

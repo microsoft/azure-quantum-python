@@ -13,8 +13,8 @@ To install run: pip install azure-quantum[qiskit]"
 from typing import Dict, Iterable
 from azure.quantum import Workspace
 
-from azure.quantum.plugins.qiskit.job import AzureQuantumJob
-from azure.quantum.plugins.qiskit.backends import *
+from azure.quantum.qiskit.job import AzureQuantumJob
+from azure.quantum.qiskit.backends import *
 
 QISKIT_USER_AGENT = "azure-quantum-qiskit"
 
@@ -47,7 +47,7 @@ class AzureQuantumProvider(Provider):
         """
         from azure.quantum.target.target_factory import TargetFactory
         from qiskit.providers import BackendV1 as Backend
-        from azure.quantum.plugins.qiskit.backends import DEFAULT_TARGETS
+        from azure.quantum.qiskit.backends import DEFAULT_TARGETS
 
         all_targets = {
             name: _t for t in Backend.__subclasses__()
