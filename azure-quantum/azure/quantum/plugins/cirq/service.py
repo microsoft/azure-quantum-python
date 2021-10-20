@@ -22,6 +22,7 @@ if TYPE_CHECKING:
     from cirq_ionq import Job as CirqIonqJob
 
 DEFAULT_JOB_NAME = "cirq-job"
+CIRQ_USER_AGENT = "azure-quantum-cirq"
 
 
 class AzureQuantumService:
@@ -45,8 +46,13 @@ class AzureQuantumService:
         if workspace is None:
             workspace = Workspace(**kwargs)
 
+        # Append user agent info if already set
+        if workspace.user_agent:
+            workspace.user_agent += f" {CIRQ_USER_AGENT}"
+        else:
+            workspace.user_agent = CIRQ_USER_AGENT
+
         self._workspace = workspace
-        self._workspace.user_agent = kwargs.pop("user-agent", "azure-quantum-cirq")
         self._default_target = default_target
     
     @property
