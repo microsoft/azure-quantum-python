@@ -3,13 +3,13 @@
 # Licensed under the MIT License.
 ##
 
-from azure.quantum.plugins.qiskit.backends.ionq import (
+from azure.quantum.qiskit.backends.ionq import (
     IonQBackend,
     IonQQPUBackend,
     IonQSimulatorBackend
 )
 
-from azure.quantum.plugins.qiskit.backends.honeywell import (
+from azure.quantum.qiskit.backends.honeywell import (
     HoneywellBackend,
     HoneywellQPUBackend,
     HoneywellAPIValidatorBackend,

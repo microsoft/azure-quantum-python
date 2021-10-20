@@ -1,9 +1,6 @@
-"""Azure Quantum Qiskit Provider"""
+##
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+##
 
-from .provider import AzureQuantumProvider
-from azure.quantum import __version__
-
-__all__ = [
-    "AzureQuantumProvider",
-    "__version__"
-]
+from azure.quantum.qiskit import *
