@@ -177,7 +177,7 @@ class Workspace:
         self.storage = storage
         self.user_agent = user_agent
 
-        if self.user_agent == None:
+        if self.user_agent is None:
             self.user_agent = os.environ.get("AZURE_QUANTUM_PYTHON_APPID")
 
         # Convert user-provided location into names
@@ -253,8 +253,8 @@ class Workspace:
         return Job(self, details)
 
     def list_jobs(
-        self, 
-        name_match: str = None, 
+        self,
+        name_match: str = None,
         status: Optional[JobStatus] = None,
         created_after: Optional[datetime] = None
     ) -> List[Job]:
