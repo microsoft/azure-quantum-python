@@ -12,6 +12,11 @@ from azure.quantum.workspace import Workspace
 
 class Honeywell(Target):
     """Honeywell target."""
+    target_names = (
+        "honeywell.hqs-lt-s1",
+        "honeywell.hqs-lt-s1-apival",
+        "honeywell.hqs-lt-s1-sim",
+    )
 
     def __init__(
         self,

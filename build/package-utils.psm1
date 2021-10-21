@@ -48,7 +48,7 @@ function GetEnvName {
         [string] $PackageName,
         [string] $CondaEnvironmentSuffix
     )
-    return ($PackageName + $CondaEnvironmentSuffix).replace("-", "")
+    return ($PackageName + $CondaEnvironmentSuffix).replace("-", "").replace(".aio", "")
 }
 
 function Install-PackageInEnv {

@@ -34,7 +34,7 @@ class FilteredJob(abc.ABC):
         
         if created_after is not None:
             # if supplied date is date we must convert to datetime first
-            if type(created_after) is date:
+            if isinstance(created_after, date):
                 created_after = datetime(created_after.year, created_after.month, created_after.day)
             
             # if supplied date is naive, assume local and convert to timezone aware object

@@ -137,7 +137,7 @@ class Problem:
         if "terms_slc" in result["cost_function"]:
             terms.append([SlcTerm.from_dict(t) for t in result["cost_function"]["terms_slc"]])
 
-        problem = Problem(
+        problem = cls(
             name=name,
             terms=terms,
             problem_type=ProblemType[result["cost_function"]["type"]],

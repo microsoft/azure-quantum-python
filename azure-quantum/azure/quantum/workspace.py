@@ -74,6 +74,7 @@ else:
         )
     ARM_BASE_URL = "https://management.azure.com/"
 
+
 class Workspace:
     """Represents an Azure Quantum workspace.
 
@@ -279,8 +280,8 @@ class Workspace:
         return Job(self, details)
 
     def list_jobs(
-        self, 
-        name_match: str = None, 
+        self,
+        name_match: str = None,
         status: Optional[JobStatus] = None,
         created_after: Optional[datetime] = None
     ) -> List[Job]:

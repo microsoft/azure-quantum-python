@@ -18,7 +18,8 @@ from azure.quantum.optimization import (
     ProblemType,
     Term,
 )
-from common import QuantumTestBase
+from azure.quantum.storage import download_blob
+from .common import QuantumTestBase
 
 
 class TestStreamingProblem(QuantumTestBase):
