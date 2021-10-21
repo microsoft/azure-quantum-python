@@ -41,10 +41,9 @@ class TestStreamingProblem(QuantumTestBase):
 
         ws = self.create_async_workspace()
 
-        sProblem = StreamingProblem(
-            ws, name="test", problem_type=problem_type
+        sProblem = await StreamingProblem.create(
+            ws, name="test", problem_type=problem_type, terms=initial_terms
         )
-        await sProblem.add_terms(initial_terms)
         rProblem = Problem(
             "test", problem_type=problem_type, terms=initial_terms
         )
@@ -53,7 +52,7 @@ class TestStreamingProblem(QuantumTestBase):
         sProblem.compress = compress
 
         for i in range(count):
-            sProblem.add_term(c=i, indices=[i, i + 1])
+            await sProblem.add_term(c=i, indices=[i, i + 1])
             rProblem.add_term(c=i, indices=[i, i + 1])
 
         self.assertEqual(problem_type, sProblem.problem_type)
@@ -74,7 +73,7 @@ class TestStreamingProblem(QuantumTestBase):
             sProblem.stats["min_coupling"],
         )
 
-        uri = sProblem.upload(ws)
+        uri = await sProblem.upload(ws)
         data = await sProblem.download()
         uploaded = json.loads(data.serialize())
         local = json.loads(rProblem.serialize())

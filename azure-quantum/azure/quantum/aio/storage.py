@@ -46,7 +46,8 @@ async def create_container_using_client(container_client: ContainerClient):
     """
     Creates and initializes a container.
     """
-    if not await container_client.exists():
+    container_exists = await container_client.exists()
+    if not container_exists:
         logger.debug(
             f'{"  - uploading to **new** container:"}'
             f"{container_client.container_name}"

@@ -4,19 +4,32 @@
 ##
 
 import logging
+import sys
+import gzip
+import io
 
-from typing import List, Union
+from asyncio import sleep
+
+from typing import TYPE_CHECKING, Dict, List, Optional, Union
 from azure.quantum.optimization import Term
 from azure.quantum.aio.optimization import Problem
 from azure.quantum.aio.storage import (
+    StreamedBlob,
     ContainerClient,
     BlobClient,
     download_blob,
 )
 from azure.quantum.optimization.streaming_problem import StreamingProblem as SyncStreamingProblem
 from azure.quantum.optimization.streaming_problem import JsonStreamingProblemUploader as SyncJsonStreamingProblemUploader
+from azure.quantum.aio.storage import StreamedBlobState
+from azure.quantum.aio.optimization.problem import ProblemType
+
 from asyncio import create_task
-from queue import Empty
+from queue import Empty, Queue
+
+if TYPE_CHECKING:
+    from azure.quantum.aio.workspace import Workspace
+
 
 logger = logging.getLogger(__name__)
 
@@ -43,6 +56,30 @@ class StreamingProblem(SyncStreamingProblem):
      ProblemType.ising), defaults to ProblemType.ising
     :type problem_type: ProblemType, optional
     """
+    @classmethod
+    async def create(
+        cls,
+        workspace: "Workspace",
+        name: str = "Optimization Problem",
+        terms: Optional[List[Term]] = None,
+        init_config: Optional[Dict[str, int]] = None,
+        problem_type: "ProblemType" = ProblemType.ising,
+        metadata: Dict[str, str] = {},
+        **kw,
+    ):
+        problem = cls(
+            workspace,
+            name,
+            terms,
+            init_config,
+            problem_type,
+            metadata,
+            **kw
+        )
+        if terms is not None and len(terms) > 0:
+            await problem.add_terms(terms.copy())
+        return problem
+
     async def add_term(self, c: Union[int, float], indices: List[int]):
         """Adds a single term to the `Problem`
         representation and queues it to be uploaded
@@ -100,11 +137,20 @@ class StreamingProblem(SyncStreamingProblem):
                 )
                 uploader_task = create_task(self.uploader.start())
 
-            term_couplings = [len(term.ids) for term in terms]
-            max_coupling = max(term_couplings)
-            min_coupling = min(term_couplings)
-            self.__n_couplers += sum(term_couplings)
-            self.stats["num_terms"] += len(terms)
+            max_coupling = -sys.float_info.max
+            min_coupling = sys.float_info.max
+            for term in terms:
+                if isinstance(term, Term):
+                    n = len(term.ids)
+                    max_coupling = max(max_coupling, n)
+                    min_coupling = min(min_coupling, n)
+                    self.__n_couplers += n
+                    self.stats["num_terms"] += 1
+                else:
+                    raise Exception(
+                        "Unsupported statistics in streamingproblem for TermBase subclass {}.".format(type(term))
+                    )
+
             self.stats["avg_coupling"] = (
                 self.__n_couplers / self.stats["num_terms"]
             )
@@ -113,7 +159,8 @@ class StreamingProblem(SyncStreamingProblem):
             if self.stats["min_coupling"] > min_coupling:
                 self.stats["min_coupling"] = min_coupling
             self.terms_queue.put_nowait(terms)
-            await uploader_task
+            if self.uploader is None:
+                await uploader_task
 
     async def download(self):
         """Downloads the uploaded problem as an instance of `Problem`"""
@@ -126,6 +173,33 @@ class StreamingProblem(SyncStreamingProblem):
         blob = coords["container_client"].get_blob_client(coords["blob_name"])
         contents = await download_blob(blob.url)
         return Problem.deserialize(contents, self.name)
+
+    async def upload(
+        self,
+        workspace,
+        container_name: str = "qio-problems",
+        blob_name: str = None,
+        compress: bool = True,
+    ):
+        """Uploads an optimization problem instance
+           to the cloud storage linked with the Workspace.
+
+        :param workspace: interaction terms of the problem.
+        :return: uri of the uploaded problem
+        """
+        if not self.uploaded_uri:
+            self.uploader.blob_properties = {
+                k: str(v) for k, v in {**self.stats, **self.metadata}.items()
+            }
+            self.terms_queue.put_nowait(None)
+            while not self.uploader.is_done():
+                await sleep(0.2)
+            blob = self.uploader.blob
+            self.uploaded_uri = blob.getUri(not not self.workspace.storage)
+            self.uploader = None
+            self.terms_queue = None
+
+        return self.uploaded_uri
 
 
 class JsonStreamingProblemUploader(SyncJsonStreamingProblemUploader):
@@ -142,22 +216,59 @@ class JsonStreamingProblemUploader(SyncJsonStreamingProblemUploader):
      Once this many terms are ready to be uploaded, the chunk will be uploaded.
     :param blob_properties: Properties to set on the blob.
     """
+    def __init__(
+        self,
+        problem: StreamingProblem,
+        container: ContainerClient,
+        name: str,
+        compress: bool,
+        upload_size_threshold: int,
+        upload_term_threshold: int,
+        blob_properties: Dict[str, str] = None,
+    ):
+        self.problem = problem
+        self.started_upload = False
+        self.blob = StreamedBlob(
+            container,
+            name,
+            "application/json",
+            self._get_content_type(compress),
+        )
+        self.compressedStream = io.BytesIO() if compress else None
+        self.compressor = (
+            gzip.GzipFile(mode="wb", fileobj=self.compressedStream)
+            if compress
+            else None
+        )
+        self.uploaded_terms = 0
+        self.blob_properties = blob_properties
+        self.__thread = None
+        self.__queue_wait_timeout = 1
+        self.__upload_terms_threshold = upload_term_threshold
+        self.__upload_size_threshold = upload_size_threshold
+        self.__read_pos = 0
+
     async def start(self):
         await self._run_queue()
+
+    def is_done(self):
+        """True if the thread uploader has completed"""
+        return self.blob.state == StreamedBlobState.committed
 
     async def _run_queue(self):
         continue_processing = True
         terms = []
         while continue_processing:
             try:
-                new_terms = await self.problem.terms_queue.get()
+                new_terms = self.problem.terms_queue.get_nowait()
                 if new_terms is None:
                     continue_processing = False
                 else:
                     terms = terms + new_terms
                     if len(terms) < self.__upload_terms_threshold:
                         continue
-            except Empty:
+            except Empty or AttributeError:
+                continue_processing = False
                 pass
             except Exception as e:
                 raise e
