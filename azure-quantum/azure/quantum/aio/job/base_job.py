@@ -235,6 +235,8 @@ class BaseJob(SyncBaseJob):
             input_data,
             return_sas_token=return_sas_token
         )
+
+        await container_client.close()
         return uploaded_blob_uri
 
     async def download_data(self, blob_uri: str) -> dict:
@@ -256,6 +258,7 @@ class BaseJob(SyncBaseJob):
                 blob_client.container_name, blob_client.blob_name
             )
             payload = await download_blob(blob_uri)
+            await blob_client.close()
         else:
             # blob_uri contains SAS token, use it
             payload = await download_blob(blob_uri)

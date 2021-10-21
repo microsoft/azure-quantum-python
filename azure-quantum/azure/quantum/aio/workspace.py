@@ -290,6 +290,7 @@ class Workspace:
                 container_uri
             )
             await create_container_using_client(container_client)
+            await container_client.close()
         else:
             # Use the storage acount specified to generate container URI,
             # create a new container if it does not yet exist
