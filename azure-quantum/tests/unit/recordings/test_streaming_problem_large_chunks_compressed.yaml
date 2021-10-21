@@ -1,29 +1,29 @@
 interactions:
 - request:
-    body: client_id=PLACEHOLDER&grant_type=client_credentials&client_info=1&client_secret=PLACEHOLDER&scope=https%3A%2F%2Fquantum.microsoft.com%2F.default
+    body: client_id=PLACEHOLDER&grant_type=client_credentials&client_info=1&client_secret=PLACEHOLDER&claims=PLACEHOLDER&scope=https%3A%2F%2Fquantum.microsoft.com%2F.default
     headers:
       Accept:
       - application/json
       Accept-Encoding:
-      - gzip, deflate
+      - gzip, deflate, br
       Connection:
       - keep-alive
       Content-Length:
-      - '192'
+      - '287'
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - azsdk-python-identity/1.6.0 Python/3.7.8 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-identity/1.7.0 Python/3.7.10 (Darwin-20.6.0-x86_64-i386-64bit)
       x-client-cpu:
       - x64
       x-client-current-telemetry:
       - 4|730,0|
       x-client-os:
-      - win32
+      - darwin
       x-client-sku:
       - MSAL.Python
       x-client-ver:
-      - 1.13.0
+      - 1.14.0
     method: POST
     uri: https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token
   response:
@@ -39,12 +39,12 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: 'b''{"containerName": "e82df118-069e-11ec-8a72-2816a847b9a3"}'''
+    body: 'b''{"containerName": "ce20f954-321b-11ec-82d4-acde48001122"}'''
     headers:
       Accept:
       - application/json
       Accept-Encoding:
-      - gzip, deflate
+      - gzip, deflate, br
       Connection:
       - keep-alive
       Content-Length:
@@ -52,16 +52,16 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-quantum/0.0.0.1 Python/3.7.8 (Windows-10-10.0.19041-SP0)
+      - testapp azsdk-python-quantum/0.0.0.1 Python/3.7.10 (Darwin-20.6.0-x86_64-i386-64bit)
     method: POST
     uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/storage/sasUri
   response:
     body:
-      string: '{"sasUri": "https://mystorage.blob.core.windows.net/e82df118-069e-11ec-8a72-2816a847b9a3?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+      string: '{"sasUri": "https://mystorage.blob.core.windows.net/ce20f954-321b-11ec-82d4-acde48001122?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
         "access_token": "fake_token"}'
     headers:
       content-length:
-      - '205'
+      - '201'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -75,28 +75,28 @@ interactions:
       Accept:
       - application/xml
       Accept-Encoding:
-      - gzip, deflate
+      - gzip, deflate, br
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-blob/12.8.1 Python/3.7.8 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-storage-blob/12.9.0 Python/3.7.10 (Darwin-20.6.0-x86_64-i386-64bit)
       x-ms-date:
-      - Thu, 26 Aug 2021 18:53:34 GMT
+      - Thu, 21 Oct 2021 03:05:56 GMT
       x-ms-version:
-      - '2020-06-12'
+      - '2020-10-02'
     method: GET
-    uri: https://mystorage.blob.core.windows.net/e82df118-069e-11ec-8a72-2816a847b9a3?restype=container&sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
+    uri: https://mystorage.blob.core.windows.net/ce20f954-321b-11ec-82d4-acde48001122?restype=container&sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerNotFound</Code><Message>The
-        specified container does not exist.\nRequestId:9dbc09b7-e01e-0081-40ab-9a3f37000000\nTime:2021-08-26T18:53:35.3214557Z</Message></Error>"
+        specified container does not exist.\nRequestId:8b154bb5-601e-00a0-6328-c61b4c000000\nTime:2021-10-21T03:05:56.6054104Z</Message></Error>"
     headers:
       content-length:
       - '225'
       content-type:
       - application/xml
       x-ms-version:
-      - '2020-06-12'
+      - '2020-10-02'
     status:
       code: 404
       message: The specified container does not exist.
@@ -106,19 +106,19 @@ interactions:
       Accept:
       - application/xml
       Accept-Encoding:
-      - gzip, deflate
+      - gzip, deflate, br
       Connection:
       - keep-alive
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-blob/12.8.1 Python/3.7.8 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-storage-blob/12.9.0 Python/3.7.10 (Darwin-20.6.0-x86_64-i386-64bit)
       x-ms-date:
-      - Thu, 26 Aug 2021 18:53:35 GMT
+      - Thu, 21 Oct 2021 03:05:56 GMT
       x-ms-version:
-      - '2020-06-12'
+      - '2020-10-02'
     method: PUT
-    uri: https://mystorage.blob.core.windows.net/e82df118-069e-11ec-8a72-2816a847b9a3?restype=container&sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
+    uri: https://mystorage.blob.core.windows.net/ce20f954-321b-11ec-82d4-acde48001122?restype=container&sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
   response:
     body:
       string: ''
@@ -126,17 +126,17 @@ interactions:
       content-length:
       - '0'
       x-ms-version:
-      - '2020-06-12'
+      - '2020-10-02'
     status:
       code: 201
       message: Created
 - request:
-    body: b"\x1f\x8b\x08\x00.\xe3'a\x02\xffD\xc8A\n\x80 \x14E\xd1\xad\xc8\x1bKd6r+!\r\xcc\xc2A\x1aiA\x88{\xefW\x90\xb3{O\x86\t1\x8d\xf3\xe1Mr\xc1Ce\x9cv\x8foB4-8\xd2\xb5Y\x1a\x17\x9d_\x9e\xb5\xfb\x1a\xa1\x86\x0c\x03\xc5Z\xce\xe0&z6P\n]\xf8\xe7\xa2:e\xf7{W\x9dR\xfe.\xabS\xf6\xba\xe8Rn\x00\x00\x00\xff\xff\x03\x00\xc1\x1d\xe0X\x9c\x00\x00\x00"
+    body: b'\x1f\x8b\x08\x00\x14\xd9pa\x02\xffD\xc8A\n\x80 \x14E\xd1\xad\xc8\x1bKd6r+!\r\xcc\xc2A\x1aiA\x88{\xefW\x90\xb3{O\x86\t1\x8d\xf3\xe1Mr\xc1Ce\x9cv\x8foB4-8\xd2\xb5Y\x1a\x17\x9d_\x9e\xb5\xfb\x1a\xa1\x86\x0c\x03\xc5Z\xce\xe0&z6P\n]\xf8\xe7\xa2:e\xf7{W\x9dR\xfe.\xabS\xf6\xba\xe8Rn\x00\x00\x00\xff\xff\x03\x00\xc1\x1d\xe0X\x9c\x00\x00\x00'
     headers:
       Accept:
       - application/xml
       Accept-Encoding:
-      - gzip, deflate
+      - gzip, deflate, br
       Connection:
       - keep-alive
       Content-Length:
@@ -144,13 +144,13 @@ interactions:
       Content-Type:
       - application/octet-stream
       User-Agent:
-      - azsdk-python-storage-blob/12.8.1 Python/3.7.8 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-storage-blob/12.9.0 Python/3.7.10 (Darwin-20.6.0-x86_64-i386-64bit)
       x-ms-date:
-      - Thu, 26 Aug 2021 18:53:35 GMT
+      - Thu, 21 Oct 2021 03:05:56 GMT
       x-ms-version:
-      - '2020-06-12'
+      - '2020-10-02'
     method: PUT
-    uri: https://mystorage.blob.core.windows.net/e82df118-069e-11ec-8a72-2816a847b9a3/e82df118-069e-11ec-8a72-2816a847b9a3?comp=block&blockid=ICAgICAgICAgMA%3D%3D&sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
+    uri: https://mystorage.blob.core.windows.net/ce20f954-321b-11ec-82d4-acde48001122/ce20f954-321b-11ec-82d4-acde48001122?comp=block&blockid=ICAgICAgICAgMA%3D%3D&sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
   response:
     body:
       string: ''
@@ -158,7 +158,7 @@ interactions:
       content-length:
       - '0'
       x-ms-version:
-      - '2020-06-12'
+      - '2020-10-02'
     status:
       code: 201
       message: Created
@@ -168,7 +168,7 @@ interactions:
       Accept:
       - application/xml
       Accept-Encoding:
-      - gzip, deflate
+      - gzip, deflate, br
       Connection:
       - keep-alive
       Content-Length:
@@ -176,9 +176,9 @@ interactions:
       Content-Type:
       - application/xml
       User-Agent:
-      - azsdk-python-storage-blob/12.8.1 Python/3.7.8 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-storage-blob/12.9.0 Python/3.7.10 (Darwin-20.6.0-x86_64-i386-64bit)
       x-ms-date:
-      - Thu, 26 Aug 2021 18:53:35 GMT
+      - Thu, 21 Oct 2021 03:05:56 GMT
       x-ms-meta-avg_coupling:
       - '2.0'
       x-ms-meta-max_coupling:
@@ -190,9 +190,9 @@ interactions:
       x-ms-meta-type:
       - ising
       x-ms-version:
-      - '2020-06-12'
+      - '2020-10-02'
     method: PUT
-    uri: https://mystorage.blob.core.windows.net/e82df118-069e-11ec-8a72-2816a847b9a3/e82df118-069e-11ec-8a72-2816a847b9a3?comp=blocklist&sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
+    uri: https://mystorage.blob.core.windows.net/ce20f954-321b-11ec-82d4-acde48001122/ce20f954-321b-11ec-82d4-acde48001122?comp=blocklist&sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
   response:
     body:
       string: ''
@@ -200,17 +200,17 @@ interactions:
       content-length:
       - '0'
       x-ms-version:
-      - '2020-06-12'
+      - '2020-10-02'
     status:
       code: 201
       message: Created
 - request:
-    body: 'b''{"containerName": "e82df118-069e-11ec-8a72-2816a847b9a3"}'''
+    body: 'b''{"containerName": "ce20f954-321b-11ec-82d4-acde48001122"}'''
     headers:
       Accept:
       - application/json
       Accept-Encoding:
-      - gzip, deflate
+      - gzip, deflate, br
       Connection:
       - keep-alive
       Content-Length:
@@ -218,16 +218,16 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-quantum/0.0.0.1 Python/3.7.8 (Windows-10-10.0.19041-SP0)
+      - testapp azsdk-python-quantum/0.0.0.1 Python/3.7.10 (Darwin-20.6.0-x86_64-i386-64bit)
     method: POST
     uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/storage/sasUri
   response:
     body:
-      string: '{"sasUri": "https://mystorage.blob.core.windows.net/e82df118-069e-11ec-8a72-2816a847b9a3?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+      string: '{"sasUri": "https://mystorage.blob.core.windows.net/ce20f954-321b-11ec-82d4-acde48001122?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
         "access_token": "fake_token"}'
     headers:
       content-length:
-      - '203'
+      - '207'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -241,19 +241,19 @@ interactions:
       Accept:
       - application/xml
       Accept-Encoding:
-      - gzip, deflate
+      - gzip, deflate, br
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-blob/12.8.1 Python/3.7.8 (Windows-10-10.0.19041-SP0)
+      - azsdk-python-storage-blob/12.9.0 Python/3.7.10 (Darwin-20.6.0-x86_64-i386-64bit)
       x-ms-date:
-      - Thu, 26 Aug 2021 18:53:35 GMT
+      - Thu, 21 Oct 2021 03:05:57 GMT
       x-ms-range:
       - bytes=0-33554431
       x-ms-version:
-      - '2020-06-12'
+      - '2020-10-02'
     method: GET
-    uri: https://mystorage.blob.core.windows.net/e82df118-069e-11ec-8a72-2816a847b9a3/e82df118-069e-11ec-8a72-2816a847b9a3?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
+    uri: https://mystorage.blob.core.windows.net/ce20f954-321b-11ec-82d4-acde48001122/ce20f954-321b-11ec-82d4-acde48001122?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
   response:
     body:
       string: '{"cost_function": {"version": "1.0", "type": "ising", "terms": [{"c":
@@ -271,7 +271,7 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-creation-time:
-      - Thu, 26 Aug 2021 18:53:35 GMT
+      - Thu, 21 Oct 2021 03:05:57 GMT
       x-ms-lease-state:
       - available
       x-ms-lease-status:
@@ -289,7 +289,7 @@ interactions:
       x-ms-server-encrypted:
       - 'true'
       x-ms-version:
-      - '2020-06-12'
+      - '2020-10-02'
     status:
       code: 206
       message: Partial Content
