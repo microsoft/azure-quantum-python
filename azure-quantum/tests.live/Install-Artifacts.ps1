@@ -23,7 +23,7 @@ if (-not $Env:PYTHON_OUTDIR) {
     "== We will install $PackageName from source." | Write-Host
     "" | Write-Host
 
-    Install-PackageInEnv -PackageName $PackageName -FromSource $FromSource
+    Install-PackageInEnv -PackageName $PackageName -FromSource $True
 
     "" | Write-Host
     "== $PackageName installed from source. ==" | Write-Host

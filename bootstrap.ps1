@@ -14,15 +14,22 @@
           The CondaEnvironmentSuffix is used to find an alternate environment yml, for
         instance environment<CondaEnvironmentSuffix>.yml.
           
-          FromSource determines if the package is installed from source using
-        <pip install -e> and defaults to True.
+          FromWheel determines if the package is installed from a wheel on PyPI (if True)
+          or from source using <pip install -e> (if False) and defaults to False.
 #>
 
 param(
   [string] $PackageName,
   [string] $CondaEnvironmentSuffix,
-  [bool] $FromSource
+  [bool] $FromWheel
 )
+
+if ($False -eq $FromWheel) {
+  $FromSource = $True;
+} else {
+  $FromSource = $False;
+}
+Write-Host $FromSource;
 
 # Set env vars
 & (Join-Path $PSScriptRoot "build" "set-env.ps1");
