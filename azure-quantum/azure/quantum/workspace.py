@@ -205,6 +205,11 @@ class Workspace:
 
     @property
     def user_agent(self):
+        """
+        Get the Workspace's UserAgent that is sent to the service via the header.
+        Uses the value specified during initialization and appends the environment
+        variable AZURE_QUANTUM_PYTHON_APPID if specified.
+        """
         full_user_agent = self._user_agent
         env_app_id = os.environ.get(USER_AGENT_APPID_ENV_VAR_NAME)
         if env_app_id:
@@ -212,6 +217,12 @@ class Workspace:
         return full_user_agent
 
     def append_user_agent(self, value: str):
+        """
+        Append a new value to the Workspace's UserAgent and re-initialize the
+        QuantumClient. The values are appended using a dash.
+        
+        :param value: UserAgent value to add, e.g. "azure-quantum-<plugin>"
+        """
         if value not in (self._user_agent or ""):
             new_user_agent = f"{self._user_agent}-{value}" if self._user_agent else value
             if new_user_agent != self._user_agent:
