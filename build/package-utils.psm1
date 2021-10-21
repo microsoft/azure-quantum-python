@@ -156,5 +156,5 @@ function Invoke-Tests() {
     pip install pytest pytest-azurepipelines pytest-cov
     # Run tests
     $PkgName = $PackageName.replace("-", ".")
-    pytest --cov-report term --cov=$PkgName $AbsPackageDir
+    pytest --cov-report term --cov=$PkgName --junitxml test-output-$PackageName.xml $AbsPackageDir
 }
