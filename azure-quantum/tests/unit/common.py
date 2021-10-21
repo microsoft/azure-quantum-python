@@ -7,6 +7,7 @@
 # Licensed under the MIT License.
 ##
 
+from contextlib import contextmanager
 import os
 import re
 
@@ -185,8 +186,8 @@ class QuantumTestBase(ReplayableTest):
     @property
     def workspace_name(self):
         return self._workspace_name
-
-    def create_workspace(self) -> Workspace:
+    
+    def create_workspace(self, **kwargs) -> Workspace:
         """Create workspace using credentials passed via OS Environment Variables
         described in the README.md documentation, or when in playback mode use
         a placeholder credential.
@@ -207,7 +208,9 @@ class QuantumTestBase(ReplayableTest):
             resource_group=self.resource_group,
             name=self.workspace_name,
             location=self.location,
+            **kwargs
         )
+        workspace.append_user_agent("testapp")
 
         return workspace
 
