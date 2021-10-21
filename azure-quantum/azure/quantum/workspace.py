@@ -224,7 +224,9 @@ class Workspace:
             if self._client is not None:
                 self._client = self._create_client()
 
-    user_agent = property(get_user_agent, set_user_agent)
+    @property
+    def user_agent(self):
+        return self.get_full_user_agent()
 
     def append_user_agent(self, user_agent: str):
         if user_agent not in (self.user_agent or ""):
