@@ -221,28 +221,7 @@ class QuantumTestBase(ReplayableTest):
     def get_async_result(self, coro):
         return asyncio.get_event_loop().run_until_complete(coro)
     
-    @contextmanager
-    def set_user_agent(self, value, as_environ_var = False):
-        app_id_value = self._user_agent
-        app_id_env_value = os.environ.get("AZURE_QUANTUM_PYTHON_APPID")
-
-        if as_environ_var:
-            os.environ["AZURE_QUANTUM_PYTHON_APPID"] = value
-            self._user_agent = None # Force load from env var
-        else:
-            self._user_agent = value
-
-        yield
-
-        self._user_agent = app_id_value
-
-        if as_environ_var:
-            if app_id_env_value:
-                os.environ["AZURE_QUANTUM_PYTHON_APPID"] = app_id_env_value
-            else:
-                os.environ.pop("AZURE_QUANTUM_PYTHON_APPID")
-
-    def create_async_workspace(self) -> AsyncWorkspace:
+    def create_async_workspace(self, **kwargs) -> AsyncWorkspace:
         """Create workspace using credentials passed via OS Environment Variables
         described in the README.md documentation, or when in playback mode use
         a placeholder credential.
@@ -263,7 +242,9 @@ class QuantumTestBase(ReplayableTest):
             resource_group=self.resource_group,
             name=self.workspace_name,
             location=self.location,
+             **kwargs
         )
+        workspace.append_user_agent("testapp")
 
         return workspace
 
