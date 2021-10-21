@@ -210,7 +210,7 @@ class BaseJob(abc.ABC):
         input_data: bytes,
         content_type: str,
         blob_name: str = "inputData",
-        encoding:str = "",
+        encoding: str = "",
         return_sas_token: bool = False
     ) -> str:
         """Upload input data file
