@@ -5,8 +5,7 @@
 from azure.quantum.aio.target.ionq import IonQ
 from azure.quantum.aio.target.honeywell import Honeywell
 from azure.quantum.aio.target.target import Target
-from .target import Target
-from .solvers import Solver
+from azure.quantum.aio.target.solvers import Solver
 from .microsoft.qio import (
     ParallelTempering,
     SimulatedAnnealing,

@@ -4,13 +4,15 @@
 ##
 import logging
 
-from typing import Union
+from typing import TYPE_CHECKING, Union
 from enum import Enum
 from azure.quantum.aio import Workspace, Job
-from azure.quantum.aio.optimization import Problem
 from azure.quantum.aio.target.target import Target
 from azure.quantum.target.solvers import Solver as SyncSolver
 from azure.quantum.aio.job.base_job import DEFAULT_TIMEOUT
+
+if TYPE_CHECKING:
+    from azure.quantum.aio.optimization.problem import Problem
 
 logger = logging.getLogger(__name__)
 
@@ -26,7 +28,7 @@ class Solver(Target, SyncSolver):
     workspace: Workspace
 
     async def submit(
-        self, problem: Union[str, Problem], compress: bool = True
+        self, problem: Union[str, "Problem"], compress: bool = True
     ) -> Job:
         """Submits a job to execution to the associated
         Azure Quantum Workspace.
@@ -39,6 +41,7 @@ class Solver(Target, SyncSolver):
             Whether or not to compress the problem when uploading it
             the Blob Storage.
         """
+        from azure.quantum.aio.optimization.problem import Problem
         if isinstance(problem, Problem):
             # Create job from input data
             name = problem.name
@@ -82,7 +85,7 @@ class Solver(Target, SyncSolver):
 
         return job
 
-    async def optimize(self, problem: Union[str, Problem], timeout_secs: int=DEFAULT_TIMEOUT):
+    async def optimize(self, problem: Union[str, "Problem"], timeout_secs: int=DEFAULT_TIMEOUT):
         """[Submits the Problem to the associated
             Azure Quantum Workspace and get the results.
 
