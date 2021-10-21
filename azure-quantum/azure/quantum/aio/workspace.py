@@ -15,7 +15,7 @@ from azure.quantum._client.models import BlobDetails, JobStatus
 from azure.quantum.aio.job import Job
 from azure.quantum.aio.storage import create_container_using_client, get_container_uri, ContainerClient
 
-from azure.quantum.workspace import BASE_URL, ARM_BASE_URL
+from azure.quantum.workspace import BASE_URL, ARM_BASE_URL, USER_AGENT_APPID_ENV_VAR_NAME
 
 if TYPE_CHECKING:
     from azure.quantum.aio.target import Target
@@ -124,15 +124,14 @@ class Workspace:
                                                  subscription_id=subscription_id,
                                                  arm_base_url=ARM_BASE_URL)
 
+        self._client = None
         self.credentials = credential
         self.name = name
         self.resource_group = resource_group
         self.subscription_id = subscription_id
         self.storage = storage
-        self.user_agent = user_agent
-
-        if self.user_agent is None:
-            self.user_agent = os.environ.get("AZURE_QUANTUM_PYTHON_APPID", "azure-quantum-async")
+        self._user_agent = user_agent
+        self.append_user_agent("async")
 
         # Convert user-provided location into names
         # recognized by Azure resource manager.
@@ -159,6 +158,35 @@ class Workspace:
             user_agent=self.user_agent
         )
         return client
+
+    @property
+    def user_agent(self):
+        """
+        Get the Workspace's UserAgent that is sent to the service via the header.
+        Uses the value specified during initialization and appends the environment
+        variable AZURE_QUANTUM_PYTHON_APPID if specified.
+        """
+        full_user_agent = self._user_agent
+        env_app_id = os.environ.get(USER_AGENT_APPID_ENV_VAR_NAME)
+        if env_app_id:
+            full_user_agent = f"{full_user_agent}-{env_app_id}" if full_user_agent else env_app_id
+        return full_user_agent
+
+    def append_user_agent(self, value: str):
+        """
+        Append a new value to the Workspace's UserAgent and re-initialize the
+        QuantumClient. The values are appended using a dash.
+        
+        :param value: UserAgent value to add, e.g. "azure-quantum-<plugin>"
+        """
+        if value not in (self._user_agent or ""):
+            new_user_agent = f"{self._user_agent}-{value}" if self._user_agent else value
+            if new_user_agent != self._user_agent:
+                self._user_agent = new_user_agent
+                # We need to recreate the client for it to
+                # pick the new UserAgent
+                if self._client is not None:
+                    self._client = self._create_client()
 
     async def _get_linked_storage_sas_uri(
         self, container_name: str, blob_name: str = None
