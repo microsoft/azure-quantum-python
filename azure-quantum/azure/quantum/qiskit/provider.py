@@ -20,16 +20,12 @@ QISKIT_USER_AGENT = "azure-quantum-qiskit"
 
 
 class AzureQuantumProvider(Provider):
-    def __init__(self, workspace = None, **kwargs):
+    def __init__(self, workspace=None, **kwargs):
         self._backends = None
         if workspace is None:
             workspace = Workspace(**kwargs)
 
-        # Append user agent info if already set
-        if workspace.user_agent:
-            workspace.user_agent += f"-{QISKIT_USER_AGENT}"
-        else:
-            workspace.user_agent = QISKIT_USER_AGENT
+        workspace.append_user_agent(QISKIT_USER_AGENT)
 
         self._workspace = workspace
 
