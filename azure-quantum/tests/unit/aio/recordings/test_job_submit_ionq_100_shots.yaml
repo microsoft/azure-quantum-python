@@ -1,66 +1,21 @@
 interactions:
 - request:
-    body: None
+    body: '{''client_id'': ''00000000-0000-0000-0000-000000000000'', ''client_secret'':
+      ''PLACEHOLDER'', ''grant_type'': ''client_credentials'', ''scope'': ''https://quantum.microsoft.com/.default''}'
     headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - python-requests/2.25.1
-    method: GET
-    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000?api-version=2018-01-01
-  response:
-    body:
-      string: '{"error": {"code": "AuthenticationFailed", "message": "Authentication
-        failed. The ''Authorization'' header is missing."}, "access_token": "fake_token"}'
-    headers:
-      connection:
-      - close
-      content-length:
-      - '115'
-      content-type:
-      - application/json; charset=utf-8
-    status:
-      code: 401
-      message: Unauthorized
-    url: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000?api-version=2018-01-01
-- request:
-    body: client_id=PLACEHOLDER&grant_type=authorization_code&client_info=1&claims=PLACEHOLDER&code_verifier=PLACEHOLDER&code_verifier=PLACEHOLDER&redirect_uri=http%3A%2F%2Flocalhost%3A8401&scope=https%3A%2F%2Fquantum.microsoft.com%2F.default+offline_access+openid+profile
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '1467'
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - azsdk-python-identity/1.6.0 Python/3.7.10 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-debian-bullseye-sid)
-      x-client-cpu:
-      - x64
-      x-client-current-telemetry:
-      - 4|832,0|
-      x-client-os:
-      - linux
-      x-client-sku:
-      - MSAL.Python
-      x-client-ver:
-      - 1.12.0
+      - azsdk-python-identity/1.7.0 Python/3.7.10 (Darwin-20.6.0-x86_64-i386-64bit)
     method: POST
     uri: https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token
   response:
     body:
-      string: '{"token_type": "Bearer", "expires_in": 3599, "ext_expires_in": 3599,
+      string: '{"token_type": "Bearer", "expires_in": 86399, "ext_expires_in": 86399,
         "access_token": "fake_token"}'
     headers:
       content-length:
-      - '5818'
+      - '1722'
       content-type:
       - application/json; charset=utf-8
     status:
@@ -72,16 +27,12 @@ interactions:
     headers:
       Accept:
       - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
       Content-Length:
       - '61'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-quantum/0.0.0.1 Python/3.7.10 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-debian-bullseye-sid)
+      - async-testapp azsdk-python-quantum/0.0.0.1 Python/3.7.10 (Darwin-20.6.0-x86_64-i386-64bit)
     method: POST
     uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/storage/sasUri
   response:
@@ -90,7 +41,7 @@ interactions:
         "access_token": "fake_token"}'
     headers:
       content-length:
-      - '205'
+      - '209'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -100,55 +51,44 @@ interactions:
       message: OK
     url: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/storage/sasUri
 - request:
-    body: None
+    body: null
     headers:
       Accept:
       - application/xml
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
       User-Agent:
-      - azsdk-python-storage-blob/12.8.1 Python/3.7.10 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-debian-bullseye-sid)
+      - azsdk-python-storage-blob/12.9.0 Python/3.7.10 (Darwin-20.6.0-x86_64-i386-64bit)
       x-ms-date:
-      - Tue, 20 Jul 2021 19:01:09 GMT
+      - Thu, 21 Oct 2021 07:14:42 GMT
       x-ms-version:
-      - '2020-06-12'
+      - '2020-10-02'
     method: GET
     uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?restype=container&sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
   response:
     body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerNotFound</Code><Message>The\
-        \ specified container does not exist.\nRequestId:c331ebcb-801e-005c-7099-7dcab5000000\n\
-        Time:2021-07-20T19:01:09.4497334Z</Message></Error>"
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerNotFound</Code><Message>The
+        specified container does not exist.\nRequestId:14294e05-801e-0001-764b-c6c031000000\nTime:2021-10-21T07:14:42.8296340Z</Message></Error>"
     headers:
       content-length:
       - '225'
       content-type:
       - application/xml
       x-ms-version:
-      - '2020-06-12'
+      - '2020-10-02'
     status:
       code: 404
       message: The specified container does not exist.
     url: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?restype=container&sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
 - request:
-    body: None
+    body: null
     headers:
       Accept:
       - application/xml
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
       User-Agent:
-      - azsdk-python-storage-blob/12.8.1 Python/3.7.10 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-debian-bullseye-sid)
+      - azsdk-python-storage-blob/12.9.0 Python/3.7.10 (Darwin-20.6.0-x86_64-i386-64bit)
       x-ms-date:
-      - Tue, 20 Jul 2021 19:01:09 GMT
+      - Thu, 21 Oct 2021 07:14:42 GMT
       x-ms-version:
-      - '2020-06-12'
+      - '2020-10-02'
     method: PUT
     uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?restype=container&sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
   response:
@@ -158,26 +98,22 @@ interactions:
       content-length:
       - '0'
       x-ms-version:
-      - '2020-06-12'
+      - '2020-10-02'
     status:
       code: 201
       message: Created
     url: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?restype=container&sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
 - request:
-    body: None
+    body: null
     headers:
       Accept:
       - application/xml
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
       User-Agent:
-      - azsdk-python-storage-blob/12.8.1 Python/3.7.10 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-debian-bullseye-sid)
+      - azsdk-python-storage-blob/12.9.0 Python/3.7.10 (Darwin-20.6.0-x86_64-i386-64bit)
       x-ms-date:
-      - Tue, 20 Jul 2021 19:01:09 GMT
+      - Thu, 21 Oct 2021 07:14:42 GMT
       x-ms-version:
-      - '2020-06-12'
+      - '2020-10-02'
     method: GET
     uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?restype=container&sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
   response:
@@ -191,7 +127,7 @@ interactions:
       x-ms-lease-status:
       - unlocked
       x-ms-version:
-      - '2020-06-12'
+      - '2020-10-02'
     status:
       code: 200
       message: OK
@@ -202,22 +138,18 @@ interactions:
     headers:
       Accept:
       - application/xml
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
       Content-Length:
       - '144'
       Content-Type:
       - application/octet-stream
       User-Agent:
-      - azsdk-python-storage-blob/12.8.1 Python/3.7.10 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-debian-bullseye-sid)
+      - azsdk-python-storage-blob/12.9.0 Python/3.7.10 (Darwin-20.6.0-x86_64-i386-64bit)
       x-ms-blob-type:
       - BlockBlob
       x-ms-date:
-      - Tue, 20 Jul 2021 19:01:09 GMT
+      - Thu, 21 Oct 2021 07:15:04 GMT
       x-ms-version:
-      - '2020-06-12'
+      - '2020-10-02'
     method: PUT
     uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
   response:
@@ -227,7 +159,7 @@ interactions:
       content-length:
       - '0'
       x-ms-version:
-      - '2020-06-12'
+      - '2020-10-02'
     status:
       code: 201
       message: Created
@@ -241,32 +173,28 @@ interactions:
     headers:
       Accept:
       - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
       Content-Length:
-      - '558'
+      - '562'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-quantum/0.0.0.1 Python/3.7.10 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-debian-bullseye-sid)
+      - async-testapp azsdk-python-quantum/0.0.0.1 Python/3.7.10 (Darwin-20.6.0-x86_64-i386-64bit)
     method: PUT
     uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000000
   response:
     body:
       string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
-        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
         "inputDataFormat": "ionq.circuit.v1", "inputParams": {"shots": 100}, "providerId":
         "ionq", "target": "ionq.simulator", "metadata": null, "name": "ionq-3ghz-job",
         "id": "00000000-0000-0000-0000-000000000000", "status": "Waiting", "outputDataFormat":
         "ionq.quantum-results.v1", "outputDataUri": "https://e2etests.blob.core.windows.net:443/job-00000000-0000-0000-0000-000000000000/outputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
-        "creationTime": "2021-07-20T19:01:12.1613859+00:00", "beginExecutionTime":
+        "creationTime": "2021-10-21T07:15:05.5801009+00:00", "beginExecutionTime":
         null, "endExecutionTime": null, "cancellationTime": null, "errorData": null,
         "isCancelling": false, "tags": [], "access_token": "fake_token"}'
     headers:
       content-length:
-      - '974'
+      - '1093'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -276,16 +204,12 @@ interactions:
       message: OK
     url: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000000
 - request:
-    body: None
+    body: null
     headers:
       Accept:
       - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
       User-Agent:
-      - azsdk-python-quantum/0.0.0.1 Python/3.7.10 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-debian-bullseye-sid)
+      - async-testapp azsdk-python-quantum/0.0.0.1 Python/3.7.10 (Darwin-20.6.0-x86_64-i386-64bit)
     method: GET
     uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000000
   response:
@@ -296,13 +220,13 @@ interactions:
         "ionq", "target": "ionq.simulator", "metadata": null, "name": "ionq-3ghz-job",
         "id": "00000000-0000-0000-0000-000000000000", "status": "Succeeded", "outputDataFormat":
         "ionq.quantum-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3Dionq-3ghz-job-00000000-0000-0000-0000-000000000000.output.json",
-        "creationTime": "2021-07-20T19:01:12.1613859+00:00", "beginExecutionTime":
-        "2021-07-20T19:01:14.077Z", "endExecutionTime": "2021-07-20T19:01:14.085Z",
+        "creationTime": "2021-10-21T07:15:05.5801009+00:00", "beginExecutionTime":
+        "2021-10-21T07:15:07.169Z", "endExecutionTime": "2021-10-21T07:15:07.18Z",
         "cancellationTime": null, "errorData": null, "isCancelling": false, "tags":
         [], "access_token": "fake_token"}'
     headers:
       content-length:
-      - '1303'
+      - '1306'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -312,16 +236,12 @@ interactions:
       message: OK
     url: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000000
 - request:
-    body: None
+    body: null
     headers:
       Accept:
       - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
       User-Agent:
-      - azsdk-python-quantum/0.0.0.1 Python/3.7.10 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-debian-bullseye-sid)
+      - async-testapp azsdk-python-quantum/0.0.0.1 Python/3.7.10 (Darwin-20.6.0-x86_64-i386-64bit)
     method: GET
     uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000000
   response:
@@ -332,13 +252,13 @@ interactions:
         "ionq", "target": "ionq.simulator", "metadata": null, "name": "ionq-3ghz-job",
         "id": "00000000-0000-0000-0000-000000000000", "status": "Succeeded", "outputDataFormat":
         "ionq.quantum-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3Dionq-3ghz-job-00000000-0000-0000-0000-000000000000.output.json",
-        "creationTime": "2021-07-20T19:01:12.1613859+00:00", "beginExecutionTime":
-        "2021-07-20T19:01:14.077Z", "endExecutionTime": "2021-07-20T19:01:14.085Z",
+        "creationTime": "2021-10-21T07:15:05.5801009+00:00", "beginExecutionTime":
+        "2021-10-21T07:15:07.169Z", "endExecutionTime": "2021-10-21T07:15:07.18Z",
         "cancellationTime": null, "errorData": null, "isCancelling": false, "tags":
         [], "access_token": "fake_token"}'
     headers:
       content-length:
-      - '1305'
+      - '1306'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -348,16 +268,12 @@ interactions:
       message: OK
     url: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000000
 - request:
-    body: None
+    body: null
     headers:
       Accept:
       - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
       User-Agent:
-      - azsdk-python-quantum/0.0.0.1 Python/3.7.10 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-debian-bullseye-sid)
+      - async-testapp azsdk-python-quantum/0.0.0.1 Python/3.7.10 (Darwin-20.6.0-x86_64-i386-64bit)
     method: GET
     uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000000
   response:
@@ -368,13 +284,13 @@ interactions:
         "ionq", "target": "ionq.simulator", "metadata": null, "name": "ionq-3ghz-job",
         "id": "00000000-0000-0000-0000-000000000000", "status": "Succeeded", "outputDataFormat":
         "ionq.quantum-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3Dionq-3ghz-job-00000000-0000-0000-0000-000000000000.output.json",
-        "creationTime": "2021-07-20T19:01:12.1613859+00:00", "beginExecutionTime":
-        "2021-07-20T19:01:14.077Z", "endExecutionTime": "2021-07-20T19:01:14.085Z",
+        "creationTime": "2021-10-21T07:15:05.5801009+00:00", "beginExecutionTime":
+        "2021-10-21T07:15:07.169Z", "endExecutionTime": "2021-10-21T07:15:07.18Z",
         "cancellationTime": null, "errorData": null, "isCancelling": false, "tags":
         [], "access_token": "fake_token"}'
     headers:
       content-length:
-      - '1305'
+      - '1306'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -384,33 +300,27 @@ interactions:
       message: OK
     url: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000000
 - request:
-    body: None
+    body: null
     headers:
       Accept:
       - application/xml
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
       User-Agent:
-      - azsdk-python-storage-blob/12.8.1 Python/3.7.10 (Linux-5.4.72-microsoft-standard-WSL2-x86_64-with-debian-bullseye-sid)
+      - azsdk-python-storage-blob/12.9.0 Python/3.7.10 (Darwin-20.6.0-x86_64-i386-64bit)
       x-ms-date:
-      - Tue, 20 Jul 2021 19:01:23 GMT
+      - Thu, 21 Oct 2021 07:15:10 GMT
       x-ms-range:
       - bytes=0-33554431
       x-ms-version:
-      - '2020-06-12'
+      - '2020-10-02'
     method: GET
     uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3Dionq-3ghz-job-00000000-0000-0000-0000-000000000000.output.json
   response:
     body:
-      string: '{"duration": 6600439, "histogram": {"0": 0.5, "7": 0.5}, "access_token":
+      string: '{"duration": 9241831, "histogram": {"0": 0.5, "7": 0.5}, "access_token":
         "fake_token"}'
     headers:
       accept-ranges:
       - bytes
-      content-disposition:
-      - attachment; filename=ionq-3ghz-job-00000000-0000-0000-0000-000000000000.output.json
       content-length:
       - '50'
       content-range:
@@ -418,11 +328,11 @@ interactions:
       content-type:
       - application/json
       x-ms-blob-content-md5:
-      - hMCxh2okuWf61gtkPSuXgA==
+      - gQ9/nD8hT2HY1nW0qZxNLg==
       x-ms-blob-type:
       - BlockBlob
       x-ms-creation-time:
-      - Tue, 20 Jul 2021 19:01:12 GMT
+      - Thu, 21 Oct 2021 07:15:05 GMT
       x-ms-lease-state:
       - available
       x-ms-lease-status:
@@ -430,7 +340,7 @@ interactions:
       x-ms-server-encrypted:
       - 'true'
       x-ms-version:
-      - '2020-06-12'
+      - '2020-10-02'
     status:
       code: 206
       message: Partial Content
