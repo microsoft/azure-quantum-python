@@ -46,15 +46,11 @@ class AzureQuantumService:
         if workspace is None:
             workspace = Workspace(**kwargs)
 
-        # Append user agent info if already set
-        if workspace.user_agent:
-            workspace.user_agent += f"-{CIRQ_USER_AGENT}"
-        else:
-            workspace.user_agent = CIRQ_USER_AGENT
+        workspace.append_user_agent(CIRQ_USER_AGENT)
 
         self._workspace = workspace
         self._default_target = default_target
-    
+
     @property
     def _target_factory(self):
         from azure.quantum.target.target_factory import TargetFactory
