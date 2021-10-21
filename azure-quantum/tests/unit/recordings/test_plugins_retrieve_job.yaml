@@ -1,29 +1,29 @@
 interactions:
 - request:
-    body: client_id=PLACEHOLDER&grant_type=client_credentials&client_info=1&client_secret=PLACEHOLDER&scope=https%3A%2F%2Fquantum.microsoft.com%2F.default
+    body: client_id=PLACEHOLDER&grant_type=client_credentials&client_info=1&client_secret=PLACEHOLDER&claims=PLACEHOLDER&scope=https%3A%2F%2Fquantum.microsoft.com%2F.default
     headers:
       Accept:
       - application/json
       Accept-Encoding:
-      - gzip, deflate
+      - gzip, deflate, br
       Connection:
       - keep-alive
       Content-Length:
-      - '192'
+      - '287'
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - azsdk-python-identity/1.6.0 Python/3.7.10 (Linux-5.10.16.3-microsoft-standard-WSL2-x86_64-with-debian-bullseye-sid)
+      - azsdk-python-identity/1.7.0 Python/3.7.10 (Darwin-20.6.0-x86_64-i386-64bit)
       x-client-cpu:
       - x64
       x-client-current-telemetry:
       - 4|730,0|
       x-client-os:
-      - linux
+      - darwin
       x-client-sku:
       - MSAL.Python
       x-client-ver:
-      - 1.13.0
+      - 1.14.0
     method: POST
     uri: https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token
   response:
@@ -44,11 +44,11 @@ interactions:
       Accept:
       - application/json
       Accept-Encoding:
-      - gzip, deflate
+      - gzip, deflate, br
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-quantum/0.0.0.1 Python/3.7.10 (Linux-5.10.16.3-microsoft-standard-WSL2-x86_64-with-debian-bullseye-sid)
+      - testapp-azure-quantum-qiskit azsdk-python-quantum/0.0.0.1 Python/3.7.10 (Darwin-20.6.0-x86_64-i386-64bit)
     method: GET
     uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/providerStatus
   response:
@@ -71,11 +71,11 @@ interactions:
         "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.substochasticmontecarlo-parameterfree.cpu",
         "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null}]},
         {"id": "ionq", "currentAvailability": "Available", "targets": [{"id": "ionq.qpu",
-        "currentAvailability": "Available", "averageQueueTime": 137938, "statusPage":
+        "currentAvailability": "Available", "averageQueueTime": 33680, "statusPage":
         "https://status.ionq.co"}, {"id": "ionq.simulator", "currentAvailability":
-        "Available", "averageQueueTime": 1, "statusPage": "https://status.ionq.co"}]},
+        "Available", "averageQueueTime": 0, "statusPage": "https://status.ionq.co"}]},
         {"id": "toshiba", "currentAvailability": "Available", "targets": [{"id": "toshiba.sbm.ising",
-        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null}]},
+        "currentAvailability": "Available", "averageQueueTime": 5, "statusPage": null}]},
         {"id": "honeywell", "currentAvailability": "Degraded", "targets": [{"id":
         "honeywell.hqs-lt-s1", "currentAvailability": "Unavailable", "averageQueueTime":
         0, "statusPage": "https://www.honeywell.com/en-us/company/quantum"}, {"id":
@@ -86,12 +86,12 @@ interactions:
         "honeywell.hqs-lt-s2-apival", "currentAvailability": "Available", "averageQueueTime":
         0, "statusPage": "https://www.honeywell.com/en-us/company/quantum"}, {"id":
         "honeywell.hqs-lt-s1-sim", "currentAvailability": "Available", "averageQueueTime":
-        851, "statusPage": "https://www.honeywell.com/en-us/company/quantum"}]}, {"id":
-        "Microsoft.Simulator", "currentAvailability": "Available", "targets": [{"id":
-        "microsoft.simulator.fullstate", "currentAvailability": "Available", "averageQueueTime":
-        0, "statusPage": null}]}, {"id": "1qbit", "currentAvailability": "Available",
-        "targets": [{"id": "1qbit.tabu", "currentAvailability": "Available", "averageQueueTime":
-        0, "statusPage": "http://status.1qbit.com/"}, {"id": "1qbit.pathrelinking",
+        1755, "statusPage": "https://www.honeywell.com/en-us/company/quantum"}]},
+        {"id": "Microsoft.Simulator", "currentAvailability": "Available", "targets":
+        [{"id": "microsoft.simulator.fullstate", "currentAvailability": "Available",
+        "averageQueueTime": 0, "statusPage": null}]}, {"id": "1qbit", "currentAvailability":
+        "Available", "targets": [{"id": "1qbit.tabu", "currentAvailability": "Available",
+        "averageQueueTime": 0, "statusPage": "http://status.1qbit.com/"}, {"id": "1qbit.pathrelinking",
         "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": "http://status.1qbit.com/"},
         {"id": "1qbit.pticm", "currentAvailability": "Available", "averageQueueTime":
         0, "statusPage": "http://status.1qbit.com/"}]}], "nextLink": null, "access_token":
@@ -112,7 +112,7 @@ interactions:
       Accept:
       - application/json
       Accept-Encoding:
-      - gzip, deflate
+      - gzip, deflate, br
       Connection:
       - keep-alive
       Content-Length:
@@ -120,7 +120,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-quantum/0.0.0.1 Python/3.7.10 (Linux-5.10.16.3-microsoft-standard-WSL2-x86_64-with-debian-bullseye-sid)
+      - testapp-azure-quantum-qiskit azsdk-python-quantum/0.0.0.1 Python/3.7.10 (Darwin-20.6.0-x86_64-i386-64bit)
     method: POST
     uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/storage/sasUri
   response:
@@ -129,7 +129,7 @@ interactions:
         "access_token": "fake_token"}'
     headers:
       content-length:
-      - '209'
+      - '207'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -143,28 +143,28 @@ interactions:
       Accept:
       - application/xml
       Accept-Encoding:
-      - gzip, deflate
+      - gzip, deflate, br
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-blob/12.8.1 Python/3.7.10 (Linux-5.10.16.3-microsoft-standard-WSL2-x86_64-with-debian-bullseye-sid)
+      - azsdk-python-storage-blob/12.9.0 Python/3.7.10 (Darwin-20.6.0-x86_64-i386-64bit)
       x-ms-date:
-      - Mon, 18 Oct 2021 23:42:48 GMT
+      - Thu, 21 Oct 2021 03:04:55 GMT
       x-ms-version:
-      - '2020-06-12'
+      - '2020-10-02'
     method: GET
     uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?restype=container&sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerNotFound</Code><Message>The
-        specified container does not exist.\nRequestId:816e1c80-b01e-0047-4a79-c4f4b6000000\nTime:2021-10-18T23:42:57.1185387Z</Message></Error>"
+        specified container does not exist.\nRequestId:8824353a-401e-0031-0c28-c67efe000000\nTime:2021-10-21T03:04:55.6325388Z</Message></Error>"
     headers:
       content-length:
       - '225'
       content-type:
       - application/xml
       x-ms-version:
-      - '2020-06-12'
+      - '2020-10-02'
     status:
       code: 404
       message: The specified container does not exist.
@@ -174,17 +174,17 @@ interactions:
       Accept:
       - application/xml
       Accept-Encoding:
-      - gzip, deflate
+      - gzip, deflate, br
       Connection:
       - keep-alive
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-blob/12.8.1 Python/3.7.10 (Linux-5.10.16.3-microsoft-standard-WSL2-x86_64-with-debian-bullseye-sid)
+      - azsdk-python-storage-blob/12.9.0 Python/3.7.10 (Darwin-20.6.0-x86_64-i386-64bit)
       x-ms-date:
-      - Mon, 18 Oct 2021 23:42:50 GMT
+      - Thu, 21 Oct 2021 03:04:55 GMT
       x-ms-version:
-      - '2020-06-12'
+      - '2020-10-02'
     method: PUT
     uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?restype=container&sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
   response:
@@ -194,7 +194,7 @@ interactions:
       content-length:
       - '0'
       x-ms-version:
-      - '2020-06-12'
+      - '2020-10-02'
     status:
       code: 201
       message: Created
@@ -204,15 +204,15 @@ interactions:
       Accept:
       - application/xml
       Accept-Encoding:
-      - gzip, deflate
+      - gzip, deflate, br
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-blob/12.8.1 Python/3.7.10 (Linux-5.10.16.3-microsoft-standard-WSL2-x86_64-with-debian-bullseye-sid)
+      - azsdk-python-storage-blob/12.9.0 Python/3.7.10 (Darwin-20.6.0-x86_64-i386-64bit)
       x-ms-date:
-      - Mon, 18 Oct 2021 23:42:50 GMT
+      - Thu, 21 Oct 2021 03:04:55 GMT
       x-ms-version:
-      - '2020-06-12'
+      - '2020-10-02'
     method: GET
     uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?restype=container&sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
   response:
@@ -226,7 +226,7 @@ interactions:
       x-ms-lease-status:
       - unlocked
       x-ms-version:
-      - '2020-06-12'
+      - '2020-10-02'
     status:
       code: 200
       message: OK
@@ -238,7 +238,7 @@ interactions:
       Accept:
       - application/xml
       Accept-Encoding:
-      - gzip, deflate
+      - gzip, deflate, br
       Connection:
       - keep-alive
       Content-Length:
@@ -246,13 +246,13 @@ interactions:
       Content-Type:
       - application/octet-stream
       User-Agent:
-      - azsdk-python-storage-blob/12.8.1 Python/3.7.10 (Linux-5.10.16.3-microsoft-standard-WSL2-x86_64-with-debian-bullseye-sid)
+      - azsdk-python-storage-blob/12.9.0 Python/3.7.10 (Darwin-20.6.0-x86_64-i386-64bit)
       x-ms-blob-type:
       - BlockBlob
       x-ms-date:
-      - Mon, 18 Oct 2021 23:42:50 GMT
+      - Thu, 21 Oct 2021 03:04:56 GMT
       x-ms-version:
-      - '2020-06-12'
+      - '2020-10-02'
     method: PUT
     uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
   response:
@@ -262,7 +262,7 @@ interactions:
       content-length:
       - '0'
       x-ms-version:
-      - '2020-06-12'
+      - '2020-10-02'
     status:
       code: 201
       message: Created
@@ -278,33 +278,33 @@ interactions:
       Accept:
       - application/json
       Accept-Encoding:
-      - gzip, deflate
+      - gzip, deflate, br
       Connection:
       - keep-alive
       Content-Length:
-      - '707'
+      - '705'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-quantum/0.0.0.1 Python/3.7.10 (Linux-5.10.16.3-microsoft-standard-WSL2-x86_64-with-debian-bullseye-sid)
+      - testapp-azure-quantum-qiskit azsdk-python-quantum/0.0.0.1 Python/3.7.10 (Darwin-20.6.0-x86_64-i386-64bit)
     method: PUT
     uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000000
   response:
     body:
       string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
-        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
         "inputDataFormat": "ionq.circuit.v1", "inputParams": {"shots": 500}, "providerId":
         "ionq", "target": "ionq.simulator", "metadata": {"qiskit": "True", "name":
         "Qiskit Sample - 3-qubit GHZ circuit", "num_qubits": "3", "meas_map": "[0,
         1, 2]"}, "name": "Qiskit Sample - 3-qubit GHZ circuit", "id": "00000000-0000-0000-0000-000000000000",
         "status": "Waiting", "outputDataFormat": "ionq.quantum-results.v1", "outputDataUri":
         "https://e2etests.blob.core.windows.net:443/job-00000000-0000-0000-0000-000000000000/outputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
-        "creationTime": "2021-10-18T23:42:57.2704686+00:00", "beginExecutionTime":
+        "creationTime": "2021-10-21T03:04:56.6001484+00:00", "beginExecutionTime":
         null, "endExecutionTime": null, "cancellationTime": null, "errorData": null,
         "isCancelling": false, "tags": [], "access_token": "fake_token"}'
     headers:
       content-length:
-      - '1102'
+      - '1207'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -318,30 +318,30 @@ interactions:
       Accept:
       - application/json
       Accept-Encoding:
-      - gzip, deflate
+      - gzip, deflate, br
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-quantum/0.0.0.1 Python/3.7.10 (Linux-5.10.16.3-microsoft-standard-WSL2-x86_64-with-debian-bullseye-sid)
+      - testapp-azure-quantum-qiskit azsdk-python-quantum/0.0.0.1 Python/3.7.10 (Darwin-20.6.0-x86_64-i386-64bit)
     method: GET
     uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000000
   response:
     body:
       string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
-        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DQiskit%2BSample%2B-%2B3-qubit%2BGHZ%2Bcircuit-15f271c8-306d-11ec-a2f4-00155d7e7626.input.json",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DQiskit%2BSample%2B-%2B3-qubit%2BGHZ%2Bcircuit-a9c16454-321b-11ec-82d4-acde48001122.input.json",
         "inputDataFormat": "ionq.circuit.v1", "inputParams": {"shots": 500}, "providerId":
         "ionq", "target": "ionq.simulator", "metadata": {"qiskit": "True", "name":
         "Qiskit Sample - 3-qubit GHZ circuit", "num_qubits": "3", "meas_map": "[0,
         1, 2]"}, "name": "Qiskit Sample - 3-qubit GHZ circuit", "id": "00000000-0000-0000-0000-000000000000",
         "status": "Succeeded", "outputDataFormat": "ionq.quantum-results.v1", "outputDataUri":
-        "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DQiskit%2BSample%2B-%2B3-qubit%2BGHZ%2Bcircuit-15f271c8-306d-11ec-a2f4-00155d7e7626.output.json",
-        "creationTime": "2021-10-18T23:42:57.2704686+00:00", "beginExecutionTime":
-        "2021-10-18T23:42:59.586Z", "endExecutionTime": "2021-10-18T23:42:59.597Z",
+        "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DQiskit%2BSample%2B-%2B3-qubit%2BGHZ%2Bcircuit-a9c16454-321b-11ec-82d4-acde48001122.output.json",
+        "creationTime": "2021-10-21T03:04:56.6001484+00:00", "beginExecutionTime":
+        "2021-10-21T03:04:58.077Z", "endExecutionTime": "2021-10-21T03:04:58.089Z",
         "cancellationTime": null, "errorData": null, "isCancelling": false, "tags":
         [], "access_token": "fake_token"}'
     headers:
       content-length:
-      - '1489'
+      - '1491'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -355,30 +355,30 @@ interactions:
       Accept:
       - application/json
       Accept-Encoding:
-      - gzip, deflate
+      - gzip, deflate, br
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-quantum/0.0.0.1 Python/3.7.10 (Linux-5.10.16.3-microsoft-standard-WSL2-x86_64-with-debian-bullseye-sid)
+      - testapp-azure-quantum-qiskit azsdk-python-quantum/0.0.0.1 Python/3.7.10 (Darwin-20.6.0-x86_64-i386-64bit)
     method: GET
     uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000000
   response:
     body:
       string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
-        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DQiskit%2BSample%2B-%2B3-qubit%2BGHZ%2Bcircuit-15f271c8-306d-11ec-a2f4-00155d7e7626.input.json",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DQiskit%2BSample%2B-%2B3-qubit%2BGHZ%2Bcircuit-a9c16454-321b-11ec-82d4-acde48001122.input.json",
         "inputDataFormat": "ionq.circuit.v1", "inputParams": {"shots": 500}, "providerId":
         "ionq", "target": "ionq.simulator", "metadata": {"qiskit": "True", "name":
         "Qiskit Sample - 3-qubit GHZ circuit", "num_qubits": "3", "meas_map": "[0,
         1, 2]"}, "name": "Qiskit Sample - 3-qubit GHZ circuit", "id": "00000000-0000-0000-0000-000000000000",
         "status": "Succeeded", "outputDataFormat": "ionq.quantum-results.v1", "outputDataUri":
-        "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DQiskit%2BSample%2B-%2B3-qubit%2BGHZ%2Bcircuit-15f271c8-306d-11ec-a2f4-00155d7e7626.output.json",
-        "creationTime": "2021-10-18T23:42:57.2704686+00:00", "beginExecutionTime":
-        "2021-10-18T23:42:59.586Z", "endExecutionTime": "2021-10-18T23:42:59.597Z",
+        "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DQiskit%2BSample%2B-%2B3-qubit%2BGHZ%2Bcircuit-a9c16454-321b-11ec-82d4-acde48001122.output.json",
+        "creationTime": "2021-10-21T03:04:56.6001484+00:00", "beginExecutionTime":
+        "2021-10-21T03:04:58.077Z", "endExecutionTime": "2021-10-21T03:04:58.089Z",
         "cancellationTime": null, "errorData": null, "isCancelling": false, "tags":
         [], "access_token": "fake_token"}'
     headers:
       content-length:
-      - '1489'
+      - '1491'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -392,11 +392,11 @@ interactions:
       Accept:
       - application/json
       Accept-Encoding:
-      - gzip, deflate
+      - gzip, deflate, br
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-quantum/0.0.0.1 Python/3.7.10 (Linux-5.10.16.3-microsoft-standard-WSL2-x86_64-with-debian-bullseye-sid)
+      - testapp-azure-quantum-qiskit azsdk-python-quantum/0.0.0.1 Python/3.7.10 (Darwin-20.6.0-x86_64-i386-64bit)
     method: GET
     uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/providerStatus
   response:
@@ -419,11 +419,11 @@ interactions:
         "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.substochasticmontecarlo-parameterfree.cpu",
         "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null}]},
         {"id": "ionq", "currentAvailability": "Available", "targets": [{"id": "ionq.qpu",
-        "currentAvailability": "Available", "averageQueueTime": 137938, "statusPage":
+        "currentAvailability": "Available", "averageQueueTime": 33680, "statusPage":
         "https://status.ionq.co"}, {"id": "ionq.simulator", "currentAvailability":
-        "Available", "averageQueueTime": 1, "statusPage": "https://status.ionq.co"}]},
+        "Available", "averageQueueTime": 0, "statusPage": "https://status.ionq.co"}]},
         {"id": "toshiba", "currentAvailability": "Available", "targets": [{"id": "toshiba.sbm.ising",
-        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null}]},
+        "currentAvailability": "Available", "averageQueueTime": 5, "statusPage": null}]},
         {"id": "honeywell", "currentAvailability": "Degraded", "targets": [{"id":
         "honeywell.hqs-lt-s1", "currentAvailability": "Unavailable", "averageQueueTime":
         0, "statusPage": "https://www.honeywell.com/en-us/company/quantum"}, {"id":
@@ -434,12 +434,12 @@ interactions:
         "honeywell.hqs-lt-s2-apival", "currentAvailability": "Available", "averageQueueTime":
         0, "statusPage": "https://www.honeywell.com/en-us/company/quantum"}, {"id":
         "honeywell.hqs-lt-s1-sim", "currentAvailability": "Available", "averageQueueTime":
-        851, "statusPage": "https://www.honeywell.com/en-us/company/quantum"}]}, {"id":
-        "Microsoft.Simulator", "currentAvailability": "Available", "targets": [{"id":
-        "microsoft.simulator.fullstate", "currentAvailability": "Available", "averageQueueTime":
-        0, "statusPage": null}]}, {"id": "1qbit", "currentAvailability": "Available",
-        "targets": [{"id": "1qbit.tabu", "currentAvailability": "Available", "averageQueueTime":
-        0, "statusPage": "http://status.1qbit.com/"}, {"id": "1qbit.pathrelinking",
+        1755, "statusPage": "https://www.honeywell.com/en-us/company/quantum"}]},
+        {"id": "Microsoft.Simulator", "currentAvailability": "Available", "targets":
+        [{"id": "microsoft.simulator.fullstate", "currentAvailability": "Available",
+        "averageQueueTime": 0, "statusPage": null}]}, {"id": "1qbit", "currentAvailability":
+        "Available", "targets": [{"id": "1qbit.tabu", "currentAvailability": "Available",
+        "averageQueueTime": 0, "statusPage": "http://status.1qbit.com/"}, {"id": "1qbit.pathrelinking",
         "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": "http://status.1qbit.com/"},
         {"id": "1qbit.pticm", "currentAvailability": "Available", "averageQueueTime":
         0, "statusPage": "http://status.1qbit.com/"}]}], "nextLink": null, "access_token":
@@ -460,30 +460,30 @@ interactions:
       Accept:
       - application/json
       Accept-Encoding:
-      - gzip, deflate
+      - gzip, deflate, br
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-quantum/0.0.0.1 Python/3.7.10 (Linux-5.10.16.3-microsoft-standard-WSL2-x86_64-with-debian-bullseye-sid)
+      - testapp-azure-quantum-qiskit azsdk-python-quantum/0.0.0.1 Python/3.7.10 (Darwin-20.6.0-x86_64-i386-64bit)
     method: GET
     uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000000
   response:
     body:
       string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
-        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DQiskit%2BSample%2B-%2B3-qubit%2BGHZ%2Bcircuit-15f271c8-306d-11ec-a2f4-00155d7e7626.input.json",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DQiskit%2BSample%2B-%2B3-qubit%2BGHZ%2Bcircuit-a9c16454-321b-11ec-82d4-acde48001122.input.json",
         "inputDataFormat": "ionq.circuit.v1", "inputParams": {"shots": 500}, "providerId":
         "ionq", "target": "ionq.simulator", "metadata": {"qiskit": "True", "name":
         "Qiskit Sample - 3-qubit GHZ circuit", "num_qubits": "3", "meas_map": "[0,
         1, 2]"}, "name": "Qiskit Sample - 3-qubit GHZ circuit", "id": "00000000-0000-0000-0000-000000000000",
         "status": "Succeeded", "outputDataFormat": "ionq.quantum-results.v1", "outputDataUri":
-        "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DQiskit%2BSample%2B-%2B3-qubit%2BGHZ%2Bcircuit-15f271c8-306d-11ec-a2f4-00155d7e7626.output.json",
-        "creationTime": "2021-10-18T23:42:57.2704686+00:00", "beginExecutionTime":
-        "2021-10-18T23:42:59.586Z", "endExecutionTime": "2021-10-18T23:42:59.597Z",
+        "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DQiskit%2BSample%2B-%2B3-qubit%2BGHZ%2Bcircuit-a9c16454-321b-11ec-82d4-acde48001122.output.json",
+        "creationTime": "2021-10-21T03:04:56.6001484+00:00", "beginExecutionTime":
+        "2021-10-21T03:04:58.077Z", "endExecutionTime": "2021-10-21T03:04:58.089Z",
         "cancellationTime": null, "errorData": null, "isCancelling": false, "tags":
         [], "access_token": "fake_token"}'
     headers:
       content-length:
-      - '1489'
+      - '1491'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -497,30 +497,30 @@ interactions:
       Accept:
       - application/json
       Accept-Encoding:
-      - gzip, deflate
+      - gzip, deflate, br
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-quantum/0.0.0.1 Python/3.7.10 (Linux-5.10.16.3-microsoft-standard-WSL2-x86_64-with-debian-bullseye-sid)
+      - testapp-azure-quantum-qiskit azsdk-python-quantum/0.0.0.1 Python/3.7.10 (Darwin-20.6.0-x86_64-i386-64bit)
     method: GET
     uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000000
   response:
     body:
       string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
-        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DQiskit%2BSample%2B-%2B3-qubit%2BGHZ%2Bcircuit-15f271c8-306d-11ec-a2f4-00155d7e7626.input.json",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DQiskit%2BSample%2B-%2B3-qubit%2BGHZ%2Bcircuit-a9c16454-321b-11ec-82d4-acde48001122.input.json",
         "inputDataFormat": "ionq.circuit.v1", "inputParams": {"shots": 500}, "providerId":
         "ionq", "target": "ionq.simulator", "metadata": {"qiskit": "True", "name":
         "Qiskit Sample - 3-qubit GHZ circuit", "num_qubits": "3", "meas_map": "[0,
         1, 2]"}, "name": "Qiskit Sample - 3-qubit GHZ circuit", "id": "00000000-0000-0000-0000-000000000000",
         "status": "Succeeded", "outputDataFormat": "ionq.quantum-results.v1", "outputDataUri":
-        "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DQiskit%2BSample%2B-%2B3-qubit%2BGHZ%2Bcircuit-15f271c8-306d-11ec-a2f4-00155d7e7626.output.json",
-        "creationTime": "2021-10-18T23:42:57.2704686+00:00", "beginExecutionTime":
-        "2021-10-18T23:42:59.586Z", "endExecutionTime": "2021-10-18T23:42:59.597Z",
+        "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DQiskit%2BSample%2B-%2B3-qubit%2BGHZ%2Bcircuit-a9c16454-321b-11ec-82d4-acde48001122.output.json",
+        "creationTime": "2021-10-21T03:04:56.6001484+00:00", "beginExecutionTime":
+        "2021-10-21T03:04:58.077Z", "endExecutionTime": "2021-10-21T03:04:58.089Z",
         "cancellationTime": null, "errorData": null, "isCancelling": false, "tags":
         [], "access_token": "fake_token"}'
     headers:
       content-length:
-      - '1489'
+      - '1491'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -534,30 +534,30 @@ interactions:
       Accept:
       - application/json
       Accept-Encoding:
-      - gzip, deflate
+      - gzip, deflate, br
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-quantum/0.0.0.1 Python/3.7.10 (Linux-5.10.16.3-microsoft-standard-WSL2-x86_64-with-debian-bullseye-sid)
+      - testapp-azure-quantum-qiskit azsdk-python-quantum/0.0.0.1 Python/3.7.10 (Darwin-20.6.0-x86_64-i386-64bit)
     method: GET
     uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000000
   response:
     body:
       string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
-        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DQiskit%2BSample%2B-%2B3-qubit%2BGHZ%2Bcircuit-15f271c8-306d-11ec-a2f4-00155d7e7626.input.json",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DQiskit%2BSample%2B-%2B3-qubit%2BGHZ%2Bcircuit-a9c16454-321b-11ec-82d4-acde48001122.input.json",
         "inputDataFormat": "ionq.circuit.v1", "inputParams": {"shots": 500}, "providerId":
         "ionq", "target": "ionq.simulator", "metadata": {"qiskit": "True", "name":
         "Qiskit Sample - 3-qubit GHZ circuit", "num_qubits": "3", "meas_map": "[0,
         1, 2]"}, "name": "Qiskit Sample - 3-qubit GHZ circuit", "id": "00000000-0000-0000-0000-000000000000",
         "status": "Succeeded", "outputDataFormat": "ionq.quantum-results.v1", "outputDataUri":
-        "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DQiskit%2BSample%2B-%2B3-qubit%2BGHZ%2Bcircuit-15f271c8-306d-11ec-a2f4-00155d7e7626.output.json",
-        "creationTime": "2021-10-18T23:42:57.2704686+00:00", "beginExecutionTime":
-        "2021-10-18T23:42:59.586Z", "endExecutionTime": "2021-10-18T23:42:59.597Z",
+        "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DQiskit%2BSample%2B-%2B3-qubit%2BGHZ%2Bcircuit-a9c16454-321b-11ec-82d4-acde48001122.output.json",
+        "creationTime": "2021-10-21T03:04:56.6001484+00:00", "beginExecutionTime":
+        "2021-10-21T03:04:58.077Z", "endExecutionTime": "2021-10-21T03:04:58.089Z",
         "cancellationTime": null, "errorData": null, "isCancelling": false, "tags":
         [], "access_token": "fake_token"}'
     headers:
       content-length:
-      - '1489'
+      - '1491'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -571,11 +571,11 @@ interactions:
       Accept:
       - application/json
       Accept-Encoding:
-      - gzip, deflate
+      - gzip, deflate, br
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-quantum/0.0.0.1 Python/3.7.10 (Linux-5.10.16.3-microsoft-standard-WSL2-x86_64-with-debian-bullseye-sid)
+      - testapp-azure-quantum-qiskit azsdk-python-quantum/0.0.0.1 Python/3.7.10 (Darwin-20.6.0-x86_64-i386-64bit)
     method: GET
     uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/providerStatus
   response:
@@ -598,11 +598,11 @@ interactions:
         "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.substochasticmontecarlo-parameterfree.cpu",
         "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null}]},
         {"id": "ionq", "currentAvailability": "Available", "targets": [{"id": "ionq.qpu",
-        "currentAvailability": "Available", "averageQueueTime": 137938, "statusPage":
+        "currentAvailability": "Available", "averageQueueTime": 33680, "statusPage":
         "https://status.ionq.co"}, {"id": "ionq.simulator", "currentAvailability":
-        "Available", "averageQueueTime": 1, "statusPage": "https://status.ionq.co"}]},
+        "Available", "averageQueueTime": 0, "statusPage": "https://status.ionq.co"}]},
         {"id": "toshiba", "currentAvailability": "Available", "targets": [{"id": "toshiba.sbm.ising",
-        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null}]},
+        "currentAvailability": "Available", "averageQueueTime": 5, "statusPage": null}]},
         {"id": "honeywell", "currentAvailability": "Degraded", "targets": [{"id":
         "honeywell.hqs-lt-s1", "currentAvailability": "Unavailable", "averageQueueTime":
         0, "statusPage": "https://www.honeywell.com/en-us/company/quantum"}, {"id":
@@ -613,12 +613,12 @@ interactions:
         "honeywell.hqs-lt-s2-apival", "currentAvailability": "Available", "averageQueueTime":
         0, "statusPage": "https://www.honeywell.com/en-us/company/quantum"}, {"id":
         "honeywell.hqs-lt-s1-sim", "currentAvailability": "Available", "averageQueueTime":
-        851, "statusPage": "https://www.honeywell.com/en-us/company/quantum"}]}, {"id":
-        "Microsoft.Simulator", "currentAvailability": "Available", "targets": [{"id":
-        "microsoft.simulator.fullstate", "currentAvailability": "Available", "averageQueueTime":
-        0, "statusPage": null}]}, {"id": "1qbit", "currentAvailability": "Available",
-        "targets": [{"id": "1qbit.tabu", "currentAvailability": "Available", "averageQueueTime":
-        0, "statusPage": "http://status.1qbit.com/"}, {"id": "1qbit.pathrelinking",
+        1755, "statusPage": "https://www.honeywell.com/en-us/company/quantum"}]},
+        {"id": "Microsoft.Simulator", "currentAvailability": "Available", "targets":
+        [{"id": "microsoft.simulator.fullstate", "currentAvailability": "Available",
+        "averageQueueTime": 0, "statusPage": null}]}, {"id": "1qbit", "currentAvailability":
+        "Available", "targets": [{"id": "1qbit.tabu", "currentAvailability": "Available",
+        "averageQueueTime": 0, "statusPage": "http://status.1qbit.com/"}, {"id": "1qbit.pathrelinking",
         "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": "http://status.1qbit.com/"},
         {"id": "1qbit.pticm", "currentAvailability": "Available", "averageQueueTime":
         0, "statusPage": "http://status.1qbit.com/"}]}], "nextLink": null, "access_token":
@@ -639,30 +639,30 @@ interactions:
       Accept:
       - application/json
       Accept-Encoding:
-      - gzip, deflate
+      - gzip, deflate, br
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-quantum/0.0.0.1 Python/3.7.10 (Linux-5.10.16.3-microsoft-standard-WSL2-x86_64-with-debian-bullseye-sid)
+      - testapp-azure-quantum-qiskit azsdk-python-quantum/0.0.0.1 Python/3.7.10 (Darwin-20.6.0-x86_64-i386-64bit)
     method: GET
     uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000000
   response:
     body:
       string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
-        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DQiskit%2BSample%2B-%2B3-qubit%2BGHZ%2Bcircuit-15f271c8-306d-11ec-a2f4-00155d7e7626.input.json",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DQiskit%2BSample%2B-%2B3-qubit%2BGHZ%2Bcircuit-a9c16454-321b-11ec-82d4-acde48001122.input.json",
         "inputDataFormat": "ionq.circuit.v1", "inputParams": {"shots": 500}, "providerId":
         "ionq", "target": "ionq.simulator", "metadata": {"qiskit": "True", "name":
         "Qiskit Sample - 3-qubit GHZ circuit", "num_qubits": "3", "meas_map": "[0,
         1, 2]"}, "name": "Qiskit Sample - 3-qubit GHZ circuit", "id": "00000000-0000-0000-0000-000000000000",
         "status": "Succeeded", "outputDataFormat": "ionq.quantum-results.v1", "outputDataUri":
-        "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DQiskit%2BSample%2B-%2B3-qubit%2BGHZ%2Bcircuit-15f271c8-306d-11ec-a2f4-00155d7e7626.output.json",
-        "creationTime": "2021-10-18T23:42:57.2704686+00:00", "beginExecutionTime":
-        "2021-10-18T23:42:59.586Z", "endExecutionTime": "2021-10-18T23:42:59.597Z",
+        "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DQiskit%2BSample%2B-%2B3-qubit%2BGHZ%2Bcircuit-a9c16454-321b-11ec-82d4-acde48001122.output.json",
+        "creationTime": "2021-10-21T03:04:56.6001484+00:00", "beginExecutionTime":
+        "2021-10-21T03:04:58.077Z", "endExecutionTime": "2021-10-21T03:04:58.089Z",
         "cancellationTime": null, "errorData": null, "isCancelling": false, "tags":
         [], "access_token": "fake_token"}'
     headers:
       content-length:
-      - '1489'
+      - '1495'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -676,22 +676,22 @@ interactions:
       Accept:
       - application/xml
       Accept-Encoding:
-      - gzip, deflate
+      - gzip, deflate, br
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-blob/12.8.1 Python/3.7.10 (Linux-5.10.16.3-microsoft-standard-WSL2-x86_64-with-debian-bullseye-sid)
+      - azsdk-python-storage-blob/12.9.0 Python/3.7.10 (Darwin-20.6.0-x86_64-i386-64bit)
       x-ms-date:
-      - Mon, 18 Oct 2021 23:42:55 GMT
+      - Thu, 21 Oct 2021 03:05:01 GMT
       x-ms-range:
       - bytes=0-33554431
       x-ms-version:
-      - '2020-06-12'
+      - '2020-10-02'
     method: GET
-    uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DQiskit%2BSample%2B-%2B3-qubit%2BGHZ%2Bcircuit-15f271c8-306d-11ec-a2f4-00155d7e7626.output.json
+    uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DQiskit%2BSample%2B-%2B3-qubit%2BGHZ%2Bcircuit-a9c16454-321b-11ec-82d4-acde48001122.output.json
   response:
     body:
-      string: '{"duration": 9250594, "histogram": {"0": 0.5, "7": 0.5}, "access_token":
+      string: '{"duration": 9254220, "histogram": {"0": 0.5, "7": 0.5}, "access_token":
         "fake_token"}'
     headers:
       accept-ranges:
@@ -703,11 +703,11 @@ interactions:
       content-type:
       - application/json
       x-ms-blob-content-md5:
-      - ZxAoyub3r8x4bgFA+zGF+A==
+      - mx+8P+Uqf6y6+P6AWTHV2Q==
       x-ms-blob-type:
       - BlockBlob
       x-ms-creation-time:
-      - Mon, 18 Oct 2021 23:42:57 GMT
+      - Thu, 21 Oct 2021 03:04:56 GMT
       x-ms-lease-state:
       - available
       x-ms-lease-status:
@@ -715,7 +715,7 @@ interactions:
       x-ms-server-encrypted:
       - 'true'
       x-ms-version:
-      - '2020-06-12'
+      - '2020-10-02'
     status:
       code: 206
       message: Partial Content

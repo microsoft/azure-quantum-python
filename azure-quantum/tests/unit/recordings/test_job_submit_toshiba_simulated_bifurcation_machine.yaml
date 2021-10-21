@@ -1,19 +1,19 @@
 interactions:
 - request:
-    body: client_id=PLACEHOLDER&grant_type=client_credentials&client_info=1&client_secret=PLACEHOLDER&scope=https%3A%2F%2Fquantum.microsoft.com%2F.default
+    body: client_id=PLACEHOLDER&grant_type=client_credentials&client_info=1&client_secret=PLACEHOLDER&claims=PLACEHOLDER&scope=https%3A%2F%2Fquantum.microsoft.com%2F.default
     headers:
       Accept:
       - application/json
       Accept-Encoding:
-      - gzip, deflate
+      - gzip, deflate, br
       Connection:
       - keep-alive
       Content-Length:
-      - '192'
+      - '287'
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - azsdk-python-identity/1.6.0 Python/3.7.10 (Darwin-20.6.0-x86_64-i386-64bit)
+      - azsdk-python-identity/1.7.0 Python/3.7.10 (Darwin-20.6.0-x86_64-i386-64bit)
       x-client-cpu:
       - x64
       x-client-current-telemetry:
@@ -44,7 +44,7 @@ interactions:
       Accept:
       - application/json
       Accept-Encoding:
-      - gzip, deflate
+      - gzip, deflate, br
       Connection:
       - keep-alive
       Content-Length:
@@ -52,7 +52,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-quantum/0.0.0.1 Python/3.7.10 (Darwin-20.6.0-x86_64-i386-64bit)
+      - testapp azsdk-python-quantum/0.0.0.1 Python/3.7.10 (Darwin-20.6.0-x86_64-i386-64bit)
     method: POST
     uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/storage/sasUri
   response:
@@ -75,28 +75,28 @@ interactions:
       Accept:
       - application/xml
       Accept-Encoding:
-      - gzip, deflate
+      - gzip, deflate, br
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-blob/12.8.1 Python/3.7.10 (Darwin-20.6.0-x86_64-i386-64bit)
+      - azsdk-python-storage-blob/12.9.0 Python/3.7.10 (Darwin-20.6.0-x86_64-i386-64bit)
       x-ms-date:
-      - Fri, 17 Sep 2021 22:19:58 GMT
+      - Thu, 21 Oct 2021 03:09:45 GMT
       x-ms-version:
-      - '2020-06-12'
+      - '2020-10-02'
     method: GET
     uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?restype=container&sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerNotFound</Code><Message>The
-        specified container does not exist.\nRequestId:c5d74dc3-501e-004f-0612-aceeb9000000\nTime:2021-09-17T22:19:59.7054294Z</Message></Error>"
+        specified container does not exist.\nRequestId:833210f7-d01e-0023-6f29-c6052e000000\nTime:2021-10-21T03:09:45.8854954Z</Message></Error>"
     headers:
       content-length:
       - '225'
       content-type:
       - application/xml
       x-ms-version:
-      - '2020-06-12'
+      - '2020-10-02'
     status:
       code: 404
       message: The specified container does not exist.
@@ -106,17 +106,17 @@ interactions:
       Accept:
       - application/xml
       Accept-Encoding:
-      - gzip, deflate
+      - gzip, deflate, br
       Connection:
       - keep-alive
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-blob/12.8.1 Python/3.7.10 (Darwin-20.6.0-x86_64-i386-64bit)
+      - azsdk-python-storage-blob/12.9.0 Python/3.7.10 (Darwin-20.6.0-x86_64-i386-64bit)
       x-ms-date:
-      - Fri, 17 Sep 2021 22:19:59 GMT
+      - Thu, 21 Oct 2021 03:09:45 GMT
       x-ms-version:
-      - '2020-06-12'
+      - '2020-10-02'
     method: PUT
     uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?restype=container&sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
   response:
@@ -126,7 +126,7 @@ interactions:
       content-length:
       - '0'
       x-ms-version:
-      - '2020-06-12'
+      - '2020-10-02'
     status:
       code: 201
       message: Created
@@ -136,15 +136,15 @@ interactions:
       Accept:
       - application/xml
       Accept-Encoding:
-      - gzip, deflate
+      - gzip, deflate, br
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-blob/12.8.1 Python/3.7.10 (Darwin-20.6.0-x86_64-i386-64bit)
+      - azsdk-python-storage-blob/12.9.0 Python/3.7.10 (Darwin-20.6.0-x86_64-i386-64bit)
       x-ms-date:
-      - Fri, 17 Sep 2021 22:19:59 GMT
+      - Thu, 21 Oct 2021 03:09:45 GMT
       x-ms-version:
-      - '2020-06-12'
+      - '2020-10-02'
     method: GET
     uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?restype=container&sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
   response:
@@ -158,32 +158,31 @@ interactions:
       x-ms-lease-status:
       - unlocked
       x-ms-version:
-      - '2020-06-12'
+      - '2020-10-02'
     status:
       code: 200
       message: OK
 - request:
-    body: b"\x1f\x8b\x08\x00\x8c\x14Ea\x02\xffU\x8d\xc1\x0e\xc2 \x10D\x7f\xa5\xd9\xb3\x18\xa0VS\x8f\xde=\xe9\xcd6f\xa54\x92\x08m\n\x98\x98\x86\x7f\x17\xe9\xa1r\xda\xd9y\xb3\xb33h\xe9\xb0C\x87p,f0\xa8e\x14p\x95\xd6\x91\x8b\xd2\xfe\x85Nv'\xd5\xfbI\xa0S\x839\xa3x*#I\x03\x9crFkv
-      \xacbu\xb5o\x00\xc2\xa6\x001Xw\xef\xbd\x11\xbfp\xaa|\xcb\xc9.\x1a\xd8\x96B\xcc\xb8\xcf\x98\x9e\x8c\xfe1\xa4]N\xdaF\xe36\x83\x88\x83\x94\xd1S]r\xd8\xa6\xa0m\xec]H\xb5\x02\x9e\x81:\x03l\x05|\x05evAv\x19\xf9;\xc9\x01oC\x1b\xc2\x17\xd0\xa5\xb1\x1a&\x01\x00\x00"
+    body: b'\x1f\x8b\x08\x00\xf7\xd9pa\x02\xffU\x8d1\x0f\xc2 \x10\x85\xffJss1@\xebPGw\xa7\xba\xd9\xc6\x9c\x94F\x12\xa1M\x01\x13\xd3\xf0\xdfE:T\xa6{\xf7\xbew\xefV\xd0\xd2\xe1\x80\x0e\xe1T\xac`P\xcb(\xe0*\xad#\xad\xd2\xfe\x85N\x0eg5\xfaE\xa0S\x93\xb9\xa0x*#I\x07\x9cr\xc6(\xa7\x84S\xda\xd4U\x07\x10\xca\x02\xc4d\xdd}\xf4F\xfc\xc2\xa9\xf2-\x17\xbbi`\x07\n1\xe3>sz2\xfb\xc7\x94v\xb9h\x1b\x8d\xdb\n"\x0eREO\r\xc9aeA\xfb\xd8\xbb\x91\xe3\x0ex\x06\x9a\x0c\xb0\x1d\xf0\x1dT\xd9\x05\xa93\xf2w\x92\x03\xde\x87>\x84/\xef&\xe64&\x01\x00\x00'
     headers:
       Accept:
       - application/xml
       Accept-Encoding:
-      - gzip, deflate
+      - gzip, deflate, br
       Connection:
       - keep-alive
       Content-Length:
-      - '183'
+      - '182'
       Content-Type:
       - application/octet-stream
       User-Agent:
-      - azsdk-python-storage-blob/12.8.1 Python/3.7.10 (Darwin-20.6.0-x86_64-i386-64bit)
+      - azsdk-python-storage-blob/12.9.0 Python/3.7.10 (Darwin-20.6.0-x86_64-i386-64bit)
       x-ms-blob-type:
       - BlockBlob
       x-ms-date:
-      - Fri, 17 Sep 2021 22:20:01 GMT
+      - Thu, 21 Oct 2021 03:09:46 GMT
       x-ms-version:
-      - '2020-06-12'
+      - '2020-10-02'
     method: PUT
     uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
   response:
@@ -193,7 +192,7 @@ interactions:
       content-length:
       - '0'
       x-ms-version:
-      - '2020-06-12'
+      - '2020-10-02'
     status:
       code: 201
       message: Created
@@ -207,7 +206,7 @@ interactions:
       Accept:
       - application/json
       Accept-Encoding:
-      - gzip, deflate
+      - gzip, deflate, br
       Connection:
       - keep-alive
       Content-Length:
@@ -215,7 +214,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-quantum/0.0.0.1 Python/3.7.10 (Darwin-20.6.0-x86_64-i386-64bit)
+      - testapp azsdk-python-quantum/0.0.0.1 Python/3.7.10 (Darwin-20.6.0-x86_64-i386-64bit)
     method: PUT
     uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000000
   response:
@@ -226,7 +225,7 @@ interactions:
         "toshiba", "target": "toshiba.sbm.ising", "metadata": null, "name": "Test-SimulatedBifurcationMachine-\"20210101-000000\"",
         "id": "00000000-0000-0000-0000-000000000000", "status": "Waiting", "outputDataFormat":
         "microsoft.qio-results.v2", "outputDataUri": "https://e2etests.blob.core.windows.net:443/job-00000000-0000-0000-0000-000000000000/outputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
-        "creationTime": "2021-09-17T22:20:01.7836428+00:00", "beginExecutionTime":
+        "creationTime": "2021-10-21T03:09:47.0973989+00:00", "beginExecutionTime":
         null, "endExecutionTime": null, "cancellationTime": null, "errorData": null,
         "isCancelling": false, "tags": [], "access_token": "fake_token"}'
     headers:
@@ -245,28 +244,28 @@ interactions:
       Accept:
       - application/json
       Accept-Encoding:
-      - gzip, deflate
+      - gzip, deflate, br
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-quantum/0.0.0.1 Python/3.7.10 (Darwin-20.6.0-x86_64-i386-64bit)
+      - testapp azsdk-python-quantum/0.0.0.1 Python/3.7.10 (Darwin-20.6.0-x86_64-i386-64bit)
     method: GET
     uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000000
   response:
     body:
       string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
-        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-SimulatedBifurcationMachine-%252220210101-000000%2522-638fb3f8-1805-11ec-a476-acde48001122.input.json",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-SimulatedBifurcationMachine-%252220210101-000000%2522-56d2c3cc-321c-11ec-a362-acde48001122.input.json",
         "inputDataFormat": "microsoft.qio.v2", "inputParams": {"loops": 10}, "providerId":
         "toshiba", "target": "toshiba.sbm.ising", "metadata": null, "name": "Test-SimulatedBifurcationMachine-\"20210101-000000\"",
         "id": "00000000-0000-0000-0000-000000000000", "status": "Succeeded", "outputDataFormat":
-        "microsoft.qio-results.v2", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-SimulatedBifurcationMachine-%252220210101-000000%2522-638fb3f8-1805-11ec-a476-acde48001122.output.json",
-        "creationTime": "2021-09-17T22:20:01.7836428+00:00", "beginExecutionTime":
-        "2021-09-17T22:20:06.618+00:00", "endExecutionTime": "2021-09-17T22:20:06.93+00:00",
+        "microsoft.qio-results.v2", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-SimulatedBifurcationMachine-%252220210101-000000%2522-56d2c3cc-321c-11ec-a362-acde48001122.output.json",
+        "creationTime": "2021-10-21T03:09:47.0973989+00:00", "beginExecutionTime":
+        "2021-10-21T03:09:51.953+00:00", "endExecutionTime": "2021-10-21T03:09:52.312+00:00",
         "cancellationTime": null, "errorData": null, "isCancelling": false, "tags":
         [], "access_token": "fake_token"}'
     headers:
       content-length:
-      - '1450'
+      - '1453'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -280,41 +279,41 @@ interactions:
       Accept:
       - application/xml
       Accept-Encoding:
-      - gzip, deflate
+      - gzip, deflate, br
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-blob/12.8.1 Python/3.7.10 (Darwin-20.6.0-x86_64-i386-64bit)
+      - azsdk-python-storage-blob/12.9.0 Python/3.7.10 (Darwin-20.6.0-x86_64-i386-64bit)
       x-ms-date:
-      - Fri, 17 Sep 2021 22:20:08 GMT
+      - Thu, 21 Oct 2021 03:09:56 GMT
       x-ms-range:
       - bytes=0-33554431
       x-ms-version:
-      - '2020-06-12'
+      - '2020-10-02'
     method: GET
-    uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-SimulatedBifurcationMachine-%252220210101-000000%2522-638fb3f8-1805-11ec-a476-acde48001122.output.json
+    uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-SimulatedBifurcationMachine-%252220210101-000000%2522-56d2c3cc-321c-11ec-a362-acde48001122.output.json
   response:
     body:
       string: '{"target": "toshiba.sbm.ising", "version": "1.0", "input_params": {"loops":
         10}, "input_data_uri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
         "solutions": [{"cost": -5.0, "configuration": {"0": 1, "1": 1, "2": 0, "3":
-        1}, "parameters": {"runs": 1601, "message": "finished", "time": 0.022}}],
-        "access_token": "fake_token"}'
+        1}, "parameters": {"runs": 1600, "message": "finished", "time": 0.02}}], "access_token":
+        "fake_token"}'
     headers:
       accept-ranges:
       - bytes
       content-length:
-      - '448'
+      - '447'
       content-range:
-      - bytes 0-447/448
+      - bytes 0-446/447
       content-type:
       - application/octet-stream
       x-ms-blob-content-md5:
-      - Vxxd4u1FXuWbQx3YxmDDRg==
+      - diRVtgmgATpZGJYSJIssAg==
       x-ms-blob-type:
       - BlockBlob
       x-ms-creation-time:
-      - Fri, 17 Sep 2021 22:20:01 GMT
+      - Thu, 21 Oct 2021 03:09:47 GMT
       x-ms-lease-state:
       - available
       x-ms-lease-status:
@@ -322,7 +321,7 @@ interactions:
       x-ms-server-encrypted:
       - 'true'
       x-ms-version:
-      - '2020-06-12'
+      - '2020-10-02'
     status:
       code: 206
       message: Partial Content
@@ -332,28 +331,28 @@ interactions:
       Accept:
       - application/json
       Accept-Encoding:
-      - gzip, deflate
+      - gzip, deflate, br
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-quantum/0.0.0.1 Python/3.7.10 (Darwin-20.6.0-x86_64-i386-64bit)
+      - testapp azsdk-python-quantum/0.0.0.1 Python/3.7.10 (Darwin-20.6.0-x86_64-i386-64bit)
     method: GET
     uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000000
   response:
     body:
       string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
-        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-SimulatedBifurcationMachine-%252220210101-000000%2522-638fb3f8-1805-11ec-a476-acde48001122.input.json",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-SimulatedBifurcationMachine-%252220210101-000000%2522-56d2c3cc-321c-11ec-a362-acde48001122.input.json",
         "inputDataFormat": "microsoft.qio.v2", "inputParams": {"loops": 10}, "providerId":
         "toshiba", "target": "toshiba.sbm.ising", "metadata": null, "name": "Test-SimulatedBifurcationMachine-\"20210101-000000\"",
         "id": "00000000-0000-0000-0000-000000000000", "status": "Succeeded", "outputDataFormat":
-        "microsoft.qio-results.v2", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-SimulatedBifurcationMachine-%252220210101-000000%2522-638fb3f8-1805-11ec-a476-acde48001122.output.json",
-        "creationTime": "2021-09-17T22:20:01.7836428+00:00", "beginExecutionTime":
-        "2021-09-17T22:20:06.618+00:00", "endExecutionTime": "2021-09-17T22:20:06.93+00:00",
+        "microsoft.qio-results.v2", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-SimulatedBifurcationMachine-%252220210101-000000%2522-56d2c3cc-321c-11ec-a362-acde48001122.output.json",
+        "creationTime": "2021-10-21T03:09:47.0973989+00:00", "beginExecutionTime":
+        "2021-10-21T03:09:51.953+00:00", "endExecutionTime": "2021-10-21T03:09:52.312+00:00",
         "cancellationTime": null, "errorData": null, "isCancelling": false, "tags":
         [], "access_token": "fake_token"}'
     headers:
       content-length:
-      - '1458'
+      - '1461'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:

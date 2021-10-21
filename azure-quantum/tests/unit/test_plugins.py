@@ -74,8 +74,9 @@ class TestQiskit(QuantumTestBase):
         ):
             workspace = self.create_workspace()
             provider = AzureQuantumProvider(workspace=workspace)
+            assert "azure-quantum-qiskit" in provider._workspace.user_agent
             backend = provider.get_backend("ionq.simulator")
-            
+
             qiskit_job = backend.run(
                 circuit=circuit,
                 shots=num_shots
@@ -95,7 +96,7 @@ class TestQiskit(QuantumTestBase):
                 assert result.data()["probabilities"] == {'000': 0.5, '111': 0.5}
                 counts = result.get_counts()
                 assert counts == result.data()["counts"]
-    
+
     @pytest.mark.ionq
     @pytest.mark.live_test
     def test_plugins_retrieve_job(self):
@@ -195,12 +196,24 @@ class TestCirq(QuantumTestBase):
 
         return circuit
 
+    def test_plugins_cirq_user_agent(self):
+        # VCR is incompatible with parametrized tests
+        for app_id in [
+            "test-user-agent",
+            "test-very-very-very-very-very-very-very-very-long-user-agent"
+        ]:
+            workspace = self.create_workspace(user_agent=app_id)
+            service = AzureQuantumService(workspace=workspace)
+            assert app_id in service._workspace.user_agent
+            assert "-azure-quantum-cirq" in service._workspace.user_agent
+
     @pytest.mark.honeywell
     @pytest.mark.ionq
     @pytest.mark.live_test
     def test_plugins_cirq_get_targets(self):
         workspace = self.create_workspace()
         service = AzureQuantumService(workspace=workspace)
+        assert "azure-quantum-cirq" in service._workspace.user_agent
         targets = service.targets()
         target_names = [t.name for t in targets]
         assert all([isinstance(t, Target) for t in targets])

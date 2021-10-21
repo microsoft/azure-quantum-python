@@ -16,13 +16,16 @@ from azure.quantum import Workspace
 from azure.quantum.qiskit.job import AzureQuantumJob
 from azure.quantum.qiskit.backends import *
 
+QISKIT_USER_AGENT = "azure-quantum-qiskit"
+
 
 class AzureQuantumProvider(Provider):
-    def __init__(self, workspace = None, **kwargs):
+    def __init__(self, workspace=None, **kwargs):
         self._backends = None
         if workspace is None:
-            kwargs.setdefault('user_agent', 'azure-quantum-qiskit')
             workspace = Workspace(**kwargs)
+
+        workspace.append_user_agent(QISKIT_USER_AGENT)
 
         self._workspace = workspace
 
