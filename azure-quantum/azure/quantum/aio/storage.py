@@ -196,7 +196,7 @@ async def download_blob(blob_url: str) -> Any:
 
     response = await (await blob_client.download_blob()).readall()
     logger.debug(response)
-    blob_client.close()
+    await blob_client.close()
 
     return response
 
