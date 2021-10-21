@@ -21,8 +21,8 @@ from azure.quantum.aio.optimization import Problem, ProblemType
 from azure.quantum.aio.target.solvers import Solver
 from azure.quantum.optimization import Term
 import azure.quantum.aio.target.microsoft as microsoft
-import azure.quantum.target.oneqbit as oneqbit
-import azure.quantum.target.toshiba as toshiba
+import azure.quantum.aio.target.oneqbit as oneqbit
+import azure.quantum.aio.target.toshiba as toshiba
 
 
 SOLVER_TYPES = [
