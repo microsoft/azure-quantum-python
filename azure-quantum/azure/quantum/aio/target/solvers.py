@@ -15,6 +15,8 @@ from azure.quantum.aio.job.base_job import DEFAULT_TIMEOUT
 logger = logging.getLogger(__name__)
 
 __all__ = [
+    "HardwarePlatform",
+    "RangeSchedule",
     "Solver",
 ]
 
