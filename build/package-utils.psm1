@@ -58,12 +58,6 @@ function Install-PackageInEnv {
         [bool] $FromSource,
         [string] $BuildArtifactPath
     )
-
-    if ($null -eq $FromSource) {
-        $FromSource = $True
-        Write-Host "##[info]No FromSource. Setting to default '$FromSource'"
-    }
-
     $PackageNames = PackagesList -PackageName $PackageName
     foreach ($PackageName in $PackageNames) {
         $EnvName = GetEnvName -PackageName $PackageName -CondaEnvironmentSuffix $CondaEnvironmentSuffix
