@@ -36,6 +36,7 @@ logger = logging.getLogger(__name__)
 __all__ = ["Workspace"]
 
 DEFAULT_CONTAINER_NAME_FORMAT = "job-{job_id}"
+USER_AGENT_APPID_ENV_VAR_NAME = "AZURE_QUANTUM_PYTHON_APPID"
 
 
 def sdk_environment(name):
@@ -174,10 +175,7 @@ class Workspace:
         self.resource_group = resource_group
         self.subscription_id = subscription_id
         self.storage = storage
-        self.user_agent = user_agent
-
-        if self.user_agent == None:
-            self.user_agent = os.environ.get("AZURE_QUANTUM_PYTHON_APPID")
+        self._user_agent = user_agent
 
         # Convert user-provided location into names
         # recognized by Azure resource manager.
@@ -201,9 +199,41 @@ class Workspace:
             resource_group_name=self.resource_group,
             workspace_name=self.name,
             base_url=base_url,
-            user_agent=self.user_agent
+            user_agent=self.get_full_user_agent()
         )
         return client
+
+    def get_full_user_agent(self):
+        full_user_agent = self.user_agent
+        env_app_id = os.environ.get(USER_AGENT_APPID_ENV_VAR_NAME)
+        if env_app_id:
+            if full_user_agent:
+                full_user_agent += f"-{env_app_id}"
+            else:
+                full_user_agent = env_app_id
+        return full_user_agent
+
+    def get_user_agent(self):
+        return self._user_agent
+
+    def set_user_agent(self, value):
+        if value != self._user_agent:
+            self._user_agent = value
+            # We need to recreate the client for it to
+            # pick the new UserAgent
+            if self._client is not None:
+                self._client = self._create_client()
+
+    user_agent = property(get_user_agent, set_user_agent)
+
+    def append_user_agent(self, user_agent: str):
+        if user_agent not in (self.user_agent or ""):
+            # Make sure to use the self.user_agent property setter as
+            # we have some logic in there
+            if self.user_agent:
+                self.user_agent += f"-{user_agent}"
+            else:
+                self.user_agent = user_agent
 
     def _get_jobs_client(self) -> JobsOperations:
         return self._client.jobs
