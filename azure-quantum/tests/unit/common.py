@@ -210,6 +210,7 @@ class QuantumTestBase(ReplayableTest):
             location=self.location,
             **kwargs
         )
+        workspace.append_user_agent("testapp")
 
         return workspace
 
