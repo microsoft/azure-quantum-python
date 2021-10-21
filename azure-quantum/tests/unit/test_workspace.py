@@ -245,4 +245,7 @@ class TestWorkspace(QuantumTestBase):
             assert ws.user_agent == "featurex"
             assert ws.get_full_user_agent() == "featurex"
         finally:
-            os.environ[USER_AGENT_APPID_ENV_VAR_NAME] = original_env_app_id
+            if original_env_app_id:
+                os.environ[USER_AGENT_APPID_ENV_VAR_NAME] = original_env_app_id
+            else:
+                os.environ.pop(USER_AGENT_APPID_ENV_VAR_NAME)
