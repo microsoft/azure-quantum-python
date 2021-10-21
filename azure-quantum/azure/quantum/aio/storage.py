@@ -46,10 +46,7 @@ async def create_container_using_client(container_client: ContainerClient):
     """
     Creates and initializes a container.
     """
-    try:
-        await container_client.get_container_properties()
-        logger.debug(f'{"  - uploading to existing container"}')
-    except Exception:
+    if not await container_client.exists():
         logger.debug(
             f'{"  - uploading to **new** container:"}'
             f"{container_client.container_name}"
@@ -156,7 +153,7 @@ async def append_blob(
             content_settings=content_settings, metadata=metadata
         )
 
-    blob.append_block(data, len(data))
+    await blob.append_block(data, len(data))
     logger.debug(f"  - blob '{blob_name}' appended. generating sas token.")
 
     if return_sas_token:

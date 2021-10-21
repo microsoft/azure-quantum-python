@@ -1,3 +1,7 @@
+##
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+##
 from azure.quantum.aio.target.ionq import IonQ
 from azure.quantum.aio.target.honeywell import Honeywell
 from azure.quantum.aio.target.target import Target

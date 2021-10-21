@@ -6,23 +6,18 @@ import asyncio
 import logging
 import json
 
-from typing import TYPE_CHECKING
-
-from azure.quantum._client.models import JobDetails
 from azure.quantum.aio.job.base_job import BaseJob, DEFAULT_TIMEOUT
 from azure.quantum.job.job import Job as SyncJob
+from azure.quantum.job.filtered_job import FilteredJob
 
 __all__ = ["Job"]
 
 logger = logging.getLogger(__name__)
 
-if TYPE_CHECKING:
-    from azure.quantum.aio.workspace import Workspace
-
-
 _log = logging.getLogger(__name__)
 
-class Job(BaseJob, SyncJob):
+
+class Job(BaseJob, SyncJob, FilteredJob):
     """Azure Quantum Job that is submitted to a given Workspace.
 
     :param workspace: Workspace instance to submit job to
@@ -80,7 +75,7 @@ class Job(BaseJob, SyncJob):
                 else poll_wait * 1.5
             )
 
-    async def get_results(self, timeout_secs: float=DEFAULT_TIMEOUT) -> dict:
+    async def get_results(self, timeout_secs: float = DEFAULT_TIMEOUT) -> dict:
         """Get job results by downloading the results blob from the
         storage container linked via the workspace.
 

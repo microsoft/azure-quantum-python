@@ -67,6 +67,9 @@ class Workspace:
 
         Defaults to \"DefaultAzureCredential\", which will attempt multiple 
         forms of authentication.
+
+    :param user_agent:
+        Add the specified value as a prefix to the HTTP User-Agent header when communicating to the Azure Quantum service.
     """
 
     credentials = None
@@ -117,6 +120,7 @@ class Workspace:
         # See _DefaultAzureCredential documentation for more info.
         if credential is None:
             credential = _DefaultAzureCredential(exclude_interactive_browser_credential=False,
+                                                 exclude_shared_token_cache_credential=True,
                                                  subscription_id=subscription_id,
                                                  arm_base_url=ARM_BASE_URL)
 
@@ -127,7 +131,7 @@ class Workspace:
         self.storage = storage
         self.user_agent = user_agent
 
-        if self.user_agent == None:
+        if self.user_agent is None:
             self.user_agent = os.environ.get("AZURE_QUANTUM_PYTHON_APPID", "azure-quantum-async")
 
         # Convert user-provided location into names
@@ -136,13 +140,17 @@ class Workspace:
         # "West US" should be converted to "westus".
         self.location = "".join(location.split()).lower()
 
+        # Create QuantumClient
+        self._client = self._create_client()
+
+    def _create_client(self) -> QuantumClient:
         base_url = BASE_URL(self.location)
         logger.debug(
             f"Creating client for: subs:{self.subscription_id},"
             + f"rg={self.resource_group}, ws={self.name}, frontdoor={base_url}"
         )
 
-        self._client = QuantumClient(
+        client = QuantumClient(
             credential=self.credentials,
             subscription_id=self.subscription_id,
             resource_group_name=self.resource_group,
@@ -150,6 +158,7 @@ class Workspace:
             base_url=base_url,
             user_agent=self.user_agent
         )
+        return client
 
     async def _get_linked_storage_sas_uri(
         self, container_name: str, blob_name: str = None
@@ -181,8 +190,8 @@ class Workspace:
         return Job(self, details)
 
     async def list_jobs(
-        self, 
-        name_match: str = None, 
+        self,
+        name_match: str = None,
         status: Optional[JobStatus] = None,
         created_after: Optional[datetime] = None
     ) -> List[Job]:

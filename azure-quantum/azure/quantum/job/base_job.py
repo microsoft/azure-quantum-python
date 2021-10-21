@@ -8,7 +8,6 @@ import uuid
 
 from urllib.parse import urlparse
 from typing import Any, Dict, TYPE_CHECKING
-from urllib.parse import urlparse
 from azure.storage.blob import BlobClient
 
 from azure.quantum.storage import upload_blob, download_blob, ContainerClient
@@ -21,7 +20,7 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
-DEFAULT_TIMEOUT = 300 # Default timeout for waiting for job to complete
+DEFAULT_TIMEOUT = 300  # Default timeout for waiting for job to complete
 
 
 class BaseJob(abc.ABC):
@@ -211,7 +210,7 @@ class BaseJob(abc.ABC):
         input_data: bytes,
         content_type: str,
         blob_name: str = "inputData",
-        encoding = "",
+        encoding: str = "",
         return_sas_token: bool = False
     ) -> str:
         """Upload input data file

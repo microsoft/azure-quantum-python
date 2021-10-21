@@ -114,7 +114,6 @@ class StreamingProblem(SyncStreamingProblem):
             self.terms_queue.put_nowait(terms)
             await uploader_task
 
-
     async def download(self):
         """Downloads the uploaded problem as an instance of `Problem`"""
         if not self.uploaded_uri:

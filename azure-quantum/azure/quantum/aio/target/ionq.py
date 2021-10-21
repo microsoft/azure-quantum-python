@@ -2,13 +2,10 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 ##
-import io
-import json
 from typing import Any, Dict
 
 from azure.quantum.aio.target.target import Target
 from azure.quantum.aio.job.job import Job
-from azure.quantum.aio.workspace import Workspace
 from azure.quantum.target import IonQ as SyncIonQ
 
 
