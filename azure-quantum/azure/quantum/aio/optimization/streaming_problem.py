@@ -14,6 +14,7 @@ from azure.quantum.aio.storage import (
     download_blob,
 )
 from azure.quantum.optimization.streaming_problem import StreamingProblem as SyncStreamingProblem
+from azure.quantum.optimization.streaming_problem import JsonStreamingProblemUploader as SyncJsonStreamingProblemUploader
 from asyncio import create_task
 from queue import Empty
 
@@ -127,7 +128,7 @@ class StreamingProblem(SyncStreamingProblem):
         return Problem.deserialize(contents, self.name)
 
 
-class JsonStreamingProblemUploader:
+class JsonStreamingProblemUploader(SyncJsonStreamingProblemUploader):
     """Helper class for uploading json problem files in chunks.
 
     :param problem: Back-ref to the problem being uploaded
