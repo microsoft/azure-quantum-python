@@ -51,6 +51,7 @@ function PyTestMarkExpr() {
 
 # Copy unit tests without recordings and run Pytest
 Copy-Item -Path (Join-Path $PackageDir "tests" "unit" "*.py") -Destination $PSScriptRoot;
+Copy-Item -Path (Join-Path $PackageDir "tests" "unit" "aio" "*.py") -Destination $PSScriptRoot;
 if (Test-Path Env:AZURE_QUANTUM_CAPABILITIES) {
     Write-Host "##[info]Using AZURE_QUANTUM_CAPABILITIES env variable: $Env:AZURE_QUANTUM_CAPABILITIES"
     $AzureQuantumCapabilities = $Env:AZURE_QUANTUM_CAPABILITIES -Split ";" | ForEach-Object { $_.trim().ToLower() }
