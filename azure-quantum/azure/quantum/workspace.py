@@ -199,43 +199,27 @@ class Workspace:
             resource_group_name=self.resource_group,
             workspace_name=self.name,
             base_url=base_url,
-            user_agent=self.get_full_user_agent()
+            user_agent=self.user_agent
         )
         return client
 
-    def get_full_user_agent(self):
-        full_user_agent = self.user_agent
-        env_app_id = os.environ.get(USER_AGENT_APPID_ENV_VAR_NAME)
-        if env_app_id:
-            if full_user_agent:
-                full_user_agent += f"-{env_app_id}"
-            else:
-                full_user_agent = env_app_id
-        return full_user_agent
-
-    def get_user_agent(self):
-        return self._user_agent
-
-    def set_user_agent(self, value):
-        if value != self._user_agent:
-            self._user_agent = value
-            # We need to recreate the client for it to
-            # pick the new UserAgent
-            if self._client is not None:
-                self._client = self._create_client()
-
     @property
     def user_agent(self):
-        return self.get_full_user_agent()
+        full_user_agent = self._user_agent
+        env_app_id = os.environ.get(USER_AGENT_APPID_ENV_VAR_NAME)
+        if env_app_id:
+            full_user_agent = f"{full_user_agent}-{env_app_id}" if full_user_agent else env_app_id
+        return full_user_agent
 
-    def append_user_agent(self, user_agent: str):
-        if user_agent not in (self.user_agent or ""):
-            # Make sure to use the self.user_agent property setter as
-            # we have some logic in there
-            if self.user_agent:
-                self.user_agent += f"-{user_agent}"
-            else:
-                self.user_agent = user_agent
+    def append_user_agent(self, value: str):
+        if value not in (self._user_agent or ""):
+            new_user_agent = f"{self._user_agent}-{value}" if self._user_agent else value
+            if new_user_agent != self._user_agent:
+                self._user_agent = new_user_agent
+                # We need to recreate the client for it to
+                # pick the new UserAgent
+                if self._client is not None:
+                    self._client = self._create_client()
 
     def _get_jobs_client(self) -> JobsOperations:
         return self._client.jobs

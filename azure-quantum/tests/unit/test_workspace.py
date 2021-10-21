@@ -171,7 +171,6 @@ class TestWorkspace(QuantumTestBase):
                 location=self.location
             )
             assert ws.user_agent is None
-            assert ws.get_full_user_agent() is None
 
             # no UserAgent parameter and with EnvVar AppId
             os.environ[USER_AGENT_APPID_ENV_VAR_NAME] = env_var_app_id
@@ -181,8 +180,7 @@ class TestWorkspace(QuantumTestBase):
                 name=self.workspace_name,
                 location=self.location
             )
-            assert ws.user_agent is None
-            assert ws.get_full_user_agent() == env_var_app_id
+            assert ws.user_agent == env_var_app_id
 
             # with UserAgent parameter and no EnvVar AppId
             os.environ[USER_AGENT_APPID_ENV_VAR_NAME] = ""
@@ -194,7 +192,6 @@ class TestWorkspace(QuantumTestBase):
                 user_agent=user_agent
             )
             assert ws.user_agent == user_agent
-            assert ws.get_full_user_agent() == user_agent
 
             # with very long UserAgent parameter and no EnvVar AppId
             os.environ[USER_AGENT_APPID_ENV_VAR_NAME] = ""
@@ -206,7 +203,6 @@ class TestWorkspace(QuantumTestBase):
                 user_agent=very_long_user_agent
             )
             assert ws.user_agent == very_long_user_agent
-            assert ws.get_full_user_agent() == very_long_user_agent
 
             # with UserAgent parameter and with EnvVar AppId
             os.environ[USER_AGENT_APPID_ENV_VAR_NAME] = env_var_app_id
@@ -217,8 +213,7 @@ class TestWorkspace(QuantumTestBase):
                 location=self.location,
                 user_agent=user_agent
             )
-            assert ws.user_agent == user_agent
-            assert ws.get_full_user_agent() == f"{user_agent}-{env_var_app_id}"
+            assert ws.user_agent == f"{user_agent}-{env_var_app_id}"
 
             # Append with UserAgent parameter and with EnvVar AppId 
             os.environ[USER_AGENT_APPID_ENV_VAR_NAME] = env_var_app_id
@@ -230,8 +225,7 @@ class TestWorkspace(QuantumTestBase):
                 user_agent=user_agent
             )
             ws.append_user_agent("featurex")
-            assert ws.user_agent == f"{user_agent}-featurex"
-            assert ws.get_full_user_agent() == f"{user_agent}-featurex-{env_var_app_id}"
+            assert ws.user_agent == f"{user_agent}-featurex-{env_var_app_id}"
 
             # Append with no UserAgent parameter and no EnvVar AppId 
             os.environ[USER_AGENT_APPID_ENV_VAR_NAME] = ""
@@ -243,7 +237,6 @@ class TestWorkspace(QuantumTestBase):
             )
             ws.append_user_agent("featurex")
             assert ws.user_agent == "featurex"
-            assert ws.get_full_user_agent() == "featurex"
         finally:
             if original_env_app_id:
                 os.environ[USER_AGENT_APPID_ENV_VAR_NAME] = original_env_app_id
