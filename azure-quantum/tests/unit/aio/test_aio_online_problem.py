@@ -11,7 +11,7 @@ from asyncmock import AsyncMock, patch
 from unittest.mock import Mock
 from azure.quantum.aio.optimization import Problem, OnlineProblem
 import azure.quantum.aio.optimization.problem
-from ..common import expected_terms, QuantumTestBase
+from common import expected_terms, QuantumTestBase
 
 
 class TestOnlineProblemClass(QuantumTestBase):

@@ -16,7 +16,7 @@ from azure.quantum.aio.optimization import (
     StreamingProblem
 )
 from azure.quantum.optimization import Term
-from ..common import QuantumTestBase
+from common import QuantumTestBase
 
 
 class TestStreamingProblem(QuantumTestBase):
