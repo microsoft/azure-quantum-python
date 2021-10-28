@@ -13,7 +13,7 @@ from azure.quantum.aio.optimization import Problem
 from azure.quantum.optimization import Term
 import azure.quantum.aio.optimization.problem
 import azure.quantum.aio.job.base_job
-from ..common import expected_terms
+from common import expected_terms
 import numpy
 import os
 

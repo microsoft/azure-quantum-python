@@ -16,7 +16,7 @@ from unittest.mock import patch
 
 from azure.identity import CredentialUnavailableError
 from azure.quantum._authentication import _TokenFileCredential
-from .common import QuantumTestBase
+from common import QuantumTestBase
 
 _AZURE_QUANTUM_SCOPE = "https://quantum.microsoft.com/.default"
 

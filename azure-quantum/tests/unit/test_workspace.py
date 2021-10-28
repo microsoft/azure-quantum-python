@@ -10,7 +10,7 @@ import pytest
 import os
 from azure.quantum import Workspace
 from azure.quantum.workspace import USER_AGENT_APPID_ENV_VAR_NAME
-from .common import QuantumTestBase
+from common import QuantumTestBase
 
 class TestWorkspace(QuantumTestBase):
 

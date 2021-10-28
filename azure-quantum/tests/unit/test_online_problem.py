@@ -9,7 +9,7 @@
 from unittest.mock import Mock, patch
 from azure.quantum.optimization import Problem, OnlineProblem
 import azure.quantum.optimization.problem
-from .common import expected_terms, QuantumTestBase
+from common import expected_terms, QuantumTestBase
 import json
 
 

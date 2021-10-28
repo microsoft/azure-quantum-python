@@ -18,7 +18,7 @@ from azure.quantum.aio.target.microsoft.qio import (
     QuantumMonteCarlo,
     SubstochasticMonteCarlo,
 )
-from ..common import QuantumTestBase
+from common import QuantumTestBase
 
 
 class TestProblem(QuantumTestBase):
