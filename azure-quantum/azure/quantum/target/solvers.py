@@ -221,11 +221,24 @@ are not compressed with gzip encoding. Ignoring compress flag.")
                     f"with problem type {problem.problem_type};"
                     f"Try PopulationAnnealing or SubstochasticMonteCarlo."
                 )
+        if not self.supports_protobuf():
+            raise ValueError(
+                f"Solver type is not compatible"
+                f"for serialization with protobuf;"
+                f"Try PopulationAnnealing or SubstochasticMonteCarlo."
+            )
 
     def supports_grouped_terms(self):
         """
         Return whether or not the Solver class supported grouped terms in the cost function.
         This should be overridden by Solver subclasses which do support grouped terms.
+        """
+        return False
+    
+    def supports_protobuf(self):
+        """
+        Return whether or not the Solver class supports protobuf serialization.
+        This should be overridden by Solver subclasses which do support protobuf.
         """
         return False
 

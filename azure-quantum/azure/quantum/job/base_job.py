@@ -55,6 +55,7 @@ class BaseJob(abc.ABC):
         input_data_format: str = None,
         output_data_format: str = None,
         input_params: Dict[str, Any] = None,
+        serialization_type: str = "application/json"
         **kwargs
     ) -> "BaseJob":
         """Create a new Azure Quantum job based on a raw input_data payload.
@@ -87,6 +88,8 @@ class BaseJob(abc.ABC):
         :type input_params: Dict[str, Any], optional
         :param input_params: Input params for job
         :type input_params: Dict[str, Any]
+        :param serialization_type: optional serialization type, eg: application/json or application/x-protobuf, default is application/json
+        :type serialization_type: str, optional
         :return: Azure Quantum Job
         :rtype: Job
         """
@@ -107,7 +110,8 @@ class BaseJob(abc.ABC):
             input_data=input_data,
             content_type=content_type,
             blob_name=blob_name,
-            encoding=encoding
+            encoding=encoding,
+            serialization_type=serialization_type
         )
 
         # Create and submit job
@@ -212,6 +216,7 @@ class BaseJob(abc.ABC):
         content_type: str,
         blob_name: str = "inputData",
         encoding = "",
+        serialization_type = "application/json",
         return_sas_token: bool = False
     ) -> str:
         """Upload input data file
@@ -226,6 +231,8 @@ class BaseJob(abc.ABC):
         :type blob_name: str, optional
         :param encoding: Encoding, e.g. "gzip", defaults to ""
         :type encoding: str, optional
+        :param serialization_type: Serializtion type, eg: application/json, application/x-protobuf. Default : application/x-protobuf
+        :type serialization_type: str, optional
         :param return_sas_token: Flag to return SAS token as part of URI, defaults to False
         :type return_sas_token: bool, optional
         :return: Uploaded data URI
@@ -241,6 +248,7 @@ class BaseJob(abc.ABC):
             content_type,
             encoding,
             input_data,
+            serialization_type
             return_sas_token=return_sas_token
         )
         return uploaded_blob_uri

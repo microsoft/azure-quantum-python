@@ -84,3 +84,6 @@ class SubstochasticMonteCarlo(Solver):
     
     def supports_grouped_terms(self):
         return True
+    
+    def supports_protobuf(self):
+        return True

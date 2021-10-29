@@ -53,6 +53,8 @@ class Problem:
     :param problem_type: Problem type (ProblemType.pubo or
         ProblemType.ising), defaults to ProblemType.ising
     :type problem_type: ProblemType, optional
+    :param serialization_type: Serialization type, eg: application/json. application/x-protobuf. Default is application/json
+    :type serialization_type: str, optional
     """
 
     def __init__(
@@ -61,6 +63,7 @@ class Problem:
         terms: Optional[List[TermBase]] = None,
         init_config: Optional[Dict[str, int]] = None,
         problem_type: ProblemType = ProblemType.ising,
+        serialization_type: str = "application/json"
     ):
         self.name = name or "Optimization problem"
         self.problem_type = problem_type
@@ -88,27 +91,14 @@ class Problem:
     NUM_VARIABLES_LARGE = 2500
     NUM_TERMS_LARGE = 1e6
 
-    def is_valid_proto_problem(self, provider = None, target=None):
-        """
-        Provider = Microsoft
-        QIOTE Targets
-        No SLC terms
-        """
-        target_names = (
-        "microsoft.substochasticmontecarlo.cpu",
-        "microsoft.substochasticmontecarlo-parameterfree.cpu",
-        "microsoft.populationannealing.cpu",
-        "microsoft.populationannealing-parameterfree.cpu",
-        )
-        return provider == "Microsoft" and target in target_names and len(self.terms_slc) == 0
 
-    def serialize(self, provider = None, target = None) -> Union[str, list]:
+    def serialize(self) -> Union[str, list]:
         """Wrapper function for serialzing. It may serialize to json or protobuf
-        For MS solvers the default will be protobuf except if type is pubo grouped or ising grouped. 
-        These will also be protobuf in the next iteration. 
-        For all external solvers it will be json till the partners choose to support protobuf
         """ 
-        return serialize_to_proto(self) if is_valid_proto_target(provider, target) else serialize_to_json(self)
+        if self.serialization_type == "application/x-protobuf" && len(self.terms_slc) == 0:
+            return self.serialize_to_proto()
+        else:
+            return self.serialize_to_json()
 
     def serialize_to_json(self) -> str:
         """Serializes the problem to a JSON string"""
@@ -192,7 +182,7 @@ class Problem:
             problem name ignoring the serialized value.
         :type name: Optional[str]
         """
-        if content_type == "application/x-protobuf" or type(problem_str) == list :
+        if self.serialization_type == "application/x-protobuf" or type(problem_str) == list :
             deserialize_proto_problem(cls, problem_str,name) 
             else :
                 serialize_to_json(cls,problem_str,name)
@@ -323,28 +313,26 @@ class Problem:
         elif self.problem_type == ProblemType.ising:
             self.problem_type = ProblemType.ising_grouped
             
-    def to_blob(self, compress: bool = False, provider = None, target = None) -> bytes:
+    def to_blob(self, compress: bool = False) -> bytes:
         """Convert problem data to a binary blob.
 
         :param compress: Compress the blob using gzip, defaults to None
-        :type compress: bool, optional
-        :param provider: The provider to which the problem is being submitted, defaults to None
-        :type provider: str, optional
+        :type compress: bool, optional 
         :return: Blob data
         :rtype: bytes
         """
-        input_problem = self.serialize(target)
+        input_problem = self.serialize()
         logger.debug("Input Problem: " + input_problem)
         data = io.BytesIO()
 
-        if is_valid_proto_problem(provide, target):
+        if self.serialization_type == "application/x-protobuf":
             # Write to a series of files to folder and compress
             # QIOTE expects all files to be names "gzipinputfile_pb_{file_count}.pb" at this time
-            folder_name = "gzipinputfile_pb"
+            file_name_prefix = "gzipinputfile_pb"
             file_count = 0
             with tarfile.open(fileobj = data, mode = 'w:gz') as tar:
                 for msg in input_problem:
-                    file_name = folder_name+"_"+str(file_count)+".pb"
+                    file_name = file_name_prefix+"_"+str(file_count)+".pb"
                     info = tarfile.TarInfo(name=file_name)
                     info.size = len(msg)
                     msg_data = io.BytesIO(msg)
@@ -372,8 +360,6 @@ class Problem:
         blob_name: str = "inputData",
         compress: bool = True,
         container_uri: str = None,
-        provider: str = None, 
-        target: str = None
     ):
         """Uploads an optimization problem instance to
         the cloud storage linked with the Workspace.
@@ -388,10 +374,6 @@ class Problem:
         :type compress: bool, optional
         :param container_uri: Optional container URI
         :type container_uri: str
-        :param provider: Optional provder to which the problem is submitted
-        :type provider: str
-        :param target: Optional target to which the problem is submitted
-        :type provider: str
         :return: uri of the uploaded problem
         :rtype: str
         """
@@ -403,8 +385,9 @@ class Problem:
             blob_name = self._blob_name()
 
         encoding = "gzip" if compress else ""
-        content_type = "application/x-protobuf" if is_valid_proto_problem(provider, target) else "application/json"
-        blob = self.to_blob(compress=compress)
+        content_type = "application/json"
+        serialization_type = self.serialization_type
+        blob = self.(compress=compress)
         if container_uri is None:
             container_uri = workspace.get_container_uri(
                 container_name=container_name
@@ -415,6 +398,7 @@ class Problem:
             container_uri=container_uri,
             encoding=encoding,
             content_type= content_type
+            serialization_type = serialization_type
         )
         self.uploaded_blob_params = blob_params
         self.uploaded_blob_uri = input_data_uri
