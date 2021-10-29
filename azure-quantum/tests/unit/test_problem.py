@@ -347,7 +347,8 @@ class TestProblemClass(unittest.TestCase):
         )
 
     def test_serialzie_proto_problem(self):
-        problem_msgs = self.problem.serialize(provider = "Microsoft", target = "microsoft.substochasticmontecarlo.cpu")
+        problem.serialization_type = "application/x-protobuf"
+        problem_msgs = self.problem.serialize()
         self.assertEqual(
             len(problem_msgs), 1
         )
