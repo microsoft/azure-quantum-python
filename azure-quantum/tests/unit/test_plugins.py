@@ -1,4 +1,4 @@
-"""
+
 import unittest
 import warnings
 
@@ -286,4 +286,3 @@ class TestCirq(QuantumTestBase):
                     assert len(result.measurements["q2"]) == 500
                     assert result.measurements["q0"].sum() == result.measurements["q1"].sum()
                     assert result.measurements["q1"].sum() == result.measurements["q2"].sum()
-"""

@@ -216,7 +216,8 @@ class BaseJob(abc.ABC):
         content_type: str,
         blob_name: str = "inputData",
         encoding = "",
-        serialization_type = "application/json",
+        #serialization_type: Optional[str] = "application/json",
+        serialization_type: str = "application/json",
         return_sas_token: bool = False
     ) -> str:
         """Upload input data file
