@@ -14,12 +14,14 @@ import os
 import re
 from unittest.mock import Mock, patch
 from typing import TYPE_CHECKING
+from azure.quantum import problem_pb2
 from azure.quantum.optimization import Problem, ProblemType, Term, SlcTerm
 import azure.quantum.optimization.problem
 from common import expected_terms
-import problem_pb2
+
 
 class TestProblemClass(unittest.TestCase):
+    
     def setUp(self):
         self.mock_ws = Mock()
         self.mock_ws.get_container_uri = Mock(return_value = "mock_container_uri/foo/bar")
@@ -84,7 +86,7 @@ class TestProblemClass(unittest.TestCase):
             k=self.pubo_problem.k,
             c=self.pubo_problem.c
         )
-
+    
     def test_problem_name_serialization(self):
         problem_names = ["test",
                          "my_problem"]
@@ -106,32 +108,32 @@ class TestProblemClass(unittest.TestCase):
             assert problem_json["metadata"]["name"] == problem_name
 
             # deserializes name
-            deserialized_problem = Problem.deserialize(problem_as_json=serialized_problem)
+            deserialized_problem = Problem.deserialize(problem_str=serialized_problem)
             assert problem_name == deserialized_problem.name
 
             new_problem_name = "new_problem_name"
             # use the name passed in the parameter
-            deserialized_problem = Problem.deserialize(problem_as_json=serialized_problem,
+            deserialized_problem = Problem.deserialize(problem_str=serialized_problem,
                                                        name=new_problem_name)
             assert new_problem_name == deserialized_problem.name
 
         # test deserializing a problem that does not have a name in the json
         # and leaving the name as None
         serialized_problem_without_name = '{"cost_function": {"version": "1.0", "type": "ising", "terms": [{"c": 3, "ids": [1, 0]}, {"c": 5, "ids": [2, 0]}]}}'        
-        deserialized_problem = Problem.deserialize(problem_as_json=serialized_problem_without_name)
+        deserialized_problem = Problem.deserialize(problem_str=serialized_problem_without_name)
         assert deserialized_problem.name == "Optimization problem"
 
         # test deserializing a problem that does not have a name in the json
         # and using the name parameter
         new_problem_name = "new_problem_name"
-        deserialized_problem = Problem.deserialize(problem_as_json=serialized_problem_without_name,
+        deserialized_problem = Problem.deserialize(problem_str=serialized_problem_without_name,
                                                    name=new_problem_name)
         assert new_problem_name == deserialized_problem.name
 
         # test deserializing a problem that does not have a name but have a metadata in the json
         # and leaving the name as None
         serialized_problem_without_name = '{"metadata":{"somemetadata":123}, "cost_function": {"version": "1.0", "type": "ising", "terms": [{"c": 3, "ids": [1, 0]}, {"c": 5, "ids": [2, 0]}]}}'        
-        deserialized_problem = Problem.deserialize(problem_as_json=serialized_problem_without_name)
+        deserialized_problem = Problem.deserialize(problem_str=serialized_problem_without_name)
         assert deserialized_problem.name == "Optimization problem"
 
     def test_upload(self):
@@ -345,36 +347,62 @@ class TestProblemClass(unittest.TestCase):
             ),
             self.pubo_problem.terms
         )
-
+    
     def test_serialzie_proto_problem(self):
-        problem.serialization_type = "application/x-protobuf"
-        problem_msgs = self.problem.serialize()
+        problem = Problem(name = "test_proto", problem_type = ProblemType.ising, serialization_type="application/x-protobuf")
+        problem.terms = [
+            Term(c=3, indices=[1, 0]),
+            Term(c=5, indices=[2, 0]),
+            Term(c=3, indices=[1, 0]),
+            Term(c=5, indices=[2, 0]),
+            Term(c=3, indices=[1, 0]),
+            Term(c=5, indices=[2, 0]),
+            Term(c=3, indices=[1, 0]),
+            Term(c=5, indices=[2, 0]),
+            Term(c=3, indices=[1, 0]),
+            Term(c=5, indices=[2, 0]),
+            Term(c=3, indices=[1, 0]),
+            Term(c=5, indices=[2, 0]),
+        ]
+        problem_msgs = problem.serialize()
         self.assertEqual(
             len(problem_msgs), 1
         )
-        proto_problem = problem_msgs[0].ParseFromString()
+        proto_problem = problem_pb2.Problem()
+        proto_problem.ParseFromString(problem_msgs[0])
         self.assertEqual(
-            proto_problem.type, 
+            proto_problem.cost_function.type, 
             problem_pb2.Problem.ProblemType.ISING
         )
-
-""""    
-    def test_deserialzie_proto_problem(self):
-        problem_msgs = self.problem.serialize(provide = "Microsoft", target = "microsoft.substochasticmontecarlo.cpu")
-        problem = Problem.deserialize(problem_msgs, "proto_problem")
         self.assertEqual(
-            problem.type, Problem.ProblemType.ising
+            len(proto_problem.cost_function.terms),
+            12
         )
-        self.assertEqual(
-            problem.
-        )
-
-    def test_download_proto_problem(self):
-        return
     
-    def test_upload_proto_problem(self):
-        return
+    def test_deserialize_proto_problem(self):
+        problem = Problem(name = "test_proto", problem_type = ProblemType.pubo, serialization_type="application/x-protobuf")
+        problem.terms = [
+            Term(c=3, indices=[1, 0]),
+            Term(c=5, indices=[2, 0]),
+            Term(c=3, indices=[1, 0]),
+            Term(c=5, indices=[2, 0]),
+            Term(c=3, indices=[1, 0]),
+            Term(c=5, indices=[2, 0]),
+            Term(c=3, indices=[1, 0]),
+            Term(c=5, indices=[2, 0]),
+            Term(c=3, indices=[1, 0]),
+            Term(c=5, indices=[2, 0]),
+            Term(c=3, indices=[1, 0]),
+            Term(c=5, indices=[2, 0]),
+        ]
+        problem_msgs = problem.serialize()
+        deserialized_problem = Problem.deserialize(problem_msgs)
+        self.assertEqual( len(deserialized_problem.terms), 12 )
+        self.assertEqual(deserialized_problem.problem_type, ProblemType.pubo)
+        self.assertEqual(deserialized_problem.name, problem.name)
+        #self.assertEqual( len(deserialized_problem.terms), 12 )
 
+    """
     def tearDown(self):
         test_files = [
             self.default_qubo_filename,
@@ -386,4 +414,4 @@ class TestProblemClass(unittest.TestCase):
         for test_file in test_files:
             if os.path.isfile(test_file):
                 os.remove(test_file)
-"""
+    """       

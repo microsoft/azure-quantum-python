@@ -80,4 +80,4 @@ class PopulationAnnealing(Solver):
         return True
     
     def supports_protobuf(self):
-    return True
+        return True

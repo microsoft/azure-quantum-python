@@ -11,6 +11,8 @@ from .workspace import *
 
 from ._client.models._quantum_client_enums import JobStatus
 
+from .problem_pb2 import *
+
 logger = logging.getLogger(__name__)
 logger.info(f"version: {__version__}")
 

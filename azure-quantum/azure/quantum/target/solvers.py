@@ -221,12 +221,13 @@ are not compressed with gzip encoding. Ignoring compress flag.")
                     f"with problem type {problem.problem_type};"
                     f"Try PopulationAnnealing or SubstochasticMonteCarlo."
                 )
-        if not self.supports_protobuf():
-            raise ValueError(
-                f"Solver type is not compatible"
-                f"for serialization with protobuf;"
-                f"Try PopulationAnnealing or SubstochasticMonteCarlo."
-            )
+        if problem.serialization_type == "application/x-protobuf":
+            if not self.supports_protobuf():
+                raise ValueError(
+                    f"Solver type is not compatible"
+                    f"for serialization with protobuf;"
+                    f"Try PopulationAnnealing or SubstochasticMonteCarlo."
+                )
 
     def supports_grouped_terms(self):
         """

@@ -11,7 +11,7 @@ import json
 import numpy
 import os
 import tarfile
-import problem_pb2
+
 
 from typing import List, Tuple, Union, Dict, Optional, TYPE_CHECKING
 from enum import Enum
@@ -20,9 +20,12 @@ from azure.quantum.storage import (
     ContainerClient,
     download_blob,
     BlobClient,
+    download_blob_metadata
 )
 from azure.quantum.job.job import Job
 from azure.quantum.target.target import Target
+from azure.quantum import problem_pb2
+from google.protobuf import struct_pb2
 
 logger = logging.getLogger(__name__)
 
@@ -37,6 +40,10 @@ class ProblemType(str, Enum):
     pubo_grouped = 2
     ising_grouped = 3
 
+proto_types = {
+    ProblemType.ising: problem_pb2.Problem.ProblemType.ISING,
+    ProblemType.pubo: problem_pb2.Problem.ProblemType.PUBO, 
+}
 
 class Problem:
     """Problem to submit to the service.
@@ -63,13 +70,14 @@ class Problem:
         terms: Optional[List[TermBase]] = None,
         init_config: Optional[Dict[str, int]] = None,
         problem_type: ProblemType = ProblemType.ising,
-        serialization_type: str = "application/json"
+        serialization_type: Optional[str] = None
     ):
         self.name = name or "Optimization problem"
         self.problem_type = problem_type
         self.init_config = init_config
         self.uploaded_blob_uri = None
         self.uploaded_blob_params = None
+        self.serialization_type = serialization_type
 
         # each type of term has its own section for quicker serialization
         self.terms = []
@@ -95,7 +103,7 @@ class Problem:
     def serialize(self) -> Union[str, list]:
         """Wrapper function for serialzing. It may serialize to json or protobuf
         """ 
-        if self.serialization_type == "application/x-protobuf" && len(self.terms_slc) == 0:
+        if (self.serialization_type == "application/x-protobuf" and len(self.terms_slc) == 0):
             return self.serialize_to_proto()
         else:
             return self.serialize_to_json()
@@ -112,7 +120,6 @@ class Problem:
                 "terms": [term.to_dict() for term in self.terms]
             }
         }
-
         if len(self.terms_slc) > 0:
             result["cost_function"]["terms_slc"] = [term.to_dict() for term in self.terms_slc]
 
@@ -130,18 +137,16 @@ class Problem:
         Every message in the list is a byte string
         """
         proto_messages = []
-        proto_types = {
-            ProblemType.ISING, problem_pb2.Problem.ProblemType.ISING,
-            ProblemType.PUBO, problem_pb2.Problem.ProblemType.PUBO, 
-        }
         msg_count = 0
         terms_remaining = len(self.terms)
         while terms_remaining > 0:   
             proto_problem = problem_pb2.Problem()
             cost_function = proto_problem.cost_function
+            metadata = proto_problem.metadata
             if msg_count == 0:
-                cost_function.version = self.version
-                cost_function.type = proto_types[self.type]
+                #cost_function.version = self.version
+                cost_function.type = proto_types[self.problem_type]
+                metadata["name"] = self.name
             # add 1000 terms per proto message
             if terms_remaining - 1000 > 0: 
                 for i in range (1000):
@@ -159,40 +164,14 @@ class Problem:
             msg_count += 1
             terms_remaining -= 1000
             proto_messages.append(proto_problem.SerializeToString())
-        
         return proto_messages
     
-    @classmethod
-    def deserialize(
-        cls, 
-        problem_str: Union[list,str], 
-        name:Optional[str] = None, 
-        content_type = None):
-        """Deserializes the problem from a
-        JSON string or protobuf messages serialized with Problem.serialize()
-        Also used to deserialize the messages downloaded from the blob
-
-        :param problem_str:
-            The string to be deserialized to a `Problem` instance
-        :type problem_str: str
-        :param name: 
-            The name of the problem is optional, since it will try 
-            to read the serialized name from the json payload.
-            If this parameter is not empty, it will use it as the
-            problem name ignoring the serialized value.
-        :type name: Optional[str]
-        """
-        if self.serialization_type == "application/x-protobuf" or type(problem_str) == list :
-            deserialize_proto_problem(cls, problem_str,name) 
-            else :
-                serialize_to_json(cls,problem_str,name)
-
     @classmethod
     def deserialize_from_json(
             cls, 
             problem_as_json: str, 
             name: Optional[str] = None
-        ):
+        ) -> Problem:
 
         result = json.loads(problem_as_json)
 
@@ -217,30 +196,64 @@ class Problem:
         return problem
     
     @classmethod
-    def deserialize_proto_problem(
+    def deserialize_from_proto(
         cls,
         problem_as_str: Union[list,str],
         name: Optional[str] = None
-    ):
-    msg_count = 0
-    problem = Problem(
-        name = name
-    )
-    for msg in problem_as_str:
+    ) -> Problem:
+        msg_count = 0
 
-        proto_problem = problem_pb2.Problem()
-        proto_problem.ParseFromString(msg)
-        if msg_count == 0:
-            problem.type = proto_problem.type
-        for msg_term in proto_problem.terms:
-            term = Term(
-                c = msg_term.c
-            )
-            for msg_term_id in msg_term.ids:
-                term.indices.append(msg_term_id)
-            problem.terms.append(term)
-    
-    return problem
+        problem = Problem(
+            name = name
+        )
+
+        for msg in problem_as_str:
+            proto_problem = problem_pb2.Problem()
+            proto_problem.ParseFromString(msg)
+            if msg_count == 0:
+                for qdk_type, proto_type in proto_types.items():
+                    if proto_problem.cost_function.type == proto_type:
+                        problem.problem_type = qdk_type
+                metadata = proto_problem.metadata               
+                if name is None:
+                    name = metadata["name"]
+                    problem.name = name
+            for msg_term in proto_problem.cost_function.terms:
+                term = Term(
+                    c = msg_term.c
+                )
+                term.ids = []
+                for msg_term_id in msg_term.ids:
+                    term.ids.append(msg_term_id)
+                problem.terms.append(term)
+        
+        return problem
+
+    @classmethod
+    def deserialize(
+        cls, 
+        problem_str: Union[list,str], 
+        name:Optional[str] = None, 
+        serialization_type:Optional[str] = None) -> Problem:
+        """Deserializes the problem from a
+        JSON string or protobuf messages serialized with Problem.serialize()
+        Also used to deserialize the messages downloaded from the blob
+
+        :param problem_str:
+            The string to be deserialized to a `Problem` instance
+        :type problem_str: str
+        :param name: 
+            The name of the problem is optional, since it will try 
+            to read the serialized name from the json payload.
+            If this parameter is not empty, it will use it as the
+            problem name ignoring the serialized value.
+        :type name: Optional[str]
+        """
+        if serialization_type == "application/x-protobuf" or type(problem_str) == list :
+            return Problem.deserialize_from_proto(problem_str,name) 
+        else :
+            return Problem.deserialize_from_json(problem_str,name)
+
 
 
     def add_term(self, c: Union[int, float], indices: List[int]):
@@ -387,7 +400,8 @@ class Problem:
         encoding = "gzip" if compress else ""
         content_type = "application/json"
         serialization_type = self.serialization_type
-        blob = self.(compress=compress)
+
+        blob = self.to_blob(compress=compress)
         if container_uri is None:
             container_uri = workspace.get_container_uri(
                 container_name=container_name
@@ -397,7 +411,7 @@ class Problem:
             blob_name=blob_name,
             container_uri=container_uri,
             encoding=encoding,
-            content_type= content_type
+            content_type= content_type,
             serialization_type = serialization_type
         )
         self.uploaded_blob_params = blob_params
@@ -514,8 +528,9 @@ class Problem:
         blob_name = blob_client.blob_name
         blob = container_client.get_blob_client(blob_name)
         contents = download_blob(blob.url)
-        content_type = download_blob_properties(blob.url).content_type
-        return Problem.deserialize(contents, self.name, content_type)
+        blob_metadata = download_blob_metadata(blob.url)
+        serialization_type = blob_metadata["serializationtype"] if "serializationtype" in blob_metadata else None
+        return Problem.deserialize(contents, self.name, serialization_type)
 
     def get_terms(self, id: int) -> List[TermBase]:
         """Given an index the function will return

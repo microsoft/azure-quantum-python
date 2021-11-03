@@ -55,7 +55,7 @@ class BaseJob(abc.ABC):
         input_data_format: str = None,
         output_data_format: str = None,
         input_params: Dict[str, Any] = None,
-        serialization_type: str = "application/json"
+        serialization_type: str = "application/json",
         **kwargs
     ) -> "BaseJob":
         """Create a new Azure Quantum job based on a raw input_data payload.
@@ -248,7 +248,7 @@ class BaseJob(abc.ABC):
             content_type,
             encoding,
             input_data,
-            serialization_type
+            serialization_type,
             return_sas_token=return_sas_token
         )
         return uploaded_blob_uri

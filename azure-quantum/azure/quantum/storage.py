@@ -13,8 +13,7 @@ from azure.storage.blob import (
     ContentSettings,
     generate_blob_sas,
     generate_container_sas,
-    BlobType,
-    BlobProperties
+    BlobType
 )
 from datetime import datetime, timedelta
 from enum import Enum
@@ -104,21 +103,21 @@ def upload_blob(
     content_settings = ContentSettings(
         content_type=content_type, content_encoding=content_encoding
     )
-    blob_properties = BlobProperties(
-        metadata = 
-        {
-            "SerializationType" : serialization_type
-        }
-    )
+    
+    metadata = {
+        "serializationtype" : serialization_type
+    }
+   
     blob = container.get_blob_client(blob_name)
-    blob.upload_blob(data, content_settings=content_settings, blob_properties = blob_properties)
+    
+    blob.upload_blob(data, content_settings=content_settings)
     logger.debug(f"  - blob '{blob_name}' uploaded. generating sas token.")
 
     if return_sas_token:
         uri = get_blob_uri_with_sas_token(blob)
     else:
         uri = remove_sas_token(blob.url)
-
+    set_blob_metadata(blob.url, metadata)
     logger.debug(f"  - blob access url: '{uri}'.")
 
     return uri
