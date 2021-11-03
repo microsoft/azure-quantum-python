@@ -18,6 +18,8 @@ from azure.quantum import problem_pb2
 from azure.quantum.optimization import Problem, ProblemType, Term, SlcTerm
 import azure.quantum.optimization.problem
 from common import expected_terms
+import numpy
+import os
 
 
 class TestProblemClass(unittest.TestCase):

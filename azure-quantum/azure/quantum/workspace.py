@@ -36,6 +36,7 @@ logger = logging.getLogger(__name__)
 __all__ = ["Workspace"]
 
 DEFAULT_CONTAINER_NAME_FORMAT = "job-{job_id}"
+USER_AGENT_APPID_ENV_VAR_NAME = "AZURE_QUANTUM_PYTHON_APPID"
 
 
 def sdk_environment(name):
@@ -72,6 +73,7 @@ else:
             or f"https://{location}.quantum.azure.com/"
         )
     ARM_BASE_URL = "https://management.azure.com/"
+
 
 class Workspace:
     """Represents an Azure Quantum workspace.
@@ -174,10 +176,7 @@ class Workspace:
         self.resource_group = resource_group
         self.subscription_id = subscription_id
         self.storage = storage
-        self.user_agent = user_agent
-
-        if self.user_agent == None:
-            self.user_agent = os.environ.get("AZURE_QUANTUM_PYTHON_APPID")
+        self._user_agent = user_agent
 
         # Convert user-provided location into names
         # recognized by Azure resource manager.
@@ -204,6 +203,35 @@ class Workspace:
             user_agent=self.user_agent
         )
         return client
+
+    @property
+    def user_agent(self):
+        """
+        Get the Workspace's UserAgent that is sent to the service via the header.
+        Uses the value specified during initialization and appends the environment
+        variable AZURE_QUANTUM_PYTHON_APPID if specified.
+        """
+        full_user_agent = self._user_agent
+        env_app_id = os.environ.get(USER_AGENT_APPID_ENV_VAR_NAME)
+        if env_app_id:
+            full_user_agent = f"{full_user_agent}-{env_app_id}" if full_user_agent else env_app_id
+        return full_user_agent
+
+    def append_user_agent(self, value: str):
+        """
+        Append a new value to the Workspace's UserAgent and re-initialize the
+        QuantumClient. The values are appended using a dash.
+        
+        :param value: UserAgent value to add, e.g. "azure-quantum-<plugin>"
+        """
+        if value not in (self._user_agent or ""):
+            new_user_agent = f"{self._user_agent}-{value}" if self._user_agent else value
+            if new_user_agent != self._user_agent:
+                self._user_agent = new_user_agent
+                # We need to recreate the client for it to
+                # pick the new UserAgent
+                if self._client is not None:
+                    self._client = self._create_client()
 
     def _get_jobs_client(self) -> JobsOperations:
         return self._client.jobs
@@ -252,8 +280,8 @@ class Workspace:
         return Job(self, details)
 
     def list_jobs(
-        self, 
-        name_match: str = None, 
+        self,
+        name_match: str = None,
         status: Optional[JobStatus] = None,
         created_after: Optional[datetime] = None
     ) -> List[Job]:

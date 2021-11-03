@@ -78,6 +78,26 @@ function Use-CondaEnv {
     Write-Host "##[info]Activated Conda env: $(Get-PythonConfiguration | Out-String)"
 }
 
+function Install-Package() {
+    param(
+      [string] $EnvName,
+      [string] $PackageName,
+      [bool] $FromSource
+    )
+    # Activate env
+    Use-CondaEnv $EnvName
+    # Install package
+    if ($True -eq $FromSource) {
+      $ParentPath = Split-Path -parent $PSScriptRoot
+      $AbsPackageDir = Join-Path $ParentPath $PackageName
+      Write-Host "##[info]Install package $AbsPackageDir in development mode for env $EnvName"
+      pip install -e $AbsPackageDir
+    } else {
+      Write-Host "##[info]Install package $PackageName for env $EnvName"
+      pip install $PackageName
+    }
+}
+
 function Get-PythonConfiguration {
     <#
         .SYNOPSIS

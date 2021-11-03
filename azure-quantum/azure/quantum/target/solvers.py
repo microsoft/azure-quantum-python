@@ -64,12 +64,15 @@ class Solver(Target):
         output_data_format="microsoft.qio-results.v2",
         nested_params: bool = True,
         force_str_params: bool = False,
+        params: dict = None,
         **kwargs
     ):
         self.provider_id = provider_id
         self.nested_params = nested_params
         self.force_str_params = force_str_params
         self.params = {"params": {}} if nested_params else {}
+        params = params or {}
+        name = self._switch_name(name, **params)
 
         super().__init__(
             workspace=workspace,
@@ -81,11 +84,21 @@ class Solver(Target):
             encoding="gzip",
             **kwargs
         )
+ 
+        self._set_params(**params)
+        self._check_params(**params)
+
 
     """Constants that define thresholds for submission warnings
     """
     SWEEPS_WARNING = 10000
     TIMEOUT_WARNING = 600
+
+    def _switch_name(self, name, **params):
+        return name
+
+    def _check_params(self, **params):
+        pass
 
     @staticmethod
     def _encode_input_data(data: "Problem") -> bytes:
@@ -175,6 +188,10 @@ are not compressed with gzip encoding. Ignoring compress flag.")
                 self.params["params"] if self.nested_params else self.params
             )
             params[name] = str(value) if self.force_str_params else value
+
+    def _set_params(self, **params):
+        for param_name, param in params.items():
+            self.set_one_param(param_name, param)
 
     def set_number_of_solutions(self, number_of_solutions: int):
         """Sets the number of solutions to return.

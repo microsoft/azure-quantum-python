@@ -8,7 +8,7 @@ from .term import *
 from .problem import *
 from .streaming_problem import *
 from .online_problem import *
-from azure.quantum.target import Solver
+from azure.quantum.target.solvers import *
 from azure.quantum.target.microsoft.qio import (
     ParallelTempering,
     PopulationAnnealing,

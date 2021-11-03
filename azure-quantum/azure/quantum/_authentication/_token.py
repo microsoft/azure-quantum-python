@@ -18,12 +18,12 @@ except ImportError:
 
 if TYPE_CHECKING:
     # pylint:disable=unused-import,ungrouped-imports
-    from typing import Any, Optional
-    from azure.core.credentials import AccessToken
+    from typing import Any
 
 _LOGGER = logging.getLogger(__name__)
 
-_TOKEN_FILE_ENV_VARIABLE="AZURE_QUANTUM_TOKEN_FILE"
+_TOKEN_FILE_ENV_VARIABLE = "AZURE_QUANTUM_TOKEN_FILE"
+
 
 class _TokenFileCredential(object):
     """
@@ -70,13 +70,11 @@ class _TokenFileCredential(object):
             raise CredentialUnavailableError(message="Token already expired at {}".format(time.asctime(time.gmtime(token.expires_on))))
 
         return token
-    
+
     def _parse_token_file(self, path):
         # type: (*str) -> AccessToken
-                
         with open(path, "r") as file:
             data = json.load(file)
-            expires_on = int(data["expires_on"]) / 1000 # Convert ms to seconds, since python time.time only handles epoch time in seconds
+            expires_on = int(data["expires_on"]) / 1000  # Convert ms to seconds, since python time.time only handles epoch time in seconds
             token = AccessToken(data["access_token"],  expires_on)
-
-        return token
+            return token

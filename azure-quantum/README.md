@@ -1,87 +1,95 @@
-# Python SDK for Azure Quantum #
+![Azure Quantum logo](https://raw.githubusercontent.com/microsoft/qdk-python/main/azure-quantum/Azure-Quantum-logo.png)
 
-The `azure-quantum` package for Python provides functionality for interacting with Azure Quantum workspaces,
-including creating jobs, listing jobs, and retrieving job results.
+# Azure Quantum #
 
-For details on how to get started with Azure Quantum, please visit https://azure.com/quantum.
+[![Build Status](https://dev.azure.com/ms-quantum-public/Microsoft%20Quantum%20(public)/_apis/build/status/microsoft.qdk-python?branchName=main)](https://dev.azure.com/ms-quantum-public/Microsoft%20Quantum%20(public)/_build/latest?definitionId=32&branchName=main) [![PyPI version](https://badge.fury.io/py/azure-quantum.svg)](https://badge.fury.io/py/azure-quantum)
 
-You can also try our [Quantum Computing Fundamentals](https://aka.ms/learnqc) learning path to get familiar with the basic concepts of quantum computing, build quantum programs, and identify the kind of problems that can be solved.
+Azure Quantum is Microsoft's cloud service for running Quantum Computing circuits or solving Optimization problems with our quantum partners and technologies. The `azure-quantum` package for Python provides functionality for interacting with Azure Quantum workspaces,
+including creating jobs, listing jobs, and retrieving job results. For more information, view the [Azure Quantum Documentation](https://docs.microsoft.com/azure/quantum).
 
-## Installing with pip ##
+This package supports submitting quantum circuits or problem definitions written with Python. To submit quantum programs written with Q#, Microsoft's Domain-specific language for Quantum Programming, view [Submit Q# Jobs to Azure Quantum](https://docs.microsoft.com/azure/quantum/how-to-submit-jobs).
+
+## Installation ##
+
+The package is released on PyPI and can be installed via `pip`:
 
 ```bash
 pip install azure-quantum
 ```
 
-## Development ##
-
-The best way to install all the Python pre-reqs packages is to create a new Conda environment.
-Run at the root of the `azure-quantum` directory:
+To use `azure-quantum` for submitting quantum circuits expressed with [Qiskit](https://pypi.org/project/qiskit), install with optional dependencies:
 
 ```bash
-conda env create -f environment.yml
+pip install azure-quantum[qiskit]
 ```
 
-Then to activate the environment:
+To use `azure-quantum` for submitting quantum circuits expressed with [Cirq](https://pypi.org/project/cirq), install with optional dependencies:
 
 ```bash
-conda activate azurequantum
+pip install azure-quantum[cirq]
 ```
 
-In case you have created the conda environment a while ago, you can make sure you have the latest versions of all dependencies by updating your environment:
+## Getting started and Quickstart guides ##
 
-```bash
-conda env update -f environment.yml --prune
+To work in Azure Quantum, you need an Azure subscription. If you don't have an Azure subscription, create a [free account](https://azure.microsoft.com/free/). Follow the [Create an Azure Quantum workspace](https://docs.microsoft.com/azure/quantum/how-to-create-workspace) how-to guide to set up your Workspace and enable your preferred providers.
+
+To get started, visit the following Quickstart guides:
+
+- [Quickstart: Submit a circuit with Qiskit](https://docs.microsoft.com/en-us/azure/quantum/quickstart-microsoft-qiskit)
+- [Quickstart: Submit a circuit with Cirq](https://docs.microsoft.com/azure/quantum/quickstart-microsoft-qiskit)
+- [Quickstart: Submit a circuit with a provider-specific format](https://docs.microsoft.com/azure/quantum/quickstart-microsoft-provider-format).
+- [Quickstart: Solve a simple optimization problem](https://docs.microsoft.com/azure/quantum/quickstart-microsoft-qio?pivots=platform-microsoft#express-a-simple-problem).
+
+## General usage ##
+
+To connect to your Azure Quantum Workspace, go to the [Azure Portal](https://portal.azure.com), navigate to your Workspace and copy-paste the resource ID and location into the code snippet below.
+
+```python
+from azure.quantum import Workspace
+
+# Enter your Workspace details (resource ID and location) below
+workspace = Workspace(
+    resource_id="",
+    location=""
+)
 ```
 
-### Install the local development package ###
+### List all targets ###
 
-To install the package in development mode, run:
+To list all targets that are available to your workspace, run
 
-```bash
-pip install -e .
+```python
+workspace.get_targets()
 ```
 
-### Unit tests ###
+### Submit a quantum circuit or optimization problem ###
 
-To run the unit tests, simply run `pytest` from the root of the `azure-quantum` directory:
+First, define a quantum circuit or optimization problem, and create a job by submitting it to one of the available targets:
 
-```bash
-pytest
+```python
+# Enter target name below
+target = workspace.get_targets("")
+
+# Submit quantum circuit or optimization problem
+job = target.submit(problem)
+
+# Wait for job to complete and fetch results
+result = job.get_results()
 ```
 
-To run the a specific unit test class, run:
+## Contributing ##
 
-```bash
-pytest ./tests/unit/test_job.py
-```
+For details on contributing to this repository, see the [contributing guide](../CONTRIBUTING.md).
 
-To run the a specific unit test case, run:
+This project welcomes contributions and suggestions. Most contributions require you to agree to a Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us the rights to use your contribution. For details, visit
+https://cla.microsoft.com.
 
-```bash
-pytest -k test_job_refresh
-```
+When you submit a pull request, a CLA-bot will automatically determine whether you need to provide a CLA and decorate the PR appropriately (e.g., label, comment). Simply follow the instructions provided by the bot. You will only need to do this once across all repositories using our CLA.
 
-## Building the `azure-quantum` Package ##
+This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/).
+For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/)
+or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
 
-The Azure Quantum Python SDK uses a standard `setuptools`-based packaging strategy.
-To build a platform-independent wheel, run the setup script with `bdist_wheel` instead:
+## Support ##
 
-```bash
-cd src/Python/
-python setup.py bdist_wheel
-```
-
-By default, this will create a `azure-quantum` wheel in `dist/` with the version number set to 0.0.0.1.
-To provide a more useful version number, set the `PYTHON_VERSION` environment variable before running `setup.py`.
-
-## Environment Variables ##
-In addition to the [common Azure SDK environment variables](https://azure.github.io/azure-sdk/general_azurecore.html#environment-variables), you can also set the following environment variables to change the behaviour of the Azure Quantum SDK for Python:
-| Environment Variable             | Description                                                            |
-| -------------------------------- | ---------------------------------------------------------------------- |
-| AZURE_QUANTUM_PYTHON_APPID       | Prefixes the HTTP User-Agent header with the specified value           |
-
-
-## Support and Q&A ##
-
-If you have questions about the Quantum Development Kit and the Q# language, or if you encounter issues while using any of the components of the kit, you can reach out to the quantum team and the community of users in [Stack Overflow](https://stackoverflow.com/questions/tagged/q%23) and in [Quantum Computing Stack Exchange](https://quantumcomputing.stackexchange.com/questions/tagged/q%23) tagging your questions with **q#**.
+If you run into any problems or bugs using this package, please head over to the [issues](https://github.com/microsoft/qdk-python/issues) page and open a new issue, if it does not already exist.

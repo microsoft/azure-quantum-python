@@ -9,6 +9,7 @@
 import pytest
 import os
 from azure.quantum import Workspace
+from azure.quantum.workspace import USER_AGENT_APPID_ENV_VAR_NAME
 from common import QuantumTestBase
 
 class TestWorkspace(QuantumTestBase):
@@ -25,7 +26,7 @@ class TestWorkspace(QuantumTestBase):
         assert ws.subscription_id == self.subscription_id
         assert ws.resource_group == self.resource_group
         assert ws.name == self.workspace_name
-        assert ws.location.lower() == self.location.lower()
+        assert ws.location.lower().replace(" ", "") == self.location.lower().replace(" ", "")
 
         ws = Workspace(
             subscription_id=self.subscription_id,
@@ -84,13 +85,36 @@ class TestWorkspace(QuantumTestBase):
         with pytest.raises(ValueError):
             Workspace(storage=storage)
 
-    def test_workspace_get_targets(self):
+    @pytest.mark.ionq
+    @pytest.mark.live_test
+    def test_workspace_get_targets_ionq(self):
         ws = self.create_workspace()
         targets = ws.get_targets()
         assert None not in targets
         test_targets = set([
             'honeywell.hqs-lt-s1-apival',
-            'ionq.simulator',
+            'ionq.simulator'
+        ])
+        assert test_targets.issubset(set([t.name for t in targets]))
+    
+    @pytest.mark.honeywell
+    @pytest.mark.live_test
+    def test_workspace_get_targets_honeywell(self):
+        ws = self.create_workspace()
+        targets = ws.get_targets()
+        assert None not in targets
+        test_targets = set([
+            'honeywell.hqs-lt-s1-apival'
+        ])
+        assert test_targets.issubset(set([t.name for t in targets]))
+    
+    @pytest.mark.qio
+    @pytest.mark.live_test
+    def test_workspace_get_targets_qio(self):
+        ws = self.create_workspace()
+        targets = ws.get_targets()
+        assert None not in targets
+        test_targets = set([
             'microsoft.paralleltempering-parameterfree.cpu',
             'microsoft.populationannealing.cpu',
             'microsoft.qmc.cpu',
@@ -100,6 +124,10 @@ class TestWorkspace(QuantumTestBase):
         ])
         assert test_targets.issubset(set([t.name for t in targets]))
 
+    @pytest.mark.ionq
+    @pytest.mark.live_test
+    def test_workspace_get_target_ionq(self):
+        ws = self.create_workspace()
         target = ws.get_targets("ionq.qpu")
         assert target.average_queue_time is not None
         assert target.current_availability is not None
@@ -115,43 +143,102 @@ class TestWorkspace(QuantumTestBase):
             target.name = "foo"
             target.refresh()
 
+    @pytest.mark.live_test
     def test_workspace_job_quotas(self):
         ws = self.create_workspace()
         quotas = ws.get_quotas()
         assert len(quotas) > 0
         assert "dimension" in quotas[0]
-        assert "scope" in quotas [0]
-        assert "provider_id" in quotas [0]
-        assert "utilization" in quotas [0]
-        assert "holds" in quotas [0]
-        assert "limit" in quotas [0]
-        assert "period" in quotas [0]
+        assert "scope" in quotas[0]
+        assert "provider_id" in quotas[0]
+        assert "utilization" in quotas[0]
+        assert "holds" in quotas[0]
+        assert "limit" in quotas[0]
+        assert "period" in quotas[0]
 
     def test_workspace_user_agent_appid(self):
-        ws = Workspace(
-            subscription_id=self.subscription_id,
-            resource_group=self.resource_group,
-            name=self.workspace_name,
-            location=self.location
-        )
-        assert ws.user_agent == os.environ.get("AZURE_QUANTUM_PYTHON_APPID")
+        env_var_app_id = "MyEnvVarAppId"
+        user_agent = "MyUserAgentAppId"
+        very_long_user_agent = "MyVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryLongUserAgentAppId"
+        original_env_app_id = os.environ.get(USER_AGENT_APPID_ENV_VAR_NAME, "")
+        try:
+            # no UserAgent parameter and no EnvVar AppId
+            os.environ[USER_AGENT_APPID_ENV_VAR_NAME] = ""
+            ws = Workspace(
+                subscription_id=self.subscription_id,
+                resource_group=self.resource_group,
+                name=self.workspace_name,
+                location=self.location
+            )
+            assert ws.user_agent is None
 
-        user_agent = "MyUserAgent"
-        ws = Workspace(
-            subscription_id=self.subscription_id,
-            resource_group=self.resource_group,
-            name=self.workspace_name,
-            location=self.location,
-            user_agent=user_agent
-        )
-        assert ws.user_agent == user_agent
+            # no UserAgent parameter and with EnvVar AppId
+            os.environ[USER_AGENT_APPID_ENV_VAR_NAME] = env_var_app_id
+            ws = Workspace(
+                subscription_id=self.subscription_id,
+                resource_group=self.resource_group,
+                name=self.workspace_name,
+                location=self.location
+            )
+            assert ws.user_agent == env_var_app_id
 
-        user_agent = "MyUserAgent123"
-        os.environ["AZURE_QUANTUM_PYTHON_APPID"] = user_agent
-        ws = Workspace(
-            subscription_id=self.subscription_id,
-            resource_group=self.resource_group,
-            name=self.workspace_name,
-            location=self.location,
-        )
-        assert ws.user_agent == user_agent
+            # with UserAgent parameter and no EnvVar AppId
+            os.environ[USER_AGENT_APPID_ENV_VAR_NAME] = ""
+            ws = Workspace(
+                subscription_id=self.subscription_id,
+                resource_group=self.resource_group,
+                name=self.workspace_name,
+                location=self.location,
+                user_agent=user_agent
+            )
+            assert ws.user_agent == user_agent
+
+            # with very long UserAgent parameter and no EnvVar AppId
+            os.environ[USER_AGENT_APPID_ENV_VAR_NAME] = ""
+            ws = Workspace(
+                subscription_id=self.subscription_id,
+                resource_group=self.resource_group,
+                name=self.workspace_name,
+                location=self.location,
+                user_agent=very_long_user_agent
+            )
+            assert ws.user_agent == very_long_user_agent
+
+            # with UserAgent parameter and with EnvVar AppId
+            os.environ[USER_AGENT_APPID_ENV_VAR_NAME] = env_var_app_id
+            ws = Workspace(
+                subscription_id=self.subscription_id,
+                resource_group=self.resource_group,
+                name=self.workspace_name,
+                location=self.location,
+                user_agent=user_agent
+            )
+            assert ws.user_agent == f"{user_agent}-{env_var_app_id}"
+
+            # Append with UserAgent parameter and with EnvVar AppId 
+            os.environ[USER_AGENT_APPID_ENV_VAR_NAME] = env_var_app_id
+            ws = Workspace(
+                subscription_id=self.subscription_id,
+                resource_group=self.resource_group,
+                name=self.workspace_name,
+                location=self.location,
+                user_agent=user_agent
+            )
+            ws.append_user_agent("featurex")
+            assert ws.user_agent == f"{user_agent}-featurex-{env_var_app_id}"
+
+            # Append with no UserAgent parameter and no EnvVar AppId 
+            os.environ[USER_AGENT_APPID_ENV_VAR_NAME] = ""
+            ws = Workspace(
+                subscription_id=self.subscription_id,
+                resource_group=self.resource_group,
+                name=self.workspace_name,
+                location=self.location
+            )
+            ws.append_user_agent("featurex")
+            assert ws.user_agent == "featurex"
+        finally:
+            if original_env_app_id:
+                os.environ[USER_AGENT_APPID_ENV_VAR_NAME] = original_env_app_id
+            else:
+                os.environ.pop(USER_AGENT_APPID_ENV_VAR_NAME)

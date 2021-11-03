@@ -22,6 +22,7 @@ if TYPE_CHECKING:
 
 _log = logging.getLogger(__name__)
 
+
 class Job(BaseJob, FilteredJob):
     """Azure Quantum Job that is submitted to a given Workspace.
 
@@ -95,7 +96,7 @@ class Job(BaseJob, FilteredJob):
                 else poll_wait * 1.5
             )
 
-    def get_results(self, timeout_secs: float=DEFAULT_TIMEOUT) -> dict:
+    def get_results(self, timeout_secs: float = DEFAULT_TIMEOUT) -> dict:
         """Get job results by downloading the results blob from the
         storage container linked via the workspace.
 
