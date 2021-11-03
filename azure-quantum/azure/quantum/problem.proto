@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+import "google/protobuf/struct.proto";
+
+package AzureQuantum;
+message Problem
+{
+    enum ProblemType {
+        PUBO = 0;
+        ISING = 1;
+        MAXSAT = 2;
+        SOFTSPIN = 3;
+    }
+
+    message Term {
+        double c = 1;
+        repeated int64 ids = 2;
+    } 
+
+
+    message CostFunction {
+        ProblemType type = 1;
+        string version = 2;
+        repeated Term terms = 3;
+        map<string, int64> init_config = 4;
+    }
+
+    CostFunction cost_function = 1;
+    google.protobuf.Struct metadata = 2;
+}
