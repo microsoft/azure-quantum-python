@@ -13,7 +13,7 @@ from azure.storage.blob import (
     ContentSettings,
     generate_blob_sas,
     generate_container_sas,
-    BlobType
+    BlobType,
 )
 from datetime import datetime, timedelta
 from enum import Enum
