@@ -335,7 +335,8 @@ class Problem:
         :rtype: bytes
         """
         input_problem = self.serialize()
-        logger.debug("Input Problem: " + input_problem)
+        debug_input_string = input_problem if type(input_problem) is str else b''.join( input_problem).decode()
+        logger.debug("Input Problem: " + debug_input_string)
         data = io.BytesIO()
 
         if self.serialization_type == "application/x-protobuf":
@@ -529,7 +530,8 @@ class Problem:
         blob = container_client.get_blob_client(blob_name)
         contents = download_blob(blob.url)
         blob_metadata = download_blob_metadata(blob.url)
-        serialization_type = blob_metadata["serializationtype"] if "serializationtype" in blob_metadata else None
+        if blob_metadata is not None:
+            serialization_type = blob_metadata["serializationtype"] if "serializationtype" in blob_metadata else None
         return Problem.deserialize(contents, self.name, serialization_type)
 
     def get_terms(self, id: int) -> List[TermBase]:

@@ -158,6 +158,18 @@ class TestProblemClass(unittest.TestCase):
             actual_result = self.problem.download(self.mock_ws)
             assert actual_result.name == "test"
             azure.quantum.optimization.problem.download_blob.assert_called_once()
+    """
+    def test_download_proto(self):
+        with patch("azure.quantum.optimization.problem.download_blob") as mock_download_blob,\
+            patch("azure.quantum.optimization.problem.BlobClient") as mock_blob_client,\
+            patch("azure.quantum.optimization.problem.ContainerClient") as mock_container_client:
+            mock_download_blob.return_value=expected_terms()
+            mock_blob_client.from_blob_url.return_value = Mock()
+            mock_container_client.from_container_url.return_value = Mock()
+            actual_result = self.problem.download(self.mock_ws)
+            assert actual_result.name == "test"
+            azure.quantum.optimization.problem.download_blob.assert_called_once()
+    """
 
     def test_get_term(self):
         terms = self.problem.get_terms(0)
@@ -402,7 +414,7 @@ class TestProblemClass(unittest.TestCase):
         self.assertEqual(deserialized_problem.name, problem.name)
         #self.assertEqual( len(deserialized_problem.terms), 12 )
 
-    """
+    
     def tearDown(self):
         test_files = [
             self.default_qubo_filename,
@@ -414,4 +426,4 @@ class TestProblemClass(unittest.TestCase):
         for test_file in test_files:
             if os.path.isfile(test_file):
                 os.remove(test_file)
-    """       
+      

@@ -9,8 +9,8 @@
 
 import unittest
 from unittest.mock import Mock, patch
-from azure.quantum import Workspace, storage
-from azure.quantum.optimization import Solver, OnlineProblem, Problem
+from azure.quantum import Workspace, storage, problem_pb2
+from azure.quantum.optimization import Solver, OnlineProblem, Problem, Term, ProblemType
 import azure.quantum.storage
 
 
@@ -22,6 +22,9 @@ class TestSolvers(unittest.TestCase):
         # self.mock_ws.submit_job = Mock(return_value = )
         self.testsolver = Solver(
             self.mock_ws, "Microsoft", "SimulatedAnnealing", "json", "json"
+        )
+        self.testprotosolver = Solver(
+            self.mock_ws, "PopulationAnnealing", "Microsoft" ,"microsoft.qio.v2", "microsoft.qio-results.v2"
         )
 
     def test_submit_problem(self):
@@ -44,3 +47,25 @@ class TestSolvers(unittest.TestCase):
         self.testsolver.set_number_of_solutions(100)
         assert param_name in self.testsolver.params["params"]
         assert self.testsolver.params["params"][param_name] == 100
+    
+    def test_submit_proto_problem(self):
+        problem = Problem(name = "proto_test", serialization_type="application/x-protobuf")
+        problem.terms = [
+            Term(c=3, indices=[1,0]),
+            Term(c=5, indices=[2,0])
+        ]
+        with patch("azure.quantum.job.base_job.upload_blob") as mock_upload:
+            job = self.testprotosolver.submit(problem)
+        mock_upload.assert_called_once()
+        self.testsolver.workspace.submit_job.assert_called_once()
+    
+    def test_throw_exception_proto_problem(self):
+        self.testprotosolver.name = "SimulatedAnnealing"
+        problem = Problem(name = "proto_test", serialization_type="application/x-protobuf")
+        problem.terms = [
+            Term(c=3, indices=[1,0]),
+            Term(c=5, indices=[2,0])
+        ]
+        with patch("azure.quantum.job.base_job.upload_blob") as mock_upload:
+            self.assertRaises( ValueError, self.testprotosolver.submit, problem)
+    

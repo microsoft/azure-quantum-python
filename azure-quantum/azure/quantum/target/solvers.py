@@ -49,6 +49,10 @@ class RangeSchedule:
                 '"schedule_type" must be "linear" or "geometric"!'
             )
 
+proto_valid_solver_names = [
+    "PopulationAnnealing",
+    "SubstochasticMonteCarlo"
+]
 
 class Solver(Target):
     def __init__(
@@ -222,7 +226,7 @@ are not compressed with gzip encoding. Ignoring compress flag.")
                     f"Try PopulationAnnealing or SubstochasticMonteCarlo."
                 )
         if problem.serialization_type == "application/x-protobuf":
-            if not self.supports_protobuf():
+            if not self.supports_protobuf() and self.name not in proto_valid_solver_names:
                 raise ValueError(
                     f"Solver type is not compatible"
                     f"for serialization with protobuf;"

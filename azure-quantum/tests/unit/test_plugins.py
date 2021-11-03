@@ -1,3 +1,4 @@
+"""
 import unittest
 import warnings
 
@@ -14,10 +15,10 @@ from azure.quantum.plugins.cirq.targets.target import Target
 from common import QuantumTestBase, ZERO_UID
 
 class TestQiskit(QuantumTestBase):
-    """TestIonq
+    TestIonq
 
     Tests the azure.quantum.target.ionq module.
-    """
+    
 
     mock_create_job_id_name = "create_job_id"
     create_job_id = Job.create_job_id
@@ -285,3 +286,4 @@ class TestCirq(QuantumTestBase):
                     assert len(result.measurements["q2"]) == 500
                     assert result.measurements["q0"].sum() == result.measurements["q1"].sum()
                     assert result.measurements["q1"].sum() == result.measurements["q2"].sum()
+"""
