@@ -46,7 +46,7 @@ def test_number_of_solutions_set(testsolver):
     assert testsolver.params["params"][param_name] == 100
 
 def test_submit_proto_problem(self):
-        problem = Problem(name = "proto_test", serialization_type="application/x-protobuf")
+        problem = Problem(name = "proto_test", content_type="application/x-protobuf")
         problem.terms = [
             Term(c=3, indices=[1,0]),
             Term(c=5, indices=[2,0])
@@ -58,7 +58,7 @@ def test_submit_proto_problem(self):
     
 def test_throw_exception_proto_problem(self):
     self.testprotosolver.name = "SimulatedAnnealing"
-    problem = Problem(name = "proto_test", serialization_type="application/x-protobuf")
+    problem = Problem(name = "proto_test", content_type="application/x-protobuf")
     problem.terms = [
         Term(c=3, indices=[1,0]),
         Term(c=5, indices=[2,0])

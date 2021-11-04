@@ -242,7 +242,7 @@ are not compressed with gzip encoding. Ignoring compress flag.")
                     f"with problem type {problem.problem_type};"
                     f"Try PopulationAnnealing or SubstochasticMonteCarlo."
                 )
-        if problem.serialization_type == "application/x-protobuf":
+        if problem.content_type == "application/x-protobuf":
             if not self.supports_protobuf() and self.name not in proto_valid_solver_names:
                 raise ValueError(
                     f"Solver type is not compatible"
@@ -257,13 +257,6 @@ are not compressed with gzip encoding. Ignoring compress flag.")
         """
         return False
     
-    def supports_protobuf(self):
-        """
-        Return whether or not the Solver class supports protobuf serialization.
-        This should be overridden by Solver subclasses which do support protobuf.
-        """
-        return False
-
     class ScheduleEvolution(Enum):
         INCREASING = 1
         DECREASING = 2

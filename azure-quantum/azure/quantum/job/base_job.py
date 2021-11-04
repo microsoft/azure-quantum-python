@@ -45,7 +45,7 @@ class BaseJob(abc.ABC):
         name: str,
         target: str,
         input_data: bytes,
-        content_type: str,
+        content_type: str = "application/json",
         blob_name: str = "inputData",
         encoding: str = "",
         job_id: str = None,
@@ -54,7 +54,6 @@ class BaseJob(abc.ABC):
         input_data_format: str = None,
         output_data_format: str = None,
         input_params: Dict[str, Any] = None,
-        serialization_type: str = "application/json",
         **kwargs
     ) -> "BaseJob":
         """Create a new Azure Quantum job based on a raw input_data payload.
@@ -86,9 +85,7 @@ class BaseJob(abc.ABC):
         :param input_params: Input parameters, defaults to None
         :type input_params: Dict[str, Any], optional
         :param input_params: Input params for job
-        :type input_params: Dict[str, Any]
-        :param serialization_type: optional serialization type, eg: application/json or application/x-protobuf, default is application/json
-        :type serialization_type: str, optional
+        :type input_params: Dict[str, Any
         :return: Azure Quantum Job
         :rtype: Job
         """
@@ -110,7 +107,6 @@ class BaseJob(abc.ABC):
             content_type=content_type,
             blob_name=blob_name,
             encoding=encoding,
-            serialization_type=serialization_type
         )
 
         # Create and submit job
@@ -212,11 +208,9 @@ class BaseJob(abc.ABC):
     def upload_input_data(
         container_uri: str,
         input_data: bytes,
-        content_type: str,
+        content_type: str = "application/json",
         blob_name: str = "inputData",
         encoding: str = "",
-        #serialization_type: Optional[str] = "application/json",
-        serialization_type: str = "application/json",
         return_sas_token: bool = False
     ) -> str:
         """Upload input data file
@@ -231,8 +225,6 @@ class BaseJob(abc.ABC):
         :type blob_name: str, optional
         :param encoding: Encoding, e.g. "gzip", defaults to ""
         :type encoding: str, optional
-        :param serialization_type: Serializtion type, eg: application/json, application/x-protobuf. Default : application/x-protobuf
-        :type serialization_type: str, optional
         :param return_sas_token: Flag to return SAS token as part of URI, defaults to False
         :type return_sas_token: bool, optional
         :return: Uploaded data URI
@@ -248,7 +240,6 @@ class BaseJob(abc.ABC):
             content_type,
             encoding,
             input_data,
-            serialization_type,
             return_sas_token=return_sas_token
         )
         return uploaded_blob_uri

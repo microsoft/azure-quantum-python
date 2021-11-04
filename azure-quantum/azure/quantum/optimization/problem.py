@@ -20,7 +20,8 @@ from azure.quantum.storage import (
     ContainerClient,
     download_blob,
     BlobClient,
-    download_blob_metadata
+    download_blob_metadata,
+    download_blob_properties
 )
 from azure.quantum.job.job import Job
 from azure.quantum.target.target import Target
@@ -60,8 +61,8 @@ class Problem:
     :param problem_type: Problem type (ProblemType.pubo or
         ProblemType.ising), defaults to ProblemType.ising
     :type problem_type: ProblemType, optional
-    :param serialization_type: Serialization type, eg: application/json. application/x-protobuf. Default is application/json
-    :type serialization_type: str, optional
+    :param content_type: Content type, eg: application/json. application/x-protobuf. Default is application/json
+    :type content_type: str, optional
     """
 
     def __init__(
@@ -70,14 +71,14 @@ class Problem:
         terms: Optional[List[TermBase]] = None,
         init_config: Optional[Dict[str, int]] = None,
         problem_type: ProblemType = ProblemType.ising,
-        serialization_type: Optional[str] = None
+        content_type: Optional[str] = None
     ):
         self.name = name or "Optimization problem"
         self.problem_type = problem_type
         self.init_config = init_config
         self.uploaded_blob_uri = None
         self.uploaded_blob_params = None
-        self.serialization_type = serialization_type
+        self.content_type = content_type
 
         # each type of term has its own section for quicker serialization
         self.terms = []
@@ -103,7 +104,7 @@ class Problem:
     def serialize(self) -> Union[str, list]:
         """Wrapper function for serialzing. It may serialize to json or protobuf
         """ 
-        if (self.serialization_type == "application/x-protobuf" and len(self.terms_slc) == 0):
+        if (self.content_type == "application/x-protobuf" and len(self.terms_slc) == 0):
             return self.serialize_to_proto()
         else:
             return self.serialize_to_json()
@@ -234,7 +235,7 @@ class Problem:
         cls, 
         problem_str: Union[list,str], 
         name:Optional[str] = None, 
-        serialization_type:Optional[str] = None) -> Problem:
+        content_type:Optional[str] = None) -> Problem:
         """Deserializes the problem from a
         JSON string or protobuf messages serialized with Problem.serialize()
         Also used to deserialize the messages downloaded from the blob
@@ -249,7 +250,7 @@ class Problem:
             problem name ignoring the serialized value.
         :type name: Optional[str]
         """
-        if serialization_type == "application/x-protobuf" or type(problem_str) == list :
+        if content_type == "application/x-protobuf" or type(problem_str) == list :
             return Problem.deserialize_from_proto(problem_str,name) 
         else :
             return Problem.deserialize_from_json(problem_str,name)
@@ -339,7 +340,7 @@ class Problem:
         logger.debug("Input Problem: " + debug_input_string)
         data = io.BytesIO()
 
-        if self.serialization_type == "application/x-protobuf":
+        if self.content_type == "application/x-protobuf":
             # Write to a series of files to folder and compress
             # QIOTE expects all files to be names "gzipinputfile_pb_{file_count}.pb" at this time
             file_name_prefix = "gzipinputfile_pb"
@@ -400,7 +401,7 @@ class Problem:
 
         encoding = "gzip" if compress else ""
         content_type = "application/json"
-        serialization_type = self.serialization_type
+        content_type = self.content_type
 
         blob = self.to_blob(compress=compress)
         if container_uri is None:
@@ -413,7 +414,7 @@ class Problem:
             container_uri=container_uri,
             encoding=encoding,
             content_type= content_type,
-            serialization_type = serialization_type
+            content_type = content_type
         )
         self.uploaded_blob_params = blob_params
         self.uploaded_blob_uri = input_data_uri
@@ -529,10 +530,9 @@ class Problem:
         blob_name = blob_client.blob_name
         blob = container_client.get_blob_client(blob_name)
         contents = download_blob(blob.url)
-        blob_metadata = download_blob_metadata(blob.url)
-        if blob_metadata is not None:
-            serialization_type = blob_metadata["serializationtype"] if "serializationtype" in blob_metadata else None
-        return Problem.deserialize(contents, self.name, serialization_type)
+        blob_properties = download_blob_properties(blob.url)        
+        content_type = blob_properties.content_type
+        return Problem.deserialize(contents, self.name, content_type)
 
     def get_terms(self, id: int) -> List[TermBase]:
         """Given an index the function will return

@@ -363,7 +363,7 @@ class TestProblemClass(unittest.TestCase):
         )
     
     def test_serialzie_proto_problem(self):
-        problem = Problem(name = "test_proto", problem_type = ProblemType.ising, serialization_type="application/x-protobuf")
+        problem = Problem(name = "test_proto", problem_type = ProblemType.ising, content_type="application/x-protobuf")
         problem.terms = [
             Term(c=3, indices=[1, 0]),
             Term(c=5, indices=[2, 0]),
@@ -394,7 +394,7 @@ class TestProblemClass(unittest.TestCase):
         )
     
     def test_deserialize_proto_problem(self):
-        problem = Problem(name = "test_proto", problem_type = ProblemType.pubo, serialization_type="application/x-protobuf")
+        problem = Problem(name = "test_proto", problem_type = ProblemType.pubo, content_type="application/x-protobuf")
         problem.terms = [
             Term(c=3, indices=[1, 0]),
             Term(c=5, indices=[2, 0]),

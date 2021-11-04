@@ -83,7 +83,6 @@ def upload_blob(
     blob_name: str,
     content_type: str,
     content_encoding: str,
-    serialization_type: str,
     data: Any,
     return_sas_token: bool = True,
 ) -> str:
@@ -103,10 +102,6 @@ def upload_blob(
     content_settings = ContentSettings(
         content_type=content_type, content_encoding=content_encoding
     )
-    
-    metadata = {
-        "serializationtype" : serialization_type
-    }
    
     blob = container.get_blob_client(blob_name)
     
@@ -117,7 +112,6 @@ def upload_blob(
         uri = get_blob_uri_with_sas_token(blob)
     else:
         uri = remove_sas_token(blob.url)
-    set_blob_metadata(blob.url, metadata)
     logger.debug(f"  - blob access url: '{uri}'.")
 
     return uri
