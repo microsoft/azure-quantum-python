@@ -24,5 +24,8 @@ if ($Env:ENABLE_PYTHON -eq "false") {
   foreach ($PackageName in $PackageNames) {
     $EnvName = GetEnvName -PackageName $PackageName -CondaEnvironmentSuffix $CondaEnvironmentSuffix
     Invoke-Tests -PackageName $PackageName -EnvName $EnvName
+    if (0 -ne $LastExitCode) {
+      exit 1
+    }
   }
 }
