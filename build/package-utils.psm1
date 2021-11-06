@@ -157,4 +157,9 @@ function Invoke-Tests() {
     # Run tests
     $PkgName = $PackageName.replace("-", ".")
     pytest --cov-report term --cov=$PkgName --junitxml test-output-$PackageName.xml $AbsPackageDir
+    if (0 -eq $LastExitCode) {
+        return $True;
+    } else {
+        return $False;
+    }
 }
