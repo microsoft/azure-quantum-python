@@ -28,7 +28,6 @@ if ($Env:ENABLE_PYTHON -eq "false") {
     if (0 -ne $LastExitCode) {
       $ExitCode = 1;
       Write-Host "##vso[task.logissue type=error;]Tests for package $PackageName failed."
-      exit $ExitCode;
     }
   }
   exit $ExitCode;
