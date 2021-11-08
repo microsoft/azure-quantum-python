@@ -245,7 +245,7 @@ are not compressed with gzip encoding. Ignoring compress flag.")
         if problem.content_type == "application/x-protobuf":
             if not self.supports_protobuf() and self.name not in proto_valid_solver_names:
                 raise ValueError(
-                    f"Solver type is not compatible"
+                    f"Solver `{self.name} type is not compatible "
                     f"for serialization with protobuf; "
                     f"Try PopulationAnnealing or SubstochasticMonteCarlo."
                 )
