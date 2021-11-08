@@ -46,6 +46,10 @@ proto_types = {
     ProblemType.pubo: ProtoProblem.ProblemType.PUBO, 
 }
 
+class ContentType(str, Enum):
+    json = "application/json"
+    protobuf = "application/x-protobuf"
+
 class Problem:
     """Problem to submit to the service.
 
@@ -62,7 +66,7 @@ class Problem:
         ProblemType.ising), defaults to ProblemType.ising
     :type problem_type: ProblemType, optional
     :param content_type: Content type, eg: application/json. application/x-protobuf. Default is application/json
-    :type content_type: str, optional
+    :type content_type: ContentType, optional
     """
 
     def __init__(
@@ -71,7 +75,7 @@ class Problem:
         terms: Optional[List[TermBase]] = None,
         init_config: Optional[Dict[str, int]] = None,
         problem_type: ProblemType = ProblemType.ising,
-        content_type: Optional[str] = None
+        content_type: Optional[ContentType] = None
     ):
         self.name = name or "Optimization problem"
         self.problem_type = problem_type
@@ -104,7 +108,7 @@ class Problem:
     def serialize(self) -> Union[str, list]:
         """Wrapper function for serialzing. It may serialize to json or protobuf
         """ 
-        if (self.content_type == "application/x-protobuf" and len(self.terms_slc) == 0):
+        if (self.content_type == ContentType.protobuf and len(self.terms_slc) == 0):
             return self.serialize_to_proto()
         else:
             return self.serialize_to_json()
@@ -233,27 +237,29 @@ class Problem:
     @classmethod
     def deserialize(
         cls, 
-        problem_str: Union[list,str], 
+        problem_as_json: Union[list,str], 
         name:Optional[str] = None, 
-        content_type:Optional[str] = None) -> Problem:
+        content_type:Optional[ContentType] = None) -> Problem:
         """Deserializes the problem from a
         JSON string or protobuf messages serialized with Problem.serialize()
         Also used to deserialize the messages downloaded from the blob
 
-        :param problem_str:
+        :param problem_as_json:
             The string to be deserialized to a `Problem` instance
-        :type problem_str: str
+        :type problem_as_json: str
         :param name: 
             The name of the problem is optional, since it will try 
             to read the serialized name from the json payload.
             If this parameter is not empty, it will use it as the
             problem name ignoring the serialized value.
         :type name: Optional[str]
+        :param content_type: The content type of the input problem data
+        :type: Optional, ContentType
         """
-        if content_type == "application/x-protobuf" or type(problem_str) == list :
-            return Problem.deserialize_from_proto(problem_str,name) 
+        if content_type == ContentType.protobuf or type(problem_as_json) == list :
+            return Problem.deserialize_from_proto(problem_as_json,name) 
         else :
-            return Problem.deserialize_from_json(problem_str,name)
+            return Problem.deserialize_from_json(problem_as_json,name)
 
 
 
@@ -340,7 +346,7 @@ class Problem:
         logger.debug("Input Problem: " + debug_input_string)
         data = io.BytesIO()
 
-        if self.content_type == "application/x-protobuf":
+        if self.content_type == ContentType.protobuf:
             # Write to a series of files to folder and compress
             # QIOTE expects all files to be names "gzipinputfile_pb_{file_count}.pb" at this time
             file_name_prefix = "gzipinputfile_pb"
@@ -400,7 +406,6 @@ class Problem:
             blob_name = self._blob_name()
 
         encoding = "gzip" if compress else ""
-        content_type = "application/json"
         content_type = self.content_type
 
         blob = self.to_blob(compress=compress)
