@@ -109,11 +109,11 @@ class Problem:
         """Wrapper function for serialzing. It may serialize to json or protobuf
         """ 
         if (self.content_type == ContentType.protobuf and len(self.terms_slc) == 0):
-            return self.serialize_to_proto()
+            return self.to_proto()
         else:
-            return self.serialize_to_json()
+            return self.to_json()
 
-    def serialize_to_json(self) -> str:
+    def to_json(self) -> str:
         """Serializes the problem to a JSON string"""
         result = {
             "metadata": {
@@ -133,7 +133,7 @@ class Problem:
 
         return json.dumps(result)
     
-    def serialize_to_proto(self) -> list:
+    def to_proto(self) -> list:
         """Serializes a problem to a list serialized protobuf messages
         Every problem is built into a series of protobuf messages 
         each with 1000 terms and added to a list of proto messages.
@@ -172,7 +172,7 @@ class Problem:
         return proto_messages
     
     @classmethod
-    def deserialize_from_json(
+    def from_json(
             cls, 
             problem_as_json: str, 
             name: Optional[str] = None
@@ -201,7 +201,7 @@ class Problem:
         return problem
     
     @classmethod
-    def deserialize_from_proto(
+    def from_proto(
         cls,
         problem_as_str: Union[list,str],
         name: Optional[str] = None
@@ -257,9 +257,9 @@ class Problem:
         :type: Optional, ContentType
         """
         if content_type == ContentType.protobuf or type(problem_as_json) == list :
-            return Problem.deserialize_from_proto(problem_as_json,name) 
+            return Problem.from_proto(problem_as_json,name) 
         else :
-            return Problem.deserialize_from_json(problem_as_json,name)
+            return Problem.from_json(problem_as_json,name)
 
 
 
