@@ -342,7 +342,7 @@ class Problem:
         :rtype: bytes
         """
         input_problem = self.serialize()
-        debug_input_string = input_problem if type(input_problem) is str else b''.join( input_problem).decode()
+        debug_input_string = input_problem if type(input_problem) is str else b''.join( input_problem).decode('latin-1')
         logger.debug("Input Problem: " + debug_input_string)
         data = io.BytesIO()
 

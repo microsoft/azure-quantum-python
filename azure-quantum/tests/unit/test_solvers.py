@@ -58,7 +58,6 @@ def test_number_of_solutions_set(testsolver):
     assert testsolver.params["params"][param_name] == 100
 
 def test_submit_proto_problem(testprotosolver):
-        print(testprotosolver.name)
         problem = Problem(name = "proto_test", content_type="application/x-protobuf")
         problem.terms = [
             Term(c=3, indices=[1,0]),
@@ -68,6 +67,19 @@ def test_submit_proto_problem(testprotosolver):
             job = testprotosolver.submit(problem)
         mock_upload.assert_called_once()
         testprotosolver.workspace.submit_job.assert_called_once()
+
+def test_submit_large_proto_problem(testprotosolver):
+
+        problem = Problem(name = "proto_test", content_type="application/x-protobuf")
+        terms = []
+        for i in range (0,3000):
+            terms.append(Term(c = i, indices=[i, i+1]))
+        problem.terms = terms
+        with patch("azure.quantum.job.base_job.upload_blob") as mock_upload:
+            job = testprotosolver.submit(problem)
+        mock_upload.assert_called_once()
+        testprotosolver.workspace.submit_job.assert_called_once()
+        
  
 def test_throw_exception_proto_problem(testprotosolver):
     testprotosolver.name = "SimulatedAnnealing"
