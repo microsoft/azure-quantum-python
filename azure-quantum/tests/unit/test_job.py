@@ -157,8 +157,7 @@ class TestJob(QuantumTestBase):
         solver_type = functools.partial(microsoft.PopulationAnnealing, sweeps=200)
         solver_name = "PopulationAnnealing"
         self._test_job_submit(solver_name, solver_type,content_type="application/x-protobuf")
-        # renable after schema change is deployed
-        #self._test_job_submit(solver_name, solver_type, test_grouped=True)
+
 
     @pytest.mark.live_test
     @pytest.mark.qio
@@ -166,8 +165,7 @@ class TestJob(QuantumTestBase):
         solver_type = functools.partial(microsoft.SubstochasticMonteCarlo, step_limit=280)
         solver_name = "SubstochasticMonteCarlo"
         self._test_job_submit(solver_name, solver_type, content_type="application/x-protobuf")
-        # renable after schema change is deployed
-        #self._test_job_submit(solver_name, solver_type, test_grouped=True)
+
 
     @pytest.mark.live_test
     @pytest.mark.qio
