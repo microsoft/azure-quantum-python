@@ -150,6 +150,25 @@ class TestJob(QuantumTestBase):
         # renable after schema change is deployed
         #self._test_job_submit(solver_name, solver_type, test_grouped=True)
 
+    
+    @pytest.mark.live_test
+    @pytest.mark.qio
+    def test_job_submit_microsoft_population_annealing_proto(self):
+        solver_type = functools.partial(microsoft.PopulationAnnealing, sweeps=200)
+        solver_name = "PopulationAnnealing"
+        self._test_job_submit(solver_name, solver_type,content_type="application/x-protobuf")
+        # renable after schema change is deployed
+        #self._test_job_submit(solver_name, solver_type, test_grouped=True)
+
+    @pytest.mark.live_test
+    @pytest.mark.qio
+    def test_job_submit_microsoft_substochastic_monte_carlo_proto(self):
+        solver_type = functools.partial(microsoft.SubstochasticMonteCarlo, step_limit=280)
+        solver_name = "SubstochasticMonteCarlo"
+        self._test_job_submit(solver_name, solver_type, content_type="application/x-protobuf")
+        # renable after schema change is deployed
+        #self._test_job_submit(solver_name, solver_type, test_grouped=True)
+
     @pytest.mark.live_test
     @pytest.mark.qio
     def test_job_upload_and_run_solvers(self):
@@ -254,7 +273,7 @@ class TestJob(QuantumTestBase):
             before_date = date.today() - timedelta(days=100)
             self.assertEqual(True, job.matches_filter(created_after=before_date))
 
-    def _test_job_submit(self, solver_name, solver_type, test_grouped=False):
+    def _test_job_submit(self, solver_name, solver_type, test_grouped=False, content_type = "application/json"):
         """Tests the job submission and its lifecycle for a given solver.
 
         :param solver_type:
@@ -263,7 +282,7 @@ class TestJob(QuantumTestBase):
 
         problem_name = f'Test-{solver_name}-{datetime.now():"%Y%m%d-%H%M%S"}'
 
-        problem = self.create_problem(name=problem_name, test_grouped=test_grouped)
+        problem = self.create_problem(name=problem_name, test_grouped=test_grouped,content_type=content_type)
 
         self._test_job_submit_problem(solver_type, problem)
     
@@ -340,6 +359,7 @@ class TestJob(QuantumTestBase):
             init: bool = False,
             problem_type: ProblemType = ProblemType.pubo,
             test_grouped: bool = False,
+            content_type: str = "application/json"
         ) -> Problem:
         """Create optimization problem with some default terms
 
@@ -370,6 +390,7 @@ class TestJob(QuantumTestBase):
             terms=terms,
             init_config=initial_config,
             problem_type=problem_type,
+            content_type=content_type
         )
 
 
