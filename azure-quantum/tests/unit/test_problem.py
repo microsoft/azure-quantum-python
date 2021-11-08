@@ -402,7 +402,6 @@ class TestProblemClass(unittest.TestCase):
         self.assertEqual( len(deserialized_problem.terms), 12 )
         self.assertEqual(deserialized_problem.problem_type, ProblemType.pubo)
         self.assertEqual(deserialized_problem.name, problem.name)
-
     
     def tearDown(self):
         test_files = [
