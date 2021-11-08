@@ -171,6 +171,25 @@ class Problem:
             proto_messages.append(proto_problem.SerializeToString())
         return proto_messages
     
+    def compress_protobuf(
+        self, 
+    proto_messages: List[str] ) -> bytes:
+    # Write to a series of files to folder and compress
+    # QIOTE expects all files to be names "gzipinputfile_pb_{file_count}.pb" at this time
+        data = io.BytesIO()
+        file_name_prefix = "gzipinputfile_pb"
+        file_count = 0
+        with tarfile.open(fileobj = data, mode = 'w:gz') as tar:
+            for msg in proto_messages:
+                file_name = file_name_prefix+"_"+str(file_count)+".pb"
+                info = tarfile.TarInfo(name=file_name)
+                info.size = len(msg)
+                msg_data = io.BytesIO(msg)
+                tar.addfile(info, msg_data)
+                file_count += 1
+        return data.getvalue() 
+
+    
     @classmethod
     def from_json(
             cls, 
@@ -345,23 +364,8 @@ class Problem:
         debug_input_string = input_problem if type(input_problem) is str else b''.join( input_problem).decode('latin-1')
         logger.debug("Input Problem: " + debug_input_string)
         data = io.BytesIO()
-
         if self.content_type == ContentType.protobuf:
-            # Write to a series of files to folder and compress
-            # QIOTE expects all files to be names "gzipinputfile_pb_{file_count}.pb" at this time
-            file_name_prefix = "gzipinputfile_pb"
-            file_count = 0
-            with tarfile.open(fileobj = data, mode = 'w:gz') as tar:
-                for msg in input_problem:
-                    file_name = file_name_prefix+"_"+str(file_count)+".pb"
-                    info = tarfile.TarInfo(name=file_name)
-                    info.size = len(msg)
-                    msg_data = io.BytesIO(msg)
-                    tar.addfile(info, msg_data)
-                    file_count += 1
-            return data.getvalue() 
-                    
-
+          return self.compress_protobuf(input_problem)                   
         elif compress:
             with gzip.GzipFile(fileobj=data, mode="w") as fo:
                 fo.write(input_problem.encode())
