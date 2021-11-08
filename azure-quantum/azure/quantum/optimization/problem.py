@@ -222,7 +222,7 @@ class Problem:
     @classmethod
     def from_proto(
         cls,
-        problem_as_str: Union[list,str],
+        problem_msgs: Union[list,str],
         name: Optional[str] = None
     ) -> Problem:
         msg_count = 0
@@ -231,7 +231,7 @@ class Problem:
             name = name
         )
 
-        for msg in problem_as_str:
+        for msg in problem_msgs:
             proto_problem = ProtoProblem()
             proto_problem.ParseFromString(msg)
             if msg_count == 0:
