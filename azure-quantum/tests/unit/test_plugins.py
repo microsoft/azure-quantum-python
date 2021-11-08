@@ -21,7 +21,6 @@ class TestQiskit(QuantumTestBase):
     Tests the azure.quantum.target.ionq module.
     """
     
-
     mock_create_job_id_name = "create_job_id"
     create_job_id = Job.create_job_id
 
