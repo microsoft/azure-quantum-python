@@ -327,7 +327,7 @@ class TestJob(QuantumTestBase):
             job = solver.submit(problem)
             # Check if problem can be successfully downloaded and deserialized
             problem_as_json = job.download_data(job.details.input_data_uri)
-            downloaded_problem = Problem.deserialize(problem_as_json=problem_as_json)
+            downloaded_problem = Problem.deserialize(input_problem = problem_as_json)
 
             actual = downloaded_problem.serialize()
             expected = problem.serialize()

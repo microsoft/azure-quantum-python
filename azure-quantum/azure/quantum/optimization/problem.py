@@ -190,14 +190,14 @@ class Problem:
         return data.getvalue() 
 
     
-    @staticmethod
+    @classmethod
     def from_json(
             cls, 
-            problem_as_json: str, 
+            input_problem: str, 
             name: Optional[str] = None
         ) -> Problem:
 
-        result = json.loads(problem_as_json)
+        result = json.loads(input_problem)
 
         if name is None:
             metadata = result.get("metadata")
@@ -219,15 +219,15 @@ class Problem:
 
         return problem
     
-    @staticmethod
+    @classmethod
     def from_proto(
         cls,
-        problem_msgs: Union[list,str],
+        problem_msgs: list,
         name: Optional[str] = None
     ) -> Problem:
         msg_count = 0
 
-        problem = Problem(
+        problem = cls(
             name = name
         )
 
@@ -256,16 +256,17 @@ class Problem:
     @classmethod
     def deserialize(
         cls, 
-        problem_as_json: Union[list,str], 
+        input_problem: Union[str, list],
         name:Optional[str] = None, 
         content_type:Optional[ContentType] = None) -> Problem:
         """Deserializes the problem from a
         JSON string or protobuf messages serialized with Problem.serialize()
         Also used to deserialize the messages downloaded from the blob
 
-        :param problem_as_json:
-            The string to be deserialized to a `Problem` instance
-        :type problem_as_json: str
+        :param input_problem:
+            The json string or the list of protobuf messages to be deserialized to a `Problem` instance
+        :type input_problem: Union[str,list]
+        :param
         :param name: 
             The name of the problem is optional, since it will try 
             to read the serialized name from the json payload.
@@ -275,12 +276,10 @@ class Problem:
         :param content_type: The content type of the input problem data
         :type: Optional, ContentType
         """
-        if content_type == ContentType.protobuf or type(problem_as_json) == list :
-            return Problem.from_proto(problem_as_json,name) 
+        if content_type == ContentType.protobuf or type(input_problem) == list :
+            return Problem.from_proto(input_problem, name) 
         else :
-            return Problem.from_json(problem_as_json,name)
-
-
+            return Problem.from_json(input_problem, name)
 
     def add_term(self, c: Union[int, float], indices: List[int]):
         """Adds a single monomial term to the `Problem` representation
