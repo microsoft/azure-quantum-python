@@ -14,8 +14,9 @@ import pytest
 from datetime import date, datetime, timedelta
 
 from common import QuantumTestBase, ZERO_UID
-from azure.quantum import Job, problem_pb2
+from azure.quantum import Job
 from azure.quantum.optimization import Problem, ProblemType, Term, SlcTerm
+from azure.quantum.serialization import ProtoProblem
 import azure.quantum.optimization as microsoft
 import azure.quantum.target.oneqbit as oneqbit
 import azure.quantum.target.toshiba as toshiba

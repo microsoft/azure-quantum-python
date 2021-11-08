@@ -14,7 +14,7 @@ import os
 import re
 from unittest.mock import Mock, patch
 from typing import TYPE_CHECKING
-from azure.quantum import problem_pb2
+from azure.quantum.serialization import ProtoProblem
 from azure.quantum.optimization import Problem, ProblemType, Term, SlcTerm
 import azure.quantum.optimization.problem
 from common import expected_terms
@@ -382,11 +382,11 @@ class TestProblemClass(unittest.TestCase):
         self.assertEqual(
             len(problem_msgs), 1
         )
-        proto_problem = problem_pb2.Problem()
+        proto_problem = ProtoProblem()
         proto_problem.ParseFromString(problem_msgs[0])
         self.assertEqual(
             proto_problem.cost_function.type, 
-            problem_pb2.Problem.ProblemType.ISING
+            ProtoProblem.ProblemType.ISING
         )
         self.assertEqual(
             len(proto_problem.cost_function.terms),

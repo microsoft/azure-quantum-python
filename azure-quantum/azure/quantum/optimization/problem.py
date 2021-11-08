@@ -25,7 +25,7 @@ from azure.quantum.storage import (
 )
 from azure.quantum.job.job import Job
 from azure.quantum.target.target import Target
-from azure.quantum import problem_pb2
+from azure.quantum.serialization import ProtoProblem
 from google.protobuf import struct_pb2
 
 logger = logging.getLogger(__name__)
@@ -42,8 +42,8 @@ class ProblemType(str, Enum):
     ising_grouped = 3
 
 proto_types = {
-    ProblemType.ising: problem_pb2.Problem.ProblemType.ISING,
-    ProblemType.pubo: problem_pb2.Problem.ProblemType.PUBO, 
+    ProblemType.ising: ProtoProblem.ProblemType.ISING,
+    ProblemType.pubo: ProtoProblem.ProblemType.PUBO, 
 }
 
 class Problem:
@@ -141,7 +141,7 @@ class Problem:
         msg_count = 0
         terms_remaining = len(self.terms)
         while terms_remaining > 0:   
-            proto_problem = problem_pb2.Problem()
+            proto_problem = ProtoProblem()
             cost_function = proto_problem.cost_function
             metadata = proto_problem.metadata
             if msg_count == 0:
@@ -209,7 +209,7 @@ class Problem:
         )
 
         for msg in problem_as_str:
-            proto_problem = problem_pb2.Problem()
+            proto_problem = ProtoProblem()
             proto_problem.ParseFromString(msg)
             if msg_count == 0:
                 for qdk_type, proto_type in proto_types.items():
@@ -413,8 +413,7 @@ class Problem:
             blob_name=blob_name,
             container_uri=container_uri,
             encoding=encoding,
-            content_type= content_type,
-            content_type = content_type
+            content_type= content_type
         )
         self.uploaded_blob_params = blob_params
         self.uploaded_blob_uri = input_data_uri

@@ -9,9 +9,9 @@
 
 import pytest
 from unittest.mock import Mock, patch
-from azure.quantum import Workspace, problem_pb2
+from azure.quantum import Workspace
 from azure.quantum.optimization import Solver, OnlineProblem, Problem, Term, ProblemType
-
+from azure.quantum.serialization import ProtoProblem
 
 @pytest.fixture
 def testsolver():
