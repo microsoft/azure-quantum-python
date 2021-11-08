@@ -7,6 +7,7 @@
 # Licensed under the MIT License.
 ##
 
+from logging import raiseExceptions
 import pytest
 from unittest.mock import Mock, patch
 from azure.quantum import Workspace
@@ -21,6 +22,17 @@ def testsolver():
     # self.mock_ws.submit_job = Mock(return_value = )
     testsolver = Solver(
         mock_ws, "Microsoft", "SimulatedAnnealing", "json", "json"
+    )
+    return testsolver
+
+@pytest.fixture
+def testprotosolver():
+    mock_ws = Mock(spec=Workspace)
+    mock_ws.storage = "mock_storage"
+    mock_ws.get_container_uri = Mock(return_value="mock_container_uri/foo/bar")
+    # self.mock_ws.submit_job = Mock(return_value = )
+    testsolver = Solver(
+        mock_ws, "PopulationAnnealing"
     )
     return testsolver
 
@@ -45,23 +57,24 @@ def test_number_of_solutions_set(testsolver):
     assert param_name in testsolver.params["params"]
     assert testsolver.params["params"][param_name] == 100
 
-def test_submit_proto_problem(self):
+def test_submit_proto_problem(testprotosolver):
+        print(testprotosolver.name)
         problem = Problem(name = "proto_test", content_type="application/x-protobuf")
         problem.terms = [
             Term(c=3, indices=[1,0]),
             Term(c=5, indices=[2,0])
         ]
         with patch("azure.quantum.job.base_job.upload_blob") as mock_upload:
-            job = self.testprotosolver.submit(problem)
+            job = testprotosolver.submit(problem)
         mock_upload.assert_called_once()
-        self.testsolver.workspace.submit_job.assert_called_once()
-    
-def test_throw_exception_proto_problem(self):
-    self.testprotosolver.name = "SimulatedAnnealing"
-    problem = Problem(name = "proto_test", content_type="application/x-protobuf")
+        testprotosolver.workspace.submit_job.assert_called_once()
+ 
+def test_throw_exception_proto_problem(testprotosolver):
+    testprotosolver.name = "SimulatedAnnealing"
+    problem = Problem(name = "proto_test_exception", content_type="application/x-protobuf")
     problem.terms = [
         Term(c=3, indices=[1,0]),
         Term(c=5, indices=[2,0])
     ]
     with patch("azure.quantum.job.base_job.upload_blob") as mock_upload:
-        self.assertRaises( ValueError, self.testprotosolver.submit, problem)
+        pytest.raises( ValueError, testprotosolver.submit, problem)
