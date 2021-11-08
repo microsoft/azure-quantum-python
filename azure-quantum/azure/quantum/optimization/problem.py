@@ -190,7 +190,7 @@ class Problem:
         return data.getvalue() 
 
     
-    @classmethod
+    @staticmethod
     def from_json(
             cls, 
             problem_as_json: str, 
@@ -219,7 +219,7 @@ class Problem:
 
         return problem
     
-    @classmethod
+    @staticmethod
     def from_proto(
         cls,
         problem_msgs: Union[list,str],
