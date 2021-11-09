@@ -220,7 +220,7 @@ class BaseJob(abc.ABC):
         :param input_data: Input data in binary format
         :type input_data: bytes
         :param content_type: Content type, e.g. "application/json" or application/x-protobuf
-        :type content_type: Optional str
+        :type content_type: Optional, str
         :param blob_name: Blob name, defaults to "inputData"
         :type blob_name: str, optional
         :param encoding: Encoding, e.g. "gzip", defaults to ""
