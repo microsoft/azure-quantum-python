@@ -75,7 +75,7 @@ class Problem:
         terms: Optional[List[TermBase]] = None,
         init_config: Optional[Dict[str, int]] = None,
         problem_type: ProblemType = ProblemType.ising,
-        content_type: Optional[ContentType] = None
+        content_type: Optional[ContentType] = ContentType.json 
     ):
         self.name = name or "Optimization problem"
         self.problem_type = problem_type

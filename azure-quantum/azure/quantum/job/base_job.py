@@ -7,7 +7,7 @@ import logging
 import uuid
 
 from urllib.parse import urlparse
-from typing import Any, Dict, TYPE_CHECKING
+from typing import Any, Dict, Optional, TYPE_CHECKING
 from azure.storage.blob import BlobClient
 
 from azure.quantum.storage import upload_blob, download_blob, ContainerClient
@@ -208,7 +208,7 @@ class BaseJob(abc.ABC):
     def upload_input_data(
         container_uri: str,
         input_data: bytes,
-        content_type: str = "application/json",
+        content_type: Optional[str] = "application/json",
         blob_name: str = "inputData",
         encoding: str = "",
         return_sas_token: bool = False
@@ -219,8 +219,8 @@ class BaseJob(abc.ABC):
         :type container_uri: str
         :param input_data: Input data in binary format
         :type input_data: bytes
-        :param content_type: Content type, e.g. "application/json"
-        :type content_type: str
+        :param content_type: Content type, e.g. "application/json" or application/x-protobuf
+        :type content_type: Optional str
         :param blob_name: Blob name, defaults to "inputData"
         :type blob_name: str, optional
         :param encoding: Encoding, e.g. "gzip", defaults to ""
