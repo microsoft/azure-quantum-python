@@ -85,7 +85,7 @@ class BaseJob(abc.ABC):
         :param input_params: Input parameters, defaults to None
         :type input_params: Dict[str, Any], optional
         :param input_params: Input params for job
-        :type input_params: Dict[str, Any
+        :type input_params: Dict[str, Any]
         :return: Azure Quantum Job
         :rtype: Job
         """
