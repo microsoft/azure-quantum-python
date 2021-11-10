@@ -25,7 +25,6 @@ if ($Env:ENABLE_PYTHON -eq "false") {
   foreach ($PackageName in $PackageNames) {
     $EnvName = GetEnvName -PackageName $PackageName -CondaEnvironmentSuffix $CondaEnvironmentSuffix
     $Success = Invoke-Tests -PackageName $PackageName -EnvName $EnvName
-    Write-Host $Success
     if ($Success -ne $True) {
         $ExitCode = 1;
         Write-Host "##vso[task.logissue type=error;]Tests for package $PackageName failed."
