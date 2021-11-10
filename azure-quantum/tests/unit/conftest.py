@@ -1,8 +1,6 @@
 import pytest
 import asyncio
 
-raise ValueError("Test")
-
 
 @pytest.fixture(scope="class")
 def event_loop_instance(request):
