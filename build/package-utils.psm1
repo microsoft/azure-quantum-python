@@ -152,9 +152,10 @@ function Invoke-Tests() {
     # Activate env
     Use-CondaEnv $EnvName
     # Install testing deps
-    python -m pip install --upgrade pip
-    pip install pytest pytest-azurepipelines pytest-cov
+    python -m pip install --upgrade pip | Write-Host
+    pip install pytest pytest-azurepipelines pytest-cov | Write-Host
     # Run tests
     $PkgName = $PackageName.replace("-", ".")
-    pytest --cov-report term --cov=$PkgName --junitxml test-output-$PackageName.xml $AbsPackageDir
+    pytest --cov-report term --cov=$PkgName --junitxml test-output-$PackageName.xml $AbsPackageDir | Write-Host
+    return $LASTEXITCODE
 }
