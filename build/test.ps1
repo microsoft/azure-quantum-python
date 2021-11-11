@@ -21,8 +21,14 @@ if ($Env:ENABLE_PYTHON -eq "false") {
   Write-Host "##vso[task.logissue type=warning;]Skipping testing Python packages. Env:ENABLE_PYTHON was set to 'false'."
 } else {
   $PackageNames = PackagesList -PackageName $PackageName
+  $ExitCode = 0;
   foreach ($PackageName in $PackageNames) {
     $EnvName = GetEnvName -PackageName $PackageName -CondaEnvironmentSuffix $CondaEnvironmentSuffix
-    Invoke-Tests -PackageName $PackageName -EnvName $EnvName
-  }
+    $Success = Invoke-Tests -PackageName $PackageName -EnvName $EnvName
+    if ($Success -ne $True) {
+        $ExitCode = 1;
+        Write-Host "##vso[task.logissue type=error;]Tests for package $PackageName failed."
+      }
+    }
+    exit $ExitCode;
 }
