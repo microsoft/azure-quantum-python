@@ -14,6 +14,7 @@ import pytest
 from datetime import date, datetime, timedelta
 
 from common import QuantumTestBase, ZERO_UID
+from azure.quantum.job.base_job import ContentType
 from azure.quantum import Job
 from azure.quantum.optimization import Problem, ProblemType, Term, SlcTerm
 from azure.quantum.serialization import ProtoProblem
@@ -156,7 +157,7 @@ class TestJob(QuantumTestBase):
     def test_job_submit_microsoft_population_annealing_proto(self):
         solver_type = functools.partial(microsoft.PopulationAnnealing, sweeps=200)
         solver_name = "PopulationAnnealing"
-        self._test_job_submit(solver_name, solver_type,content_type="application/x-protobuf")
+        self._test_job_submit(solver_name, solver_type, content_type=ContentType.protobuf)
 
 
     @pytest.mark.live_test
@@ -164,7 +165,7 @@ class TestJob(QuantumTestBase):
     def test_job_submit_microsoft_substochastic_monte_carlo_proto(self):
         solver_type = functools.partial(microsoft.SubstochasticMonteCarlo, step_limit=280)
         solver_name = "SubstochasticMonteCarlo"
-        self._test_job_submit(solver_name, solver_type, content_type="application/x-protobuf")
+        self._test_job_submit(solver_name, solver_type, content_type=ContentType.protobuf)
 
 
     @pytest.mark.live_test
@@ -271,7 +272,7 @@ class TestJob(QuantumTestBase):
             before_date = date.today() - timedelta(days=100)
             self.assertEqual(True, job.matches_filter(created_after=before_date))
 
-    def _test_job_submit(self, solver_name, solver_type, test_grouped=False, content_type = "application/json"):
+    def _test_job_submit(self, solver_name, solver_type, test_grouped=False, content_type=ContentType.json):
         """Tests the job submission and its lifecycle for a given solver.
 
         :param solver_type:
@@ -357,7 +358,7 @@ class TestJob(QuantumTestBase):
             init: bool = False,
             problem_type: ProblemType = ProblemType.pubo,
             test_grouped: bool = False,
-            content_type: str = "application/json"
+            content_type: ContentType = ContentType.json
         ) -> Problem:
         """Create optimization problem with some default terms
 

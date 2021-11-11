@@ -11,8 +11,8 @@ from logging import raiseExceptions
 import pytest
 from unittest.mock import Mock, patch
 from azure.quantum import Workspace
-from azure.quantum.optimization import Solver, OnlineProblem, Problem, Term, ProblemType
-from azure.quantum.serialization import ProtoProblem
+from azure.quantum.optimization import Solver, OnlineProblem, Problem, Term 
+from azure.quantum.job.base_job import ContentType
 
 @pytest.fixture
 def testsolver():
@@ -58,7 +58,7 @@ def test_number_of_solutions_set(testsolver):
     assert testsolver.params["params"][param_name] == 100
 
 def test_submit_proto_problem(testprotosolver):
-        problem = Problem(name = "proto_test", content_type="application/x-protobuf")
+        problem = Problem(name = "proto_test", content_type=ContentType.protobuf)
         problem.terms = [
             Term(c=3, indices=[1,0]),
             Term(c=5, indices=[2,0])
@@ -70,7 +70,7 @@ def test_submit_proto_problem(testprotosolver):
 
 def test_submit_large_proto_problem(testprotosolver):
 
-        problem = Problem(name = "proto_test", content_type="application/x-protobuf")
+        problem = Problem(name = "proto_test", content_type=ContentType.protobuf)
         terms = []
         for i in range (0,3000):
             terms.append(Term(c = i, indices=[i, i+1]))
@@ -83,7 +83,7 @@ def test_submit_large_proto_problem(testprotosolver):
  
 def test_throw_exception_proto_problem(testprotosolver):
     testprotosolver.name = "SimulatedAnnealing"
-    problem = Problem(name = "proto_test_exception", content_type="application/x-protobuf")
+    problem = Problem(name = "proto_test_exception", content_type=ContentType.protobuf)
     problem.terms = [
         Term(c=3, indices=[1,0]),
         Term(c=5, indices=[2,0])

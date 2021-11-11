@@ -6,6 +6,7 @@ import abc
 import logging
 import uuid
 
+from enum import Enum
 from urllib.parse import urlparse
 from typing import Any, Dict, Optional, TYPE_CHECKING
 from azure.storage.blob import BlobClient
@@ -22,6 +23,9 @@ logger = logging.getLogger(__name__)
 
 DEFAULT_TIMEOUT = 300  # Default timeout for waiting for job to complete
 
+class ContentType(str, Enum):
+    json = "application/json"
+    protobuf = "application/x-protobuf"
 
 class BaseJob(abc.ABC):
     # Optionally override these to create a Provider-specific Job subclass
@@ -45,7 +49,7 @@ class BaseJob(abc.ABC):
         name: str,
         target: str,
         input_data: bytes,
-        content_type: str = "application/json",
+        content_type: ContentType = ContentType.json,
         blob_name: str = "inputData",
         encoding: str = "",
         job_id: str = None,
@@ -69,7 +73,7 @@ class BaseJob(abc.ABC):
         :param blob_name: Input data blob name, defaults to "inputData"
         :type blob_name: str
         :param content_type: Content type, e.g. "application/json"
-        :type content_type: str
+        :type content_type: ContentType
         :param encoding: input_data encoding, e.g. "gzip", defaults to empty string
         :type encoding: str
         :param job_id: Job ID, defaults to None
@@ -208,7 +212,7 @@ class BaseJob(abc.ABC):
     def upload_input_data(
         container_uri: str,
         input_data: bytes,
-        content_type: Optional[str] = "application/json",
+        content_type: Optional[ContentType] = ContentType.json,
         blob_name: str = "inputData",
         encoding: str = "",
         return_sas_token: bool = False
@@ -220,7 +224,7 @@ class BaseJob(abc.ABC):
         :param input_data: Input data in binary format
         :type input_data: bytes
         :param content_type: Content type, e.g. "application/json" or application/x-protobuf
-        :type content_type: Optional, str
+        :type content_type: Optional, ContentType
         :param blob_name: Blob name, defaults to "inputData"
         :type blob_name: str, optional
         :param encoding: Encoding, e.g. "gzip", defaults to ""

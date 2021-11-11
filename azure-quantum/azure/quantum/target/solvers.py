@@ -6,6 +6,7 @@ import logging
 
 from typing import TYPE_CHECKING, Union, Any, Optional
 from enum import Enum
+from azure.quantum.job.base_job import ContentType
 from azure.quantum import Workspace, Job
 from azure.quantum.job.base_job import DEFAULT_TIMEOUT
 from azure.quantum.target.target import Target
@@ -80,7 +81,7 @@ class Solver(Target):
             input_data_format=input_data_format,
             output_data_format=output_data_format,
             provider_id=provider_id,
-            content_type="application/json",
+            content_type=ContentType.json,
             encoding="gzip",
             **kwargs
         )
@@ -242,7 +243,7 @@ are not compressed with gzip encoding. Ignoring compress flag.")
                     f"with problem type {problem.problem_type};"
                     f"Try PopulationAnnealing or SubstochasticMonteCarlo."
                 )
-        if problem.content_type == "application/x-protobuf":
+        if problem.content_type == ContentType.protobuf:
             if not self.supports_protobuf() and self.name not in proto_valid_solver_names:
                 raise ValueError(
                     f"Solver `{self.name} type is not compatible "

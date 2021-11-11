@@ -23,6 +23,7 @@ from azure.quantum.storage import (
     download_blob_metadata,
     download_blob_properties
 )
+from azure.quantum.job.base_job import ContentType
 from azure.quantum.job.job import Job
 from azure.quantum.target.target import Target
 from azure.quantum.serialization import ProtoProblem
@@ -46,9 +47,6 @@ proto_types = {
     ProblemType.pubo: ProtoProblem.ProblemType.PUBO, 
 }
 
-class ContentType(str, Enum):
-    json = "application/json"
-    protobuf = "application/x-protobuf"
 
 class Problem:
     """Problem to submit to the service.
