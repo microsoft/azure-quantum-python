@@ -1,0 +1,45 @@
+interactions:
+- request:
+    body: client_id=PLACEHOLDER&grant_type=client_credentials&client_info=1&client_secret=PLACEHOLDER&scope=https%3A%2F%2Fquantum.microsoft.com%2F.default
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '169'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      User-Agent:
+      - azsdk-python-identity/1.6.0 Python/3.9.1 (Windows-10-10.0.19041-SP0)
+      x-client-cpu:
+      - x64
+      x-client-current-telemetry:
+      - 4|730,0|
+      x-client-os:
+      - win32
+      x-client-sku:
+      - MSAL.Python
+      x-client-ver:
+      - 1.12.0
+    method: POST
+    uri: https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token
+  response:
+    body:
+      string: '{"error": "unauthorized_client", "error_description": "AADSTS700038:
+        00000000-0000-0000-0000-000000000000 is not a valid application identifier.\r\nTrace
+        ID: 61f1d5a0-08b7-4c3a-b28a-c7a794d1e500\r\nCorrelation ID: 47b3d8f0-4e97-4212-b282-152781a430dd\r\nTimestamp:
+        2021-11-09 00:06:12Z", "error_codes": [700038], "timestamp": "2021-11-09 00:06:12Z",
+        "trace_id": "61f1d5a0-08b7-4c3a-b28a-c7a794d1e500", "correlation_id": "47b3d8f0-4e97-4212-b282-152781a430dd",
+        "access_token": "fake_token"}'
+    headers:
+      content-length:
+      - '448'
+      content-type:
+      - application/json; charset=utf-8
+    status:
+      code: 400
+      message: Bad Request
+version: 1
