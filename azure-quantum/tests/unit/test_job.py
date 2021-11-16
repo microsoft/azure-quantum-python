@@ -390,6 +390,5 @@ class TestJob(QuantumTestBase):
             content_type = content_type or ContentType.json
         )
 
-
 if __name__ == "__main__":
     unittest.main()
