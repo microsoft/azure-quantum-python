@@ -275,9 +275,9 @@ class Problem:
         :type: Optional, ContentType
         """
         if content_type == ContentType.protobuf or type(input_problem) == list :
-            return Problem.from_proto(input_problem, name) 
+            return cls.from_proto(input_problem, name) 
         else :
-            return Problem.from_json(input_problem, name)
+            return cls.from_json(input_problem, name)
 
     def add_term(self, c: Union[int, float], indices: List[int]):
         """Adds a single monomial term to the `Problem` representation
