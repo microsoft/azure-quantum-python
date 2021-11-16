@@ -1,12 +1,29 @@
 interactions:
 - request:
-    body: '{''client_id'': ''00000000-0000-0000-0000-000000000000'', ''client_secret'':
-      ''PLACEHOLDER'', ''grant_type'': ''client_credentials'', ''scope'': ''https://quantum.microsoft.com/.default''}'
+    body: client_id=PLACEHOLDER&grant_type=client_credentials&client_info=1&client_secret=PLACEHOLDER&claims=PLACEHOLDER&scope=https%3A%2F%2Fquantum.microsoft.com%2F.default
     headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '287'
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
       - azsdk-python-identity/1.7.0 Python/3.7.12 (Windows-10-10.0.19041-SP0)
+      x-client-cpu:
+      - x64
+      x-client-current-telemetry:
+      - 4|730,0|
+      x-client-os:
+      - win32
+      x-client-sku:
+      - MSAL.Python
+      x-client-ver:
+      - 1.15.0
     method: POST
     uri: https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token
   response:
@@ -21,14 +38,17 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token
 - request:
     body: null
     headers:
       Accept:
       - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
       User-Agent:
-      - async-testapp azsdk-python-quantum/0.0.0.1 Python/3.7.12 (Windows-10-10.0.19041-SP0)
+      - testapp-azure-quantum-cirq azsdk-python-quantum/0.0.0.1 Python/3.7.12 (Windows-10-10.0.19041-SP0)
     method: GET
     uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/providerStatus
   response:
@@ -86,5 +106,4 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/providerStatus
 version: 1
