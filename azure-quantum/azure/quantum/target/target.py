@@ -10,7 +10,7 @@ from typing import Any, Dict
 
 from azure.quantum._client.models import TargetStatus
 from azure.quantum.job.job import Job
-
+from azure.quantum.job.base_job import ContentType
 if TYPE_CHECKING:
     from azure.quantum import Workspace
 
@@ -30,7 +30,7 @@ class Target:
         input_data_format: str = "",
         output_data_format: str = "",
         provider_id: str = "",
-        content_type: str = "",
+        content_type: ContentType = ContentType.json,
         encoding: str = "",
         average_queue_time: float = None,
         current_availability: str = ""
@@ -139,7 +139,6 @@ target '{self.name}' of provider '{self.provider_id}' not found."
         content_type = kwargs.pop("content_type", self.content_type)
         encoding = kwargs.pop("encoding", self.encoding)
         blob = self._encode_input_data(data=input_data)
-
         return Job.from_input_data(
             workspace=self.workspace,
             name=name,

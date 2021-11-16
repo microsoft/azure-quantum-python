@@ -8,6 +8,7 @@ from typing import Optional
 
 from azure.quantum.target.solvers import RangeSchedule, Solver
 from azure.quantum.workspace import Workspace
+from azure.quantum.job.base_job import ContentType
 
 logger = logging.getLogger(__name__)
 
@@ -27,6 +28,7 @@ class SubstochasticMonteCarlo(Solver):
         beta: Optional[RangeSchedule] = None,
         steps_per_walker: Optional[int] = None,
         timeout: Optional[int] = None,
+        content_type: Optional[ContentType] = ContentType.json,
         **kwargs
     ):
         """Constructor of Substochastic Monte Carlo solver.
@@ -68,6 +70,7 @@ class SubstochasticMonteCarlo(Solver):
             name=name,
             input_data_format="microsoft.qio.v2",
             output_data_format="microsoft.qio-results.v2",
+            content_type=content_type,
             **kwargs
         )
         self.set_one_param("seed", seed)

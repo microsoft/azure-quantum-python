@@ -147,7 +147,7 @@ class Problem:
             cost_function = proto_problem.cost_function
             metadata = proto_problem.metadata
             if msg_count == 0:
-                #cost_function.version = self.version
+                cost_function.version = "1.0"
                 cost_function.type = proto_types[self.problem_type]
                 metadata["name"] = self.name
             # add 1000 terms per proto message

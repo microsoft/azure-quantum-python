@@ -66,6 +66,7 @@ class Solver(Target):
         nested_params: bool = True,
         force_str_params: bool = False,
         params: dict = None,
+        content_type : Optional[ContentType] = ContentType.json,
         **kwargs
     ):
         self.provider_id = provider_id
@@ -81,7 +82,7 @@ class Solver(Target):
             input_data_format=input_data_format,
             output_data_format=output_data_format,
             provider_id=provider_id,
-            content_type=ContentType.json,
+            content_type = content_type,
             encoding="gzip",
             **kwargs
         )

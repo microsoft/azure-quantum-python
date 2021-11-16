@@ -155,15 +155,14 @@ class TestJob(QuantumTestBase):
     @pytest.mark.live_test
     @pytest.mark.qio
     def test_job_submit_microsoft_population_annealing_proto(self):
-        solver_type = functools.partial(microsoft.PopulationAnnealing, sweeps=200)
+        solver_type = functools.partial(microsoft.PopulationAnnealing, sweeps=200, content_type = ContentType.protobuf)
         solver_name = "PopulationAnnealing"
         self._test_job_submit(solver_name, solver_type, content_type=ContentType.protobuf)
 
 
-    @pytest.mark.live_test
     @pytest.mark.qio
     def test_job_submit_microsoft_substochastic_monte_carlo_proto(self):
-        solver_type = functools.partial(microsoft.SubstochasticMonteCarlo, step_limit=280)
+        solver_type = functools.partial(microsoft.SubstochasticMonteCarlo, step_limit=280, content_type = ContentType.protobuf)
         solver_name = "SubstochasticMonteCarlo"
         self._test_job_submit(solver_name, solver_type, content_type=ContentType.protobuf)
 
@@ -358,7 +357,7 @@ class TestJob(QuantumTestBase):
             init: bool = False,
             problem_type: ProblemType = ProblemType.pubo,
             test_grouped: bool = False,
-            content_type: ContentType = ContentType.json
+            content_type: ContentType = None ,
         ) -> Problem:
         """Create optimization problem with some default terms
 
@@ -383,13 +382,12 @@ class TestJob(QuantumTestBase):
 
         initial_config = {"1": 0, "0": 1, "2": 0, "3": 1} if init \
                          else None
-
         return Problem(
             name=name,
             terms=terms,
             init_config=initial_config,
             problem_type=problem_type,
-            content_type=content_type
+            content_type = content_type or ContentType.json
         )
 
 
