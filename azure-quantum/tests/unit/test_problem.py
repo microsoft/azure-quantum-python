@@ -28,7 +28,7 @@ class TestProblemClass(unittest.TestCase):
     def setUp(self):
         self.mock_ws = Mock()
         self.mock_ws.get_container_uri = Mock(return_value = "mock_container_uri/foo/bar")
-
+        self.mock_ws._get_linked_storage_sas_uri = Mock(return_value = "mock_linked_storage_sas_uri/foo/bar")
         ## QUBO problem
         self.problem = Problem(name="test")
         self.problem.terms = [
@@ -154,10 +154,12 @@ class TestProblemClass(unittest.TestCase):
     def test_download(self):
         with patch("azure.quantum.optimization.problem.download_blob") as mock_download_blob,\
             patch("azure.quantum.optimization.problem.BlobClient") as mock_blob_client,\
+            patch("azure.storage.blob.BlobClient.from_blob_url") as mock_blob_url,\
             patch("azure.quantum.optimization.problem.ContainerClient") as mock_container_client:
             mock_download_blob.return_value=expected_terms()
             mock_blob_client.from_blob_url.return_value = Mock()
             mock_container_client.from_container_url.return_value = Mock()
+            mock_blob_url = Mock()
             actual_result = self.problem.download(self.mock_ws)
             assert actual_result.name == "test"
             azure.quantum.optimization.problem.download_blob.assert_called_once()
