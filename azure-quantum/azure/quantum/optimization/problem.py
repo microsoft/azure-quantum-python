@@ -173,7 +173,6 @@ class Problem:
         self, 
     proto_messages: List[str] ) -> bytes:
     # Write to a series of files to folder and compress
-    # QIOTE expects all files to be names "gzipinputfile_pb_{file_count}.pb" at this time
         data = io.BytesIO()
         file_name_prefix = "gzipinputfile_pb"
         file_count = 0
