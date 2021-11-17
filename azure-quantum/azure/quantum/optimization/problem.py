@@ -193,7 +193,20 @@ class Problem:
             input_problem: str, 
             name: Optional[str] = None
         ) -> Problem:
+        """Deserializes the problem from a
+        json serialized with Problem.serialize()
 
+        :param input_problem:
+            the json string to be deserialized to a `Problem` instance
+        :type problem_msgs: str
+        :param
+        :param name: 
+            The name of the problem is optional, since it will try 
+            to read the serialized name from the json payload.
+            If this parameter is not empty, it will use it as the
+            problem name ignoring the serialized value.
+        :type name: Optional[str]
+        """
         result = json.loads(input_problem)
 
         if name is None:
@@ -219,16 +232,30 @@ class Problem:
     @classmethod
     def from_proto(
         cls,
-        problem_msgs: list,
+        input_problem: list,
         name: Optional[str] = None
     ) -> Problem:
+        """Deserializes the problem from a
+        protobuf messages serialized with Problem.serialize()
+
+        :param input_problem:
+            the list of protobuf messages to be deserialized to a `Problem` instance
+        :type input_problem: list
+        :param
+        :param name: 
+            The name of the problem is optional, since it will try 
+            to read the serialized name from the json payload.
+            If this parameter is not empty, it will use it as the
+            problem name ignoring the serialized value.
+        :type name: Optional[str]
+        """
         msg_count = 0
 
         problem = cls(
             name = name
         )
 
-        for msg in problem_msgs:
+        for msg in input_problem:
             proto_problem = ProtoProblem()
             proto_problem.ParseFromString(msg)
             if msg_count == 0:
@@ -254,8 +281,8 @@ class Problem:
     def deserialize(
         cls, 
         input_problem: Union[str, list],
-        name:Optional[str] = None, 
-        content_type:Optional[ContentType] = None) -> Problem:
+        name: Optional[str] = None, 
+        content_type: Optional[ContentType] = None) -> Problem:
         """Deserializes the problem from a
         JSON string or protobuf messages serialized with Problem.serialize()
         Also used to deserialize the messages downloaded from the blob
