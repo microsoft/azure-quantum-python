@@ -133,7 +133,8 @@ are not compressed with gzip encoding. Ignoring compress flag.")
                 input_data=problem,
                 name=problem.name,
                 input_params=self.params,
-                blob_name="inputData"
+                blob_name="inputData",
+                content_type = problem.content_type
             )
 
         else:
