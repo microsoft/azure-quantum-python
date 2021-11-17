@@ -1,0 +1,42 @@
+///
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+///
+
+syntax = "proto3";
+
+import "google/protobuf/struct.proto";
+
+package AzureQuantum;
+// The top level message data structure that contains the input problem data
+message Problem
+{
+    // The types of supported input problem types
+    enum ProblemType {
+        PUBO = 0;
+        ISING = 1;
+        MAXSAT = 2;
+        SOFTSPIN = 3;
+    }
+
+    // Definition of a single cost function term
+    message Term {
+        double c = 1;
+        //The list of term ids
+        repeated int64 ids = 2;
+    } 
+
+    // The cost function data structure
+    message CostFunction {
+        ProblemType type = 1;
+        string version = 2;
+        
+        //The list of terms.
+        repeated Term terms = 3;
+        map<string, int64> init_config = 4;
+    }
+
+    CostFunction cost_function = 1;
+    // The type to hold problem metadata information eg: name
+    google.protobuf.Struct metadata = 2;
+}
