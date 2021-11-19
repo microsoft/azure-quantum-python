@@ -85,7 +85,7 @@ setuptools.setup(
             "qiskit-terra>=0.18.0"
         ],
         "cirq": [
-            "cirq==0.12.0",
+            "cirq-core==0.12.0",
             "cirq-ionq==0.12.0",
         ]
     }
