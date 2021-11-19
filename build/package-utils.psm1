@@ -34,7 +34,7 @@ function Install-Package() {
     } elseif ("" -ne $BuildArtifactPath) {
         Write-Host "##[info]Installing $PackageName from $BuildArtifactPath"
         Push-Location $BuildArtifactPath
-            pip install $PackageName --find-links $BuildArtifactPath
+            pip install $PackageName --pre --find-links $BuildArtifactPath
             if ($LASTEXITCODE -ne 0) { throw "Error installing qsharp-core wheel" }
         Pop-Location
     } else {
