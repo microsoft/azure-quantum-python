@@ -48,7 +48,12 @@ function GetEnvName {
         [string] $PackageName,
         [string] $CondaEnvironmentSuffix
     )
-    return ($PackageName + $CondaEnvironmentSuffix).replace("-", "").replace(".aio", "")
+    # The environment name is based on $PackageName, but
+    #   1. if the name includes the version via name==version, remove the version, 
+    #   2. add conda env suffix
+    #   3. remove "-" since its invalid
+    #   4. remove ".aio" and use the same environment as the non-async version
+    return ($PackageName.Split("=")[0] + $CondaEnvironmentSuffix).replace("-", "").replace(".aio", "")
 }
 
 function Install-PackageInEnv {
@@ -79,7 +84,8 @@ function New-CondaEnvironment {
 
     $PackageNames = PackagesList -PackageName $PackageName
     foreach ($PackageName in $PackageNames) {
-        NewCondaEnvForPackage -PackageName $PackageName -CondaEnvironmentSuffix $CondaEnvironmentSuffix
+        $Name = GetEnvName $PackageName
+        NewCondaEnvForPackage -PackageName $Name -CondaEnvironmentSuffix $CondaEnvironmentSuffix
     }
 }
 
@@ -107,7 +113,7 @@ function NewCondaEnvForPackage {
 
     } else {
         # If it does not exist, create conda environment
-        Write-Host "##[info]Build '$EnvPath' Conda environment"
+        Write-Host "##[info]Build '$EnvPath' for Conda environment $EnvName"
         conda env create --quiet --file $EnvPath
     }    
 }
