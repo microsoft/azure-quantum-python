@@ -84,8 +84,7 @@ function New-CondaEnvironment {
 
     $PackageNames = PackagesList -PackageName $PackageName
     foreach ($PackageName in $PackageNames) {
-        $Name = GetEnvName $PackageName
-        NewCondaEnvForPackage -PackageName $Name -CondaEnvironmentSuffix $CondaEnvironmentSuffix
+        NewCondaEnvForPackage -PackageName $PackageName -CondaEnvironmentSuffix $CondaEnvironmentSuffix
     }
 }
 
