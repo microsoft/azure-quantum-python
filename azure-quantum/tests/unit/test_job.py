@@ -14,8 +14,10 @@ import pytest
 from datetime import date, datetime, timedelta
 
 from common import QuantumTestBase, ZERO_UID
+from azure.quantum.job.base_job import ContentType
 from azure.quantum import Job
 from azure.quantum.optimization import Problem, ProblemType, Term, SlcTerm
+from azure.quantum.serialization import ProtoProblem
 import azure.quantum.optimization as microsoft
 import azure.quantum.target.oneqbit as oneqbit
 import azure.quantum.target.toshiba as toshiba
@@ -149,6 +151,22 @@ class TestJob(QuantumTestBase):
         # renable after schema change is deployed
         #self._test_job_submit(solver_name, solver_type, test_grouped=True)
 
+    
+    @pytest.mark.live_test
+    @pytest.mark.qio
+    def test_job_submit_microsoft_population_annealing_proto(self):
+        solver_type = functools.partial(microsoft.PopulationAnnealing, sweeps=200, content_type = ContentType.protobuf)
+        solver_name = "PopulationAnnealing"
+        self._test_job_submit(solver_name, solver_type, content_type=ContentType.protobuf)
+
+
+    @pytest.mark.qio
+    def test_job_submit_microsoft_substochastic_monte_carlo_proto(self):
+        solver_type = functools.partial(microsoft.SubstochasticMonteCarlo, step_limit=280, content_type = ContentType.protobuf)
+        solver_name = "SubstochasticMonteCarlo"
+        self._test_job_submit(solver_name, solver_type, content_type=ContentType.protobuf)
+
+
     @pytest.mark.live_test
     @pytest.mark.qio
     def test_job_upload_and_run_solvers(self):
@@ -253,7 +271,7 @@ class TestJob(QuantumTestBase):
             before_date = date.today() - timedelta(days=100)
             self.assertEqual(True, job.matches_filter(created_after=before_date))
 
-    def _test_job_submit(self, solver_name, solver_type, test_grouped=False):
+    def _test_job_submit(self, solver_name, solver_type, test_grouped=False, content_type=ContentType.json):
         """Tests the job submission and its lifecycle for a given solver.
 
         :param solver_type:
@@ -262,7 +280,7 @@ class TestJob(QuantumTestBase):
 
         problem_name = f'Test-{solver_name}-{datetime.now():"%Y%m%d-%H%M%S"}'
 
-        problem = self.create_problem(name=problem_name, test_grouped=test_grouped)
+        problem = self.create_problem(name=problem_name, test_grouped=test_grouped,content_type=content_type)
 
         self._test_job_submit_problem(solver_type, problem)
     
@@ -326,7 +344,7 @@ class TestJob(QuantumTestBase):
             job = solver.submit(problem)
             # Check if problem can be successfully downloaded and deserialized
             problem_as_json = job.download_data(job.details.input_data_uri)
-            downloaded_problem = Problem.deserialize(problem_as_json=problem_as_json)
+            downloaded_problem = Problem.deserialize(input_problem = problem_as_json)
 
             actual = downloaded_problem.serialize()
             expected = problem.serialize()
@@ -339,6 +357,7 @@ class TestJob(QuantumTestBase):
             init: bool = False,
             problem_type: ProblemType = ProblemType.pubo,
             test_grouped: bool = False,
+            content_type: ContentType = None ,
         ) -> Problem:
         """Create optimization problem with some default terms
 
@@ -363,14 +382,13 @@ class TestJob(QuantumTestBase):
 
         initial_config = {"1": 0, "0": 1, "2": 0, "3": 1} if init \
                          else None
-
         return Problem(
             name=name,
             terms=terms,
             init_config=initial_config,
             problem_type=problem_type,
+            content_type = content_type or ContentType.json
         )
-
 
 if __name__ == "__main__":
     unittest.main()

@@ -102,7 +102,9 @@ def upload_blob(
     content_settings = ContentSettings(
         content_type=content_type, content_encoding=content_encoding
     )
+   
     blob = container.get_blob_client(blob_name)
+    
     blob.upload_blob(data, content_settings=content_settings)
     logger.debug(f"  - blob '{blob_name}' uploaded. generating sas token.")
 
@@ -110,7 +112,6 @@ def upload_blob(
         uri = get_blob_uri_with_sas_token(blob)
     else:
         uri = remove_sas_token(blob.url)
-
     logger.debug(f"  - blob access url: '{uri}'.")
 
     return uri

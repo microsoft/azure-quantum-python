@@ -8,6 +8,7 @@ from typing import Optional
 
 from azure.quantum import Workspace
 from azure.quantum.target.solvers import RangeSchedule, Solver
+from azure.quantum.job.base_job import ContentType
 
 logger = logging.getLogger(__name__)
 
@@ -26,6 +27,7 @@ class PopulationAnnealing(Solver):
         sweeps: Optional[int] = None,
         beta: Optional[RangeSchedule] = None,
         timeout: Optional[int] = None,
+        content_type: Optional[ContentType] = ContentType.json,
         **kwargs
     ):
         """Constructor of the Population Annealing solver.
@@ -64,6 +66,7 @@ class PopulationAnnealing(Solver):
             name=name,
             input_data_format="microsoft.qio.v2",
             output_data_format="microsoft.qio-results.v2",
+            content_type= content_type,
             **kwargs
         )
 
@@ -77,4 +80,7 @@ class PopulationAnnealing(Solver):
         self.check_set_positive_int("timeout", timeout)
 
     def supports_grouped_terms(self):
+        return True
+    
+    def supports_protobuf(self):
         return True

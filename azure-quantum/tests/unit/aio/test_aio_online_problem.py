@@ -24,10 +24,12 @@ class TestOnlineProblemClass(QuantumTestBase):
     def test_download(self):
         with patch("azure.quantum.aio.optimization.problem.download_blob") as mock_download_blob,\
             patch("azure.quantum.aio.optimization.problem.BlobClient") as mock_blob_client, \
+            patch("azure.storage.blob.BlobClient.from_blob_url") as mock_blob_url,\
             patch("azure.quantum.aio.optimization.problem.ContainerClient") as mock_container_client:
             mock_download_blob.return_value=expected_terms()
             mock_blob_client.from_blob_url.return_value = Mock()
             mock_container_client.from_container_url.return_value = Mock()
+            mock_blob_url = Mock()
             actual_result = self.get_async_result(self.o_problem.download(self.mock_ws))
             # TODO: add test that user warning was registered in log
             assert actual_result.name == "test"
