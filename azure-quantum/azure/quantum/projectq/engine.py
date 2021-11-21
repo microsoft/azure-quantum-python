@@ -3,14 +3,13 @@
 # Licensed under the MIT License.
 ##
 try:
-    import projectq
+    from projectq import MainEngine as ProjectQEngine
 except ImportError:
     raise ImportError(
     "Missing optional 'projectq' dependencies. \
 To install run: pip install azure-quantum[projectq]"
     )
 
-from typing import Union, List, Optional
 from azure.quantum import Workspace
 
 from azure.quantum.projectq.job import AzureQuantumJob
@@ -19,7 +18,7 @@ from azure.quantum.projectq.backends import *
 PROJECTQ_USER_AGENT = "azure-quantum-projectq"
 
 
-class AzureQuantumProvider:
+class AzureQuantumEngine(ProjectQEngine):
     def __init__(self, workspace=None, **kwargs):
         self._backends = None
         if workspace is None:
@@ -44,4 +43,7 @@ class AzureQuantumProvider:
         pass
 
     def get_job(self, job_id) -> AzureQuantumJob:
-        pass
+        """ Returns the Job instance associated with the given id."""
+        azure_job = self._workspace.get_job(job_id)
+        backend = self.get_backend(azure_job.details.target)
+        return AzureQuantumJob(backend, azure_job)

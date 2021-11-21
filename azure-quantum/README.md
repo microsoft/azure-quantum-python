@@ -29,6 +29,12 @@ To use `azure-quantum` for submitting quantum circuits expressed with [Cirq](htt
 pip install azure-quantum[cirq]
 ```
 
+To use `azure-quantum` for submitting quantum circuits expressed with [ProjectQ](https://pypi.org/project/projectq), install with optional dependencies:
+
+```bash
+pip install azure-quantum[projectq]
+```
+
 ## Getting started and Quickstart guides ##
 
 To work in Azure Quantum, you need an Azure subscription. If you don't have an Azure subscription, create a [free account](https://azure.microsoft.com/free/). Follow the [Create an Azure Quantum workspace](https://docs.microsoft.com/azure/quantum/how-to-create-workspace) how-to guide to set up your Workspace and enable your preferred providers.
