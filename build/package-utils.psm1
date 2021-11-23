@@ -34,7 +34,7 @@ function Install-Package() {
     } elseif ("" -ne $BuildArtifactPath) {
         Write-Host "##[info]Installing $PackageName from $BuildArtifactPath"
         Push-Location $BuildArtifactPath
-            pip install $PackageName --find-links $BuildArtifactPath
+            pip install $PackageName --pre --find-links $BuildArtifactPath
             if ($LASTEXITCODE -ne 0) { throw "Error installing qsharp-core wheel" }
         Pop-Location
     } else {
@@ -48,7 +48,12 @@ function GetEnvName {
         [string] $PackageName,
         [string] $CondaEnvironmentSuffix
     )
-    return ($PackageName + $CondaEnvironmentSuffix).replace("-", "").replace(".aio", "")
+    # The environment name is based on $PackageName, but
+    #   1. if the name includes the version via name==version, remove the version, 
+    #   2. add conda env suffix
+    #   3. remove "-" since its invalid
+    #   4. remove ".aio" and use the same environment as the non-async version
+    return ($PackageName.Split("=")[0] + $CondaEnvironmentSuffix).replace("-", "").replace(".aio", "")
 }
 
 function Install-PackageInEnv {
@@ -107,7 +112,7 @@ function NewCondaEnvForPackage {
 
     } else {
         # If it does not exist, create conda environment
-        Write-Host "##[info]Build '$EnvPath' Conda environment"
+        Write-Host "##[info]Build '$EnvPath' for Conda environment $EnvName"
         conda env create --quiet --file $EnvPath
     }    
 }

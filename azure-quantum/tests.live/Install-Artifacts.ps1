@@ -37,8 +37,13 @@ if (-not $Env:PYTHON_OUTDIR) {
 } else {
     "== Preparing environment to use artifacts with version '$Env:PYTHON_VERSION' " | Write-Host
     "== from '$Env:PYTHON_OUTDIR'" | Write-Host
+    if ($Env:PYTHON_VERSION) {
+        $NameAndVersion = "$PackageName==$($Env:PYTHON_VERSION)"
+    } else {
+        $NameAndVersion = $PackageName
+    }
     
-    Install-PackageInEnv -PackageName $PackageName -FromSource $False -BuildArtifactPath $Env:PYTHON_OUTDIR
+    Install-PackageInEnv -PackageName $NameAndVersion -FromSource $False -BuildArtifactPath $Env:PYTHON_OUTDIR
     
     "" | Write-Host
     "== $PackageName installed from build artifacts. ==" | Write-Host
