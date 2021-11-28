@@ -4,8 +4,8 @@
 ##
 import json
 from typing import TYPE_CHECKING
+
 from azure.quantum import __version__
-from azure.quantum.projectq.circuits import Circuit
 from azure.quantum.projectq.job import (
     AzureQuantumJob, 
     IONQ_INPUT_DATA_FORMAT, 
@@ -61,20 +61,34 @@ class IonQBackend(ProjectQIonQBackend):
         self._name = name
         self._provider_id = "ionq"
 
+    def _job_metadata(self, circuit_name, num_qubits, meas_map):
+        return {
+            "projectq": True,
+            "name": circuit_name,
+            "num_qubits": num_qubits,
+            "meas_map": meas_map,
+        }
+
     def name(self):
         return self._name
 
     def provider_id(self):
         return self._provider_id
 
-    def run(self, circuit: Circuit, **kwargs):
+    def run(self, circuit_name, **kwargs):
         """Submits the given circuit to run on an IonQ target."""
         logger.info(f"Submitting new job for backend {self.device}")
 
-        # todo: convert prjectq circuit to ionq circuit
-        ionq_circ, _, meas_map = None, None, None
+        qubit_mapping = self.main_engine.mapper.current_mapping
+        measured_ids = self._measured_ids[:]
+
+        num_qubits = len(qubit_mapping.keys())
+        meas_map = [qubit_mapping[qubit_id] for qubit_id in measured_ids]
+
+        ionq_circ = self._circuit
+
         input_data = json.dumps({
-            "qubits": circuit.num_qubits,
+            "qubits": num_qubits,
             "circuit": ionq_circ,
         })
 
@@ -83,7 +97,7 @@ class IonQBackend(ProjectQIonQBackend):
 
         job = AzureQuantumJob(
             backend=self,
-            name=circuit.name(),
+            name=circuit_name,
             target=self.name(),
             input_data=input_data,
             blob_name="inputData",
@@ -92,18 +106,18 @@ class IonQBackend(ProjectQIonQBackend):
             input_data_format=IONQ_INPUT_DATA_FORMAT,
             output_data_format=IONQ_OUTPUT_DATA_FORMAT,
             input_params = input_params,
-            metadata= self._job_metadata(circuit=circuit, meas_map=meas_map),
+            metadata= self._job_metadata(circuit_name=circuit_name, num_qubits=num_qubits, meas_map=meas_map),
             **kwargs
-        )
+        ) 
 
-        logger.info(f"Submitted job with id '{job.id()}' for circuit '{circuit.name}':")
+        logger.info(f"Submitted job with id '{job.id()}' for circuit '{circuit_name}':")
         logger.info( )
 
         return job
 
         
 class IonQSimulatorBackend(IonQBackend):
-    backend_names = ("ionq_simulator",)
+    backend_name = "ionq_simulator"
 
     def __init__(
         self, 
@@ -124,7 +138,7 @@ class IonQSimulatorBackend(IonQBackend):
             num_runs=num_runs, 
             verbose=verbose, 
             token=token, 
-            device='ionq_simulator', 
+            device=self.backend_name, 
             num_retries=num_retries, 
             interval=interval, 
             retrieve_execution=retrieve_execution
@@ -132,7 +146,7 @@ class IonQSimulatorBackend(IonQBackend):
 
 
 class IonQQPUBackend(IonQBackend):
-    backend_names = ("ionq_qpu",)
+    backend_name = "ionq_qpu"
 
     def __init__(
         self, 
@@ -153,7 +167,7 @@ class IonQQPUBackend(IonQBackend):
             num_runs=num_runs, 
             verbose=verbose, 
             token=token, 
-            device='ionq_qpu', 
+            device=self.backend_name, 
             num_retries=num_retries, 
             interval=interval, 
             retrieve_execution=retrieve_execution

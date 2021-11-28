@@ -1,6 +1,6 @@
 """Azure Quantum Qiskit Provider"""
 
-from .engine import AzureQuantumEngine
+from azure.quantum.projectq.engine import AzureQuantumEngine
 from azure.quantum import __version__
 
 __all__ = [
