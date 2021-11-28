@@ -46,9 +46,9 @@ class AzureQuantumEngine(ProjectQMainEngine):
     def get_workspace(self) -> Workspace:
         return self._workspace
 
-    def run(self, **kwargs) -> AzureQuantumJob:
+    def run(self, name, **kwargs) -> AzureQuantumJob:
         """Submits the circuit to run on associated backend."""
-        return self.backend.run(kwargs)
+        return self.backend.run(name, **kwargs)
 
     def get_job(self, job_id) -> AzureQuantumJob:
         """ Returns the Job instance associated with the given id."""

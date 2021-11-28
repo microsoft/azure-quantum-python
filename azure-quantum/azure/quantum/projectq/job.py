@@ -34,12 +34,13 @@ class AzureQuantumJob:
         """A Job running on Azure Quantum. """
         if azure_job is None:
             azure_job = Job.from_input_data(
-                workspace=backend.provider().get_workspace(),
+                workspace=backend.main_engine.get_workspace(),
                 **kwargs
             )
 
         self._azure_job = azure_job
-        self._workspace = backend.provider().get_workspace()
+        self._workspace = backend.main_engine.get_workspace()
+        # todo: is backend.main_engine is accessible?
 
     def id(self):
         """ This job's id."""
