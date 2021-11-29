@@ -26,7 +26,7 @@ if TYPE_CHECKING:
 import logging
 logger = logging.getLogger(__name__)
 
-__all__ = ["IonQBackend", "IonQSimulatorBackend", "IonQQPUBackend"]
+__all__ = ["IonQBackend", "IonQQPUBackend", "IonQSimulatorBackend"]
 
 
 class IonQBackend(ProjectQIonQBackend):
@@ -38,7 +38,7 @@ class IonQBackend(ProjectQIonQBackend):
         num_runs=100, 
         verbose=False, 
         token=None, 
-        device='ionq_simulator', 
+        device="ionq_simulator", 
         num_retries=3000, 
         interval=1, 
         retrieve_execution=None
@@ -59,12 +59,15 @@ class IonQBackend(ProjectQIonQBackend):
 
         self._provider_id = "ionq"
 
-    def _job_metadata(self, name, num_qubits, meas_map):
+    def __get_input_params(self, name, num_qubits, meas_map):
         return {
-            "projectq": True,
             "name": name,
+            "circuit": self._circuit,
+            "shots": self._num_runs,
             "num_qubits": num_qubits,
             "meas_map": meas_map,
+            "num_retries": self._num_retries,
+            "interval": self._interval
         }
 
     def provider_id(self):
@@ -87,21 +90,20 @@ class IonQBackend(ProjectQIonQBackend):
             "circuit": ionq_circ,
         })
 
-        # todo: get input_params
-        input_params = dict()
+        input_params = self.__get_input_params(name=name, num_qubits=num_qubits, meas_map=meas_map)
 
         job = AzureQuantumJob(
             backend=self,
             name=name,
-            target="",  # todo: what is target?
+            target=self.backend_name, 
             input_data=input_data,
             blob_name="inputData",
             content_type="application/json",
+            job_id=self._retrieve_execution,
             provider_id=self.provider_id(),
             input_data_format=IONQ_INPUT_DATA_FORMAT,
             output_data_format=IONQ_OUTPUT_DATA_FORMAT,
             input_params = input_params,
-            metadata= self._job_metadata(name=name, num_qubits=num_qubits, meas_map=meas_map),
             **kwargs
         ) 
 
@@ -109,33 +111,6 @@ class IonQBackend(ProjectQIonQBackend):
         logger.info(input_data)
 
         return job
-
-        
-class IonQSimulatorBackend(IonQBackend):
-    backend_name = "ionq_simulator"
-
-    def __init__(
-        self, 
-        num_runs=100, 
-        verbose=False, 
-        token=None, 
-        num_retries=3000, 
-        interval=1, 
-        retrieve_execution=None
-    ):
-        """Base class for interfacing with an IonQ Simulator backend"""
-        logger.info("Initializing IonQSimulatorBackend")
-
-        super().__init__(
-            use_hardware=False, 
-            num_runs=num_runs, 
-            verbose=verbose, 
-            token=token, 
-            device=self.backend_name, 
-            num_retries=num_retries, 
-            interval=interval, 
-            retrieve_execution=retrieve_execution
-        )
 
 
 class IonQQPUBackend(IonQBackend):
@@ -155,6 +130,33 @@ class IonQQPUBackend(IonQBackend):
 
         super().__init__(
             use_hardware=True, 
+            num_runs=num_runs, 
+            verbose=verbose, 
+            token=token, 
+            device=self.backend_name, 
+            num_retries=num_retries, 
+            interval=interval, 
+            retrieve_execution=retrieve_execution
+        )
+
+        
+class IonQSimulatorBackend(IonQBackend):
+    backend_name = "ionq_simulator"
+
+    def __init__(
+        self, 
+        num_runs=100, 
+        verbose=False, 
+        token=None, 
+        num_retries=3000, 
+        interval=1, 
+        retrieve_execution=None
+    ):
+        """Base class for interfacing with an IonQ Simulator backend"""
+        logger.info("Initializing IonQSimulatorBackend")
+
+        super().__init__(
+            use_hardware=False, 
             num_runs=num_runs, 
             verbose=verbose, 
             token=token, 
