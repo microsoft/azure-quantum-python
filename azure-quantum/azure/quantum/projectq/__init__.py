@@ -1,4 +1,4 @@
-"""Azure Quantum Qiskit Provider"""
+"""Azure Quantum ProjectQ Provider"""
 
 from azure.quantum.projectq.engine import AzureQuantumEngine
 from azure.quantum import __version__
