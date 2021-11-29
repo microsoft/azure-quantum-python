@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING
 from azure.quantum import __version__
 from azure.quantum.projectq.job import (
     AzureQuantumJob, 
+    IONQ_PROVIDER, 
     IONQ_INPUT_DATA_FORMAT, 
     IONQ_OUTPUT_DATA_FORMAT
 )
@@ -37,7 +38,6 @@ class IonQBackend(ProjectQIonQBackend):
         use_hardware=False, 
         num_runs=100, 
         verbose=False, 
-        token=None, 
         device="ionq_simulator", 
         num_retries=3000, 
         interval=1, 
@@ -50,14 +50,11 @@ class IonQBackend(ProjectQIonQBackend):
             use_hardware=use_hardware, 
             num_runs=num_runs, 
             verbose=verbose, 
-            token=token, 
             device=device, 
             num_retries=num_retries, 
             interval=interval, 
             retrieve_execution=retrieve_execution
         )
-
-        self._provider_id = "ionq"
 
     def __get_input_params(self, name, num_qubits, meas_map):
         return {
@@ -69,9 +66,6 @@ class IonQBackend(ProjectQIonQBackend):
             "num_retries": self._num_retries,
             "interval": self._interval
         }
-
-    def provider_id(self):
-        return self._provider_id
 
     def run(self, name, **kwargs):
         """Submits the given circuit to run on an IonQ target."""
@@ -90,7 +84,11 @@ class IonQBackend(ProjectQIonQBackend):
             "circuit": ionq_circ,
         })
 
-        input_params = self.__get_input_params(name=name, num_qubits=num_qubits, meas_map=meas_map)
+        input_params = self.__get_input_params(
+            name=name, 
+            num_qubits=num_qubits, 
+            meas_map=meas_map
+        )
 
         job = AzureQuantumJob(
             backend=self,
@@ -100,7 +98,7 @@ class IonQBackend(ProjectQIonQBackend):
             blob_name="inputData",
             content_type="application/json",
             job_id=self._retrieve_execution,
-            provider_id=self.provider_id(),
+            provider_id=IONQ_PROVIDER,
             input_data_format=IONQ_INPUT_DATA_FORMAT,
             output_data_format=IONQ_OUTPUT_DATA_FORMAT,
             input_params = input_params,
@@ -120,7 +118,6 @@ class IonQQPUBackend(IonQBackend):
         self, 
         num_runs=100, 
         verbose=False, 
-        token=None, 
         num_retries=3000, 
         interval=1, 
         retrieve_execution=None
@@ -132,7 +129,6 @@ class IonQQPUBackend(IonQBackend):
             use_hardware=True, 
             num_runs=num_runs, 
             verbose=verbose, 
-            token=token, 
             device=self.backend_name, 
             num_retries=num_retries, 
             interval=interval, 
@@ -147,7 +143,6 @@ class IonQSimulatorBackend(IonQBackend):
         self, 
         num_runs=100, 
         verbose=False, 
-        token=None, 
         num_retries=3000, 
         interval=1, 
         retrieve_execution=None
@@ -159,7 +154,6 @@ class IonQSimulatorBackend(IonQBackend):
             use_hardware=False, 
             num_runs=num_runs, 
             verbose=verbose, 
-            token=token, 
             device=self.backend_name, 
             num_retries=num_retries, 
             interval=interval, 

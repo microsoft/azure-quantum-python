@@ -15,12 +15,13 @@ from azure.quantum import Job
 import logging
 logger = logging.getLogger(__name__)
 
+# Constants for providers
+IONQ_PROVIDER = "ionq"
+
 # Constants for input data format
-MICROSOFT_INPUT_DATA_FORMAT = "microsoft.circuit.v1"
 IONQ_INPUT_DATA_FORMAT = "ionq.circuit.v1"
 
 # Constants for output data format
-MICROSOFT_OUTPUT_DATA_FORMAT = "microsoft.quantum-results.v1"
 IONQ_OUTPUT_DATA_FORMAT = "ionq.quantum-results.v1"
 
 
