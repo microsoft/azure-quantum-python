@@ -15,6 +15,7 @@ from azure.quantum.projectq.job import (
 
 try:
     from projectq.backends import IonQBackend as ProjectQIonQBackend
+    import projectq.setups.ionq
 except ImportError:
     raise ImportError(
     "Missing optional 'projectq' dependencies. \
@@ -39,8 +40,8 @@ class IonQBackend(ProjectQIonQBackend):
         num_runs=100, 
         verbose=False, 
         device="ionq_simulator", 
-        num_retries=3000, 
-        interval=1, 
+        # num_retries=3000, 
+        # interval=1, 
         retrieve_execution=None
     ):
         """Base class for interfacing with an IonQ backend in Azure Quantum"""
@@ -51,21 +52,25 @@ class IonQBackend(ProjectQIonQBackend):
             num_runs=num_runs, 
             verbose=verbose, 
             device=device, 
-            num_retries=num_retries, 
-            interval=interval, 
+            # num_retries=num_retries, 
+            # interval=interval, 
             retrieve_execution=retrieve_execution
         )
 
-    def __get_input_params(self, name, num_qubits, meas_map):
+    def __get_metadata(self, name, num_qubits, meas_map):
         return {
             "name": name,
-            "circuit": self._circuit,
-            "shots": self._num_runs,
             "num_qubits": num_qubits,
             "meas_map": meas_map,
-            "num_retries": self._num_retries,
-            "interval": self._interval
+            # "num_retries": self._num_retries,
+            # "interval": self._interval
         }
+        
+    def get_engine_list(self):
+        """Return the default list of compiler engine for the IonQ platform."""
+        return projectq.setups.ionq.get_engine_list(
+            device=self.backend_name
+        )
 
     def run(self, name, **kwargs):
         """Submits the given circuit to run on an IonQ target."""
@@ -84,7 +89,11 @@ class IonQBackend(ProjectQIonQBackend):
             "circuit": ionq_circ,
         })
 
-        input_params = self.__get_input_params(
+        input_params = {
+            "shots": self._num_runs
+        }
+
+        metadata = self.__get_metadata(
             name=name, 
             num_qubits=num_qubits, 
             meas_map=meas_map
@@ -102,6 +111,7 @@ class IonQBackend(ProjectQIonQBackend):
             input_data_format=IONQ_INPUT_DATA_FORMAT,
             output_data_format=IONQ_OUTPUT_DATA_FORMAT,
             input_params = input_params,
+            metadata = metadata,
             **kwargs
         ) 
 
@@ -118,8 +128,8 @@ class IonQQPUBackend(IonQBackend):
         self, 
         num_runs=100, 
         verbose=False, 
-        num_retries=3000, 
-        interval=1, 
+        # num_retries=3000, 
+        # interval=1, 
         retrieve_execution=None
     ):
         """Base class for interfacing with an IonQ QPU backend"""
@@ -130,8 +140,8 @@ class IonQQPUBackend(IonQBackend):
             num_runs=num_runs, 
             verbose=verbose, 
             device=self.backend_name, 
-            num_retries=num_retries, 
-            interval=interval, 
+            # num_retries=num_retries, 
+            # interval=interval, 
             retrieve_execution=retrieve_execution
         )
 
@@ -143,8 +153,8 @@ class IonQSimulatorBackend(IonQBackend):
         self, 
         num_runs=100, 
         verbose=False, 
-        num_retries=3000, 
-        interval=1, 
+        # num_retries=3000, 
+        # interval=1, 
         retrieve_execution=None
     ):
         """Base class for interfacing with an IonQ Simulator backend"""
@@ -155,7 +165,7 @@ class IonQSimulatorBackend(IonQBackend):
             num_runs=num_runs, 
             verbose=verbose, 
             device=self.backend_name, 
-            num_retries=num_retries, 
-            interval=interval, 
+            # num_retries=num_retries, 
+            # interval=interval, 
             retrieve_execution=retrieve_execution
         )

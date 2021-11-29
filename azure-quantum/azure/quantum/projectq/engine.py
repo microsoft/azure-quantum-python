@@ -22,14 +22,13 @@ class AzureQuantumEngine(ProjectQMainEngine):
     def __init__(
         self, 
         backend=None, 
-        engine_list=None, 
         verbose=False,
         workspace=None, 
         **kwargs
     ):
         super().__init__(
             backend=backend,
-            engine_list=engine_list,
+            engine_list=backend.get_engine_list(),
             verbose=verbose
         )
 
