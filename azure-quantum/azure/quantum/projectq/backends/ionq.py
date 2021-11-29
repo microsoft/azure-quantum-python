@@ -115,8 +115,8 @@ class IonQBackend(ProjectQIonQBackend):
             provider_id=IONQ_PROVIDER,
             input_data_format=IONQ_INPUT_DATA_FORMAT,
             output_data_format=IONQ_OUTPUT_DATA_FORMAT,
-            input_params = input_params,
-            metadata = metadata,
+            input_params=input_params,
+            metadata=metadata,
             **kwargs
         ) 
 
