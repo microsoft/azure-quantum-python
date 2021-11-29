@@ -49,11 +49,6 @@ class AzureQuantumEngine(ProjectQMainEngine):
         """Submits the circuit to run on associated backend."""
         return self.backend.run(name, **kwargs)
 
-    # Override flush method from parent class
-    def flush(self, **kwargs):
-        """Submits the circuit to run on associated backend."""
-        return self.run(**kwargs)
-
     def get_job(self, job_id) -> AzureQuantumJob:
         """ Returns the Job instance associated with the given id."""
         backend = self.get_backend()
