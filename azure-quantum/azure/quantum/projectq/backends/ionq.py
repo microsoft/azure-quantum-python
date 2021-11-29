@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 ##
 import json
+import uuid
 from typing import TYPE_CHECKING
 
 from azure.quantum import __version__
@@ -72,9 +73,13 @@ class IonQBackend(ProjectQIonQBackend):
             device=self.backend_name
         )
 
-    def run(self, name, **kwargs):
+    def run(self, name=None, **kwargs):
         """Submits the given circuit to run on an IonQ target."""
         logger.info(f"Submitting new job for backend {self.device}")
+
+        if name is None:
+            random_suffix = str(uuid.uuid4())[:8]
+            name = "projectq-ionq-circuit-{}".format(random_suffix)
 
         qubit_mapping = self.main_engine.mapper.current_mapping
         measured_ids = self._measured_ids[:]
@@ -119,6 +124,19 @@ class IonQBackend(ProjectQIonQBackend):
         logger.info(input_data)
 
         return job
+
+    # Override get_probability method from parent class
+    def get_probability():
+        raise TypeError("IonQBackend.get_probability is not supported, use IonQBackend.run instead")
+
+    # Override get_probabilities method from parent class
+    def get_probabilities():
+        raise TypeError("IonQBackend.get_probabilities is not supported, use IonQBackend.run instead")
+
+    # Override _run method from parent class
+    # This is indirectly used in IonQBackend.receive method
+    def _run(self):
+        self.run()
 
 
 class IonQQPUBackend(IonQBackend):
