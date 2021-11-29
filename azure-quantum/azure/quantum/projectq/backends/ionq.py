@@ -125,16 +125,7 @@ class IonQBackend(ProjectQIonQBackend):
 
         return job
 
-    # Override get_probability method from parent class
-    def get_probability():
-        raise TypeError("IonQBackend.get_probability is not supported, use IonQBackend.run instead")
-
-    # Override get_probabilities method from parent class
-    def get_probabilities():
-        raise TypeError("IonQBackend.get_probabilities is not supported, use IonQBackend.run instead")
-
     # Override _run method from parent class
-    # This is indirectly used in IonQBackend.receive method
     def _run(self):
         self.run()
 
