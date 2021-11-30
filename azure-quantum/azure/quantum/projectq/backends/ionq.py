@@ -41,8 +41,6 @@ class IonQBackend(ProjectQIonQBackend):
         num_runs=100, 
         verbose=False, 
         device="ionq_simulator", 
-        # num_retries=3000, 
-        # interval=1, 
         retrieve_execution=None
     ):
         """Base class for interfacing with an IonQ backend in Azure Quantum"""
@@ -53,19 +51,10 @@ class IonQBackend(ProjectQIonQBackend):
             num_runs=num_runs, 
             verbose=verbose, 
             device=device, 
-            # num_retries=num_retries, 
-            # interval=interval, 
+            num_retries=0,
+            interval=1, 
             retrieve_execution=retrieve_execution
         )
-
-    def __get_metadata(self, name, num_qubits, meas_map):
-        return {
-            "name": name,
-            "num_qubits": num_qubits,
-            "meas_map": meas_map,
-            # "num_retries": self._num_retries,
-            # "interval": self._interval
-        }
         
     def get_engine_list(self):
         """Return the default list of compiler engine for the IonQ platform."""
@@ -98,11 +87,13 @@ class IonQBackend(ProjectQIonQBackend):
             "shots": self._num_runs
         }
 
-        metadata = self.__get_metadata(
-            name=name, 
-            num_qubits=num_qubits, 
-            meas_map=meas_map
-        )
+        metadata = {
+            "name": name, 
+            "num_qubits": num_qubits, 
+            "meas_map": meas_map,
+            # "num_retries": self._num_retries,
+            # "interval": self._interval
+        }
 
         job = AzureQuantumJob(
             backend=self,
@@ -137,8 +128,6 @@ class IonQQPUBackend(IonQBackend):
         self, 
         num_runs=100, 
         verbose=False, 
-        # num_retries=3000, 
-        # interval=1, 
         retrieve_execution=None
     ):
         """Base class for interfacing with an IonQ QPU backend"""
@@ -149,8 +138,6 @@ class IonQQPUBackend(IonQBackend):
             num_runs=num_runs, 
             verbose=verbose, 
             device=self.backend_name, 
-            # num_retries=num_retries, 
-            # interval=interval, 
             retrieve_execution=retrieve_execution
         )
 
@@ -162,8 +149,6 @@ class IonQSimulatorBackend(IonQBackend):
         self, 
         num_runs=100, 
         verbose=False, 
-        # num_retries=3000, 
-        # interval=1, 
         retrieve_execution=None
     ):
         """Base class for interfacing with an IonQ Simulator backend"""
@@ -174,7 +159,5 @@ class IonQSimulatorBackend(IonQBackend):
             num_runs=num_runs, 
             verbose=verbose, 
             device=self.backend_name, 
-            # num_retries=num_retries, 
-            # interval=interval, 
             retrieve_execution=retrieve_execution
         )
