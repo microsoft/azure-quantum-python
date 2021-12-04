@@ -1,6 +1,6 @@
 # %% Get all one-qubit and two-qubit gates
-from qiskit import QuantumCircuit
-from qiskit.converters import circuit_to_dag
+from qiskit.circuit.quantumcircuit import Qasm
+from qiskit.converters import ast_to_dag
 
 
 GATES_1Q = [
@@ -42,8 +42,9 @@ def estimate_cost_honeywell(qasm_str: str, num_shots: int) -> float:
     :return: Cost estimation
     :rtype: float
     """
-    qc = QuantumCircuit.from_qasm_str(qasm_str)
-    dag = circuit_to_dag(qc)
+    qasm = Qasm(data=qasm_str)
+    ast = qasm.parse()
+    dag = ast_to_dag(ast)
     ops = dag.count_ops()
     N_1q = sum([value for key, value in ops.items() if key in GATES_1Q])
     N_2q = sum([value for key, value in ops.items() if key in GATES_MULTI])
@@ -70,3 +71,4 @@ measure q[2] -> c[2];
 measure q[3] -> c[3];"""
 
 estimate_cost_honeywell(test_circuit, 10)
+# %%
