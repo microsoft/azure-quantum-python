@@ -71,4 +71,3 @@ measure q[2] -> c[2];
 measure q[3] -> c[3];"""
 
 estimate_cost_honeywell(test_circuit, 10)
-# %%
