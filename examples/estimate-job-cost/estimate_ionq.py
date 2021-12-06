@@ -91,4 +91,17 @@ test_circuit = {
             ]
         }
 
+def estimate_cost_ionq_qiskit(circuit: QuantumCircuit, num_shots: int):
+    """
+    Estimate costs for a qiskit circuit
+    """
+    from qiskit_ionq.helpers import qiskit_circ_to_ionq_circ
+
+    ionq_circ, _, _ = qiskit_circ_to_ionq_circ(circuit)
+    input_data = json.dumps({
+        "qubits": circuit.num_qubits,
+        "circuit": ionq_circ,
+    })
+    estimate_cost_ionq(circuit=input_data, num_shots=num_shots)
+
 estimate_cost_ionq(circuit=test_circuit, num_shots=1024)

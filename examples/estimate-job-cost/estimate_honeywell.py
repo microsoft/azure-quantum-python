@@ -1,6 +1,12 @@
+##
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+##
+
 # %% Get all one-qubit and two-qubit gates
 from qiskit.circuit.quantumcircuit import Qasm
 from qiskit.converters import ast_to_dag
+from qiskit import QuantumCircuit
 
 
 GATES_1Q = [
@@ -51,6 +57,18 @@ def estimate_cost_honeywell(qasm_str: str, num_shots: int) -> float:
     N_m = sum([value for key, value in ops.items() if key in GATES_M])
     HQC = 5 + num_shots * (N_1q + 10 * N_2q + 5 * N_m) / 5000
     return HQC
+
+
+def estimate_cost_honeywell_qiskit(circuit: QuantumCircuit, num_shots: int):
+    """
+    Estimate costs for a qiskit circuit
+    """
+    ionq_circ, _, meas_map = qiskit_circ_to_ionq_circ(circuit)
+    input_data = json.dumps({
+        "qubits": circuit.num_qubits,
+        "circuit": ionq_circ,
+    })
+    return estimate_cost_honeywell(input_data, num_shots)s
 
 
 test_circuit = """OPENQASM 2.0;
