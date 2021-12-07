@@ -63,29 +63,28 @@ def estimate_cost_honeywell_qiskit(circuit: QuantumCircuit, num_shots: int):
     """
     Estimate costs for a qiskit circuit
     """
-    ionq_circ, _, meas_map = qiskit_circ_to_ionq_circ(circuit)
-    input_data = json.dumps({
-        "qubits": circuit.num_qubits,
-        "circuit": ionq_circ,
-    })
-    return estimate_cost_honeywell(input_data, num_shots)s
+    input_data = circuit.qasm()
+    return estimate_cost_honeywell(input_data, num_shots)
 
 
-test_circuit = """OPENQASM 2.0;
-include "qelib1.inc";
-qreg q[4];
-creg c[4];
-h q[0];
-h q[1];
-h q[2];
-h q[3];
-cx q[0],q[1];
-cx q[2],q[3];
-ry(2) q[0];
-cx q[1],q[0];
-measure q[0] -> c[0];
-measure q[1] -> c[1];
-measure q[2] -> c[2];
-measure q[3] -> c[3];"""
+if __name__ == "__main__":
 
-estimate_cost_honeywell(test_circuit, 10)
+    test_circuit = """OPENQASM 2.0;
+    include "qelib1.inc";
+    qreg q[4];
+    creg c[4];
+    h q[0];
+    h q[1];
+    h q[2];
+    h q[3];
+    cx q[0],q[1];
+    cx q[2],q[3];
+    ry(2) q[0];
+    cx q[1],q[0];
+    measure q[0] -> c[0];
+    measure q[1] -> c[1];
+    measure q[2] -> c[2];
+    measure q[3] -> c[3];"""
+
+    cost = estimate_cost_honeywell(test_circuit, 10)
+    print(f"Estimated cost: ${cost}")

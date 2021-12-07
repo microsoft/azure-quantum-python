@@ -4,7 +4,11 @@
 ##
 
 # %% Get all one-qubit and two-qubit gates
-from typing import Dict, Any
+from typing import Dict, Any, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from qiskit import QuantumCircuit
+
 
 GATES_1Q = [
     "x",	# Pauli X gate
@@ -23,6 +27,7 @@ GATES_1Q = [
     "vi",	# Conjugate transpose of square-root-of-not gate
 ]
 
+
 GATES_MULTI = [
     "cnot",	# Convenient alias for controlled-not gate
     "xx",	# Ising XX gate: e^(-iθ X⊗X /2)
@@ -31,11 +36,14 @@ GATES_MULTI = [
     "swap",	# Swaps two qubits
 ]
 
+
 def is_1q_gate(gate: Dict[str, Any]):
     return gate.get("gate") in GATES_1Q
 
+
 def is_multi_q_gate(gate):
     return gate.get("gate") in GATES_MULTI
+
 
 def num_2q_gates(gate):
     controls = gate.get("controls")
@@ -44,6 +52,7 @@ def num_2q_gates(gate):
         return 1
     # Multiple control qubits
     return 6 * (len(controls) - 2)
+
 
 def estimate_cost_ionq(
     circuit: Dict[str, Any],
@@ -70,31 +79,12 @@ def estimate_cost_ionq(
     cost = (cost_1q * N_1q + cost_2q * N_2q) * num_shots
     return max(cost, 1.0)
 
-# %% Estimate costs for a test circuit
-test_circuit = {
-            "qubits": 3,
-            "circuit": [
-                {
-                "gate": "h",
-                "target": 0
-                },
-                {
-                "gate": "cnot",
-                "control": 0,
-                "target": 1
-                },
-                {
-                "gate": "cnot",
-                "control": 0,
-                "target": 2
-                },
-            ]
-        }
 
-def estimate_cost_ionq_qiskit(circuit: QuantumCircuit, num_shots: int):
+def estimate_cost_ionq_qiskit(circuit: "QuantumCircuit", num_shots: int):
     """
     Estimate costs for a qiskit circuit
     """
+    import json
     from qiskit_ionq.helpers import qiskit_circ_to_ionq_circ
 
     ionq_circ, _, _ = qiskit_circ_to_ionq_circ(circuit)
@@ -104,4 +94,27 @@ def estimate_cost_ionq_qiskit(circuit: QuantumCircuit, num_shots: int):
     })
     estimate_cost_ionq(circuit=input_data, num_shots=num_shots)
 
-estimate_cost_ionq(circuit=test_circuit, num_shots=1024)
+
+if __name__ == "__main__":
+    test_circuit = {
+        "qubits": 3,
+        "circuit": [
+            {
+            "gate": "h",
+            "target": 0
+            },
+            {
+            "gate": "cnot",
+            "control": 0,
+            "target": 1
+            },
+            {
+            "gate": "cnot",
+            "control": 0,
+            "target": 2
+            },
+        ]
+    }
+
+    cost = estimate_cost_ionq(circuit=test_circuit, num_shots=1024)
+    print(f"Estimated cost: ${cost}")
