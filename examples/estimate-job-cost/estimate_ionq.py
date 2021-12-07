@@ -113,8 +113,7 @@ if __name__ == "__main__":
         ]
     }
 
-    cost = estimate_cost_ionq(circuit=test_circuit, num_shots=100e3)
-    print(f"Estimated cost: ${cost}")
+    cost1 = estimate_cost_ionq(circuit=test_circuit, num_shots=100e3)
 
     circuit = QuantumCircuit(3, 3)
     circuit.h(0)
@@ -124,5 +123,6 @@ if __name__ == "__main__":
     circuit.measure(1, 1)
     circuit.measure(2, 2)
 
-    cost = estimate_cost_ionq_qiskit(circuit, 100e3)
-    print(f"Estimated cost: ${cost}")
+    cost2 = estimate_cost_ionq_qiskit(circuit, 100e3)
+    assert cost1 == cost2
+    print(f"Estimated cost: ${cost1}")

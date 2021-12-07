@@ -83,8 +83,7 @@ if __name__ == "__main__":
     measure q[2] -> c[2];
     measure q[3] -> c[3];"""
 
-    cost = estimate_cost_honeywell(test_circuit, 1024)
-    print(f"Estimated cost: HQC {cost}")
+    cost1 = estimate_cost_honeywell(test_circuit, 1024)
 
     circuit = QuantumCircuit(4, 4)
     circuit.h(0)
@@ -100,5 +99,7 @@ if __name__ == "__main__":
     circuit.measure(2, 2)
     circuit.measure(3, 3)
 
-    cost = estimate_cost_honeywell_qiskit(circuit, 1024)
-    print(f"Estimated cost: HQC {cost}")
+    cost2 = estimate_cost_honeywell_qiskit(circuit, 1024)
+
+    assert cost1 == cost2
+    print(f"Estimated cost: HQC {cost1}")
