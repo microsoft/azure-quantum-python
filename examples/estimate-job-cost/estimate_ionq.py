@@ -4,10 +4,8 @@
 ##
 
 # %% Get all one-qubit and two-qubit gates
-from typing import Dict, Any, TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from qiskit import QuantumCircuit
+from typing import Dict, Any
+from qiskit import QuantumCircuit
 
 
 GATES_1Q = [
@@ -38,16 +36,16 @@ GATES_MULTI = [
 
 
 def is_1q_gate(gate: Dict[str, Any]):
-    return gate.get("gate") in GATES_1Q
+    return gate.get("gate") in GATES_1Q and ("controls" not in gate and "control" not in gate)
 
 
 def is_multi_q_gate(gate):
-    return gate.get("gate") in GATES_MULTI
+    return gate.get("gate") in GATES_MULTI or "controls" in gate or "control" in gate
 
 
 def num_2q_gates(gate):
     controls = gate.get("controls")
-    if controls is None:
+    if controls is None or len(controls) == 1:
         # Only one control qubit
         return 1
     # Multiple control qubits
@@ -84,15 +82,14 @@ def estimate_cost_ionq_qiskit(circuit: "QuantumCircuit", num_shots: int):
     """
     Estimate costs for a qiskit circuit
     """
-    import json
     from qiskit_ionq.helpers import qiskit_circ_to_ionq_circ
 
     ionq_circ, _, _ = qiskit_circ_to_ionq_circ(circuit)
-    input_data = json.dumps({
+    input_data = {
         "qubits": circuit.num_qubits,
         "circuit": ionq_circ,
-    })
-    estimate_cost_ionq(circuit=input_data, num_shots=num_shots)
+    }
+    return estimate_cost_ionq(circuit=input_data, num_shots=num_shots)
 
 
 if __name__ == "__main__":
@@ -116,5 +113,16 @@ if __name__ == "__main__":
         ]
     }
 
-    cost = estimate_cost_ionq(circuit=test_circuit, num_shots=1024)
+    cost = estimate_cost_ionq(circuit=test_circuit, num_shots=100e3)
+    print(f"Estimated cost: ${cost}")
+
+    circuit = QuantumCircuit(3, 3)
+    circuit.h(0)
+    circuit.cnot(0, 1)
+    circuit.cnot(0, 2)
+    circuit.measure(0, 0)
+    circuit.measure(1, 1)
+    circuit.measure(2, 2)
+
+    cost = estimate_cost_ionq_qiskit(circuit, 100e3)
     print(f"Estimated cost: ${cost}")

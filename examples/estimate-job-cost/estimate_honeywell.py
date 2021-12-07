@@ -2,13 +2,11 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 ##
-
-# %% Get all one-qubit and two-qubit gates
 from qiskit.circuit.quantumcircuit import Qasm
 from qiskit.converters import ast_to_dag
 from qiskit import QuantumCircuit
 
-
+# Get all one-qubit and two-qubit gates
 GATES_1Q = [
     "x",
     "y",
@@ -68,7 +66,6 @@ def estimate_cost_honeywell_qiskit(circuit: QuantumCircuit, num_shots: int):
 
 
 if __name__ == "__main__":
-
     test_circuit = """OPENQASM 2.0;
     include "qelib1.inc";
     qreg q[4];
@@ -86,5 +83,22 @@ if __name__ == "__main__":
     measure q[2] -> c[2];
     measure q[3] -> c[3];"""
 
-    cost = estimate_cost_honeywell(test_circuit, 10)
-    print(f"Estimated cost: ${cost}")
+    cost = estimate_cost_honeywell(test_circuit, 1024)
+    print(f"Estimated cost: HQC {cost}")
+
+    circuit = QuantumCircuit(4, 4)
+    circuit.h(0)
+    circuit.h(1)
+    circuit.h(2)
+    circuit.h(3)
+    circuit.cx(0, 1)
+    circuit.cx(2, 3)
+    circuit.ry(2, 0)
+    circuit.cx(1, 0)
+    circuit.measure(0, 0)
+    circuit.measure(1, 1)
+    circuit.measure(2, 2)
+    circuit.measure(3, 3)
+
+    cost = estimate_cost_honeywell_qiskit(circuit, 1024)
+    print(f"Estimated cost: HQC {cost}")
