@@ -122,7 +122,10 @@ class IonQ(Target):
         min_cost: float=1.0
     ) -> float:
         """Calculate the cost of submittng a circuit to IonQ targets.
+        Optionally, you can provide the number of gate and measurement operations
+        manually.
         The actual cost charged by the provider may differ from this calculation.
+        
         Specify pricing details for your area to get most accurate results.
         By default, this function charges cost_1q=0.00003 USD for a single-qubit gate,
         cost_2q=0.0003 USD for a two-qubit gate with a total minimum cost of $1.-
