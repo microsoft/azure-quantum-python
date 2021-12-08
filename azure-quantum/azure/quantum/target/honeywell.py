@@ -117,7 +117,7 @@ class Honeywell(Target):
         N_2q: int = None,
         N_m: int  = None
     ):
-        """Calculate the cost in HQN for a given circuit.
+        """Calculate the cost in HQC for a given circuit.
         Optionally, you can provide the number of gate and measurement operations
         manually.
         The actual cost charged by the provider may differ from this calculation.
