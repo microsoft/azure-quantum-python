@@ -109,7 +109,7 @@ class Honeywell(Target):
             **kwargs
         )
     
-    def estimate_cost(
+    def estimate_price(
         self,
         circuit: str = None,
         num_shots: int = None,
@@ -117,10 +117,10 @@ class Honeywell(Target):
         N_2q: int = None,
         N_m: int  = None
     ):
-        """Estimate the cost in HQC for a given circuit.
+        """Estimate the price in HQC for a given circuit.
         Optionally, you can provide the number of gate and measurement operations
         manually.
-        The actual cost charged by the provider may differ from this estimation.
+        The actual price charged by the provider may differ from this estimation.
 
         For the most current pricing details, see
         https://docs.microsoft.com/en-us/azure/quantum/provider-honeywell#honeywell-system-model-h1

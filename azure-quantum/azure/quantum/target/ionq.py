@@ -113,22 +113,22 @@ class IonQ(Target):
             **kwargs
         )
 
-    def estimate_cost(
+    def estimate_price(
         self,
         circuit: Dict[str, Any],
         num_shots: int,
-        cost_1q: float=0.00003,
-        cost_2q: float=0.0003,
-        min_cost: float=1.0
+        price_1q: float=0.00003,
+        price_2q: float=0.0003,
+        min_price: float=1.0
     ) -> float:
-        """Estimate the cost of submittng a circuit to IonQ targets.
+        """Estimate the price of submittng a circuit to IonQ targets.
         Optionally, you can provide the number of gate and measurement operations
         manually.
-        The actual cost charged by the provider may differ from this calculation.
+        The actual price charged by the provider may differ from this calculation.
         
         Specify pricing details for your area to get most accurate results.
-        By default, this function charges cost_1q=0.00003 USD for a single-qubit gate,
-        cost_2q=0.0003 USD for a two-qubit gate with a total minimum cost of $1.-
+        By default, this function charges price_1q=0.00003 USD for a single-qubit gate,
+        price_2q=0.0003 USD for a two-qubit gate with a total minimum price of $1.-
         per circuit.
 
         For the most current pricing details, see
@@ -141,14 +141,14 @@ class IonQ(Target):
         :type circuit: Dict[str, Any]
         :param num_shots: Number of shots, defaults to None
         :type num_shots: int
-        :param cost_1q: The cost of running a single-qubit gate
+        :param price_1q: The price of running a single-qubit gate
             for one shot, defaults to 0.00003
-        :type cost_1q: float, optional
-        :param cost_2q: The cost of running a double-qubit gate
+        :type price_1q: float, optional
+        :param price_2q: The price of running a double-qubit gate
             for one shot, defaults to 0.0003
-        :type cost_2q: float, optional
-        :param min_cost: The minimum cost for running a job, defaults to 1.0
-        :type min_cost: float, optional
+        :type price_2q: float, optional
+        :param min_price: The minimum price for running a job, defaults to 1.0
+        :type min_price: float, optional
         """
         if self.name == "ionq.simulator": 
             return 0.0
@@ -174,6 +174,6 @@ class IonQ(Target):
         gates = circuit.get("circuit", [])
         N_1q = sum(map(is_1q_gate, gates))
         N_2q = sum(map(num_2q_gates, filter(is_multi_q_gate, gates)))
-        cost = (cost_1q * N_1q + cost_2q * N_2q) * num_shots
+        price = (price_1q * N_1q + price_2q * N_2q) * num_shots
 
-        return max(cost, min_cost)
+        return max(price, min_price)

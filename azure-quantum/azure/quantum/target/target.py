@@ -160,9 +160,9 @@ target '{self.name}' of provider '{self.provider_id}' not found."
         """
         return False
     
-    def estimate_cost(
+    def estimate_price(
         self,
         input_data: Any,
         input_params: Dict[str, Any] = None
     ):
-        return NotImplementedError("Cost calculation is not implemented yet for this target.")
+        return NotImplementedError("Price estimation is not implemented yet for this target.")
