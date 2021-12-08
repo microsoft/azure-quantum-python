@@ -160,7 +160,7 @@ target '{self.name}' of provider '{self.provider_id}' not found."
         """
         return False
     
-    def calculate_cost(
+    def estimate_cost(
         self,
         input_data: Any,
         input_params: Dict[str, Any] = None

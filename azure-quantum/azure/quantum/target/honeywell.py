@@ -109,7 +109,7 @@ class Honeywell(Target):
             **kwargs
         )
     
-    def calculate_cost(
+    def estimate_cost(
         self,
         circuit: str = None,
         num_shots: int = None,
@@ -117,10 +117,10 @@ class Honeywell(Target):
         N_2q: int = None,
         N_m: int  = None
     ):
-        """Calculate the cost in HQC for a given circuit.
+        """Estimate the cost in HQC for a given circuit.
         Optionally, you can provide the number of gate and measurement operations
         manually.
-        The actual cost charged by the provider may differ from this calculation.
+        The actual cost charged by the provider may differ from this estimation.
 
         For the most current pricing details, see
         https://docs.microsoft.com/en-us/azure/quantum/provider-honeywell#honeywell-system-model-h1
@@ -129,16 +129,16 @@ class Honeywell(Target):
 
         :param circuit: Quantum circuit in QASM format
         :type circuit: str
-        :param num_shots: Number of shots for which to calculate costs
+        :param num_shots: Number of shots for which to estimate costs
         :type num_shots: int, optional
         :param N_1q: Number of one-qubit gates, if not specified, 
-            this is calculated from the circuit
+            this is estimated from the circuit
         :type N_1q: int, optional
         :param N_2q: Number of two-qubit gates, if not specified, 
-            this is calculated from the circuit
+            this is estimated from the circuit
         :type N_2q: int, optional
         :param N_m: Number of measurement operations, if not specified, 
-            this is calculated from the circuit
+            this is estimated from the circuit
         :type N_m: int, optional
         :raises ImportError: If N_1q, N_2q and N_m are not specified,
             this will require a qiskit installation.

@@ -113,7 +113,7 @@ class IonQ(Target):
             **kwargs
         )
 
-    def calculate_cost(
+    def estimate_cost(
         self,
         circuit: Dict[str, Any],
         num_shots: int,
@@ -121,7 +121,7 @@ class IonQ(Target):
         cost_2q: float=0.0003,
         min_cost: float=1.0
     ) -> float:
-        """Calculate the cost of submittng a circuit to IonQ targets.
+        """Estimate the cost of submittng a circuit to IonQ targets.
         Optionally, you can provide the number of gate and measurement operations
         manually.
         The actual cost charged by the provider may differ from this calculation.
