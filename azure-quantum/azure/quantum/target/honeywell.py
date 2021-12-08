@@ -18,6 +18,35 @@ class Honeywell(Target):
         "honeywell.hqs-lt-s1-sim",
     )
 
+    # Get all one-qubit, two-qubit gates and measurement operations
+    GATES_1Q = [
+        "x",
+        "y",
+        "z",
+        "rx",
+        "ry",
+        "rz",
+        "h",
+        "s",
+        "sdg",
+        "t",
+        "tdg",
+        "v",
+        "vdg",
+    ]
+
+    GATES_MULTI = [
+        "cx",
+        "ccx",
+        "cz",
+        "zz",
+    ]
+
+    GATES_M = [
+        "measure",
+        "reset"
+    ]
+
     def __init__(
         self,
         workspace: Workspace,
@@ -79,3 +108,56 @@ class Honeywell(Target):
             input_params=input_params,
             **kwargs
         )
+    
+    def calculate_cost(
+        self,
+        circuit: str = None,
+        num_shots: int = None,
+        N_1q: int = None,
+        N_2q: int = None,
+        N_m: int  = None
+    ):
+        """Calculate the cost in HQN for a given circuit.
+
+        :param circuit: Quantum circuit in QASM format
+        :type circuit: str
+        :param num_shots: Number of shots for which to calculate costs
+        :type num_shots: int, optional
+        :param N_1q: Number of one-qubit gates, if not specified, 
+            this is calculated from the circuit
+        :type N_1q: int, optional
+        :param N_2q: Number of two-qubit gates, if not specified, 
+            this is calculated from the circuit
+        :type N_2q: int, optional
+        :param N_m: Number of measurement operations, if not specified, 
+            this is calculated from the circuit
+        :type N_m: int, optional
+        :raises ImportError: If N_1q, N_2q and N_m are not specified,
+            this will require a qiskit installation.
+        """
+        if "apival" in self.name:
+            return 0.0
+
+        if circuit is not None and (N_1q is None or N_2q is None or N_m is None):
+            try:
+                from qiskit.circuit.quantumcircuit import Qasm
+                from qiskit.converters import ast_to_dag
+
+            except ImportError:
+                raise ImportError(
+                    "Missing dependency qiskit. Please run `pip install azure-quantum[qiskit]` " \
+"to estimate the circuit cost. Alternatively, specify the number of one-qubit and two-qubit " \
+"gates in the method input arguments.")
+
+            else:
+                qasm = Qasm(data=circuit)
+                ast = qasm.parse()
+                dag = ast_to_dag(ast)
+                ops = dag.count_ops()
+                N_1q = sum([value for key, value in ops.items() if key in self.GATES_1Q])
+                N_2q = sum([value for key, value in ops.items() if key in self.GATES_MULTI])
+                N_m = sum([value for key, value in ops.items() if key in self.GATES_M])
+
+        HQC = 5 + num_shots * (N_1q + 10 * N_2q + 5 * N_m) / 5000
+
+        return HQC

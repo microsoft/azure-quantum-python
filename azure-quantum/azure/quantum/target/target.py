@@ -159,3 +159,10 @@ target '{self.name}' of provider '{self.provider_id}' not found."
         This should be overridden by Solver subclasses which do support protobuf.
         """
         return False
+    
+    def calculate_cost(
+        self,
+        input_data: Any,
+        input_params: Dict[str, Any] = None
+    ):
+        return NotImplementedError("Cost calculation is not implemented for this target")
