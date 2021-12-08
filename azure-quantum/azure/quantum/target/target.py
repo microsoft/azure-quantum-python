@@ -165,4 +165,4 @@ target '{self.name}' of provider '{self.provider_id}' not found."
         input_data: Any,
         input_params: Dict[str, Any] = None
     ):
-        return NotImplementedError("Cost calculation is not implemented for this target")
+        return NotImplementedError("Cost calculation is not implemented yet for this target.")
