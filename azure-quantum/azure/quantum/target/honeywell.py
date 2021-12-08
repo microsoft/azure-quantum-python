@@ -118,6 +118,12 @@ class Honeywell(Target):
         N_m: int  = None
     ):
         """Calculate the cost in HQN for a given circuit.
+        The actual cost charged by the provider may differ from this calculation.
+
+        For the most current pricing details, see
+        https://docs.microsoft.com/en-us/azure/quantum/provider-honeywell#honeywell-system-model-h1
+        Or find your workspace and view pricing options in the "Provider" tab
+        of your workspace: http://aka.ms/aq/myworkspaces
 
         :param circuit: Quantum circuit in QASM format
         :type circuit: str

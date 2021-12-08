@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 ##
-from _typeshed import NoneType
 import io
 import json
 
@@ -121,10 +120,13 @@ class IonQ(Target):
         cost_1q: float=0.00003,
         cost_2q: float=0.0003,
         min_cost: float=1.0
-    ) -> Union[float, NoneType]:
+    ) -> float:
         """Calculate the cost of submittng a circuit to IonQ targets.
-        Specify pricing details for your area to calculate roughly what your
-        job will cost.
+        The actual cost charged by the provider may differ from this calculation.
+        Specify pricing details for your area to get most accurate results.
+        By default, this function charges cost_1q=0.00003 USD for a single-qubit gate,
+        cost_2q=0.0003 USD for a two-qubit gate with a total minimum cost of $1.-
+        per circuit.
 
         For the most current pricing details, see
         https://docs.microsoft.com/en-us/azure/quantum/provider-ionq#pricing
