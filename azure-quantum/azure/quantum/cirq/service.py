@@ -90,8 +90,14 @@ class AzureQuantumService:
         :return: Cirq target
         :rtype: CirqTarget
         """
-        return self.targets(name=name, **kwargs)
-    
+        if name is None:
+            if self._default_target is None:
+                raise ValueError("No default target specified for job.")
+            return self.targets(name=self._default_target, **kwargs)
+
+        if isinstance(name, str):
+            return self.targets(name=name, **kwargs)
+
     def get_job(self, job_id: str, *args, **kwargs) -> Union["CirqJob", "CirqIonqJob"]:
         """Get Cirq Job by job ID
 
@@ -131,12 +137,7 @@ class AzureQuantumService:
         :rtype: azure.quantum.cirq.Job
         """
         # Get target
-        if target is None:
-            if self._default_target is None:
-                raise ValueError("No default target specified for job.")
-            target = self._default_target
-        if isinstance(target, str):
-            target = self.get_target(name=target)
+        target = self.get_target(name=target)
         # Resolve parameters
         resolved_circuit = cirq.resolve_parameters(program, param_resolver)
         # Submit job to Azure
@@ -144,6 +145,23 @@ class AzureQuantumService:
             program=resolved_circuit,
             repetitions=repetitions,
             name=name
+        )
+
+    def estimate_price(
+        self,
+        program: cirq.Circuit,
+        repetitions: int,
+        target: str = None,
+        param_resolver: cirq.ParamResolverOrSimilarType = cirq.ParamResolver({}),
+        **kwargs
+    ):
+        # Resolve parameters
+        resolved_circuit = cirq.resolve_parameters(program, param_resolver)
+        target = self.get_target(name=target)
+        return target.estimate_price(
+            program=resolved_circuit,
+            repetitions=repetitions,
+            **kwargs
         )
 
     def run(
@@ -175,12 +193,6 @@ class AzureQuantumService:
         :return: Measurement results
         :rtype: cirq.Result
         """
-        # Get target
-        if target is None:
-            if self._default_target is None:
-                raise ValueError("No default target specified for job.")
-            target = self._default_target
-        target = self.get_target(name=target)
         job = self.create_job(
             program=program,
             repetitions=repetitions,
@@ -200,6 +212,7 @@ Job status: '{job.status()}'.")
                 raise e
 
         # Convert to Cirq Result
+        target = self.get_target(name=target)
         return target._to_cirq_result(
             result=result,
             param_resolver=param_resolver,

@@ -62,6 +62,20 @@ class HoneywellBackend(Backend):
     def _default_options(cls):
         return Options(count=500)
 
+    def estimate_price(self, circuit: QuantumCircuit, count: int):
+        """Estimate price for running this circuit
+
+        :param circuit: Qiskit quantum circuit
+        :type circuit: QuantumCircuit
+        :param count: Shot count
+        :type count: int
+        """
+        input_data = circuit.qasm()
+        workspace = self.provider().get_workspace()
+        target = workspace.get_targets(self.name())
+        return target.estimate_price(input_data, num_shots=count)
+
+
     def run(self, circuit: QuantumCircuit, **kwargs):
         """Submits the given circuit for execution on an Honeywell target."""
         # If the circuit was created using qiskit.assemble,
