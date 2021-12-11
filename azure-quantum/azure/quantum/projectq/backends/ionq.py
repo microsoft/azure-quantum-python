@@ -44,7 +44,7 @@ class IonQBackend(ProjectQIonQBackend):
         retrieve_execution=None
     ):
         """Base class for interfacing with an IonQ backend in Azure Quantum"""
-        logger.info("Initializing IonQBackend")
+        logger.info("Initializing IonQBackend for ProjectQ")
 
         super().__init__(
             use_hardware=use_hardware, 
@@ -71,16 +71,13 @@ class IonQBackend(ProjectQIonQBackend):
             name = "projectq-ionq-circuit-{}".format(random_suffix)
 
         qubit_mapping = self.main_engine.mapper.current_mapping
-        measured_ids = self._measured_ids[:]
 
         num_qubits = len(qubit_mapping.keys())
-        meas_map = [qubit_mapping[qubit_id] for qubit_id in measured_ids]
-
-        ionq_circ = self._circuit
+        meas_map = [qubit_mapping[qubit_id] for qubit_id in self._measured_ids]
 
         input_data = json.dumps({
             "qubits": num_qubits,
-            "circuit": ionq_circ,
+            "circuit": self._circuit,
         })
 
         input_params = {

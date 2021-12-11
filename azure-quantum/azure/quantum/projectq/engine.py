@@ -36,7 +36,7 @@ class AzureQuantumEngine(ProjectQMainEngine):
             workspace = Workspace(**kwargs)
 
         workspace.append_user_agent(PROJECTQ_USER_AGENT)
-
+        
         self._workspace = workspace
 
     def get_backend(self) -> IonQBackend:
