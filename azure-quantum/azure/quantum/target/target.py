@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 ##
-import abc
 from typing import TYPE_CHECKING, Any, Dict
 import io
 import json
