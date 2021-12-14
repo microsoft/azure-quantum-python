@@ -11,7 +11,7 @@ import json
 import threading
 import sys
 
-from typing import List, Tuple, Union, Dict, Optional, Type
+from typing import List, Union, Dict, Optional
 from azure.quantum import Workspace
 from azure.quantum.optimization import Term, Problem, ProblemType
 from azure.quantum.storage import (

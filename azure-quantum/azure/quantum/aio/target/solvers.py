@@ -5,7 +5,6 @@
 import logging
 
 from typing import TYPE_CHECKING, Union
-from enum import Enum
 from azure.quantum.aio import Workspace, Job
 from azure.quantum.aio.target.target import Target
 from azure.quantum.target.solvers import Solver as SyncSolver
