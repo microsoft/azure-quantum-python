@@ -4,7 +4,6 @@
 ##
 import json
 import uuid
-from typing import TYPE_CHECKING
 
 from azure.quantum import __version__
 from azure.quantum.projectq.job import (
@@ -15,7 +14,7 @@ from azure.quantum.projectq.job import (
 )
 
 try:
-    from projectq.backends import IonQBackend as ProjectQIonQBackend
+    from projectq.backends import IonQBackend as _IonQBackend
     import projectq.setups.ionq
 except ImportError:
     raise ImportError(
@@ -23,16 +22,13 @@ except ImportError:
 To install run: pip install azure-quantum[projectq]"
 )
 
-if TYPE_CHECKING:
-    from azure.quantum.projectq import AzureQuantumEngine
-
 import logging
 logger = logging.getLogger(__name__)
 
 __all__ = ["IonQBackend", "IonQQPUBackend", "IonQSimulatorBackend"]
 
 
-class IonQBackend(ProjectQIonQBackend):
+class IonQBackend(_IonQBackend):
     backend_name = None
 
     def __init__(
@@ -55,6 +51,8 @@ class IonQBackend(ProjectQIonQBackend):
             interval=1, 
             retrieve_execution=retrieve_execution
         )
+
+        self.backend_name = device
         
     def get_engine_list(self):
         """Return the default list of compiler engine for the IonQ platform."""
@@ -128,7 +126,7 @@ class IonQQPUBackend(IonQBackend):
         retrieve_execution=None
     ):
         """Base class for interfacing with an IonQ QPU backend"""
-        logger.info("Initializing IonQQPUBackend")
+        logger.info("Initializing IonQQPUBackend for ProjectQ")
 
         super().__init__(
             use_hardware=True, 
@@ -149,7 +147,7 @@ class IonQSimulatorBackend(IonQBackend):
         retrieve_execution=None
     ):
         """Base class for interfacing with an IonQ Simulator backend"""
-        logger.info("Initializing IonQSimulatorBackend")
+        logger.info("Initializing IonQSimulatorBackend for ProjectQ")
 
         super().__init__(
             use_hardware=False, 

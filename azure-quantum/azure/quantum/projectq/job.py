@@ -2,14 +2,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 ##
-try:
-    import projectq
-except ImportError:
-    raise ImportError(
-        "Missing optional 'projectq' dependencies. \
-To install run: pip install azure-quantum[projectq]"
-    )
-
 from azure.quantum import Job
 
 import logging
@@ -17,12 +9,15 @@ logger = logging.getLogger(__name__)
 
 # Constants for providers
 IONQ_PROVIDER = "ionq"
+HONEYWELL_PROVIDER = "honeywell"
 
 # Constants for input data format
 IONQ_INPUT_DATA_FORMAT = "ionq.circuit.v1"
+HONEYWELL_INPUT_DATA_FORMAT = "honeywell.openqasm.v1"
 
 # Constants for output data format
 IONQ_OUTPUT_DATA_FORMAT = "ionq.quantum-results.v1"
+HONEYWELL_OUTPUT_DATA_FORMAT = "honeywell.quantum-results.v1"
 
 
 class AzureQuantumJob:

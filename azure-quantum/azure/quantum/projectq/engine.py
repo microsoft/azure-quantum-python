@@ -3,8 +3,7 @@
 # Licensed under the MIT License.
 ##
 try:
-    from projectq import MainEngine as ProjectQMainEngine
-    from projectq.backends import IonQBackend
+    from projectq import MainEngine
 except ImportError:
     raise ImportError(
     "Missing optional 'projectq' dependencies. \
@@ -18,7 +17,7 @@ from azure.quantum.projectq.job import AzureQuantumJob
 PROJECTQ_USER_AGENT = "azure-quantum-projectq"
 
 
-class AzureQuantumEngine(ProjectQMainEngine):
+class AzureQuantumEngine(MainEngine):
     def __init__(
         self, 
         backend=None, 
@@ -39,7 +38,7 @@ class AzureQuantumEngine(ProjectQMainEngine):
         
         self._workspace = workspace
 
-    def get_backend(self) -> IonQBackend:
+    def get_backend(self):
         return self.backend
 
     def get_workspace(self) -> Workspace:

@@ -8,3 +8,10 @@ from azure.quantum.projectq.backends.ionq import (
     IonQQPUBackend,
     IonQSimulatorBackend
 )
+
+from azure.quantum.projectq.backends.honeywell import (
+    HoneywellBackend,
+    HoneywellQPUBackend,
+    HoneywellAPIValidatorBackend,
+    HoneywellSimulatorBackend
+)
