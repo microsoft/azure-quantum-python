@@ -25,7 +25,7 @@ from azure.quantum.aio.storage import StreamedBlobState
 from azure.quantum.aio.optimization.problem import ProblemType
 
 from asyncio import create_task
-from queue import Empty, Queue
+from queue import Empty
 
 if TYPE_CHECKING:
     from azure.quantum.aio.workspace import Workspace
