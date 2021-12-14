@@ -137,7 +137,6 @@ class PticmSolver(Solver):
             parameter with value SPVAR. Default: 0.3
         :param frac_icm_thermal_layers:
             The fraction of temperatures for the iso-energetic cluster moves.
-            To change this value, set the perform_icm parameter to True.
             Default: 0.5
         :param frac_sweeps_fixing:
             The fraction of sweeps used for fixing the QUBO variables.
