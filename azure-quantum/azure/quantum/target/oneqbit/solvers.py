@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 ##
 import logging
+import warnings
 
 from typing import Optional, List
 from azure.quantum import Workspace
@@ -105,6 +106,7 @@ class PticmSolver(Solver):
         num_replicas: Optional[int] = None,
         num_sweeps_per_run: Optional[int] = None,
         num_temps: Optional[int] = None,
+        perform_icm: Optional[bool] = None,
         scaling_type: Optional[str] = None,
         seed: Optional[int] = None,
         var_fixing_type: Optional[str] = None,
@@ -176,6 +178,8 @@ class PticmSolver(Solver):
             The number of temperatures including the highest and the lowest
             temperatures. Set the auto_set_temperatures parameter to False to
             use this feature. Default: 30
+        :param perform_icm:
+            This parameter is deprecated. Default: None
         :param scaling_type:
             This defines whether the QUBO problem
             is automatically scaled or not.
@@ -196,6 +200,9 @@ class PticmSolver(Solver):
             less than one. Valid values: "PERSISTENCY", "SPVAR" or "NO_FIXING".
             Default: "NO_FIXING"
         """
+        if perform_icm is not None:
+            warnings.warn("The perform_icm parameter has been deprecated and will be ignored.")
+
         super().__init__(
             workspace=workspace,
             provider_id="1qbit",
