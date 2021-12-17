@@ -201,7 +201,7 @@ class PticmSolver(Solver):
             Default: "NO_FIXING"
         """
         if perform_icm is not None:
-            warnings.warn("The perform_icm parameter has been deprecated and will be ignored.")
+            warnings.warn(DeprecationWarning("The perform_icm parameter has been deprecated and will be ignored."))
 
         super().__init__(
             workspace=workspace,
