@@ -12,14 +12,10 @@ Implementation by Jan H. Jensen, based on the paper
     DOI: 10.1002/bkcs.10334
 """
 
-import copy
 import itertools
-import sys
 import tempfile
 import os
 import uuid
-import stat
-import shutil
 
 from contextlib import contextmanager
 

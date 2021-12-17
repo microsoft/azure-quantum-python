@@ -2,6 +2,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 ##
+from collections import defaultdict
+
 try:
     from qiskit.providers import JobV1, JobStatus
     from qiskit.result import Result
@@ -151,12 +153,12 @@ class AzureQuantumJob(JobV1):
             # flip bitstring to convert back to big Endian
             return "".join([bitstring[n] for n in meas_map])[::-1]
 
-        counts = {}
-        histogram = {}
+        counts = defaultdict(int)
+        histogram = defaultdict(int)
         for key, value in az_result['histogram'].items():
             bitstring = _to_bitstring(key)
-            counts[bitstring] = int(shots * value)
-            histogram[bitstring] = value
+            counts[bitstring] += int(shots * value)
+            histogram[bitstring] += value
 
         return {"counts": counts, "probabilities": histogram}
 

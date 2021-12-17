@@ -7,7 +7,6 @@
 # Licensed under the MIT License.
 ##
 
-from contextlib import contextmanager
 import os
 import re
 
