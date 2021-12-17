@@ -49,6 +49,12 @@ class IonQBackend(Backend):
         """Submits the given circuit to run on an IonQ target."""        
         # If the circuit was created using qiskit.assemble,
         # disassemble into QASM here
+
+        if isinstance(circuit, (list, tuple)):
+            if len(circuit) > 1:
+                raise NotImplementedError("Multi-experiment jobs are not supported!")
+            circuit = circuit[0]
+
         if isinstance(circuit, QasmQobj) or isinstance(circuit, Qobj):
             from qiskit.assembler import disassemble
             circuits, run, _ = disassemble(circuit)

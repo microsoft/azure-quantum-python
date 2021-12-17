@@ -47,6 +47,29 @@ class TestQiskit(QuantumTestBase):
     
     @pytest.mark.ionq
     @pytest.mark.live_test
+    def test_plugins_submit_qiskit_circuit_as_list_to_ionq(self):
+        circuit = self._3_qubit_ghz()
+        self._test_qiskit_submit_ionq(circuit=[circuit], num_shots=500, num_shots_actual=500)
+
+    @pytest.mark.ionq
+    @pytest.mark.live_test
+    def test_plugins_submit_qiskit_multi_circuit_experiment_to_ionq(self):
+        circuit = self._3_qubit_ghz()
+
+        workspace = self.create_workspace()
+        provider = AzureQuantumProvider(workspace=workspace)
+        assert "azure-quantum-qiskit" in provider._workspace.user_agent
+        backend = provider.get_backend("ionq.simulator")
+
+        with pytest.raises(NotImplementedError) as exc:
+            backend.run(
+                circuit=[circuit, circuit],
+                shots=500
+            )
+        assert str(exc.value) == "Multi-experiment jobs are not supported!"
+
+    @pytest.mark.ionq
+    @pytest.mark.live_test
     def test_plugins_submit_qiskit_qobj_to_ionq(self):
         from qiskit import assemble
         circuit = self._3_qubit_ghz()
