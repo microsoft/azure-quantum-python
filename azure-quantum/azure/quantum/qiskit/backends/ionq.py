@@ -2,10 +2,10 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 ##
-import json
 from typing import TYPE_CHECKING
 from azure.quantum import __version__
 from azure.quantum.qiskit.job import AzureQuantumJob
+from azure.quantum.target.ionq import IonQ
 
 try:
     from qiskit.providers import BackendV1 as Backend
@@ -76,6 +76,7 @@ class IonQBackend(Backend):
                 kwargs["shots"] = run["shots"]
 
         input_data, meas_map = self._translate_circuit(circuit, **kwargs)
+        input_data = IonQ._encode_input_data(input_data)
 
         # Options are mapped to input_params
         # Take also into consideration options passed in the kwargs, as the take precedence
@@ -90,7 +91,7 @@ class IonQBackend(Backend):
             backend=self,
             name=circuit.name,
             target=self.name(),
-            input_data=json.dumps(input_data).encode('utf-8'),
+            input_data=input_data,
             blob_name="inputData",
             content_type="application/json",
             provider_id="ionq",
