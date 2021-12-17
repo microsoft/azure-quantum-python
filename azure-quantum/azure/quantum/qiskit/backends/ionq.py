@@ -90,7 +90,7 @@ class IonQBackend(Backend):
             backend=self,
             name=circuit.name,
             target=self.name(),
-            input_data=json.dumps(input_data),
+            input_data=json.dumps(input_data).encode('utf-8'),
             blob_name="inputData",
             content_type="application/json",
             provider_id="ionq",
