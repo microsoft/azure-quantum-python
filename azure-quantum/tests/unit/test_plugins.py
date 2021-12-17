@@ -57,7 +57,7 @@ class TestQiskit(QuantumTestBase):
 
         backend = provider.get_backend("ionq.qpu")
         cost = backend.estimate_price(circuit, shots=100e3)
-        assert np.round(cost) == 63.0
+        assert np.round(cost) == 66.0
 
     @pytest.mark.ionq
     @pytest.mark.live_test
@@ -169,7 +169,7 @@ class TestQiskit(QuantumTestBase):
 
         backend = provider.get_backend("honeywell.hqs-lt-s1")
         cost = backend.estimate_price(circuit, count=100e3)
-        assert cost == 725.0
+        assert cost == 745.0
 
     @pytest.mark.honeywell
     @pytest.mark.live_test
