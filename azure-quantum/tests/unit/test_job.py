@@ -215,7 +215,15 @@ class TestJob(QuantumTestBase):
     def test_job_submit_oneqbit_tabu_search(self):
         solver_type = functools.partial(oneqbit.TabuSearch, improvement_cutoff=10)
         solver_name = "TabuSearch"
-        self._test_job_submit(solver_name, solver_type)
+        solver_kwargs = {
+            "improvement_cutoff": 2,
+            "improvement_tolerance": 1e-9,
+            "seed": 123,
+            "tabu_tenure": 2,
+            "tabu_tenure_rand_max": 2,
+            "timeout": 2,
+        }
+        self._test_job_submit(solver_name, solver_type, solver_kwargs=solver_kwargs)
 
     @pytest.mark.skipif(not(os.environ.get("AZURE_QUANTUM_1QBIT", "") == "1"), reason="1Qbit tests not enabled")
     @pytest.mark.oneqbit
@@ -223,7 +231,33 @@ class TestJob(QuantumTestBase):
     def test_job_submit_oneqbit_pticm_solver(self):
         solver_type = functools.partial(oneqbit.PticmSolver, num_sweeps_per_run=99)
         solver_name = "PticmSolver"
-        self._test_job_submit(solver_name, solver_type)
+        solver_kwargs = {
+            "auto_set_temperatures": False,
+            "elite_threshold": 0.3,
+            "frac_icm_thermal_layers": 0.5,
+            "frac_sweeps_fixing": 0.15,
+            "frac_sweeps_idle": 1.0,
+            "frac_sweeps_stagnation": 1.0,
+            "goal": "OPTIMIZE",
+            "high_temp": 2,
+            "low_temp": 0.2,
+            "max_samples_per_layer": 10,
+            "max_total_sweeps": 1000,
+            "num_elite_temps": 4,
+            "num_replicas": 2,
+            "num_sweeps_per_run": 100,
+            "num_temps": 30,
+            "perform_icm": True,
+            "scaling_type": "MEDIAN",
+            "seed": 42,
+            "var_fixing_type": "NO_FIXING"
+        }
+
+        with pytest.deprecated_call():
+            self._test_job_submit(solver_name, solver_type, solver_kwargs=solver_kwargs.copy())
+        
+        solver_kwargs.pop("perform_icm")
+        self._test_job_submit(solver_name, solver_type, solver_kwargs=solver_kwargs)
 
     @pytest.mark.skipif(not(os.environ.get("AZURE_QUANTUM_1QBIT", "") == "1"), reason="1Qbit tests not enabled")
     @pytest.mark.oneqbit
@@ -231,7 +265,14 @@ class TestJob(QuantumTestBase):
     def test_job_submit_oneqbit_path_relinking_solver(self):
         solver_type = functools.partial(oneqbit.PathRelinkingSolver, distance_scale=0.44)
         solver_name = "PathRelinkingSolver"
-        self._test_job_submit(solver_name, solver_type)
+        solver_kwargs = {
+            "distance_scale": 0.33,
+            "greedy_path_relinking": False,
+            "ref_set_count": 10,
+            "seed": 123,
+            "timeout": 0,
+        }
+        self._test_job_submit(solver_name, solver_type, solver_kwargs=solver_kwargs)
 
     @pytest.mark.skipif(not(os.environ.get("AZURE_QUANTUM_TOSHIBA", "") == "1"), reason="Toshiba tests not enabled")
     @pytest.mark.toshiba
@@ -271,7 +312,14 @@ class TestJob(QuantumTestBase):
             before_date = date.today() - timedelta(days=100)
             self.assertEqual(True, job.matches_filter(created_after=before_date))
 
-    def _test_job_submit(self, solver_name, solver_type, test_grouped=False, content_type=ContentType.json):
+    def _test_job_submit(
+        self,
+        solver_name,
+        solver_type,
+        test_grouped=False,
+        content_type=ContentType.json,
+        solver_kwargs=None
+    ):
         """Tests the job submission and its lifecycle for a given solver.
 
         :param solver_type:
@@ -282,19 +330,21 @@ class TestJob(QuantumTestBase):
 
         problem = self.create_problem(name=problem_name, test_grouped=test_grouped,content_type=content_type)
 
-        self._test_job_submit_problem(solver_type, problem)
+        self._test_job_submit_problem(solver_type, problem, solver_kwargs)
     
-    def _test_job_submit_problem(self, solver_type, problem):
+    def _test_job_submit_problem(self, solver_type, problem, solver_kwargs=None):
         """Tests the job submission and its lifecycle for a given solver.
         :param solver_type:
             The class name of the solver, for example "SimulatedAnnealing".
         :param problem
             The problem to submit
+        :param solver_kwargs
+            Solver kwargs
         """
 
         workspace = self.create_workspace()
-
-        solver = solver_type(workspace)
+        solver_kwargs = solver_kwargs or {}
+        solver = solver_type(workspace, **solver_kwargs)
 
         with unittest.mock.patch.object(
             Job,
