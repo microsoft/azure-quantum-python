@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 ##
 import logging
+import warnings
 
 from typing import Optional, List
 from azure.quantum import Workspace
@@ -14,15 +15,15 @@ __all__ = ["TabuSearch", "PticmSolver", "PathRelinkingSolver"]
 
 
 class TabuSearch(Solver):
-    target_names = (
-        "1qbit.tabu",
-    )
+    target_names = ("1qbit.tabu",)
+
     def __init__(
         self,
         workspace: Workspace,
         name: str = "1qbit.tabu",
         improvement_cutoff: Optional[int] = None,
         improvement_tolerance: Optional[float] = None,
+        seed: Optional[int] = None,
         tabu_tenure: Optional[int] = None,
         tabu_tenure_rand_max: Optional[int] = None,
         timeout: Optional[int] = None,
@@ -48,6 +49,9 @@ class TabuSearch(Solver):
         :param improvement_tolerance:
             The tolerance value that determines if a solution is an improvement
             over the previous iteration. Default: 1e-9
+        :param seed:
+            The seed in the random number generator to control for deterministic
+            results. Default: a random integer
         :param tabu_tenure:
             The tenure prevents a flipped
             variable from being flipped again during
@@ -73,15 +77,15 @@ class TabuSearch(Solver):
 
         self.set_one_param("improvement_cutoff", improvement_cutoff)
         self.set_one_param("improvement_tolerance", improvement_tolerance)
+        self.set_one_param("seed", seed)
         self.set_one_param("tabu_tenure", tabu_tenure)
         self.set_one_param("tabu_tenure_rand_max", tabu_tenure_rand_max)
         self.set_one_param("timeout", timeout)
 
 
 class PticmSolver(Solver):
-    target_names = (
-        "1qbit.pticm",
-    )
+    target_names = ("1qbit.pticm",)
+
     def __init__(
         self,
         workspace: Workspace,
@@ -104,6 +108,7 @@ class PticmSolver(Solver):
         num_temps: Optional[int] = None,
         perform_icm: Optional[bool] = None,
         scaling_type: Optional[str] = None,
+        seed: Optional[int] = None,
         var_fixing_type: Optional[str] = None,
         **kwargs
     ):
@@ -134,7 +139,6 @@ class PticmSolver(Solver):
             parameter with value SPVAR. Default: 0.3
         :param frac_icm_thermal_layers:
             The fraction of temperatures for the iso-energetic cluster moves.
-            To change this value, set the perform_icm parameter to True.
             Default: 0.5
         :param frac_sweeps_fixing:
             The fraction of sweeps used for fixing the QUBO variables.
@@ -175,14 +179,16 @@ class PticmSolver(Solver):
             temperatures. Set the auto_set_temperatures parameter to False to
             use this feature. Default: 30
         :param perform_icm:
-            This defines whether or not to perform the isoenergetic cluster
-            moves. Default: True
+            This parameter is deprecated. Default: None
         :param scaling_type:
             This defines whether the QUBO problem
             is automatically scaled or not.
             "MEDIAN" means it's automatically
             scaled, and "NO_SCALING" means it's
             not. Valid values: "MEDIAN" or "NO_SCALING"
+        :param seed:
+            The seed in the random number generator to control for deterministic
+            results. Default: a random integer
         :param var_fixing_type:
             This decides whether the values of QUBO variables are fixed or not.
             You can fix them with "PERSISTENCY" or
@@ -194,6 +200,9 @@ class PticmSolver(Solver):
             less than one. Valid values: "PERSISTENCY", "SPVAR" or "NO_FIXING".
             Default: "NO_FIXING"
         """
+        if perform_icm is not None:
+            warnings.warn(DeprecationWarning("The perform_icm parameter has been deprecated and will be ignored."))
+
         super().__init__(
             workspace=workspace,
             provider_id="1qbit",
@@ -221,15 +230,14 @@ class PticmSolver(Solver):
         self.set_one_param("num_replicas", num_replicas)
         self.set_one_param("num_sweeps_per_run", num_sweeps_per_run)
         self.set_one_param("num_temps", num_temps)
-        self.set_one_param("perform_icm", perform_icm)
         self.set_one_param("scaling_type", scaling_type)
+        self.set_one_param("seed", seed)
         self.set_one_param("var_fixing_type", var_fixing_type)
 
 
 class PathRelinkingSolver(Solver):
-    target_names = (
-        "1qbit.pathrelinking",
-    )
+    target_names = ("1qbit.pathrelinking",)
+
     def __init__(
         self,
         workspace: Workspace,
@@ -237,10 +245,11 @@ class PathRelinkingSolver(Solver):
         distance_scale: Optional[float] = None,
         greedy_path_relinking: Optional[bool] = None,
         ref_set_count: Optional[int] = None,
+        seed: Optional[int] = None,
         timeout: Optional[int] = None,
         **kwargs
     ):
-        """The constructor of a Tabu Search solver.
+        """The constructor of a Path-relinking Search solver.
 
         The path-relinking algorithm is a heuristic algorithm that uses the
         tabu search as a subroutine to solve a QUBO problem. The algorithm
@@ -270,6 +279,9 @@ class PathRelinkingSolver(Solver):
         :param ref_set_count:
             The number of initial elite solutions to be generated by the tabu
             search algorithm. Valid values: Greater than 1. Default: 10
+        :param seed:
+            The seed in the random number generator to control for deterministic
+            results. Default: a random integer
         :param timeout:
             The duration in ms the solver runs
             before exiting. If the value is set
@@ -289,4 +301,5 @@ class PathRelinkingSolver(Solver):
         self.set_one_param("distance_scale", distance_scale)
         self.set_one_param("greedy_path_relinking", greedy_path_relinking)
         self.set_one_param("ref_set_count", ref_set_count)
+        self.set_one_param("seed", seed)
         self.set_one_param("timeout", timeout)
