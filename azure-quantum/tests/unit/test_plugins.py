@@ -29,11 +29,12 @@ class TestQiskit(QuantumTestBase):
                else Job.create_job_id()
     
     def _3_qubit_ghz(self):
-        circuit = QuantumCircuit(3, 3)
+        circuit = QuantumCircuit(4, 3)
         circuit.name = "Qiskit Sample - 3-qubit GHZ circuit"
         circuit.h(0)
         circuit.cx(0, 1)
         circuit.cx(1, 2)
+        circuit.h(3) # Dummy helper qubit that is not measured
         circuit.measure([0,1,2], [0, 1, 2])
 
         return circuit

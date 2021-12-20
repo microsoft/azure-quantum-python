@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 ##
-import io
 from typing import Any, Dict
 
 from azure.quantum.aio.target.target import Target

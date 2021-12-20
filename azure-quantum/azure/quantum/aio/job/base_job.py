@@ -2,9 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 ##
-import abc
 import logging
-import uuid
 
 from urllib.parse import urlparse
 from typing import Any, Dict, TYPE_CHECKING
