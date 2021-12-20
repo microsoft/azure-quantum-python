@@ -30,12 +30,12 @@ class AzureQuantumJob:
         """A Job running on Azure Quantum. """
         if azure_job is None:
             azure_job = Job.from_input_data(
-                workspace=backend.main_engine.get_workspace(),
+                workspace=backend.main_engine.workspace,
                 **kwargs
             )
 
         self._azure_job = azure_job
-        self._workspace = backend.main_engine.get_workspace()
+        self._workspace = backend.main_engine.workspace
 
     def id(self):
         """ This job's id."""

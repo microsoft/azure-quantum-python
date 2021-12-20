@@ -47,12 +47,8 @@ class IonQBackend(_IonQBackend):
             num_runs=num_runs, 
             verbose=verbose, 
             device=device, 
-            num_retries=0,
-            interval=1, 
             retrieve_execution=retrieve_execution
         )
-
-        self.backend_name = device
         
     def get_engine_list(self):
         """Return the default list of compiler engine for the IonQ platform."""
@@ -86,8 +82,6 @@ class IonQBackend(_IonQBackend):
             "name": name, 
             "num_qubits": num_qubits, 
             "meas_map": meas_map,
-            # "num_retries": self._num_retries,
-            # "interval": self._interval
         }
 
         job = AzureQuantumJob(
@@ -111,7 +105,10 @@ class IonQBackend(_IonQBackend):
 
         return job
 
-    # Override _run method from parent class
+    """
+    Overriding base class _run method with Azure Quantum run logic.
+    It can triggered using MainEngine.flush() method or passing FlushGate to IonQBackend.receive() method.
+    """
     def _run(self):
         self.run()
 

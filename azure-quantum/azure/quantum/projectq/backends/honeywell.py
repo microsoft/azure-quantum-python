@@ -16,8 +16,23 @@ try:
     # Using IBMBackend as HoneywellBackend to translate `projectq` circuit to QASM.
     from projectq.backends import IBMBackend as _HoneywellBackend
     from projectq.cengines import BasicMapperEngine
-    from projectq.ops import Toffoli
     import projectq.setups.restrictedgateset
+    from projectq.ops import (
+        X,
+        Y,
+        Z,
+        Rx,
+        Ry,
+        Rz,
+        H,
+        CX,
+        CZ,
+        S,
+        Sdag,
+        T,
+        Tdag,
+        Toffoli,
+    )
 except ImportError:
     raise ImportError(
     "Missing optional 'projectq' dependencies. \
@@ -48,14 +63,14 @@ class HoneywellBackend(_HoneywellBackend):
             use_hardware=use_hardware, 
             num_runs=num_runs, 
             verbose=verbose, 
-            num_retries=0,
-            interval=1, 
             retrieve_execution=retrieve_execution
         )
 
-        self.backend_name = device
+        # Overriding IBMBackend device name with Honeywell device name.
+        self.device = device
 
     def get_engine_list(self):
+        """Return the default list of compiler engine for the Honeywell platform."""
         mapper = BasicMapperEngine()
         num_qubits = 10
 
@@ -66,8 +81,8 @@ class HoneywellBackend(_HoneywellBackend):
         mapper.current_mapping = mapping
 
         engine_list = projectq.setups.restrictedgateset.get_engine_list(
-            one_qubit_gates='any',
-            two_qubit_gates='any',
+            one_qubit_gates=(X, Y, Z, Rx, Ry, Rz, H, S, Sdag, T, Tdag),
+            two_qubit_gates=(CX, CZ),
             other_gates=(Toffoli,)
         )
 
@@ -91,9 +106,7 @@ class HoneywellBackend(_HoneywellBackend):
         }
 
         metadata = {
-            "num_qubits": num_qubits,
-            # "num_retries": self._num_retries,
-            # "interval": self._interval
+            "num_qubits": num_qubits
         }
 
         job = AzureQuantumJob(
@@ -117,7 +130,10 @@ class HoneywellBackend(_HoneywellBackend):
 
         return job
 
-    # Override _run method from parent class
+    """
+    Overriding base class _run method with Azure Quantum run logic.
+    It can triggered using MainEngine.flush() method or passing FlushGate to HoneywellBackend.receive() method.
+    """
     def _run(self):
         self.run()
 
@@ -130,7 +146,6 @@ class HoneywellQPUBackend(HoneywellBackend):
 
     def __init__(
         self, 
-        use_hardware=False, 
         num_runs=100, 
         verbose=False, 
         device="honeywell.hqs-lt-s1", 
@@ -140,7 +155,7 @@ class HoneywellQPUBackend(HoneywellBackend):
         logger.info("Initializing HoneywellQPUBackend for ProjectQ")
 
         super().__init__(
-            use_hardware=use_hardware, 
+            use_hardware=True, 
             num_runs=num_runs, 
             verbose=verbose, 
             device=device, 
@@ -156,7 +171,6 @@ class HoneywellAPIValidatorBackend(HoneywellBackend):
 
     def __init__(
         self, 
-        use_hardware=False, 
         num_runs=100, 
         verbose=False, 
         device="honeywell.hqs-lt-s1-apival", 
@@ -166,7 +180,7 @@ class HoneywellAPIValidatorBackend(HoneywellBackend):
         logger.info("Initializing HoneywellAPIValidatorBackend for ProjectQ")
 
         super().__init__(
-            use_hardware=use_hardware, 
+            use_hardware=False, 
             num_runs=num_runs, 
             verbose=verbose, 
             device=device, 
@@ -182,7 +196,6 @@ class HoneywellSimulatorBackend(HoneywellBackend):
 
     def __init__(
         self, 
-        use_hardware=False, 
         num_runs=100, 
         verbose=False, 
         device="honeywell.hqs-lt-s1-sim", 
@@ -192,7 +205,7 @@ class HoneywellSimulatorBackend(HoneywellBackend):
         logger.info("Initializing HoneywellSimulatorBackend for ProjectQ")
 
         super().__init__(
-            use_hardware=use_hardware, 
+            use_hardware=False, 
             num_runs=num_runs, 
             verbose=verbose, 
             device=device, 
