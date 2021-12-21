@@ -25,11 +25,12 @@ To install run: pip install azure-quantum[projectq]"
 import logging
 logger = logging.getLogger(__name__)
 
-__all__ = ["IonQBackend", "IonQQPUBackend", "IonQSimulatorBackend"]
+__all__ = ["IonQQPUBackend", "IonQSimulatorBackend"]
 
 
 class IonQBackend(_IonQBackend):
-    backend_name = None
+    projectq_backend_name = None
+    azure_quantum_backend_name = None
 
     def __init__(
         self, 
@@ -53,7 +54,7 @@ class IonQBackend(_IonQBackend):
     def get_engine_list(self):
         """Return the default list of compiler engine for the IonQ platform."""
         return projectq.setups.ionq.get_engine_list(
-            device=self.backend_name
+            device=self.projectq_backend_name
         )
 
     def run(self, name=None, **kwargs):
@@ -87,7 +88,7 @@ class IonQBackend(_IonQBackend):
         job = AzureQuantumJob(
             backend=self,
             name=name,
-            target=self.backend_name, 
+            target=self.azure_quantum_backend_name, 
             input_data=input_data,
             blob_name="inputData",
             content_type="application/json",
@@ -105,16 +106,17 @@ class IonQBackend(_IonQBackend):
 
         return job
 
-    """
-    Overriding base class _run method with Azure Quantum run logic.
-    It can triggered using MainEngine.flush() method or passing FlushGate to IonQBackend.receive() method.
-    """
     def _run(self):
-        self.run()
+        """
+        Overriding Projectq run method with empty function.
+        This disables circuit execution using default ProjectQ logic. Use engine.run() to submit job to Azure Quantum.
+        """
+        pass
 
 
 class IonQQPUBackend(IonQBackend):
-    backend_name = "ionq_qpu"
+    projectq_backend_name = "ionq_qpu"
+    azure_quantum_backend_name = "ionq.qpu"
 
     def __init__(
         self, 
@@ -129,13 +131,14 @@ class IonQQPUBackend(IonQBackend):
             use_hardware=True, 
             num_runs=num_runs, 
             verbose=verbose, 
-            device=self.backend_name, 
+            device=self.projectq_backend_name, 
             retrieve_execution=retrieve_execution
         )
 
         
 class IonQSimulatorBackend(IonQBackend):
-    backend_name = "ionq_simulator"
+    projectq_backend_name = "ionq_simulator"
+    azure_quantum_backend_name = "ionq.simulator"
 
     def __init__(
         self, 
@@ -150,6 +153,6 @@ class IonQSimulatorBackend(IonQBackend):
             use_hardware=False, 
             num_runs=num_runs, 
             verbose=verbose, 
-            device=self.backend_name, 
+            device=self.projectq_backend_name, 
             retrieve_execution=retrieve_execution
         )

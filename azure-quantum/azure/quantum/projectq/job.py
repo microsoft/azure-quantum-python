@@ -34,6 +34,7 @@ class AzureQuantumJob:
                 **kwargs
             )
 
+        self._backend = backend
         self._azure_job = azure_job
         self._workspace = backend.main_engine.workspace
 

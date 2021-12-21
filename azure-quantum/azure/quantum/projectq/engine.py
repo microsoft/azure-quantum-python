@@ -33,7 +33,7 @@ class AzureQuantumEngine(MainEngine):
 
         if workspace is None:
             workspace = Workspace(**kwargs)
-
+            
         workspace.append_user_agent(PROJECTQ_USER_AGENT)
         
         self._workspace = workspace
@@ -50,6 +50,6 @@ class AzureQuantumEngine(MainEngine):
         return self.backend.run(name, **kwargs)
 
     def get_job(self, job_id) -> AzureQuantumJob:
-        """ Returns the Job instance associated with the given id."""
+        """Returns the Job instance associated with the given id."""
         azure_job = self._workspace.get_job(job_id)
         return AzureQuantumJob(self.backend, azure_job)

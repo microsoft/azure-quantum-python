@@ -42,7 +42,7 @@ To install run: pip install azure-quantum[projectq]"
 import logging
 logger = logging.getLogger(__name__)
 
-__all__ = ["HoneywellBackend", "HoneywellQPUBackend", "HoneywellAPIValidatorBackend", "HoneywellSimulatorBackend"]
+__all__ = ["HoneywellQPUBackend", "HoneywellAPIValidatorBackend", "HoneywellSimulatorBackend"]
 
 
 class HoneywellBackend(_HoneywellBackend):
@@ -130,12 +130,12 @@ class HoneywellBackend(_HoneywellBackend):
 
         return job
 
-    """
-    Overriding base class _run method with Azure Quantum run logic.
-    It can triggered using MainEngine.flush() method or passing FlushGate to HoneywellBackend.receive() method.
-    """
     def _run(self):
-        self.run()
+        """
+        Overriding Projectq run method with empty function.
+        This disables circuit execution using default ProjectQ logic. Use engine.run() to submit job to Azure Quantum.
+        """
+        pass
 
 
 class HoneywellQPUBackend(HoneywellBackend):
