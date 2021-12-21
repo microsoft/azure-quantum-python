@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 ##
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Union, List
 from azure.quantum.version import __version__
 from azure.quantum.qiskit.job import AzureQuantumJob
 
@@ -56,14 +56,21 @@ HONEYWELL_BASIS_GATES = [
 
 
 class HoneywellBackend(Backend):
-    """Base class for interfacing with an Honeywell backend in Azure Quantum"""
+    """Base class for interfacing with a Honeywell backend in Azure Quantum"""
 
     @classmethod
     def _default_options(cls):
         return Options(count=500)
 
-    def run(self, circuit: QuantumCircuit, **kwargs):
-        """Submits the given circuit for execution on an Honeywell target."""
+    def run(self, circuit: Union[QuantumCircuit, List[QuantumCircuit]], **kwargs):
+        """Submits the given circuit for execution on a Honeywell target."""
+        # Some Qiskit features require passing lists of circuits, so unpack those here.
+        # We currently only support single-experiment jobs.
+        if isinstance(circuit, (list, tuple)):
+            if len(circuit) > 1:
+                raise NotImplementedError("Multi-experiment jobs are not supported!")
+            circuit = circuit[0]
+
         # If the circuit was created using qiskit.assemble,
         # disassemble into QASM here
         if isinstance(circuit, QasmQobj) or isinstance(circuit, Qobj):

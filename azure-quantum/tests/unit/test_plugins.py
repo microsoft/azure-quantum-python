@@ -20,14 +20,14 @@ class TestQiskit(QuantumTestBase):
 
     Tests the azure.quantum.target.ionq module.
     """
-    
+
     mock_create_job_id_name = "create_job_id"
     create_job_id = Job.create_job_id
 
     def get_test_job_id(self):
         return ZERO_UID if self.is_playback \
                else Job.create_job_id()
-    
+
     def _3_qubit_ghz(self):
         circuit = QuantumCircuit(4, 3)
         circuit.name = "Qiskit Sample - 3-qubit GHZ circuit"
@@ -44,7 +44,7 @@ class TestQiskit(QuantumTestBase):
     def test_plugins_submit_qiskit_to_ionq(self):
         circuit = self._3_qubit_ghz()
         self._test_qiskit_submit_ionq(circuit=circuit, num_shots=500, num_shots_actual=500)
-    
+
     @pytest.mark.ionq
     @pytest.mark.live_test
     def test_plugins_submit_qiskit_circuit_as_list_to_ionq(self):
@@ -75,7 +75,7 @@ class TestQiskit(QuantumTestBase):
         circuit = self._3_qubit_ghz()
         qobj = assemble(circuit)
         self._test_qiskit_submit_ionq(circuit=qobj, num_shots=1024, num_shots_actual=1024)
-    
+
     def _qiskit_wait_to_complete(self, qiskit_job, provider):
         job = qiskit_job._azure_job
         self.pause_recording()
@@ -153,7 +153,7 @@ class TestQiskit(QuantumTestBase):
                     'counts': {
                         '000': 250,
                         '111': 250
-                    }, 
+                    },
                     'probabilities': {
                         '000': 0.5,
                         '111': 0.5
@@ -163,9 +163,34 @@ class TestQiskit(QuantumTestBase):
     @pytest.mark.honeywell
     @pytest.mark.live_test
     def test_plugins_submit_qiskit_to_honeywell(self):
-        self._test_qiskit_submit_honeywell(num_shots=None)
+        circuit = self._3_qubit_ghz()
+        self._test_qiskit_submit_honeywell(circuit=circuit, num_shots=None)
 
-    def _test_qiskit_submit_honeywell(self, num_shots):
+    @pytest.mark.honeywell
+    @pytest.mark.live_test
+    def test_plugins_submit_qiskit_circuit_as_list_to_honeywell(self):
+        circuit = self._3_qubit_ghz()
+        self._test_qiskit_submit_honeywell(circuit=[circuit], num_shots=None)
+
+    @pytest.mark.ionq
+    @pytest.mark.live_test
+    def test_plugins_submit_qiskit_multi_circuit_experiment_to_honeywell(self):
+        circuit = self._3_qubit_ghz()
+
+        workspace = self.create_workspace()
+        provider = AzureQuantumProvider(workspace=workspace)
+        backend = provider.get_backend("honeywell.hqs-lt-s1-apival")
+        assert "honeywell.hqs-lt-s1-apival" in backend.backend_names
+        assert backend.backend_names[0] in [t.name for t in workspace.get_targets(provider_id="honeywell")]
+
+        with pytest.raises(NotImplementedError) as exc:
+            backend.run(
+                circuit=[circuit, circuit],
+                shots=None
+            )
+        assert str(exc.value) == "Multi-experiment jobs are not supported!"
+
+    def _test_qiskit_submit_honeywell(self, circuit, num_shots):
 
         with unittest.mock.patch.object(
             Job,
@@ -177,12 +202,12 @@ class TestQiskit(QuantumTestBase):
             backend = provider.get_backend("honeywell.hqs-lt-s1-apival")
             assert "honeywell.hqs-lt-s1-apival" in backend.backend_names
             assert backend.backend_names[0] in [t.name for t in workspace.get_targets(provider_id="honeywell")]
-            circuit = self._3_qubit_ghz()
+
             qiskit_job = backend.run(
                 circuit=circuit,
                 num_shots=num_shots
             )
-   
+
             # Make sure the job is completed before fetching the results
             # playback currently does not work for repeated calls
             # See: https://github.com/microsoft/qdk-python/issues/118
