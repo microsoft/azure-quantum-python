@@ -47,14 +47,15 @@ class IonQBackend(Backend):
 
     def run(self, circuit, **kwargs):
         """Submits the given circuit to run on an IonQ target."""        
-        # If the circuit was created using qiskit.assemble,
-        # disassemble into QASM here
-
+        # Some Qiskit features require passing lists of circuits, so unpack those here.
+        # We currently only support single-experiment jobs.
         if isinstance(circuit, (list, tuple)):
             if len(circuit) > 1:
                 raise NotImplementedError("Multi-experiment jobs are not supported!")
             circuit = circuit[0]
 
+        # If the circuit was created using qiskit.assemble,
+        # disassemble into QASM here
         if isinstance(circuit, QasmQobj) or isinstance(circuit, Qobj):
             from qiskit.assembler import disassemble
             circuits, run, _ = disassemble(circuit)
