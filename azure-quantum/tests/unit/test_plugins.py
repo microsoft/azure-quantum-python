@@ -8,10 +8,14 @@ from cirq import ParamResolver
 
 from qiskit.providers import JobStatus
 
+from projectq.ops import H, CX, All, Measure
+
 from azure.quantum.job.job import Job
 from azure.quantum.qiskit import AzureQuantumProvider
 from azure.quantum.cirq import AzureQuantumService
 from azure.quantum.cirq.targets.target import Target
+from azure.quantum.projectq import AzureQuantumEngine
+from azure.quantum.projectq.backends import IonQSimulatorBackend, HoneywellSimulatorBackend
 
 from common import QuantumTestBase, ZERO_UID
 
@@ -327,3 +331,104 @@ class TestCirq(QuantumTestBase):
                     assert len(result.measurements["q2"]) == 500
                     assert result.measurements["q0"].sum() == result.measurements["q1"].sum()
                     assert result.measurements["q1"].sum() == result.measurements["q2"].sum()
+
+
+class TestProjectQ(QuantumTestBase):
+    mock_create_job_id_name = "create_job_id"
+    create_job_id = Job.create_job_id
+
+    def get_test_job_id(self):
+        return ZERO_UID if self.is_playback \
+               else Job.create_job_id()
+
+    def _projectq_submit_3_qubit_ghz_circuit(self, engine, name):
+        circuit = engine.allocate_qureg(3)
+        q0, q1, q2 = circuit
+
+        H | q0
+        CX | (q0, q1)
+        CX | (q1, q2)
+        All(Measure) | circuit
+
+        return engine.run(name)
+
+    def _projectq_submit_ionq_job(self, job_id):
+        num_shots = 500
+
+        ionq_backend = IonQSimulatorBackend(
+            num_runs=num_shots,
+            retrieve_execution=job_id
+        )
+        workspace = self.create_workspace()
+
+        engine = AzureQuantumEngine(
+            backend=ionq_backend,
+            workspace=workspace
+        )
+
+        azure_job = self._projectq_submit_3_qubit_ghz_circuit(engine, name="ionq-circuit")
+        return engine, azure_job
+
+    def _projectq_submit_honeywell_job(self, job_id):
+        num_shots = 500
+
+        honeywell_backend = HoneywellSimulatorBackend(
+            num_runs=num_shots,
+            retrieve_execution=job_id
+        )
+        workspace = self.create_workspace()
+
+        engine = AzureQuantumEngine(
+            backend=honeywell_backend,
+            workspace=workspace
+        )
+
+        azure_job = self._projectq_submit_3_qubit_ghz_circuit(engine, name="honeywell-circuit")
+        return engine, azure_job
+    
+    def _projectq_wait_to_complete(self, engine, projectq_job):
+        job = projectq_job._azure_job
+        self.pause_recording()
+
+        try:
+            job.wait_until_completed(timeout_secs=60)
+        except TimeoutError:
+            self.resume_recording()
+            warnings.warn(f"ProjectQ Job {job.id} exceeded timeout. Skipping fetching results.")
+        else:
+            self.resume_recording()
+
+            self.assertEqual("Succeeded", projectq_job.status())
+            projectq_job = engine.get_job(job.id)
+            self.assertEqual("Succeeded", projectq_job.status())
+
+    @pytest.mark.ionq
+    @pytest.mark.live_test
+    def test_plugins_submit_projectq_to_ionq(self):
+        with unittest.mock.patch.object(
+            Job,
+            self.mock_create_job_id_name,
+            return_value=self.get_test_job_id(),
+        ):
+            job_id = self.get_test_job_id()
+            engine, projectq_job = self._projectq_submit_ionq_job(job_id=job_id)
+
+            # Make sure the job is completed before fetching the results
+            # playback currently does not work for repeated calls
+            # See: https://github.com/microsoft/qdk-python/issues/118
+            if self.in_recording:
+                self._projectq_wait_to_complete(engine, projectq_job)
+            
+            if projectq_job.status() == "Succeeded":
+                projectq_result = projectq_job.result()
+                assert projectq_result['histogram'] == { "0": 0.5, "7": 0.5 }
+
+    @pytest.mark.honeywell
+    @pytest.mark.live_test
+    def test_plugins_submit_projectq_to_honeywell(self):
+        with unittest.mock.patch.object(
+            Job,
+            self.mock_create_job_id_name,
+            return_value=self.get_test_job_id(),
+        ):
+            assert True  # todo: add projectq to honetwell tests
