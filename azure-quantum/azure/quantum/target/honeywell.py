@@ -18,35 +18,6 @@ class Honeywell(Target):
         "honeywell.hqs-lt-s1-sim",
     )
 
-    # Get all one-qubit, two-qubit gates and measurement operations
-    GATES_1Q = [
-        "x",
-        "y",
-        "z",
-        "rx",
-        "ry",
-        "rz",
-        "h",
-        "s",
-        "sdg",
-        "t",
-        "tdg",
-        "v",
-        "vdg",
-    ]
-
-    GATES_MULTI = [
-        "cx",
-        "ccx",
-        "cz",
-        "zz",
-    ]
-
-    GATES_M = [
-        "measure",
-        "reset"
-    ]
-
     def __init__(
         self,
         workspace: Workspace,
@@ -158,13 +129,19 @@ class Honeywell(Target):
 "gates in the method input arguments.")
 
             else:
+                from qiskit.dagcircuit.dagnode import DAGOpNode
                 qasm = Qasm(data=circuit)
                 ast = qasm.parse()
                 dag = ast_to_dag(ast)
-                ops = dag.count_ops()
-                N_1q = sum([value for key, value in ops.items() if key in self.GATES_1Q])
-                N_2q = sum([value for key, value in ops.items() if key in self.GATES_MULTI])
-                N_m = sum([value for key, value in ops.items() if key in self.GATES_M])
+                N_1q, N_2q, N_m = 0, 0, 0
+                for node in dag._multi_graph.nodes():
+                    if isinstance(node, DAGOpNode):
+                        if node.op.name in ["measure", "reset"]:
+                            N_m += 1
+                        elif node.op.num_qubits == 1:
+                            N_1q += 1
+                        else:
+                            N_2q += 1
 
         HQC = 5 + num_shots * (N_1q + 10 * N_2q + 5 * N_m) / 5000
 
