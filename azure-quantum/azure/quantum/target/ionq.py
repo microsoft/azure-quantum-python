@@ -19,36 +19,6 @@ class IonQ(Target):
         "ionq.simulator",
     )
 
-    # Get all one-qubit, two-qubit gates
-    GATES_1Q = [
-        "x",	# Pauli X gate
-        "y",	# Pauli Y gate
-        "z",	# Pauli Z gate
-        "rx",	# X-axis rotation
-        "ry",	# Y-axis rotation
-        "rz",	# Z-axis rotation
-        "h",	# Hadamard gate
-        "not",	# Convenient alias for Pauli-X gate
-        "s",	# S gate
-        "si",	# Conjugate transpose of S gate
-        "t",	# T gate
-        "ti",	# Conjugate transpose of T gate
-        "v",	# Square root of not gate
-        "vi",	# Conjugate transpose of square-root-of-not gate
-    ]
-
-
-    GATES_MULTI = [
-        "x",	# Pauli X gate
-        "y",	# Pauli Y gate
-        "z",	# Pauli Z gate
-        "cnot",	# Convenient alias for controlled-not gate
-        "xx",	# Ising XX gate: e^(-iθ X⊗X /2)
-        "yy",	# Ising YY gate: e^(-iθ Y⊗Y /2)
-        "zz",	# Ising ZZ gate: e^(-iθ Z⊗Z /2)
-        "swap",	# Swaps two qubits
-    ]
-
     def __init__(
         self,
         workspace: Workspace,
@@ -154,14 +124,10 @@ class IonQ(Target):
             return 0.0
 
         def is_1q_gate(gate: Dict[str, Any]):
-            return gate.get("gate") in self.GATES_1Q and (
-                "controls" not in gate and "control" not in gate
-            )
+            return "controls" not in gate and "control" not in gate
 
         def is_multi_q_gate(gate):
-            return gate.get("gate") in self.GATES_MULTI and (
-                "controls" in gate or "control" in gate
-            )
+            return "controls" in gate or "control" in gate
 
         def num_2q_gates(gate):
             controls = gate.get("controls")
