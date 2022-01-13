@@ -2,6 +2,8 @@ import unittest
 import warnings
 import pytest
 
+import numpy as np
+
 from azure.core.exceptions import HttpResponseError
 from azure.quantum.job.job import Job
 from azure.quantum.target import IonQ, Honeywell
@@ -42,6 +44,19 @@ class TestIonQ(QuantumTestBase):
                 },
             ]
         }
+
+    @pytest.mark.ionq
+    def test_estimate_price_ionq(self):
+        workspace = self.create_workspace()
+        circuit = self._3_qubit_ghz()
+        target = IonQ(workspace=workspace, name="ionq.simulator")
+        cost = target.estimate_price(circuit, num_shots=100e3)
+        assert cost == 0.0
+
+        target = IonQ(workspace=workspace, name="ionq.qpu")
+        cost = target.estimate_price(circuit, num_shots=100e3)
+        assert np.round(cost) == 63.0
+
 
     @pytest.mark.ionq
     @pytest.mark.live_test
@@ -113,7 +128,8 @@ class TestHoneywell(QuantumTestBase):
 
         qreg q[3];
         creg c0[1];
-        creg c1[3];
+        creg c1[1];
+        creg c2[1];
 
         h q[0];
         cx q[0], q[1];
@@ -121,17 +137,32 @@ class TestHoneywell(QuantumTestBase):
         h q[2];
         cx q[2], q[0];
         h q[2];
-        measure q[0] -> c1[0];
-        c0[0] = c1[0];
+        measure q[0] -> c0[0];
         if (c0==1) x q[1];
-        c0[0] = 0;
-        measure q[2] -> c1[1];
-        c0[0] = c1[1];
-        if (c0==1) z q[1];
-        c0[0] = 0;
+        measure q[2] -> c1[0];
+        if (c1==1) z q[1];
         h q[1];
-        measure q[1] -> c1[2];
+        measure q[1] -> c2[0];
         """
+
+    @pytest.mark.honeywell
+    def test_job_estimate_price_honeywell(self):
+
+        with unittest.mock.patch.object(
+            Job,
+            self.mock_create_job_id_name,
+            return_value=self.get_test_job_id(),
+        ):
+            workspace = self.create_workspace()
+            circuit = self._teleport()
+            target = Honeywell(workspace=workspace, name="honeywell.hqs-lt-s1-apival")
+            cost = target.estimate_price(circuit, num_shots=100e3)
+            assert cost == 0.0
+
+            target = Honeywell(workspace=workspace, name="honeywell.hqs-lt-s1")
+            cost = target.estimate_price(circuit, num_shots=100e3)
+            assert cost == 845.0
+
 
     @pytest.mark.honeywell
     @pytest.mark.live_test

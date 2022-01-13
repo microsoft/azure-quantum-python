@@ -60,7 +60,7 @@ class TargetFactory:
         """Get all target classes by target name"""
         return {
             name.lower(): _t for t in self._base_cls.__subclasses__()
-            for _t in [t] + t.__subclasses__()
+            for _t in t.__subclasses__() + [t]
             if hasattr(_t, "target_names")
             for name in _t.target_names
             if not asyncio.iscoroutinefunction(_t.submit)

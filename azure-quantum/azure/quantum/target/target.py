@@ -158,3 +158,10 @@ target '{self.name}' of provider '{self.provider_id}' not found."
         This should be overridden by Solver subclasses which do support protobuf.
         """
         return False
+    
+    def estimate_price(
+        self,
+        input_data: Any,
+        input_params: Dict[str, Any] = None
+    ):
+        return NotImplementedError("Price estimation is not implemented yet for this target.")
