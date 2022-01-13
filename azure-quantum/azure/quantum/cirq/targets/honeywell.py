@@ -74,6 +74,26 @@ class HoneywellTarget(Honeywell, CirqTarget):
             meas.gate.key: [q.x for q in meas.qubits] for meas in measurements
         }
 
+    def estimate_price(
+        self,
+        program: str,
+        repetitions: int
+    ) -> float:
+        """Estimate price for running this program
+
+        :param program: Cirq quatnum program
+        :type program: str, optional
+        :param repetitions: Number of repetitions
+        :type repetitions: int, optional
+        :return: Price estimate in HQC
+        :rtype: float
+        """
+        serialized_program = self._translate_circuit(program)
+        return super().estimate_price(
+            circuit=serialized_program,
+            num_shots=repetitions
+        )
+
     def submit(
         self,
         program: "cirq.Circuit",
