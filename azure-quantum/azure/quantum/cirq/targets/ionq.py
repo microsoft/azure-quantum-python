@@ -111,6 +111,39 @@ are not installed, throw error with installation instructions."""
         job_dict = self._client._create_job_dict(azure_job)
         return CirqIonqJob(client=self._client, job_dict=job_dict)
 
+    def estimate_price(
+        self,
+        program: "cirq.Circuit",
+        repetitions: int,
+        price_1q: float = 0.00003,
+        price_2q: float = 0.0003,
+        min_price: float = 1) -> float:
+        """Estimate price for running this program
+
+        :param program: Cirq quantum program
+        :type program: cirq.Circuit
+        :param repetitions: Number of repetitions
+        :type repetitions: int
+        :param price_1q: The price of running a single-qubit gate
+            for one shot, defaults to 0.00003
+        :type price_1q: float, optional
+        :param price_2q: The price of running a double-qubit gate
+            for one shot, defaults to 0.0003
+        :type price_2q: float, optional
+        :param min_price: The minimum price for running a job, defaults to 1.0
+        :type min_price: float, optional
+        :return: Price estimate
+        :rtype: float
+        """
+        serialized_program = self._translate_cirq_circuit(program)
+        return super().estimate_price(
+            serialized_program.body,
+            repetitions,
+            price_1q=price_1q,
+            price_2q=price_2q,
+            min_price=min_price
+        )
+
     def submit(
         self,
         program: "cirq.Circuit",

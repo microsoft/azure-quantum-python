@@ -2,10 +2,10 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 ##
-import json
 from typing import TYPE_CHECKING
 from azure.quantum import __version__
 from azure.quantum.qiskit.job import AzureQuantumJob
+from azure.quantum.target.ionq import IonQ
 
 try:
     from qiskit.providers import BackendV1 as Backend
@@ -45,6 +45,23 @@ class IonQBackend(Backend):
             "meas_map": meas_map,
         }
 
+    @staticmethod
+    def _translate_circuit(circuit, **kwargs):
+        ionq_circ, _, meas_map = qiskit_circ_to_ionq_circ(circuit)
+        input_data = {
+            "qubits": circuit.num_qubits,
+            "circuit": ionq_circ,
+        }
+
+        return input_data, meas_map
+
+    def estimate_price(self, circuit, shots):
+        """Estimate the price for the given circuit."""
+        input_data, _ = self._translate_circuit(circuit)
+        workspace = self.provider().get_workspace()
+        target = workspace.get_targets(self.name())
+        return target.estimate_price(input_data, num_shots=shots)
+
     def run(self, circuit, **kwargs):
         """Submits the given circuit to run on an IonQ target."""        
         # Some Qiskit features require passing lists of circuits, so unpack those here.
@@ -65,11 +82,8 @@ class IonQBackend(Backend):
                 # unless the user specifies the backend.
                 kwargs["shots"] = run["shots"]
 
-        ionq_circ, _, meas_map = qiskit_circ_to_ionq_circ(circuit)
-        input_data = json.dumps({
-            "qubits": circuit.num_qubits,
-            "circuit": ionq_circ,
-        })
+        input_data, meas_map = self._translate_circuit(circuit, **kwargs)
+        input_data = IonQ._encode_input_data(input_data)
 
         # Options are mapped to input_params
         # Take also into consideration options passed in the kwargs, as the take precedence
@@ -79,7 +93,7 @@ class IonQBackend(Backend):
             if opt in input_params:
                 input_params[opt] = kwargs.pop(opt)
 
-        logger.info(f"Submitting new job for backend {self.name()}")
+        logger.info(f"Submitting new job for basckend {self.name()}")
         job = AzureQuantumJob(
             backend=self,
             name=circuit.name,
