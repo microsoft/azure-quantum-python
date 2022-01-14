@@ -477,13 +477,8 @@ class TestProjectQ(QuantumTestBase):
 
         return engine.submit_job(name)
 
-    def _projectq_submit_ionq_job(self, job_id):
-        num_shots = 500
-
-        ionq_backend = IonQSimulatorBackend(
-            num_runs=num_shots,
-            retrieve_execution=job_id
-        )
+    def _projectq_ionq_engine(self):
+        ionq_backend = IonQSimulatorBackend(num_runs=500)
         workspace = self.create_workspace()
 
         engine = AzureQuantumEngine(
@@ -491,15 +486,11 @@ class TestProjectQ(QuantumTestBase):
             workspace=workspace
         )
 
-        azure_job = self._projectq_submit_3_qubit_ghz_circuit(engine, name="ionq-circuit")
-        return engine, azure_job
+        return engine
 
-    def _projectq_submit_honeywell_job(self, job_id):
-        num_shots = 500
-
+    def _projectq_honeywell_engine(self):
         honeywell_backend = HoneywellSimulatorBackend(
-            num_runs=num_shots,
-            retrieve_execution=job_id
+            num_runs=500
         )
         workspace = self.create_workspace()
 
@@ -508,9 +499,8 @@ class TestProjectQ(QuantumTestBase):
             workspace=workspace
         )
 
-        azure_job = self._projectq_submit_3_qubit_ghz_circuit(engine, name="honeywell-circuit")
-        return engine, azure_job
-    
+        return engine
+
     def _projectq_wait_to_complete(self, engine, projectq_job):
         job = projectq_job._azure_job
         self.pause_recording()
@@ -535,8 +525,8 @@ class TestProjectQ(QuantumTestBase):
             self.mock_create_job_id_name,
             return_value=self.get_test_job_id(),
         ):
-            job_id = self.get_test_job_id()
-            engine, projectq_job = self._projectq_submit_ionq_job(job_id=job_id)
+            engine = self._projectq_ionq_engine()
+            projectq_job = self._projectq_submit_3_qubit_ghz_circuit(engine, name="ionq-circuit")
 
             # Make sure the job is completed before fetching the results
             # playback currently does not work for repeated calls
@@ -556,17 +546,7 @@ class TestProjectQ(QuantumTestBase):
             self.mock_create_job_id_name,
             return_value=self.get_test_job_id(),
         ):
-            num_shots = 500
-
-            ionq_backend = IonQSimulatorBackend(
-                num_runs=num_shots
-            )
-            workspace = self.create_workspace()
-
-            engine = AzureQuantumEngine(
-                backend=ionq_backend,
-                workspace=workspace
-            )
+            engine = self._projectq_ionq_engine()
             circuit = engine.allocate_qureg(3)
             q0, q1, q2 = circuit
 
@@ -588,4 +568,15 @@ class TestProjectQ(QuantumTestBase):
             self.mock_create_job_id_name,
             return_value=self.get_test_job_id(),
         ):
-            assert True  # todo: add projectq to honetwell tests
+            engine = self._projectq_honeywell_engine()
+            projectq_job = self._projectq_submit_3_qubit_ghz_circuit(engine, name="honeywell-circuit")
+
+            # Make sure the job is completed before fetching the results
+            # playback currently does not work for repeated calls
+            # See: https://github.com/microsoft/qdk-python/issues/118
+            if self.in_recording:
+                self._projectq_wait_to_complete(engine, projectq_job)
+            
+            if projectq_job.status() == "Succeeded":
+                projectq_result = projectq_job.result()
+                assert projectq_result['histogram'] == { "0": 0.5, "7": 0.5 }

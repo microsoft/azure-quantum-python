@@ -46,7 +46,7 @@ __all__ = ["HoneywellQPUBackend", "HoneywellAPIValidatorBackend", "HoneywellSimu
 
 
 class HoneywellBackend(_HoneywellBackend):
-    backend_name = None
+    azure_quantum_backend_name: str = None
 
     def __init__(
         self, 
@@ -88,7 +88,7 @@ class HoneywellBackend(_HoneywellBackend):
 
         return engine_list + [mapper]
 
-    def run(self, name=None, **kwargs):
+    def submit_job(self, name=None, **kwargs):
         """Submits the given circuit to run on an Honeywell target."""
         logger.info(f"Submitting new job for backend {self.device}")
 
@@ -112,7 +112,7 @@ class HoneywellBackend(_HoneywellBackend):
         job = AzureQuantumJob(
             backend=self,
             name=name,
-            target=self.backend_name, 
+            target=self.device,
             input_data=input_data,
             blob_name="inputData",
             content_type="application/qasm",
