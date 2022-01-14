@@ -5,11 +5,17 @@
 import io
 import json
 
-from typing import Any, Dict, Union
+from typing import Any, Dict, List
 
 from azure.quantum.target.target import Target
 from azure.quantum.job.job import Job
 from azure.quantum.workspace import Workspace
+
+def int_to_bitstring(k: int, num_qubits: int, measured_qubit_ids: List[int]):
+    # flip bitstring to convert to little Endian
+    bitstring = format(int(k), f"0{num_qubits}b")[::-1]
+    # flip bitstring to convert back to big Endian
+    return "".join([bitstring[n] for n in measured_qubit_ids])[::-1]
 
 
 class IonQ(Target):

@@ -45,9 +45,9 @@ class AzureQuantumEngine(MainEngine):
     def get_backend(self):
         return self.backend
 
-    def run(self, name=None, **kwargs) -> AzureQuantumJob:
+    def submit_job(self, name=None, **kwargs) -> AzureQuantumJob:
         """Submits the circuit to run on associated backend."""
-        return self.backend.run(name, **kwargs)
+        return self.backend.submit_job(name, **kwargs)
 
     def get_job(self, job_id) -> AzureQuantumJob:
         """Returns the Job instance associated with the given id."""

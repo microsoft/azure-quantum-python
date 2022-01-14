@@ -475,7 +475,7 @@ class TestProjectQ(QuantumTestBase):
         CX | (q1, q2)
         All(Measure) | circuit
 
-        return engine.run(name)
+        return engine.submit_job(name)
 
     def _projectq_submit_ionq_job(self, job_id):
         num_shots = 500
@@ -547,6 +547,38 @@ class TestProjectQ(QuantumTestBase):
             if projectq_job.status() == "Succeeded":
                 projectq_result = projectq_job.result()
                 assert projectq_result['histogram'] == { "0": 0.5, "7": 0.5 }
+
+    @pytest.mark.ionq
+    @pytest.mark.live_test
+    def test_plugins_submit_projectq_to_ionq_flush(self):
+        with unittest.mock.patch.object(
+            Job,
+            self.mock_create_job_id_name,
+            return_value=self.get_test_job_id(),
+        ):
+            num_shots = 500
+
+            ionq_backend = IonQSimulatorBackend(
+                num_runs=num_shots
+            )
+            workspace = self.create_workspace()
+
+            engine = AzureQuantumEngine(
+                backend=ionq_backend,
+                workspace=workspace
+            )
+            circuit = engine.allocate_qureg(3)
+            q0, q1, q2 = circuit
+
+            H | q0
+            CX | (q0, q1)
+            CX | (q1, q2)
+            All(Measure) | circuit
+
+            engine.flush()
+
+            probabilities = engine.backend.get_probabilities(circuit)
+            assert probabilities == { "000": 0.5, "111": 0.5 }
 
     @pytest.mark.honeywell
     @pytest.mark.live_test

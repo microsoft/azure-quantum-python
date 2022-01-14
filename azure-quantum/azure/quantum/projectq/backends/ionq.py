@@ -5,6 +5,8 @@
 import json
 import uuid
 
+import numpy as np
+
 from azure.quantum import __version__
 from azure.quantum.projectq.job import (
     AzureQuantumJob, 
@@ -12,10 +14,13 @@ from azure.quantum.projectq.job import (
     IONQ_INPUT_DATA_FORMAT, 
     IONQ_OUTPUT_DATA_FORMAT
 )
+from azure.quantum.target.ionq import int_to_bitstring
+
+from projectq.types import WeakQubitRef
 
 try:
     from projectq.backends import IonQBackend as _IonQBackend
-    import projectq.setups.ionq
+    from projectq.setups.ionq import get_engine_list
 except ImportError:
     raise ImportError(
     "Missing optional 'projectq' dependencies. \
@@ -29,35 +34,54 @@ __all__ = ["IonQQPUBackend", "IonQSimulatorBackend"]
 
 
 class IonQBackend(_IonQBackend):
-    projectq_backend_name = None
-    azure_quantum_backend_name = None
+    projectq_backend_name: str = None
+    azure_quantum_backend_name: str = None
 
     def __init__(
         self, 
-        use_hardware=False, 
-        num_runs=100, 
-        verbose=False, 
-        device="ionq_simulator", 
-        retrieve_execution=None
+        use_hardware: bool=False,
+        num_runs: int=100,
+        verbose: bool=False,
+        device: str="ionq_simulator",
+        num_retries: int = 3000,
+        interval: int = 1,
+        retrieve_execution: str=None
     ):
-        """Base class for interfacing with an IonQ backend in Azure Quantum"""
+        """Base class for interfacing with an IonQ backend in Azure Quantum
+
+        :param use_hardware: Whether or not to use real IonQ hardware or just a simulator. If False, the
+            ionq_simulator is used regardless of the value of ``device``. Defaults to False.
+        :param num_runs: Number of times to run circuits. Defaults to 100.
+        verbose: If True, print statistics after job results have been collected. Defaults to
+            False.
+        :param token: An IonQ API token. Defaults to None.
+        :param device: Device to run jobs on.  Supported devices are ``'ionq_qpu'`` or
+            ``'ionq_simulator'``.  Defaults to ``'ionq_simulator'``.
+        :param num_retries: Number of times to retry fetching job results after it has been submitted. Defaults
+            to 3000.
+        :param interval: Number of seconds to wait inbetween result fetch retries. Defaults to 1.
+        :param retrieve_execution: An IonQ API Job ID.  If provided, a job with this ID will be
+            fetched. Defaults to None.
+        """
         logger.info("Initializing IonQBackend for ProjectQ")
 
         super().__init__(
             use_hardware=use_hardware, 
             num_runs=num_runs, 
             verbose=verbose, 
-            device=device, 
+            device=device,
+            num_retries=num_retries,
+            interval=interval,
             retrieve_execution=retrieve_execution
         )
         
     def get_engine_list(self):
         """Return the default list of compiler engine for the IonQ platform."""
-        return projectq.setups.ionq.get_engine_list(
+        return get_engine_list(
             device=self.projectq_backend_name
         )
 
-    def run(self, name=None, **kwargs):
+    def submit_job(self, name=None, **kwargs) -> AzureQuantumJob:
         """Submits the given circuit to run on an IonQ target."""
         logger.info(f"Submitting new job for backend {self.device}")
 
@@ -108,10 +132,17 @@ class IonQBackend(_IonQBackend):
 
     def _run(self):
         """
-        Overriding Projectq run method with empty function.
-        This disables circuit execution using default ProjectQ logic. Use engine.run() to submit job to Azure Quantum.
+        Run a ProjectQ circuit and wait until it is done.
         """
-        pass
+        job = self.submit_job()
+        result = job.result(timeout_secs=self._num_retries*self._interval)
+        self._probabilities = {int_to_bitstring(k, len(self._measured_ids), self._measured_ids): v for k, v in result["histogram"].items()}
+
+        # Set a single measurement result
+        bitstring = np.random.choice(list(self._probabilities.keys()), p=list(self._probabilities.values()))
+        for qid in self._measured_ids:
+            qubit_ref = WeakQubitRef(self.main_engine, qid)
+            self.main_engine.set_measurement_result(qubit_ref, bitstring[qid])
 
 
 class IonQQPUBackend(IonQBackend):
@@ -119,9 +150,11 @@ class IonQQPUBackend(IonQBackend):
     azure_quantum_backend_name = "ionq.qpu"
 
     def __init__(
-        self, 
-        num_runs=100, 
-        verbose=False, 
+        self,
+        num_runs=100,
+        verbose=False,
+        num_retries: int = 3000,
+        interval: int = 1,
         retrieve_execution=None
     ):
         """Base class for interfacing with an IonQ QPU backend"""
@@ -131,11 +164,13 @@ class IonQQPUBackend(IonQBackend):
             use_hardware=True, 
             num_runs=num_runs, 
             verbose=verbose, 
-            device=self.projectq_backend_name, 
+            device=self.projectq_backend_name,
+            num_retries=num_retries,
+            interval=interval,
             retrieve_execution=retrieve_execution
         )
 
-        
+
 class IonQSimulatorBackend(IonQBackend):
     projectq_backend_name = "ionq_simulator"
     azure_quantum_backend_name = "ionq.simulator"
@@ -143,16 +178,20 @@ class IonQSimulatorBackend(IonQBackend):
     def __init__(
         self, 
         num_runs=100, 
-        verbose=False, 
+        verbose=False,
+        num_retries: int = 3000,
+        interval: int = 1,
         retrieve_execution=None
     ):
         """Base class for interfacing with an IonQ Simulator backend"""
         logger.info("Initializing IonQSimulatorBackend for ProjectQ")
 
         super().__init__(
-            use_hardware=False, 
-            num_runs=num_runs, 
-            verbose=verbose, 
-            device=self.projectq_backend_name, 
+            use_hardware=False,
+            num_runs=num_runs,
+            verbose=verbose,
+            device=self.projectq_backend_name,
+            num_retries=num_retries,
+            interval=interval,
             retrieve_execution=retrieve_execution
         )
