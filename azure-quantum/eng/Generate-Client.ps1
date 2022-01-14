@@ -15,7 +15,7 @@ if ([string]::IsNullOrEmpty($PackageVersion)) {
 $Namespace = "azure.quantum._client"
 
 $SpecsRepo = "https://github.com/Azure/azure-rest-api-specs.git"
-$SpecsBranch = "master"
+$SpecsBranch = "main"
 $SpecsCommitId = ""
 $PathAllowList = ("specification/quantum")
 
