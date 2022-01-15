@@ -99,7 +99,8 @@ class HoneywellBackend(_HoneywellBackend):
         qubit_mapping = self.main_engine.mapper.current_mapping
         num_qubits = len(qubit_mapping.keys())
 
-        input_data = self.get_qasm()
+        input_data = 'OPENQASM 2.0;\ninclude "qelib1.inc";\n'
+        input_data += self.get_qasm()
 
         input_params = {
             "shots": self._num_runs
