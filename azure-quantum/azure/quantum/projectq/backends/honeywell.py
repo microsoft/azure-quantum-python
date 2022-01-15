@@ -2,7 +2,9 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 ##
+from collections import Counter
 import uuid
+import numpy as np
 
 from azure.quantum import __version__
 from azure.quantum.projectq.job import (
@@ -11,12 +13,14 @@ from azure.quantum.projectq.job import (
     HONEYWELL_INPUT_DATA_FORMAT, 
     HONEYWELL_OUTPUT_DATA_FORMAT
 )
+from azure.quantum.target.ionq import int_to_bitstring
 
 try:
     # Using IBMBackend as HoneywellBackend to translate `projectq` circuit to QASM.
     from projectq.backends import IBMBackend as _HoneywellBackend
     from projectq.cengines import BasicMapperEngine
     import projectq.setups.restrictedgateset
+    from projectq.types import WeakQubitRef
     from projectq.ops import (
         X,
         Y,
@@ -50,24 +54,44 @@ class HoneywellBackend(_HoneywellBackend):
 
     def __init__(
         self, 
-        use_hardware=False, 
-        num_runs=100, 
-        verbose=False, 
-        device="honeywell.hqs-lt-s1-apival", 
-        retrieve_execution=None
+        use_hardware: bool=False,
+        num_runs: int=100,
+        verbose: bool=False,
+        device: str="ionq_simulator",
+        num_retries: int = 3000,
+        interval: int = 1,
+        retrieve_execution: str=None
     ):
-        """Base class for interfacing with an Honeywell backend in Azure Quantum"""
+        """Base class for interfacing with a Honeywell backend in Azure Quantum
+
+        :param use_hardware: Whether or not to use real IonQ hardware or just a simulator. If False, the
+            Honeywell simulator is used regardless of the value of ``device``. Defaults to False.
+        :param num_runs: Number of times to run circuits. Defaults to 100.
+        verbose: If True, print statistics after job results have been collected. Defaults to
+            False.
+        :param token: An IonQ API token. Defaults to None.
+        :param device: Device to run jobs on.  Supported devices are ``'ionq_qpu'`` or
+            ``'ionq_simulator'``.  Defaults to ``'ionq_simulator'``.
+        :param num_retries: Number of times to retry fetching job results after it has been submitted. Defaults
+            to 3000.
+        :param interval: Number of seconds to wait inbetween result fetch retries. Defaults to 1.
+        :param retrieve_execution: An IonQ API Job ID.  If provided, a job with this ID will be
+            fetched. Defaults to None.
+        """
         logger.info("Initializing HoneywellBackend for ProjectQ")
 
+        if not use_hardware:
+            device = "honeywell.hqs-lt-s1-sim"
+
         super().__init__(
-            use_hardware=use_hardware, 
+            use_hardware=True, 
             num_runs=num_runs, 
-            verbose=verbose, 
+            verbose=verbose,
+            device=device,
+            num_retries=num_retries,
+            interval=interval,
             retrieve_execution=retrieve_execution
         )
-
-        # Overriding IBMBackend device name with Honeywell device name.
-        self.device = device
 
     def get_engine_list(self):
         """Return the default list of compiler engine for the Honeywell platform."""
@@ -96,11 +120,13 @@ class HoneywellBackend(_HoneywellBackend):
             random_suffix = str(uuid.uuid4())[:8]
             name = "projectq-honeywell-circuit-{}".format(random_suffix)
 
-        qubit_mapping = self.main_engine.mapper.current_mapping
-        num_qubits = len(qubit_mapping.keys())
+        num_qubits = len(self._measured_ids)
 
-        input_data = 'OPENQASM 2.0;\ninclude "qelib1.inc";\n'
-        input_data += self.get_qasm()
+        qasm = self.get_qasm()
+        qasm = qasm.replace("u2(0,pi/2)", "h")
+        input_data = f"OPENQASM 2.0;\ninclude \"qelib1.inc\";\nqreg q[{num_qubits}];\ncreg c[{num_qubits}];{qasm}\n"
+        for meas_id in self._measured_ids:
+            input_data += f"measure q[{meas_id}] -> c[{meas_id}];\n"
 
         input_params = {
             "shots": self._num_runs
@@ -133,10 +159,19 @@ class HoneywellBackend(_HoneywellBackend):
 
     def _run(self):
         """
-        Overriding Projectq run method with empty function.
-        This disables circuit execution using default ProjectQ logic. Use engine.run() to submit job to Azure Quantum.
+        Run a ProjectQ circuit and wait until it is done.
         """
-        pass
+        job = self.submit_job()
+        result = job.result(timeout_secs=self._num_retries*self._interval)
+        histogram = Counter(result["c"])
+        num_shots = sum(histogram.values())
+        self._probabilities = {int_to_bitstring(k, len(self._measured_ids), self._measured_ids): v/num_shots for k, v in histogram.items()}
+
+        # Set a single measurement result
+        bitstring = np.random.choice(list(self._probabilities.keys()), p=list(self._probabilities.values()))
+        for qid in self._measured_ids:
+            qubit_ref = WeakQubitRef(self.main_engine, qid)
+            self.main_engine.set_measurement_result(qubit_ref, bitstring[qid])
 
 
 class HoneywellQPUBackend(HoneywellBackend):

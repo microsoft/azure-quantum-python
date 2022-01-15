@@ -19,6 +19,10 @@ from azure.quantum.cirq.targets.target import Target
 from azure.quantum.projectq import AzureQuantumEngine
 from azure.quantum.projectq.backends import IonQSimulatorBackend, HoneywellSimulatorBackend
 
+from azure.quantum.target.ionq import int_to_bitstring
+
+from projectq.types import WeakQubitRef
+
 from common import QuantumTestBase, ZERO_UID
 
 class TestQiskit(QuantumTestBase):
@@ -579,4 +583,26 @@ class TestProjectQ(QuantumTestBase):
             
             if projectq_job.status() == "Succeeded":
                 projectq_result = projectq_job.result()
-                assert projectq_result['histogram'] == { "0": 0.5, "7": 0.5 }
+                assert projectq_result['c'] == ["000"]
+
+    @pytest.mark.honeywell
+    @pytest.mark.live_test
+    def test_plugins_submit_projectq_to_honeywell_flush(self):
+        with unittest.mock.patch.object(
+            Job,
+            self.mock_create_job_id_name,
+            return_value=self.get_test_job_id(),
+        ):
+            engine = self._projectq_honeywell_engine()
+            circuit = engine.allocate_qureg(3)
+            q0, q1, q2 = circuit
+
+            H | q0
+            CX | (q0, q1)
+            CX | (q1, q2)
+            All(Measure) | circuit
+
+            engine.flush()
+
+            probabilities = engine.backend.get_probabilities(circuit)
+            assert probabilities == { "000": 1.0 }

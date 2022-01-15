@@ -16,11 +16,10 @@ from azure.quantum.projectq.job import (
 )
 from azure.quantum.target.ionq import int_to_bitstring
 
-from projectq.types import WeakQubitRef
-
 try:
     from projectq.backends import IonQBackend as _IonQBackend
     from projectq.setups.ionq import get_engine_list
+    from projectq.types import WeakQubitRef
 except ImportError:
     raise ImportError(
     "Missing optional 'projectq' dependencies. \
@@ -74,7 +73,7 @@ class IonQBackend(_IonQBackend):
             interval=interval,
             retrieve_execution=retrieve_execution
         )
-        
+
     def get_engine_list(self):
         """Return the default list of compiler engine for the IonQ platform."""
         return get_engine_list(
@@ -91,7 +90,7 @@ class IonQBackend(_IonQBackend):
 
         qubit_mapping = self.main_engine.mapper.current_mapping
 
-        num_qubits = len(qubit_mapping.keys())
+        num_qubits = len(self._measured_ids)
         meas_map = [qubit_mapping[qubit_id] for qubit_id in self._measured_ids]
 
         input_data = json.dumps({
