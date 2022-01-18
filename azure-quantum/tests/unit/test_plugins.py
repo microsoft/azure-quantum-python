@@ -304,30 +304,29 @@ class TestCirq(QuantumTestBase):
         assert "honeywell.hqs-lt-s1-apival" in target_names
         assert "ionq.simulator" in target_names
 
-    @pytest.mark.ionq
     def test_plugins_estimate_cost_cirq_ionq(self):
         workspace = self.create_workspace()
         service = AzureQuantumService(workspace=workspace)
-        price = service.estimate_cost(
+        cost = service.estimate_cost(
             program=self._3_qubit_ghz_cirq(),
             repetitions=100e3,
             target="ionq.simulator"
         )
-        assert price == 0.0
+        assert cost.estimated_total == 0.0
 
-        price = service.estimate_cost(
+        cost = service.estimate_cost(
             program=self._3_qubit_ghz_cirq(),
             repetitions=1024,
             target="ionq.qpu"
         )
-        assert np.round(price) == 1.0
+        assert np.round(cost.estimated_total) == 1.0
 
-        price = service.estimate_cost(
+        cost = service.estimate_cost(
             program=self._3_qubit_ghz_cirq(),
             repetitions=100e3,
             target="ionq.qpu"
         )
-        assert np.round(price) == 63.0
+        assert np.round(cost.estimated_total) == 63.0
 
     @pytest.mark.ionq
     @pytest.mark.live_test
@@ -382,19 +381,19 @@ class TestCirq(QuantumTestBase):
     def test_plugins_estimate_cost_cirq_honeywell(self):
         workspace = self.create_workspace()
         service = AzureQuantumService(workspace=workspace)
-        price = service.estimate_cost(
+        cost = service.estimate_cost(
             program=self._3_qubit_ghz_cirq(),
             repetitions=100e3,
             target="honeywell.hqs-lt-s1-apival"
         )
-        assert price == 0.0
+        assert cost.estimated_total == 0.0
 
-        price = service.estimate_cost(
+        cost = service.estimate_cost(
             program=self._3_qubit_ghz_cirq(),
             repetitions=100e3,
             target="honeywell.hqs-lt-s1"
         )
-        assert np.round(price) == 725.0
+        assert np.round(cost.estimated_total) == 725.0
 
     @pytest.mark.honeywell
     @pytest.mark.live_test
