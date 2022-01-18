@@ -80,7 +80,7 @@ class Honeywell(Target):
             **kwargs
         )
     
-    def estimate_price(
+    def estimate_cost(
         self,
         circuit: str = None,
         num_shots: int = None,

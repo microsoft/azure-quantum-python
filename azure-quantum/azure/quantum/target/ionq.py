@@ -83,7 +83,7 @@ class IonQ(Target):
             **kwargs
         )
 
-    def estimate_price(
+    def estimate_cost(
         self,
         circuit: Dict[str, Any],
         num_shots: int,

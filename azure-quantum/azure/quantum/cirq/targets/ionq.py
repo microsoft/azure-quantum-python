@@ -111,7 +111,7 @@ are not installed, throw error with installation instructions."""
         job_dict = self._client._create_job_dict(azure_job)
         return CirqIonqJob(client=self._client, job_dict=job_dict)
 
-    def estimate_price(
+    def estimate_cost(
         self,
         program: "cirq.Circuit",
         repetitions: int,
@@ -136,7 +136,7 @@ are not installed, throw error with installation instructions."""
         :rtype: float
         """
         serialized_program = self._translate_cirq_circuit(program)
-        return super().estimate_price(
+        return super().estimate_cost(
             serialized_program.body,
             repetitions,
             price_1q=price_1q,
