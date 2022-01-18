@@ -92,7 +92,7 @@ class IonQ(Target):
         price_2q: float=0.0003,
         min_price: float=1.0
     ) -> CostEstimate:
-        """Estimate the price of submittng a circuit to IonQ targets.
+        """Estimate the cost of submittng a circuit to IonQ targets.
         Optionally, you can provide the number of gate and measurement operations
         manually.
         The actual price charged by the provider may differ from this calculation.

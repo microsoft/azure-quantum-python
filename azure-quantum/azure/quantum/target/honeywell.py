@@ -89,7 +89,7 @@ class Honeywell(Target):
         N_2q: int = None,
         N_m: int  = None
     ) -> CostEstimate:
-        """Estimate the price in HQC for a given circuit.
+        """Estimate the cost in HQC for a given circuit.
         Optionally, you can provide the number of gate and measurement operations
         manually.
         The actual price charged by the provider may differ from this estimation.

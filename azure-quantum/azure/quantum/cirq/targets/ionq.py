@@ -118,7 +118,7 @@ are not installed, throw error with installation instructions."""
         price_1q: float = 0.00003,
         price_2q: float = 0.0003,
         min_price: float = 1) -> float:
-        """Estimate price for running this program
+        """Estimate cost for running this program
 
         :param program: Cirq quantum program
         :type program: cirq.Circuit

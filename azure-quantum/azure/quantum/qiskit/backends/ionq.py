@@ -56,7 +56,7 @@ class IonQBackend(Backend):
         return input_data, meas_map
 
     def estimate_cost(self, circuit, shots):
-        """Estimate the price for the given circuit."""
+        """Estimate the cost for the given circuit."""
         input_data, _ = self._translate_circuit(circuit)
         workspace = self.provider().get_workspace()
         target = workspace.get_targets(self.name())

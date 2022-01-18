@@ -79,7 +79,7 @@ class HoneywellTarget(Honeywell, CirqTarget):
         program: str,
         repetitions: int
     ) -> float:
-        """Estimate price for running this program
+        """Estimate cost for running this program
 
         :param program: Cirq quatnum program
         :type program: str, optional

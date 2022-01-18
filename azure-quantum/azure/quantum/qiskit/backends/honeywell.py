@@ -63,7 +63,7 @@ class HoneywellBackend(Backend):
         return Options(count=500)
 
     def estimate_cost(self, circuit: QuantumCircuit, count: int):
-        """Estimate price for running this circuit
+        """Estimate cost for running this circuit
 
         :param circuit: Qiskit quantum circuit
         :type circuit: QuantumCircuit
