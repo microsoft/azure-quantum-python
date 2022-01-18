@@ -8,6 +8,7 @@ from typing import Any, Dict
 from azure.quantum.target.target import Target
 from azure.quantum.job.job import Job
 from azure.quantum.workspace import Workspace
+from azure.quantum._client.models import CostEstimate, UsageEvent
 
 
 class Honeywell(Target):
@@ -87,7 +88,7 @@ class Honeywell(Target):
         N_1q: int = None,
         N_2q: int = None,
         N_m: int  = None
-    ):
+    ) -> CostEstimate:
         """Estimate the price in HQC for a given circuit.
         Optionally, you can provide the number of gate and measurement operations
         manually.
@@ -114,9 +115,6 @@ class Honeywell(Target):
         :raises ImportError: If N_1q, N_2q and N_m are not specified,
             this will require a qiskit installation.
         """
-        if "apival" in self.name:
-            return 0.0
-
         if circuit is not None and (N_1q is None or N_2q is None or N_m is None):
             try:
                 from qiskit.circuit.quantumcircuit import Qasm
@@ -143,6 +141,38 @@ class Honeywell(Target):
                         else:
                             N_2q += 1
 
-        HQC = 5 + num_shots * (N_1q + 10 * N_2q + 5 * N_m) / 5000
+        if "apival" in self.name:
+            HQC = 0.0
+        else:
+            HQC = 5 + num_shots * (N_1q + 10 * N_2q + 5 * N_m) / 5000
 
-        return HQC
+        return CostEstimate(
+            events = [
+                UsageEvent(
+                    dimension_id="gates1q",
+                    dimension_name="1Q Gates",
+                    measure_unit="1q gates",
+                    amount_billed=0.0,
+                    amount_consumed=N_1q,
+                    unit_price=0.0
+                ),
+                UsageEvent(
+                    dimension_id="gates2q",
+                    dimension_name="2Q Gates",
+                    measure_unit="2q gates",
+                    amount_billed=0.0,
+                    amount_consumed=N_2q,
+                    unit_price=0.0
+                ),
+                UsageEvent(
+                    dimension_id="measops",
+                    dimension_name="Measurement operations",
+                    measure_unit="measurement operations",
+                    amount_billed=0.0,
+                    amount_consumed=N_m,
+                    unit_price=0.0
+                )
+            ],
+            currency_code="HQC",
+            estimated_total=HQC
+        )
