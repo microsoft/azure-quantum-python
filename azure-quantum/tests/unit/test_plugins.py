@@ -49,15 +49,15 @@ class TestQiskit(QuantumTestBase):
         assert "azure-quantum-qiskit" in provider._workspace.user_agent
         backend = provider.get_backend("ionq.simulator")
         cost = backend.estimate_cost(circuit, shots=100e3)
-        assert cost == 0.0
+        assert cost.estimated_total == 0.0
 
         backend = provider.get_backend("ionq.qpu")
         cost = backend.estimate_cost(circuit, shots=1024)
-        assert np.round(cost) == 1.0
+        assert np.round(cost.estimated_total) == 1.0
 
         backend = provider.get_backend("ionq.qpu")
         cost = backend.estimate_cost(circuit, shots=100e3)
-        assert np.round(cost) == 66.0
+        assert np.round(cost.estimated_total) == 66.0
 
     @pytest.mark.ionq
     @pytest.mark.live_test
@@ -188,11 +188,11 @@ class TestQiskit(QuantumTestBase):
         assert "azure-quantum-qiskit" in provider._workspace.user_agent
         backend = provider.get_backend("honeywell.hqs-lt-s1-apival")
         cost = backend.estimate_cost(circuit, count=100e3)
-        assert cost == 0.0
+        assert cost.estimated_total == 0.0
 
         backend = provider.get_backend("honeywell.hqs-lt-s1")
         cost = backend.estimate_cost(circuit, count=100e3)
-        assert cost == 745.0
+        assert cost.estimated_total == 745.0
 
     @pytest.mark.honeywell
     @pytest.mark.live_test
