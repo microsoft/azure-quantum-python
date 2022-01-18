@@ -68,16 +68,21 @@ class TestIonQ(QuantumTestBase):
             # Make sure the job is completed before fetching the results
             # playback currently does not work for repeated calls
             # See: https://github.com/microsoft/qdk-python/issues/118
-            if not self.is_playback:
-                self.assertEqual(False, job.has_completed())
-                if self.in_recording:
-                    import time
-                    time.sleep(3)
-                await job.refresh()
-                await job.wait_until_completed()
+            if self.in_recording:
+                self.pause_recording()
+                try:
+                    # Set a timeout for IonQ recording
+                    await job.wait_until_completed(timeout_secs=60)
+                except TimeoutError:
+                    warnings.warn("IonQ execution exceeded timeout. Skipping fetching results.")
+
+                # Check if job succeeded
                 self.assertEqual(True, job.has_completed())
-                job = await workspace.get_job(job.id)
-                self.assertEqual(True, job.has_completed())
+                assert job.details.status == "Succeeded"
+                self.resume_recording()
+
+            job = await workspace.get_job(job.id)
+            self.assertEqual(True, job.has_completed())
 
             results = await job.get_results()
             assert "histogram" in results
