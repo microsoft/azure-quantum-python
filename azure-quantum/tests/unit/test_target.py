@@ -47,16 +47,16 @@ class TestIonQ(QuantumTestBase):
         }
 
     @pytest.mark.ionq
-    def test_estimate_price_ionq(self):
+    def test_estimate_cost_ionq(self):
         workspace = self.create_workspace()
         circuit = self._3_qubit_ghz()
         target = IonQ(workspace=workspace, name="ionq.simulator")
-        cost = target.estimate_price(circuit, num_shots=100e3)
-        assert cost == 0.0
+        cost = target.estimate_cost(circuit, num_shots=100e3)
+        assert cost.estimated_total == 0.0
 
         target = IonQ(workspace=workspace, name="ionq.qpu")
-        cost = target.estimate_price(circuit, num_shots=100e3)
-        assert np.round(cost) == 63.0
+        cost = target.estimate_cost(circuit, num_shots=100e3)
+        assert np.round(cost.estimated_total) == 63.0
 
 
     @pytest.mark.ionq
@@ -165,7 +165,7 @@ class TestHoneywell(QuantumTestBase):
         """
 
     @pytest.mark.honeywell
-    def test_job_estimate_price_honeywell(self):
+    def test_job_estimate_cost_honeywell(self):
 
         with unittest.mock.patch.object(
             Job,
@@ -175,12 +175,12 @@ class TestHoneywell(QuantumTestBase):
             workspace = self.create_workspace()
             circuit = self._teleport()
             target = Honeywell(workspace=workspace, name="honeywell.hqs-lt-s1-apival")
-            cost = target.estimate_price(circuit, num_shots=100e3)
-            assert cost == 0.0
+            cost = target.estimate_cost(circuit, num_shots=100e3)
+            assert cost.estimated_total == 0.0
 
             target = Honeywell(workspace=workspace, name="honeywell.hqs-lt-s1")
-            cost = target.estimate_price(circuit, num_shots=100e3)
-            assert cost == 845.0
+            cost = target.estimate_cost(circuit, num_shots=100e3)
+            assert cost.estimated_total == 845.0
 
 
     @pytest.mark.honeywell

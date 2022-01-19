@@ -5,11 +5,12 @@
 import io
 import json
 
-from typing import Any, Dict, Union
+from typing import Any, Dict
 
 from azure.quantum.target.target import Target
 from azure.quantum.job.job import Job
 from azure.quantum.workspace import Workspace
+from azure.quantum._client.models import CostEstimate, UsageEvent
 
 
 class IonQ(Target):
@@ -83,15 +84,15 @@ class IonQ(Target):
             **kwargs
         )
 
-    def estimate_price(
+    def estimate_cost(
         self,
         circuit: Dict[str, Any],
         num_shots: int,
         price_1q: float=0.00003,
         price_2q: float=0.0003,
         min_price: float=1.0
-    ) -> float:
-        """Estimate the price of submittng a circuit to IonQ targets.
+    ) -> CostEstimate:
+        """Estimate the cost of submittng a circuit to IonQ targets.
         Optionally, you can provide the number of gate and measurement operations
         manually.
         The actual price charged by the provider may differ from this calculation.
@@ -120,9 +121,6 @@ class IonQ(Target):
         :param min_price: The minimum price for running a job, defaults to 1.0
         :type min_price: float, optional
         """
-        if self.name == "ionq.simulator": 
-            return 0.0
-
         def is_1q_gate(gate: Dict[str, Any]):
             return "controls" not in gate and "control" not in gate
 
@@ -140,6 +138,32 @@ class IonQ(Target):
         gates = circuit.get("circuit", [])
         N_1q = sum(map(is_1q_gate, gates))
         N_2q = sum(map(num_2q_gates, filter(is_multi_q_gate, gates)))
-        price = (price_1q * N_1q + price_2q * N_2q) * num_shots
 
-        return max(price, min_price)
+        if self.name == "ionq.simulator": 
+            price = 0.0
+        else:
+            price = (price_1q * N_1q + price_2q * N_2q) * num_shots
+            price = max(price, min_price)
+
+        return CostEstimate(
+            events = [
+                UsageEvent(
+                    dimension_id="gs1q",
+                    dimension_name="1Q Gate Shot",
+                    measure_unit="1q gate shot",
+                    amount_billed=0.0,
+                    amount_consumed=N_1q * num_shots,
+                    unit_price=0.0
+                ),
+                UsageEvent(
+                    dimension_id="gs2q",
+                    dimension_name="2Q Gate Shot",
+                    measure_unit="2q gate shot",
+                    amount_billed=0.0,
+                    amount_consumed=N_2q * num_shots,
+                    unit_price=0.0
+                )
+            ],
+            currency_code="USD",
+            estimated_total=price
+        )
