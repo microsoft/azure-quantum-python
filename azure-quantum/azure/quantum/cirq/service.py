@@ -147,7 +147,7 @@ class AzureQuantumService:
             name=name
         )
 
-    def estimate_price(
+    def estimate_cost(
         self,
         program: cirq.Circuit,
         repetitions: int,
@@ -158,7 +158,7 @@ class AzureQuantumService:
         # Resolve parameters
         resolved_circuit = cirq.resolve_parameters(program, param_resolver)
         target = self.get_target(name=target)
-        return target.estimate_price(
+        return target.estimate_cost(
             program=resolved_circuit,
             repetitions=repetitions,
             **kwargs
