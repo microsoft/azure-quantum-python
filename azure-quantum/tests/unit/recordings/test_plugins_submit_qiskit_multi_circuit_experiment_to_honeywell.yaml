@@ -54,10 +54,7 @@ interactions:
   response:
     body:
       string: '{"value": [{"id": "Microsoft", "currentAvailability": "Available",
-        "targets": [{"id": "microsoft.simulatedannealing.fpga", "currentAvailability":
-        "Available", "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.simulatedannealing-parameterfree.fpga",
-        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null},
-        {"id": "microsoft.paralleltempering-parameterfree.cpu", "currentAvailability":
+        "targets": [{"id": "microsoft.paralleltempering-parameterfree.cpu", "currentAvailability":
         "Available", "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.paralleltempering.cpu",
         "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null},
         {"id": "microsoft.simulatedannealing-parameterfree.cpu", "currentAvailability":
@@ -72,17 +69,108 @@ interactions:
         "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null},
         {"id": "microsoft.substochasticmontecarlo.cpu", "currentAvailability": "Available",
         "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.substochasticmontecarlo-parameterfree.cpu",
-        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null},
-        {"id": "microsoft.populationannealing-parameterfree.cpu", "currentAvailability":
-        "Available", "averageQueueTime": 0, "statusPage": null}]}, {"id": "ionq",
-        "currentAvailability": "Available", "targets": [{"id": "ionq.qpu", "currentAvailability":
-        "Available", "averageQueueTime": 252, "statusPage": "https://status.ionq.co"},
-        {"id": "ionq.simulator", "currentAvailability": "Available", "averageQueueTime":
-        3, "statusPage": "https://status.ionq.co"}]}], "nextLink": null, "access_token":
+        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null}]},
+        {"id": "ionq", "currentAvailability": "Available", "targets": [{"id": "ionq.qpu",
+        "currentAvailability": "Available", "averageQueueTime": 17, "statusPage":
+        "https://status.ionq.co"}, {"id": "ionq.simulator", "currentAvailability":
+        "Available", "averageQueueTime": 3, "statusPage": "https://status.ionq.co"}]},
+        {"id": "toshiba", "currentAvailability": "Available", "targets": [{"id": "toshiba.sbm.ising",
+        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null}]},
+        {"id": "honeywell", "currentAvailability": "Degraded", "targets": [{"id":
+        "honeywell.hqs-lt-s1", "currentAvailability": "Unavailable", "averageQueueTime":
+        0, "statusPage": "https://www.honeywell.com/en-us/company/quantum"}, {"id":
+        "honeywell.hqs-lt-s1-apival", "currentAvailability": "Available", "averageQueueTime":
+        4, "statusPage": "https://www.honeywell.com/en-us/company/quantum"}, {"id":
+        "honeywell.hqs-lt-s2", "currentAvailability": "Degraded", "averageQueueTime":
+        60671, "statusPage": "https://www.honeywell.com/en-us/company/quantum"}, {"id":
+        "honeywell.hqs-lt-s2-apival", "currentAvailability": "Available", "averageQueueTime":
+        0, "statusPage": "https://www.honeywell.com/en-us/company/quantum"}, {"id":
+        "honeywell.hqs-lt-s1-sim", "currentAvailability": "Available", "averageQueueTime":
+        380, "statusPage": "https://www.honeywell.com/en-us/company/quantum"}, {"id":
+        "honeywell.hqs-lt", "currentAvailability": "Degraded", "averageQueueTime":
+        0, "statusPage": "https://www.honeywell.com/en-us/company/quantum"}]}, {"id":
+        "Microsoft.Simulator", "currentAvailability": "Available", "targets": [{"id":
+        "microsoft.simulator.fullstate", "currentAvailability": "Available", "averageQueueTime":
+        0, "statusPage": null}]}, {"id": "1qbit", "currentAvailability": "Available",
+        "targets": [{"id": "1qbit.tabu", "currentAvailability": "Available", "averageQueueTime":
+        0, "statusPage": "http://status.1qbit.com/"}, {"id": "1qbit.pathrelinking",
+        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": "http://status.1qbit.com/"},
+        {"id": "1qbit.pticm", "currentAvailability": "Available", "averageQueueTime":
+        0, "statusPage": "http://status.1qbit.com/"}]}], "nextLink": null, "access_token":
         "fake_token"}'
     headers:
       content-length:
-      - '2060'
+      - '3416'
+      content-type:
+      - application/json; charset=utf-8
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate, br
+      Connection:
+      - keep-alive
+      User-Agent:
+      - testapp-azure-quantum-qiskit azsdk-python-quantum/0.0.0.1 Python/3.7.12 (Darwin-21.2.0-x86_64-i386-64bit)
+    method: GET
+    uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/providerStatus
+  response:
+    body:
+      string: '{"value": [{"id": "Microsoft", "currentAvailability": "Available",
+        "targets": [{"id": "microsoft.paralleltempering-parameterfree.cpu", "currentAvailability":
+        "Available", "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.paralleltempering.cpu",
+        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null},
+        {"id": "microsoft.simulatedannealing-parameterfree.cpu", "currentAvailability":
+        "Available", "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.simulatedannealing.cpu",
+        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null},
+        {"id": "microsoft.tabu-parameterfree.cpu", "currentAvailability": "Available",
+        "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.tabu.cpu", "currentAvailability":
+        "Available", "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.qmc.cpu",
+        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null},
+        {"id": "microsoft.populationannealing.cpu", "currentAvailability": "Available",
+        "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.populationannealing-parameterfree.cpu",
+        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null},
+        {"id": "microsoft.substochasticmontecarlo.cpu", "currentAvailability": "Available",
+        "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.substochasticmontecarlo-parameterfree.cpu",
+        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null}]},
+        {"id": "ionq", "currentAvailability": "Available", "targets": [{"id": "ionq.qpu",
+        "currentAvailability": "Available", "averageQueueTime": 17, "statusPage":
+        "https://status.ionq.co"}, {"id": "ionq.simulator", "currentAvailability":
+        "Available", "averageQueueTime": 3, "statusPage": "https://status.ionq.co"}]},
+        {"id": "toshiba", "currentAvailability": "Available", "targets": [{"id": "toshiba.sbm.ising",
+        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null}]},
+        {"id": "honeywell", "currentAvailability": "Degraded", "targets": [{"id":
+        "honeywell.hqs-lt-s1", "currentAvailability": "Unavailable", "averageQueueTime":
+        0, "statusPage": "https://www.honeywell.com/en-us/company/quantum"}, {"id":
+        "honeywell.hqs-lt-s1-apival", "currentAvailability": "Available", "averageQueueTime":
+        4, "statusPage": "https://www.honeywell.com/en-us/company/quantum"}, {"id":
+        "honeywell.hqs-lt-s2", "currentAvailability": "Degraded", "averageQueueTime":
+        60671, "statusPage": "https://www.honeywell.com/en-us/company/quantum"}, {"id":
+        "honeywell.hqs-lt-s2-apival", "currentAvailability": "Available", "averageQueueTime":
+        0, "statusPage": "https://www.honeywell.com/en-us/company/quantum"}, {"id":
+        "honeywell.hqs-lt-s1-sim", "currentAvailability": "Available", "averageQueueTime":
+        380, "statusPage": "https://www.honeywell.com/en-us/company/quantum"}, {"id":
+        "honeywell.hqs-lt", "currentAvailability": "Degraded", "averageQueueTime":
+        0, "statusPage": "https://www.honeywell.com/en-us/company/quantum"}]}, {"id":
+        "Microsoft.Simulator", "currentAvailability": "Available", "targets": [{"id":
+        "microsoft.simulator.fullstate", "currentAvailability": "Available", "averageQueueTime":
+        0, "statusPage": null}]}, {"id": "1qbit", "currentAvailability": "Available",
+        "targets": [{"id": "1qbit.tabu", "currentAvailability": "Available", "averageQueueTime":
+        0, "statusPage": "http://status.1qbit.com/"}, {"id": "1qbit.pathrelinking",
+        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": "http://status.1qbit.com/"},
+        {"id": "1qbit.pticm", "currentAvailability": "Available", "averageQueueTime":
+        0, "statusPage": "http://status.1qbit.com/"}]}], "nextLink": null, "access_token":
+        "fake_token"}'
+    headers:
+      content-length:
+      - '3416'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
