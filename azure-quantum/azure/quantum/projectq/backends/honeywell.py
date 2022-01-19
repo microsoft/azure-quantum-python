@@ -38,8 +38,8 @@ try:
     )
 except ImportError:
     raise ImportError(
-        "Missing optional 'projectq' dependencies. "
-        "To install run: pip install azure-quantum[projectq]"
+    "Missing optional 'projectq' dependencies. \
+To install run: pip install azure-quantum[projectq]"
 )
 
 import logging
