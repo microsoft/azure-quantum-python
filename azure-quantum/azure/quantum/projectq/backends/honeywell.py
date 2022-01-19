@@ -6,7 +6,6 @@ from collections import Counter
 import uuid
 import numpy as np
 
-from azure.quantum import __version__
 from azure.quantum.projectq.job import (
     AzureQuantumJob, 
     HONEYWELL_PROVIDER, 
@@ -39,8 +38,8 @@ try:
     )
 except ImportError:
     raise ImportError(
-    "Missing optional 'projectq' dependencies. \
-To install run: pip install azure-quantum[projectq]"
+        "Missing optional 'projectq' dependencies. "
+        "To install run: pip install azure-quantum[projectq]"
 )
 
 import logging
@@ -57,9 +56,7 @@ class HoneywellBackend(_HoneywellBackend):
         use_hardware: bool=False,
         num_runs: int=100,
         verbose: bool=False,
-        device: str="ionq_simulator",
-        num_retries: int = 3000,
-        interval: int = 1,
+        device: str="honeywell.hqs-lt-s1-sim",
         retrieve_execution: str=None
     ):
         """Base class for interfacing with a Honeywell backend in Azure Quantum
@@ -69,13 +66,9 @@ class HoneywellBackend(_HoneywellBackend):
         :param num_runs: Number of times to run circuits. Defaults to 100.
         verbose: If True, print statistics after job results have been collected. Defaults to
             False.
-        :param token: An IonQ API token. Defaults to None.
-        :param device: Device to run jobs on.  Supported devices are ``'ionq_qpu'`` or
-            ``'ionq_simulator'``.  Defaults to ``'ionq_simulator'``.
-        :param num_retries: Number of times to retry fetching job results after it has been submitted. Defaults
-            to 3000.
-        :param interval: Number of seconds to wait inbetween result fetch retries. Defaults to 1.
-        :param retrieve_execution: An IonQ API Job ID.  If provided, a job with this ID will be
+        :param device: Device to run jobs on.  Supported devices are ``'honeywell.hqs-lt-s1'`` or
+            ``honeywell.hqs-lt-s1-apival`` or ``'honeywell.hqs-lt-s1-sim'``. Defaults to ``'honeywell.hqs-lt-s1-sim'``.
+        :param retrieve_execution: An Honeywell API Job ID.  If provided, a job with this ID will be
             fetched. Defaults to None.
         """
         logger.info("Initializing HoneywellBackend for ProjectQ")
@@ -88,8 +81,6 @@ class HoneywellBackend(_HoneywellBackend):
             num_runs=num_runs, 
             verbose=verbose,
             device=device,
-            num_retries=num_retries,
-            interval=interval,
             retrieve_execution=retrieve_execution
         )
 
