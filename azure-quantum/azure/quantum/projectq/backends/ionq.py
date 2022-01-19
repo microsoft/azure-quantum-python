@@ -50,7 +50,7 @@ class IonQBackend(_IonQBackend):
         :param num_runs: Number of times to run circuits. Defaults to 100.
         verbose: If True, print statistics after job results have been collected. Defaults to
             False.
-        :param device: Device to run jobs on.  Supported devices are ``'ionq_qpu'`` or
+        :param device: Device to run jobs on. Supported devices are ``'ionq_qpu'`` or
             ``'ionq_simulator'``.  Defaults to ``'ionq_simulator'``.
         :param retrieve_execution: An IonQ API Job ID.  If provided, a job with this ID will be
             fetched. Defaults to None.

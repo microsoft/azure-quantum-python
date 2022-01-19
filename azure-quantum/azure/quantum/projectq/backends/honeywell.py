@@ -61,13 +61,12 @@ class HoneywellBackend(_HoneywellBackend):
     ):
         """Base class for interfacing with a Honeywell backend in Azure Quantum
 
-        :param use_hardware: Whether or not to use real IonQ hardware or just a simulator. If False, the
+        :param use_hardware: Whether or not to use real Honeywell hardware or just a simulator. If False, the
             Honeywell simulator is used regardless of the value of ``device``. Defaults to False.
         :param num_runs: Number of times to run circuits. Defaults to 100.
         verbose: If True, print statistics after job results have been collected. Defaults to
             False.
-        :param device: Device to run jobs on.  Supported devices are ``'honeywell.hqs-lt-s1'`` or
-            ``honeywell.hqs-lt-s1-apival`` or ``'honeywell.hqs-lt-s1-sim'``. Defaults to ``'honeywell.hqs-lt-s1-sim'``.
+        :param device: Device to run jobs on. Defaults to ``'honeywell.hqs-lt-s1-sim'``.
         :param retrieve_execution: An Honeywell API Job ID.  If provided, a job with this ID will be
             fetched. Defaults to None.
         """
