@@ -7,8 +7,8 @@ try
 {
     Push-Location (Join-Path $PSScriptRoot "../")
  
-    conda env create -f environment-cirq-beta.yml
-    conda env update -f environment-cirq-beta.yml --prune
+    conda env create -f environment.yml
+    conda env update -f environment.yml --prune
     conda activate azurequantumcirqbeta
 
     pip install -e .[qiskit,cirq]
