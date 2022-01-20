@@ -6,6 +6,7 @@ import numpy as np
 
 from azure.core.exceptions import HttpResponseError
 from azure.quantum.job.job import Job
+from azure.quantum._client.models import CostEstimate, UsageEvent
 from azure.quantum.target import IonQ, Honeywell
 
 from common import QuantumTestBase, ZERO_UID
@@ -46,16 +47,16 @@ class TestIonQ(QuantumTestBase):
         }
 
     @pytest.mark.ionq
-    def test_estimate_price_ionq(self):
+    def test_estimate_cost_ionq(self):
         workspace = self.create_workspace()
         circuit = self._3_qubit_ghz()
         target = IonQ(workspace=workspace, name="ionq.simulator")
-        cost = target.estimate_price(circuit, num_shots=100e3)
-        assert cost == 0.0
+        cost = target.estimate_cost(circuit, num_shots=100e3)
+        assert cost.estimated_total == 0.0
 
         target = IonQ(workspace=workspace, name="ionq.qpu")
-        cost = target.estimate_price(circuit, num_shots=100e3)
-        assert np.round(cost) == 63.0
+        cost = target.estimate_cost(circuit, num_shots=100e3)
+        assert np.round(cost.estimated_total) == 63.0
 
 
     @pytest.mark.ionq
@@ -67,6 +68,18 @@ class TestIonQ(QuantumTestBase):
     @pytest.mark.live_test
     def test_job_submit_ionq_100_shots(self):
         self._test_job_submit_ionq(num_shots=100)
+
+    @pytest.mark.ionq
+    @pytest.mark.live_test
+    def test_job_submit_ionq_cost_estimate(self):
+        job = self._test_job_submit_ionq(num_shots=None)
+        self.assertIsNotNone(job.details)
+        cost_estimate: CostEstimate = job.details.cost_estimate
+        self.assertIsNotNone(cost_estimate)
+        self.assertEqual(cost_estimate.currency_code, "USD")
+        events: list[UsageEvent] = cost_estimate.events
+        self.assertGreater(len(events), 0)
+        self.assertGreaterEqual(cost_estimate.estimated_total, 0)
 
     def _test_job_submit_ionq(self, num_shots, circuit=None):
 
@@ -85,22 +98,26 @@ class TestIonQ(QuantumTestBase):
                 num_shots=num_shots
             )
 
-            # Make sure the job is completed before fetching the results
-            # playback currently does not work for repeated calls
+            # If in recording mode, we don't want to record the pooling of job
+            # status as the current testing infrastructure does not support
+            # multiple identical requests.
+            # So we pause the recording until the job has actually completed.
             # See: https://github.com/microsoft/qdk-python/issues/118
-            if not self.is_playback:
+            if self.in_recording:
+                self.pause_recording()
                 try:
                     # Set a timeout for IonQ recording
                     job.wait_until_completed(timeout_secs=60)
                 except TimeoutError:
                     warnings.warn("IonQ execution exceeded timeout. Skipping fetching results.")
-                else:
-                    # Check if job succeeded
-                    self.assertEqual(True, job.has_completed())
-                    assert job.details.status == "Succeeded"
 
-                    job = workspace.get_job(job.id)
-                    self.assertEqual(True, job.has_completed())
+                # Check if job succeeded
+                self.assertEqual(True, job.has_completed())
+                assert job.details.status == "Succeeded"
+                self.resume_recording()
+
+            job = workspace.get_job(job.id)
+            self.assertEqual(True, job.has_completed())
 
             if job.has_completed():
                 results = job.get_results()
@@ -112,6 +129,8 @@ class TestIonQ(QuantumTestBase):
                 assert job.details.input_params.get("shots") == num_shots
             else:
                 assert job.details.input_params.get("shots") is None
+
+            return job
 
 
 class TestHoneywell(QuantumTestBase):
@@ -146,7 +165,7 @@ class TestHoneywell(QuantumTestBase):
         """
 
     @pytest.mark.honeywell
-    def test_job_estimate_price_honeywell(self):
+    def test_job_estimate_cost_honeywell(self):
 
         with unittest.mock.patch.object(
             Job,
@@ -156,12 +175,12 @@ class TestHoneywell(QuantumTestBase):
             workspace = self.create_workspace()
             circuit = self._teleport()
             target = Honeywell(workspace=workspace, name="honeywell.hqs-lt-s1-apival")
-            cost = target.estimate_price(circuit, num_shots=100e3)
-            assert cost == 0.0
+            cost = target.estimate_cost(circuit, num_shots=100e3)
+            assert cost.estimated_total == 0.0
 
             target = Honeywell(workspace=workspace, name="honeywell.hqs-lt-s1")
-            cost = target.estimate_price(circuit, num_shots=100e3)
-            assert cost == 845.0
+            cost = target.estimate_cost(circuit, num_shots=100e3)
+            assert cost.estimated_total == 845.0
 
 
     @pytest.mark.honeywell

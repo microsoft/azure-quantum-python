@@ -82,11 +82,11 @@ setuptools.setup(
     extras_require={
         "qiskit": [
             "qiskit-ionq>=0.1.4",
-            "qiskit-terra>=0.18.0"
+            "qiskit-terra>=0.19.1"
         ],
         "cirq": [
-            "cirq-core==0.12.0",
-            "cirq-ionq==0.12.0",
+            "cirq-core==0.13.1",
+            "cirq-ionq==0.13.1",
         ],
         "projectq": [
             "projectq==0.7.0"

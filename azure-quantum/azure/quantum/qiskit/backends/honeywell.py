@@ -62,8 +62,8 @@ class HoneywellBackend(Backend):
     def _default_options(cls):
         return Options(count=500)
 
-    def estimate_price(self, circuit: QuantumCircuit, count: int):
-        """Estimate price for running this circuit
+    def estimate_cost(self, circuit: QuantumCircuit, count: int):
+        """Estimate cost for running this circuit
 
         :param circuit: Qiskit quantum circuit
         :type circuit: QuantumCircuit
@@ -73,7 +73,7 @@ class HoneywellBackend(Backend):
         input_data = circuit.qasm()
         workspace = self.provider().get_workspace()
         target = workspace.get_targets(self.name())
-        return target.estimate_price(input_data, num_shots=count)
+        return target.estimate_cost(input_data, num_shots=count)
 
     def run(self, circuit: Union[QuantumCircuit, List[QuantumCircuit]], **kwargs):
         """Submits the given circuit for execution on a Honeywell target."""
