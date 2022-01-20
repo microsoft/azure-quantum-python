@@ -130,6 +130,7 @@ class TestJob(QuantumTestBase):
         solver_name = "SubstochasticMonteCarlo"
         self.get_async_result(self._test_job_submit(solver_name, solver_type))
 
+    @pytest.mark.skip()
     def test_job_upload_and_run_solvers(self):
         self.get_async_result(self._test_job_upload_and_run_solvers())
 
@@ -162,12 +163,15 @@ class TestJob(QuantumTestBase):
                 # Submit the blob data URI and run job
                 job = await solver.submit(input_data_uri)
 
-                # Check if job succeeded during live tests
-                if not self.is_playback:
-                    await job.refresh()
-                    await job.get_results()
-                    assert job.has_completed()
-                    assert job.details.status == "Succeeded"
+                # For recording purposes, we only want to record and
+                # and resume recording when the job has completed
+                self.pause_recording()
+                await job.wait_until_completed()
+                await job.get_results()
+                self.resume_recording()
+
+                assert job.has_completed()
+                assert job.details.status == "Succeeded"
 
     @pytest.mark.skipif(not(os.environ.get("AZURE_QUANTUM_1QBIT", "") == "1"), reason="1Qbit tests not enabled")
     def test_job_submit_oneqbit_tabu_search(self):
