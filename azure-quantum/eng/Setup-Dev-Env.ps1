@@ -9,7 +9,7 @@ try
  
     conda env create -f environment.yml
     conda env update -f environment.yml --prune
-    conda activate azurequantumcirqbeta
+    conda activate azurequantum
 
     pip install -e .[qiskit,cirq]
 }
