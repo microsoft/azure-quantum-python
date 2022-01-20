@@ -11,15 +11,17 @@ from cirq import ParamResolver
 from qiskit.providers import JobStatus
 
 from projectq.ops import H, CX, All, Measure
+from projectq import MainEngine
 
 from azure.quantum.job.job import Job
 from azure.quantum.qiskit import AzureQuantumProvider
 from azure.quantum.cirq import AzureQuantumService
 from azure.quantum.cirq.targets.target import Target
 from azure.quantum.projectq import AzureQuantumEngine
-from azure.quantum.projectq.backends import IonQSimulatorBackend, HoneywellSimulatorBackend
+from azure.quantum.projectq.backends import AzureIonQSimulatorBackend, HoneywellSimulatorBackend
 
 from azure.quantum.target.ionq import int_to_bitstring
+from projectq.backends._ionq._ionq_mapper import BoundedQubitMapper
 
 from projectq.types import WeakQubitRef
 
@@ -482,12 +484,18 @@ class TestProjectQ(QuantumTestBase):
         return engine.submit_job(name)
 
     def _projectq_ionq_engine(self):
-        ionq_backend = IonQSimulatorBackend(num_runs=500)
         workspace = self.create_workspace()
+        ionq_backend = AzureIonQSimulatorBackend(
+            workspace=workspace,
+            num_runs=500
+        )
 
-        engine = AzureQuantumEngine(
+        def _factory(n=4):
+            return BoundedQubitMapper(n)
+
+        engine = MainEngine(
             backend=ionq_backend,
-            workspace=workspace
+            engine_list=[_factory()]
         )
 
         return engine
