@@ -7,7 +7,6 @@ import uuid
 
 import numpy as np
 
-from azure.quantum import __version__
 from azure.quantum.projectq.job import (
     AzureQuantumJob, 
     IONQ_PROVIDER, 
@@ -42,8 +41,6 @@ class IonQBackend(_IonQBackend):
         num_runs: int=100,
         verbose: bool=False,
         device: str="ionq_simulator",
-        num_retries: int = 3000,
-        interval: int = 1,
         retrieve_execution: str=None
     ):
         """Base class for interfacing with an IonQ backend in Azure Quantum
@@ -53,12 +50,8 @@ class IonQBackend(_IonQBackend):
         :param num_runs: Number of times to run circuits. Defaults to 100.
         verbose: If True, print statistics after job results have been collected. Defaults to
             False.
-        :param token: An IonQ API token. Defaults to None.
-        :param device: Device to run jobs on.  Supported devices are ``'ionq_qpu'`` or
+        :param device: Device to run jobs on. Supported devices are ``'ionq_qpu'`` or
             ``'ionq_simulator'``.  Defaults to ``'ionq_simulator'``.
-        :param num_retries: Number of times to retry fetching job results after it has been submitted. Defaults
-            to 3000.
-        :param interval: Number of seconds to wait inbetween result fetch retries. Defaults to 1.
         :param retrieve_execution: An IonQ API Job ID.  If provided, a job with this ID will be
             fetched. Defaults to None.
         """
@@ -69,8 +62,6 @@ class IonQBackend(_IonQBackend):
             num_runs=num_runs, 
             verbose=verbose, 
             device=device,
-            num_retries=num_retries,
-            interval=interval,
             retrieve_execution=retrieve_execution
         )
 
@@ -152,8 +143,6 @@ class IonQQPUBackend(IonQBackend):
         self,
         num_runs=100,
         verbose=False,
-        num_retries: int = 3000,
-        interval: int = 1,
         retrieve_execution=None
     ):
         """Base class for interfacing with an IonQ QPU backend"""
@@ -164,8 +153,6 @@ class IonQQPUBackend(IonQBackend):
             num_runs=num_runs, 
             verbose=verbose, 
             device=self.projectq_backend_name,
-            num_retries=num_retries,
-            interval=interval,
             retrieve_execution=retrieve_execution
         )
 
@@ -178,8 +165,6 @@ class IonQSimulatorBackend(IonQBackend):
         self, 
         num_runs=100, 
         verbose=False,
-        num_retries: int = 3000,
-        interval: int = 1,
         retrieve_execution=None
     ):
         """Base class for interfacing with an IonQ Simulator backend"""
@@ -190,7 +175,5 @@ class IonQSimulatorBackend(IonQBackend):
             num_runs=num_runs,
             verbose=verbose,
             device=self.projectq_backend_name,
-            num_retries=num_retries,
-            interval=interval,
             retrieve_execution=retrieve_execution
         )
