@@ -7,8 +7,10 @@ import uuid
 
 import numpy as np
 
-from azure.quantum.projectq.job import (
-    AzureQuantumJob, 
+from azure.quantum import Job
+from azure.quantum.workspace import Workspace
+from azure.quantum.projectq.utils import (
+    PROJECTQ_USER_AGENT,
     IONQ_PROVIDER, 
     IONQ_INPUT_DATA_FORMAT, 
     IONQ_OUTPUT_DATA_FORMAT
@@ -28,15 +30,16 @@ To install run: pip install azure-quantum[projectq]"
 import logging
 logger = logging.getLogger(__name__)
 
-__all__ = ["IonQQPUBackend", "IonQSimulatorBackend"]
+__all__ = ["AzureIonQQPUBackend", "AzureIonQSimulatorBackend"]
 
 
-class IonQBackend(_IonQBackend):
+class AzureIonQBackend(_IonQBackend):
     projectq_backend_name: str = None
-    azure_quantum_backend_name: str = None
+    azure_target_name: str = None
 
     def __init__(
         self, 
+        workspace: Workspace, 
         use_hardware: bool=False,
         num_runs: int=100,
         verbose: bool=False,
@@ -57,6 +60,9 @@ class IonQBackend(_IonQBackend):
         """
         logger.info("Initializing IonQBackend for ProjectQ")
 
+        workspace.append_user_agent(PROJECTQ_USER_AGENT)
+        self._workspace = workspace
+
         super().__init__(
             use_hardware=use_hardware, 
             num_runs=num_runs, 
@@ -65,13 +71,7 @@ class IonQBackend(_IonQBackend):
             retrieve_execution=retrieve_execution
         )
 
-    def get_engine_list(self):
-        """Return the default list of compiler engine for the IonQ platform."""
-        return get_engine_list(
-            device=self.projectq_backend_name
-        )
-
-    def submit_job(self, name=None, **kwargs) -> AzureQuantumJob:
+    def submit_job(self, name=None, **kwargs) -> Job:
         """Submits the given circuit to run on an IonQ target."""
         logger.info(f"Submitting new job for backend {self.device}")
 
@@ -99,10 +99,10 @@ class IonQBackend(_IonQBackend):
             "meas_map": meas_map,
         }
 
-        job = AzureQuantumJob(
-            backend=self,
+        job = Job.from_input_data(
+            workspace=self._workspace,
             name=name,
-            target=self.azure_quantum_backend_name, 
+            target=self.azure_target_name, 
             input_data=input_data,
             blob_name="inputData",
             content_type="application/json",
@@ -115,7 +115,7 @@ class IonQBackend(_IonQBackend):
             **kwargs
         ) 
 
-        logger.info(f"Submitted job with id '{job.id()}' for circuit '{name}':")
+        logger.info(f"Submitted job with id '{job.id}' for circuit '{name}':")
         logger.info(input_data)
 
         return job
@@ -125,7 +125,7 @@ class IonQBackend(_IonQBackend):
         Run a ProjectQ circuit and wait until it is done.
         """
         job = self.submit_job()
-        result = job.result(timeout_secs=self._num_retries*self._interval)
+        result = job.get_results()
         self._probabilities = {int_to_bitstring(k, len(self._measured_ids), self._measured_ids): v for k, v in result["histogram"].items()}
 
         # Set a single measurement result
@@ -135,12 +135,13 @@ class IonQBackend(_IonQBackend):
             self.main_engine.set_measurement_result(qubit_ref, bitstring[qid])
 
 
-class IonQQPUBackend(IonQBackend):
+class AzureIonQQPUBackend(AzureIonQBackend):
     projectq_backend_name = "ionq_qpu"
-    azure_quantum_backend_name = "ionq.qpu"
+    azure_target_name = "ionq.qpu"
 
     def __init__(
         self,
+        workspace: Workspace,
         num_runs=100,
         verbose=False,
         retrieve_execution=None
@@ -149,6 +150,7 @@ class IonQQPUBackend(IonQBackend):
         logger.info("Initializing IonQQPUBackend for ProjectQ")
 
         super().__init__(
+            workspace=workspace,
             use_hardware=True, 
             num_runs=num_runs, 
             verbose=verbose, 
@@ -157,12 +159,13 @@ class IonQQPUBackend(IonQBackend):
         )
 
 
-class IonQSimulatorBackend(IonQBackend):
+class AzureIonQSimulatorBackend(AzureIonQBackend):
     projectq_backend_name = "ionq_simulator"
-    azure_quantum_backend_name = "ionq.simulator"
+    azure_target_name = "ionq.simulator"
 
     def __init__(
         self, 
+        workspace: Workspace,
         num_runs=100, 
         verbose=False,
         retrieve_execution=None
@@ -171,6 +174,7 @@ class IonQSimulatorBackend(IonQBackend):
         logger.info("Initializing IonQSimulatorBackend for ProjectQ")
 
         super().__init__(
+            workspace=workspace,
             use_hardware=False,
             num_runs=num_runs,
             verbose=verbose,
