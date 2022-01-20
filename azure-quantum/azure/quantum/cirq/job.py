@@ -32,7 +32,11 @@ class Job:
     def status(self) -> str:
         """Gets the current status of the job."""
         self._azure_job.refresh()
-        return self._azure_job.details.status
+        status = self._azure_job.details.status
+        if status == "Failed":
+            return f"{status}: {self._azure_job.details.error_data.message}"
+        else:
+            return status
 
     def target(self) -> str:
         """Returns the target where the job was run."""

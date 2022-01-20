@@ -1,4 +1,14 @@
 $PackageName = "azure-quantum-_client"
+$Namespace = "azure.quantum._client"
+$SwaggerTagVersion = "package-2021-11-01-preview"
+
+$SpecsRepo = "https://github.com/Azure/azure-rest-api-specs.git"
+$SpecsBranch = "main"
+$SpecsCommitId = ""
+$PathAllowList = ("specification/quantum")
+
+$TempFolder = Join-Path $PSScriptRoot "../temp/"
+$SpecsFolder = Join-Path $TempFolder  "/specs/"
 
 $PackageVersion = $env:PYTHON_VERSION 
 if ([string]::IsNullOrEmpty($PackageVersion)) {
@@ -11,16 +21,6 @@ if ([string]::IsNullOrEmpty($PackageVersion)) {
 if ([string]::IsNullOrEmpty($PackageVersion)) {
     $PackageVersion = "0.0.0.1"
 }
-
-$Namespace = "azure.quantum._client"
-
-$SpecsRepo = "https://github.com/Azure/azure-rest-api-specs.git"
-$SpecsBranch = "master"
-$SpecsCommitId = ""
-$PathAllowList = ("specification/quantum")
-
-$TempFolder = Join-Path $PSScriptRoot "../temp/"
-$SpecsFolder = Join-Path $TempFolder  "/specs/"
 
 # Check-out specs repo to get the latest swagger API Definition file
 $CheckoutScript = Join-Path $PSScriptRoot "./Checkout-Repo.ps1" 
@@ -41,6 +41,7 @@ npm install -g autorest@latest | Write-Verbose
 autorest $AutoRestConfig `
     --verbose `
     --python `
+    --tag=$SwaggerTagVersion `
     --package-name=$PackageName `
     --package-version=$PackageVersion `
     --namespace=$Namespace `

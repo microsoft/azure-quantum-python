@@ -3,6 +3,8 @@ import unittest
 import warnings
 import pytest
 
+import numpy as np
+
 from qiskit import QuantumCircuit
 from cirq import ParamResolver
 
@@ -38,6 +40,24 @@ class TestQiskit(QuantumTestBase):
         circuit.measure([0,1,2], [0, 1, 2])
 
         return circuit
+
+    @pytest.mark.ionq
+    def test_plugins_estimate_cost_qiskit_ionq(self):
+        circuit = self._3_qubit_ghz()
+        workspace = self.create_workspace()
+        provider = AzureQuantumProvider(workspace=workspace)
+        assert "azure-quantum-qiskit" in provider._workspace.user_agent
+        backend = provider.get_backend("ionq.simulator")
+        cost = backend.estimate_cost(circuit, shots=100e3)
+        assert cost.estimated_total == 0.0
+
+        backend = provider.get_backend("ionq.qpu")
+        cost = backend.estimate_cost(circuit, shots=1024)
+        assert np.round(cost.estimated_total) == 1.0
+
+        backend = provider.get_backend("ionq.qpu")
+        cost = backend.estimate_cost(circuit, shots=100e3)
+        assert np.round(cost.estimated_total) == 66.0
 
     @pytest.mark.ionq
     @pytest.mark.live_test
@@ -159,6 +179,20 @@ class TestQiskit(QuantumTestBase):
                         '111': 0.5
                     }
                 }
+    
+    @pytest.mark.honeywell
+    def test_plugins_estimate_cost_qiskit_honeywell(self):
+        circuit = self._3_qubit_ghz()
+        workspace = self.create_workspace()
+        provider = AzureQuantumProvider(workspace=workspace)
+        assert "azure-quantum-qiskit" in provider._workspace.user_agent
+        backend = provider.get_backend("honeywell.hqs-lt-s1-apival")
+        cost = backend.estimate_cost(circuit, count=100e3)
+        assert cost.estimated_total == 0.0
+
+        backend = provider.get_backend("honeywell.hqs-lt-s1")
+        cost = backend.estimate_cost(circuit, count=100e3)
+        assert cost.estimated_total == 745.0
 
     @pytest.mark.honeywell
     @pytest.mark.live_test
@@ -270,6 +304,30 @@ class TestCirq(QuantumTestBase):
         assert "honeywell.hqs-lt-s1-apival" in target_names
         assert "ionq.simulator" in target_names
 
+    def test_plugins_estimate_cost_cirq_ionq(self):
+        workspace = self.create_workspace()
+        service = AzureQuantumService(workspace=workspace)
+        cost = service.estimate_cost(
+            program=self._3_qubit_ghz_cirq(),
+            repetitions=100e3,
+            target="ionq.simulator"
+        )
+        assert cost.estimated_total == 0.0
+
+        cost = service.estimate_cost(
+            program=self._3_qubit_ghz_cirq(),
+            repetitions=1024,
+            target="ionq.qpu"
+        )
+        assert np.round(cost.estimated_total) == 1.0
+
+        cost = service.estimate_cost(
+            program=self._3_qubit_ghz_cirq(),
+            repetitions=100e3,
+            target="ionq.qpu"
+        )
+        assert np.round(cost.estimated_total) == 63.0
+
     @pytest.mark.ionq
     @pytest.mark.live_test
     def test_plugins_ionq_cirq(self):
@@ -318,6 +376,24 @@ class TestCirq(QuantumTestBase):
                     assert len(result.measurements["q2"]) == 500
                     assert result.measurements["q0"].sum() == result.measurements["q1"].sum()
                     assert result.measurements["q1"].sum() == result.measurements["q2"].sum()
+
+    @pytest.mark.honeywell
+    def test_plugins_estimate_cost_cirq_honeywell(self):
+        workspace = self.create_workspace()
+        service = AzureQuantumService(workspace=workspace)
+        cost = service.estimate_cost(
+            program=self._3_qubit_ghz_cirq(),
+            repetitions=100e3,
+            target="honeywell.hqs-lt-s1-apival"
+        )
+        assert cost.estimated_total == 0.0
+
+        cost = service.estimate_cost(
+            program=self._3_qubit_ghz_cirq(),
+            repetitions=100e3,
+            target="honeywell.hqs-lt-s1"
+        )
+        assert np.round(cost.estimated_total) == 725.0
 
     @pytest.mark.honeywell
     @pytest.mark.live_test
