@@ -53,6 +53,13 @@ if ([string]::IsNullOrEmpty($PackageVersion)) {
 
 $OutputFolder = Join-Path $PSScriptRoot "../azure/quantum/_client/"
 
+Write-Verbose "Output folder: $OutputFolder"
+
+Write-Verbose "Deleting previous output folder contents"
+if (Test-Path $OutputFolder) {
+    Remove-Item $OutputFolder -Recurse | Write-Verbose
+}
+
 $AutoRestConfig = "$SwaggerRepoUrl/blob/$SwaggerRepoBranch/specification/quantum/data-plane/readme.md"
 
 Write-Verbose "Installing latest AutoRest client"
