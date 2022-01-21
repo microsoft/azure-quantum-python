@@ -6,8 +6,10 @@ from collections import Counter
 import uuid
 import numpy as np
 
-from azure.quantum.projectq.job import (
-    AzureQuantumJob, 
+from azure.quantum import Job
+from azure.quantum.workspace import Workspace
+from azure.quantum.projectq.utils import (
+    PROJECTQ_USER_AGENT, 
     HONEYWELL_PROVIDER, 
     HONEYWELL_INPUT_DATA_FORMAT, 
     HONEYWELL_OUTPUT_DATA_FORMAT
@@ -17,25 +19,7 @@ from azure.quantum.target.ionq import int_to_bitstring
 try:
     # Using IBMBackend as HoneywellBackend to translate `projectq` circuit to QASM.
     from projectq.backends import IBMBackend as _HoneywellBackend
-    from projectq.cengines import BasicMapperEngine
-    import projectq.setups.restrictedgateset
     from projectq.types import WeakQubitRef
-    from projectq.ops import (
-        X,
-        Y,
-        Z,
-        Rx,
-        Ry,
-        Rz,
-        H,
-        CX,
-        CZ,
-        S,
-        Sdag,
-        T,
-        Tdag,
-        Toffoli,
-    )
 except ImportError:
     raise ImportError(
     "Missing optional 'projectq' dependencies. \
@@ -45,14 +29,15 @@ To install run: pip install azure-quantum[projectq]"
 import logging
 logger = logging.getLogger(__name__)
 
-__all__ = ["HoneywellQPUBackend", "HoneywellAPIValidatorBackend", "HoneywellSimulatorBackend"]
+__all__ = ["AzureHoneywellQPUBackend", "AzureHoneywellAPIValidatorBackend", "AzureHoneywellSimulatorBackend"]
 
 
-class HoneywellBackend(_HoneywellBackend):
+class AzureHoneywellBackend(_HoneywellBackend):
     azure_quantum_backend_name: str = None
 
     def __init__(
         self, 
+        workspace: Workspace, 
         use_hardware: bool=False,
         num_runs: int=100,
         verbose: bool=False,
@@ -72,6 +57,9 @@ class HoneywellBackend(_HoneywellBackend):
         """
         logger.info("Initializing HoneywellBackend for ProjectQ")
 
+        workspace.append_user_agent(PROJECTQ_USER_AGENT)
+        self._workspace = workspace
+
         if not use_hardware:
             device = "honeywell.hqs-lt-s1-sim"
 
@@ -83,26 +71,7 @@ class HoneywellBackend(_HoneywellBackend):
             retrieve_execution=retrieve_execution
         )
 
-    def get_engine_list(self):
-        """Return the default list of compiler engine for the Honeywell platform."""
-        mapper = BasicMapperEngine()
-        num_qubits = 10
-
-        mapping = {}
-        for i in range(num_qubits):
-            mapping[i] = i
-
-        mapper.current_mapping = mapping
-
-        engine_list = projectq.setups.restrictedgateset.get_engine_list(
-            one_qubit_gates=(X, Y, Z, Rx, Ry, Rz, H, S, Sdag, T, Tdag),
-            two_qubit_gates=(CX, CZ),
-            other_gates=(Toffoli,)
-        )
-
-        return engine_list + [mapper]
-
-    def submit_job(self, name=None, **kwargs):
+    def submit_job(self, name=None, **kwargs) -> Job:
         """Submits the given circuit to run on an Honeywell target."""
         logger.info(f"Submitting new job for backend {self.device}")
 
@@ -126,8 +95,8 @@ class HoneywellBackend(_HoneywellBackend):
             "num_qubits": num_qubits
         }
 
-        job = AzureQuantumJob(
-            backend=self,
+        job = Job.from_input_data(
+            workspace=self._workspace,
             name=name,
             target=self.device,
             input_data=input_data,
@@ -142,7 +111,7 @@ class HoneywellBackend(_HoneywellBackend):
             **kwargs
         ) 
 
-        logger.info(f"Submitted job with id '{job.id()}' for circuit '{name}':")
+        logger.info(f"Submitted job with id '{job.id}' for circuit '{name}':")
         logger.info(input_data)
 
         return job
@@ -152,7 +121,7 @@ class HoneywellBackend(_HoneywellBackend):
         Run a ProjectQ circuit and wait until it is done.
         """
         job = self.submit_job()
-        result = job.result(timeout_secs=self._num_retries*self._interval)
+        result = job.get_results()
         histogram = Counter(result["c"])
         num_shots = sum(histogram.values())
         self._probabilities = {int_to_bitstring(k, len(self._measured_ids), self._measured_ids): v/num_shots for k, v in histogram.items()}
@@ -164,7 +133,7 @@ class HoneywellBackend(_HoneywellBackend):
             self.main_engine.set_measurement_result(qubit_ref, bitstring[qid])
 
 
-class HoneywellQPUBackend(HoneywellBackend):
+class AzureHoneywellQPUBackend(AzureHoneywellBackend):
     backend_names = (
         "honeywell.hqs-lt-s1",
         "honeywell.hqs-lt-s2"
@@ -172,6 +141,7 @@ class HoneywellQPUBackend(HoneywellBackend):
 
     def __init__(
         self, 
+        workspace: Workspace,
         num_runs=100, 
         verbose=False, 
         device="honeywell.hqs-lt-s1", 
@@ -181,6 +151,7 @@ class HoneywellQPUBackend(HoneywellBackend):
         logger.info("Initializing HoneywellQPUBackend for ProjectQ")
 
         super().__init__(
+            workspace=workspace,
             use_hardware=True, 
             num_runs=num_runs, 
             verbose=verbose, 
@@ -189,7 +160,7 @@ class HoneywellQPUBackend(HoneywellBackend):
         )
 
 
-class HoneywellAPIValidatorBackend(HoneywellBackend):
+class AzureHoneywellAPIValidatorBackend(AzureHoneywellBackend):
     backend_names = (
         "honeywell.hqs-lt-s1-apival",
         "honeywell.hqs-lt-s2-apival"
@@ -197,6 +168,7 @@ class HoneywellAPIValidatorBackend(HoneywellBackend):
 
     def __init__(
         self, 
+        workspace: Workspace,
         num_runs=100, 
         verbose=False, 
         device="honeywell.hqs-lt-s1-apival", 
@@ -206,6 +178,7 @@ class HoneywellAPIValidatorBackend(HoneywellBackend):
         logger.info("Initializing HoneywellAPIValidatorBackend for ProjectQ")
 
         super().__init__(
+            workspace=workspace,
             use_hardware=False, 
             num_runs=num_runs, 
             verbose=verbose, 
@@ -214,7 +187,7 @@ class HoneywellAPIValidatorBackend(HoneywellBackend):
         )
 
 
-class HoneywellSimulatorBackend(HoneywellBackend):
+class AzureHoneywellSimulatorBackend(AzureHoneywellBackend):
     backend_names = (
         "honeywell.hqs-lt-s1-sim",
         "honeywell.hqs-lt-s2-sim"
@@ -222,6 +195,7 @@ class HoneywellSimulatorBackend(HoneywellBackend):
 
     def __init__(
         self, 
+        workspace: Workspace,
         num_runs=100, 
         verbose=False, 
         device="honeywell.hqs-lt-s1-sim", 
@@ -231,6 +205,7 @@ class HoneywellSimulatorBackend(HoneywellBackend):
         logger.info("Initializing HoneywellSimulatorBackend for ProjectQ")
 
         super().__init__(
+            workspace=workspace,
             use_hardware=False, 
             num_runs=num_runs, 
             verbose=verbose, 
