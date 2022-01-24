@@ -124,6 +124,10 @@ class AzureIonQBackend(_IonQBackend):
         """
         Run a ProjectQ circuit and wait until it is done.
         """
+        if not self._circuit:
+            logger.debug("Cannot run circuit because it is empty.")
+            return
+
         job = self.submit_job()
         result = job.get_results()
         self._probabilities = {int_to_bitstring(k, len(self._measured_ids), self._measured_ids): v for k, v in result["histogram"].items()}

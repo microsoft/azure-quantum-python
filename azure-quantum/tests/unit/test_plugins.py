@@ -571,6 +571,8 @@ class TestProjectQ(QuantumTestBase):
             probabilities = engine.backend.get_probabilities(circuit)
             assert probabilities == { "000": 0.5, "111": 0.5 }
 
+            engine.__del__()
+
     @pytest.mark.honeywell
     @pytest.mark.live_test
     def test_plugins_submit_projectq_to_honeywell(self):
