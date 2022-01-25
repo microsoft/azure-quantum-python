@@ -123,7 +123,7 @@ class AzureHoneywellBackend(_HoneywellBackend):
         logger.info(f"Submitted job with id '{job.id}' for circuit '{name}':")
         logger.info(input_data)
 
-        # # reset engine state
+        # reset engine state
         self._reset()
 
         return job
