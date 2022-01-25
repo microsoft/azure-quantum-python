@@ -73,6 +73,15 @@ class AzureHoneywellBackend(_HoneywellBackend):
 
     def submit_job(self, name=None, **kwargs) -> Job:
         """Submits the given circuit to run on an Honeywell target."""
+        for measured_id in self._measured_ids:
+            qb_loc = self.main_engine.mapper.current_mapping[measured_id]
+            self.qasm += "\nmeasure q[{0}] -> c[{0}];".format(qb_loc)
+            self._json.append({'qubits': [qb_loc], 'name': 'measure', 'memory': [qb_loc]})
+
+        if not self.qasm:
+            logger.debug("Cannot run circuit because it is empty.")
+            return
+
         logger.info(f"Submitting new job for backend {self.device}")
 
         if name is None:
@@ -114,6 +123,9 @@ class AzureHoneywellBackend(_HoneywellBackend):
         logger.info(f"Submitted job with id '{job.id}' for circuit '{name}':")
         logger.info(input_data)
 
+        # # reset engine state
+        self._reset()
+
         return job
 
     def _run(self):
@@ -121,16 +133,17 @@ class AzureHoneywellBackend(_HoneywellBackend):
         Run a ProjectQ circuit and wait until it is done.
         """
         job = self.submit_job()
-        result = job.get_results()
-        histogram = Counter(result["c"])
-        num_shots = sum(histogram.values())
-        self._probabilities = {int_to_bitstring(k, len(self._measured_ids), self._measured_ids): v/num_shots for k, v in histogram.items()}
+        if job:
+            result = job.get_results()
+            histogram = Counter(result["c"])
+            num_shots = sum(histogram.values())
+            self._probabilities = {int_to_bitstring(k, len(self._measured_ids), self._measured_ids): v/num_shots for k, v in histogram.items()}
 
-        # Set a single measurement result
-        bitstring = np.random.choice(list(self._probabilities.keys()), p=list(self._probabilities.values()))
-        for qid in self._measured_ids:
-            qubit_ref = WeakQubitRef(self.main_engine, qid)
-            self.main_engine.set_measurement_result(qubit_ref, bitstring[qid])
+            # Set a single measurement result
+            bitstring = np.random.choice(list(self._probabilities.keys()), p=list(self._probabilities.values()))
+            for qid in self._measured_ids:
+                qubit_ref = WeakQubitRef(self.main_engine, qid)
+                self.main_engine.set_measurement_result(qubit_ref, bitstring[qid])
 
 
 class AzureHoneywellQPUBackend(AzureHoneywellBackend):
