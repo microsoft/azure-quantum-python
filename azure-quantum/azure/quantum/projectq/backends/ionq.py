@@ -73,6 +73,10 @@ class AzureIonQBackend(_IonQBackend):
 
     def submit_job(self, name=None, **kwargs) -> Job:
         """Submits the given circuit to run on an IonQ target."""
+        if not self._circuit:
+            logger.debug("Cannot run circuit because it is empty.")
+            return
+            
         logger.info(f"Submitting new job for backend {self.device}")
 
         if name is None:
@@ -118,25 +122,25 @@ class AzureIonQBackend(_IonQBackend):
         logger.info(f"Submitted job with id '{job.id}' for circuit '{name}':")
         logger.info(input_data)
 
+        # reset engine state
+        self._reset()
+
         return job
 
     def _run(self):
         """
         Run a ProjectQ circuit and wait until it is done.
         """
-        if not self._circuit:
-            logger.debug("Cannot run circuit because it is empty.")
-            return
-
         job = self.submit_job()
-        result = job.get_results()
-        self._probabilities = {int_to_bitstring(k, len(self._measured_ids), self._measured_ids): v for k, v in result["histogram"].items()}
+        if job:
+            result = job.get_results()
+            self._probabilities = {int_to_bitstring(k, len(self._measured_ids), self._measured_ids): v for k, v in result["histogram"].items()}
 
-        # Set a single measurement result
-        bitstring = np.random.choice(list(self._probabilities.keys()), p=list(self._probabilities.values()))
-        for qid in self._measured_ids:
-            qubit_ref = WeakQubitRef(self.main_engine, qid)
-            self.main_engine.set_measurement_result(qubit_ref, bitstring[qid])
+            # Set a single measurement result
+            bitstring = np.random.choice(list(self._probabilities.keys()), p=list(self._probabilities.values()))
+            for qid in self._measured_ids:
+                qubit_ref = WeakQubitRef(self.main_engine, qid)
+                self.main_engine.set_measurement_result(qubit_ref, bitstring[qid])
 
 
 class AzureIonQQPUBackend(AzureIonQBackend):
