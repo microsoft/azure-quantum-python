@@ -132,14 +132,15 @@ class AzureIonQBackend(_IonQBackend):
         Run a ProjectQ circuit and wait until it is done.
         """
         job = self.submit_job()
-        result = job.get_results()
-        self._probabilities = {int_to_bitstring(k, len(self._measured_ids), self._measured_ids): v for k, v in result["histogram"].items()}
+        if job:
+            result = job.get_results()
+            self._probabilities = {int_to_bitstring(k, len(self._measured_ids), self._measured_ids): v for k, v in result["histogram"].items()}
 
-        # Set a single measurement result
-        bitstring = np.random.choice(list(self._probabilities.keys()), p=list(self._probabilities.values()))
-        for qid in self._measured_ids:
-            qubit_ref = WeakQubitRef(self.main_engine, qid)
-            self.main_engine.set_measurement_result(qubit_ref, bitstring[qid])
+            # Set a single measurement result
+            bitstring = np.random.choice(list(self._probabilities.keys()), p=list(self._probabilities.values()))
+            for qid in self._measured_ids:
+                qubit_ref = WeakQubitRef(self.main_engine, qid)
+                self.main_engine.set_measurement_result(qubit_ref, bitstring[qid])
 
 
 class AzureIonQQPUBackend(AzureIonQBackend):
