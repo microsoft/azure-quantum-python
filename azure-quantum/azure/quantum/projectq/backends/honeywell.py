@@ -76,7 +76,6 @@ class AzureHoneywellBackend(_HoneywellBackend):
         for measured_id in self._measured_ids:
             qb_loc = self.main_engine.mapper.current_mapping[measured_id]
             self.qasm += "\nmeasure q[{0}] -> c[{0}];".format(qb_loc)
-            self._json.append({'qubits': [qb_loc], 'name': 'measure', 'memory': [qb_loc]})
 
         if not self.qasm:
             logger.debug("Cannot run circuit because it is empty.")
@@ -93,8 +92,6 @@ class AzureHoneywellBackend(_HoneywellBackend):
         qasm = self.get_qasm()
         qasm = qasm.replace("u2(0,pi/2)", "h")
         input_data = f"OPENQASM 2.0;\ninclude \"qelib1.inc\";\nqreg q[{num_qubits}];\ncreg c[{num_qubits}];{qasm}\n"
-        for meas_id in self._measured_ids:
-            input_data += f"measure q[{meas_id}] -> c[{meas_id}];\n"
 
         input_params = {
             "shots": self._num_runs
