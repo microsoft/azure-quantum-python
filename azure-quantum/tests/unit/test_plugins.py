@@ -549,6 +549,8 @@ class TestProjectQ(QuantumTestBase):
                 projectq_result = projectq_job.get_results()
                 assert projectq_result['histogram'] == { "0": 0.5, "7": 0.5 }
 
+            engine.__del__()
+
     @pytest.mark.ionq
     @pytest.mark.live_test
     def test_plugins_submit_projectq_to_ionq_flush(self):
@@ -594,6 +596,8 @@ class TestProjectQ(QuantumTestBase):
                 projectq_result = projectq_job.get_results()
                 assert projectq_result['c'] == ["000"]
 
+            engine.__del__()
+
     @pytest.mark.honeywell
     @pytest.mark.live_test
     def test_plugins_submit_projectq_to_honeywell_flush(self):
@@ -615,3 +619,5 @@ class TestProjectQ(QuantumTestBase):
 
             probabilities = engine.backend.get_probabilities(circuit)
             assert probabilities == { "000": 1.0 }
+
+            engine.__del__()

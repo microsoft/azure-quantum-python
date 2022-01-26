@@ -87,6 +87,10 @@ class AzureHoneywellBackend(_HoneywellBackend):
             random_suffix = str(uuid.uuid4())[:8]
             name = "projectq-honeywell-circuit-{}".format(random_suffix)
 
+        # saving measured_ids in base class variable, self.reset will cleanup self._measured_ids
+        # measured_ids is required for construct self._probabilities in self._run method.
+        self.measured_ids = self._measured_ids[:]
+
         num_qubits = len(self._measured_ids)
 
         qasm = self.get_qasm()
@@ -134,11 +138,11 @@ class AzureHoneywellBackend(_HoneywellBackend):
             result = job.get_results()
             histogram = Counter(result["c"])
             num_shots = sum(histogram.values())
-            self._probabilities = {int_to_bitstring(k, len(self._measured_ids), self._measured_ids): v/num_shots for k, v in histogram.items()}
+            self._probabilities = {int_to_bitstring(k, len(self.measured_ids), self.measured_ids): v/num_shots for k, v in histogram.items()}
 
             # Set a single measurement result
             bitstring = np.random.choice(list(self._probabilities.keys()), p=list(self._probabilities.values()))
-            for qid in self._measured_ids:
+            for qid in self.measured_ids:
                 qubit_ref = WeakQubitRef(self.main_engine, qid)
                 self.main_engine.set_measurement_result(qubit_ref, bitstring[qid])
 
