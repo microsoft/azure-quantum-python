@@ -224,4 +224,4 @@ class TestHoneywell(QuantumTestBase):
                 if job.has_completed():
                     results = job.get_results()
                     assert results["c0"] == ["0"]
-                    assert results["c1"] == ["000"]
+                    assert results["c1"] == ["0"]
