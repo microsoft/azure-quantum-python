@@ -9,18 +9,20 @@ class PassThroughTarget(Target):
     Basic target that submits a raw byte-array to an Azure Quantum target.
     All job parameters, including input_data_format, target_id, provider, etc
     Need to be explicitly specified during init...
+
+    TODO: we should be able to remove this once compression is not needed.
     """
     @staticmethod
-    def _encode_input_data(data: io.BytesIO) -> bytes:
+    def _encode_input_data(data: bytes) -> bytes:
         # Bug https://ms-quantum.visualstudio.com/Quantum%20Program/_workitems/edit/37092: For now, it is required that content is in gzip.
         compressed = io.BytesIO()
         with gzip.GzipFile(fileobj=compressed, mode="w") as fo:
-            fo.write(data.readall())
+            fo.write(data)
         return compressed.getvalue()
 
-    def submit(self, stream: io.BytesIO, name: str, **kwargs) -> Job:
+    def submit(self, input_data: bytes, name: str, **kwargs) -> Job:
         return super().submit(
-            input_data=stream,
+            input_data=input_data,
             name=name,
             encoding="gzip",
             **kwargs
@@ -57,7 +59,7 @@ target = PassThroughTarget(
 # Open the QIR file and submit it. The only thing required is the entryPoint.
 # Bug https://ms-quantum.visualstudio.com/Quantum%20Program/_workitems/edit/37096: Controller/QIR errors are not getting propagated and all we get is "InternalError"
 f = open("qir/Sample.ll", "rb", buffering=0)
-job = target.submit(f, "Sample__HelloQ.ll", input_params={ "entryPoint": "Sample__HelloQ" })
+job = target.submit(f.readall(), "Sample__HelloQ.ll", input_params={ "entryPoint": "Sample__HelloQ" })
 
 # Print job, wait for results:
 print(job.id)
