@@ -1,4 +1,3 @@
-
 from azure.quantum import Workspace, Job
 from azure.quantum.target import Target
 
@@ -47,16 +46,18 @@ target = PassThroughTarget(
     workspace= workspace,
     name= "microsoft.simulator.fullstate",
     input_data_format = "qir.v1/full-profile",
-    # For now, the output format returned by the simulator is "microsoft.qio-results.v2"
+    # Bug #3: For now, the output format returned by the simulator is "microsoft.qio-results.v2"
+    # Bug #4: Job fails with Exception if output format doesn't match job's output format.
     output_data_format = "microsoft.qio-results.v2",
     provider_id = "Microsoft.Simulator",
     content_type = "qir.v1/full-profile",
-    encoding = ""
+    encoding = "gzip"
 )
 
 # Open the QIR file and submit it. The only thing required is the entryPoint.
-f = open("qir/union.ll", "rb", buffering=0)
-job = target.submit(f, "union__HelloQ.ll", input_params={ "entryPoint": "union__HelloQ" })
+# Bug #5: Controller/QIR errors are not getting propagated and all we get is "InternalError"
+f = open("qir/Sample.ll", "rb", buffering=0)
+job = target.submit(f, "Sample__HelloQ.ll", input_params={ "entryPoint": "Sample__HelloQ" })
 
 # Print job, wait for results:
 print(job.id)
