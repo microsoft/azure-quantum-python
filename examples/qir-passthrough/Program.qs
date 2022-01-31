@@ -1,4 +1,4 @@
-﻿namespace union {
+﻿namespace Sample {
 
     open Microsoft.Quantum.Diagnostics;
     open Microsoft.Quantum.Arithmetic;
@@ -28,8 +28,8 @@
         Message("State b:");
         DumpRegister((), q_b);
 
-        // Adjoint QFT(LittleEndianAsBigEndian(a));
-        // Adjoint QFT(LittleEndianAsBigEndian(b));
+        Adjoint QFT(LittleEndianAsBigEndian(a));
+        Adjoint QFT(LittleEndianAsBigEndian(b));
 
         Message("a phase:");
         DumpRegister((), q_a);
@@ -45,8 +45,8 @@
         DumpRegister((), q_b);
         
         Message("After QFT");
-        // QFT(LittleEndianAsBigEndian(a));
-        // QFT(LittleEndianAsBigEndian(b));
+        QFT(LittleEndianAsBigEndian(a));
+        QFT(LittleEndianAsBigEndian(b));
 
         Message("a result:");
         DumpRegister((), q_a);
