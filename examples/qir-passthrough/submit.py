@@ -20,14 +20,6 @@ class PassThroughTarget(Target):
             fo.write(data)
         return compressed.getvalue()
 
-    def submit(self, input_data: bytes, name: str, **kwargs) -> Job:
-        return super().submit(
-            input_data=input_data,
-            name=name,
-            encoding="gzip",
-            **kwargs
-        )
-
 workspace = Workspace(
     resource_id="/subscriptions/916dfd6d-030c-4bd9-b579-7bb6d1926e97/resourceGroups/anpaz-demos/providers/Microsoft.Quantum/Workspaces/demo-sim",
     location="westus2"
