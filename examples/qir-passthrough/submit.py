@@ -12,7 +12,7 @@ class PassThroughTarget(Target):
     """
     @staticmethod
     def _encode_input_data(data: io.BytesIO) -> bytes:
-        # Bug #: For now, it is required that content is in gzip.
+        # Bug https://ms-quantum.visualstudio.com/Quantum%20Program/_workitems/edit/37092: For now, it is required that content is in gzip.
         compressed = io.BytesIO()
         with gzip.GzipFile(fileobj=compressed, mode="w") as fo:
             fo.write(data.readall())
@@ -33,7 +33,7 @@ workspace = Workspace(
 
 print("Using workspace", workspace.name)
 
-# Bug #2: simulator is not listed in get_targets()...
+# Bug https://ms-quantum.visualstudio.com/Quantum%20Program/_workitems/edit/37093: simulator is not listed in get_targets()...
 # Verify simulator is a valid target in this workspace:
 # targets =  [e.name for e in workspace.get_targets()]
 # print(targets)
@@ -46,8 +46,8 @@ target = PassThroughTarget(
     workspace= workspace,
     name= "microsoft.simulator.fullstate",
     input_data_format = "qir.v1/full-profile",
-    # Bug #3: For now, the output format returned by the simulator is "microsoft.qio-results.v2"
-    # Bug #4: Job fails with Exception if output format doesn't match job's output format.
+    # Bug https://ms-quantum.visualstudio.com/Quantum%20Program/_workitems/edit/37094: For now, the output format returned by the simulator is "microsoft.qio-results.v2"
+    # Bug https://ms-quantum.visualstudio.com/Quantum%20Program/_workitems/edit/37095: Job fails with Exception if output format doesn't match job's output format.
     output_data_format = "microsoft.qio-results.v2",
     provider_id = "Microsoft.Simulator",
     content_type = "qir.v1/full-profile",
@@ -55,7 +55,7 @@ target = PassThroughTarget(
 )
 
 # Open the QIR file and submit it. The only thing required is the entryPoint.
-# Bug #5: Controller/QIR errors are not getting propagated and all we get is "InternalError"
+# Bug https://ms-quantum.visualstudio.com/Quantum%20Program/_workitems/edit/37096: Controller/QIR errors are not getting propagated and all we get is "InternalError"
 f = open("qir/Sample.ll", "rb", buffering=0)
 job = target.submit(f, "Sample__HelloQ.ll", input_params={ "entryPoint": "Sample__HelloQ" })
 
