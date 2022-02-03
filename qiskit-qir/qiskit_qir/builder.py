@@ -1,5 +1,8 @@
+##
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
+##
+
 from dis import Instruction
 from typing import Union, Iterable
 

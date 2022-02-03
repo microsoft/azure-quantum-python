@@ -1,5 +1,7 @@
+##
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
+##
 
 from types import MethodType
 from typing import Optional
