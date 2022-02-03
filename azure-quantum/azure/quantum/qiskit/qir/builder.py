@@ -88,8 +88,12 @@ class QiskitToQirBuilder(QirBuilder):
             fn = self.rz
         elif "s" == instruction.name:
             fn = self.s
+        elif "sdg" == instruction.name:
+            fn = self.s_adj
         elif "t" == instruction.name:
             fn = self.t
+        elif "tdg" == instruction.name:
+            fn = self.t_adj
         elif "x" == instruction.name:
             fn = self.x
         elif "y" == instruction.name:

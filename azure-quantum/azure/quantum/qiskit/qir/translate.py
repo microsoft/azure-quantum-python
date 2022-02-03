@@ -6,7 +6,8 @@
 from types import MethodType
 from typing import Optional
 from qiskit import QuantumCircuit
-from qiskit_qir.quantumcircuit import QirQuantumCircuit
+
+from azure.quantum.qiskit.qir.quantumcircuit import QirQuantumCircuit
 
 
 def to_qir(

@@ -7,8 +7,8 @@ import os
 import pytest
 import tempfile
 
-from qiskit_qir.quantumcircuit import QirQuantumCircuit
-from qiskit_qir import to_qir
+from azure.quantum.qiskit.qir.quantumcircuit import QirQuantumCircuit
+from azure.quantum.qiskit.qir.translate import to_qir
 
 
 @pytest.fixture()
@@ -41,5 +41,14 @@ def test_circuit_save_file(circuit):
         assert os.path.exists(filename)
 
         filename = os.path.join(tmpdirname, "output2.ll")
-        to_qir(filename=filename)
+        to_qir(circuit, filename=filename)
         assert os.path.exists(filename)
+
+
+def test_circuit_unroll():
+    from qiskit.transpiler import PassManager
+    circ = QirQuantumCircuit(3)
+    circ.ccx(0, 1, 2)
+    # circ.crz(theta=0.1, control_qubit=0, target_qubit=1)
+    new_circ = circ.decompose()
+    qir_bitcode = to_qir(new_circ)
