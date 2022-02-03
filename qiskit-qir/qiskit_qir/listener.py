@@ -1,3 +1,0 @@
-
-def listener(circuit):
-    pass
