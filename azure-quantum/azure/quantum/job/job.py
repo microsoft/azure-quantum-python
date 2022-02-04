@@ -102,8 +102,8 @@ class Job(BaseJob, FilteredJob):
 
         :param timeout_secs: Timeout in seconds, defaults to 300
         :type timeout_secs: int
-        :raises RuntimeError: [description]
-        :return: [description]
+        :raises RuntimeError: Raises RuntimeError if job execution failed
+        :return: Results dictionary with histogram shots
         :rtype: dict
         """
         if self.results is not None:
