@@ -512,8 +512,7 @@ class TestProjectQ(QuantumTestBase):
 
         return engine, honeywell_backend
 
-    def _projectq_wait_to_complete(self, engine, projectq_job):
-        job = projectq_job._azure_job
+    def _projectq_wait_to_complete(self, engine, job):
         self.pause_recording()
 
         try:
@@ -524,9 +523,7 @@ class TestProjectQ(QuantumTestBase):
         else:
             self.resume_recording()
 
-            self.assertEqual("Succeeded", projectq_job.status())
-            projectq_job = engine.get_job(job.id)
-            self.assertEqual("Succeeded", projectq_job.status())
+            self.assertEqual("Succeeded", job.details.status)
 
     @pytest.mark.ionq
     @pytest.mark.live_test
