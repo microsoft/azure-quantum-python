@@ -25,6 +25,8 @@ function Install-Package() {
     )
     # Activate env
     Use-CondaEnv $EnvName
+    # Show all installed packages
+    conda list
     # Install package
     if ($True -eq $FromSource) {
         $ParentPath = Split-Path -parent $PSScriptRoot
@@ -114,7 +116,7 @@ function NewCondaEnvForPackage {
         # If it does not exist, create conda environment
         Write-Host "##[info]Build '$EnvPath' for Conda environment $EnvName"
         conda env create --quiet --file $EnvPath
-    }    
+    }
 }
 
 function New-Wheel() {
@@ -129,8 +131,6 @@ function New-Wheel() {
         Write-Host "##[info]Pack wheel for env '$EnvName'"
         # Activate env
         Use-CondaEnv $EnvName
-        # Show all installed packages
-        conda list
         # Create package distribution
         python setup.py bdist_wheel sdist --formats=gztar
 
