@@ -129,6 +129,8 @@ function New-Wheel() {
         Write-Host "##[info]Pack wheel for env '$EnvName'"
         # Activate env
         Use-CondaEnv $EnvName
+        # Show all installed packages
+        conda list
         # Create package distribution
         python setup.py bdist_wheel sdist --formats=gztar
 
