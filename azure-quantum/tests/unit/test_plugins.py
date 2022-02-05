@@ -29,9 +29,7 @@ from azure.quantum.cirq import AzureQuantumService
 from azure.quantum.cirq.targets.target import Target
 from azure.quantum.projectq.backends import AzureIonQSimulatorBackend, AzureHoneywellSimulatorBackend
 
-from azure.quantum.target.ionq import int_to_bitstring
-
-from projectq.types import WeakQubitRef
+from cirq_ionq import Job as CirqIonqJob
 
 from common import QuantumTestBase, ZERO_UID
 
@@ -354,12 +352,20 @@ class TestCirq(QuantumTestBase):
             workspace = self.create_workspace()
             service = AzureQuantumService(workspace=workspace)
             try:
-                run_result = service.run(
-                    program=self._3_qubit_ghz_cirq(),
-                    repetitions=500,
-                    target="ionq.simulator",
-                    timeout_seconds=60
-                )
+                # Modify the Job.wait_until_completed method
+                # such that it only records once
+                # See: https://github.com/microsoft/qdk-python/issues/118
+                with mock.patch.object(
+                    CirqIonqJob,
+                    "results",
+                    self.mock_wait(CirqIonqJob.results)
+                ):
+                    run_result = service.run(
+                        program=self._3_qubit_ghz_cirq(),
+                        repetitions=500,
+                        target="ionq.simulator",
+                        timeout_seconds=60
+                    )
 
             except TimeoutError as e:
                 # Pass on timeout
@@ -422,12 +428,20 @@ class TestCirq(QuantumTestBase):
             service = AzureQuantumService(workspace=workspace)
             program = self._3_qubit_ghz_cirq()
             try:
-                run_result = service.run(
-                    program=program,
-                    repetitions=500,
-                    target="honeywell.hqs-lt-s1-apival",
-                    timeout_seconds=60
-                )
+                # Modify the Job.wait_until_completed method
+                # such that it only records once
+                # See: https://github.com/microsoft/qdk-python/issues/118
+                with mock.patch.object(
+                    Job,
+                    "wait_until_completed",
+                    self.mock_wait(Job.wait_until_completed)
+                ):
+                    run_result = service.run(
+                        program=program,
+                        repetitions=500,
+                        target="honeywell.hqs-lt-s1-apival",
+                        timeout_seconds=60
+                    )
 
             except TimeoutError as e:
                 # Pass on timeout
@@ -578,7 +592,15 @@ class TestProjectQ(QuantumTestBase):
             CX | (q1, q2)
             All(Measure) | circuit
 
-            engine.flush()
+            # Modify the Job.wait_until_completed method
+            # such that it only records once
+            # See: https://github.com/microsoft/qdk-python/issues/118
+            with mock.patch.object(
+                Job,
+                "wait_until_completed",
+                self.mock_wait(Job.wait_until_completed)
+            ):
+                engine.flush()
 
             probabilities = engine.backend.get_probabilities(circuit)
             assert probabilities == { "000": 0.5, "111": 0.5 }
@@ -622,7 +644,15 @@ class TestProjectQ(QuantumTestBase):
             CX | (q1, q2)
             All(Measure) | circuit
 
-            engine.flush()
+            # Modify the Job.wait_until_completed method
+            # such that it only records once
+            # See: https://github.com/microsoft/qdk-python/issues/118
+            with mock.patch.object(
+                Job,
+                "wait_until_completed",
+                self.mock_wait(Job.wait_until_completed)
+            ):
+                engine.flush()
 
             probabilities = engine.backend.get_probabilities(circuit)
             assert probabilities == { "000": 1.0 }
