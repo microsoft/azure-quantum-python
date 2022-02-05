@@ -246,6 +246,9 @@ class QuantumTestBase(ReplayableTest):
         workspace.append_user_agent("testapp")
 
         return workspace
+    
+    def mock_wait(*args, **kwargs):
+        return
 
 class PauseRecordingProcessor(RecordingProcessor):
     def __init__(self):
