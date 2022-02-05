@@ -89,7 +89,7 @@ setuptools.setup(
             "cirq-ionq==0.13.1",
         ],
         "projectq": [
-            "projectq==0.7.0"
+            "projectq==0.7.1"
         ]
     }
 )
