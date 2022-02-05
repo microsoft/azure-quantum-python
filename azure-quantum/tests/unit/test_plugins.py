@@ -10,10 +10,19 @@ from cirq import ParamResolver
 
 from qiskit.providers import JobStatus
 
+from projectq import MainEngine
+from projectq.ops import H, CX, All, Measure
+from projectq.backends._ionq._ionq_mapper import BoundedQubitMapper
+
 from azure.quantum.job.job import Job
 from azure.quantum.qiskit import AzureQuantumProvider
 from azure.quantum.cirq import AzureQuantumService
 from azure.quantum.cirq.targets.target import Target
+from azure.quantum.projectq.backends import AzureIonQSimulatorBackend, AzureHoneywellSimulatorBackend
+
+from azure.quantum.target.ionq import int_to_bitstring
+
+from projectq.types import WeakQubitRef
 
 from common import QuantumTestBase, ZERO_UID
 
@@ -451,3 +460,161 @@ class TestCirq(QuantumTestBase):
                     assert len(result.measurements["q2"]) == 500
                     assert result.measurements["q0"].sum() == result.measurements["q1"].sum()
                     assert result.measurements["q1"].sum() == result.measurements["q2"].sum()
+
+
+class TestProjectQ(QuantumTestBase):
+    mock_create_job_id_name = "create_job_id"
+    create_job_id = Job.create_job_id
+
+    def get_test_job_id(self):
+        return ZERO_UID if self.is_playback \
+               else Job.create_job_id()
+
+    def _engine_factory(self):
+        return [BoundedQubitMapper(4)]
+
+    def _projectq_submit_3_qubit_ghz_circuit(self, engine, backend, name):
+        circuit = engine.allocate_qureg(3)
+        q0, q1, q2 = circuit
+
+        H | q0
+        CX | (q0, q1)
+        CX | (q1, q2)
+        All(Measure) | circuit
+
+        return backend.submit_job(name)
+
+    def _projectq_ionq_engine(self):
+        workspace = self.create_workspace()
+        ionq_backend = AzureIonQSimulatorBackend(
+            workspace=workspace,
+            num_runs=500
+        )
+
+        engine = MainEngine(
+            backend=ionq_backend,
+            engine_list=self._engine_factory()
+        )
+
+        return engine, ionq_backend
+
+    def _projectq_honeywell_engine(self):
+        workspace = self.create_workspace()
+        honeywell_backend = AzureHoneywellSimulatorBackend(
+            workspace=workspace,
+            num_runs=500
+        )
+
+        engine = MainEngine(
+            backend=honeywell_backend,
+            engine_list=self._engine_factory()
+        )
+
+        return engine, honeywell_backend
+
+    def _projectq_wait_to_complete(self, engine, job):
+        self.pause_recording()
+
+        try:
+            job.wait_until_completed(timeout_secs=60)
+        except TimeoutError:
+            self.resume_recording()
+            warnings.warn(f"ProjectQ Job {job.id} exceeded timeout. Skipping fetching results.")
+        else:
+            self.resume_recording()
+
+            self.assertEqual("Succeeded", job.details.status)
+
+    @pytest.mark.ionq
+    @pytest.mark.live_test
+    def test_plugins_submit_projectq_to_ionq(self):
+        with unittest.mock.patch.object(
+            Job,
+            self.mock_create_job_id_name,
+            return_value=self.get_test_job_id(),
+        ):
+            engine, ionq_backend = self._projectq_ionq_engine()
+            projectq_job = self._projectq_submit_3_qubit_ghz_circuit(engine, ionq_backend, name="ionq-circuit")
+
+            # Make sure the job is completed before fetching the results
+            # playback currently does not work for repeated calls
+            # See: https://github.com/microsoft/qdk-python/issues/118
+            if self.in_recording:
+                self._projectq_wait_to_complete(engine, projectq_job)
+            
+            if projectq_job.has_completed():
+                projectq_result = projectq_job.get_results()
+                assert projectq_result['histogram'] == { "0": 0.5, "7": 0.5 }
+
+            engine.__del__()
+
+    @pytest.mark.ionq
+    @pytest.mark.live_test
+    def test_plugins_submit_projectq_to_ionq_flush(self):
+        with unittest.mock.patch.object(
+            Job,
+            self.mock_create_job_id_name,
+            return_value=self.get_test_job_id(),
+        ):
+            engine, ionq_backend = self._projectq_ionq_engine()
+            circuit = engine.allocate_qureg(3)
+            q0, q1, q2 = circuit
+
+            H | q0
+            CX | (q0, q1)
+            CX | (q1, q2)
+            All(Measure) | circuit
+
+            engine.flush()
+
+            probabilities = engine.backend.get_probabilities(circuit)
+            assert probabilities == { "000": 0.5, "111": 0.5 }
+
+            engine.__del__()
+
+    @pytest.mark.honeywell
+    @pytest.mark.live_test
+    def test_plugins_submit_projectq_to_honeywell(self):
+        with unittest.mock.patch.object(
+            Job,
+            self.mock_create_job_id_name,
+            return_value=self.get_test_job_id(),
+        ):
+            engine, honeywell_backend = self._projectq_honeywell_engine()
+            projectq_job = self._projectq_submit_3_qubit_ghz_circuit(engine, honeywell_backend, name="honeywell-circuit")
+
+            # Make sure the job is completed before fetching the results
+            # playback currently does not work for repeated calls
+            # See: https://github.com/microsoft/qdk-python/issues/118
+            if self.in_recording:
+                self._projectq_wait_to_complete(engine, projectq_job)
+            
+            if projectq_job.has_completed():
+                projectq_result = projectq_job.get_results()
+                assert projectq_result['c'] == ["000"]
+
+            engine.__del__()
+
+    @pytest.mark.honeywell
+    @pytest.mark.live_test
+    def test_plugins_submit_projectq_to_honeywell_flush(self):
+        with unittest.mock.patch.object(
+            Job,
+            self.mock_create_job_id_name,
+            return_value=self.get_test_job_id(),
+        ):
+            engine, honeywell_backend = self._projectq_honeywell_engine()
+            circuit = engine.allocate_qureg(3)
+            q0, q1, q2 = circuit
+
+            H | q0
+            CX | (q0, q1)
+            CX | (q1, q2)
+            All(Measure) | circuit
+
+            engine.flush()
+
+            probabilities = engine.backend.get_probabilities(circuit)
+            assert probabilities == { "000": 1.0 }
+
+            engine.__del__()
