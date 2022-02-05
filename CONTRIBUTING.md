@@ -53,6 +53,12 @@ To run the a specific unit test case, run:
 pytest -k test_job_refresh
 ```
 
+#### Recordings ####
+
+To read more about how to create and update recordings for testing code that interacts with a live API, see the [Azure Quantum Unit tests README](./azure-quantum/tests/README.md).
+
+Before merging your code contribution to `main`, make sure that all new code is covered by unit tests and that the unit tests have up-to-date recordings. If you recorded your tests and then updated or refactored the code afterwards, remember to re-record the tests.
+
 ### Update/re-generate the Azure Quantum internal SDK client based on Swagger ###
 
 The internal Azure Quantum Python SDK client (`azure/quantum/_client`) needs to be re-generated every time there is a change in the [Azure Quantum Service API definition](https://github.com/Azure/azure-rest-api-specs/tree/main/specification/quantum/data-plane) (aka Swagger).
@@ -69,9 +75,6 @@ After re-generating the client make sure to:
 1. Re-run/Re-record all unit tests against the live-service (you can run `./eng/Record-Tests.ps1`)
 1. If necessary, adjust the convenience layer for breaking-changes or to expose new features
 1. Add new unit-tests for new features and record them too
-#### Recordings ####
-
-To read more about how to create and update recordings for testing code that interacts with a live API, see the [Azure Quantum Unit tests README](./azure-quantum/tests/README.md).
 
 ### Building the `azure-quantum` Package wheel ###
 
