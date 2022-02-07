@@ -1,15 +1,9 @@
+from json import JSONDecodeError
 import unittest
-import warnings
-from azure.quantum.target.microsoft.simulator.fullstate import FullStateTarget
-from azure.quantum.workspace import Workspace
+import os
 import pytest
-
-import numpy as np
-
-from azure.core.exceptions import HttpResponseError
+from azure.quantum.target.microsoft.simulator.fullstate import FullStateTarget
 from azure.quantum.job.job import Job
-from azure.quantum._client.models import CostEstimate, UsageEvent
-from azure.quantum.target import IonQ, Honeywell
 
 from common import QuantumTestBase, ZERO_UID
 
@@ -22,10 +16,10 @@ class TestFullStateSimulator(QuantumTestBase):
         return ZERO_UID if self.is_playback \
                else Job.create_job_id()
 
-    def get_test_qir_file(self):
-        return "Sample.ll"
+    def _test_qir_file(self):
+        return os.path.join(os.path.split(__file__)[0], "Sample.ll")
 
-    def test_job_submit_ms_full_state(self):
+    def test_job_submit_microsoft_full_state(self):
         with unittest.mock.patch.object(
             Job,
             self.mock_create_job_id_name,
@@ -33,6 +27,6 @@ class TestFullStateSimulator(QuantumTestBase):
         ):
             workspace = self.create_workspace()
             target: FullStateTarget = workspace.get_targets("microsoft.simulator.fullstate")
-            job = target.submit_qir_file("Sample.ll", "QIR test", "Sample__HelloQ")
-            result = job.get_results()
-            assert result
+            job = target.submit_qir_file(self._test_qir_file(), "QIR test", "Sample__HelloQ")
+            with pytest.raises(JSONDecodeError):
+                result = job.get_results()
