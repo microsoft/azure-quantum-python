@@ -75,12 +75,15 @@ entry:
   call void @__quantum__rt__result_update_reference_count(%Result* %existing_value7, i32 -1)
   call void @__quantum__rt__result_update_reference_count(%Result* %measurement6, i32 1)
   store %Result* %measurement6, %Result** %c2_result_2, align 8
-  call void @__quantum__rt__qubit_release(%Qubit* %q0)
-  call void @__quantum__rt__qubit_release(%Qubit* %q1)
-  call void @__quantum__rt__qubit_release(%Qubit* %q3)
+  call void @__quantum__qis__dumpmachine__body(i8* null)
   call void @__quantum__rt__qubit_release(%Qubit* %q2)
+  call void @__quantum__rt__qubit_release(%Qubit* %q0)
+  call void @__quantum__rt__qubit_release(%Qubit* %q3)
+  call void @__quantum__rt__qubit_release(%Qubit* %q1)
   ret %Array* %results
 }
+
+declare void @__quantum__qis__dumpmachine__body(i8*)
 
 declare %Qubit* @__quantum__rt__qubit_allocate()
 
