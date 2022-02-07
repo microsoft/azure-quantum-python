@@ -246,6 +246,35 @@ class QuantumTestBase(ReplayableTest):
         workspace.append_user_agent("testapp")
 
         return workspace
+    
+    def mock_wait(self, job_wait_until_completed):
+        # Workaround for issue #118
+        # See: https://github.com/microsoft/qdk-python/issues/118
+        # Use this method to mock out job.wait_until_completed.
+        #
+        # Example usage:
+        #
+        # with mock.patch.object(
+        #     Job,
+        #     "wait_until_completed",
+        #     self.mock_wait(Job.wait_until_completed)
+        # ):
+        #     job.wait_until_completed()
+        #
+        # Create closure to expose self and Job.wait_until_completed to
+        # mock function
+        def _mock_wait(job, *args, **kwargs):
+            # Pause recording such that we don't record multiple calls
+            self.pause_recording()
+            job_wait_until_completed(job, *args, **kwargs)
+            self.resume_recording()
+
+            # Record a single GET request such that job.wait_until_completed
+            # doesn't fail when running recorded tests
+            return job_wait_until_completed(job, *args, **kwargs)
+
+        return _mock_wait
+
 
 class PauseRecordingProcessor(RecordingProcessor):
     def __init__(self):

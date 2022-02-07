@@ -1,4 +1,13 @@
-
+#!/bin/env python
+# -*- coding: utf-8 -*-
+##
+# test_optimization.py: Checks correctness of azure.quantum.optimization module.
+##
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+##
+from multiprocessing.sharedctypes import Value
+import mock
 import unittest
 import warnings
 import pytest
@@ -20,9 +29,7 @@ from azure.quantum.cirq import AzureQuantumService
 from azure.quantum.cirq.targets.target import Target
 from azure.quantum.projectq.backends import AzureIonQSimulatorBackend, AzureHoneywellSimulatorBackend
 
-from azure.quantum.target.ionq import int_to_bitstring
-
-from projectq.types import WeakQubitRef
+from cirq_ionq import Job as CirqIonqJob
 
 from common import QuantumTestBase, ZERO_UID
 
@@ -115,6 +122,12 @@ class TestQiskit(QuantumTestBase):
             warnings.warn(f"Qiskit Job {job.id} exceeded timeout. Skipping fetching results.")
         else:
             self.resume_recording()
+
+            # Record a single GET request such that job.wait_until_completed
+            # doesn't fail when running recorded tests
+            # See: https://github.com/microsoft/qdk-python/issues/118
+            job.refresh()
+
             self.assertEqual(JobStatus.DONE, qiskit_job.status())
             qiskit_job = provider.get_job(job.id)
             self.assertEqual(JobStatus.DONE, qiskit_job.status())
@@ -137,10 +150,7 @@ class TestQiskit(QuantumTestBase):
             )
 
             # Make sure the job is completed before fetching the results
-            # playback currently does not work for repeated calls
-            # See: https://github.com/microsoft/qdk-python/issues/118
-            if self.in_recording:
-                self._qiskit_wait_to_complete(qiskit_job, provider)
+            self._qiskit_wait_to_complete(qiskit_job, provider)
 
             if JobStatus.DONE == qiskit_job.status():
                 result = qiskit_job.result()
@@ -169,10 +179,7 @@ class TestQiskit(QuantumTestBase):
             )
 
             # Make sure the job is completed before fetching the results
-            # playback currently does not work for repeated calls
-            # See: https://github.com/microsoft/qdk-python/issues/118
-            if self.in_recording:
-                self._qiskit_wait_to_complete(qiskit_job, provider)
+            self._qiskit_wait_to_complete(qiskit_job, provider)
 
             if JobStatus.DONE == qiskit_job.status():
                 fetched_job = backend.retrieve_job(qiskit_job.id())
@@ -252,10 +259,7 @@ class TestQiskit(QuantumTestBase):
             )
 
             # Make sure the job is completed before fetching the results
-            # playback currently does not work for repeated calls
-            # See: https://github.com/microsoft/qdk-python/issues/118
-            if self.in_recording:
-                self._qiskit_wait_to_complete(qiskit_job, provider)
+            self._qiskit_wait_to_complete(qiskit_job, provider)
 
             if JobStatus.DONE == qiskit_job.status():
                 result = qiskit_job.result()
@@ -348,12 +352,20 @@ class TestCirq(QuantumTestBase):
             workspace = self.create_workspace()
             service = AzureQuantumService(workspace=workspace)
             try:
-                run_result = service.run(
-                    program=self._3_qubit_ghz_cirq(),
-                    repetitions=500,
-                    target="ionq.simulator",
-                    timeout_seconds=60
-                )
+                # Modify the Job.wait_until_completed method
+                # such that it only records once
+                # See: https://github.com/microsoft/qdk-python/issues/118
+                with mock.patch.object(
+                    CirqIonqJob,
+                    "results",
+                    self.mock_wait(CirqIonqJob.results)
+                ):
+                    run_result = service.run(
+                        program=self._3_qubit_ghz_cirq(),
+                        repetitions=500,
+                        target="ionq.simulator",
+                        timeout_seconds=60
+                    )
 
             except TimeoutError as e:
                 # Pass on timeout
@@ -416,12 +428,20 @@ class TestCirq(QuantumTestBase):
             service = AzureQuantumService(workspace=workspace)
             program = self._3_qubit_ghz_cirq()
             try:
-                run_result = service.run(
-                    program=program,
-                    repetitions=500,
-                    target="honeywell.hqs-lt-s1-apival",
-                    timeout_seconds=60
-                )
+                # Modify the Job.wait_until_completed method
+                # such that it only records once
+                # See: https://github.com/microsoft/qdk-python/issues/118
+                with mock.patch.object(
+                    Job,
+                    "wait_until_completed",
+                    self.mock_wait(Job.wait_until_completed)
+                ):
+                    run_result = service.run(
+                        program=program,
+                        repetitions=500,
+                        target="honeywell.hqs-lt-s1-apival",
+                        timeout_seconds=60
+                    )
 
             except TimeoutError as e:
                 # Pass on timeout
@@ -465,10 +485,16 @@ class TestCirq(QuantumTestBase):
 class TestProjectQ(QuantumTestBase):
     mock_create_job_id_name = "create_job_id"
     create_job_id = Job.create_job_id
+    _job_id = None
 
     def get_test_job_id(self):
-        return ZERO_UID if self.is_playback \
-               else Job.create_job_id()
+        if self.is_playback:
+            return ZERO_UID
+
+        if self._job_id is None:
+            self._job_id = Job.create_job_id()
+
+        return self._job_id
 
     def _engine_factory(self):
         return [BoundedQubitMapper(4)]
@@ -523,6 +549,10 @@ class TestProjectQ(QuantumTestBase):
         else:
             self.resume_recording()
 
+            # Record a single GET request such that job.wait_until_completed
+            # doesn't fail when running recorded tests
+            # See: https://github.com/microsoft/qdk-python/issues/118
+            job.refresh()
             self.assertEqual("Succeeded", job.details.status)
 
     @pytest.mark.ionq
@@ -537,11 +567,8 @@ class TestProjectQ(QuantumTestBase):
             projectq_job = self._projectq_submit_3_qubit_ghz_circuit(engine, ionq_backend, name="ionq-circuit")
 
             # Make sure the job is completed before fetching the results
-            # playback currently does not work for repeated calls
-            # See: https://github.com/microsoft/qdk-python/issues/118
-            if self.in_recording:
-                self._projectq_wait_to_complete(engine, projectq_job)
-            
+            self._projectq_wait_to_complete(engine, projectq_job)
+
             if projectq_job.has_completed():
                 projectq_result = projectq_job.get_results()
                 assert projectq_result['histogram'] == { "0": 0.5, "7": 0.5 }
@@ -565,7 +592,15 @@ class TestProjectQ(QuantumTestBase):
             CX | (q1, q2)
             All(Measure) | circuit
 
-            engine.flush()
+            # Modify the Job.wait_until_completed method
+            # such that it only records once
+            # See: https://github.com/microsoft/qdk-python/issues/118
+            with mock.patch.object(
+                Job,
+                "wait_until_completed",
+                self.mock_wait(Job.wait_until_completed)
+            ):
+                engine.flush()
 
             probabilities = engine.backend.get_probabilities(circuit)
             assert probabilities == { "000": 0.5, "111": 0.5 }
@@ -584,14 +619,11 @@ class TestProjectQ(QuantumTestBase):
             projectq_job = self._projectq_submit_3_qubit_ghz_circuit(engine, honeywell_backend, name="honeywell-circuit")
 
             # Make sure the job is completed before fetching the results
-            # playback currently does not work for repeated calls
-            # See: https://github.com/microsoft/qdk-python/issues/118
-            if self.in_recording:
-                self._projectq_wait_to_complete(engine, projectq_job)
+            self._projectq_wait_to_complete(engine, projectq_job)
             
             if projectq_job.has_completed():
                 projectq_result = projectq_job.get_results()
-                assert projectq_result['c'] == ["000"]
+                assert projectq_result['c'] == ["111"]
 
             engine.__del__()
 
@@ -612,7 +644,15 @@ class TestProjectQ(QuantumTestBase):
             CX | (q1, q2)
             All(Measure) | circuit
 
-            engine.flush()
+            # Modify the Job.wait_until_completed method
+            # such that it only records once
+            # See: https://github.com/microsoft/qdk-python/issues/118
+            with mock.patch.object(
+                Job,
+                "wait_until_completed",
+                self.mock_wait(Job.wait_until_completed)
+            ):
+                engine.flush()
 
             probabilities = engine.backend.get_probabilities(circuit)
             assert probabilities == { "000": 1.0 }

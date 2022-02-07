@@ -103,18 +103,22 @@ class TestIonQ(QuantumTestBase):
             # multiple identical requests.
             # So we pause the recording until the job has actually completed.
             # See: https://github.com/microsoft/qdk-python/issues/118
-            if self.in_recording:
-                self.pause_recording()
-                try:
-                    # Set a timeout for IonQ recording
-                    job.wait_until_completed(timeout_secs=60)
-                except TimeoutError:
-                    warnings.warn("IonQ execution exceeded timeout. Skipping fetching results.")
+            self.pause_recording()
+            try:
+                # Set a timeout for IonQ recording
+                job.wait_until_completed(timeout_secs=60)
+            except TimeoutError:
+                warnings.warn("IonQ execution exceeded timeout. Skipping fetching results.")
 
-                # Check if job succeeded
-                self.assertEqual(True, job.has_completed())
-                assert job.details.status == "Succeeded"
-                self.resume_recording()
+            # Check if job succeeded
+            self.assertEqual(True, job.has_completed())
+            assert job.details.status == "Succeeded"
+            self.resume_recording()
+
+            # Record a single GET request such that job.wait_until_completed
+            # doesn't fail when running recorded tests
+            # See: https://github.com/microsoft/qdk-python/issues/118
+            job.refresh()
 
             job = workspace.get_job(job.id)
             self.assertEqual(True, job.has_completed())
