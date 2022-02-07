@@ -53,7 +53,6 @@ entry:
   store %Qubit* %q1, %Qubit** %__controlQubits__0_result_tmp_result_03, align 8
   call void @Microsoft__Quantum__Intrinsic__X__ctl(%Array* %__controlQubits__1, %Qubit* %q2)
   call void @__quantum__rt__array_update_reference_count(%Array* %__controlQubits__1, i32 -1)
-  call void @Microsoft__Quantum__Intrinsic__H__body(%Qubit* %q3)
   %measurement = call %Result* @Microsoft__Quantum__Intrinsic__M__body(%Qubit* %q0)
   %c0_0_raw = call i8* @__quantum__rt__array_get_element_ptr_1d(%Array* %c, i64 0)
   %c0_result_0 = bitcast i8* %c0_0_raw to %Result**
@@ -76,10 +75,10 @@ entry:
   call void @__quantum__rt__result_update_reference_count(%Result* %measurement6, i32 1)
   store %Result* %measurement6, %Result** %c2_result_2, align 8
   call void @__quantum__qis__dumpmachine__body(i8* null)
-  call void @__quantum__rt__qubit_release(%Qubit* %q2)
-  call void @__quantum__rt__qubit_release(%Qubit* %q0)
   call void @__quantum__rt__qubit_release(%Qubit* %q3)
+  call void @__quantum__rt__qubit_release(%Qubit* %q0)
   call void @__quantum__rt__qubit_release(%Qubit* %q1)
+  call void @__quantum__rt__qubit_release(%Qubit* %q2)
   ret %Array* %results
 }
 
