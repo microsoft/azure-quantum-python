@@ -165,6 +165,10 @@ class QirQuantumCircuit(QuantumCircuit):
                 # Insert qasm representation of the original instruction
                 builder.add_instruction(instruction, [bit_labels[j] for j in qargs + cargs])
 
+        # Dump machine state to stdout
+        builder.dump_machine()
+
+        # Get QIR LLVM code
         qir_bitcode = builder.get_ir_string()
 
         if filename:
