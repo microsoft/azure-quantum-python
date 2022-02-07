@@ -22,6 +22,9 @@ class TestFullStateSimulator(QuantumTestBase):
     def _test_qir_qiskit_file(self):
         return os.path.join(os.path.split(__file__)[0], "qir", "QiskitSample.ll")
 
+    def _test_qir_bell_file(self):
+        return os.path.join(os.path.split(__file__)[0], "qir", "Bell.ll")
+
     def test_job_submit_microsoft_full_state(self):
         with unittest.mock.patch.object(
             Job,
@@ -43,5 +46,17 @@ class TestFullStateSimulator(QuantumTestBase):
             workspace = self.create_workspace()
             target: FullStateTarget = workspace.get_targets("microsoft.simulator.fullstate")
             job = target.submit_qir_file(self._test_qir_qiskit_file(), "Qiskit GHZ program", "QuantumApplication__Run")
+            results = job.get_results()
+            assert results
+
+    def test_job_submit_microsoft_full_state_pyqir_new(self):
+        with unittest.mock.patch.object(
+            Job,
+            self.mock_create_job_id_name,
+            return_value=self.get_test_job_id(),
+        ):
+            workspace = self.create_workspace()
+            target: FullStateTarget = workspace.get_targets("microsoft.simulator.fullstate")
+            job = target.submit_qir_file(self._test_qir_bell_file(), "Bell state program", "QuantumApplication__Run")
             results = job.get_results()
             assert results
