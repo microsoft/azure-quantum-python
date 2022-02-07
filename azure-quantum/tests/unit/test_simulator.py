@@ -28,5 +28,5 @@ class TestFullStateSimulator(QuantumTestBase):
             workspace = self.create_workspace()
             target: FullStateTarget = workspace.get_targets("microsoft.simulator.fullstate")
             job = target.submit_qir_file(self._test_qir_file(), "QIR test", "Sample__HelloQ")
-            with pytest.raises(JSONDecodeError):
-                result = job.get_results()
+            result: str = job.get_results()
+            assert result.startswith("Hello quantum world!")

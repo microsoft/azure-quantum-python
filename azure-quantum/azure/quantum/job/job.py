@@ -120,5 +120,8 @@ class Job(BaseJob, FilteredJob):
             )
 
         payload = self.download_data(self.details.output_data_uri)
-        results = json.loads(payload.decode("utf8"))
-        return results
+        payload = payload.decode("utf8")
+        try:
+            return json.loads(payload)
+        except json.JSONDecodeError:
+            return payload
