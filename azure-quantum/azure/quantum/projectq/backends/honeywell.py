@@ -60,7 +60,7 @@ class AzureHoneywellBackend(_HoneywellBackend):
         workspace.append_user_agent(PROJECTQ_USER_AGENT)
         self._workspace = workspace
 
-        if not use_hardware:
+        if not use_hardware and "apival" not in device:
             device = "honeywell.hqs-lt-s1-sim"
 
         super().__init__(

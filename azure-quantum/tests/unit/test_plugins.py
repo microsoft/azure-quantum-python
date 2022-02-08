@@ -656,6 +656,6 @@ class TestProjectQ(QuantumTestBase):
                 engine.flush()
 
             probabilities = engine.backend.get_probabilities(circuit)
-            assert probabilities == { "111": 1.0 }
+            assert probabilities == { "000": 1.0 }
 
             engine.__del__()
