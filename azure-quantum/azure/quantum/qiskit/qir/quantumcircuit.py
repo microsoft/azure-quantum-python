@@ -168,8 +168,11 @@ class QirQuantumCircuit(QuantumCircuit):
         # Dump machine state to stdout
         builder.dump_machine()
 
-        # Get QIR LLVM code
-        qir_bitcode = builder.get_ir_string()
+        if filename.endswith(".ll"):
+            # Get QIR LLVM code
+            qir_bitcode = builder.get_ir_string()
+        else:
+            qir_bitcode = builder.get_bitcode_base64_string()
 
         if filename:
             with open(filename, "w+", encoding=encoding) as file:
