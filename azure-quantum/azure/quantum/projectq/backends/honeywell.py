@@ -41,13 +41,13 @@ class AzureHoneywellBackend(_HoneywellBackend):
         use_hardware: bool=False,
         num_runs: int=100,
         verbose: bool=False,
-        device: str="honeywell.hqs-lt-s1-sim",
+        device: str=None,
         retrieve_execution: str=None
     ):
         """Base class for interfacing with a Honeywell backend in Azure Quantum
 
         :param use_hardware: Whether or not to use real Honeywell hardware or just a simulator. If False, the
-            Honeywell simulator is used regardless of the value of ``device``. Defaults to False.
+            Honeywell simulator is used, but only if ``device`` is not specified. Defaults to False.
         :param num_runs: Number of times to run circuits. Defaults to 100.
         verbose: If True, print statistics after job results have been collected. Defaults to
             False.
@@ -60,8 +60,11 @@ class AzureHoneywellBackend(_HoneywellBackend):
         workspace.append_user_agent(PROJECTQ_USER_AGENT)
         self._workspace = workspace
 
-        if not use_hardware and "apival" not in device:
-            device = "honeywell.hqs-lt-s1-sim"
+        if device is None:
+            if not use_hardware:
+                device = "honeywell.hqs-lt-s1-sim"
+            else:
+                device = "honeywell.hqs-lt-s1"
 
         super().__init__(
             use_hardware=True, 
