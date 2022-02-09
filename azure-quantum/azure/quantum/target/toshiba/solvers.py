@@ -128,23 +128,3 @@ class SimulatedBifurcationMachine(Solver):
         self.set_one_param("algo", algo)
         self.set_one_param("auto", auto)
 
-    # We are temporarily disabling the
-    # compression of problems for the Toshiba
-    # solver to mitigate an issue downloading
-    # gzip files using the Blob Storage SDK
-    # Issue: https://github.com/Azure/azure-storage-python/issues/548
-    def submit(
-        self, problem: Union[str, "Problem"], compress: bool = True
-    ) -> Job:
-        """Submits a job to execution to
-        the associated Azure Quantum Workspace.
-
-        :param problem:
-            The Problem to solve. It can be an instance of a Problem,
-            or the URL of an Azure Storage Blob where the serialized version
-            of a Problem has been uploaded.
-        :param compress:
-            Whether or not to compress the problem when uploading it
-            the Blob Storage.
-        """
-        return super().submit(problem=problem, compress=False)

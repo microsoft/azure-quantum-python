@@ -107,8 +107,7 @@ class Solver(Target):
         return data.to_blob(compress=True)
 
     def submit(
-        self, problem: Union[str, "Problem"], compress: bool = True
-    ) -> Job:
+        self, problem: Union[str, "Problem"]) -> Job:
         """Submits a job to execution to the associated
         Azure Quantum Workspace.
 
@@ -116,16 +115,8 @@ class Solver(Target):
             The Problem to solve. It can be an instance of a Problem,
             or the URL of an Azure Storage Blob where the serialized version
             of a Problem has been uploaded.
-        :param compress:
-            Whether or not to compress the problem when uploading it
-            the Blob Storage. This input param is not used and will be
-            deprecated.
         """
-        if compress == False:
-            import warnings
-            warnings.warn("The service no longer accepts payloads that \
-are not compressed with gzip encoding. Ignoring compress flag.")
-
+        
         from azure.quantum.optimization import Problem
         if isinstance(problem, Problem):
             self.check_valid_problem(problem)
