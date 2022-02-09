@@ -27,7 +27,8 @@ from azure.quantum.job.job import Job
 from azure.quantum.qiskit import AzureQuantumProvider
 from azure.quantum.cirq import AzureQuantumService
 from azure.quantum.cirq.targets.target import Target
-from azure.quantum.projectq.backends import AzureIonQSimulatorBackend, AzureHoneywellSimulatorBackend
+from azure.quantum.projectq.backends import AzureIonQSimulatorBackend
+from azure.quantum.projectq.backends.honeywell import AzureHoneywellAPIValidatorBackend
 
 from cirq_ionq import Job as CirqIonqJob
 
@@ -526,7 +527,7 @@ class TestProjectQ(QuantumTestBase):
 
     def _projectq_honeywell_engine(self):
         workspace = self.create_workspace()
-        honeywell_backend = AzureHoneywellSimulatorBackend(
+        honeywell_backend = AzureHoneywellAPIValidatorBackend(
             workspace=workspace,
             num_runs=500
         )
@@ -623,7 +624,7 @@ class TestProjectQ(QuantumTestBase):
             
             if projectq_job.has_completed():
                 projectq_result = projectq_job.get_results()
-                assert projectq_result['c'] == ["111"]
+                assert projectq_result['c'] == ["000"]
 
             engine.__del__()
 
@@ -655,6 +656,6 @@ class TestProjectQ(QuantumTestBase):
                 engine.flush()
 
             probabilities = engine.backend.get_probabilities(circuit)
-            assert probabilities == { "000": 1.0 }
+            assert probabilities == { "111": 1.0 }
 
             engine.__del__()
