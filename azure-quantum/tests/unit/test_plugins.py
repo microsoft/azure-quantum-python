@@ -611,6 +611,25 @@ class TestProjectQ(QuantumTestBase):
 
     @pytest.mark.ionq
     @pytest.mark.live_test
+    def test_plugins_submit_projectq_to_ionq_auto_flush(self):
+        with unittest.mock.patch.object(
+            Job,
+            self.mock_create_job_id_name,
+            return_value=self.get_test_job_id(),
+        ):
+            engine, ionq_backend = self._projectq_ionq_engine()
+            circuit = engine.allocate_qureg(3)
+            q0, q1, q2 = circuit
+
+            H | q0
+            CX | (q0, q1)
+            CX | (q1, q2)
+            All(Measure) | circuit
+
+            engine.__del__()
+
+    @pytest.mark.ionq
+    @pytest.mark.live_test
     def test_plugins_submit_projectq_to_ionq_flush(self):
         with unittest.mock.patch.object(
             Job,
@@ -693,6 +712,26 @@ class TestProjectQ(QuantumTestBase):
             if projectq_job.has_completed():
                 projectq_result = projectq_job.get_results()
                 assert projectq_result['c'] == ["000"]
+
+            engine.__del__()
+
+    @pytest.mark.honeywell
+    @pytest.mark.live_test
+    def test_plugins_submit_projectq_to_honeywell_auto_flush(self):
+        with unittest.mock.patch.object(
+            Job,
+            self.mock_create_job_id_name,
+            return_value=self.get_test_job_id(),
+        ):
+            engine, honeywell_backend = self._projectq_honeywell_engine()
+            assert honeywell_backend.device == "honeywell.hqs-lt-s1-apival"
+            circuit = engine.allocate_qureg(3)
+            q0, q1, q2 = circuit
+
+            H | q0
+            CX | (q0, q1)
+            CX | (q1, q2)
+            All(Measure) | circuit
 
             engine.__del__()
 
