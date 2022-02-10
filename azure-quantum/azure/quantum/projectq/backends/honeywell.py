@@ -77,7 +77,12 @@ class AzureHoneywellBackend(_HoneywellBackend):
     def submit_job(self, name=None, **kwargs) -> Job:
         """Submits the given circuit to run on an Honeywell target."""
         for measured_id in self._measured_ids:
-            qb_loc = self.main_engine.mapper.current_mapping[measured_id]
+            try:
+                qb_loc = self.main_engine.mapper.current_mapping[measured_id]
+            except KeyError:
+                logger.debug("Invalid qubit mapping, skipping job submission.")
+                return
+
             self.qasm += "\nmeasure q[{0}] -> c[{0}];".format(qb_loc)
 
         if not self.qasm:

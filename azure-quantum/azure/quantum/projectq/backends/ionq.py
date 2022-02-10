@@ -84,9 +84,13 @@ class AzureIonQBackend(_IonQBackend):
             name = "projectq-ionq-circuit-{}".format(random_suffix)
 
         qubit_mapping = self.main_engine.mapper.current_mapping
-
         num_qubits = len(self._measured_ids)
-        meas_map = [qubit_mapping[qubit_id] for qubit_id in self._measured_ids]
+
+        try:
+            meas_map = [qubit_mapping[qubit_id] for qubit_id in self._measured_ids]
+        except KeyError:
+            logger.debug("Invalid qubit mapping, skipping job submission.")
+            return
 
         input_data = json.dumps({
             "qubits": num_qubits,
