@@ -13,13 +13,13 @@ interactions:
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - azsdk-python-identity/1.7.1 Python/3.7.12 (Darwin-21.1.0-x86_64-i386-64bit)
+      - azsdk-python-identity/1.7.1 Python/3.9.10 (Linux-5.10.60.1-microsoft-standard-WSL2-x86_64-with-glibc2.31)
       x-client-cpu:
       - x64
       x-client-current-telemetry:
       - 4|730,0|
       x-client-os:
-      - darwin
+      - linux
       x-client-sku:
       - MSAL.Python
       x-client-ver:
@@ -48,7 +48,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - testapp azsdk-python-quantum/0.0.0.1 Python/3.7.12 (Darwin-21.1.0-x86_64-i386-64bit)
+      - testapp azsdk-python-quantum/0.0.0.1 Python/3.9.10 (Linux-5.10.60.1-microsoft-standard-WSL2-x86_64-with-glibc2.31)
     method: GET
     uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/providerStatus
   response:
@@ -77,13 +77,13 @@ interactions:
         0, "statusPage": "https://www.honeywell.com/en-us/company/quantum"}, {"id":
         "honeywell.hqs-lt-s1-apival", "currentAvailability": "Available", "averageQueueTime":
         0, "statusPage": "https://www.honeywell.com/en-us/company/quantum"}, {"id":
-        "honeywell.hqs-lt-s2", "currentAvailability": "Unavailable", "averageQueueTime":
-        0, "statusPage": "https://www.honeywell.com/en-us/company/quantum"}, {"id":
-        "honeywell.hqs-lt-s2-apival", "currentAvailability": "Available", "averageQueueTime":
+        "honeywell.hqs-lt-s2", "currentAvailability": "Degraded", "averageQueueTime":
+        220596, "statusPage": "https://www.honeywell.com/en-us/company/quantum"},
+        {"id": "honeywell.hqs-lt-s2-apival", "currentAvailability": "Available", "averageQueueTime":
         0, "statusPage": "https://www.honeywell.com/en-us/company/quantum"}, {"id":
         "honeywell.hqs-lt-s1-sim", "currentAvailability": "Available", "averageQueueTime":
-        4, "statusPage": "https://www.honeywell.com/en-us/company/quantum"}, {"id":
-        "honeywell.hqs-lt", "currentAvailability": "Unavailable", "averageQueueTime":
+        0, "statusPage": "https://www.honeywell.com/en-us/company/quantum"}, {"id":
+        "honeywell.hqs-lt", "currentAvailability": "Degraded", "averageQueueTime":
         0, "statusPage": "https://www.honeywell.com/en-us/company/quantum"}]}, {"id":
         "Microsoft.Simulator", "currentAvailability": "Available", "targets": [{"id":
         "microsoft.simulator.fullstate", "currentAvailability": "Available", "averageQueueTime":
@@ -94,13 +94,12 @@ interactions:
         {"id": "1qbit.pticm", "currentAvailability": "Available", "averageQueueTime":
         0, "statusPage": "http://status.1qbit.com/"}]}, {"id": "ionq", "currentAvailability":
         "Available", "targets": [{"id": "ionq.qpu", "currentAvailability": "Available",
-        "averageQueueTime": 2550, "statusPage": "https://status.ionq.co"}, {"id":
-        "ionq.simulator", "currentAvailability": "Available", "averageQueueTime":
-        2, "statusPage": "https://status.ionq.co"}]}], "nextLink": null, "access_token":
-        "fake_token"}'
+        "averageQueueTime": 110, "statusPage": "https://status.ionq.co"}, {"id": "ionq.simulator",
+        "currentAvailability": "Available", "averageQueueTime": 2, "statusPage": "https://status.ionq.co"}]}],
+        "nextLink": null, "access_token": "fake_token"}'
     headers:
       content-length:
-      - '3418'
+      - '3416'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -122,7 +121,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - testapp azsdk-python-quantum/0.0.0.1 Python/3.7.12 (Darwin-21.1.0-x86_64-i386-64bit)
+      - testapp azsdk-python-quantum/0.0.0.1 Python/3.9.10 (Linux-5.10.60.1-microsoft-standard-WSL2-x86_64-with-glibc2.31)
     method: POST
     uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/storage/sasUri
   response:
@@ -131,7 +130,7 @@ interactions:
         "access_token": "fake_token"}'
     headers:
       content-length:
-      - '207'
+      - '209'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -149,9 +148,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-blob/12.9.0 Python/3.7.12 (Darwin-21.1.0-x86_64-i386-64bit)
+      - azsdk-python-storage-blob/12.9.0 Python/3.9.10 (Linux-5.10.60.1-microsoft-standard-WSL2-x86_64-with-glibc2.31)
       x-ms-date:
-      - Tue, 08 Feb 2022 05:57:41 GMT
+      - Thu, 10 Feb 2022 06:56:33 GMT
       x-ms-version:
       - '2020-10-02'
     method: GET
@@ -159,7 +158,7 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerNotFound</Code><Message>The
-        specified container does not exist.\nRequestId:337232e1-101e-0061-23b0-1cbcae000000\nTime:2022-02-08T05:57:42.1750901Z</Message></Error>"
+        specified container does not exist.\nRequestId:3e48e224-101e-0061-644b-1ebcae000000\nTime:2022-02-10T06:56:38.2207132Z</Message></Error>"
     headers:
       content-length:
       - '225'
@@ -182,9 +181,9 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-blob/12.9.0 Python/3.7.12 (Darwin-21.1.0-x86_64-i386-64bit)
+      - azsdk-python-storage-blob/12.9.0 Python/3.9.10 (Linux-5.10.60.1-microsoft-standard-WSL2-x86_64-with-glibc2.31)
       x-ms-date:
-      - Tue, 08 Feb 2022 05:57:42 GMT
+      - Thu, 10 Feb 2022 06:56:34 GMT
       x-ms-version:
       - '2020-10-02'
     method: PUT
@@ -210,9 +209,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-blob/12.9.0 Python/3.7.12 (Darwin-21.1.0-x86_64-i386-64bit)
+      - azsdk-python-storage-blob/12.9.0 Python/3.9.10 (Linux-5.10.60.1-microsoft-standard-WSL2-x86_64-with-glibc2.31)
       x-ms-date:
-      - Tue, 08 Feb 2022 05:57:42 GMT
+      - Thu, 10 Feb 2022 06:56:34 GMT
       x-ms-version:
       - '2020-10-02'
     method: GET
@@ -233,7 +232,7 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: 'b''\x1f\x8b\x08\x00U\x06\x02b\x02\xff\xec}\t\\\x13\xd7\xf6\x7f6\xb2\x11\xc2\x10@\xc2j\x02a\x151,b\\\xd0$
+    body: 'b''\x1f\x8b\x08\x00!\xb7\x04b\x02\xff\xec}\t\\\x13\xd7\xf6\x7f6\xb2\x11\xc2\x10@\xc2j\x02a\x151,b\\\xd0$
       \x02"\x06\xc5\xad\xc56("Z\x97`\xd5\xe2V\xb3\xb1hQ\xc3\xa6T\xa9\x06D\x8b\xd6Z\\Z\xa9\xd5\xd7\x04\xd0\x82R\x8bK\x15\xab\xb5A\xb1Ek-m\xd5\xda>-\xff\x99\xcc\xdcI\x18\xec\xf2^\x7f\xef\xf7\xde\xef\xfd\xeb\xe7Sz\x18f\xe6\xde{\xee\xb9\xe7~\xcf\xb9\xe7\x9c\x91\xc7\x9bn\x0cw#\x91\x1cH$\xd2\x1c\x8eX\x942\xebo9\xb3\xff~t\xb2c\xba:\x95\x0c_\x13rH\xa4\xd9\x89$\x92#EH\xa2\xc0\xbf\x0f\x82\xffch\x02Je\xad\xb4d:\x145\xb2\x8c\xac\xe7\x04:0=\xfdh\xaf\xcdQ\x8b\xc6S\xe4e\x8er\x91K\x94\x9b\x84\xc9\x9f\xc8\x8e*+NR\xb5\x08\x03\x12xE%\x90\xac\x8c\x92\xdd\xca<\xe4&\x88O,\x16\xb4\x91\xa3\xca\xf4\xfc\xb0\x900C\xe4\xda\x86\xccRA[+\xfc\xde\r\x02\x12\xa9\x1d\xfe\x7f\x94\x7f\x12[\x90]@+\x17\xd5\xe9\xe1\x1f\xb7\xf45\x067^jY\x89\xa3^4\tjl\xf5\xd1HI_2\xa5]\x1b\xdds9\x14\''\n\x8di$\xbfLK\x9a\xee&\xa0\xdeQ\xa8\xa1l9y\x8a\xc1\xd1\xa1X\x16\xe6&`\xcc\x9a\xaa\x16\x94\x902\xcfO\xf9D^\xe2B\x8a\xa9\x81x!\n\xa3\xd4\xbd\xccD\x99\xddZA\xa9\xc8\xdaL\xe2\x9c\x11h\x9a\xe87\r\x14\xdf\xd6x\xb6\x9b\x00\xba\xaaP\''d\xcb\xc8\xfe\xa5t\x87\xd6\x84\x9dn\x02\xb7;S\xd4\x19\xd9\x13\xc8sJ\xc5\x0e\xad\xe3\xb9n\x02~"$PgW(\xe9\xe7%\xba7\xfc\xeb"O3I\x87e\x0e\x1bUT\xc6\xed\x10\xad\xde\xfb\xe8-v%\xdb\xb0\xa0\x84d\xf4\x0b\xec\x95\x8d;\xd8Q\xcb4\xc1\xb7\xb0\xa7\xd0\x84\x94\xdc$\x17\x11\xb3\xc6\x7f\x9eA\x90M\xf5\x8d\xd4@)Sh\x81\xf2\xdcdO\x11S!\x9ftF@.\x82VO\xa1\xb1RBR\\*BjB\xe7\x19\x8c\t\xaci\xa1\x14\x07\xf2\xf2=LJ\x85bkTR\xe3!\xcd{nr-/pl\xfdk\x9e\x15!\xdf\xc9^<#\x901\xf9\xec\xa9t\xa17\xad\xa3\xca\x9f\t\xc9\xe7\xb1\x852\xb5\xda{\xf9^\x88\xb7\xf6q\xafl\xc1\x19u|1\xe9\xb9\xb9\xf4\xc1c\xd7*vD%A7\x0bo\xf0\xcdE\xce\x1b\xa7\xd2Y\xf2\xee\x0e\x9f\x80\x90t\xf9\n\xf8%\xc5\xbe\xc7_f2\xc2\x1d\xa1\xf0\x16>Y\xba\n\xbe\xb2\x05\xfal*3\x8e?Va\x1c;\x0f\xf2O`>\r\xd5BB\xb7z\x0e\xef\xc1"\xa3l\x9e\xc1\xd2\xccp\x8f\xd2\xfa\t\x97\xc3W\xf4\x82\xda\x04xP\t\xcc\xa1aZg\xe1%\xe4\x9e\x90\x9a\t\x05\x06c\x11\xc5ac\xcc\x04\xa8B\xb6egr\xc2>&\xef\x81!0\xa0\'']^\x05\xbf>)\xe8B\x06\x93\xb5\xfaA\x880-\xa7c\xf7\x04\xd6\xaa0\x1dM\xb8\x8bY\xe1B\x0b\x11\xa6#\x1cr+\r\xd3\xd3\xc8\x94\xb5\x86\xd0h&d\xd1)*eZCF\xdd\xdd\x92JC\xfd<\xaf\x00R\xf14\xd6s\xa5oE%\xe5\xbe\xabQV\xca\x8a\r\xc9\xa2\xb7\x98o\xaf\x85\xde\x96\''U\xc5\xdc\xa1_\x85\x9f\x8d[}\x0f\x8a\x88\xee9?\xb7h9\xf2\xec\xec\x96\xb78\xbc\xa0\xcf\x05/\xcek\xcc\xbbE\''\x0fir"\x8b\x0e@r=\xa7*\xa1e\xa3X\xca\xf4\x1c\xa2\x83\xe2\xe4\xcc\xab\x90\xd4\xb3"\xf4\x9a\xf4\xecF\xf1>\xf7\xe1C\x9a\xeb\xa6\xbf\xdd3\x8bU\x91~\x14\xe1\x9dn\xaf\xbbL\xeb\xbc\x7fz\xe1t\xb9\xbe\xe3]y\x12\xc9\xd8\xce\x98\x17M%\xcd\x1b\x9b\xfb<<\x8b]\x89\x9f\xa7\x08\xc9j\x12yl\xcf\x0e!\t\xe9u\x13\xdc2\x94\x17s\x90s\xa6"t\xf72\x84G\xac7\x86hh)#
       )\xfc\xf4$\xffW\x12;\x02\xd4\x96\xd2\x9d\xa1\xa4\x85\xe3\xc7&\xb1\xda"\xb5\xd0H\xfd\''\xcc\xd5k\rc\x0f\xcf\xa5\tS\xeaw\xb1*:\xc6\x050=\xc7\x93\x17T\xb8\xe8;\x85\xdaD\x88R\xc8\xe1\xf1]\x8f\xd6\xea\x83\xaa\x12\x1c\x93=\xe1\xf5\x92\xce\''\x91x\xf0\xff\xbd+,}\xf0?\x86\x94\x12b\xe4\xaa\xc7v\x8aY\xc8\xaf\xe38\xfb,\xdc\x07\n\xee\xf7\xbd\xdc^%\xfb{\x03\xf7\xb6\x85\xdbm\xe2\xfeDZ\xa4*D\xfe>\xb8p\x8a\x8a\xb1\xdaP\xb4V]\xf0J\x12\xe3\x15#\x83\x94\x0c\xbf\x8f\n\xbf\xcfU\xab\x94\x0bR\x99t\x98$\xa583]x\xf1\x85%\x15$r\x8c\x9c?\xa8SH\xa6\x8b\xeb\xdbH\xe8?\x1a\xbd!>\x8a\xa3\x9cYNF\x7fgr\x94E-|\x93)\x88\x8a\xfe\x0e\xf1M\xdc\xe4(u\xcd$:\xfa\xbb@\xac\xf6\xe5\xed\xe5\xc4Ws\xd0\xdf\xa5J\xd2h\x11UL\x1f\xe9\x89\xfe\xae6\x91V&\xd1\xd5\x9c\x97\xa3\xb0\x064\xe4{\x06\x8e\xd4\xb3\''\x1b\xfb\x9dB\xed\x14z\xaa\xa3.\xf5\xeb\x00i^\x83}\x07\xb2IgT\xc1v\x1dh#U\x91\''\xdbu\xa0\x8c,\xd1\xed\xec\xd7\x01Ua\\\xbf\x0eX8k\xfbu\x80\xe4\xf5\xb3}\x076h|2\x9bw\xf5{Ck\xe1\x0c\xfb7\x1cU\xb2\xaf\x90\xc2\xec\x99\x10\xdcj\xf1\x92\xcf\xb3{\xc9O\x05\xa1\x99\xbaz\xfb\x97\xf0\\\xa8K\xd5\x95\xf6\x03\t\xcaV9\xed\xb6\xefIF\x01\xe7\xa0&\xc3~,\x1f\x18\xcc\xc3+\xce\xd8q\xa3\xec\xf5\xe9\x8d\xf4\xa9\xf6\x9d\xf9\xb0\xdc\xf1\x8a\xca\xbe3\xac-pg\x14\xf6\x9d\xf9n\xca\x90\xcc\xf8\xfdv\x9d\xa9;\xca\xa3.-\xb6\xef\xcc\xd1\xe7\xe0\xce\xec\xb7\xef\xcc\x8d\xd78\x07\xb3\xa6\xd9u\xe6BI\xa9yx\xc3\x99~S#\xe6g\xcf\xeb7w|\xce{\xfdx\xab\xe6\x14>\xdf\x8f\xf9J:\xf5`?\xde*\x0b\xc7\xf4\x17\x0fz|\xff\x1b\x14:\xd9\x8c~\xf3\xab6\x8b\x87\xd8\x8d\xf7\xce\xb9^\x8b\xd7s\xf6\xdd8\xe9=4S\xf7V\xffVtY\xfd_\xd2h6\r\xe9\''E&\xa5\xb1\xdf\xec\x90T\xe2\x07\xc4\xc1.\xb4\xb5\xc2\x9f\xb2\xc9o<\x83$\xc6.\x90
       \x12]\\w<.\xc2YM\xb2\xfd\xe3(\x93\x86\xaf\xbf\xecG"\xdb.\xf1M\x860\x07\xdd}\xe2m\xf3\n\xcd\xfc\x12\nd\xbb\xa6&s\xf6M\x89\x84tS\xac\xdb3\xf6O\xac\x16~:\x8a>_\xc5\x96\xda=\r\xb7[\xd6&\xe5N\''\x93\xe8\xe0\x12\xc5D*\xcc\xa8\xf3\xac&3h\xb6\xfb\x94\xa4\xf8\xfd\x0f9\xbdFw\x98\xc2\xfe\t\xac=\xdc\xab\xe1\x9f
@@ -341,11 +340,11 @@ interactions:
       Content-Type:
       - application/octet-stream
       User-Agent:
-      - azsdk-python-storage-blob/12.9.0 Python/3.7.12 (Darwin-21.1.0-x86_64-i386-64bit)
+      - azsdk-python-storage-blob/12.9.0 Python/3.9.10 (Linux-5.10.60.1-microsoft-standard-WSL2-x86_64-with-glibc2.31)
       x-ms-blob-type:
       - BlockBlob
       x-ms-date:
-      - Tue, 08 Feb 2022 05:57:42 GMT
+      - Thu, 10 Feb 2022 06:56:34 GMT
       x-ms-version:
       - '2020-10-02'
     method: PUT
@@ -362,6 +361,51 @@ interactions:
       code: 201
       message: Created
 - request:
+    body: 'b''{"id": "00000000-0000-0000-0000-000000000000", "name": "QIR test", "containerUri":
+      "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+      "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData",
+      "inputDataFormat": "qir.v1/full-profile", "inputParams": {"entryPoint": "Sample__HelloQ"},
+      "providerId": "Microsoft.Simulator", "target": "microsoft.simulator.fullstate",
+      "outputDataFormat": "microsoft.qio-results.v2"}'''
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate, br
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '610'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - testapp azsdk-python-quantum/0.0.0.1 Python/3.9.10 (Linux-5.10.60.1-microsoft-standard-WSL2-x86_64-with-glibc2.31)
+    method: PUT
+    uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000000
+  response:
+    body:
+      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData",
+        "inputDataFormat": "qir.v1/full-profile", "inputParams": {"entryPoint": "Sample__HelloQ"},
+        "providerId": "microsoft.simulator", "target": "microsoft.simulator.fullstate",
+        "metadata": null, "name": "QIR test", "id": "00000000-0000-0000-0000-000000000000",
+        "status": "Waiting", "outputDataFormat": "microsoft.qio-results.v2", "outputDataUri":
+        "https://e2etests.blob.core.windows.net:443/job-00000000-0000-0000-0000-000000000000/outputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "creationTime": "2022-02-10T06:56:38.440051+00:00", "beginExecutionTime":
+        null, "endExecutionTime": null, "cancellationTime": null, "costEstimate":
+        null, "errorData": null, "isCancelling": false, "tags": [], "access_token":
+        "fake_token"}'
+    headers:
+      content-length:
+      - '1049'
+      content-type:
+      - application/json; charset=utf-8
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
+- request:
     body: null
     headers:
       Accept:
@@ -371,25 +415,25 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - testapp azsdk-python-quantum/0.0.0.1 Python/3.7.12 (Darwin-21.1.0-x86_64-i386-64bit)
+      - testapp azsdk-python-quantum/0.0.0.1 Python/3.9.10 (Linux-5.10.60.1-microsoft-standard-WSL2-x86_64-with-glibc2.31)
     method: GET
     uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000000
   response:
     body:
       string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
-        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DQIR%2Btest-062f7d1e-88a4-11ec-ba0e-3c7d0a1d68ec.input.json",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DQIR%2Btest-94175976-8a3e-11ec-b6ac-00155d6d8f85.input.json",
         "inputDataFormat": "qir.v1/full-profile", "inputParams": {"entryPoint": "Sample__HelloQ"},
         "providerId": "microsoft.simulator", "target": "microsoft.simulator.fullstate",
         "metadata": null, "name": "QIR test", "id": "00000000-0000-0000-0000-000000000000",
         "status": "Succeeded", "outputDataFormat": "microsoft.qio-results.v2", "outputDataUri":
-        "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DQIR%2Btest-062f7d1e-88a4-11ec-ba0e-3c7d0a1d68ec.output.json",
-        "creationTime": "2022-02-08T05:57:42.3942295+00:00", "beginExecutionTime":
-        "2022-02-08T05:57:43.6916038Z", "endExecutionTime": "2022-02-08T05:57:53.6776946Z",
+        "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DQIR%2Btest-94175976-8a3e-11ec-b6ac-00155d6d8f85.output.json",
+        "creationTime": "2022-02-10T06:56:38.440051+00:00", "beginExecutionTime":
+        "2022-02-10T06:56:39.1650698Z", "endExecutionTime": "2022-02-10T06:56:47.5718548Z",
         "cancellationTime": null, "costEstimate": null, "errorData": null, "isCancelling":
         false, "tags": [], "access_token": "fake_token"}'
     headers:
       content-length:
-      - '1373'
+      - '1380'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -407,15 +451,15 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-blob/12.9.0 Python/3.7.12 (Darwin-21.1.0-x86_64-i386-64bit)
+      - azsdk-python-storage-blob/12.9.0 Python/3.9.10 (Linux-5.10.60.1-microsoft-standard-WSL2-x86_64-with-glibc2.31)
       x-ms-date:
-      - Tue, 08 Feb 2022 05:57:57 GMT
+      - Thu, 10 Feb 2022 06:56:49 GMT
       x-ms-range:
       - bytes=0-33554431
       x-ms-version:
       - '2020-10-02'
     method: GET
-    uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DQIR%2Btest-062f7d1e-88a4-11ec-ba0e-3c7d0a1d68ec.output.json
+    uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DQIR%2Btest-94175976-8a3e-11ec-b6ac-00155d6d8f85.output.json
   response:
     body:
       string: 'Hello quantum world!
@@ -547,7 +591,7 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-creation-time:
-      - Tue, 08 Feb 2022 05:57:43 GMT
+      - Thu, 10 Feb 2022 06:56:39 GMT
       x-ms-lease-state:
       - available
       x-ms-lease-status:
