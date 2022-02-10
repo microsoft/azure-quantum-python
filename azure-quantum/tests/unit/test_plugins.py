@@ -7,6 +7,8 @@
 # Licensed under the MIT License.
 ##
 from multiprocessing.sharedctypes import Value
+from azure.quantum.projectq.backends import honeywell
+from azure.quantum.projectq.backends.ionq import AzureIonQBackend, AzureIonQQPUBackend
 import mock
 import unittest
 import warnings
@@ -27,7 +29,8 @@ from azure.quantum.job.job import Job
 from azure.quantum.qiskit import AzureQuantumProvider
 from azure.quantum.cirq import AzureQuantumService
 from azure.quantum.cirq.targets.target import Target
-from azure.quantum.projectq.backends import AzureIonQSimulatorBackend, AzureHoneywellSimulatorBackend
+from azure.quantum.projectq.backends import AzureIonQSimulatorBackend
+from azure.quantum.projectq.backends.honeywell import AzureHoneywellAPIValidatorBackend, AzureHoneywellBackend, AzureHoneywellQPUBackend, AzureHoneywellSimulatorBackend
 
 from cirq_ionq import Job as CirqIonqJob
 
@@ -526,7 +529,7 @@ class TestProjectQ(QuantumTestBase):
 
     def _projectq_honeywell_engine(self):
         workspace = self.create_workspace()
-        honeywell_backend = AzureHoneywellSimulatorBackend(
+        honeywell_backend = AzureHoneywellAPIValidatorBackend(
             workspace=workspace,
             num_runs=500
         )
@@ -554,6 +557,37 @@ class TestProjectQ(QuantumTestBase):
             # See: https://github.com/microsoft/qdk-python/issues/118
             job.refresh()
             self.assertEqual("Succeeded", job.details.status)
+
+    @pytest.mark.ionq
+    def test_plugins_projectq_ionq_backend(self):
+        ionq_backend = AzureIonQSimulatorBackend(
+            workspace=mock.Mock(),
+            num_runs=500
+        )
+        assert ionq_backend.device == "ionq_simulator"
+
+        ionq_backend = AzureIonQQPUBackend(
+            workspace=mock.Mock(),
+            num_runs=500
+        )
+        assert ionq_backend.device == "ionq_qpu"
+
+        # IonQ backend defaults to simulator if use_hardware is set to False
+        ionq_backend = AzureIonQBackend(
+            workspace=mock.Mock(),
+            num_runs=500,
+            device="ionq_qpu",
+            use_hardware=False
+        )
+        assert ionq_backend.device == "ionq_simulator"
+
+        ionq_backend = AzureIonQBackend(
+            workspace=mock.Mock(),
+            num_runs=500,
+            device="ionq_qpu",
+            use_hardware=True
+        )
+        assert ionq_backend.device == "ionq_qpu"
 
     @pytest.mark.ionq
     @pytest.mark.live_test
@@ -606,6 +640,40 @@ class TestProjectQ(QuantumTestBase):
             assert probabilities == { "000": 0.5, "111": 0.5 }
 
             engine.__del__()
+    
+    @pytest.mark.honeywell
+    def test_plugins_projectq_honeywell_backend(self):
+        honeywell_backend = AzureHoneywellSimulatorBackend(
+            workspace=mock.Mock(),
+            num_runs=500
+        )
+        assert honeywell_backend.device == "honeywell.hqs-lt-s1-sim"
+
+        honeywell_backend = AzureHoneywellAPIValidatorBackend(
+            workspace=mock.Mock(),
+            num_runs=500
+        )
+        assert honeywell_backend.device == "honeywell.hqs-lt-s1-apival"
+
+        honeywell_backend = AzureHoneywellQPUBackend(
+            workspace=mock.Mock(),
+            num_runs=500
+        )
+        assert honeywell_backend.device == "honeywell.hqs-lt-s1"
+
+        honeywell_backend = AzureHoneywellBackend(
+            workspace=mock.Mock(),
+            num_runs=500,
+            use_hardware=True
+        )
+        assert honeywell_backend.device == "honeywell.hqs-lt-s1"
+
+        honeywell_backend = AzureHoneywellBackend(
+            workspace=mock.Mock(),
+            num_runs=500,
+            use_hardware=False
+        )
+        assert honeywell_backend.device == "honeywell.hqs-lt-s1-sim"
 
     @pytest.mark.honeywell
     @pytest.mark.live_test
@@ -616,6 +684,7 @@ class TestProjectQ(QuantumTestBase):
             return_value=self.get_test_job_id(),
         ):
             engine, honeywell_backend = self._projectq_honeywell_engine()
+            assert honeywell_backend.device == "honeywell.hqs-lt-s1-apival"
             projectq_job = self._projectq_submit_3_qubit_ghz_circuit(engine, honeywell_backend, name="honeywell-circuit")
 
             # Make sure the job is completed before fetching the results
@@ -623,7 +692,7 @@ class TestProjectQ(QuantumTestBase):
             
             if projectq_job.has_completed():
                 projectq_result = projectq_job.get_results()
-                assert projectq_result['c'] == ["111"]
+                assert projectq_result['c'] == ["000"]
 
             engine.__del__()
 
@@ -636,6 +705,7 @@ class TestProjectQ(QuantumTestBase):
             return_value=self.get_test_job_id(),
         ):
             engine, honeywell_backend = self._projectq_honeywell_engine()
+            assert honeywell_backend.device == "honeywell.hqs-lt-s1-apival"
             circuit = engine.allocate_qureg(3)
             q0, q1, q2 = circuit
 
