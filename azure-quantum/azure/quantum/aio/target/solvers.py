@@ -27,7 +27,7 @@ class Solver(Target, SyncSolver):
     workspace: Workspace
 
     async def submit(
-        self, problem: Union[str, "Problem"], compress: bool = True
+        self, problem: Union[str, "Problem"]
     ) -> Job:
         """Submits a job to execution to the associated
         Azure Quantum Workspace.
@@ -36,15 +36,12 @@ class Solver(Target, SyncSolver):
             The Problem to solve. It can be an instance of a Problem,
             or the URL of an Azure Storage Blob where the serialized version
             of a Problem has been uploaded.
-        :param compress:
-            Whether or not to compress the problem when uploading it
-            the Blob Storage.
         """
         from azure.quantum.aio.optimization.problem import Problem
         if isinstance(problem, Problem):
             # Create job from input data
             name = problem.name
-            blob = problem.to_blob(compress=compress)
+            blob = problem.to_blob()
             job = await Job.from_input_data(
                 workspace=self.workspace,
                 name=name,

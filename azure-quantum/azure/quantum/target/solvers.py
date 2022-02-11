@@ -104,7 +104,7 @@ class Solver(Target):
 
     @staticmethod
     def _encode_input_data(data: "Problem") -> bytes:
-        return data.to_blob(compress=True)
+        return data.to_blob()
 
     def submit(
         self, problem: Union[str, "Problem"]) -> Job:
