@@ -97,6 +97,18 @@ class TestCirq(QuantumTestBase):
             target="ionq.qpu"
         )
         assert np.round(cost.estimated_total) == 63.0
+    
+    @pytest.mark.live_test
+    def test_plugins_cirq_nonexistent_target(self):
+        workspace = self.create_workspace()
+        service = AzureQuantumService(workspace=workspace)
+        with pytest.raises(RuntimeError):
+            service.run(
+                program=self._3_qubit_ghz_cirq(),
+                repetitions=500,
+                target="provider.doesnotexist",
+                timeout_seconds=60
+            )
 
     @pytest.mark.ionq
     @pytest.mark.live_test
