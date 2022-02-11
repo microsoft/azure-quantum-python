@@ -2,6 +2,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 ##
+import warnings
+
 from typing import TYPE_CHECKING, Union, List
 from azure.quantum.version import __version__
 from azure.quantum.qiskit.job import AzureQuantumJob
@@ -60,23 +62,36 @@ class HoneywellBackend(Backend):
 
     @classmethod
     def _default_options(cls):
-        return Options(count=500)
+        return Options(shots=500)
 
-    def estimate_cost(self, circuit: QuantumCircuit, count: int):
+    def estimate_cost(self, circuit: QuantumCircuit, shots: int = None, count: int = None):
         """Estimate cost for running this circuit
 
         :param circuit: Qiskit quantum circuit
         :type circuit: QuantumCircuit
-        :param count: Shot count
+        :param shots: Shot count
+        :type shots: int
+        :param count: Shot count (deprecated)
         :type count: int
         """
+        if shots is None or count is not None:
+            shots = shots or count
+            warnings.warn(
+                "Input parameter 'count' will be deprecated. Please use 'shots' instead.")
+        if shots is None and count is None:
+            raise ValueError("Missing input argument 'shots'.")
+
         input_data = circuit.qasm()
         workspace = self.provider().get_workspace()
         target = workspace.get_targets(self.name())
-        return target.estimate_cost(input_data, num_shots=count)
+        return target.estimate_cost(input_data, num_shots=shots)
 
     def run(self, circuit: Union[QuantumCircuit, List[QuantumCircuit]], **kwargs):
         """Submits the given circuit for execution on a Honeywell target."""
+        if "count" in kwargs and "shots" not in kwargs:
+            kwargs["shots"] = kwargs.pop("count")
+            warnings.warn(
+                "Input parameter 'count' will be deprecated. Please use 'shots' instead.")
         # Some Qiskit features require passing lists of circuits, so unpack those here.
         # We currently only support single-experiment jobs.
         if isinstance(circuit, (list, tuple)):
@@ -90,10 +105,10 @@ class HoneywellBackend(Backend):
             from qiskit.assembler import disassemble
             circuits, run, _ = disassemble(circuit)
             circuit = circuits[0]
-            if kwargs.get("count") is None:
+            if kwargs.get("shots") is None:
                 # Note that the default number of shots for QObj is 1024
                 # unless the user specifies the backend.
-                kwargs["count"] = run["shots"]
+                kwargs["shots"] = run["shots"]
 
         input_data = circuit.qasm()
 
@@ -104,6 +119,9 @@ class HoneywellBackend(Backend):
         for opt in kwargs.copy():
             if opt in input_params:
                 input_params[opt] = kwargs.pop(opt)
+
+        # Honeywell target expects 'count' as input param
+        input_params["count"] = input_params.pop("shots")
 
         logger.info(f"Submitting new job for backend {self.name()}")
         job = AzureQuantumJob(
