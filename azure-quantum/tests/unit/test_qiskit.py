@@ -43,6 +43,42 @@ class TestQiskit(QuantumTestBase):
         circuit.measure([0,1,2], [0, 1, 2])
 
         return circuit
+    
+    def _5_qubit_superposition(self):
+        circuit = QuantumCircuit(5, 1)
+        for q in range(5):
+            circuit.h(q)
+        circuit.measure([0], [0])
+        return circuit
+
+    def test_qiskit_submit_ionq_5_qubit_superposition(self):
+        with unittest.mock.patch.object(
+            Job,
+            self.mock_create_job_id_name,
+            return_value=self.get_test_job_id(),
+        ):
+            workspace = self.create_workspace()
+            provider = AzureQuantumProvider(workspace=workspace)
+            assert "azure-quantum-qiskit" in provider._workspace.user_agent
+            backend = provider.get_backend("ionq.simulator")
+            num_shots = 1000
+
+            qiskit_job = backend.run(
+                circuit=self._5_qubit_superposition(),
+                shots=num_shots
+            )
+
+            # Make sure the job is completed before fetching the results
+            self._qiskit_wait_to_complete(qiskit_job, provider)
+
+            if JobStatus.DONE == qiskit_job.status():
+                result = qiskit_job.result()
+                assert result.data()["counts"] == {
+                    '0': num_shots//2, '1': num_shots//2
+                }
+                assert result.data()["probabilities"] == {'0': 0.5, '1': 0.5}
+                counts = result.get_counts()
+                assert counts == result.data()["counts"]
 
     @pytest.mark.ionq
     def test_plugins_estimate_cost_qiskit_ionq(self):
