@@ -76,13 +76,13 @@ interactions:
         "honeywell.hqs-lt-s1", "currentAvailability": "Unavailable", "averageQueueTime":
         0, "statusPage": "https://www.honeywell.com/en-us/company/quantum"}, {"id":
         "honeywell.hqs-lt-s1-apival", "currentAvailability": "Available", "averageQueueTime":
-        1, "statusPage": "https://www.honeywell.com/en-us/company/quantum"}, {"id":
+        0, "statusPage": "https://www.honeywell.com/en-us/company/quantum"}, {"id":
         "honeywell.hqs-lt-s2", "currentAvailability": "Degraded", "averageQueueTime":
-        518054, "statusPage": "https://www.honeywell.com/en-us/company/quantum"},
+        248646, "statusPage": "https://www.honeywell.com/en-us/company/quantum"},
         {"id": "honeywell.hqs-lt-s2-apival", "currentAvailability": "Available", "averageQueueTime":
         0, "statusPage": "https://www.honeywell.com/en-us/company/quantum"}, {"id":
         "honeywell.hqs-lt-s1-sim", "currentAvailability": "Available", "averageQueueTime":
-        8, "statusPage": "https://www.honeywell.com/en-us/company/quantum"}, {"id":
+        6, "statusPage": "https://www.honeywell.com/en-us/company/quantum"}, {"id":
         "honeywell.hqs-lt", "currentAvailability": "Degraded", "averageQueueTime":
         0, "statusPage": "https://www.honeywell.com/en-us/company/quantum"}]}, {"id":
         "Microsoft.Simulator", "currentAvailability": "Available", "targets": [{"id":
@@ -94,7 +94,7 @@ interactions:
         {"id": "1qbit.pticm", "currentAvailability": "Available", "averageQueueTime":
         0, "statusPage": "http://status.1qbit.com/"}]}, {"id": "ionq", "currentAvailability":
         "Available", "targets": [{"id": "ionq.qpu", "currentAvailability": "Available",
-        "averageQueueTime": 392, "statusPage": "https://status.ionq.co"}, {"id": "ionq.simulator",
+        "averageQueueTime": 251, "statusPage": "https://status.ionq.co"}, {"id": "ionq.simulator",
         "currentAvailability": "Available", "averageQueueTime": 2, "statusPage": "https://status.ionq.co"}]}],
         "nextLink": null, "access_token": "fake_token"}'
     headers:
@@ -102,6 +102,8 @@ interactions:
       - '3416'
       content-type:
       - application/json; charset=utf-8
+      transfer-encoding:
+      - chunked
     status:
       code: 200
       message: OK
@@ -128,7 +130,7 @@ interactions:
         "access_token": "fake_token"}'
     headers:
       content-length:
-      - '209'
+      - '207'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -148,7 +150,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.9.0 Python/3.9.5 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Wed, 09 Feb 2022 18:36:04 GMT
+      - Fri, 11 Feb 2022 17:33:11 GMT
       x-ms-version:
       - '2020-10-02'
     method: GET
@@ -156,7 +158,7 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerNotFound</Code><Message>The
-        specified container does not exist.\nRequestId:a558f437-001e-0030-23e3-1d2122000000\nTime:2022-02-09T18:36:04.2850623Z</Message></Error>"
+        specified container does not exist.\nRequestId:82bf5581-f01e-00a2-1e6d-1fa5f4000000\nTime:2022-02-11T17:33:12.1574715Z</Message></Error>"
     headers:
       content-length:
       - '225'
@@ -181,7 +183,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.9.0 Python/3.9.5 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Wed, 09 Feb 2022 18:36:04 GMT
+      - Fri, 11 Feb 2022 17:33:12 GMT
       x-ms-version:
       - '2020-10-02'
     method: PUT
@@ -209,7 +211,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.9.0 Python/3.9.5 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Wed, 09 Feb 2022 18:36:04 GMT
+      - Fri, 11 Feb 2022 17:33:12 GMT
       x-ms-version:
       - '2020-10-02'
     method: GET
@@ -250,7 +252,7 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-date:
-      - Wed, 09 Feb 2022 18:36:04 GMT
+      - Fri, 11 Feb 2022 17:33:12 GMT
       x-ms-version:
       - '2020-10-02'
     method: PUT
@@ -282,7 +284,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '693'
+      - '691'
       Content-Type:
       - application/json
       User-Agent:
@@ -292,22 +294,24 @@ interactions:
   response:
     body:
       string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
-        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
         "inputDataFormat": "honeywell.openqasm.v1", "inputParams": {"count": 500},
         "providerId": "honeywell", "target": "honeywell.hqs-lt-s1-apival", "metadata":
         {"qubits": "3", "repetitions": "500", "measurement_dict": "{''q0'': [0], ''q1'':
         [1], ''q2'': [2]}"}, "name": "cirq-job", "id": "00000000-0000-0000-0000-000000000000",
         "status": "Waiting", "outputDataFormat": "honeywell.quantum-results.v1", "outputDataUri":
         "https://e2etests.blob.core.windows.net:443/job-00000000-0000-0000-0000-000000000000/outputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
-        "creationTime": "2022-02-09T18:36:04.5433957+00:00", "beginExecutionTime":
+        "creationTime": "2022-02-11T17:33:12.435275+00:00", "beginExecutionTime":
         null, "endExecutionTime": null, "cancellationTime": null, "costEstimate":
         null, "errorData": null, "isCancelling": false, "tags": [], "access_token":
         "fake_token"}'
     headers:
       content-length:
-      - '1110'
+      - '1214'
       content-type:
       - application/json; charset=utf-8
+      transfer-encoding:
+      - chunked
     status:
       code: 200
       message: OK
@@ -334,13 +338,13 @@ interactions:
         [1], ''q2'': [2]}"}, "name": "cirq-job", "id": "00000000-0000-0000-0000-000000000000",
         "status": "Succeeded", "outputDataFormat": "honeywell.quantum-results.v1",
         "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3Dcirq-job-00000000-0000-0000-0000-000000000000.output.json",
-        "creationTime": "2022-02-09T18:36:04.5433957+00:00", "beginExecutionTime":
-        "2022-02-09T18:36:07.324915+00:00", "endExecutionTime": "2022-02-09T18:36:07.326388+00:00",
+        "creationTime": "2022-02-11T17:33:12.435275+00:00", "beginExecutionTime":
+        "2022-02-11T17:33:14.013923+00:00", "endExecutionTime": "2022-02-11T17:33:14.015221+00:00",
         "cancellationTime": null, "costEstimate": null, "errorData": null, "isCancelling":
         false, "tags": [], "access_token": "fake_token"}'
     headers:
       content-length:
-      - '1443'
+      - '1440'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -360,7 +364,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.9.0 Python/3.9.5 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Wed, 09 Feb 2022 18:36:09 GMT
+      - Fri, 11 Feb 2022 17:33:15 GMT
       x-ms-range:
       - bytes=0-33554431
       x-ms-version:
@@ -484,7 +488,7 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-creation-time:
-      - Wed, 09 Feb 2022 18:36:04 GMT
+      - Fri, 11 Feb 2022 17:33:12 GMT
       x-ms-lease-state:
       - available
       x-ms-lease-status:
@@ -534,13 +538,13 @@ interactions:
         "honeywell.hqs-lt-s1", "currentAvailability": "Unavailable", "averageQueueTime":
         0, "statusPage": "https://www.honeywell.com/en-us/company/quantum"}, {"id":
         "honeywell.hqs-lt-s1-apival", "currentAvailability": "Available", "averageQueueTime":
-        1, "statusPage": "https://www.honeywell.com/en-us/company/quantum"}, {"id":
+        0, "statusPage": "https://www.honeywell.com/en-us/company/quantum"}, {"id":
         "honeywell.hqs-lt-s2", "currentAvailability": "Degraded", "averageQueueTime":
-        518054, "statusPage": "https://www.honeywell.com/en-us/company/quantum"},
+        248646, "statusPage": "https://www.honeywell.com/en-us/company/quantum"},
         {"id": "honeywell.hqs-lt-s2-apival", "currentAvailability": "Available", "averageQueueTime":
         0, "statusPage": "https://www.honeywell.com/en-us/company/quantum"}, {"id":
         "honeywell.hqs-lt-s1-sim", "currentAvailability": "Available", "averageQueueTime":
-        8, "statusPage": "https://www.honeywell.com/en-us/company/quantum"}, {"id":
+        6, "statusPage": "https://www.honeywell.com/en-us/company/quantum"}, {"id":
         "honeywell.hqs-lt", "currentAvailability": "Degraded", "averageQueueTime":
         0, "statusPage": "https://www.honeywell.com/en-us/company/quantum"}]}, {"id":
         "Microsoft.Simulator", "currentAvailability": "Available", "targets": [{"id":
@@ -552,7 +556,7 @@ interactions:
         {"id": "1qbit.pticm", "currentAvailability": "Available", "averageQueueTime":
         0, "statusPage": "http://status.1qbit.com/"}]}, {"id": "ionq", "currentAvailability":
         "Available", "targets": [{"id": "ionq.qpu", "currentAvailability": "Available",
-        "averageQueueTime": 392, "statusPage": "https://status.ionq.co"}, {"id": "ionq.simulator",
+        "averageQueueTime": 251, "statusPage": "https://status.ionq.co"}, {"id": "ionq.simulator",
         "currentAvailability": "Available", "averageQueueTime": 2, "statusPage": "https://status.ionq.co"}]}],
         "nextLink": null, "access_token": "fake_token"}'
     headers:
@@ -588,13 +592,13 @@ interactions:
         [1], ''q2'': [2]}"}, "name": "cirq-job", "id": "00000000-0000-0000-0000-000000000000",
         "status": "Succeeded", "outputDataFormat": "honeywell.quantum-results.v1",
         "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3Dcirq-job-00000000-0000-0000-0000-000000000000.output.json",
-        "creationTime": "2022-02-09T18:36:04.5433957+00:00", "beginExecutionTime":
-        "2022-02-09T18:36:07.324915+00:00", "endExecutionTime": "2022-02-09T18:36:07.326388+00:00",
+        "creationTime": "2022-02-11T17:33:12.435275+00:00", "beginExecutionTime":
+        "2022-02-11T17:33:14.013923+00:00", "endExecutionTime": "2022-02-11T17:33:14.015221+00:00",
         "cancellationTime": null, "costEstimate": null, "errorData": null, "isCancelling":
         false, "tags": [], "access_token": "fake_token"}'
     headers:
       content-length:
-      - '1443'
+      - '1440'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -625,13 +629,13 @@ interactions:
         [1], ''q2'': [2]}"}, "name": "cirq-job", "id": "00000000-0000-0000-0000-000000000000",
         "status": "Succeeded", "outputDataFormat": "honeywell.quantum-results.v1",
         "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3Dcirq-job-00000000-0000-0000-0000-000000000000.output.json",
-        "creationTime": "2022-02-09T18:36:04.5433957+00:00", "beginExecutionTime":
-        "2022-02-09T18:36:07.324915+00:00", "endExecutionTime": "2022-02-09T18:36:07.326388+00:00",
+        "creationTime": "2022-02-11T17:33:12.435275+00:00", "beginExecutionTime":
+        "2022-02-11T17:33:14.013923+00:00", "endExecutionTime": "2022-02-11T17:33:14.015221+00:00",
         "cancellationTime": null, "costEstimate": null, "errorData": null, "isCancelling":
         false, "tags": [], "access_token": "fake_token"}'
     headers:
       content-length:
-      - '1443'
+      - '1440'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -651,7 +655,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.9.0 Python/3.9.5 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Wed, 09 Feb 2022 18:36:09 GMT
+      - Fri, 11 Feb 2022 17:33:15 GMT
       x-ms-range:
       - bytes=0-33554431
       x-ms-version:
@@ -775,7 +779,7 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-creation-time:
-      - Wed, 09 Feb 2022 18:36:04 GMT
+      - Fri, 11 Feb 2022 17:33:12 GMT
       x-ms-lease-state:
       - available
       x-ms-lease-status:
@@ -799,7 +803,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.9.0 Python/3.9.5 (Windows-10-10.0.19044-SP0)
       x-ms-date:
-      - Wed, 09 Feb 2022 18:36:09 GMT
+      - Fri, 11 Feb 2022 17:33:16 GMT
       x-ms-range:
       - bytes=0-33554431
       x-ms-version:
@@ -923,7 +927,7 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-creation-time:
-      - Wed, 09 Feb 2022 18:36:04 GMT
+      - Fri, 11 Feb 2022 17:33:12 GMT
       x-ms-lease-state:
       - available
       x-ms-lease-status:

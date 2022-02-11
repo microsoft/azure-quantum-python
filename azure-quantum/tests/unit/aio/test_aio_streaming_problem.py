@@ -26,7 +26,6 @@ class TestStreamingProblem(QuantumTestBase):
         count: int,
         terms_thresh: int,
         size_thresh: int,
-        compress: bool,
         problem_type: ProblemType = ProblemType.ising,
         initial_terms: List[Term] = [],
         **kwargs
@@ -49,7 +48,6 @@ class TestStreamingProblem(QuantumTestBase):
         )
         sProblem.upload_terms_threshold = terms_thresh
         sProblem.upload_size_threshold = size_thresh
-        sProblem.compress = compress
 
         for i in range(count):
             await sProblem.add_term(c=i, indices=[i, i + 1])
