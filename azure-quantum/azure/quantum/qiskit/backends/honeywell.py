@@ -77,7 +77,7 @@ class HoneywellBackend(Backend):
         if shots is None or count is not None:
             shots = shots or count
             warnings.warn(
-                "Input parameter 'count' will be deprecated. Please use 'shots' instead.")
+                "Input parameter 'count' has been deprecated. Please use 'shots' instead.")
         if shots is None and count is None:
             raise ValueError("Missing input argument 'shots'.")
 
@@ -91,7 +91,7 @@ class HoneywellBackend(Backend):
         if "count" in kwargs and "shots" not in kwargs:
             kwargs["shots"] = kwargs.pop("count")
             warnings.warn(
-                "Input parameter 'count' will be deprecated. Please use 'shots' instead.")
+                "Input parameter 'count' has been deprecated. Please use 'shots' instead.")
         # Some Qiskit features require passing lists of circuits, so unpack those here.
         # We currently only support single-experiment jobs.
         if isinstance(circuit, (list, tuple)):
