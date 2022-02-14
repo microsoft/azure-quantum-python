@@ -193,6 +193,10 @@ class TestQiskit(QuantumTestBase):
         cost = backend.estimate_cost(circuit, count=100e3)
         assert cost.estimated_total == 0.0
 
+        backend = provider.get_backend("honeywell.hqs-lt-s1-sim")
+        cost = backend.estimate_cost(circuit, count=100e3)
+        assert cost.estimated_total == 0.0
+
         backend = provider.get_backend("honeywell.hqs-lt-s1")
         cost = backend.estimate_cost(circuit, count=100e3)
         assert cost.estimated_total == 745.0

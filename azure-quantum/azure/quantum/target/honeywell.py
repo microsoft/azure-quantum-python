@@ -141,7 +141,7 @@ class Honeywell(Target):
                         else:
                             N_2q += 1
 
-        if "apival" in self.name:
+        if "apival" in self.name or "sim" in self.name:
             HQC = 0.0
         else:
             HQC = 5 + num_shots * (N_1q + 10 * N_2q + 5 * N_m) / 5000

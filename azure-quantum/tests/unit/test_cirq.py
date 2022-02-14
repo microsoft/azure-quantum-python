@@ -169,6 +169,13 @@ class TestCirq(QuantumTestBase):
         cost = service.estimate_cost(
             program=self._3_qubit_ghz_cirq(),
             repetitions=100e3,
+            target="honeywell.hqs-lt-s1-sim"
+        )
+        assert np.round(cost.estimated_total) == 0.0
+
+        cost = service.estimate_cost(
+            program=self._3_qubit_ghz_cirq(),
+            repetitions=100e3,
             target="honeywell.hqs-lt-s1"
         )
         assert np.round(cost.estimated_total) == 725.0

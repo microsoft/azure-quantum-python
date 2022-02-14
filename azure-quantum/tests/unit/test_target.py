@@ -182,6 +182,10 @@ class TestHoneywell(QuantumTestBase):
             cost = target.estimate_cost(circuit, num_shots=100e3)
             assert cost.estimated_total == 0.0
 
+            target = Honeywell(workspace=workspace, name="honeywell.hqs-lt-s1-sim")
+            cost = target.estimate_cost(circuit, num_shots=100e3)
+            assert cost.estimated_total == 0.0
+
             target = Honeywell(workspace=workspace, name="honeywell.hqs-lt-s1")
             cost = target.estimate_cost(circuit, num_shots=100e3)
             assert cost.estimated_total == 845.0
