@@ -74,6 +74,8 @@ class TestQiskit(QuantumTestBase):
             if JobStatus.DONE == qiskit_job.status():
                 result = qiskit_job.result()
                 assert sum(result.data()["counts"].values()) == num_shots
+                assert np.isclose(result.data()["counts"]["0"], num_shots//2, 20)
+                assert np.isclose(result.data()["counts"]["1"], num_shots//2, 20)
                 assert result.data()["probabilities"] == {'0': 0.5, '1': 0.5}
                 counts = result.get_counts()
                 assert counts == result.data()["counts"]
@@ -176,6 +178,8 @@ class TestQiskit(QuantumTestBase):
             if JobStatus.DONE == qiskit_job.status():
                 result = qiskit_job.result()
                 assert sum(result.data()["counts"].values()) == num_shots_actual
+                assert np.isclose(result.data()["counts"]["000"], num_shots_actual//2, 20)
+                assert np.isclose(result.data()["counts"]["111"], num_shots_actual//2, 20)
                 assert result.data()["probabilities"] == {'000': 0.5, '111': 0.5}
                 counts = result.get_counts()
                 assert counts == result.data()["counts"]
@@ -209,6 +213,8 @@ class TestQiskit(QuantumTestBase):
                     '111': 0.5
                 }
                 assert sum(result.data()["counts"].values()) == 500
+                assert np.isclose(result.data()["counts"]["000"], 250, 20)
+                assert np.isclose(result.data()["counts"]["111"], 250, 20)
     
     @pytest.mark.honeywell
     def test_plugins_estimate_cost_qiskit_honeywell(self):
