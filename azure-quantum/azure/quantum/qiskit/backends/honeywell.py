@@ -91,7 +91,7 @@ class HoneywellBackend(Backend):
 
     def run(self, circuit: Union[QuantumCircuit, List[QuantumCircuit]], **kwargs):
         """Submits the given circuit for execution on a Honeywell target."""
-        if "count" in kwargs and "shots" not in kwargs:
+        if "count" in kwargs:
             kwargs["shots"] = kwargs.pop("count")
             warnings.warn(
                 "Input parameter 'count' has been deprecated. Please use 'shots' instead.")
