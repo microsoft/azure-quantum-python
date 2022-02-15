@@ -74,11 +74,14 @@ class HoneywellBackend(Backend):
         :param count: Shot count (deprecated)
         :type count: int
         """
-        if shots is None or count is not None:
+        if count is not None:
+            shots = count
+            warnings.warn(
+                "Input parameter 'count' has been deprecated. Please use 'shots' instead.")
             shots = shots or count
             warnings.warn(
                 "Input parameter 'count' has been deprecated. Please use 'shots' instead.")
-        if shots is None and count is None:
+        if shots is None:
             raise ValueError("Missing input argument 'shots'.")
 
         input_data = circuit.qasm()
