@@ -109,7 +109,7 @@ class IonQ(Target):
         per circuit.
 
         For the most current pricing details, see
-        https://docs.microsoft.com/en-us/azure/quantum/provider-ionq#pricing
+        https://docs.microsoft.com/azure/quantum/provider-ionq#pricing
         Or find your workspace and view pricing options in the "Provider" tab
         of your workspace: http://aka.ms/aq/myworkspaces
 

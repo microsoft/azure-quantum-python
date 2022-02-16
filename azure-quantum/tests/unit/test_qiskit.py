@@ -14,6 +14,7 @@ import numpy as np
 
 from qiskit import QuantumCircuit
 from qiskit.providers import JobStatus
+from qiskit.providers.exceptions import QiskitBackendNotFoundError
 
 from azure.quantum.job.job import Job
 from azure.quantum.qiskit import AzureQuantumProvider
@@ -229,6 +230,13 @@ class TestQiskit(QuantumTestBase):
         backend = provider.get_backend("honeywell.hqs-lt-s1")
         cost = backend.estimate_cost(circuit, count=100e3)
         assert cost.estimated_total == 745.0
+
+    @pytest.mark.live_test
+    def test_plugins_submit_qiskit_noexistent_target(self):
+        workspace = self.create_workspace()
+        provider = AzureQuantumProvider(workspace=workspace)
+        with pytest.raises(QiskitBackendNotFoundError):
+            provider.get_backend("provider.doesnotexist")
 
     @pytest.mark.honeywell
     @pytest.mark.live_test
