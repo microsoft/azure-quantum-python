@@ -174,8 +174,8 @@ class TestQiskit(QuantumTestBase):
                 result = fetched_job.result()
                 assert result.data() == {
                     'counts': {
-                        '000': 250,
-                        '111': 250
+                        '000': 50,
+                        '111': 50
                     },
                     'probabilities': {
                         '000': 0.5,
