@@ -62,7 +62,7 @@ class HoneywellBackend(Backend):
 
     @classmethod
     def _default_options(cls):
-        return Options(shots=500)
+        return Options(count=500)
 
     def estimate_cost(self, circuit: QuantumCircuit, shots: int = None, count: int = None):
         """Estimate cost for running this circuit
@@ -78,9 +78,6 @@ class HoneywellBackend(Backend):
             shots = count
             warnings.warn(
                 "Input parameter 'count' has been deprecated. Please use 'shots' instead.")
-            shots = shots or count
-            warnings.warn(
-                "Input parameter 'count' has been deprecated. Please use 'shots' instead.")
         if shots is None:
             raise ValueError("Missing input argument 'shots'.")
 
@@ -91,10 +88,8 @@ class HoneywellBackend(Backend):
 
     def run(self, circuit: Union[QuantumCircuit, List[QuantumCircuit]], **kwargs):
         """Submits the given circuit for execution on a Honeywell target."""
-        if "count" in kwargs:
-            kwargs["shots"] = kwargs.pop("count")
-            warnings.warn(
-                "Input parameter 'count' has been deprecated. Please use 'shots' instead.")
+        if "shots" in kwargs:
+            kwargs["count"] = kwargs.pop("shots")
         # Some Qiskit features require passing lists of circuits, so unpack those here.
         # We currently only support single-experiment jobs.
         if isinstance(circuit, (list, tuple)):
@@ -108,10 +103,10 @@ class HoneywellBackend(Backend):
             from qiskit.assembler import disassemble
             circuits, run, _ = disassemble(circuit)
             circuit = circuits[0]
-            if kwargs.get("shots") is None:
+            if kwargs.get("count") is None:
                 # Note that the default number of shots for QObj is 1024
                 # unless the user specifies the backend.
-                kwargs["shots"] = run["shots"]
+                kwargs["count"] = run["shots"]
 
         input_data = circuit.qasm()
 
@@ -122,9 +117,6 @@ class HoneywellBackend(Backend):
         for opt in kwargs.copy():
             if opt in input_params:
                 input_params[opt] = kwargs.pop(opt)
-
-        # Honeywell target expects 'count' as input param
-        input_params["count"] = input_params.pop("shots")
 
         logger.info(f"Submitting new job for backend {self.name()}")
         job = AzureQuantumJob(
