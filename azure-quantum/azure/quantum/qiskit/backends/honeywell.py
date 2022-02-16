@@ -2,6 +2,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 ##
+import warnings
+
 from typing import TYPE_CHECKING, Union, List
 from azure.quantum.version import __version__
 from azure.quantum.qiskit.job import AzureQuantumJob
@@ -62,21 +64,32 @@ class HoneywellBackend(Backend):
     def _default_options(cls):
         return Options(count=500)
 
-    def estimate_cost(self, circuit: QuantumCircuit, count: int):
+    def estimate_cost(self, circuit: QuantumCircuit, shots: int = None, count: int = None):
         """Estimate cost for running this circuit
 
         :param circuit: Qiskit quantum circuit
         :type circuit: QuantumCircuit
-        :param count: Shot count
+        :param shots: Shot count
+        :type shots: int
+        :param count: Shot count (deprecated)
         :type count: int
         """
+        if count is not None:
+            shots = count
+            warnings.warn(
+                "Input parameter 'count' has been deprecated. Please use 'shots' instead.")
+        if shots is None:
+            raise ValueError("Missing input argument 'shots'.")
+
         input_data = circuit.qasm()
         workspace = self.provider().get_workspace()
         target = workspace.get_targets(self.name())
-        return target.estimate_cost(input_data, num_shots=count)
+        return target.estimate_cost(input_data, num_shots=shots)
 
     def run(self, circuit: Union[QuantumCircuit, List[QuantumCircuit]], **kwargs):
         """Submits the given circuit for execution on a Honeywell target."""
+        if "shots" in kwargs:
+            kwargs["count"] = kwargs.pop("shots")
         # Some Qiskit features require passing lists of circuits, so unpack those here.
         # We currently only support single-experiment jobs.
         if isinstance(circuit, (list, tuple)):
