@@ -141,9 +141,8 @@ class AzureQuantumService:
         if not _target:
             target_name = target or self._default_target
             raise RuntimeError(f"Could not find target '{target_name}'. \
-To add the provider to your quantum workspace on the Azure Portal: \
-(1) Go to your workspace on http://aka.ms/aq/myworkspaces. \
-(2) Click on Providers -> Add a provider.")
+To add the provider to your quantum workspace on the Azure Portal, \
+see https://docs.microsoft.com/azure/quantum/how-to-create-workspace#add-additional-providers")
         # Resolve parameters
         resolved_circuit = cirq.resolve_parameters(program, param_resolver)
         # Submit job to Azure
