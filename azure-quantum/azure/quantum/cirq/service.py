@@ -137,11 +137,17 @@ class AzureQuantumService:
         :rtype: azure.quantum.cirq.Job
         """
         # Get target
-        target = self.get_target(name=target)
+        _target = self.get_target(name=target)
+        if not _target:
+            target_name = target or self._default_target
+            raise RuntimeError(f"Could not find target '{target_name}'. \
+Please make sure the target name is valid and that the associated provider is added to your Workspace. \
+To add a provider to your quantum workspace on the Azure Portal, \
+see https://docs.microsoft.com/azure/quantum/how-to-create-workspace#add-additional-providers")
         # Resolve parameters
         resolved_circuit = cirq.resolve_parameters(program, param_resolver)
         # Submit job to Azure
-        return target.submit(
+        return _target.submit(
             program=resolved_circuit,
             repetitions=repetitions,
             name=name

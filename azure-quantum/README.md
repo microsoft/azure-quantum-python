@@ -35,7 +35,7 @@ To work in Azure Quantum, you need an Azure subscription. If you don't have an A
 
 To get started, visit the following Quickstart guides:
 
-- [Quickstart: Submit a circuit with Qiskit](https://docs.microsoft.com/en-us/azure/quantum/quickstart-microsoft-qiskit)
+- [Quickstart: Submit a circuit with Qiskit](https://docs.microsoft.com/azure/quantum/quickstart-microsoft-qiskit)
 - [Quickstart: Submit a circuit with Cirq](https://docs.microsoft.com/azure/quantum/quickstart-microsoft-qiskit)
 - [Quickstart: Submit a circuit with a provider-specific format](https://docs.microsoft.com/azure/quantum/quickstart-microsoft-provider-format).
 - [Quickstart: Solve a simple optimization problem](https://docs.microsoft.com/azure/quantum/quickstart-microsoft-qio?pivots=platform-microsoft#express-a-simple-problem).

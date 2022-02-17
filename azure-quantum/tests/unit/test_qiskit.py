@@ -14,6 +14,7 @@ import numpy as np
 
 from qiskit import QuantumCircuit
 from qiskit.providers import JobStatus
+from qiskit.providers.exceptions import QiskitBackendNotFoundError
 
 from azure.quantum.job.job import Job
 from azure.quantum.qiskit import AzureQuantumProvider
@@ -43,6 +44,42 @@ class TestQiskit(QuantumTestBase):
         circuit.measure([0,1,2], [0, 1, 2])
 
         return circuit
+    
+    def _5_qubit_superposition(self):
+        circuit = QuantumCircuit(5, 1)
+        for q in range(5):
+            circuit.h(q)
+        circuit.measure([0], [0])
+        return circuit
+
+    def test_qiskit_submit_ionq_5_qubit_superposition(self):
+        with unittest.mock.patch.object(
+            Job,
+            self.mock_create_job_id_name,
+            return_value=self.get_test_job_id(),
+        ):
+            workspace = self.create_workspace()
+            provider = AzureQuantumProvider(workspace=workspace)
+            assert "azure-quantum-qiskit" in provider._workspace.user_agent
+            backend = provider.get_backend("ionq.simulator")
+            num_shots = 1000
+
+            qiskit_job = backend.run(
+                circuit=self._5_qubit_superposition(),
+                shots=num_shots
+            )
+
+            # Make sure the job is completed before fetching the results
+            self._qiskit_wait_to_complete(qiskit_job, provider)
+
+            if JobStatus.DONE == qiskit_job.status():
+                result = qiskit_job.result()
+                assert sum(result.data()["counts"].values()) == num_shots
+                assert np.isclose(result.data()["counts"]["0"], num_shots//2, 20)
+                assert np.isclose(result.data()["counts"]["1"], num_shots//2, 20)
+                assert result.data()["probabilities"] == {'0': 0.5, '1': 0.5}
+                counts = result.get_counts()
+                assert counts == result.data()["counts"]
 
     @pytest.mark.ionq
     def test_plugins_estimate_cost_qiskit_ionq(self):
@@ -141,9 +178,9 @@ class TestQiskit(QuantumTestBase):
 
             if JobStatus.DONE == qiskit_job.status():
                 result = qiskit_job.result()
-                assert result.data()["counts"] == {
-                    '000': num_shots_actual//2, '111': num_shots_actual//2
-                }
+                assert sum(result.data()["counts"].values()) == num_shots_actual
+                assert np.isclose(result.data()["counts"]["000"], num_shots_actual//2, 20)
+                assert np.isclose(result.data()["counts"]["111"], num_shots_actual//2, 20)
                 assert result.data()["probabilities"] == {'000': 0.5, '111': 0.5}
                 counts = result.get_counts()
                 assert counts == result.data()["counts"]
@@ -162,7 +199,7 @@ class TestQiskit(QuantumTestBase):
             circuit = self._3_qubit_ghz()
             qiskit_job = backend.run(
                 circuit=circuit,
-                num_shots=100
+                shots=100
             )
 
             # Make sure the job is completed before fetching the results
@@ -172,16 +209,13 @@ class TestQiskit(QuantumTestBase):
                 fetched_job = backend.retrieve_job(qiskit_job.id())
                 assert fetched_job.id() == qiskit_job.id()
                 result = fetched_job.result()
-                assert result.data() == {
-                    'counts': {
-                        '000': 250,
-                        '111': 250
-                    },
-                    'probabilities': {
-                        '000': 0.5,
-                        '111': 0.5
-                    }
+                assert result.data()["probabilities"] == {
+                    '000': 0.5,
+                    '111': 0.5
                 }
+                assert sum(result.data()["counts"].values()) == 100
+                assert np.isclose(result.data()["counts"]["000"], 50, atol=10)
+                assert np.isclose(result.data()["counts"]["111"], 50, atol=10)
     
     @pytest.mark.honeywell
     def test_plugins_estimate_cost_qiskit_honeywell(self):
@@ -190,24 +224,31 @@ class TestQiskit(QuantumTestBase):
         provider = AzureQuantumProvider(workspace=workspace)
         assert "azure-quantum-qiskit" in provider._workspace.user_agent
         backend = provider.get_backend("honeywell.hqs-lt-s1-apival")
-        cost = backend.estimate_cost(circuit, count=100e3)
+        cost = backend.estimate_cost(circuit, shots=100e3)
         assert cost.estimated_total == 0.0
 
         backend = provider.get_backend("honeywell.hqs-lt-s1")
-        cost = backend.estimate_cost(circuit, count=100e3)
+        cost = backend.estimate_cost(circuit, shots=100e3)
         assert cost.estimated_total == 745.0
+
+    @pytest.mark.live_test
+    def test_plugins_submit_qiskit_noexistent_target(self):
+        workspace = self.create_workspace()
+        provider = AzureQuantumProvider(workspace=workspace)
+        with pytest.raises(QiskitBackendNotFoundError):
+            provider.get_backend("provider.doesnotexist")
 
     @pytest.mark.honeywell
     @pytest.mark.live_test
     def test_plugins_submit_qiskit_to_honeywell(self):
         circuit = self._3_qubit_ghz()
-        self._test_qiskit_submit_honeywell(circuit=circuit, num_shots=None)
+        self._test_qiskit_submit_honeywell(circuit=circuit, shots=None)
 
     @pytest.mark.honeywell
     @pytest.mark.live_test
     def test_plugins_submit_qiskit_circuit_as_list_to_honeywell(self):
         circuit = self._3_qubit_ghz()
-        self._test_qiskit_submit_honeywell(circuit=[circuit], num_shots=None)
+        self._test_qiskit_submit_honeywell(circuit=[circuit], shots=None)
 
     @pytest.mark.ionq
     @pytest.mark.live_test
@@ -227,7 +268,7 @@ class TestQiskit(QuantumTestBase):
             )
         assert str(exc.value) == "Multi-experiment jobs are not supported!"
 
-    def _test_qiskit_submit_honeywell(self, circuit, num_shots):
+    def _test_qiskit_submit_honeywell(self, circuit, shots):
 
         with unittest.mock.patch.object(
             Job,
@@ -240,10 +281,16 @@ class TestQiskit(QuantumTestBase):
             assert "honeywell.hqs-lt-s1-apival" in backend.backend_names
             assert backend.backend_names[0] in [t.name for t in workspace.get_targets(provider_id="honeywell")]
 
-            qiskit_job = backend.run(
-                circuit=circuit,
-                num_shots=num_shots
-            )
+            if shots is None:
+                qiskit_job = backend.run(
+                    circuit=circuit
+                )
+
+            else:
+                qiskit_job = backend.run(
+                    circuit=circuit,
+                    shots=shots
+                )
 
             # Make sure the job is completed before fetching the results
             self._qiskit_wait_to_complete(qiskit_job, provider)
