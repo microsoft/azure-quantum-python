@@ -95,7 +95,7 @@ class Honeywell(Target):
         The actual price charged by the provider may differ from this estimation.
 
         For the most current pricing details, see
-        https://docs.microsoft.com/azure/quantum/provider-honeywell#honeywell-system-model-h1
+        https://docs.microsoft.com/azure/quantum/provider-honeywell#system-model-h1-powered-by-honeywell
         Or find your workspace and view pricing options in the "Provider" tab
         of your workspace: http://aka.ms/aq/myworkspaces
 
