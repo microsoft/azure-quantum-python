@@ -44,7 +44,6 @@ class Problem(SyncProblem):
         workspace: "Workspace",
         container_name: str = "qio-problems",
         blob_name: str = "inputData",
-        compress: bool = True,
         container_uri: str = None
     ):
         """Uploads an optimization problem instance to
@@ -56,22 +55,20 @@ class Problem(SyncProblem):
         :type container_name: str, optional
         :param blob_name: Blob name, defaults to None
         :type blob_name: str, optional
-        :param compress: Flag to compress the payload, defaults to True
-        :type compress: bool, optional
         :param container_uri: Optional container URI
         :type container_uri: str
         :return: uri of the uploaded problem
         :rtype: str
         """
-        blob_params = [workspace, container_name, blob_name, compress]
+        blob_params = [workspace, container_name, blob_name]
         if self.uploaded_blob_uri and self.uploaded_blob_params == blob_params:
             return self.uploaded_blob_uri
 
         if blob_name is None:
             blob_name = self._blob_name()
 
-        encoding = "gzip" if compress else ""
-        blob = self.to_blob(compress=compress)
+        encoding = "gzip"
+        blob = self.to_blob()
         if container_uri is None:
             container_uri = await workspace.get_container_uri(
                 container_name=container_name

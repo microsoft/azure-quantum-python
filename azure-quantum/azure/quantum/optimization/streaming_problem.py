@@ -68,7 +68,6 @@ class StreamingProblem(object):
         self.uploaded_uri = None
         self.upload_to_url = None
         self.uploader = None
-        self.compress = True
         self.__n_couplers = 0
         self.stats = {
             "type": problem_type.name,
@@ -143,7 +142,6 @@ class StreamingProblem(object):
                     problem=self,
                     container=upload_coords["container_client"],
                     name=upload_coords["blob_name"],
-                    compress=self.compress,
                     upload_size_threshold=self.upload_size_threshold,
                     upload_term_threshold=self.upload_terms_threshold,
                 )
@@ -193,7 +191,6 @@ class StreamingProblem(object):
         workspace,
         container_name: str = "qio-problems",
         blob_name: str = None,
-        compress: bool = True,
     ):
         """Uploads an optimization problem instance
            to the cloud storage linked with the Workspace.
@@ -221,7 +218,6 @@ class JsonStreamingProblemUploader:
     :param container: Reference to the container
      client in which to store the problem
     :param name: Name of the problem (added to blob metadata)
-    :param compress: Whether the problem should be compressed on the fly
     :param upload_size_threshold: Chunking threshold (in bytes).
      Once the internal buffer reaches this size, the chunk will be uploaded.
     :param upload_term_threshold: Chunking threshold (in terms).
@@ -234,7 +230,6 @@ class JsonStreamingProblemUploader:
         problem: StreamingProblem,
         container: ContainerClient,
         name: str,
-        compress: bool,
         upload_size_threshold: int,
         upload_term_threshold: int,
         blob_properties: Dict[str, str] = None,
@@ -245,13 +240,11 @@ class JsonStreamingProblemUploader:
             container,
             name,
             "application/json",
-            self._get_content_type(compress),
+            self._get_content_type(),
         )
-        self.compressedStream = io.BytesIO() if compress else None
+        self.compressedStream = io.BytesIO()
         self.compressor = (
             gzip.GzipFile(mode="wb", fileobj=self.compressedStream)
-            if compress
-            else None
         )
         self.uploaded_terms = 0
         self.blob_properties = blob_properties
@@ -261,11 +254,8 @@ class JsonStreamingProblemUploader:
         self.__upload_size_threshold = upload_size_threshold
         self.__read_pos = 0
 
-    def _get_content_type(self, compress: bool):
-        if compress:
-            return "gzip"
-
-        return "identity"
+    def _get_content_type(self):
+        return "gzip"
 
     def start(self):
         """Starts the problem uploader in another thread"""
