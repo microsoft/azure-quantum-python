@@ -169,8 +169,7 @@ class Problem:
             proto_messages.append(proto_problem.SerializeToString())
         return proto_messages
     
-    def compress_protobuf(
-        self, 
+    def compress_protobuf(self, 
     proto_messages: List[str] ) -> bytes:
     # Write to a series of files to folder and compress
         data = io.BytesIO()
