@@ -141,6 +141,11 @@ class Honeywell(Target):
                         else:
                             N_2q += 1
 
+        if "sim" in self.name:
+            currency_code = "EHQC"
+        else:
+            currency_code = "HQC"
+
         if "apival" in self.name:
             HQC = 0.0
         else:
@@ -173,6 +178,6 @@ class Honeywell(Target):
                     unit_price=0.0
                 )
             ],
-            currency_code="HQC",
+            currency_code=currency_code,
             estimated_total=HQC
         )
