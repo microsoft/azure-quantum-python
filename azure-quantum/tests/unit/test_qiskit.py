@@ -214,8 +214,8 @@ class TestQiskit(QuantumTestBase):
                     '111': 0.5
                 }
                 assert sum(result.data()["counts"].values()) == 100
-                assert np.isclose(result.data()["counts"]["000"], 50, atol=10)
-                assert np.isclose(result.data()["counts"]["111"], 50, atol=10)
+                assert np.isclose(result.data()["counts"]["000"], 50, atol=20)
+                assert np.isclose(result.data()["counts"]["111"], 50, atol=20)
     
     @pytest.mark.honeywell
     def test_plugins_estimate_cost_qiskit_honeywell(self):
