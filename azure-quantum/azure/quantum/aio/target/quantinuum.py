@@ -20,7 +20,7 @@ class Quantinuum(Honeywell):
         input_params: Dict[str, Any] = None,
         **kwargs
     ) -> Job:
-        """Submit a Quantinuum program (QASM format)
+        """Submit a Quantinuum program (OpenQASM 2.0 format)
 
         :param circuit: Quantum circuit in Quantinuum (formerly Honeywell) QASM format
         :type circuit: str
