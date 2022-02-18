@@ -6,21 +6,21 @@ from typing import Any, Dict
 
 from azure.quantum.aio.target.target import Target
 from azure.quantum.aio.job.job import Job
-from azure.quantum.target import Honeywell as SyncHoneywell
+from azure.quantum.aio.target import Honeywell
 
 
-class Honeywell(Target, SyncHoneywell):
-    """Quantinuum (formerly Honeywell) target."""
+class Quantinuum(Honeywell):
+    """Quantinuum target."""
 
     async def submit(
         self,
         circuit: str,
-        name: str = "honeywell-job",
+        name: str = "quantinuum-job",
         num_shots: int = None,
         input_params: Dict[str, Any] = None,
         **kwargs
     ) -> Job:
-        """Submit a Quantinuum (formerly Honeywell) program (QASM format)
+        """Submit a Quantinuum program (QASM format)
 
         :param circuit: Quantum circuit in Quantinuum (formerly Honeywell) QASM format
         :type circuit: str

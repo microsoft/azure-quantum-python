@@ -12,7 +12,7 @@ from azure.quantum._client.models import CostEstimate, UsageEvent
 
 
 class Honeywell(Target):
-    """Honeywell target."""
+    """Quantinuum (formerly Honeywell) target."""
     target_names = (
         "honeywell.hqs-lt-s1",
         "honeywell.hqs-lt-s1-apival",
@@ -80,14 +80,14 @@ class Honeywell(Target):
             input_params=input_params,
             **kwargs
         )
-    
+
     def estimate_cost(
         self,
         circuit: str = None,
         num_shots: int = None,
         N_1q: int = None,
         N_2q: int = None,
-        N_m: int  = None
+        N_m: int = None
     ) -> CostEstimate:
         """Estimate the cost in HQC for a given circuit.
         Optionally, you can provide the number of gate and measurement operations
@@ -95,7 +95,7 @@ class Honeywell(Target):
         The actual price charged by the provider may differ from this estimation.
 
         For the most current pricing details, see
-        https://docs.microsoft.com/azure/quantum/provider-honeywell#system-model-h1-powered-by-honeywell
+        https://aka.ms/AQ/Quantinuum/Documentation
         Or find your workspace and view pricing options in the "Provider" tab
         of your workspace: http://aka.ms/aq/myworkspaces
 
@@ -103,13 +103,13 @@ class Honeywell(Target):
         :type circuit: str
         :param num_shots: Number of shots for which to estimate costs
         :type num_shots: int, optional
-        :param N_1q: Number of one-qubit gates, if not specified, 
+        :param N_1q: Number of one-qubit gates, if not specified,
             this is estimated from the circuit
         :type N_1q: int, optional
-        :param N_2q: Number of two-qubit gates, if not specified, 
+        :param N_2q: Number of two-qubit gates, if not specified,
             this is estimated from the circuit
         :type N_2q: int, optional
-        :param N_m: Number of measurement operations, if not specified, 
+        :param N_m: Number of measurement operations, if not specified,
             this is estimated from the circuit
         :type N_m: int, optional
         :raises ImportError: If N_1q, N_2q and N_m are not specified,
@@ -141,13 +141,18 @@ class Honeywell(Target):
                         else:
                             N_2q += 1
 
+        if "sim" in self.name:
+            currency_code = "EHQC"
+        else:
+            currency_code = "HQC"
+
         if "apival" in self.name:
             HQC = 0.0
         else:
             HQC = 5 + num_shots * (N_1q + 10 * N_2q + 5 * N_m) / 5000
 
         return CostEstimate(
-            events = [
+            events=[
                 UsageEvent(
                     dimension_id="gates1q",
                     dimension_name="1Q Gates",
@@ -173,6 +178,6 @@ class Honeywell(Target):
                     unit_price=0.0
                 )
             ],
-            currency_code="HQC",
+            currency_code=currency_code,
             estimated_total=HQC
         )

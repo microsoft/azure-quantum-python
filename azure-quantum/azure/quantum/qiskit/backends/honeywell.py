@@ -56,9 +56,18 @@ HONEYWELL_BASIS_GATES = [
     "reset"
 ]
 
+QUANTINUUM_PROVIDER_NAMES = {"honeywell": "Honeywell", "quantinuum": "Quantinuum"}
+
 
 class HoneywellBackend(Backend):
-    """Base class for interfacing with a Honeywell backend in Azure Quantum"""
+    """Base class for interfacing with a Quantinuum (formerly Honeywell) backend in Azure Quantum"""
+
+    def __init__(self, **kwargs):
+        self._provider_id = "honeywell"
+        if "provider_id" in kwargs:
+            self._provider_id = kwargs.pop("provider_id")
+        self._provider_name = QUANTINUUM_PROVIDER_NAMES[self._provider_id]
+        super().__init__(**kwargs)
 
     @classmethod
     def _default_options(cls):
@@ -86,8 +95,10 @@ class HoneywellBackend(Backend):
         target = workspace.get_targets(self.name())
         return target.estimate_cost(input_data, num_shots=shots)
 
-    def run(self, circuit: Union[QuantumCircuit, List[QuantumCircuit]], **kwargs):
-        """Submits the given circuit for execution on a Honeywell target."""
+    def run(self,
+            circuit: Union[QuantumCircuit, List[QuantumCircuit]],
+            **kwargs):
+        """Submits the given circuit for execution on a Quantinuum (formerly Honeywell) target."""
         if "shots" in kwargs:
             kwargs["count"] = kwargs.pop("shots")
         # Some Qiskit features require passing lists of circuits, so unpack those here.
@@ -126,14 +137,14 @@ class HoneywellBackend(Backend):
             input_data=input_data,
             blob_name="inputData",
             content_type="application/qasm",
-            provider_id="honeywell",
+            provider_id=self._provider_id,
             input_data_format="honeywell.openqasm.v1",
             output_data_format="honeywell.quantum-results.v1",
-            input_params = input_params,
-            metadata={ "qubits": str(circuit.num_qubits) },
+            input_params=input_params,
+            metadata={"qubits": str(circuit.num_qubits)},
             **kwargs
         )
-        
+
         logger.info(f"Submitted job with id '{job.id()}' for circuit '{circuit.name}':")
         logger.info(input_data)
 
@@ -152,6 +163,11 @@ class HoneywellAPIValidatorBackend(HoneywellBackend):
         provider: "AzureQuantumProvider",
         **kwargs
     ):
+        self._provider_id = "honeywell"
+        if "provider_id" in kwargs:
+            self._provider_id = kwargs.pop("provider_id")
+        self._provider_name = QUANTINUUM_PROVIDER_NAMES[self._provider_id]
+
         default_config = BackendConfiguration.from_dict(
             {
                 "backend_name": name,
@@ -159,7 +175,7 @@ class HoneywellAPIValidatorBackend(HoneywellBackend):
                 "simulator": True,
                 "local": False,
                 "coupling_map": None,
-                "description": "Honeywell API validator on Azure Quantum",
+                "description": f"{self._provider_name} API validator on Azure Quantum",
                 "basis_gates": HONEYWELL_BASIS_GATES,
                 "memory": False,
                 "n_qubits": 10,
@@ -171,7 +187,7 @@ class HoneywellAPIValidatorBackend(HoneywellBackend):
             }
         )
         configuration: BackendConfiguration = kwargs.pop("configuration", default_config)
-        logger.info("Initializing HoneywellAPIValidatorBackend")
+        logger.info(f"Initializing {self._provider_name}APIValidatorBackend")
         super().__init__(configuration=configuration, provider=provider, **kwargs)
 
 
@@ -187,6 +203,11 @@ class HoneywellSimulatorBackend(HoneywellBackend):
         provider: "AzureQuantumProvider",
         **kwargs
     ):
+        self._provider_id = "honeywell"
+        if "provider_id" in kwargs:
+            self._provider_id = kwargs.pop("provider_id")
+        self._provider_name = QUANTINUUM_PROVIDER_NAMES[self._provider_id]
+
         configuration: BackendConfiguration = kwargs.pop("configuration", None)
         default_config = BackendConfiguration.from_dict(
             {
@@ -195,7 +216,7 @@ class HoneywellSimulatorBackend(HoneywellBackend):
                 "simulator": True,
                 "local": False,
                 "coupling_map": None,
-                "description": "Honeywell simulator on Azure Quantum",
+                "description": f"{self._provider_name} simulator on Azure Quantum",
                 "basis_gates": HONEYWELL_BASIS_GATES,
                 "memory": False,
                 "n_qubits": 10,
@@ -207,7 +228,7 @@ class HoneywellSimulatorBackend(HoneywellBackend):
             }
         )
         configuration: BackendConfiguration = kwargs.pop("configuration", default_config)
-        logger.info("Initializing HoneywellAPIValidatorBackend")
+        logger.info(f"Initializing {self._provider_name}APIValidatorBackend")
         super().__init__(configuration=configuration, provider=provider, **kwargs)
 
 
@@ -223,6 +244,11 @@ class HoneywellQPUBackend(HoneywellBackend):
         provider: "AzureQuantumProvider",
         **kwargs
     ):
+        self._provider_id = "honeywell"
+        if "provider_id" in kwargs:
+            self._provider_id = kwargs.pop("provider_id")
+        self._provider_name = QUANTINUUM_PROVIDER_NAMES[self._provider_id]
+
         default_config = BackendConfiguration.from_dict(
             {
                 "backend_name": name,
@@ -230,7 +256,7 @@ class HoneywellQPUBackend(HoneywellBackend):
                 "simulator": False,
                 "local": False,
                 "coupling_map": None,
-                "description": "Honeywell QPU on Azure Quantum",
+                "description": f"{self._provider_name} QPU on Azure Quantum",
                 "basis_gates": HONEYWELL_BASIS_GATES,
                 "memory": False,
                 "n_qubits": 10,
@@ -242,5 +268,5 @@ class HoneywellQPUBackend(HoneywellBackend):
             }
         )
         configuration: BackendConfiguration = kwargs.pop("configuration", default_config)
-        logger.info("Initializing HoneywellQPUBackend")
+        logger.info(f"Initializing {self._provider_name}QPUBackend")
         super().__init__(configuration=configuration, provider=provider, **kwargs)

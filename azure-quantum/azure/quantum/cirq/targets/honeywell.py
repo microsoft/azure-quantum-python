@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 
 
 class HoneywellTarget(Honeywell, CirqTarget):
-    """Base class for interfacing with an Honeywell backend in Azure Quantum"""
+    """Base class for interfacing with an Quantinuum (formerly Honeywell) backend in Azure Quantum"""
 
     def __init__(
         self,
@@ -81,7 +81,7 @@ class HoneywellTarget(Honeywell, CirqTarget):
     ) -> float:
         """Estimate cost for running this program
 
-        :param program: Cirq quatnum program
+        :param program: Cirq quantum program
         :type program: str, optional
         :param repetitions: Number of repetitions
         :type repetitions: int, optional
@@ -107,7 +107,7 @@ class HoneywellTarget(Honeywell, CirqTarget):
         :type program: cirq.Circuit
         :param name: Job name
         :type name: str
-        :param repetitions: Number of shots, defaults to 
+        :param repetitions: Number of shots, defaults to
             provider default value
         :type repetitions: int
         :return: Azure Quantum job
