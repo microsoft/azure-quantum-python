@@ -13,7 +13,7 @@
 # This code was based on the qiskit.circuit.quantumcircuit.QuantumCircuit.qasm
 # method and modified to use the QirBuilder instead of building a QASM string.
 
-from typing import Optional
+from typing import Any
 
 from qiskit.qasm.exceptions import QasmError
 from qiskit.circuit.quantumcircuit import (
@@ -97,7 +97,7 @@ class QirQuantumCircuit(QuantumCircuit):
         )
         return new_circuit
 
-    def qir(self, ir_string: bool = False) -> Optional[str]:
+    def qir(self, ir_string: bool = False) -> Any:
         """Return QIR bitcode.
 
         Args:
