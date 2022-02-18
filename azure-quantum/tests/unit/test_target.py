@@ -7,7 +7,7 @@ import numpy as np
 from azure.core.exceptions import HttpResponseError
 from azure.quantum.job.job import Job
 from azure.quantum._client.models import CostEstimate, UsageEvent
-from azure.quantum.target import IonQ, Honeywell
+from azure.quantum.target import IonQ, Honeywell, Quantinuum
 
 from common import QuantumTestBase, ZERO_UID
 
@@ -169,8 +169,7 @@ class TestHoneywell(QuantumTestBase):
         """
 
     @pytest.mark.honeywell
-    def test_job_estimate_cost_honeywell(self):
-
+    def test_job_estimate_cost_honeywell(self, provider_id="honeywell"):
         with unittest.mock.patch.object(
             Job,
             self.mock_create_job_id_name,
@@ -178,19 +177,27 @@ class TestHoneywell(QuantumTestBase):
         ):
             workspace = self.create_workspace()
             circuit = self._teleport()
-            target = Honeywell(workspace=workspace, name="honeywell.hqs-lt-s1-apival")
+
+            target = Honeywell(workspace=workspace, name="honeywell.hqs-lt-s1-apival") if provider_id == "honeywell" \
+                     else Quantinuum(workspace=workspace, name="quantinuum.hqs-lt-s1-apival")
+
             cost = target.estimate_cost(circuit, num_shots=100e3)
             assert cost.estimated_total == 0.0
 
-            target = Honeywell(workspace=workspace, name="honeywell.hqs-lt-s1")
+            target = Honeywell(workspace=workspace, name="honeywell.hqs-lt-s1") if provider_id == "honeywell" \
+                     else Quantinuum(workspace=workspace, name="quantinuum.hqs-lt-s1")
+
             cost = target.estimate_cost(circuit, num_shots=100e3)
             assert cost.estimated_total == 845.0
 
+    @pytest.mark.honeywell
+    def test_job_estimate_cost_quantinuum(self):
+        if self.get_test_quantinuum_enabled():
+            self.test_job_estimate_cost_honeywell(provider_id="quantinuum")
 
     @pytest.mark.honeywell
     @pytest.mark.live_test
-    def test_job_submit_honeywell(self):
-
+    def test_job_submit_honeywell(self, provider_id="honeywell"):
         with unittest.mock.patch.object(
             Job,
             self.mock_create_job_id_name,
@@ -198,7 +205,8 @@ class TestHoneywell(QuantumTestBase):
         ):
             workspace = self.create_workspace()
             circuit = self._teleport()
-            target = Honeywell(workspace=workspace)
+            target = Honeywell(workspace=workspace) if provider_id == "honeywell" \
+                     else Quantinuum(workspace=workspace)
             try:
                 job = target.submit(circuit)
             except HttpResponseError as e:
@@ -210,6 +218,7 @@ class TestHoneywell(QuantumTestBase):
                 # Make sure the job is completed before fetching the results
                 # playback currently does not work for repeated calls
                 if not self.is_playback:
+                    self.pause_recording()
                     self.assertEqual(False, job.has_completed())
                     try:
                         # Set a timeout for Honeywell recording
@@ -220,12 +229,17 @@ class TestHoneywell(QuantumTestBase):
                         # Check if job succeeded
                         self.assertEqual(True, job.has_completed())
                         assert job.details.status == "Succeeded"
+                    self.resume_recording()
 
-                        job = workspace.get_job(job.id)
-                        self.assertEqual(True, job.has_completed())
-
+                job = workspace.get_job(job.id)
+                self.assertEqual(True, job.has_completed())
 
                 if job.has_completed():
                     results = job.get_results()
                     assert results["c0"] == ["0"]
                     assert results["c1"] == ["0"]
+
+    @pytest.mark.honeywell
+    def test_job_submit_quantinuum(self):
+        if self.get_test_quantinuum_enabled():
+            self.test_job_submit_honeywell(provider_id="quantinuum")
