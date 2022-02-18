@@ -55,9 +55,9 @@ class Honeywell(Target):
         input_params: Dict[str, Any] = None,
         **kwargs
     ) -> Job:
-        """Submit a Honeywell program (QASM format)
+        """Submit a Honeywell program (OpenQASM 2.0 format)
 
-        :param circuit: Quantum circuit in Honeywell QASM format
+        :param circuit: Quantum circuit in Honeywell OpenQASM 2.0 format
         :type circuit: str
         :param name: Job name
         :type name: str
@@ -99,7 +99,7 @@ class Honeywell(Target):
         Or find your workspace and view pricing options in the "Provider" tab
         of your workspace: http://aka.ms/aq/myworkspaces
 
-        :param circuit: Quantum circuit in QASM format
+        :param circuit: Quantum circuit in OpenQASM 2.0 format
         :type circuit: str
         :param num_shots: Number of shots for which to estimate costs
         :type num_shots: int, optional

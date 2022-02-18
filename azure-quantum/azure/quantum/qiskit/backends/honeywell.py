@@ -109,7 +109,7 @@ class HoneywellBackend(Backend):
             circuit = circuit[0]
 
         # If the circuit was created using qiskit.assemble,
-        # disassemble into QASM here
+        # disassemble into OpenQASM 2.0 here
         if isinstance(circuit, QasmQobj) or isinstance(circuit, Qobj):
             from qiskit.assembler import disassemble
             circuits, run, _ = disassemble(circuit)

@@ -43,7 +43,7 @@ class HoneywellTarget(Honeywell, CirqTarget):
 
     @staticmethod
     def _translate_cirq_circuit(circuit) -> str:
-        """Translate `cirq` circuit to QASM."""
+        """Translate `cirq` circuit to OpenQASM 2.0."""
         return circuit.to_qasm()
     
     @staticmethod

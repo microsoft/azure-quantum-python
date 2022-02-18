@@ -22,7 +22,7 @@ class Quantinuum(Honeywell):
     ) -> Job:
         """Submit a Quantinuum program (OpenQASM 2.0 format)
 
-        :param circuit: Quantum circuit in Quantinuum (formerly Honeywell) QASM format
+        :param circuit: Quantum circuit in Quantinuum (formerly Honeywell) OpenQASM 2.0 format
         :type circuit: str
         :param name: Job name
         :type name: str
