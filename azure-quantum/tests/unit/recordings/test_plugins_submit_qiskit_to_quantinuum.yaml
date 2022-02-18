@@ -48,7 +48,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - testapp-azure-quantum-cirq azsdk-python-quantum/0.0.0.1 Python/3.7.10 (Darwin-21.3.0-x86_64-i386-64bit)
+      - testapp-azure-quantum-qiskit azsdk-python-quantum/0.0.0.1 Python/3.7.10 (Darwin-21.3.0-x86_64-i386-64bit)
     method: GET
     uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/providerStatus
   response:
@@ -128,7 +128,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - testapp-azure-quantum-cirq azsdk-python-quantum/0.0.0.1 Python/3.7.10 (Darwin-21.3.0-x86_64-i386-64bit)
+      - testapp-azure-quantum-qiskit azsdk-python-quantum/0.0.0.1 Python/3.7.10 (Darwin-21.3.0-x86_64-i386-64bit)
     method: GET
     uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/providerStatus
   response:
@@ -198,4 +198,198 @@ interactions:
     status:
       code: 200
       message: OK
+- request:
+    body: 'b''{"containerName": "job-00000000-0000-0000-0000-000000000000"}'''
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate, br
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '61'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - testapp-azure-quantum-qiskit azsdk-python-quantum/0.0.0.1 Python/3.7.10 (Darwin-21.3.0-x86_64-i386-64bit)
+    method: POST
+    uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/storage/sasUri
+  response:
+    body:
+      string: '{"sasUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "access_token": "fake_token"}'
+    headers:
+      content-length:
+      - '221'
+      content-type:
+      - application/json; charset=utf-8
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate, br
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-blob/12.9.0 Python/3.7.10 (Darwin-21.3.0-x86_64-i386-64bit)
+      x-ms-date:
+      - Fri, 18 Feb 2022 21:04:39 GMT
+      x-ms-version:
+      - '2020-10-02'
+    method: GET
+    uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?restype=container&sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerNotFound</Code><Message>The
+        specified container does not exist.\nRequestId:177614c4-201e-0054-350b-256afe000000\nTime:2022-02-18T21:04:39.6710378Z</Message></Error>"
+    headers:
+      content-length:
+      - '225'
+      content-type:
+      - application/xml
+      x-ms-version:
+      - '2020-10-02'
+    status:
+      code: 404
+      message: The specified container does not exist.
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate, br
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-blob/12.9.0 Python/3.7.10 (Darwin-21.3.0-x86_64-i386-64bit)
+      x-ms-date:
+      - Fri, 18 Feb 2022 21:04:39 GMT
+      x-ms-version:
+      - '2020-10-02'
+    method: PUT
+    uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?restype=container&sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      x-ms-version:
+      - '2020-10-02'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate, br
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-blob/12.9.0 Python/3.7.10 (Darwin-21.3.0-x86_64-i386-64bit)
+      x-ms-date:
+      - Fri, 18 Feb 2022 21:04:39 GMT
+      x-ms-version:
+      - '2020-10-02'
+    method: GET
+    uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?restype=container&sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      x-ms-lease-state:
+      - available
+      x-ms-lease-status:
+      - unlocked
+      x-ms-version:
+      - '2020-10-02'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: b'OPENQASM 2.0;\ninclude "qelib1.inc";\nqreg q[4];\ncreg c[3];\nh q[0];\ncx
+      q[0],q[1];\ncx q[1],q[2];\nh q[3];\nmeasure q[0] -> c[0];\nmeasure q[1] -> c[1];\nmeasure
+      q[2] -> c[2];\n'
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate, br
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '168'
+      Content-Type:
+      - application/octet-stream
+      User-Agent:
+      - azsdk-python-storage-blob/12.9.0 Python/3.7.10 (Darwin-21.3.0-x86_64-i386-64bit)
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-date:
+      - Fri, 18 Feb 2022 21:04:40 GMT
+      x-ms-version:
+      - '2020-10-02'
+    method: PUT
+    uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      x-ms-version:
+      - '2020-10-02'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: 'b''{"id": "00000000-0000-0000-0000-000000000000", "name": "Qiskit Sample
+      - 3-qubit GHZ circuit", "containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+      "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData",
+      "inputDataFormat": "honeywell.openqasm.v1", "inputParams": {"count": 500}, "providerId":
+      "honeywell", "target": "quantinuum.hqs-lt-s1-apival", "metadata": {"qubits":
+      "4"}, "outputDataFormat": "honeywell.quantum-results.v1"}'''
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate, br
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '670'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - testapp-azure-quantum-qiskit azsdk-python-quantum/0.0.0.1 Python/3.7.10 (Darwin-21.3.0-x86_64-i386-64bit)
+    method: PUT
+    uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000000
+  response:
+    body:
+      string: '{"error": {"code": "InvalidJobDefinition", "message": "The target specified
+        does not exist or is not enabled for the workspace."}, "access_token": "fake_token"}'
+    headers:
+      content-length:
+      - '126'
+      content-type:
+      - application/json; charset=utf-8
+    status:
+      code: 403
+      message: Forbidden
 version: 1
