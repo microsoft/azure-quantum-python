@@ -30,7 +30,7 @@ INSTRUCTIONS = [
 
 class QiskitToQirBuilder(QirBuilder):
     """Qiskit to QIR builder."""
-    def __init__(self, module: str):
+    def __init__(self, module: str = "qiskit-circuit"):
         """Create QiskitToQirBuilder object
 
         :param module: QIR module name
