@@ -76,6 +76,26 @@ EXISTING_GATE_NAMES = [
 
 
 class QirQuantumCircuit(QuantumCircuit):
+    @classmethod
+    def from_quantum_circuit(cls, circuit: QuantumCircuit) -> "QirQuantumCircuit":
+        """Create a new QirQuantumCircuit instance from a QuantumCircuit object.
+        This adds a method circuit.qir that can be used to translate the Qiskit
+        circuit to QIR.
+
+        :param circuit: Quantum circuit
+        :type circuit: QuantumCircuit
+        :return: QuantumCircuit that can be translated to QIR.
+        :rtype: QirQuantumCircuit
+        """
+        regs = circuit.registers
+        new_circuit = cls(
+            *regs,
+            circuit.name,
+            circuit.global_phase,
+            circuit.metadata
+        )
+        return new_circuit
+
     def qir(
             self,
             filename: Optional[str] = None,

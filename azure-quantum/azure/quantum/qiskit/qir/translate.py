@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 ##
 
+from ctypes import Union
 from types import MethodType
 from typing import Optional
 from qiskit import QuantumCircuit
@@ -11,7 +12,7 @@ from azure.quantum.qiskit.qir.quantumcircuit import QirQuantumCircuit
 
 
 def to_qir(
-    circuit: QuantumCircuit,
+    circuit: Union[QuantumCircuit, QirQuantumCircuit],
     filename: Optional[str] = None,
     encoding: Optional[str] = None
 ) -> str:
