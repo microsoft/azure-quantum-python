@@ -13,20 +13,16 @@ from azure.quantum.qiskit.qir.quantumcircuit import QirQuantumCircuit
 
 def to_qir(
     circuit: Union[QuantumCircuit, QirQuantumCircuit],
-    filename: Optional[str] = None,
-    encoding: Optional[str] = None
+    ir_string: bool = False
 ) -> str:
     """Convert a qiskit.QuantumCircuit to QIR (see qir-alliance.org).
 
     :param circuit: Quantum circuit to convert
     :type circuit: QuantumCircuit
-    :param filename: Output file name to save bitcode to, defaults to None
-    :type filename: Optional[str], optional
-    :param encoding: Specify output file encoding, defaults to system default
-        (see https://docs.python.org/3/library/codecs.html#standard-encodings)
-    :type encoding: Optional[str], optional
+    :param ir_string: Flag to set if the returned QIR should
+        be a readable string rather than base 64 encoded bitcode.
     :return: QIR bitcode
     :rtype: str
     """
     circuit.qir = MethodType( QirQuantumCircuit.qir, circuit )
-    return circuit.qir(filename=filename, encoding=encoding)
+    return circuit.qir(ir_string=ir_string)

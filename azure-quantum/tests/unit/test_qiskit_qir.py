@@ -4,16 +4,18 @@
 ##
 
 import os
+from types import MethodType
 import pytest
 import tempfile
 
 from azure.quantum.qiskit.qir.quantumcircuit import QirQuantumCircuit
 from azure.quantum.qiskit.qir.translate import to_qir
+from qiskit import QuantumCircuit
 
 
 @pytest.fixture()
 def circuit():
-    circuit = QirQuantumCircuit(4, 3)
+    circuit = QuantumCircuit(4, 3)
     circuit.name = "Qiskit Sample - 3-qubit GHZ circuit"
     circuit.h(0)
     circuit.cx(0, 1)
@@ -24,6 +26,8 @@ def circuit():
 
 
 def test_circuit_qir(circuit):
+    # circuit = QirQuantumCircuit.from_quantum_circuit(circuit)
+    circuit.qir = MethodType( QirQuantumCircuit.qir, circuit )
     qir_bitcode = circuit.qir()
     assert qir_bitcode is not None
 
@@ -36,12 +40,12 @@ def test_to_qir(circuit):
 def test_circuit_save_file(circuit):
     with tempfile.TemporaryDirectory() as tmpdirname:
         filename = os.path.join(tmpdirname, "output.ll")
-        circuit.qir(filename=filename)
-        assert os.path.exists(filename)
+        qir = circuit.qir(ir_string=True)
+        assert qir
 
         filename = os.path.join(tmpdirname, "output2.ll")
-        to_qir(circuit, filename=filename)
-        assert os.path.exists(filename)
+        qir = to_qir(circuit, ir_string=True)
+        assert qir
 
 
 def test_circuit_unroll():

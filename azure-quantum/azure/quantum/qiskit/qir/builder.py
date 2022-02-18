@@ -43,7 +43,7 @@ class QiskitToQirBuilder(QirBuilder):
 
         :param register: A Qiskit quantum or classical register object
         :type register: Union[QuantumRegister, ClassicalRegister]
-        :raises ValueError: Throws ValueError if not a quantum or classical
+        :raises TypeError: Throws TypeError if not a quantum or classical
             register is passed
         """
         if isinstance(register, QuantumRegister):
@@ -51,7 +51,7 @@ class QiskitToQirBuilder(QirBuilder):
         elif isinstance(register, ClassicalRegister):
             self.add_classical_register(register.name, register.size)
         else:
-            raise ValueError(f"Cannot add register of type {type(register)}")
+            raise TypeError(f"Cannot add register of type {type(register)}")
 
     def add_instruction(self, instruction: Instruction, bit_labels: Iterable[str]):
         """Add quantum instruction.

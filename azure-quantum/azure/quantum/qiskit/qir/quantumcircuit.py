@@ -24,6 +24,7 @@ from qiskit.circuit.quantumcircuit import (
 )
 
 from azure.quantum.qiskit.qir.builder import QiskitToQirBuilder
+from sympy import true
 
 
 EXISTING_GATE_NAMES = [
@@ -96,21 +97,12 @@ class QirQuantumCircuit(QuantumCircuit):
         )
         return new_circuit
 
-    def qir(
-            self,
-            filename: Optional[str] = None,
-            encoding: Optional[str] = None,
-        ) -> Optional[str]:
+    def qir(self, ir_string: bool = False) -> Optional[str]:
         """Return QIR bitcode.
 
         Args:
-            filename (str): Save QIR bitcode to file with name 'filename'.
-            encoding (str): Optionally specify the encoding to use for the
-                output file if ``filename`` is specified. By default this is
-                set to the system's default encoding (ie whatever
-                ``locale.getpreferredencoding()`` returns) and can be set to
-                any valid codec or alias from stdlib's
-                `codec module <https://docs.python.org/3/library/codecs.html#standard-encodings>`__
+            ir_string (bool): Flag to set if the returned QIR should
+            be a readable string rather than base 64 encoded bitcode.
 
         Returns:
             str
@@ -185,19 +177,11 @@ class QirQuantumCircuit(QuantumCircuit):
                 # Insert qasm representation of the original instruction
                 builder.add_instruction(instruction, [bit_labels[j] for j in qargs + cargs])
 
-        # Dump machine state to stdout
-        builder.dump_machine()
-
-        if filename.endswith(".ll"):
+        if ir_string is true:
             # Get QIR LLVM code
             qir_bitcode = builder.get_ir_string()
         else:
             qir_bitcode = builder.get_bitcode_base64_string()
 
-        if filename:
-            with open(filename, "w+", encoding=encoding) as file:
-                file.write(qir_bitcode)
-            file.close()
-        
         return qir_bitcode
  
