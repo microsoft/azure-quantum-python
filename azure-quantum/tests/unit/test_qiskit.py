@@ -40,7 +40,7 @@ class TestQiskit(QuantumTestBase):
         circuit.h(0)
         circuit.cx(0, 1)
         circuit.cx(1, 2)
-        circuit.h(3) # Dummy helper qubit that is not measured
+        circuit.h(3) # Helper qubit that is not measured
         circuit.measure([0, 1, 2], [0, 1, 2])
         return circuit
 
