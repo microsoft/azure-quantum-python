@@ -31,9 +31,6 @@ __all__ = [
     "HoneywellSimulatorBackend"
 ]
 
-HONEYWELL_PROVIDER_ID = "honeywell"
-HONEYWELL_PROVIDER_NAME = "Honeywell"
-
 
 class HoneywellBackend(QuantinuumBackend):
     """Base class for interfacing with a Quantinuum (formerly Honeywell) backend in Azure Quantum"""
