@@ -5,6 +5,7 @@ from azure.core.exceptions import HttpResponseError
 from azure.quantum.aio.job.job import Job
 from azure.quantum.aio.target import IonQ
 from azure.quantum.aio.target.honeywell import Honeywell
+from azure.quantum.aio.target.quantinuum import Quantinuum
 
 from common import QuantumTestBase, ZERO_UID
 
@@ -21,7 +22,7 @@ class TestIonQ(QuantumTestBase):
     def get_test_job_id(self):
         return ZERO_UID if self.is_playback \
                else Job.create_job_id()
-    
+
     def _3_qubit_ghz(self):
         return {
             "qubits": 3,
@@ -67,23 +68,14 @@ class TestIonQ(QuantumTestBase):
 
             # Make sure the job is completed before fetching the results
             # playback currently does not work for repeated calls
-            # See: https://github.com/microsoft/qdk-python/issues/118
-            self.pause_recording()
-            try:
-                # Set a timeout for IonQ recording
-                await job.wait_until_completed(timeout_secs=60)
-            except TimeoutError:
-                warnings.warn("IonQ execution exceeded timeout. Skipping fetching results.")
-
-            # Record a single GET request such that job.wait_until_completed
-            # doesn't fail when running recorded tests
-            # See: https://github.com/microsoft/qdk-python/issues/118
-            await job.refresh()
-
-            # Check if job succeeded
-            self.assertEqual(True, job.has_completed())
-            assert job.details.status == "Succeeded"
-            self.resume_recording()
+            if not self.is_playback:
+                self.pause_recording()
+                try:
+                    # Set a timeout for Honeywell recording
+                    await job.wait_until_completed(max_poll_wait_secs=60)
+                except TimeoutError:
+                    warnings.warn("IonQ execution exceeded timeout. Skipping fetching results.")
+                self.resume_recording()
 
             job = await workspace.get_job(job.id)
             self.assertEqual(True, job.has_completed())
@@ -99,7 +91,7 @@ class TestIonQ(QuantumTestBase):
                 assert job.details.input_params.get("shots") is None
 
 
-class TestHoneywell(QuantumTestBase):
+class TestQuantinuum(QuantumTestBase):
     mock_create_job_id_name = "create_job_id"
     create_job_id = Job.create_job_id
 
@@ -133,8 +125,14 @@ class TestHoneywell(QuantumTestBase):
         measure q[1] -> c1[2];
         """
 
-    def test_job_submit_honeywell(self):
+    def test_job_submit_quantinuum(self):
+        if self.get_test_quantinuum_enabled():
+            self.get_async_result(self._test_job_submit_quantinuum())
 
+    def test_job_submit_honeywell(self):
+        self.get_async_result(self._test_job_submit_quantinuum(provider_id="honeywell"))
+
+    async def _test_job_submit_quantinuum(self, **kwargs):
         with unittest.mock.patch.object(
             Job,
             self.mock_create_job_id_name,
@@ -142,9 +140,9 @@ class TestHoneywell(QuantumTestBase):
         ):
             workspace = self.create_async_workspace()
             circuit = self._teleport()
-            target = Honeywell(workspace=workspace)
+            target = Quantinuum(workspace=workspace) if kwargs.get("provider_id") != "honeywell" else Honeywell(workspace=workspace)
             try:
-                job = self.get_async_result( target.submit(circuit) )
+                job = await target.submit(circuit)
             except HttpResponseError as e:
                 if "InvalidJobDefinition" not in e.message \
                 and "The provider specified does not exist" not in e.message:
@@ -154,18 +152,17 @@ class TestHoneywell(QuantumTestBase):
                 # Make sure the job is completed before fetching the results
                 # playback currently does not work for repeated calls
                 if not self.is_playback:
-                    self.assertEqual(False, job.has_completed())
+                    self.pause_recording()
                     try:
                         # Set a timeout for Honeywell recording
-                        self.get_async_result( job.wait_until_completed(max_poll_wait_secs=60) )
+                        await job.wait_until_completed(max_poll_wait_secs=60)
                     except TimeoutError:
                         warnings.warn("Quantinuum (formerly Honeywell) execution exceeded timeout. Skipping fetching results.")
-                    else:
-                        # Check if job succeeded
-                        self.assertEqual(True, job.has_completed())
-                        assert job.details.status == "Succeeded"
+                    self.resume_recording()
 
-                if job.has_completed():
-                    results = self.get_async_result( job.get_results() )
-                    assert results["c0"] == ["0"]
-                    assert results["c1"] == ["000"]
+                job = await workspace.get_job(job.id)
+                self.assertEqual(True, job.has_completed())
+
+                results = await job.get_results()
+                assert results["c0"] == ["0"]
+                assert results["c1"] == ["000"]

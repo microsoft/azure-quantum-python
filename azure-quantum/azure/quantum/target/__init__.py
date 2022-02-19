@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 ##
-from azure.quantum.target.quantinuum import Quantinuum
 from .target import Target
 from .solvers import Solver
 from .microsoft.qio import (

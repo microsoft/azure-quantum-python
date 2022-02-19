@@ -4,12 +4,11 @@
 ##
 from typing import Any, Dict
 
-from azure.quantum.aio.target.target import Target
 from azure.quantum.aio.job.job import Job
-from azure.quantum.target import Honeywell as SyncHoneywell
+from azure.quantum.aio.target.quantinuum import Quantinuum
 
 
-class Honeywell(Target, SyncHoneywell):
+class Honeywell(Quantinuum):
     """Quantinuum (formerly Honeywell) target."""
 
     async def submit(
@@ -33,15 +32,10 @@ class Honeywell(Target, SyncHoneywell):
         :return: Azure Quantum job
         :rtype: Job
         """
-        if input_params is None:
-            input_params = {}
-        if num_shots is not None:
-            input_params = input_params.copy()
-            input_params["count"] = num_shots
-
         return await super().submit(
-            input_data=circuit,
+            circuit=circuit,
             name=name,
+            num_shots=num_shots,
             input_params=input_params,
             **kwargs
         )

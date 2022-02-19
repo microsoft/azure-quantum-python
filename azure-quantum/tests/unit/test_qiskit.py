@@ -18,6 +18,7 @@ from qiskit.providers.exceptions import QiskitBackendNotFoundError
 
 from azure.quantum.job.job import Job
 from azure.quantum.qiskit import AzureQuantumProvider
+from azure.quantum.qiskit.backends.honeywell import HONEYWELL_PROVIDER_ID
 
 from common import QuantumTestBase, ZERO_UID
 
