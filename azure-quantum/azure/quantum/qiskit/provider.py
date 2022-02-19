@@ -33,6 +33,13 @@ class AzureQuantumProvider(Provider):
     def get_workspace(self) -> Workspace:
         return self._workspace
 
+    def _get_all_subclasses(self, cls):
+        all_subclasses = []
+        for subclass in cls.__subclasses__():
+            all_subclasses.append(subclass)
+            all_subclasses.extend(self._get_all_subclasses(subclass))
+        return all_subclasses
+
     def get_backend(self, name=None, **kwargs):
         """
         Return a single backend matching the specified filtering.
@@ -61,8 +68,8 @@ see https://docs.microsoft.com/azure/quantum/how-to-create-workspace#add-additio
         from azure.quantum.qiskit.backends import DEFAULT_TARGETS
 
         all_targets = {
-            name: _t for t in Backend.__subclasses__()
-            for _t in [t] + t.__subclasses__()
+            name: _t for t in self._get_all_subclasses(Backend)
+            for _t in [t]
             if hasattr(_t, "backend_names")
             for name in _t.backend_names
         }

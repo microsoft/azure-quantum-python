@@ -9,6 +9,7 @@
 
 import os
 import re
+from numpy import deprecate
 
 import six
 import pytest
@@ -57,6 +58,9 @@ class QuantumTestBase(ReplayableTest):
         self._location = os.environ.get("AZURE_QUANTUM_WORKSPACE_LOCATION", os.environ.get("LOCATION", LOCATION))
         self._user_agent = os.environ.get("AZURE_QUANTUM_PYTHON_APPID")
 
+        # needed to make sure the Default Credential will work
+        os.environ["LOCATION"] = self._location
+
         self._pause_recording_processor = PauseRecordingProcessor()
         regex_replacer = CustomRecordingProcessor()
         recording_processors = [
@@ -75,6 +79,7 @@ class QuantumTestBase(ReplayableTest):
             OAuthRequestResponsesFilter(),
             RequestUrlNormalizer(),
             OAuthResponsesFilter(),
+            CustomUrlPlaybackProcessor()
         ]
 
         super(QuantumTestBase, self).__init__(
@@ -189,7 +194,7 @@ class QuantumTestBase(ReplayableTest):
     @property
     def workspace_name(self):
         return self._workspace_name
-    
+
     def create_workspace(self, **kwargs) -> Workspace:
         """Create workspace using credentials passed via OS Environment Variables
         described in the README.md documentation, or when in playback mode use
@@ -219,7 +224,7 @@ class QuantumTestBase(ReplayableTest):
 
     def get_async_result(self, coro):
         return asyncio.get_event_loop().run_until_complete(coro)
-    
+
     def create_async_workspace(self, **kwargs) -> AsyncWorkspace:
         """Create workspace using credentials passed via OS Environment Variables
         described in the README.md documentation, or when in playback mode use
@@ -241,12 +246,22 @@ class QuantumTestBase(ReplayableTest):
             resource_group=self.resource_group,
             name=self.workspace_name,
             location=self.location,
-             **kwargs
+            **kwargs
         )
         workspace.append_user_agent("testapp")
 
         return workspace
-    
+
+    @deprecate(message="Remove this method when Quantinuum provider is deployed to production")
+    def get_test_quantinuum_enabled(self):
+        if (self.is_playback):
+            return True
+        self.pause_recording()
+        workspace = self.create_workspace()
+        targets = workspace.get_targets(provider_id="quantinuum")
+        self.resume_recording()
+        return len(targets) > 0
+
     def mock_wait(self, job_wait_until_completed):
         # Workaround for issue #118
         # See: https://github.com/microsoft/qdk-python/issues/118
@@ -296,6 +311,14 @@ class PauseRecordingProcessor(RecordingProcessor):
             return None
         return response
 
+
+class CustomUrlPlaybackProcessor(RecordingProcessor):
+    def process_request(self, request):
+        request.uri = re.sub('https://[^\.]+.quantum.azure.com/',
+                        f'https://{LOCATION}.quantum.azure.com/',
+                        request.uri,
+                        flags=re.IGNORECASE)
+        return request
 
 class CustomRecordingProcessor(RecordingProcessor):
 
