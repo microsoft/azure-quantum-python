@@ -1,20 +1,21 @@
 ##
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 ##
 from typing import Any, Dict
 
+from azure.quantum.aio.target.target import Target
 from azure.quantum.aio.job.job import Job
-from azure.quantum.aio.target.quantinuum import Quantinuum
+from azure.quantum.target import Quantinuum as SyncQuantinuum
 
 
-class Honeywell(Quantinuum):
+class Quantinuum(Target, SyncQuantinuum):
     """Quantinuum (formerly Honeywell) target."""
 
     async def submit(
         self,
         circuit: str,
-        name: str = "honeywell-job",
+        name: str = "quantinuum-job",
         num_shots: int = None,
         input_params: Dict[str, Any] = None,
         **kwargs
@@ -32,10 +33,15 @@ class Honeywell(Quantinuum):
         :return: Azure Quantum job
         :rtype: Job
         """
+        if input_params is None:
+            input_params = {}
+        if num_shots is not None:
+            input_params = input_params.copy()
+            input_params["count"] = num_shots
+
         return await super().submit(
-            circuit=circuit,
+            input_data=circuit,
             name=name,
-            num_shots=num_shots,
             input_params=input_params,
             **kwargs
         )

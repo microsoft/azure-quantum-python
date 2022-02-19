@@ -7,7 +7,6 @@
 # Licensed under the MIT License.
 ##
 import unittest
-import json
 import os
 import functools
 import pytest
@@ -17,7 +16,6 @@ from common import QuantumTestBase, ZERO_UID
 from azure.quantum.job.base_job import ContentType
 from azure.quantum import Job
 from azure.quantum.optimization import Problem, ProblemType, Term, SlcTerm
-from azure.quantum.serialization import ProtoProblem
 import azure.quantum.optimization as microsoft
 import azure.quantum.target.oneqbit as oneqbit
 import azure.quantum.target.toshiba as toshiba
@@ -88,7 +86,6 @@ class TestJob(QuantumTestBase):
     Tests the azure.quantum.job module.
     """
 
-
     mock_create_job_id_name = "create_job_id"
     create_job_id = Job.create_job_id
 
@@ -140,7 +137,7 @@ class TestJob(QuantumTestBase):
         solver_name = "PopulationAnnealing"
         self._test_job_submit(solver_name, solver_type)
         # renable after schema change is deployed
-        #self._test_job_submit(solver_name, solver_type, test_grouped=True)
+        # self._test_job_submit(solver_name, solver_type, test_grouped=True)
 
     @pytest.mark.live_test
     @pytest.mark.qio
@@ -149,9 +146,8 @@ class TestJob(QuantumTestBase):
         solver_name = "SubstochasticMonteCarlo"
         self._test_job_submit(solver_name, solver_type)
         # renable after schema change is deployed
-        #self._test_job_submit(solver_name, solver_type, test_grouped=True)
+        # self._test_job_submit(solver_name, solver_type, test_grouped=True)
 
-    
     @pytest.mark.live_test
     @pytest.mark.qio
     def test_job_submit_microsoft_population_annealing_proto(self):
@@ -159,13 +155,11 @@ class TestJob(QuantumTestBase):
         solver_name = "PopulationAnnealing"
         self._test_job_submit(solver_name, solver_type, content_type=ContentType.protobuf)
 
-
     @pytest.mark.qio
     def test_job_submit_microsoft_substochastic_monte_carlo_proto(self):
         solver_type = functools.partial(microsoft.SubstochasticMonteCarlo, step_limit=280, content_type = ContentType.protobuf)
         solver_name = "SubstochasticMonteCarlo"
         self._test_job_submit(solver_name, solver_type, content_type=ContentType.protobuf)
-
 
     @pytest.mark.live_test
     @pytest.mark.qio
@@ -394,7 +388,7 @@ class TestJob(QuantumTestBase):
             job = solver.submit(problem)
             # Check if problem can be successfully downloaded and deserialized
             problem_as_json = job.download_data(job.details.input_data_uri)
-            downloaded_problem = Problem.deserialize(input_problem = problem_as_json)
+            downloaded_problem = Problem.deserialize(input_problem=problem_as_json)
 
             actual = downloaded_problem.serialize()
             expected = problem.serialize()
@@ -437,8 +431,9 @@ class TestJob(QuantumTestBase):
             terms=terms,
             init_config=initial_config,
             problem_type=problem_type,
-            content_type = content_type or ContentType.json
+            content_type=content_type or ContentType.json
         )
+
 
 if __name__ == "__main__":
     unittest.main()
