@@ -9,6 +9,7 @@ from typing import Optional
 from azure.quantum.target.solvers import Solver
 from azure.quantum.target.solvers import HardwarePlatform
 from azure.quantum.workspace import Workspace
+from azure.quantum._client.models import TargetStatus
 
 logger = logging.getLogger(__name__)
 
@@ -88,3 +89,25 @@ class SimulatedAnnealing(Solver):
         self.set_one_param("restarts", restarts)
         self.set_one_param("timeout", timeout)
         self.set_one_param("seed", seed)
+
+    @classmethod
+    def from_target_status(
+        cls, workspace: "Workspace", status: TargetStatus, **kwargs
+    ):
+        """Create a SimulatedAnnealing instance from a given workspace and target status.
+
+        :param workspace: Associated workspace
+        :type workspace: Workspace
+        :param status: Target status with availability and current queue time
+        :type status: TargetStatus
+        :return: Target instance
+        :rtype: Target
+        """
+        platform = HardwarePlatform.CPU if status.id.endswith("cpu") else HardwarePlatform.FPGA
+
+        return super().from_target_status(
+            workspace=workspace,
+            status=status,
+            platform=platform,
+            **kwargs
+        )
