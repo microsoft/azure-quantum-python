@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 ##
 import logging
+from multiprocessing.sharedctypes import Value
 
 from typing import Optional
 
@@ -103,7 +104,12 @@ class SimulatedAnnealing(Solver):
         :return: Target instance
         :rtype: Target
         """
-        platform = HardwarePlatform.CPU if status.id.endswith("cpu") else HardwarePlatform.FPGA
+        if status.id.endswith("cpu"):
+            platform = HardwarePlatform.CPU
+        elif status.id.endswith("fpga"):
+            platform = HardwarePlatform.FPGA
+        else:
+            raise ValueError(f"SimulatedAnnealing solver with name {status.id} is not supported.")
 
         return super().from_target_status(
             workspace=workspace,
