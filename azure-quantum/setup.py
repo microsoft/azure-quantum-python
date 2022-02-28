@@ -87,9 +87,6 @@ setuptools.setup(
         "cirq": [
             "cirq-core==0.13.1",
             "cirq-ionq==0.13.1",
-        ],
-        "projectq": [
-            "projectq==0.7.1"
         ]
     }
 )

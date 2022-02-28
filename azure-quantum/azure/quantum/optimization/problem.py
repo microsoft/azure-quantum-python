@@ -169,8 +169,7 @@ class Problem:
             proto_messages.append(proto_problem.SerializeToString())
         return proto_messages
     
-    def compress_protobuf(
-        self, 
+    def compress_protobuf(self, 
     proto_messages: List[str] ) -> bytes:
     # Write to a series of files to folder and compress
         data = io.BytesIO()
@@ -375,11 +374,9 @@ class Problem:
         elif self.problem_type == ProblemType.ising:
             self.problem_type = ProblemType.ising_grouped
             
-    def to_blob(self, compress: bool = False) -> bytes:
+    def to_blob(self) -> bytes:
         """Convert problem data to a binary blob.
 
-        :param compress: Compress the blob using gzip, defaults to None
-        :type compress: bool, optional 
         :return: Blob data
         :rtype: bytes
         """
@@ -389,13 +386,11 @@ class Problem:
         data = io.BytesIO()
         if self.content_type == ContentType.protobuf:
           return self.compress_protobuf(input_problem)                   
-        elif compress:
+        else:
             with gzip.GzipFile(fileobj=data, mode="w") as fo:
                 fo.write(input_problem.encode())
-        else:
-            data.write(input_problem.encode())
 
-        return data.getvalue()
+            return data.getvalue()
     
     def _blob_name(self):
         import uuid
@@ -406,7 +401,6 @@ class Problem:
         workspace: "Workspace",
         container_name: str = "qio-problems",
         blob_name: str = "inputData",
-        compress: bool = True,
         container_uri: str = None,
     ):
         """Uploads an optimization problem instance to
@@ -418,24 +412,22 @@ class Problem:
         :type container_name: str, optional
         :param blob_name: Blob name, defaults to None
         :type blob_name: str, optional
-        :param compress: Flag to compress the payload, defaults to True
-        :type compress: bool, optional
         :param container_uri: Optional container URI
         :type container_uri: str
         :return: uri of the uploaded problem
         :rtype: str
         """
-        blob_params = [workspace, container_name, blob_name, compress]
+        blob_params = [workspace, container_name, blob_name]
         if self.uploaded_blob_uri and self.uploaded_blob_params == blob_params:
             return self.uploaded_blob_uri
 
         if blob_name is None:
             blob_name = self._blob_name()
 
-        encoding = "gzip" if compress else ""
+        encoding = "gzip"
         content_type = self.content_type
 
-        blob = self.to_blob(compress=compress)
+        blob = self.to_blob()
         if container_uri is None:
             container_uri = workspace.get_container_uri(
                 container_name=container_name

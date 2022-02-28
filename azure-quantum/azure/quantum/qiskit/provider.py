@@ -4,6 +4,7 @@
 ##
 try:
     from qiskit.providers import ProviderV1 as Provider
+    from qiskit.providers.exceptions import QiskitBackendNotFoundError
 except ImportError:
     raise ImportError(
     "Missing optional 'qiskit' dependencies. \
@@ -32,6 +33,27 @@ class AzureQuantumProvider(Provider):
     def get_workspace(self) -> Workspace:
         return self._workspace
 
+    def _get_all_subclasses(self, cls):
+        all_subclasses = []
+        for subclass in cls.__subclasses__():
+            all_subclasses.append(subclass)
+            all_subclasses.extend(self._get_all_subclasses(subclass))
+        return all_subclasses
+
+    def get_backend(self, name=None, **kwargs):
+        """
+        Return a single backend matching the specified filtering.
+        """
+        backends = self.backends(name, **kwargs)
+        if len(backends) > 1:
+            raise QiskitBackendNotFoundError("More than one backend matches the criteria")
+        if not backends:
+            raise QiskitBackendNotFoundError(f"Could not find target '{name}'. \
+Please make sure the target name is valid and that the associated provider is added to your Workspace. \
+To add a provider to your quantum workspace on the Azure Portal, \
+see https://docs.microsoft.com/azure/quantum/how-to-create-workspace#add-additional-providers")
+        return backends[0]
+
     def backends(self, name=None, provider_id=None, **kwargs):
         """Return a list of backends matching the specified filtering.
         Args:
@@ -46,8 +68,8 @@ class AzureQuantumProvider(Provider):
         from azure.quantum.qiskit.backends import DEFAULT_TARGETS
 
         all_targets = {
-            name: _t for t in Backend.__subclasses__()
-            for _t in [t] + t.__subclasses__()
+            name: _t for t in self._get_all_subclasses(Backend)
+            for _t in [t]
             if hasattr(_t, "backend_names")
             for name in _t.backend_names
         }

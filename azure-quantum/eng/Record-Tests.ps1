@@ -3,15 +3,38 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
+[CmdletBinding()]
+Param (
+    [string] $TestFilter = ""
+)
+
+$FileFilter = "*${TestFilter}*.yaml"
+
 # Delete old recordings
 $Recordings_Folder =  Join-Path $PSScriptRoot "../tests/unit/recordings/"
 if (Test-Path $Recordings_Folder) {
-    Remove-Item $Recordings_Folder -Recurse | Write-Verbose
+    Get-ChildItem $Recordings_Folder -Recurse  -Filter $FileFilter | Remove-Item -Force | Write-Verbose
 }
 # Delete old recordings
 $Recordings_Folder =  Join-Path $PSScriptRoot "../tests/unit/aio/recordings/"
 if (Test-Path $Recordings_Folder) {
-    Remove-Item $Recordings_Folder -Recurse | Write-Verbose
+    Get-ChildItem $Recordings_Folder -Recurse  -Filter $FileFilter | Remove-Item -Force | Write-Verbose
 }
 
-pytest
+try
+{
+    Push-Location (Join-Path $PSScriptRoot "../tests/")
+
+    conda activate azurequantum
+
+    if ([string]::IsNullOrEmpty($TestFilter)) {
+        pytest
+    }
+    else {
+        pytest -k $TestFilter
+    }
+}
+finally
+{
+    Pop-Location
+}

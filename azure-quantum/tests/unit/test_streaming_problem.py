@@ -29,7 +29,6 @@ class TestStreamingProblem(QuantumTestBase):
         count: int,
         terms_thresh: int,
         size_thresh: int,
-        compress: bool,
         problem_type: ProblemType = ProblemType.ising,
         initial_terms: List[Term] = [],
         **kwargs
@@ -51,8 +50,7 @@ class TestStreamingProblem(QuantumTestBase):
             "test", problem_type=problem_type, terms=initial_terms
         )
         sProblem.upload_terms_threshold = terms_thresh
-        sProblem.upload_size_threshold = size_thresh
-        sProblem.compress = compress
+        sProblem.upload_size_threshold = size_thresh 
 
         for i in range(count):
             sProblem.add_term(c=i, indices=[i, i + 1])
@@ -90,27 +88,27 @@ class TestStreamingProblem(QuantumTestBase):
 
     @pytest.mark.live_test
     def test_streaming_problem_small_chunks(self):
-        self.__test_upload_problem(4, 1, 1, False)
+        self.__test_upload_problem(4, 1, 1)
 
 
     @pytest.mark.live_test
     def test_streaming_problem_large_chunks(self):
-        self.__test_upload_problem(4, 1000, 10e6, False)
+        self.__test_upload_problem(4, 1000, 10e6)
 
 
     @pytest.mark.live_test
     def test_streaming_problem_small_chunks_compressed(self):
-        self.__test_upload_problem(4, 1, 1, True)
+        self.__test_upload_problem(4, 1, 1)
 
 
     @pytest.mark.live_test
     def test_streaming_problem_large_chunks_compressed(self):
-        self.__test_upload_problem(4, 1000, 10e6, True)
+        self.__test_upload_problem(4, 1000, 10e6)
 
 
     @pytest.mark.live_test
     def test_streaming_problem_pubo(self):
-        self.__test_upload_problem(4, 1, 1, False, ProblemType.pubo)
+        self.__test_upload_problem(4, 1, 1, ProblemType.pubo)
 
     @pytest.mark.live_test
     def test_streaming_problem_initial_terms(self):
@@ -118,7 +116,6 @@ class TestStreamingProblem(QuantumTestBase):
             4,
             1,
             1,
-            False,
             initial_terms=[
                 Term(w=10, indices=[0, 1, 2]),
                 Term(w=20, indices=[1, 2, 3]),

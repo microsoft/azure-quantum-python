@@ -9,11 +9,11 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '287'
+      - '290'
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - azsdk-python-identity/1.7.1 Python/3.7.12 (Darwin-21.3.0-x86_64-i386-64bit)
+      - azsdk-python-identity/1.7.1 Python/3.7.10 (Darwin-21.3.0-x86_64-i386-64bit)
       x-client-cpu:
       - x64
       x-client-current-telemetry:
@@ -23,7 +23,7 @@ interactions:
       x-client-sku:
       - MSAL.Python
       x-client-ver:
-      - 1.16.0
+      - 1.14.0
     method: POST
     uri: https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token
   response:
@@ -52,8 +52,7 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - testapp-azure-quantum-projectq azsdk-python-quantum/0.0.0.1 Python/3.7.12
-        (Darwin-21.3.0-x86_64-i386-64bit)
+      - testapp azsdk-python-quantum/0.0.0.1 Python/3.7.10 (Darwin-21.3.0-x86_64-i386-64bit)
     method: POST
     uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/storage/sasUri
   response:
@@ -62,7 +61,7 @@ interactions:
         "access_token": "fake_token"}'
     headers:
       content-length:
-      - '205'
+      - '223'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -80,9 +79,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-blob/12.9.0 Python/3.7.12 (Darwin-21.3.0-x86_64-i386-64bit)
+      - azsdk-python-storage-blob/12.9.0 Python/3.7.10 (Darwin-21.3.0-x86_64-i386-64bit)
       x-ms-date:
-      - Wed, 09 Feb 2022 01:03:30 GMT
+      - Sat, 19 Feb 2022 01:14:54 GMT
       x-ms-version:
       - '2020-10-02'
     method: GET
@@ -90,7 +89,7 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerNotFound</Code><Message>The
-        specified container does not exist.\nRequestId:b6e1a474-b01e-009c-6950-1d328b000000\nTime:2022-02-09T01:03:31.0129697Z</Message></Error>"
+        specified container does not exist.\nRequestId:fa23b072-d01e-006f-382e-252f5a000000\nTime:2022-02-19T01:14:55.3139367Z</Message></Error>"
     headers:
       content-length:
       - '225'
@@ -113,9 +112,9 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-blob/12.9.0 Python/3.7.12 (Darwin-21.3.0-x86_64-i386-64bit)
+      - azsdk-python-storage-blob/12.9.0 Python/3.7.10 (Darwin-21.3.0-x86_64-i386-64bit)
       x-ms-date:
-      - Wed, 09 Feb 2022 01:03:30 GMT
+      - Sat, 19 Feb 2022 01:14:55 GMT
       x-ms-version:
       - '2020-10-02'
     method: PUT
@@ -141,9 +140,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-blob/12.9.0 Python/3.7.12 (Darwin-21.3.0-x86_64-i386-64bit)
+      - azsdk-python-storage-blob/12.9.0 Python/3.7.10 (Darwin-21.3.0-x86_64-i386-64bit)
       x-ms-date:
-      - Wed, 09 Feb 2022 01:03:30 GMT
+      - Sat, 19 Feb 2022 01:14:55 GMT
       x-ms-version:
       - '2020-10-02'
     method: GET
@@ -164,9 +163,12 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: b'OPENQASM 2.0;\ninclude "qelib1.inc";\nqreg q[3];\ncreg c[3];\nh q[0];\ncx
-      q[0], q[1];\ncx q[1], q[2];\nmeasure q[0] -> c[0];\nmeasure q[1] -> c[1];\nmeasure
-      q[2] -> c[2];\n'
+    body: b'OPENQASM 2.0;\n        include "qelib1.inc";\n\n        qreg q[3];\n        creg
+      c0[1];\n        creg c1[1];\n        creg c2[1];\n\n        h q[0];\n        cx
+      q[0], q[1];\n        x q[2];\n        h q[2];\n        cx q[2], q[0];\n        h
+      q[2];\n        measure q[0] -> c0[0];\n        if (c0==1) x q[1];\n        measure
+      q[2] -> c1[0];\n        if (c1==1) z q[1];\n        h q[1];\n        measure
+      q[1] -> c2[0];\n        '
     headers:
       Accept:
       - application/xml
@@ -175,15 +177,15 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '162'
+      - '406'
       Content-Type:
       - application/octet-stream
       User-Agent:
-      - azsdk-python-storage-blob/12.9.0 Python/3.7.12 (Darwin-21.3.0-x86_64-i386-64bit)
+      - azsdk-python-storage-blob/12.9.0 Python/3.7.10 (Darwin-21.3.0-x86_64-i386-64bit)
       x-ms-blob-type:
       - BlockBlob
       x-ms-date:
-      - Wed, 09 Feb 2022 01:03:30 GMT
+      - Sat, 19 Feb 2022 01:14:55 GMT
       x-ms-version:
       - '2020-10-02'
     method: PUT
@@ -200,12 +202,11 @@ interactions:
       code: 201
       message: Created
 - request:
-    body: 'b''{"id": "00000000-0000-0000-0000-000000000000", "name": "honeywell-circuit",
+    body: 'b''{"id": "00000000-0000-0000-0000-000000000000", "name": "quantinuum-job",
       "containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
       "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData",
-      "inputDataFormat": "honeywell.openqasm.v1", "inputParams": {"shots": 500}, "providerId":
-      "honeywell", "target": "honeywell.hqs-lt-s1-apival", "metadata": {"num_qubits":
-      "3"}, "outputDataFormat": "honeywell.quantum-results.v1"}'''
+      "inputDataFormat": "honeywell.openqasm.v1", "inputParams": {}, "providerId":
+      "quantinuum", "target": "quantinuum.hqs-lt-s1-apival", "outputDataFormat": "honeywell.quantum-results.v1"}'''
     headers:
       Accept:
       - application/json
@@ -214,30 +215,29 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '623'
+      - '611'
       Content-Type:
       - application/json
       User-Agent:
-      - testapp-azure-quantum-projectq azsdk-python-quantum/0.0.0.1 Python/3.7.12
-        (Darwin-21.3.0-x86_64-i386-64bit)
+      - testapp azsdk-python-quantum/0.0.0.1 Python/3.7.10 (Darwin-21.3.0-x86_64-i386-64bit)
     method: PUT
     uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000000
   response:
     body:
       string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
-        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData",
-        "inputDataFormat": "honeywell.openqasm.v1", "inputParams": {"shots": 500},
-        "providerId": "honeywell", "target": "honeywell.hqs-lt-s1-apival", "metadata":
-        {"num_qubits": "3"}, "name": "honeywell-circuit", "id": "00000000-0000-0000-0000-000000000000",
-        "status": "Waiting", "outputDataFormat": "honeywell.quantum-results.v1", "outputDataUri":
-        "https://e2etests.blob.core.windows.net:443/job-00000000-0000-0000-0000-000000000000/outputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
-        "creationTime": "2022-02-09T01:03:31.3409771+00:00", "beginExecutionTime":
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "inputDataFormat": "honeywell.openqasm.v1", "inputParams": {}, "providerId":
+        "quantinuum", "target": "quantinuum.hqs-lt-s1-apival", "metadata": null, "name":
+        "quantinuum-job", "id": "00000000-0000-0000-0000-000000000000", "status":
+        "Waiting", "outputDataFormat": "honeywell.quantum-results.v1", "outputDataUri":
+        "https://st8bd7d3874f6b42beb1d90a.blob.core.windows.net:443/job-00000000-0000-0000-0000-000000000000/outputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "creationTime": "2022-02-19T01:14:56.3180959+00:00", "beginExecutionTime":
         null, "endExecutionTime": null, "cancellationTime": null, "costEstimate":
         null, "errorData": null, "isCancelling": false, "tags": [], "access_token":
         "fake_token"}'
     headers:
       content-length:
-      - '1040'
+      - '1175'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -255,26 +255,25 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - testapp-azure-quantum-projectq azsdk-python-quantum/0.0.0.1 Python/3.7.12
-        (Darwin-21.3.0-x86_64-i386-64bit)
+      - testapp azsdk-python-quantum/0.0.0.1 Python/3.7.10 (Darwin-21.3.0-x86_64-i386-64bit)
     method: GET
     uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000000
   response:
     body:
       string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
-        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3Dhoneywell-circuit-1813b5ea-8944-11ec-9eee-3c7d0a1d68ec.input.json",
-        "inputDataFormat": "honeywell.openqasm.v1", "inputParams": {"shots": 500},
-        "providerId": "honeywell", "target": "honeywell.hqs-lt-s1-apival", "metadata":
-        {"num_qubits": "3"}, "name": "honeywell-circuit", "id": "00000000-0000-0000-0000-000000000000",
-        "status": "Succeeded", "outputDataFormat": "honeywell.quantum-results.v1",
-        "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3Dhoneywell-circuit-1813b5ea-8944-11ec-9eee-3c7d0a1d68ec.output.json",
-        "creationTime": "2022-02-09T01:03:31.3409771+00:00", "beginExecutionTime":
-        "2022-02-09T01:03:33.637216+00:00", "endExecutionTime": "2022-02-09T01:03:33.637471+00:00",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3Dquantinuum-job-00000000-0000-0000-0000-000000000000.input.json",
+        "inputDataFormat": "honeywell.openqasm.v1", "inputParams": {}, "providerId":
+        "quantinuum", "target": "quantinuum.hqs-lt-s1-apival", "metadata": null, "name":
+        "quantinuum-job", "id": "00000000-0000-0000-0000-000000000000", "status":
+        "Succeeded", "outputDataFormat": "honeywell.quantum-results.v1", "outputDataUri":
+        "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3Dquantinuum-job-00000000-0000-0000-0000-000000000000.output.json",
+        "creationTime": "2022-02-19T01:14:56.3180959+00:00", "beginExecutionTime":
+        "2022-02-19T01:14:58.302875+00:00", "endExecutionTime": "2022-02-19T01:14:58.303435+00:00",
         "cancellationTime": null, "costEstimate": null, "errorData": null, "isCancelling":
         false, "tags": [], "access_token": "fake_token"}'
     headers:
       content-length:
-      - '1395'
+      - '1421'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -292,33 +291,33 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-blob/12.9.0 Python/3.7.12 (Darwin-21.3.0-x86_64-i386-64bit)
+      - azsdk-python-storage-blob/12.9.0 Python/3.7.10 (Darwin-21.3.0-x86_64-i386-64bit)
       x-ms-date:
-      - Wed, 09 Feb 2022 01:03:35 GMT
+      - Sat, 19 Feb 2022 01:15:02 GMT
       x-ms-range:
       - bytes=0-33554431
       x-ms-version:
       - '2020-10-02'
     method: GET
-    uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3Dhoneywell-circuit-1813b5ea-8944-11ec-9eee-3c7d0a1d68ec.output.json
+    uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3Dquantinuum-job-00000000-0000-0000-0000-000000000000.output.json
   response:
     body:
-      string: '{"c": ["000"], "access_token": "fake_token"}'
+      string: '{"c0": ["0"], "c1": ["0"], "c2": ["0"], "access_token": "fake_token"}'
     headers:
       accept-ranges:
       - bytes
       content-length:
-      - '14'
+      - '39'
       content-range:
-      - bytes 0-13/14
+      - bytes 0-38/39
       content-type:
       - application/octet-stream
       x-ms-blob-content-md5:
-      - npRyVi2mUq7vl6BhTV4FxQ==
+      - G6E9ivtAth12WMpLNitMGA==
       x-ms-blob-type:
       - BlockBlob
       x-ms-creation-time:
-      - Wed, 09 Feb 2022 01:03:31 GMT
+      - Sat, 19 Feb 2022 01:14:57 GMT
       x-ms-lease-state:
       - available
       x-ms-lease-status:

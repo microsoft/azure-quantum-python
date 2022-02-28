@@ -5,6 +5,7 @@
 
 from azure.quantum.cirq.targets.target import Target
 from azure.quantum.cirq.targets.honeywell import HoneywellTarget
+from azure.quantum.cirq.targets.quantinuum import QuantinuumTarget
 from azure.quantum.cirq.targets.ionq import IonQTarget
 
 __all__ = ["Target", "HoneywellTarget", "IonQTarget"]
@@ -14,4 +15,5 @@ __all__ = ["Target", "HoneywellTarget", "IonQTarget"]
 DEFAULT_TARGETS = {
     "ionq": IonQTarget,
     "honeywell": HoneywellTarget,
+    "quantinuum": QuantinuumTarget,
 }
