@@ -51,7 +51,7 @@ class AzureQuantumProvider(Provider):
             raise QiskitBackendNotFoundError(f"Could not find target '{name}'. \
 Please make sure the target name is valid and that the associated provider is added to your Workspace. \
 To add a provider to your quantum workspace on the Azure Portal, \
-see https://docs.microsoft.com/azure/quantum/how-to-create-workspace#add-additional-providers")
+see https://aka.ms/AQ/Docs/AddProvider")
         return backends[0]
 
     def backends(self, name=None, provider_id=None, **kwargs):
