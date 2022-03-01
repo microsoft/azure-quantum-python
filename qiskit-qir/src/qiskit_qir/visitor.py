@@ -146,6 +146,7 @@ class BasicQisVisitor(QuantumCircuitElementVisitor):
     def __init__(self):
         self._module = None
         self._builder = None
+        self._bit_labels = {}
 
     def visitQuantumCircuit(self, circuit):
         self._module = SimpleModule(
@@ -157,7 +158,11 @@ class BasicQisVisitor(QuantumCircuitElementVisitor):
         print(f"Visiting quantum circuit '{circuit.name}' ({circuit.num_qubits}, {circuit.num_clbits})")
 
     def visitRegister(self, register):
+        self._bit_labels.update({
+            bit: "%s%d" % (register.name, idx) for (idx, bit) in enumerate(register)
+        })
         print(f"Visiting register '{register.name}'")
 
     def visitInstruction(self, instruction, qargs, cargs):
-        print(f"Visiting instruction '{instruction.name}'")
+        qlabels = ", ".join([self._bit_labels.get(bit) for bit in qargs + cargs])
+        print(f"Visiting instruction '{instruction.name}' ({qlabels})")
