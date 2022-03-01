@@ -83,6 +83,8 @@ setuptools.setup(
         "qiskit": [
             "qiskit-ionq>=0.1.4",
             "qiskit-terra>=0.19.1"
+            "qiskit-ignis>=0.7.0",
+            "qiskit-aqua>=0.9.5"
         ],
         "cirq": [
             "cirq-core==0.13.1",
