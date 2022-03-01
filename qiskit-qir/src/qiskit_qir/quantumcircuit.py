@@ -23,7 +23,7 @@ from qiskit.circuit.quantumcircuit import (
     _add_sub_instruction_to_existing_composite_circuits
 )
 
-from azure.quantum.qiskit.qir.builder import QiskitToQirBuilder
+from qiskit_qir.builder import QiskitToQirBuilder
 from sympy import true
 
 

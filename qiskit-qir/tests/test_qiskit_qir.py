@@ -8,8 +8,8 @@ from types import MethodType
 import pytest
 import tempfile
 
-from azure.quantum.qiskit.qir.quantumcircuit import QirQuantumCircuit
-from azure.quantum.qiskit.qir.translate import to_qir
+from qiskit_qir.quantumcircuit import QirQuantumCircuit
+from qiskit_qir.translate import to_qir
 from qiskit import QuantumCircuit
 
 

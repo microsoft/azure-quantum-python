@@ -6,7 +6,7 @@
 from dis import Instruction
 from typing import Union, Iterable
 
-from pyqir_generator import QirBuilder
+from pyqir.generator import BasicQisBuilder
 from qiskit.circuit.classicalregister import ClassicalRegister
 from qiskit.circuit.quantumregister import QuantumRegister
 
@@ -28,7 +28,7 @@ INSTRUCTIONS = [
 ]
 
 
-class QiskitToQirBuilder(QirBuilder):
+class QiskitToQirBuilder(BasicQisBuilder):
     """Qiskit to QIR builder."""
     def __init__(self, module: str = "qiskit-circuit"):
         """Create QiskitToQirBuilder object
