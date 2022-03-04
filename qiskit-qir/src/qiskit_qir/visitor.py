@@ -65,7 +65,6 @@ class BasicQisVisitor(QuantumCircuitElementVisitor):
 
             # Convert value into a bitstring of the same length as classical register
             values = format(instruction.condition[1], f'0{len(results)}b')
-            assert len(results) == len(values), f"Results {results} does not match values length {len(values)}."
 
             # Add branches recursively for each bit in the bitstring
             def __visit():
