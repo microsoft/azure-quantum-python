@@ -14,7 +14,7 @@ circuit.cx(0, 1)
 circuit.cx(1, 2)
 circuit.measure([0,1,2], [0, 1, 2])
 
-qir = to_qir(circuit, filename="output.ll")
+qir = to_qir(circuit)
 ```
 
 ## Install from source
