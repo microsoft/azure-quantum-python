@@ -61,7 +61,7 @@ class BasicQisVisitor(QuantumCircuitElementVisitor):
 
         if instruction.condition is not None and skip_condition is False:
             _log.debug(f"Visiting condition for instruction '{instruction.name}' ({labels})")
-            results = [self._module.results[self._clbit_labels.get(bit)] for bit in instruction.condition[0]]
+            conditions = [self._module.results[self._clbit_labels.get(bit)] for bit in instruction.condition[0]]
 
             # Convert value into a bitstring of the same length as classical register
             values = format(instruction.condition[1], f'0{len(results)}b')
@@ -70,21 +70,21 @@ class BasicQisVisitor(QuantumCircuitElementVisitor):
             def __visit():
                 self.visit_instruction(instruction, qargs, cargs, skip_condition=True)
 
-            def _branch(results_values):
+            def _branch(conditions_values):
                 try:
-                    result, val = next(results_values)
+                    result, val = next(conditions_values)
                     def __branch():
                         self._builder.if_result(
                             result=result,
-                            one=_branch(results_values) if val == "1" else None,
-                            zero=_branch(results_values) if val == "0" else None
+                            one=_branch(conditions_values) if val == "1" else None,
+                            zero=_branch(conditions_values) if val == "0" else None
                         )
                 except StopIteration:
                     return __visit
                 else:
                     return __branch
 
-            _branch(zip(results, values))()
+            _branch(zip(conditions, values))()
         elif "measure" == instruction.name or "m" == instruction.name:
             self._builder.m(qubits[0], results[0])
         elif "cx" == instruction.name:
