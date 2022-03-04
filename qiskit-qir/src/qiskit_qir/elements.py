@@ -21,7 +21,7 @@ class _Register(_QuantumCircuitElement):
         self._register = register
 
     def accept(self, visitor):
-        visitor.visitRegister(self._register)
+        visitor.visit_register(self._register)
 
 
 class _Instruction(_QuantumCircuitElement):
@@ -36,10 +36,10 @@ class _Instruction(_QuantumCircuitElement):
         self._cargs = cargs
 
     def accept(self, visitor):
-        visitor.visitInstruction(self._instruction, self._qargs, self._cargs)
+        visitor.visit_instruction(self._instruction, self._qargs, self._cargs)
 
 
-class _QuantumCircuit:
+class QiskitModule:
     def __init__(self, name, num_qubits, num_clbits, elements):
         self._name = name
         self._elements = elements
@@ -59,16 +59,8 @@ class _QuantumCircuit:
         return self._num_clbits
 
     @classmethod
-    def from_quantum_circuit(cls, circuit: QuantumCircuit) -> "_QuantumCircuit":
-        """Create a new QirQuantumCircuit instance from a QuantumCircuit object.
-        This adds a method circuit.qir that can be used to translate the Qiskit
-        circuit to QIR.
-
-        :param circuit: Quantum circuit
-        :type circuit: QuantumCircuit
-        :return: QuantumCircuit that can be translated to QIR.
-        :rtype: QirQuantumCircuit
-        """        
+    def from_quantum_circuit(cls, circuit: QuantumCircuit) -> "QuantumCircuit":
+        """Create a new QiskitModule from a qiskit.QuantumCircuit object."""        
         elements = []
 
         # Registers
@@ -105,6 +97,6 @@ class _QuantumCircuit:
         )
 
     def accept(self, visitor):
-        visitor.visitQuantumCircuit(self)
+        visitor.visit_qiskit_module(self)
         for element in self._elements:
             element.accept(visitor)

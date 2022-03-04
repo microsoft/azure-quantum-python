@@ -2,143 +2,21 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 ##
+import logging
 from abc import ABCMeta, abstractmethod
-from typing import Any
 from qiskit import ClassicalRegister, QuantumRegister
-
-from qiskit.qasm.exceptions import QasmError
-from qiskit.circuit.quantumcircuit import (
-    QuantumCircuit,
-    VALID_QASM2_IDENTIFIER
-)
 from pyqir.generator import SimpleModule, BasicQisBuilder
 
-EXISTING_GATE_NAMES = [
-    "barrier",
-    "measure",
-    "reset",
-    "u3",
-    "u2",
-    "u1",
-    "cx",
-    "id",
-    "u0",
-    "u",
-    "p",
-    "x",
-    "y",
-    "z",
-    "h",
-    "s",
-    "sdg",
-    "t",
-    "tdg",
-    "rx",
-    "ry",
-    "rz",
-    "sx",
-    "sxdg",
-    "cz",
-    "cy",
-    "swap",
-    "ch",
-    "ccx",
-    "cswap",
-    "crx",
-    "cry",
-    "crz",
-    "cu1",
-    "cp",
-    "cu3",
-    "csx",
-    "cu",
-    "rxx",
-    "rzz",
-    "rccx",
-    "rc3x",
-    "c3x",
-    "c3sx",
-    "c4x",
-]
-
-
-# def _qasm_escape_gate_name(name: str) -> str:
-#     """Returns a valid OpenQASM gate identifier"""
-#     # Replace all non-ASCII-word characters with the underscore.
-#     import re
-#     import string
-#     escaped_name = re.sub(r"\W", "_", name, flags=re.ASCII)
-#     if not escaped_name or escaped_name[0] not in string.ascii_lowercase:
-#         # Add an arbitrary, guaranteed-to-be-valid prefix.
-#         escaped_name = "gate_" + escaped_name
-
-#     return escaped_name
-
-
-# def _add_sub_instruction_to_existing_composite_circuits(
-#     instruction: Instruction,
-#     existing_gate_names: List[str],
-#     existing_composite_circuits: List[Instruction],
-# ) -> None:
-#     """Recursively add undefined sub-instructions in the definition of the given
-#     instruction to existing_composite_circuit list.
-#     """
-#     for sub_instruction, _, _ in instruction.definition:
-#         # Check instructions names are valid
-#         if not VALID_QASM2_IDENTIFIER.fullmatch(sub_instruction.name):
-#             sub_instruction = sub_instruction.copy(
-#                 name=_qasm_escape_gate_name(sub_instruction.name)
-#             )
-#         if (
-#             sub_instruction.name not in existing_gate_names
-#             and sub_instruction not in existing_composite_circuits
-#         ):
-#             existing_composite_circuits.insert(0, sub_instruction)
-#             _add_sub_instruction_to_existing_composite_circuits(
-#                 sub_instruction, existing_gate_names, existing_composite_circuits
-#             )
-
-
-# def _decompose(instruction, existing_composite_circuits):
-#     # Check instructions names or label are valid
-#     if not VALID_QASM2_IDENTIFIER.fullmatch(instruction.name):
-#         instruction = instruction.copy(name=_qasm_escape_gate_name(instruction.name))
-
-#     # decompose gate using definitions if they are not defined in OpenQASM2
-#     if (
-#         instruction.name not in EXISTING_GATE_NAMES
-#         and instruction not in existing_composite_circuits
-#     ):
-#         if instruction.name in [
-#             instruction.name for instruction in existing_composite_circuits
-#         ]:
-#             # append instruction id to name of instruction copy to make it unique
-#             instruction = instruction.copy(name=f"{instruction.name}_{id(instruction)}")
-
-#         existing_composite_circuits.append(instruction)
-#         _add_sub_instruction_to_existing_composite_circuits(
-#             instruction, EXISTING_GATE_NAMES, existing_composite_circuits
-#         )
-    
-#     return instruction
-
-
-def _bit_label(bit, regs):
-    bit_labels = {
-        bit: "%s%d" % (reg.name, idx)
-        for reg in regs
-        for (idx, bit) in enumerate(reg)
-    }
-    return bit_labels[bit]
+_log = logging.getLogger(name=__name__)
 
 
 class QuantumCircuitElementVisitor(metaclass=ABCMeta):
     @abstractmethod
-    def visitRegister(self, register):
+    def visit_register(self, register):
         raise NotImplementedError
 
     @abstractmethod
-    def visitInstruction(self, instruction):
+    def visit_instruction(self, instruction):
         raise NotImplementedError
 
 
@@ -146,23 +24,104 @@ class BasicQisVisitor(QuantumCircuitElementVisitor):
     def __init__(self):
         self._module = None
         self._builder = None
-        self._bit_labels = {}
+        self._qubit_labels = {}
+        self._clbit_labels = {}
 
-    def visitQuantumCircuit(self, circuit):
+    def visit_qiskit_module(self, module):
+        _log.debug(f"Visiting Qiskit module '{module.name}' ({module.num_qubits}, {module.num_clbits})")
         self._module = SimpleModule(
-            name=circuit.name,
-            num_qubits=circuit.num_qubits,
-            num_results=circuit.num_clbits,
+            name=module.name,
+            num_qubits=module.num_qubits,
+            num_results=module.num_clbits,
         )
         self._builder = BasicQisBuilder(self._module.builder)
-        print(f"Visiting quantum circuit '{circuit.name}' ({circuit.num_qubits}, {circuit.num_clbits})")
 
-    def visitRegister(self, register):
-        self._bit_labels.update({
-            bit: "%s%d" % (register.name, idx) for (idx, bit) in enumerate(register)
-        })
-        print(f"Visiting register '{register.name}'")
+    def visit_register(self, register):
+        _log.debug(f"Visiting register '{register.name}'")
+        if isinstance(register, QuantumRegister):
+            self._qubit_labels.update({
+                bit: n + len(self._qubit_labels) for n, bit in enumerate(register)
+            })
+        elif isinstance(register, ClassicalRegister):
+            self._clbit_labels.update({
+                bit: n + len(self._clbit_labels) for n, bit in enumerate(register)
+            })
+        else:
+            raise ValueError(f"Register of type {type(register)} not supported.")
 
-    def visitInstruction(self, instruction, qargs, cargs):
-        qlabels = ", ".join([self._bit_labels.get(bit) for bit in qargs + cargs])
-        print(f"Visiting instruction '{instruction.name}' ({qlabels})")
+    def visit_instruction(self, instruction, qargs, cargs, skip_condition=False):
+        qlabels = [self._qubit_labels.get(bit) for bit in qargs]
+        clabels = [self._clbit_labels.get(bit) for bit in cargs]
+        qubits = [self._module.qubits[n] for n in qlabels]
+        results = [self._module.results[n] for n in clabels]
+
+        labels = ", ".join([str(l) for l in qlabels + clabels])
+        if instruction.condition is None or skip_condition:
+            _log.debug(f"Visiting instruction '{instruction.name}' ({labels})")
+
+        if instruction.condition is not None and skip_condition is False:
+            _log.debug(f"Visiting conditional for instruction '{instruction.name}' ({labels})")
+            results = [self._module.results[self._clbit_labels.get(bit)] for bit in instruction.condition[0]]
+
+            # Convert value into a bitstring of the same length as classical register
+            values = format(instruction.condition[1], f'0{len(results)}b')
+            assert len(results) == len(values), f"Results {results} does not match values length {len(values)}."
+
+            # Add branches recursively for each bit in the bitstring
+            def __visit():
+                self.visit_instruction(instruction, qargs, cargs, skip_condition=True)
+
+            def _branch(results_values):
+                try:
+                    result, val = next(results_values)
+                    def __branch():
+                        self._builder.if_result(
+                            result=result,
+                            one=_branch(results_values) if val == "1" else None,
+                            zero=_branch(results_values) if val == "0" else None
+                        )
+                except StopIteration:
+                    return __visit
+                else:
+                    return __branch
+
+            _branch(zip(results, values))()
+        elif "measure" == instruction.name or "m" == instruction.name:
+            self._builder.m(qubits[0], results[0])
+        elif "cx" == instruction.name:
+            self._builder.cx(qubits[0], qubits[1])
+        elif "cz" == instruction.name:
+            self._builder.cz(qubits[0], qubits[1])
+        elif "h" == instruction.name:
+            self._builder.h(qubits[0])
+        elif "reset" == instruction.name:
+            self._builder.reset(qubits[0])
+        elif "rx" == instruction.name:
+            self._builder.rx(instruction.params[0], qubits[0])
+        elif "ry" == instruction.name:
+            self._builder.ry(instruction.params[0], qubits[0])
+        elif "rz" == instruction.name:
+            self._builder.rz(instruction.params[0], qubits[0])
+        elif "s" == instruction.name:
+            self._builder.s(qubits[0])
+        elif "sdg" == instruction.name:
+            self._builder.s_adj(qubits[0])
+        elif "t" == instruction.name:
+            self._builder.t(qubits[0])
+        elif "tdg" == instruction.name:
+            self._builder.t_adj(qubits[0])
+        elif "x" == instruction.name:
+            self._builder.x(qubits[0])
+        elif "y" == instruction.name:
+            self._builder.y(qubits[0])
+        elif "z" == instruction.name:
+            self._builder.z(qubits[0])
+        else:
+            raise ValueError(f"Instruction {instruction.name} is not supported. \
+                Try running a decomposition pass on this circuit using QuantumCircuit.decompose().")
+    
+    def ir(self):
+        return self._module.ir()
+
+    def bitcode(self):
+        return self._module.bitcode()
