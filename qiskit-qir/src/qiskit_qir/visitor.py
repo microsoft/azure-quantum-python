@@ -60,7 +60,7 @@ class BasicQisVisitor(QuantumCircuitElementVisitor):
             _log.debug(f"Visiting instruction '{instruction.name}' ({labels})")
 
         if instruction.condition is not None and skip_condition is False:
-            _log.debug(f"Visiting conditional for instruction '{instruction.name}' ({labels})")
+            _log.debug(f"Visiting condition for instruction '{instruction.name}' ({labels})")
             results = [self._module.results[self._clbit_labels.get(bit)] for bit in instruction.condition[0]]
 
             # Convert value into a bitstring of the same length as classical register
