@@ -9,6 +9,26 @@ from pyqir.generator import SimpleModule, BasicQisBuilder
 
 _log = logging.getLogger(name=__name__)
 
+SUPPORTED_INSTRUCTIONS = [
+    "measure",
+    "m",
+    "cx",
+    "cz",
+    "h",
+    "reset",
+    "rx",
+    "ry",
+    "rz",
+    "s",
+    "sdg",
+    "t",
+    "tdg",
+    "x",
+    "y",
+    "z",
+    "id"
+]
+
 
 class QuantumCircuitElementVisitor(metaclass=ABCMeta):
     @abstractmethod
@@ -50,6 +70,10 @@ class BasicQisVisitor(QuantumCircuitElementVisitor):
             raise ValueError(f"Register of type {type(register)} not supported.")
 
     def visit_instruction(self, instruction, qargs, cargs, skip_condition=False):
+        if instruction.name not in SUPPORTED_INSTRUCTIONS:
+            raise ValueError(f"Gate {instruction.name} is not supported. \
+Please transpile using the list of supported gates: {SUPPORTED_INSTRUCTIONS}.")
+
         qlabels = [self._qubit_labels.get(bit) for bit in qargs]
         clabels = [self._clbit_labels.get(bit) for bit in cargs]
         qubits = [self._module.qubits[n] for n in qlabels]
@@ -86,39 +110,39 @@ class BasicQisVisitor(QuantumCircuitElementVisitor):
 
             _branch(zip(conditions, values))()
         elif "measure" == instruction.name or "m" == instruction.name:
-            self._builder.m(qubits[0], results[0])
+            self._builder.m(*qubits, *results)
         elif "cx" == instruction.name:
-            self._builder.cx(qubits[0], qubits[1])
+            self._builder.cx(*qubits)
         elif "cz" == instruction.name:
-            self._builder.cz(qubits[0], qubits[1])
+            self._builder.cz(*qubits)
         elif "h" == instruction.name:
-            self._builder.h(qubits[0])
+            self._builder.h(*qubits)
         elif "reset" == instruction.name:
             self._builder.reset(qubits[0])
         elif "rx" == instruction.name:
-            self._builder.rx(instruction.params[0], qubits[0])
+            self._builder.rx(*instruction.params, *qubits)
         elif "ry" == instruction.name:
-            self._builder.ry(instruction.params[0], qubits[0])
+            self._builder.ry(*instruction.params, *qubits)
         elif "rz" == instruction.name:
-            self._builder.rz(instruction.params[0], qubits[0])
+            self._builder.rz(*instruction.params, *qubits)
         elif "s" == instruction.name:
-            self._builder.s(qubits[0])
+            self._builder.s(*qubits)
         elif "sdg" == instruction.name:
-            self._builder.s_adj(qubits[0])
+            self._builder.s_adj(*qubits)
         elif "t" == instruction.name:
-            self._builder.t(qubits[0])
+            self._builder.t(*qubits)
         elif "tdg" == instruction.name:
-            self._builder.t_adj(qubits[0])
+            self._builder.t_adj(*qubits)
         elif "x" == instruction.name:
-            self._builder.x(qubits[0])
+            self._builder.x(*qubits)
         elif "y" == instruction.name:
-            self._builder.y(qubits[0])
+            self._builder.y(*qubits)
         elif "z" == instruction.name:
-            self._builder.z(qubits[0])
-        else:
-            raise ValueError(f"Instruction {instruction.name} is not supported. \
-                Try running a decomposition pass on this circuit using QuantumCircuit.decompose().")
-    
+            self._builder.z(*qubits)
+        elif "id" == instruction.name:
+            self._builder.x(self._module.qubits[0])
+            self._builder.x(self._module.qubits[0])
+
     def ir(self):
         return self._module.ir()
 
