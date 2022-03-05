@@ -140,6 +140,7 @@ Please transpile using the list of supported gates: {SUPPORTED_INSTRUCTIONS}.")
         elif "z" == instruction.name:
             self._builder.z(*qubits)
         elif "id" == instruction.name:
+            # See: https://github.com/qir-alliance/pyqir/issues/74
             self._builder.x(self._module.qubits[0])
             self._builder.x(self._module.qubits[0])
 
