@@ -110,7 +110,8 @@ Please transpile using the list of supported gates: {SUPPORTED_INSTRUCTIONS}.")
 
             _branch(zip(conditions, values))()
         elif "measure" == instruction.name or "m" == instruction.name:
-            self._builder.m(*qubits, *results)
+            for qubit, result in zip(qubits, results):
+                self._builder.m(qubit, result)
         elif "cx" == instruction.name:
             self._builder.cx(*qubits)
         elif "cz" == instruction.name:
