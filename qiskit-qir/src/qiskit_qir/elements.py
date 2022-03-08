@@ -4,7 +4,6 @@
 ##
 from dis import Instruction
 from typing import List, Union
-from cirq import num_qubits
 from qiskit import ClassicalRegister, QuantumRegister
 from qiskit.circuit.bit import Bit
 from qiskit.circuit.quantumcircuit import QuantumCircuit
