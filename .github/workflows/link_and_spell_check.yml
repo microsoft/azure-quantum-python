@@ -1,0 +1,52 @@
+on:
+  push:
+    branches:
+    - main
+  workflow_dispatch:
+  pull_request:
+    branches:
+    - main
+
+name: "Check spelling, linting and links"
+
+jobs:
+  check-markdown:
+    runs-on: ubuntu-latest
+    name: "Check spelling, linting and links"
+    steps:
+    - uses: actions/checkout@v2
+    - run: |
+        wget https://github.com/qir-alliance/.github/archive/refs/heads/main.zip -O clone.zip &&
+        unzip clone.zip && mv .github-main out && rm clone.zip &&
+        mv out/workflow-templates/utils/ utils && rm -r out
+      shell: bash
+    - run: |
+        Get-ChildItem (Join-Path "eng" "problem-matchers") `
+          | ForEach-Object {
+            Write-Host "Adding matcher $_...";
+            Write-Host "::add-matcher::$_";
+          }
+      shell: pwsh
+    - name: markdownlint-cli
+      # cspell:words nosborn
+      uses: nosborn/github-action-markdown-cli@v2.0.0
+      with:
+        files: qiskit-qir
+        config_file: '.markdownlint.yaml'
+    - name: Markdown link check
+      # cspell:words gaurav
+      uses: gaurav-nelson/github-action-markdown-link-check@v1
+      with:
+        use-verbose-mode: 'yes'
+        config-file: 'utils/mlc_config.json'
+      if: ${{ github.event_name == 'push' }}
+    - name: "Check spelling in changed files"
+      # cspell:words streetsidesoftware
+      uses: streetsidesoftware/cspell-action@v1.2.4
+      with:
+        inline: warning
+        # Only warn on spelling errors, since there's likely a lot of false
+        # positives with terminology in quantum computing.
+        strict: false
+        incremental_files_only: true
+        config: 'cspell.json'

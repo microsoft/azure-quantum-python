@@ -1,0 +1,100 @@
+name: CI
+on:
+  push:
+    branches:
+    - main
+  pull_request:
+    branches:
+    - main
+    - feature/*
+    - features/*
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+    runs-on: ${{ matrix.config.os }}
+    env: ${{ matrix.config.env }}
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - {
+              os: "ubuntu-20.04",
+              arch: "amd64",
+              env: {},
+            }
+          - {
+              os: "windows-2019",
+              arch: "amd64",
+              env: {},
+            }
+          - {
+              os: "macOS-10.15",
+              arch: "amd64",
+              env: {},
+            }
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: 'recursive'
+      - name: Linux - Install build dependencies, ccache, and update PATH to use linked versions of gcc, cc, etc
+        run: sudo apt-get install -y ccache ninja-build
+        if: ${{ matrix.config.os == 'ubuntu-20.04' }}
+      - name: Windows - Install build dependencies, ccache, and update PATH to use linked versions of gcc, cc, etc
+        run: choco install --accept-license -y sccache ninja
+        if: ${{ matrix.config.os == 'windows-2019' }}
+      - name: MacOS - Install build dependencies, ccache, and update PATH to use linked versions of gcc, cc, etc
+        run: brew install ccache ninja
+        if: ${{ matrix.config.os == 'macOS-10.15' }}
+      - name: Windows - Install LLVM 11.1.0
+        run: choco install llvm --version=11.1.0 --allow-downgrade
+        if: ${{ matrix.config.os == 'windows-2019' }}
+      - name: "Build all"
+        run: ./build.ps1
+        shell: pwsh
+      - name: Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: artifacts
+          path: target/wheels/*
+
+  docs:
+    runs-on: "ubuntu-20.04"
+    needs: build
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: false
+
+      - name: Download Build Artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: artifacts
+          path: wheelhouse
+
+      - name: Build Docs
+        run: |
+          $properties = @{
+            "wheelhouse" = (Resolve-Path "wheelhouse/*-linux_x86_64.whl")
+          };
+          ./eng/build.ps1 `
+            -taskList docs `
+            -properties $properties
+        shell: pwsh
+
+      # Always publish docs as an artifact, but only publish docs to GitHub Pages
+      # when pushing to main.
+      - name: Publish Docs as Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: docs
+          path: docs/_build
+
+      - name: Publish Docs to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@4.1.7
+        with:
+          branch: gh-pages
+          folder: docs/_build/html
+        if: ${{ github.event_name == 'push' }}
