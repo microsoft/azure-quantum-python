@@ -8,7 +8,7 @@ Qiskit to QIR translator.
 from qiskit import QuantumCircuit
 from qiskit_qir import to_qir
 
-circuit = QuantumCircuit(name="my-circuit")
+circuit = QuantumCircuit(3, 3, name="my-circuit")
 circuit.h(0)
 circuit.cx(0, 1)
 circuit.cx(1, 2)
