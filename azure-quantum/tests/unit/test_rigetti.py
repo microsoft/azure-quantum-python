@@ -41,7 +41,7 @@ class TestRigettiTarget(QuantumTestBase):
             job = target.submit(
                 input_data=BELL_STATE_QUIL,
                 name="rigetti-bell-state",
-                num_shots=num_shots
+                input_params={"count": num_shots},
             )
 
             # If in recording mode, we don't want to record the pooling of job
@@ -70,7 +70,6 @@ class TestRigettiTarget(QuantumTestBase):
             assert job.has_completed()
 
             result = Result(job)
-            assert READOUT in result
             readout = result[READOUT]
             assert len(readout) == num_shots
             for shot in readout:
