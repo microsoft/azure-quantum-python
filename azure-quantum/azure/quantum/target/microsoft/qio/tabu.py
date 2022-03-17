@@ -15,6 +15,7 @@ class Tabu(Solver):
     target_names = (
         "microsoft.tabu.cpu",
         "microsoft.tabu-parameterfree.cpu",
+        "microsoft.tabu.qiote"
     )
     def __init__(
         self,
@@ -65,3 +66,13 @@ class Tabu(Solver):
         self.set_one_param("timeout", timeout)
         self.set_one_param("seed", seed)
         self.set_one_param("restarts", restarts)
+
+    def supports_grouped_terms(self):
+        if "qiote" in self.name:
+            return True
+        return False
+    
+    def supports_protobuf(self):
+        if "qiote" in self.name:
+            return True
+        return False
