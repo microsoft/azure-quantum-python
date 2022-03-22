@@ -39,6 +39,7 @@ class AzureQuantumJob(JobV1):
         self,
         backend,
         azure_job=None,
+        circuit=None,
         **kwargs
     ) -> None:
         """
@@ -52,6 +53,7 @@ class AzureQuantumJob(JobV1):
 
         self._azure_job = azure_job
         self._workspace = backend.provider().get_workspace()
+        self.circuit = circuit
 
         super().__init__(backend, self._azure_job.id, **kwargs)
 
@@ -124,6 +126,7 @@ class AzureQuantumJob(JobV1):
             elif (self._azure_job.details.output_data_format == IONQ_OUTPUT_DATA_FORMAT):
                 job_result["data"] = self._format_ionq_results(sampler_seed=sampler_seed, is_simulator=is_simulator)
                 job_result["header"] = self._azure_job.details.metadata
+                job_result["header"]["metadata"] = json.loads(job_result["header"]["metadata"])
 
             elif (self._azure_job.details.output_data_format == HONEYWELL_OUTPUT_DATA_FORMAT):
                 job_result["data"] = self._format_honeywell_results()
@@ -138,6 +141,7 @@ class AzureQuantumJob(JobV1):
             if shots_key in self._azure_job.details.input_params \
             else self._backend.options.get(shots_key)
         job_result["shots"] = shots
+
         return job_result
 
     @staticmethod

@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING
 from azure.quantum import __version__
 from azure.quantum.qiskit.job import AzureQuantumJob
 from azure.quantum.target.ionq import IonQ
+import json
 
 try:
     from qiskit.providers import BackendV1 as Backend
@@ -43,6 +44,7 @@ class IonQBackend(Backend):
             "name": circuit.name,
             "num_qubits": circuit.num_qubits,
             "meas_map": meas_map,
+            "metadata": json.dumps(circuit.metadata)
         }
 
     @staticmethod
@@ -93,7 +95,7 @@ class IonQBackend(Backend):
             if opt in input_params:
                 input_params[opt] = kwargs.pop(opt)
 
-        logger.info(f"Submitting new job for basckend {self.name()}")
+        logger.info(f"Submitting new job for backend {self.name()}")
         job = AzureQuantumJob(
             backend=self,
             name=circuit.name,
@@ -106,6 +108,7 @@ class IonQBackend(Backend):
             output_data_format="ionq.quantum-results.v1",
             input_params = input_params,
             metadata= self._job_metadata(circuit=circuit, meas_map=meas_map),
+            circuit=circuit,
             **kwargs
         )
 
