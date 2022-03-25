@@ -127,6 +127,7 @@ class AzureQuantumJob(JobV1):
             elif (self._azure_job.details.output_data_format == IONQ_OUTPUT_DATA_FORMAT):
                 job_result["data"] = self._format_ionq_results(sampler_seed=sampler_seed, is_simulator=is_simulator)
                 job_result["header"] = self._azure_job.details.metadata
+                job_result["header"]["metadata"] = json.loads(job_result["header"]["metadata"])
 
             elif (self._azure_job.details.output_data_format == HONEYWELL_OUTPUT_DATA_FORMAT):
                 job_result["data"] = self._format_honeywell_results()
