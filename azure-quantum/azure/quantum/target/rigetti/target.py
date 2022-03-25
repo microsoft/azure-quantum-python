@@ -23,11 +23,11 @@ class RigettiTarget(str, Enum):
     See https://qcs.rigetti.com/qpus for details on a QPU target.
     """
 
-    QVM = "rigetti.qvm"
+    QVM = "rigetti.sim.qvm"
     """A simulator target for Quil. See https://github.com/quil-lang/qvm for more info."""
 
-    ASPEN_11 = "rigetti.aspen-11"
-    ASPEN_M_1 = "rigetti.aspen-m-1"
+    ASPEN_11 = "rigetti.qpu.aspen-11"
+    ASPEN_M_1 = "rigetti.qpu.aspen-m-1"
 
 
 class Rigetti(Target):

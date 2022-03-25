@@ -40,7 +40,7 @@ class TestRigettiTarget(QuantumTestBase):
             target = Rigetti(workspace=workspace)
             job = target.submit(
                 input_data=BELL_STATE_QUIL,
-                name="rigetti-bell-state",
+                name="qdk-python-test",
                 input_params={"count": num_shots},
             )
 
