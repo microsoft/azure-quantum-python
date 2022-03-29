@@ -2,6 +2,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 ##
+import qiskit
+from math import pi
 from qiskit import QuantumCircuit
 from azure.quantum.qiskit import AzureQuantumProvider
 from qiskit_experiments.library import StateTomography
@@ -9,28 +11,36 @@ from qiskit_experiments.framework import ParallelExperiment
 from qiskit_experiments.framework.experiment_data import ExperimentData
 
 
-# Azure Quantum Provider
-provider = AzureQuantumProvider(
-  resource_id="/subscriptions/916dfd6d-030c-4bd9-b579-7bb6d1926e97/resourceGroups/anpaz-demos/providers/Microsoft.Quantum/Workspaces/demo15",
-  location="westus"
-)
+from qiskit import IBMQ
+IBMQ.load_account()
+provider = IBMQ.get_provider(hub='ibm-q', group='open', project='main')
+backend = provider.get_backend('ibmq_qasm_simulator')
 
-backend = provider.get_backend("ionq.simulator")
+# # Azure Quantum Provider
+# provider = AzureQuantumProvider(
+#   resource_id="/subscriptions/916dfd6d-030c-4bd9-b579-7bb6d1926e97/resourceGroups/anpaz-demos/providers/Microsoft.Quantum/Workspaces/demo15",
+#   location="westus"
+# )
+# backend = provider.get_backend("ionq.simulator")
 
-###########################
-# One Tomograph Experiment
-###########################
+# ###########################
+# # One Tomograph Experiment
+# ###########################
+circuit = QuantumCircuit(1)
+circuit.h(0)
 experiment = StateTomography(circuit)
-circuits = qiskit.transpile(experiment.circuits(), backend)
-for c in circuits:
-    cost = backend.estimate_cost(c, shots=1000)
-    print(cost)
 
-qstdata1 = experiment.run(simulator_backend, shots=100).block_for_results()
+# Azurequantum cost:
+# circuits = qiskit.transpile(experiment.circuits(), backend)
+# for c in circuits:
+#     cost = backend.estimate_cost(c, shots=1000)
+#     print(cost)
+
+qstdata1 = experiment.run(backend, shots=100).block_for_results()
 print(qstdata1)
 state_result = qstdata1.analysis_results("state")
 print(state_result.value)
-
+exit(0)
 
 ###########################
 # Multiple parallel experiments
@@ -45,15 +55,10 @@ subexps = [
 ]
 experiment = ParallelExperiment(subexps)
 
-
-circuits = qiskit.transpile(experiment.circuits(), backend)
-for c in circuits:
-    cost = backend.estimate_cost(c, shots=1000)
-    print(cost.estimated_total)
-
 pardata = experiment.run(backend, seed_simulation=100).block_for_results()
 for result in pardata.analysis_results():
     print(result)
+exit(0)
 
 ########
 # Async running

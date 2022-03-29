@@ -8,17 +8,20 @@ from qiskit.tools.monitor import job_monitor
 
 from azure.quantum.qiskit import AzureQuantumProvider
 
+from qiskit import IBMQ
+IBMQ.load_account()
+provider = IBMQ.get_provider(hub='ibm-q', group='open', project='main')
+backend = provider.get_backend('ibmq_qasm_simulator')
+
+
 # Azure Quantum Provider
-provider = AzureQuantumProvider(
-  resource_id="/subscriptions/916dfd6d-030c-4bd9-b579-7bb6d1926e97/resourceGroups/anpaz-demos/providers/Microsoft.Quantum/Workspaces/demo15",
-  location="westus"
-)
-backend = provider.get_backend('ionq.simulator')
+# provider = AzureQuantumProvider(
+#   resource_id="/subscriptions/916dfd6d-030c-4bd9-b579-7bb6d1926e97/resourceGroups/anpaz-demos/providers/Microsoft.Quantum/Workspaces/demo15",
+#   location="westus"
+# )
+# backend = provider.get_backend('ionq.simulator')
 
 import numpy as np
-import networkx as nx
-
-from qiskit.algorithms import NumPyMinimumEigensolver
 
 
 num_nodes = 4

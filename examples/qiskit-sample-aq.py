@@ -8,11 +8,6 @@ from qiskit.tools.monitor import job_monitor
 
 from azure.quantum.qiskit import AzureQuantumProvider
 
-from math import pi
-from qiskit_experiments.library import StateTomography
-from qiskit_experiments.framework import ParallelExperiment
-
-import qiskit
 
 # Azure Quantum Provider
 provider = AzureQuantumProvider(
