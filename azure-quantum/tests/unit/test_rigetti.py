@@ -7,7 +7,7 @@ import pytest
 
 from azure.quantum.job import Job
 from azure.quantum.target import Rigetti
-from azure.quantum.target.rigetti import Result
+from azure.quantum.target.rigetti import Result, InputParams
 from common import QuantumTestBase, ZERO_UID
 
 READOUT = "ro"
@@ -41,7 +41,7 @@ class TestRigettiTarget(QuantumTestBase):
             job = target.submit(
                 input_data=BELL_STATE_QUIL,
                 name="qdk-python-test",
-                input_params={"count": num_shots},
+                input_params=InputParams(count=num_shots),
             )
 
             # If in recording mode, we don't want to record the pooling of job
