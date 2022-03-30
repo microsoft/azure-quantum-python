@@ -10,6 +10,9 @@ param (
   [bool] $SkipInstall
 )
 
+# For debug, print all relevant environment variables:
+Get-ChildItem env:AZURE*, env:*VERSION, env:*OUTDIR | Format-Table | Out-String | Write-Host
+
 $PackageDir = Split-Path -parent $PSScriptRoot;
 $PackageName = $PackageDir | Split-Path -Leaf;
 $RootDir = Split-Path -parent $PackageDir;
@@ -20,9 +23,6 @@ if ($True -eq $SkipInstall) {
 } else {
     & (Join-Path $PSScriptRoot Install-Artifacts.ps1)
 }
-
-# For debug, print all relevant environment variables:
-Get-ChildItem env:AZURE*, env:*VERSION, env:*OUTDIR | Format-Table | Out-String | Write-Host
 
 # Activate env
 $EnvName = GetEnvName -PackageName $PackageName
