@@ -21,6 +21,9 @@ if ($True -eq $SkipInstall) {
     & (Join-Path $PSScriptRoot Install-Artifacts.ps1)
 }
 
+# For debug, print all relevant environment variables:
+Get-ChildItem env:AZURE*, env:*VERSION, env:*OUTDIR | Format-Table | Out-String | Write-Host
+
 # Activate env
 $EnvName = GetEnvName -PackageName $PackageName
 Use-CondaEnv $EnvName
