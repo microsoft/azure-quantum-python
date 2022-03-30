@@ -48,6 +48,9 @@ function PyTestMarkExpr() {
     if ($AzureQuantumCapabilities -notcontains "submit.fpga") {
         $MarkExpr += " and not fpga"
     }
+    if ($AzureQuantumCapabilities -notcontains "submit.rigetti") {
+        $MarkExpr += " and not rigetti"
+    }
 
     return $MarkExpr
 }
