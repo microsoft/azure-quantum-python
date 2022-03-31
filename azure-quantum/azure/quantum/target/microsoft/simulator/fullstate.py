@@ -14,7 +14,7 @@ if TYPE_CHECKING:
     from azure.quantum.job import Job
 
 
-class FullStateTarget(Target):
+class FullStateSimulator(Target):
     """
     Submit a QIR program to the full state simulator target.
 

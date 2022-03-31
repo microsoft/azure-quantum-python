@@ -3,4 +3,4 @@
 # Licensed under the MIT License.
 ##
 
-from .fullstate import FullStateTarget
+from .fullstate import FullStateSimulator
