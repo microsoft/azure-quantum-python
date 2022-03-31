@@ -1,6 +1,7 @@
 """Tests the ``azure.quantum.target.rigetti`` module."""
 import unittest
 import warnings
+from typing import Dict, Any, Union
 from unittest.mock import MagicMock
 
 import pytest
@@ -27,7 +28,7 @@ MEASURE 1 {READOUT}[1]
 class TestRigettiTarget(QuantumTestBase):
     """Tests the azure.quantum.target.Rigetti class."""
 
-    def test_job_submit_rigetti(self) -> None:
+    def _run_job(self, input_params: Union[InputParams, Dict[str, Any], None]) -> Result:
         with unittest.mock.patch.object(
             Job,
             "create_job_id",
@@ -36,12 +37,11 @@ class TestRigettiTarget(QuantumTestBase):
 
             workspace = self.create_workspace()
 
-            num_shots = 5
             target = Rigetti(workspace=workspace)
             job = target.submit(
                 input_data=BELL_STATE_QUIL,
                 name="qdk-python-test",
-                input_params=InputParams(count=num_shots),
+                input_params=input_params,
             )
 
             # If in recording mode, we don't want to record the pooling of job
@@ -69,11 +69,30 @@ class TestRigettiTarget(QuantumTestBase):
             job = workspace.get_job(job.id)
             assert job.has_completed()
 
-            result = Result(job)
-            readout = result[READOUT]
-            assert len(readout) == num_shots
-            for shot in readout:
-                assert len(shot) == 2, "Bell state program should only measure 2 qubits"
+            return Result(job)
+
+    def test_job_submit_rigetti_typed_input_params(self) -> None:
+        num_shots = 5
+        result = self._run_job(InputParams(count=num_shots))
+        readout = result[READOUT]
+        assert len(readout) == num_shots
+        for shot in readout:
+            assert len(shot) == 2, "Bell state program should only measure 2 qubits"
+
+    def test_job_submit_rigetti_dict_input_params(self) -> None:
+        num_shots = 5
+        result = self._run_job({"count": num_shots})
+        readout = result[READOUT]
+        assert len(readout) == num_shots
+        for shot in readout:
+            assert len(shot) == 2, "Bell state program should only measure 2 qubits"
+
+    def test_job_submit_rigetti_default_input_params(self) -> None:
+        result = self._run_job(None)
+        readout = result[READOUT]
+        assert len(readout) == 1
+        for shot in readout:
+            assert len(shot) == 2, "Bell state program should only measure 2 qubits"
 
 
 class FakeJob:
