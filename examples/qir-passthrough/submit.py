@@ -1,6 +1,6 @@
 import os
 from azure.quantum import Workspace
-from azure.quantum.target.microsoft.simulator.fullstate import FullStateTarget
+from azure.quantum.target.microsoft.simulator.fullstate import FullStateSimulator
 
 
 workspace = Workspace(
@@ -12,7 +12,7 @@ workspace = Workspace(
 
 print("Using workspace", workspace.name)
 
-target: FullStateTarget = workspace.get_targets("microsoft.simulator.fullstate")
+target: FullStateSimulator = workspace.get_targets("microsoft.simulator.fullstate")
 job = target.submit_qir_file("qir/Sample.ll", "HelloQ", entrypoint="Sample__HelloQ")
 
 # Print job, wait for results:

@@ -2,7 +2,7 @@ from json import JSONDecodeError
 import unittest
 import os
 import pytest
-from azure.quantum.target.microsoft.simulator.fullstate import FullStateTarget
+from azure.quantum.target.microsoft.simulator.fullstate import FullStateSimulator
 from azure.quantum.job.job import Job
 
 from common import QuantumTestBase, ZERO_UID
@@ -26,7 +26,7 @@ class TestFullStateSimulator(QuantumTestBase):
             return_value=self.get_test_job_id(),
         ):
             workspace = self.create_workspace()
-            target: FullStateTarget = workspace.get_targets("microsoft.simulator.fullstate")
+            target: FullStateSimulator = workspace.get_targets("microsoft.simulator.fullstate")
             job = target.submit_qir_file(self._test_qir_file(), "QIR test", "Sample__HelloQ")
             result: str = job.get_results()
             assert result.startswith("Hello quantum world!")
