@@ -54,6 +54,9 @@ function PyTestMarkExpr() {
     if ($AzureQuantumCapabilities -notcontains "submit.rigetti") {
         $MarkExpr += " and not rigetti"
     }
+    if ($AzureQuantumCapabilities -notcontains "submit.quantinuum") {
+        $MarkExpr += " and not quantinuum"
+    }
 
     return $MarkExpr
 }
