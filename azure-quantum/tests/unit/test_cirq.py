@@ -61,6 +61,7 @@ class TestCirq(QuantumTestBase):
             assert app_id in service._workspace.user_agent
             assert "-azure-quantum-cirq" in service._workspace.user_agent
 
+    @pytest.mark.quantinuum
     @pytest.mark.honeywell
     @pytest.mark.ionq
     @pytest.mark.live_test
@@ -73,8 +74,7 @@ class TestCirq(QuantumTestBase):
         assert all([isinstance(t, Target) for t in targets])
         assert "honeywell.hqs-lt-s1-apival" in target_names
         assert "ionq.simulator" in target_names
-        if self.get_test_quantinuum_enabled():
-            assert "quantinuum.hqs-lt-s1-apival" in target_names
+        assert "quantinuum.hqs-lt-s1-apival" in target_names
 
     def test_plugins_estimate_cost_cirq_ionq(self):
         workspace = self.create_workspace()
@@ -271,8 +271,7 @@ class TestCirq(QuantumTestBase):
                     assert result.measurements["q0"].sum() == result.measurements["q1"].sum()
                     assert result.measurements["q1"].sum() == result.measurements["q2"].sum()
 
-    @pytest.mark.honeywell
+    @pytest.mark.quantinuum
     @pytest.mark.live_test
     def test_plugins_quantinuum_cirq(self):
-        if self.get_test_quantinuum_enabled():
-            self.test_plugins_honeywell_cirq(provider_id="quantinuum")
+        self.test_plugins_honeywell_cirq(provider_id="quantinuum")
