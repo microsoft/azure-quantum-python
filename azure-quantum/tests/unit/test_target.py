@@ -1,3 +1,11 @@
+#!/bin/env python
+# -*- coding: utf-8 -*-
+##
+# test_qiskit.py: Tests for Qiskit plugin
+##
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+##
 import unittest
 import warnings
 import pytest
@@ -191,11 +199,6 @@ class TestHoneywell(QuantumTestBase):
             assert cost.estimated_total == 845.0
 
     @pytest.mark.honeywell
-    def test_job_estimate_cost_quantinuum(self):
-        if self.get_test_quantinuum_enabled():
-            self.test_job_estimate_cost_honeywell(provider_id="quantinuum")
-
-    @pytest.mark.honeywell
     @pytest.mark.live_test
     def test_job_submit_honeywell(self, provider_id="honeywell"):
         with unittest.mock.patch.object(
@@ -239,7 +242,3 @@ class TestHoneywell(QuantumTestBase):
                     assert results["c0"] == ["0"]
                     assert results["c1"] == ["0"]
 
-    @pytest.mark.honeywell
-    def test_job_submit_quantinuum(self):
-        if self.get_test_quantinuum_enabled():
-            self.test_job_submit_honeywell(provider_id="quantinuum")
