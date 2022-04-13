@@ -447,6 +447,11 @@ class TestSolvers(QuantumTestBase):
             _ = ParallelTempering(
                 ws, sweeps=20, replicas=3, all_betas=[1, 3, 5, 7, 9]
             )
+        
+        with self.assertRaises(ValueError):
+            _ = ParallelTempering(
+                ws, sweeps = 20, replicas = 1, all_betas=[1,2,3]
+            )
 
     def test_SimulatedAnnealing_input_params(self):
         ws = self.create_workspace()
