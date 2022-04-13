@@ -74,7 +74,7 @@ class ParallelTempering(Solver):
 
         # Check parameters:
         if all_betas is not None:
-            if replicas is None:
+            if replicas is not None:
                 self.set_one_param("replicas", len(all_betas))
             elif len(all_betas) != replicas:
                 raise ValueError(
