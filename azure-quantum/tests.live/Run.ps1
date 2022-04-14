@@ -10,6 +10,9 @@ param (
   [bool] $SkipInstall
 )
 
+# For debug, print all relevant environment variables:
+Get-ChildItem env:AZURE*, env:*VERSION, env:*OUTDIR | Format-Table | Out-String | Write-Host
+
 $PackageDir = Split-Path -parent $PSScriptRoot;
 $PackageName = $PackageDir | Split-Path -Leaf;
 $RootDir = Split-Path -parent $PackageDir;
@@ -47,6 +50,12 @@ function PyTestMarkExpr() {
     }
     if ($AzureQuantumCapabilities -notcontains "submit.fpga") {
         $MarkExpr += " and not fpga"
+    }
+    if ($AzureQuantumCapabilities -notcontains "submit.rigetti") {
+        $MarkExpr += " and not rigetti"
+    }
+    if ($AzureQuantumCapabilities -notcontains "submit.quantinuum") {
+        $MarkExpr += " and not quantinuum"
     }
 
     return $MarkExpr

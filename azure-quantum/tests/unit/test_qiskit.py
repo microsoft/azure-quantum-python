@@ -347,25 +347,21 @@ class TestQiskit(QuantumTestBase):
                 assert result.results[0].header.num_qubits == str(num_qubits)
                 assert result.results[0].header.metadata["some"] == "data"
 
-    @pytest.mark.honeywell
+    @pytest.mark.quantinuum
     def test_plugins_estimate_cost_qiskit_quantinuum(self):
-        if self.get_test_quantinuum_enabled():
-            self.test_plugins_estimate_cost_qiskit_honeywell(provider_id="quantinuum")
+        self.test_plugins_estimate_cost_qiskit_honeywell(provider_id="quantinuum")
 
-    @pytest.mark.honeywell
+    @pytest.mark.quantinuum
     @pytest.mark.live_test
     def test_plugins_submit_qiskit_to_quantinuum(self):
-        if self.get_test_quantinuum_enabled():
-            self.test_plugins_submit_qiskit_to_honeywell(provider_id="quantinuum")
+        self.test_plugins_submit_qiskit_to_honeywell(provider_id="quantinuum")
 
-    @pytest.mark.honeywell
+    @pytest.mark.quantinuum
     @pytest.mark.live_test
     def test_plugins_submit_qiskit_circuit_as_list_to_quantinuum(self):
-        if self.get_test_quantinuum_enabled():
-            self.test_plugins_submit_qiskit_circuit_as_list_to_honeywell(provider_id="quantinuum")
+        self.test_plugins_submit_qiskit_circuit_as_list_to_honeywell(provider_id="quantinuum")
 
-    @pytest.mark.ionq
+    @pytest.mark.quantinuum
     @pytest.mark.live_test
     def test_plugins_submit_qiskit_multi_circuit_experiment_to_quantinuum(self):
-        if self.get_test_quantinuum_enabled():
-            self.test_plugins_submit_qiskit_multi_circuit_experiment_to_honeywell(provider_id="quantinuum")
+        self.test_plugins_submit_qiskit_multi_circuit_experiment_to_honeywell(provider_id="quantinuum")
