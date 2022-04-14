@@ -98,10 +98,7 @@ class AzureQuantumJob(JobV1):
         """Return the status of the job, among the values of ``JobStatus``."""
         self._azure_job.refresh()
         status = AzureJobStatusMap[self._azure_job.details.status]
-        if self._azure_job.details.status == "Failed":
-            return f"{status}: {self._azure_job.details.error_data.message}"
-        else:
-            return status
+        return status
 
     def queue_position(self):
         """Return the position of the job in the queue. Currently not supported."""
