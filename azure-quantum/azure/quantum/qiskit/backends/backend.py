@@ -28,7 +28,7 @@ class AzureBackend(Backend):
     """Base class for interfacing with an IonQ backend in Azure Quantum"""
     backend_name = None
 
-    def _job_metadata(self, circuit):
+    def _job_metadata(self, circuit, **kwargs):
         """ Returns the metadata relative to the given circuit that will be attached to the Job"""
 
         return {
@@ -66,17 +66,17 @@ class AzureBackend(Backend):
         
         # The default of these job parameters come from the AzureBackend configuration:
         config = self.configuration()
-        job_name = kwargs.pop("job_name", circuit.name)
         blob_name = kwargs.pop("blob_name", config.azure["blob_name"])
         content_type = kwargs.pop("content_type", config.azure["content_type"])
         provider_id = kwargs.pop("provider_id", config.azure["provider_id"])
         input_data_format = kwargs.pop("input_data_format", config.azure["input_data_format"])
         output_data_format = kwargs.pop("output_data_format", config.azure["output_data_format"])
 
-        # If not provided as kwargs, the values for metadata and input_data 
+        # If not provided as kwargs, the values of these parameters 
         # are calculated from the circuit itself:
+        job_name = kwargs.pop("job_name", circuit.name)
         input_data = self._translate_circuit(circuit, **kwargs)
-        metadata = kwargs.pop("metadata") if "metadata" in kwargs else self._job_metadata(circuit)
+        metadata = kwargs.pop("metadata") if "metadata" in kwargs else self._job_metadata(circuit, **kwargs)
 
         # Backend options are mapped to input_params.
         # Take also into consideration options passed in the kwargs, as the take precedence

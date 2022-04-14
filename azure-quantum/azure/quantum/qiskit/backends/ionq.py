@@ -46,7 +46,7 @@ class IonQBackend(AzureBackend):
     def _job_metadata(self, circuit, **kwargs):
         _, _, meas_map = qiskit_circ_to_ionq_circ(circuit)
         
-        metadata = super()._job_metadata(circuit);
+        metadata = super()._job_metadata(circuit, **kwargs);
         metadata["meas_map"] = meas_map
         
         return metadata
