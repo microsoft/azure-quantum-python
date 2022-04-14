@@ -64,10 +64,23 @@ class TestQiskit(QuantumTestBase):
             backend = provider.get_backend("ionq.simulator")
             num_shots = 1000
 
+            circuit = self._5_qubit_superposition()
+            circuit.metadata = { "some": "data" }
+
             qiskit_job = backend.run(
-                circuit=self._5_qubit_superposition(),
+                circuit=circuit,
                 shots=num_shots
             )
+
+            # Check job metadata:
+            assert qiskit_job._azure_job.details.target == "ionq.simulator"
+            assert qiskit_job._azure_job.details.provider_id == "ionq"
+            assert qiskit_job._azure_job.details.input_data_format == "ionq.circuit.v1"
+            assert qiskit_job._azure_job.details.output_data_format == "ionq.quantum-results.v1"
+            assert "qiskit" in qiskit_job._azure_job.details.metadata
+            assert "name" in qiskit_job._azure_job.details.metadata
+            assert "meas_map" in qiskit_job._azure_job.details.metadata
+            assert "metadata" in qiskit_job._azure_job.details.metadata
 
             # Make sure the job is completed before fetching the results
             self._qiskit_wait_to_complete(qiskit_job, provider)
@@ -80,6 +93,8 @@ class TestQiskit(QuantumTestBase):
                 assert result.data()["probabilities"] == {'0': 0.5, '1': 0.5}
                 counts = result.get_counts()
                 assert counts == result.data()["counts"]
+                assert result.results[0].header.num_qubits == '5'
+                assert result.results[0].header.metadata["some"] == "data"
 
     @pytest.mark.ionq
     def test_plugins_estimate_cost_qiskit_ionq(self):
@@ -173,6 +188,16 @@ class TestQiskit(QuantumTestBase):
                 shots=num_shots
             )
 
+            # Check job metadata:
+            assert qiskit_job._azure_job.details.target == "ionq.simulator"
+            assert qiskit_job._azure_job.details.provider_id == "ionq"
+            assert qiskit_job._azure_job.details.input_data_format == "ionq.circuit.v1"
+            assert qiskit_job._azure_job.details.output_data_format == "ionq.quantum-results.v1"
+            assert "qiskit" in qiskit_job._azure_job.details.metadata
+            assert "name" in qiskit_job._azure_job.details.metadata
+            assert "metadata" in qiskit_job._azure_job.details.metadata
+            assert "meas_map" in qiskit_job._azure_job.details.metadata
+
             # Make sure the job is completed before fetching the results
             self._qiskit_wait_to_complete(qiskit_job, provider)
 
@@ -184,6 +209,9 @@ class TestQiskit(QuantumTestBase):
                 assert result.data()["probabilities"] == {'000': 0.5, '111': 0.5}
                 counts = result.get_counts()
                 assert counts == result.data()["counts"]
+                assert hasattr(result.results[0].header, "num_qubits")
+                assert hasattr(result.results[0].header, "metadata")
+                
 
     @pytest.mark.ionq
     @pytest.mark.live_test
@@ -281,6 +309,13 @@ class TestQiskit(QuantumTestBase):
             assert f"{provider_id}.hqs-lt-s1-apival" in backend.backend_names
             assert backend.backend_names[0] in [t.name for t in workspace.get_targets(provider_id=provider_id)]
 
+            if isinstance(circuit, list):
+                num_qubits = circuit[0].num_qubits
+                circuit[0].metadata = { "some": "data" }
+            else:
+                num_qubits = circuit.num_qubits
+                circuit.metadata = { "some": "data" }
+
             if shots is None:
                 qiskit_job = backend.run(
                     circuit=circuit
@@ -292,6 +327,15 @@ class TestQiskit(QuantumTestBase):
                     shots=shots
                 )
 
+            # Check job metadata:
+            assert qiskit_job._azure_job.details.target == f"{provider_id}.hqs-lt-s1-apival"
+            assert qiskit_job._azure_job.details.provider_id == provider_id
+            assert qiskit_job._azure_job.details.input_data_format == "honeywell.openqasm.v1"
+            assert qiskit_job._azure_job.details.output_data_format == "honeywell.quantum-results.v1"
+            assert "qiskit" in qiskit_job._azure_job.details.metadata
+            assert "name" in qiskit_job._azure_job.details.metadata
+            assert "metadata" in qiskit_job._azure_job.details.metadata
+            
             # Make sure the job is completed before fetching the results
             self._qiskit_wait_to_complete(qiskit_job, provider)
 
@@ -299,6 +343,9 @@ class TestQiskit(QuantumTestBase):
                 result = qiskit_job.result()
                 assert result.data()["counts"] == {'000': 500}
                 assert result.data()["probabilities"] == {'000': 1.0}
+                assert hasattr(result.results[0].header, "num_qubits")
+                assert result.results[0].header.num_qubits == str(num_qubits)
+                assert result.results[0].header.metadata["some"] == "data"
 
     @pytest.mark.honeywell
     def test_plugins_estimate_cost_qiskit_quantinuum(self):
