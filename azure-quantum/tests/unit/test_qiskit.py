@@ -306,6 +306,7 @@ class TestQiskit(QuantumTestBase):
             workspace = self.create_workspace()
             provider = AzureQuantumProvider(workspace=workspace)
             backend = provider.get_backend(f"{provider_id}.hqs-lt-s1-apival")
+            expected_data_format = kwargs["input_data_format"] if "input_data_format" in kwargs else "honeywell.openqasm.v1"
             assert f"{provider_id}.hqs-lt-s1-apival" in backend.backend_names
             assert backend.backend_names[0] in [t.name for t in workspace.get_targets(provider_id=provider_id)]
 
@@ -324,7 +325,7 @@ class TestQiskit(QuantumTestBase):
             # Check job metadata:
             assert qiskit_job._azure_job.details.target == f"{provider_id}.hqs-lt-s1-apival"
             assert qiskit_job._azure_job.details.provider_id == provider_id
-            assert qiskit_job._azure_job.details.input_data_format == "honeywell.openqasm.v1"
+            assert qiskit_job._azure_job.details.input_data_format == expected_data_format
             assert qiskit_job._azure_job.details.output_data_format == "honeywell.quantum-results.v1"
             assert "qiskit" in qiskit_job._azure_job.details.metadata
             assert "name" in qiskit_job._azure_job.details.metadata
