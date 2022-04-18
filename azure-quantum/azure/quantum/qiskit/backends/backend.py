@@ -23,6 +23,24 @@ except ImportError:
 To install run: pip install azure-quantum[qiskit]"
 )
 
+# Set of gates supported by QIR targets.
+QIR_BASIS_GATES = [
+    "x",
+    "y",
+    "z",
+    "rx",
+    "ry",
+    "rz",
+    "h",
+    "cx",
+    "cz",
+    "s",
+    "sdg",
+    "t",
+    "tdg",
+    "measure",
+    "reset"
+]
 
 class AzureBackend(Backend):
     """Base class for interfacing with an IonQ backend in Azure Quantum"""
