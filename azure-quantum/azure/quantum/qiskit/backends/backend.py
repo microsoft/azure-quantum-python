@@ -38,9 +38,21 @@ class AzureBackend(Backend):
             "metadata": json.dumps(circuit.metadata),
         }
 
-    def _translate_circuit(self, circuit, **kwargs):
+    def _translate_circuit(self, circuit, input_data_format, **kwargs):
         """ Translates the circuit to the format expected by the AzureBackend. """
         return NotImplementedError("AzureBackends must implement _translate_circuit.")
+
+
+    def _to_qir(self, circuit, **kwargs):
+        """ Translates the circuit to the format expected by the AzureBackend. """
+        logger.info(f"Using QIR as the job's payload format.")
+        from qiskit_qir import to_qir_bitcode, to_qir
+
+        input_data = bytes(to_qir_bitcode(circuit))
+        if logger.isEnabledFor(logging.DEBUG):
+            logger.debug(f"QIR:\n{to_qir(circuit)}")
+
+        return (input_data, {"entryPoint": "main", "arguments": []})
 
 
     def run(self, circuit, **kwargs):
@@ -75,7 +87,6 @@ class AzureBackend(Backend):
         # If not provided as kwargs, the values of these parameters 
         # are calculated from the circuit itself:
         job_name = kwargs.pop("job_name", circuit.name)
-        input_data = self._translate_circuit(circuit, **kwargs)
         metadata = kwargs.pop("metadata") if "metadata" in kwargs else self._job_metadata(circuit, **kwargs)
 
         # Backend options are mapped to input_params.
@@ -85,6 +96,14 @@ class AzureBackend(Backend):
         for opt in kwargs.copy():
             if opt in input_params:
                 input_params[opt] = kwargs.pop(opt)
+        
+        # Select method to encode payload based on input_data_format
+        if input_data_format == "qir.v1":
+            input_data, arguments = self._to_qir(circuit, **kwargs)
+            for a in arguments.keys():
+                input_params[a] = arguments[a]
+        else:
+            input_data = self._translate_circuit(circuit, input_data_format, **kwargs)
 
         logger.info(f"Submitting new job for backend {self.name()}")
         job = AzureQuantumJob(

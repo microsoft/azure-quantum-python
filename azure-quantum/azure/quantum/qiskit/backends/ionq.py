@@ -51,7 +51,7 @@ class IonQBackend(AzureBackend):
         
         return metadata
 
-    def _translate_circuit(self, circuit, **kwargs):
+    def _translate_circuit(self, circuit, input_data_format, **kwargs):
         ionq_circ, _, _ = qiskit_circ_to_ionq_circ(circuit)
 
         input_data = {
