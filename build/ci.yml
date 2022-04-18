@@ -26,6 +26,9 @@ jobs:
 - job: "QDKPython"
   pool: 
     vmImage: 'ubuntu-latest'
+  container:
+    image: qdkimages.azurecr.io/internal/quantum/linux-test:latest
+    endpoint: qdkimages-acr
   strategy:
     matrix:
       qdk:
