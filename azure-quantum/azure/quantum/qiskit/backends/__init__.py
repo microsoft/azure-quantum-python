@@ -23,6 +23,12 @@ from azure.quantum.qiskit.backends.quantinuum import (
     QuantinuumSimulatorBackend
 )
 
+from azure.quantum.qiskit.backends.qci import (
+    QCIBackend,
+    QCIQPUBackend,
+    QCISimulatorBackend
+)
+
 # Default targets to use when there is no target class
 # associated with a given target ID
 DEFAULT_TARGETS = {}
