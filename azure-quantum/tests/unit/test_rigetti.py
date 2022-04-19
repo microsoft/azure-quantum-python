@@ -1,7 +1,7 @@
 """Tests the ``azure.quantum.target.rigetti`` module."""
 import unittest
 import warnings
-from typing import Dict, Any, Union
+from typing import Dict, Any, Union, Optional
 from unittest.mock import MagicMock
 
 import pytest
@@ -21,6 +21,7 @@ CNOT 0 1
 MEASURE 0 {READOUT}[0]
 MEASURE 1 {READOUT}[1]
 """
+SYNTAX_ERROR_QUIL = "a\n" + BELL_STATE_QUIL
 
 
 @pytest.mark.rigetti
@@ -28,7 +29,11 @@ MEASURE 1 {READOUT}[1]
 class TestRigettiTarget(QuantumTestBase):
     """Tests the azure.quantum.target.Rigetti class."""
 
-    def _run_job(self, input_params: Union[InputParams, Dict[str, Any], None]) -> Result:
+    def _run_job(
+            self,
+            quil: str,
+            input_params: Union[InputParams, Dict[str, Any], None],
+    ) -> Optional[Result]:
         with unittest.mock.patch.object(
             Job,
             "create_job_id",
@@ -39,7 +44,7 @@ class TestRigettiTarget(QuantumTestBase):
 
             target = Rigetti(workspace=workspace)
             job = target.submit(
-                input_data=BELL_STATE_QUIL,
+                input_data=quil,
                 name="qdk-python-test",
                 input_params=input_params,
             )
@@ -55,10 +60,8 @@ class TestRigettiTarget(QuantumTestBase):
                 job.wait_until_completed(timeout_secs=60)
             except TimeoutError:
                 warnings.warn("Rigetti execution exceeded timeout. Skipping fetching results.")
+                return None
 
-            # Check if job succeeded
-            assert job.has_completed()
-            assert job.details.status == "Succeeded"
             self.resume_recording()
 
             # Record a single GET request such that job.wait_until_completed
@@ -73,7 +76,8 @@ class TestRigettiTarget(QuantumTestBase):
 
     def test_job_submit_rigetti_typed_input_params(self) -> None:
         num_shots = 5
-        result = self._run_job(InputParams(count=num_shots))
+        result = self._run_job(BELL_STATE_QUIL, InputParams(count=num_shots))
+        assert result is not None
         readout = result[READOUT]
         assert len(readout) == num_shots
         for shot in readout:
@@ -81,18 +85,25 @@ class TestRigettiTarget(QuantumTestBase):
 
     def test_job_submit_rigetti_dict_input_params(self) -> None:
         num_shots = 5
-        result = self._run_job({"count": num_shots})
+        result = self._run_job(BELL_STATE_QUIL, {"count": num_shots})
+        assert result is not None
         readout = result[READOUT]
         assert len(readout) == num_shots
         for shot in readout:
             assert len(shot) == 2, "Bell state program should only measure 2 qubits"
 
     def test_job_submit_rigetti_default_input_params(self) -> None:
-        result = self._run_job(None)
+        result = self._run_job(BELL_STATE_QUIL, None)
+        assert result is not None
         readout = result[READOUT]
         assert len(readout) == 1
         for shot in readout:
             assert len(shot) == 2, "Bell state program should only measure 2 qubits"
+
+    def test_quil_syntax_error(self) -> None:
+        with pytest.raises(RuntimeError) as err:
+            self._run_job(SYNTAX_ERROR_QUIL, None)
+        assert "could not be executed because the operator a is not known" in str(err.value)
 
 
 class FakeJob:
