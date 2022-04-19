@@ -107,9 +107,12 @@ class TestRigettiTarget(QuantumTestBase):
 
 
 class FakeJob:
-    def __init__(self, json: bytes) -> None:
+    def __init__(self, json: bytes, details=None) -> None:
         self.json = json
-        self.details = MagicMock()
+        if details is None:
+            details = MagicMock()
+            details.status = "Succeeded"
+        self.details = details
 
     def download_data(self, _) -> bytes:
         return self.json
@@ -120,3 +123,14 @@ class TestResult:
         result = Result(FakeJob(b'{"ro": [[0, 0], [1, 1]]}'))
 
         assert result[READOUT] == [[0, 0], [1, 1]]
+
+    def test_unsuccessful_job(self) -> None:
+        details = MagicMock()
+        details.status = "Failed"
+        details.error_data = "Some error message"
+        with pytest.raises(RuntimeError) as err:
+            Result(FakeJob(b'{"ro": [[0, 0], [1, 1]]}', details))
+        err_string = str(err.value)
+        assert details.status in err_string
+        assert details.error_data in err_string
+
