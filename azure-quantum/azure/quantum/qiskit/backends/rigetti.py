@@ -29,7 +29,7 @@ class RigettiBackend(AzureBackend):
 
     @classmethod
     def _default_options(cls):
-        return Options(shots=500)
+        return Options(count=500)
 
     @classmethod
     def _azure_config(cls):
