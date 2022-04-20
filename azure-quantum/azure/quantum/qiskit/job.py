@@ -107,7 +107,6 @@ class AzureQuantumJob(JobV1):
     def _format_results(self, sampler_seed=None):
         """ Populates the results datastructures in a format that is compatible with qiskit libraries. """
         success = self._azure_job.details.status == "Succeeded"
-        shots_key = "shots"
 
         job_result = {
             "data": {},
@@ -125,7 +124,6 @@ class AzureQuantumJob(JobV1):
 
             elif (self._azure_job.details.output_data_format == HONEYWELL_OUTPUT_DATA_FORMAT):
                 job_result["data"] = self._format_honeywell_results()
-                shots_key = "count"
 
             else:
                 job_result["data"] = self._format_unknown_results()
@@ -134,9 +132,14 @@ class AzureQuantumJob(JobV1):
         if "metadata" in job_result["header"]:
             job_result["header"]["metadata"] = json.loads(job_result["header"]["metadata"])
 
-        shots = self._azure_job.details.input_params[shots_key] \
-            if shots_key in self._azure_job.details.input_params \
-            else self._backend.options.get(shots_key)
+        # Some providers use 'count', some other 'shots', give preference to 'count':
+        input_params = self._azure_job.details.input_params
+        options = self._backend.options
+        shots = \
+            input_params["count"] if "count" in input_params else \
+            input_params["shots"] if "shots" in input_params else \
+            options.get("count") if "count" in vars(options) else \
+            options.get("shots")
         job_result["shots"] = shots
         return job_result
 
