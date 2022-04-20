@@ -114,6 +114,11 @@ class AzureBackend(Backend):
         for opt in kwargs.copy():
             if opt in input_params:
                 input_params[opt] = kwargs.pop(opt)
+
+        # Some providers refer as 'shots' the 'count' parameter,
+        # Remove this once all providers accept "count":
+        if "shots" in input_params:
+            input_params["count"] = input_params["shots"]
         
         # Select method to encode payload based on input_data_format
         if input_data_format == "qir.v1":
