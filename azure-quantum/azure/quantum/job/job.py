@@ -102,8 +102,8 @@ class Job(BaseJob, FilteredJob):
 
         :param timeout_secs: Timeout in seconds, defaults to 300
         :type timeout_secs: int
-        :raises RuntimeError: [description]
-        :return: [description]
+        :raises RuntimeError: Raises RuntimeError if job execution failed
+        :return: Results dictionary with histogram shots
         :rtype: dict
         """
         if self.results is not None:
@@ -120,5 +120,8 @@ class Job(BaseJob, FilteredJob):
             )
 
         payload = self.download_data(self.details.output_data_uri)
-        results = json.loads(payload.decode("utf8"))
-        return results
+        payload = payload.decode("utf8")
+        try:
+            return json.loads(payload)
+        except json.JSONDecodeError:
+            return payload
