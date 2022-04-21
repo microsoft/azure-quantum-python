@@ -145,6 +145,12 @@ class AzureQuantumJob(JobV1):
 
     @staticmethod
     def _draw_random_sample(sampler_seed, probabilities, shots):
+        _norm = sum(probabilities.values())
+        if _norm != 1 and np.isclose(_norm, 1.0):
+            probabilities = {k: v/_norm for k, v in probabilities.items()}
+        else:
+            raise ValueError(f"Probabilities do not add up to 1: {probabilities}")
+
         rand = np.random.RandomState(sampler_seed)
         rand_values = rand.choice(list(probabilities.keys()), shots, p=list(probabilities.values()))
         return dict(zip(*np.unique(rand_values, return_counts=True)))
