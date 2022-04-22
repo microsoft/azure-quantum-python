@@ -97,7 +97,7 @@ class Quantinuum(Target):
         For the most current pricing details, see
         https://aka.ms/AQ/Quantinuum/Documentation
         Or find your workspace and view pricing options in the "Provider" tab
-        of your workspace: http://aka.ms/aq/myworkspaces
+        of your workspace: https://aka.ms/aq/myworkspaces
 
         :param circuit: Quantum circuit in OpenQASM 2.0 format
         :type circuit: str
