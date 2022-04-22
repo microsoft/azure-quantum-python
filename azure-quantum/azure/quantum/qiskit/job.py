@@ -98,10 +98,7 @@ class AzureQuantumJob(JobV1):
         """Return the status of the job, among the values of ``JobStatus``."""
         self._azure_job.refresh()
         status = AzureJobStatusMap[self._azure_job.details.status]
-        if self._azure_job.details.status == "Failed":
-            return f"{status}: {self._azure_job.details.error_data.message}"
-        else:
-            return status
+        return status
 
     def queue_position(self):
         """Return the position of the job in the queue. Currently not supported."""
@@ -122,20 +119,20 @@ class AzureQuantumJob(JobV1):
             is_simulator = "sim" in self._azure_job.details.target
             if (self._azure_job.details.output_data_format == MICROSOFT_OUTPUT_DATA_FORMAT):
                 job_result["data"] = self._format_microsoft_results(sampler_seed=sampler_seed)
-                job_result["header"] = { "name": self._azure_job.details.name }
                 
             elif (self._azure_job.details.output_data_format == IONQ_OUTPUT_DATA_FORMAT):
                 job_result["data"] = self._format_ionq_results(sampler_seed=sampler_seed, is_simulator=is_simulator)
-                job_result["header"] = self._azure_job.details.metadata
 
             elif (self._azure_job.details.output_data_format == HONEYWELL_OUTPUT_DATA_FORMAT):
                 job_result["data"] = self._format_honeywell_results()
-                job_result["header"] = {"name": self._azure_job.details.name}
                 shots_key = "count"
 
             else:
                 job_result["data"] = self._format_unknown_results()
-                job_result["header"] = { "name": self._azure_job.details.name }
+
+        job_result["header"] = self._azure_job.details.metadata
+        if "metadata" in job_result["header"]:
+            job_result["header"]["metadata"] = json.loads(job_result["header"]["metadata"])
 
         shots = self._azure_job.details.input_params[shots_key] \
             if shots_key in self._azure_job.details.input_params \
@@ -170,11 +167,10 @@ class AzureQuantumJob(JobV1):
             if 'shots' in self._azure_job.details.input_params \
             else self._backend.options.get('shots')
 
-        if "meas_map" not in self._azure_job.details.metadata \
-            or "num_qubits" not in self._azure_job.details.metadata:
-            raise ValueError(f"Job with ID {self.id()} does not have the required metadata to format IonQ results.")
+        if "num_qubits" not in self._azure_job.details.metadata:
+            raise ValueError(f"Job with ID {self.id()} does not have the required metadata (num_qubits) to format IonQ results.")
 
-        meas_map = json.loads(self._azure_job.details.metadata.get("meas_map"))
+        meas_map = json.loads(self._azure_job.details.metadata.get("meas_map")) if "meas_map" in self._azure_job.details.metadata else None
         num_qubits = self._azure_job.details.metadata.get("num_qubits")
 
         if not 'histogram' in az_result:
@@ -183,7 +179,7 @@ class AzureQuantumJob(JobV1):
         counts = defaultdict(int)
         probabilities = defaultdict(int)
         for key, value in az_result['histogram'].items():
-            bitstring = self._to_bitstring(key, num_qubits, meas_map)
+            bitstring = self._to_bitstring(key, num_qubits, meas_map) if meas_map else key
             probabilities[bitstring] += value
 
         if is_simulator:
