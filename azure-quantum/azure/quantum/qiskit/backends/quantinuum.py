@@ -182,7 +182,7 @@ class QuantinuumSimulatorBackend(QuantinuumBackend):
                 "memory": False,
                 "n_qubits": 10,
                 "conditional": False,
-                "max_shots": 1,
+                "max_shots": None,
                 "max_experiments": 1,
                 "open_pulse": False,
                 "gates": [{"name": "TODO", "parameters": [], "qasm_def": "TODO"}],
