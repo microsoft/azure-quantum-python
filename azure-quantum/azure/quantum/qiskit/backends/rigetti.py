@@ -29,7 +29,7 @@ class RigettiBackend(AzureBackend):
 
     @classmethod
     def _default_options(cls):
-        return Options(count=500)
+        return Options(count=500, entryPoint="main", arguments=[], targetCapability="BaseProfileExecution")
 
     @classmethod
     def _azure_config(cls):
