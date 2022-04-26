@@ -64,10 +64,18 @@ class AzureBackend(Backend):
         logger.info(f"Using QIR as the job's payload format.")
         from qiskit_qir import to_qir_bitcode, to_qir
 
-        if logger.isEnabledFor(logging.DEBUG):
-            logger.debug(f"QIR:\n{to_qir(circuit)}")
+        capability = input_params["targetCapability"] if "targetCapability" in input_params else "AdaptiveProfileExecution"
 
-        qir = bytes(to_qir_bitcode(circuit))
+        if logger.isEnabledFor(logging.DEBUG):
+            logger.debug(f"QIR:\n{to_qir(circuit, capability)}")
+
+        # all qir payload needs to define an entryPoint and arguments:
+        if not "entryPoint" in input_params:
+            input_params["entryPoint"] = "main"
+        if not "arguments" in input_params:
+            input_params["arguments"] = []
+
+        qir = bytes(to_qir_bitcode(circuit, capability))
         return (qir, data_format, input_params)
 
     def run(self, circuit, **kwargs):
