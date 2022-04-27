@@ -16,6 +16,8 @@ class ParallelTempering(Solver):
         "microsoft.paralleltempering.fpga",
         "microsoft.paralleltempering.cpu",
         "microsoft.paralleltempering-parameterfree.cpu",
+        "microsoft.paralleltempering.cpu.experimental",
+        "microsoft.paralleltempering-parameterfree.cpu.experimental"
     )
     def __init__(
         self,
@@ -54,7 +56,10 @@ class ParallelTempering(Solver):
         if platform == HardwarePlatform.FPGA:
             name = "microsoft.paralleltempering.fpga"
         elif param_free:
-            name = "microsoft.paralleltempering-parameterfree.cpu"
+            if "experimental" in name:
+                name = "microsoft.paralleltempering-parameterfree.cpu"
+            else:
+                name = "microsoft.paralleltempering-parameterfree.cpu.experimental"
  
         super().__init__(
             workspace=workspace,
@@ -81,3 +86,13 @@ class ParallelTempering(Solver):
                     "Parameter 'replicas' must equal the"
                     + "length of the 'all_betas' parameters."
                 )
+
+    def supports_grouped_terms(self):
+        if "experimental" in self.name:
+            return True
+        return False
+    
+    def supports_protobuf(self):
+        if "experimental" in self.name:
+            return True
+        return False
