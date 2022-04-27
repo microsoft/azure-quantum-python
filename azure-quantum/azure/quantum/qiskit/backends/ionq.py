@@ -61,7 +61,7 @@ class IonQBackend(AzureBackend):
             }
             return (IonQ._encode_input_data(input_data), data_format, input_params)
         else:
-            super()._translate_input(circuit, data_format, input_params)
+            return super()._translate_input(circuit, data_format, input_params)
 
     def estimate_cost(self, circuit, shots):
         """Estimate the cost for the given circuit."""
