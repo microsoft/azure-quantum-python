@@ -43,23 +43,25 @@ class IonQBackend(AzureBackend):
             "output_data_format": "ionq.quantum-results.v1",
         }
 
-    def _job_metadata(self, circuit, **kwargs):
+    def _prepare_job_metadata(self, circuit, **kwargs):
         _, _, meas_map = qiskit_circ_to_ionq_circ(circuit)
         
-        metadata = super()._job_metadata(circuit, **kwargs);
+        metadata = super()._prepare_job_metadata(circuit, **kwargs);
         metadata["meas_map"] = meas_map
         
         return metadata
 
-    def _translate_circuit(self, circuit, input_data_format, **kwargs):
-        ionq_circ, _, _ = qiskit_circ_to_ionq_circ(circuit)
-
-        input_data = {
-            "qubits": circuit.num_qubits,
-            "circuit": ionq_circ,
-        }
-
-        return  IonQ._encode_input_data(input_data)
+    def _translate_input(self, circuit, data_format, input_params):
+        """ Translates the input values to the format expected by the AzureBackend. """
+        if data_format == "ionq.circuit.v1":
+            ionq_circ, _, _ = qiskit_circ_to_ionq_circ(circuit)
+            input_data = {
+                "qubits": circuit.num_qubits,
+                "circuit": ionq_circ,
+            }
+            return (IonQ._encode_input_data(input_data), data_format, input_params)
+        else:
+            return super()._translate_input(circuit, data_format, input_params)
 
     def estimate_cost(self, circuit, shots):
         """Estimate the cost for the given circuit."""

@@ -46,9 +46,8 @@ class AzureBackend(Backend):
     """Base class for interfacing with an IonQ backend in Azure Quantum"""
     backend_name = None
 
-    def _job_metadata(self, circuit, **kwargs):
+    def _prepare_job_metadata(self, circuit):
         """ Returns the metadata relative to the given circuit that will be attached to the Job"""
-
         return {
             "qiskit": True,
             "name": circuit.name,
@@ -56,22 +55,28 @@ class AzureBackend(Backend):
             "metadata": json.dumps(circuit.metadata),
         }
 
-    def _translate_circuit(self, circuit, input_data_format, **kwargs):
-        """ Translates the circuit to the format expected by the AzureBackend. """
-        return NotImplementedError("AzureBackends must implement _translate_circuit.")
+    def _translate_input(self, circuit, data_format, input_params):
+        """ Translates the input values to the format expected by the AzureBackend. """
+        if data_format != "qir.v1":
+            target = self.name()
+            raise ValueError(f"{data_format} is not a supported data format for target {target}.")
 
-
-    def _to_qir(self, circuit, **kwargs):
-        """ Translates the circuit to the format expected by the AzureBackend. """
         logger.info(f"Using QIR as the job's payload format.")
         from qiskit_qir import to_qir_bitcode, to_qir
 
-        input_data = bytes(to_qir_bitcode(circuit))
+        capability = input_params["targetCapability"] if "targetCapability" in input_params else "AdaptiveProfileExecution"
+
         if logger.isEnabledFor(logging.DEBUG):
-            logger.debug(f"QIR:\n{to_qir(circuit)}")
+            logger.debug(f"QIR:\n{to_qir(circuit, capability)}")
 
-        return (input_data, {"entryPoint": "main", "arguments": []})
+        # all qir payload needs to define an entryPoint and arguments:
+        if not "entryPoint" in input_params:
+            input_params["entryPoint"] = "main"
+        if not "arguments" in input_params:
+            input_params["arguments"] = []
 
+        qir = bytes(to_qir_bitcode(circuit, capability))
+        return (qir, data_format, input_params)
 
     def run(self, circuit, **kwargs):
         """Submits the given circuit to run on an Azure Quantum backend."""        
@@ -105,7 +110,7 @@ class AzureBackend(Backend):
         # If not provided as kwargs, the values of these parameters 
         # are calculated from the circuit itself:
         job_name = kwargs.pop("job_name", circuit.name)
-        metadata = kwargs.pop("metadata") if "metadata" in kwargs else self._job_metadata(circuit, **kwargs)
+        metadata = kwargs.pop("metadata") if "metadata" in kwargs else self._prepare_job_metadata(circuit)
 
         # Backend options are mapped to input_params.
         # Take also into consideration options passed in the kwargs, as the take precedence
@@ -114,14 +119,14 @@ class AzureBackend(Backend):
         for opt in kwargs.copy():
             if opt in input_params:
                 input_params[opt] = kwargs.pop(opt)
-        
-        # Select method to encode payload based on input_data_format
-        if input_data_format == "qir.v1":
-            input_data, arguments = self._to_qir(circuit, **kwargs)
-            for a in arguments.keys():
-                input_params[a] = arguments[a]
-        else:
-            input_data = self._translate_circuit(circuit, input_data_format, **kwargs)
+
+        # Some providers refer as 'shots' the 'count' parameter,
+        # Remove this once all providers accept "count":
+        if "shots" in input_params:
+            input_params["count"] = input_params["shots"]
+
+        # translate
+        (input_data, input_data_format, input_params) = self._translate_input(circuit, input_data_format, input_params)
 
         logger.info(f"Submitting new job for backend {self.name()}")
         job = AzureQuantumJob(
