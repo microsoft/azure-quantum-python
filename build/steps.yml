@@ -7,17 +7,10 @@ parameters:
   default: ''
 
 
-# Running powershell scripts from a new, independent instance of pwsh
-# prevents Azure Pipelines from interpreting the stderr stream from
-# conda-build as an exception stream, making it easier to capture
-# logging information without causing spurious failures.
-#
-# Note that any actual failures in conda-build can be detected by examining
-# exit codes and by testing the artifacts produced by pack.ps1.
 steps:
 - pwsh: |
     (& "$(CondaPath)/conda" "shell.powershell" "hook") | Out-String | Invoke-Expression
-    pwsh -NoProfile -Command ./bootstrap.ps1 `
+    ./bootstrap.ps1 `
        -PackageName '${{ parameters.PackageName }}' `
        -CondaEnvironmentSuffix '${{ parameters.CondaEnvironmentSuffix }}' `
        -FromSource $True
@@ -25,13 +18,13 @@ steps:
 
 - pwsh: |
     (& "$(CondaPath)/conda.exe" "shell.powershell" "hook") | Out-String | Invoke-Expression
-    pwsh -NoProfile -Command build/pack.ps1 -PackageName ${{ parameters.PackageName }}
+    build/pack.ps1 -PackageName ${{ parameters.PackageName }}
   displayName: Pack ${{ parameters.PackageName }}
   condition: eq(variables.CondaEnvironmentSuffix, '')
 
 - pwsh: |
     (& "$(CondaPath)/conda.exe" "shell.powershell" "hook") | Out-String | Invoke-Expression
-    pwsh -NoProfile -Command build/test.ps1 `
+    build/test.ps1 `
         -PackageName '${{ parameters.PackageName }}' `
         -CondaEnvironmentSuffix '${{ parameters.CondaEnvironmentSuffix}}'
   displayName: Test ${{ parameters.PackageName }}
