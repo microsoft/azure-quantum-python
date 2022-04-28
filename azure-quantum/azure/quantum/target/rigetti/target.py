@@ -11,9 +11,9 @@ __all__ = [
     "RigettiTarget",
 ]
 
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass
 from enum import Enum
-from typing import Union, Any, Dict
+from typing import Union, Any, Dict, List, Optional
 
 from ..target import Target
 from ... import Job
@@ -47,6 +47,54 @@ class InputParams:
     This **must** be set true if using `Quil-T <https://pyquil-docs.rigetti.com/en/stable/quilt.html>`_.
     """
 
+    substitutions: Optional[Dict[str, List[List[float]]]] = None
+    """A dictionary of memory region names to the list of value vectors to write to that region.
+    
+    For example, a job with this Quil program:
+    
+    .. code-block::
+        
+        DECLARE ro BIT[2]
+        DECLARE theta REAL[2]
+        DECLARE beta REAL[1]
+        RX(theta[0]) 0
+        RX(theta[1]) 1
+        RX(beta) 2
+        MEASURE 0 ro[0]
+        MEASURE 1 ro[1]
+        MEASURE 2 ro[2]
+    
+    might be run with 
+    
+    .. highlight:: python
+    .. code-block::
+    
+        InputParams(
+            substitutions={
+                "theta": [
+                    [0.0, np.pi], [np.pi, 0.0]
+                ],
+                "beta": [
+                    [2 * np.pi],
+                    [2 * np.pi],
+                ]
+            },
+            count=2,
+        )
+        
+    The resulting job will be run for each set of parameters in the list. So in the first run, theta[0] will be set to 
+    0.0, theta[1] will be set to np.pi, and beta will be set to 2 * np.pi. Each run is executed for ``count`` 
+    shots, so you'd expect a result like ``{"ro": [[0, 1, 0], [0, 1, 0], [1, 0, 0], [1, 0, 0]]} for a total of 4 
+    measurement vectors.
+    
+    Note that the length of the inner list must equal the length of the memory region—that's the ``2`` in 
+    ``DECLARE theta REAL[2]``. 
+    
+    The length of the (outer) list comprising substitution vectors for each region must be equal. So 
+    if you are passing two sets of parameters to ``theta`` (list of length two) and you have another region named 
+    ``beta``, then ``beta`` must also be a list of length two. 
+    """
+
 
 class Rigetti(Target):
     """Rigetti target, defaults to the simulator RigettiTarget.QVM
@@ -57,14 +105,14 @@ class Rigetti(Target):
     target_names = tuple(target.value for target in RigettiTarget)
 
     def __init__(
-            self,
-            workspace: Workspace,
-            name: Union[RigettiTarget, str] = RigettiTarget.QVM,
-            input_data_format: str = "rigetti.quil.v1",
-            output_data_format: str = "rigetti.quil-results.v1",
-            provider_id: str = "rigetti",
-            encoding: str = "",
-            **kwargs
+        self,
+        workspace: Workspace,
+        name: Union[RigettiTarget, str] = RigettiTarget.QVM,
+        input_data_format: str = "rigetti.quil.v1",
+        output_data_format: str = "rigetti.quil-results.v1",
+        provider_id: str = "rigetti",
+        encoding: str = "",
+        **kwargs,
     ):
         super().__init__(
             workspace=workspace,
@@ -74,7 +122,7 @@ class Rigetti(Target):
             provider_id=provider_id,
             content_type="text/plain",
             encoding=encoding,
-            **kwargs
+            **kwargs,
         )
 
     def submit(
@@ -99,8 +147,12 @@ class Rigetti(Target):
         :rtype: Job
         """
         if isinstance(input_params, InputParams):
+            typed_input_params = input_params
             input_params = {
-                "count": input_params.count,
-                "skipQuilc": input_params.skip_quilc,
+                "count": typed_input_params.count,
+                "skipQuilc": typed_input_params.skip_quilc,
             }
+            if typed_input_params.substitutions is not None:
+                input_params["substitutions"] = typed_input_params.substitutions
+
         return super().submit(input_data, name, input_params, **kwargs)
