@@ -42,7 +42,6 @@ async def test_submit_online_problem(testsolver):
     # Assert
     testsolver.workspace.submit_job.assert_called_once()
 
-@pytest.mark.asyncio
 def test_number_of_solutions_set(testsolver):
     param_name = "number_of_solutions"
     testsolver.set_number_of_solutions(100)
