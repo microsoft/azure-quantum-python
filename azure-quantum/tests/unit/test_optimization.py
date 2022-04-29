@@ -838,6 +838,23 @@ class TestSolvers(QuantumTestBase):
         self.assertEqual("microsoft.tabu.cpu", good.name)
         self.assertEqual({"tabu_tenure": 4}, good.params["params"])
 
+    def test_Tabu_experimental_input_params(self):
+        ws = self.create_workspace()
+
+        # Parameter free is no experimental yet
+        good = Tabu(ws, name = "microsoft.tabu.cpu.experimental",  timeout=1011, seed=4321)
+        self.assertIsNotNone(good)
+        self.assertEqual(
+            "microsoft.tabu-parameterfree.cpu", good.name
+        )
+        self.assertEqual(
+            {"timeout": 1011, "seed": 4321}, good.params["params"]
+        )
+
+        good = Tabu(ws, name = "microsoft.tabu.cpu.experimental",  tabu_tenure=4)
+        self.assertIsNotNone(good)
+        self.assertEqual("microsoft.tabu.cpu.experimental", good.name)
+        self.assertEqual({"tabu_tenure": 4}, good.params["params"])
 
 
 if __name__ == "__main__":
