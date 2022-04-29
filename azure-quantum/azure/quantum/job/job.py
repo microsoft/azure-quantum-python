@@ -122,3 +122,18 @@ class Job(BaseJob, FilteredJob):
         payload = self.download_data(self.details.output_data_uri)
         results = json.loads(payload.decode("utf8"))
         return results
+
+    def download_blob(self, blob_name):
+        """ Downloads a blob from Azure Storage. The blob is downloaded from the default container associated with this job."""
+        from azure.quantum.storage import ContainerClient
+
+        # Create container if it does not yet exist
+        container_uri = self.workspace.get_container_uri(job_id=self.id)
+        logger.debug(f"Container URI: {container_uri}")
+        
+        container_client = ContainerClient.from_container_url(container_uri)
+        blob_client = container_client.get_blob_client(blob_name)
+        response = blob_client.download_blob().readall()
+        return response
+
+

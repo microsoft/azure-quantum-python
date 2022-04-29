@@ -387,12 +387,13 @@ class TestJob(QuantumTestBase):
             problem = self.create_problem(name=problem_name)
             job = solver.submit(problem)
             # Check if problem can be successfully downloaded and deserialized
-            problem_as_json = job.download_data(job.details.input_data_uri)
+            problem_as_json = job.download_blob("inputData")
             downloaded_problem = Problem.deserialize(input_problem=problem_as_json)
 
             actual = downloaded_problem.serialize()
             expected = problem.serialize()
             self.assertEqual(expected, actual)
+
 
 
     def create_problem(
