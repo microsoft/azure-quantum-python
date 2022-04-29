@@ -31,8 +31,18 @@ class Result:
     """
 
     def __init__(self, job: Job) -> None:
-        """Decode the results of a Job into a RigettiResult"""
+        """
+        Decode the results of a Job with output type of "rigetti.quil-results.v1"
 
+        :raises: RuntimeError if the job has not completed successfully
+        """
+
+        if job.details.status != "Succeeded":
+            raise RuntimeError(
+                "Cannot retrieve results as job execution failed "
+                f"(status: {job.details.status}."
+                f"error: {job.details.error_data})"
+            )
         data = cast(Dict[str, List[List[RawData]]], json.loads(job.download_data(job.details.output_data_uri)))
         self.data_per_register: Dict[str, Readout] = {k: create_readout(v) for k, v in data.items()}
 

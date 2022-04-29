@@ -111,7 +111,7 @@ class IonQ(Target):
         For the most current pricing details, see
         https://docs.microsoft.com/azure/quantum/provider-ionq#pricing
         Or find your workspace and view pricing options in the "Provider" tab
-        of your workspace: http://aka.ms/aq/myworkspaces
+        of your workspace: https://aka.ms/aq/myworkspaces
 
         :param circuit: Quantum circuit in IonQ JSON format (for examples,
             see: https://docs.ionq.com/#section/Sample-JSON-Circuits)
