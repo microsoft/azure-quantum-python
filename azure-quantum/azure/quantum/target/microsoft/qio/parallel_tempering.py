@@ -57,9 +57,9 @@ class ParallelTempering(Solver):
             name = "microsoft.paralleltempering.fpga"
         elif param_free:
             if "experimental" in name:
-                name = "microsoft.paralleltempering-parameterfree.cpu"
-            else:
                 name = "microsoft.paralleltempering-parameterfree.cpu.experimental"
+            else:
+                name = "microsoft.paralleltempering-parameterfree.cpu"
  
         super().__init__(
             workspace=workspace,
