@@ -16,7 +16,7 @@ class Tabu(Solver):
         "microsoft.tabu.cpu",
         "microsoft.tabu-parameterfree.cpu",
         "microsoft.tabu.cpu.experimental",
-        "microsoft.tabu-parameterfree.cpu.experimental",
+        "microsoft.tabu-parameterfree.cpu.experimental"
     )
     def __init__(
         self,
