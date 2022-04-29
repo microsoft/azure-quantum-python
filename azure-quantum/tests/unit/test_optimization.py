@@ -18,6 +18,7 @@ from azure.quantum.target import (
     SimulatedAnnealing,
     QuantumMonteCarlo,
     SubstochasticMonteCarlo,
+    Tabu
 )
 from common import QuantumTestBase
 
@@ -385,6 +386,7 @@ class TestSolvers(QuantumTestBase):
 
         self.assertIsNotNone(SimulatedAnnealing(ws))
         self.assertIsNotNone(ParallelTempering(ws))
+        self.assertIsNotNone(Tabu(ws))
 
     def test_input_params(self):
         ws = self.create_workspace()
@@ -407,6 +409,12 @@ class TestSolvers(QuantumTestBase):
         self.assertEqual(
             {"beta_start": 3.2, "sweeps": 12}, s3_params["params"]
         )
+
+        t1_params = Tabu(ws, tabu_tenure = 3, sweeps=12).params
+        self.assertEqual(
+            {"tabu_tenure": 3, "sweeps": 12}, t1_params["params"]
+        )
+
 
     def test_ParallelTempering_input_params(self):
         ws = self.create_workspace()
@@ -811,6 +819,25 @@ class TestSolvers(QuantumTestBase):
                 ("beta.initial must be greater than 0; "
                  "found beta.initial=-2.0") in str(context.exception))
         self.assertTrue(bad_solver is None)
+
+
+    def test_Tabu_input_params(self):
+        ws = self.create_workspace()
+
+        good = Tabu(ws, timeout=1011, seed=4321)
+        self.assertIsNotNone(good)
+        self.assertEqual(
+            "microsoft.tabu-parameterfree.cpu", good.name
+        )
+        self.assertEqual(
+            {"timeout": 1011, "seed": 4321}, good.params["params"]
+        )
+
+        good = Tabu(ws, tabu_tenure=4)
+        self.assertIsNotNone(good)
+        self.assertEqual("microsoft.tabu.cpu", good.name)
+        self.assertEqual({"tabu_tenure": 4}, good.params["params"])
+
 
 
 if __name__ == "__main__":
