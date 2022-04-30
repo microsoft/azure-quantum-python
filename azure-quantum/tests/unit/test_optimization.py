@@ -871,12 +871,12 @@ class TestSolvers(QuantumTestBase):
 
         problem.add_terms(terms=terms)
 
-        solver = Tabu(workspace, tabu_tenure=4, timeout=10)
+        solver = Tabu(ws, tabu_tenure=4, timeout=10)
         result = solver.optimize(problem)
-       
+        self.assertEqual(-32.0, result["solutions"][0]["cost"])
+        
     
     def test_experimental_solvers(self):
-        ws = self.create_workspace()
         ws = self.create_workspace()
         problem = Problem(name="Test Problem", problem_type=ProblemType.ising)
         terms = [
@@ -893,6 +893,8 @@ class TestSolvers(QuantumTestBase):
 
         solver = Tabu(ws, name = "microsoft.tabu.cpu.experimental",  tabu_tenure=2, timeout=10)
         result = solver.optimize(problem)
+        self.assertEqual(-32.0, result["solutions"][0]["cost"])
+
 
 if __name__ == "__main__":
     unittest.main()
