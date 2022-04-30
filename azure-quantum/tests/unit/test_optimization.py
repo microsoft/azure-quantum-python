@@ -856,6 +856,44 @@ class TestSolvers(QuantumTestBase):
         self.assertEqual("microsoft.tabu.cpu.experimental", good.name)
         self.assertEqual({"tabu_tenure": 4}, good.params["params"])
 
+    def test_solvers(self):
+        ws = self.create_workspace()
+        problem = Problem(name="Test Problem", problem_type=ProblemType.ising)
+        terms = [
+            Term(c=-9, indices=[0]),
+            Term(c=-3, indices=[1,0]),
+            Term(c=5, indices=[2,0]),
+            Term(c=9, indices=[2,1]),
+            Term(c=2, indices=[3,0]),
+            Term(c=-4, indices=[3,1]),
+            Term(c=4, indices=[3,2])
+        ]
+
+        problem.add_terms(terms=terms)
+
+        solver = Tabu(workspace, tabu_tenure=4, timeout=10)
+        result = solver.optimize(problem)
+        
+    
+    def test_experimental_solvers(self):
+        ws = self.create_workspace()
+        ws = self.create_workspace()
+        problem = Problem(name="Test Problem", problem_type=ProblemType.ising)
+        terms = [
+            Term(c=-9, indices=[0]),
+            Term(c=-3, indices=[1,0]),
+            Term(c=5, indices=[2,0]),
+            Term(c=9, indices=[2,1]),
+            Term(c=2, indices=[3,0]),
+            Term(c=-4, indices=[3,1]),
+            Term(c=4, indices=[3,2])
+        ]
+
+        problem.add_terms(terms=terms)
+
+        solver = Tabu(ws, name = "microsoft.tabu.cpu.experimental",  tabu_tenure=2, timeout=10)
+        result = solver.optimize(problem)
+
 
 if __name__ == "__main__":
     unittest.main()
