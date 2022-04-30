@@ -873,6 +873,7 @@ class TestSolvers(QuantumTestBase):
 
         solver = Tabu(workspace, tabu_tenure=4, timeout=10)
         result = solver.optimize(problem)
+        self.assertEqual(-32.0, result["solutions"][0]["cost"])
         
     
     def test_experimental_solvers(self):
@@ -893,6 +894,7 @@ class TestSolvers(QuantumTestBase):
 
         solver = Tabu(ws, name = "microsoft.tabu.cpu.experimental",  tabu_tenure=2, timeout=10)
         result = solver.optimize(problem)
+        self.assertEqual(-32.0, result["solutions"][0]["cost"])
 
 
 if __name__ == "__main__":
