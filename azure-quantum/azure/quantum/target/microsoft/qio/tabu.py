@@ -33,7 +33,7 @@ class Tabu(Solver):
         with k-local interactions on an all-to-all graph topology with double
         precision support for the coupler weights.
 
-        This solver is CPU only.
+        This solver is CPU only.   
 
         :param sweeps:
             specifies the number of sweeps.
