@@ -434,6 +434,45 @@ class TestJob(QuantumTestBase):
             content_type=content_type or ContentType.json
         )
 
+    def test_solvers(self):
+        ws = self.create_workspace()
+        problem = Problem(name="Test Problem", problem_type=ProblemType.ising)
+        terms = [
+            Term(c=-9, indices=[0]),
+            Term(c=-3, indices=[1,0]),
+            Term(c=5, indices=[2,0]),
+            Term(c=9, indices=[2,1]),
+            Term(c=2, indices=[3,0]),
+            Term(c=-4, indices=[3,1]),
+            Term(c=4, indices=[3,2])
+        ]
+
+        problem.add_terms(terms=terms)
+
+        solver = microsoft.Tabu(ws, tabu_tenure=4, timeout=10)
+        result = solver.optimize(problem)
+        self.assertEqual(-32.0, result["solutions"][0]["cost"])
+        
+    
+    def test_experimental_solvers(self):
+        ws = self.create_workspace()
+        problem = Problem(name="Test Problem", problem_type=ProblemType.ising)
+        terms = [
+            Term(c=-9, indices=[0]),
+            Term(c=-3, indices=[1,0]),
+            Term(c=5, indices=[2,0]),
+            Term(c=9, indices=[2,1]),
+            Term(c=2, indices=[3,0]),
+            Term(c=-4, indices=[3,1]),
+            Term(c=4, indices=[3,2])
+        ]
+
+        problem.add_terms(terms=terms)
+
+        solver = microsoft.Tabu(ws, name = "microsoft.tabu.cpu.experimental",  tabu_tenure=2, timeout=10)
+        result = solver.optimize(problem)
+        self.assertEqual(-32.0, result["solutions"][0]["cost"])
+
 
 if __name__ == "__main__":
     unittest.main()
