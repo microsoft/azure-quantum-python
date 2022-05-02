@@ -218,7 +218,7 @@ class TestJob(QuantumTestBase):
             self.assertEqual(False, job.matches_filter(created_after=after_time))
 
             before_time = datetime.now() - timedelta(days=100)
-            self.assertEqual(True, job.matches_filter(created_after=before_time), "After: " str(created_after) + " Before: "  + before_time)
+            self.assertEqual(True, job.matches_filter(created_after=before_time), "job creation time: "+ str(job.details.creation_time) + " before time: "  + str(before_time))
 
             # test behaviour of datetime.date object
             before_date = date.today() - timedelta(days=100)
