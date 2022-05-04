@@ -212,17 +212,20 @@ class TestJob(QuantumTestBase):
             self.assertEqual(False, job.matches_filter(name_match="Test1"))
             self.assertEqual(True, job.matches_filter(name_match="Test-"))
             self.assertEqual(True, job.matches_filter(name_match="Test.+"))
-            # There is a few hundred ms difference in time between local machine
-            # and server, so add 2 seconds to take that into account
-            after_time = datetime.now(tz=timezone.utc) + timedelta(days=2)
-            self.assertEqual(False, job.matches_filter(created_after=after_time))
 
-            before_time = datetime.now() - timedelta(days=100)
-            self.assertEqual(True, job.matches_filter(created_after=before_time))
+            # don't run these on playback mode, as the recordings might expire
+            # since we're checking against datetime.now()
+            if not self.is_playback:
+                # There is a few hundred ms difference in time between local machine
+                # and server, so add 2 seconds to take that into account
+                after_time = datetime.now(tz=timezone.utc) + timedelta(seconds=2)
+                self.assertEqual(False, job.matches_filter(created_after=after_time))
 
-            # test behaviour of datetime.date object
-            before_date = date.today() - timedelta(days=100)
-            self.assertEqual(True, job.matches_filter(created_after=before_date))
+                before_time = datetime.now() - timedelta(days=100)
+                self.assertEqual(True, job.matches_filter(created_after=before_time))
+
+                before_date = date.today() - timedelta(days=100)
+                self.assertEqual(True, job.matches_filter(created_after=before_date))
 
     async def _test_job_submit(self, solver_name: str, solver_type: Type[Solver]):
         """Tests the job submission and its lifecycle for a given solver.
