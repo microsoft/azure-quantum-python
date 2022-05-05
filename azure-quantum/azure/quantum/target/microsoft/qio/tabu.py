@@ -15,6 +15,8 @@ class Tabu(Solver):
     target_names = (
         "microsoft.tabu.cpu",
         "microsoft.tabu-parameterfree.cpu",
+        "microsoft.tabu.cpu.experimental",
+        "microsoft.tabu-parameterfree.cpu.experimental"
     )
     def __init__(
         self,
@@ -48,8 +50,12 @@ class Tabu(Solver):
         :param seed:
             specifies a random seed value.
         """
-        if sweeps is None and tabu_tenure is None and restarts is None:
-            name = "microsoft.tabu-parameterfree.cpu"
+        param_free = sweeps is None and tabu_tenure is None and restarts is None
+        if param_free:
+            if "experimental" in name:
+                name = "microsoft.tabu-parameterfree.cpu.experimental"
+            else:
+                name = "microsoft.tabu-parameterfree.cpu"
 
         super().__init__(
             workspace=workspace,
@@ -65,3 +71,13 @@ class Tabu(Solver):
         self.set_one_param("timeout", timeout)
         self.set_one_param("seed", seed)
         self.set_one_param("restarts", restarts)
+
+    def supports_grouped_terms(self):
+        if "experimental" in self.name:
+            return True
+        return False
+    
+    def supports_protobuf(self):
+        if "experimental" in self.name:
+            return True
+        return False
