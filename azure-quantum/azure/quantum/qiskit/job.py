@@ -149,8 +149,7 @@ class AzureQuantumJob(JobV1):
         job_result["shots"] = self._shots_count()
         return job_result
 
-    @staticmethod
-    def _draw_random_sample(sampler_seed, probabilities, shots):
+    def _draw_random_sample(self, sampler_seed, probabilities, shots):
         _norm = sum(probabilities.values())
         if _norm != 1:
             if np.isclose(_norm, 1.0, rtol=1e-4):
