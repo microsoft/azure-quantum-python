@@ -400,8 +400,6 @@ class TestJob(QuantumTestBase):
         workspace = self.create_workspace()
         solver = microsoft.SimulatedAnnealing(workspace)
 
-        assert False == True
-
         with unittest.mock.patch.object(
             Job,
             self.mock_create_job_id_name,
