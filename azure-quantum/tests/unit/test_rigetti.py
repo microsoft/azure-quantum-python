@@ -5,6 +5,7 @@ from typing import Dict, Any, Union, Optional
 from unittest.mock import MagicMock
 
 import pytest
+from numpy import pi, mean
 
 from azure.quantum.job import Job
 from azure.quantum.target import Rigetti
@@ -22,6 +23,15 @@ MEASURE 0 {READOUT}[0]
 MEASURE 1 {READOUT}[1]
 """
 SYNTAX_ERROR_QUIL = "a\n" + BELL_STATE_QUIL
+PARAMETER_NAME = "theta"
+PARAMETRIZED_QUIL = f"""
+DECLARE {READOUT} BIT[1]
+DECLARE {PARAMETER_NAME} REAL[1]
+
+RX({PARAMETER_NAME}) 0
+
+MEASURE 0 {READOUT}[0]
+"""
 
 
 @pytest.mark.rigetti
@@ -30,9 +40,9 @@ class TestRigettiTarget(QuantumTestBase):
     """Tests the azure.quantum.target.Rigetti class."""
 
     def _run_job(
-            self,
-            quil: str,
-            input_params: Union[InputParams, Dict[str, Any], None],
+        self,
+        quil: str,
+        input_params: Union[InputParams, Dict[str, Any], None],
     ) -> Optional[Result]:
         with unittest.mock.patch.object(
             Job,
@@ -59,7 +69,9 @@ class TestRigettiTarget(QuantumTestBase):
                 # Set a timeout for IonQ recording
                 job.wait_until_completed(timeout_secs=60)
             except TimeoutError:
-                warnings.warn("Rigetti execution exceeded timeout. Skipping fetching results.")
+                warnings.warn(
+                    "Rigetti execution exceeded timeout. Skipping fetching results."
+                )
                 return None
 
             self.resume_recording()
@@ -103,7 +115,23 @@ class TestRigettiTarget(QuantumTestBase):
     def test_quil_syntax_error(self) -> None:
         with pytest.raises(RuntimeError) as err:
             self._run_job(SYNTAX_ERROR_QUIL, None)
-        assert "could not be executed because the operator a is not known" in str(err.value)
+        assert "could not be executed because the operator a is not known" in str(
+            err.value
+        )
+
+    def test_parametrized_quil(self) -> None:
+        result = self._run_job(
+            PARAMETRIZED_QUIL,
+            InputParams(
+                count=5, substitutions={PARAMETER_NAME: [[0.0], [pi], [2 * pi]]}
+            ),
+        )
+        assert result is not None
+        readout = result[READOUT]
+        assert len(readout) == 5 * 3
+        assert mean(readout[0:5]) == 0
+        assert mean(readout[5:10]) == 1
+        assert mean(readout[10:15]) == 0
 
 
 class FakeJob:
@@ -133,4 +161,3 @@ class TestResult:
         err_string = str(err.value)
         assert details.status in err_string
         assert details.error_data in err_string
-
