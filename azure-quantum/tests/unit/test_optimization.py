@@ -18,6 +18,7 @@ from azure.quantum.target import (
     SimulatedAnnealing,
     QuantumMonteCarlo,
     SubstochasticMonteCarlo,
+    Tabu
 )
 from common import QuantumTestBase
 
@@ -385,6 +386,7 @@ class TestSolvers(QuantumTestBase):
 
         self.assertIsNotNone(SimulatedAnnealing(ws))
         self.assertIsNotNone(ParallelTempering(ws))
+        self.assertIsNotNone(Tabu(ws))
 
     def test_input_params(self):
         ws = self.create_workspace()
@@ -407,6 +409,12 @@ class TestSolvers(QuantumTestBase):
         self.assertEqual(
             {"beta_start": 3.2, "sweeps": 12}, s3_params["params"]
         )
+
+        t1_params = Tabu(ws, tabu_tenure = 3, sweeps=12).params
+        self.assertEqual(
+            {"tabu_tenure": 3, "sweeps": 12}, t1_params["params"]
+        )
+
 
     def test_ParallelTempering_input_params(self):
         ws = self.create_workspace()
@@ -448,6 +456,47 @@ class TestSolvers(QuantumTestBase):
                 ws, sweeps=20, replicas=3, all_betas=[1, 3, 5, 7, 9]
             )
 
+    def test_ParallelTempering_experimental_input_params(self):
+        ws = self.create_workspace()
+
+        good = ParallelTempering(ws, name = "microsoft.paralleltempering.cpu.experimental", timeout=1011)
+        self.assertIsNotNone(good)
+        self.assertEqual(
+            "microsoft.paralleltempering-parameterfree.cpu.experimental", good.name
+        )
+        self.assertEqual({"timeout": 1011}, good.params["params"])
+
+        good = ParallelTempering(ws, name = "microsoft.paralleltempering.cpu.experimental", seed=20)
+        self.assertIsNotNone(good)
+        self.assertEqual(
+            "microsoft.paralleltempering-parameterfree.cpu.experimental", good.name
+        )
+        self.assertEqual({"seed": 20}, good.params["params"])
+
+        good = ParallelTempering(
+            ws, name = "microsoft.paralleltempering.cpu.experimental", sweeps=20, replicas=3, all_betas=[3, 5, 9]
+        )
+        self.assertIsNotNone(good)
+        self.assertEqual("microsoft.paralleltempering.cpu.experimental", good.name)
+        self.assertEqual(
+            {"sweeps": 20, "replicas": 3, "all_betas": [3, 5, 9]},
+            good.params["params"],
+        )
+
+        good = ParallelTempering(ws, name = "microsoft.paralleltempering.cpu.experimental", sweeps=20, all_betas=[3, 9])
+        self.assertIsNotNone(good)
+        self.assertEqual("microsoft.paralleltempering.cpu.experimental", good.name)
+        self.assertEqual(
+            {"sweeps": 20, "replicas": 2, "all_betas": [3, 9]},
+            good.params["params"],
+        )
+
+        with self.assertRaises(ValueError):
+            _ = ParallelTempering(
+                ws, name = "microsoft.paralleltempering.cpu.experimental", sweeps=20, replicas=3, all_betas=[1, 3, 5, 7, 9]
+            )
+
+
     def test_SimulatedAnnealing_input_params(self):
         ws = self.create_workspace()
 
@@ -483,11 +532,37 @@ class TestSolvers(QuantumTestBase):
         self.assertEqual("microsoft.simulatedannealing.fpga", good.name)
         self.assertEqual({"beta_start": 21}, good.params["params"])
 
+    def test_SimulatedAnnealing_experimental_input_params(self):
+        ws = self.create_workspace()
+
+        good = SimulatedAnnealing(ws, name = "microsoft.simulatedannealing.cpu.experimental", timeout=1011, seed=4321)
+        self.assertIsNotNone(good)
+        self.assertEqual(
+            "microsoft.simulatedannealing-parameterfree.cpu.experimental", good.name
+        )
+        self.assertEqual(
+            {"timeout": 1011, "seed": 4321}, good.params["params"]
+        )
+
+        good = SimulatedAnnealing(ws, name = "microsoft.simulatedannealing.cpu.experimental", beta_start=21)
+        self.assertIsNotNone(good)
+        self.assertEqual("microsoft.simulatedannealing.cpu.experimental", good.name)
+        self.assertEqual({"beta_start": 21}, good.params["params"])
+
     def test_QuantumMonteCarlo_input_params(self):
         ws = self.create_workspace()
         good = QuantumMonteCarlo(ws, trotter_number=100, seed=4321)
         self.assertIsNotNone(good)
         self.assertEqual("microsoft.qmc.cpu", good.name)
+        self.assertEqual(
+            {"trotter_number": 100, "seed": 4321}, good.params["params"]
+        )
+
+    def test_QuantumMonteCarlo_experimental_input_params(self):
+        ws = self.create_workspace()
+        good = QuantumMonteCarlo(ws, name = "microsoft.qmc.cpu.experimental", trotter_number=100, seed=4321)
+        self.assertIsNotNone(good)
+        self.assertEqual("microsoft.qmc.cpu.experimental", good.name)
         self.assertEqual(
             {"trotter_number": 100, "seed": 4321}, good.params["params"]
         )
@@ -812,6 +887,39 @@ class TestSolvers(QuantumTestBase):
                  "found beta.initial=-2.0") in str(context.exception))
         self.assertTrue(bad_solver is None)
 
+
+    def test_Tabu_input_params(self):
+        ws = self.create_workspace()
+
+        good = Tabu(ws, timeout=1011, seed=4321)
+        self.assertIsNotNone(good)
+        self.assertEqual(
+            "microsoft.tabu-parameterfree.cpu", good.name
+        )
+        self.assertEqual(
+            {"timeout": 1011, "seed": 4321}, good.params["params"]
+        )
+
+        good = Tabu(ws, tabu_tenure=4)
+        self.assertIsNotNone(good)
+        self.assertEqual("microsoft.tabu.cpu", good.name)
+        self.assertEqual({"tabu_tenure": 4}, good.params["params"])
+
+    def test_Tabu_experimental_input_params(self):
+        ws = self.create_workspace()
+        good = Tabu(ws, name = "microsoft.tabu.cpu.experimental",  timeout=1011, seed=4321)
+        self.assertIsNotNone(good)
+        self.assertEqual(
+            "microsoft.tabu-parameterfree.cpu.experimental", good.name
+        )
+        self.assertEqual(
+            {"timeout": 1011, "seed": 4321}, good.params["params"]
+        )
+
+        good = Tabu(ws, name = "microsoft.tabu.cpu.experimental",  tabu_tenure=4)
+        self.assertIsNotNone(good)
+        self.assertEqual("microsoft.tabu.cpu.experimental", good.name)
+        self.assertEqual({"tabu_tenure": 4}, good.params["params"])
 
 if __name__ == "__main__":
     unittest.main()
