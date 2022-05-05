@@ -26,6 +26,9 @@ jobs:
 - job: "QDKPython"
   pool: 
     vmImage: 'ubuntu-latest'
+  container: mcr.microsoft.com/quantum/linux-selfcontained:latest
+  variables:
+    CondaPath: '/miniconda/bin'
   strategy:
     matrix:
       qdk:
