@@ -72,7 +72,8 @@ class InputParams:
         InputParams(
             substitutions={
                 "theta": [
-                    [0.0, np.pi], [np.pi, 0.0]
+                    [0.0, np.pi],
+                    [np.pi, 0.0],
                 ],
                 "beta": [
                     [2 * np.pi],
