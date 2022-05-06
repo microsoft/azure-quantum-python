@@ -150,6 +150,7 @@ class QuantumTestBase(ReplayableTest):
         regex_replacer.register_regex(r"code_verifier=[^&]+\&", "code_verifier=PLACEHOLDER&")
         regex_replacer.register_regex(r"code=[^&]+\&", "code_verifier=PLACEHOLDER&")
         regex_replacer.register_regex(r"code=[^&]+\&", "code_verifier=PLACEHOLDER&")
+        regex_replacer.register_regex(r"http://", "https://")
 
     def pause_recording(self):
         self._pause_recording_processor.pause_recording()
@@ -314,7 +315,7 @@ class PauseRecordingProcessor(RecordingProcessor):
 
 class CustomUrlPlaybackProcessor(RecordingProcessor):
     def process_request(self, request):
-        request.uri = re.sub('https://[^\.]+.quantum.azure.com/',
+        request.uri = re.sub('https://[^.]+.quantum.azure.com/',
                         f'https://{LOCATION}.quantum.azure.com/',
                         request.uri,
                         flags=re.IGNORECASE)
