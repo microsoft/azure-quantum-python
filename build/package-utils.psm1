@@ -155,9 +155,9 @@ function Invoke-Tests() {
     )
     $ParentPath = Split-Path -parent $PSScriptRoot
     $AbsPackageDir = Join-Path $ParentPath $PackageName
-    Write-Host "##[info]Test package $AbsPackageDir and run tests for env $EnvName"
+    "##[info]Test package $AbsPackageDir and run tests for env $EnvName" | Write-Host
     # Activate env
-    Use-CondaEnv $EnvName
+    Use-CondaEnv $EnvName | Write-Host
     # Install testing deps
     python -m pip install --upgrade pip | Write-Host
     pip install pytest pytest-azurepipelines pytest-cov | Write-Host
