@@ -150,7 +150,7 @@ class QuantumTestBase(ReplayableTest):
         regex_replacer.register_regex(r"code_verifier=[^&]+\&", "code_verifier=PLACEHOLDER&")
         regex_replacer.register_regex(r"code=[^&]+\&", "code_verifier=PLACEHOLDER&")
         regex_replacer.register_regex(r"code=[^&]+\&", "code_verifier=PLACEHOLDER&")
-        regex_replacer.register_regex(r"http://", "https://")
+        regex_replacer.register_regex(r"http://", "https://")   # Devskim: ignore DS137138 
 
     def pause_recording(self):
         self._pause_recording_processor.pause_recording()
