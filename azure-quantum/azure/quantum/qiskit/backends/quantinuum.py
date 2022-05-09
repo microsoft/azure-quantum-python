@@ -13,7 +13,6 @@ from .backend import AzureBackend
 from qiskit import QuantumCircuit
 from qiskit.providers.models import BackendConfiguration
 from qiskit.providers import Options
-from qiskit.qobj import Qobj, QasmQobj
 
 if TYPE_CHECKING:
     from azure.quantum.qiskit import AzureQuantumProvider
@@ -80,8 +79,13 @@ class QuantinuumBackend(AzureBackend):
             "output_data_format": "honeywell.quantum-results.v1",
         }
 
-    def _translate_circuit(self, circuit, **kwargs):
-        return circuit.qasm()
+    def _translate_input(self, circuit, data_format, input_params):
+        """ Translates the input values to the format expected by the AzureBackend. """
+        if data_format == "honeywell.openqasm.v1":
+            return (circuit.qasm(), data_format, input_params)
+        else:
+            super()._translate_input(circuit, data_format, input_params)
+        
 
     def estimate_cost(self, circuit: QuantumCircuit, shots: int = None, count: int = None):
         """Estimate cost for running this circuit
