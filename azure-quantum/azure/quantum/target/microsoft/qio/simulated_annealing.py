@@ -58,6 +58,7 @@ class SimulatedAnnealing(Solver):
         :platform:
             specifies hardware platform
             HardwarePlatform.CPU or HardwarePlatform.FPGA.
+            
         """
         param_free = (
             beta_start is None
