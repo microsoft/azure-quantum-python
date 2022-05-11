@@ -104,7 +104,7 @@ class SimulatedAnnealing(Solver):
         :return: Target instance
         :rtype: Target
         """
-        if status.id.endswith("cpu"):
+        if status.id.endswith("cpu") or status.id.endswith("cpu.experimental"):
             platform = HardwarePlatform.CPU
         elif status.id.endswith("fpga"):
             platform = HardwarePlatform.FPGA
