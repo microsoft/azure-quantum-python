@@ -272,3 +272,63 @@ class BaseJob(abc.ABC):
             payload = download_blob(blob_uri)
 
         return payload
+
+    def upload_attachment(
+        self,
+        name: str,
+        data: bytes,
+        container_uri: str = None,
+        **kwargs
+    ) -> str:
+        """Uploads an attachment to the job's container file. Attachment's are identified by name.
+        Uploading to an existing attachment overrides its previous content.
+
+        :param name: Attachment name
+        :type name: str
+        :param data: Attachment data in binary format
+        :type input_data: bytes
+        :param container_uri: Container URI, defaults to the job's linked container.
+        :type container_uri: str, Optional
+
+        :return: Uploaded data URI
+        :rtype: str
+        """
+
+        # Use Job's default container if not specified
+        if container_uri is None:
+            container_uri = self.workspace.get_container_uri(job_id=self.id)
+
+        uploaded_blob_uri = self.upload_input_data(
+            container_uri = container_uri,
+            blob_name = name,
+            input_data = data,
+            **kwargs
+        )
+        return uploaded_blob_uri
+
+    def download_attachment(
+        self,
+        name: str,
+        container_uri: str = None
+    ):
+        """ Downloads an attachment from job's container in Azure Storage. Attachments are blobs of data
+            created as part of the Job's execution, or they can be created by uploading directly from Python
+            using the upload_attachment method.
+            
+        :param name: Attachment name
+        :type name: str
+        :param container_uri: Container URI, defaults to the job's linked container.
+        :type container_uri: str, Optional
+
+        :return: Attachment data
+        :rtype: bytes
+        """
+
+        # Use Job's default container if not specified
+        if container_uri is None:
+            container_uri = self.workspace.get_container_uri(job_id=self.id)
+        
+        container_client = ContainerClient.from_container_url(container_uri)
+        blob_client = container_client.get_blob_client(name)
+        response = blob_client.download_blob().readall()
+        return response
