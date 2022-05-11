@@ -115,6 +115,7 @@ async def upload_blob(
         uri = remove_sas_token(blob.url)
 
     logger.debug(f"  - blob access url: '{uri}'.")
+    await blob.close()
 
     return uri
 
@@ -163,6 +164,7 @@ async def append_blob(
         uri = remove_sas_token(blob.url)
 
     logger.debug(f"  - blob access url: '{uri}'.")
+    await blob.close()
 
     return uri
 
@@ -370,6 +372,8 @@ class StreamedBlob:
             metadata=metadata,
         )
         self.state = StreamedBlobState.committed
+        await self.container.close()
+        await self.blob.close()
         logger.debug(f"Committed {self.blob_name}")
 
     def getUri(self, with_sas_token: bool = False):

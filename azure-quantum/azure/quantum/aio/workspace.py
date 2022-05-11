@@ -124,7 +124,6 @@ class Workspace:
                                                  subscription_id=subscription_id,
                                                  arm_base_url=ARM_BASE_URL)
 
-        self._client = None
         self.credentials = credential
         self.name = name
         self.resource_group = resource_group
@@ -138,9 +137,6 @@ class Workspace:
         # For example, a customer-provided value of
         # "West US" should be converted to "westus".
         self.location = "".join(location.split()).lower()
-
-        # Create QuantumClient
-        self._client = self._create_client()
 
     def _create_client(self) -> QuantumClient:
         base_url = BASE_URL(self.location)
@@ -183,10 +179,6 @@ class Workspace:
             new_user_agent = f"{self._user_agent}-{value}" if self._user_agent else value
             if new_user_agent != self._user_agent:
                 self._user_agent = new_user_agent
-                # We need to recreate the client for it to
-                # pick the new UserAgent
-                if self._client is not None:
-                    self._client = self._create_client()
 
     async def _get_linked_storage_sas_uri(
         self, container_name: str, blob_name: str = None
@@ -197,24 +189,33 @@ class Workspace:
         blob_details = BlobDetails(
             container_name=container_name, blob_name=blob_name
         )
-        container_uri = await self._client.storage.sas_uri(blob_details=blob_details)
+        client = self._create_client()
+        storage = client.storage
+        container_uri = await storage.sas_uri(blob_details=blob_details)
+        await client.close()
         logger.debug(f"Container URI from service: {container_uri}")
         return container_uri.sas_uri
 
     async def submit_job(self, job: Job) -> Job:
-        details = await self._client.jobs.create(
+        client = self._create_client()
+        details = await client.jobs.create(
             job.details.id, job.details
         )
+        await client.close()
         return Job(self, details)
 
     async def cancel_job(self, job: Job) -> Job:
-        await self._client.jobs.cancel(job.details.id)
-        details = await self._client.jobs.get(job.id)
+        client = self._create_client()
+        await client.jobs.cancel(job.details.id)
+        details = await client.jobs.get(job.id)
+        await client.close()
         return Job(self, details)
 
     async def get_job(self, job_id: str) -> Job:
         """Returns the job corresponding to the given id."""
-        details = await self._client.jobs.get(job_id)
+        client = self._create_client()
+        details = await client.jobs.get(job_id)
+        await client.close()
         return Job(self, details)
 
     async def list_jobs(
@@ -228,24 +229,29 @@ class Workspace:
             :param status: filter by job status
             :param created_after: filter jobs after time of job creation
         """
-        jobs = self._client.jobs.list()
+        client = self._create_client()
+        jobs = client.jobs.list()
 
         result = []
         async for j in jobs:
             deserialized_job = Job(self, j)
             if deserialized_job.matches_filter(name_match, status, created_after):
                 result.append(deserialized_job)
+        await client.close()
         return result
     
     async def _get_target_status(self, name: str, provider_id: str) -> List[Tuple[str, "TargetStatus"]]:
         """Get provider ID and status for targets"""
-        return [
+        client = self._create_client()
+        result = [
             (provider.id, target)
-            async for provider in self._client.providers.get_status()
+            async for provider in client.providers.get_status()
             for target in provider.targets
             if (provider_id is None or provider.id.lower() == provider_id.lower())
                 and (name is None or target.id.lower() == name.lower())
         ]
+        await client.close()
+        return result
 
     async def get_targets(
         self, 
@@ -282,7 +288,10 @@ class Workspace:
         :return: Job quotas
         :rtype: List[Dict[str, Any]]
         """
-        return [q.as_dict() async for q in self._client.quotas.list()]
+        client = self._create_client()
+        result = [q.as_dict() async for q in client.quotas.list()]
+        await client.close()
+        return result
 
     async def get_container_uri(
         self,
