@@ -9,17 +9,21 @@ parameters:
 
 steps:
 - pwsh: |
+    (& "$(CondaPath)/conda" "shell.powershell" "hook") | Out-String | Invoke-Expression
     ./bootstrap.ps1 `
        -PackageName '${{ parameters.PackageName }}' `
        -CondaEnvironmentSuffix '${{ parameters.CondaEnvironmentSuffix }}' `
        -FromSource $True
   displayName: Create ${{ parameters.PackageName }}${{ parameters.CondaEnvironmentSuffix}} conda environment and install ${{ parameters.PackageName }} package from source
 
-- pwsh: build/pack.ps1 -PackageName ${{ parameters.PackageName }}
+- pwsh: |
+    (& "$(CondaPath)/conda" "shell.powershell" "hook") | Out-String | Invoke-Expression
+    build/pack.ps1 -PackageName ${{ parameters.PackageName }}
   displayName: Pack ${{ parameters.PackageName }}
   condition: eq(variables.CondaEnvironmentSuffix, '')
 
 - pwsh: |
+    (& "$(CondaPath)/conda" "shell.powershell" "hook") | Out-String | Invoke-Expression
     build/test.ps1 `
         -PackageName '${{ parameters.PackageName }}' `
         -CondaEnvironmentSuffix '${{ parameters.CondaEnvironmentSuffix}}'

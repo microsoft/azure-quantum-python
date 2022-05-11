@@ -21,6 +21,8 @@ class SimulatedAnnealing(Solver):
         "microsoft.simulatedannealing.fpga",
         "microsoft.simulatedannealing.cpu",
         "microsoft.simulatedannealing-parameterfree.cpu",
+        "microsoft.simulatedannealing.cpu.experimental",
+        "microsoft.simulatedannealing-parameterfree.cpu.experimental"
     ]
     def __init__(
         self,
@@ -74,7 +76,10 @@ class SimulatedAnnealing(Solver):
                 else "microsoft.simulatedannealing.fpga"
             )
         elif param_free:
-            name = "microsoft.simulatedannealing-parameterfree.cpu"
+            if "experimental" in name:
+                name = "microsoft.simulatedannealing-parameterfree.cpu.experimental"
+            else:
+                name = "microsoft.simulatedannealing-parameterfree.cpu"
 
         super().__init__(
             workspace=workspace,
@@ -118,3 +123,13 @@ class SimulatedAnnealing(Solver):
             platform=platform,
             **kwargs
         )
+
+    def supports_grouped_terms(self):
+        if "experimental" in self.name:
+            return True
+        return False
+    
+    def supports_protobuf(self):
+        if "experimental" in self.name:
+            return True
+        return False

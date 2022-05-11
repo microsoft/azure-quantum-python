@@ -98,19 +98,27 @@ class AzureQuantumJob(JobV1):
         """Return the status of the job, among the values of ``JobStatus``."""
         self._azure_job.refresh()
         status = AzureJobStatusMap[self._azure_job.details.status]
-        if self._azure_job.details.status == "Failed":
-            return f"{status}: {self._azure_job.details.error_data.message}"
-        else:
-            return status
+        return status
 
     def queue_position(self):
         """Return the position of the job in the queue. Currently not supported."""
         return None
 
+    def _shots_count(self):
+        # Some providers use 'count', some other 'shots', give preference to 'count':
+        input_params = self._azure_job.details.input_params
+        options = self.backend().options
+        shots = \
+            input_params["count"] if "count" in input_params else \
+            input_params["shots"] if "shots" in input_params else \
+            options.get("count") if "count" in vars(options) else \
+            options.get("shots")
+
+        return shots
+
     def _format_results(self, sampler_seed=None):
         """ Populates the results datastructures in a format that is compatible with qiskit libraries. """
         success = self._azure_job.details.status == "Succeeded"
-        shots_key = "shots"
 
         job_result = {
             "data": {},
@@ -122,29 +130,34 @@ class AzureQuantumJob(JobV1):
             is_simulator = "sim" in self._azure_job.details.target
             if (self._azure_job.details.output_data_format == MICROSOFT_OUTPUT_DATA_FORMAT):
                 job_result["data"] = self._format_microsoft_results(sampler_seed=sampler_seed)
-                job_result["header"] = { "name": self._azure_job.details.name }
                 
             elif (self._azure_job.details.output_data_format == IONQ_OUTPUT_DATA_FORMAT):
-                job_result["data"] = self._format_ionq_results(sampler_seed=sampler_seed, is_simulator=is_simulator)
-                job_result["header"] = self._azure_job.details.metadata
+                job_result["data"] = self._format_ionq_results(sampler_seed=sampler_seed)
 
             elif (self._azure_job.details.output_data_format == HONEYWELL_OUTPUT_DATA_FORMAT):
                 job_result["data"] = self._format_honeywell_results()
-                job_result["header"] = {"name": self._azure_job.details.name}
-                shots_key = "count"
 
             else:
                 job_result["data"] = self._format_unknown_results()
-                job_result["header"] = { "name": self._azure_job.details.name }
 
-        shots = self._azure_job.details.input_params[shots_key] \
-            if shots_key in self._azure_job.details.input_params \
-            else self._backend.options.get(shots_key)
-        job_result["shots"] = shots
+        job_result["header"] = self._azure_job.details.metadata
+        if "metadata" in job_result["header"]:
+            job_result["header"]["metadata"] = json.loads(job_result["header"]["metadata"])
+
+        job_result["shots"] = self._shots_count()
         return job_result
 
-    @staticmethod
-    def _draw_random_sample(sampler_seed, probabilities, shots):
+    def _draw_random_sample(self, sampler_seed, probabilities, shots):
+        _norm = sum(probabilities.values())
+        if _norm != 1:
+            if np.isclose(_norm, 1.0, rtol=1e-4):
+                probabilities = {k: v/_norm for k, v in probabilities.items()}
+            else:
+                raise ValueError(f"Probabilities do not add up to 1: {probabilities}")
+        if not sampler_seed:
+            import hashlib
+            id = self.job_id()
+            sampler_seed = int(hashlib.sha256(id.encode('utf-8')).hexdigest(), 16) % (2**32 - 1)
         rand = np.random.RandomState(sampler_seed)
         rand_values = rand.choice(list(probabilities.keys()), shots, p=list(probabilities.values()))
         return dict(zip(*np.unique(rand_values, return_counts=True)))
@@ -156,18 +169,15 @@ class AzureQuantumJob(JobV1):
         # flip bitstring to convert back to big Endian
         return "".join([bitstring[n] for n in meas_map])[::-1]
 
-    def _format_ionq_results(self, sampler_seed=None, is_simulator=False):
+    def _format_ionq_results(self, sampler_seed=None):
         """ Translate IonQ's histogram data into a format that can be consumed by qiskit libraries. """
         az_result = self._azure_job.get_results()
-        shots = int(self._azure_job.details.input_params['shots']) \
-            if 'shots' in self._azure_job.details.input_params \
-            else self._backend.options.get('shots')
+        shots = self._shots_count()
 
-        if "meas_map" not in self._azure_job.details.metadata \
-            or "num_qubits" not in self._azure_job.details.metadata:
-            raise ValueError(f"Job with ID {self.id()} does not have the required metadata to format IonQ results.")
+        if "num_qubits" not in self._azure_job.details.metadata:
+            raise ValueError(f"Job with ID {self.id()} does not have the required metadata (num_qubits) to format IonQ results.")
 
-        meas_map = json.loads(self._azure_job.details.metadata.get("meas_map"))
+        meas_map = json.loads(self._azure_job.details.metadata.get("meas_map")) if "meas_map" in self._azure_job.details.metadata else None
         num_qubits = self._azure_job.details.metadata.get("num_qubits")
 
         if not 'histogram' in az_result:
@@ -176,22 +186,20 @@ class AzureQuantumJob(JobV1):
         counts = defaultdict(int)
         probabilities = defaultdict(int)
         for key, value in az_result['histogram'].items():
-            bitstring = self._to_bitstring(key, num_qubits, meas_map)
+            bitstring = self._to_bitstring(key, num_qubits, meas_map) if meas_map else key
             probabilities[bitstring] += value
 
-        if is_simulator:
+        if self.backend().configuration().simulator:
             counts = self._draw_random_sample(sampler_seed, probabilities, shots)
         else:
             counts = {bitstring: np.round(shots * value) for bitstring, value in probabilities.items()}
 
         return {"counts": counts, "probabilities": probabilities}
 
-    def _format_microsoft_results(self, sampler_seed=None, is_simulator=False):
+    def _format_microsoft_results(self, sampler_seed=None):
         """ Translate Microsoft's job results histogram into a format that can be consumed by qiskit libraries. """
         az_result = self._azure_job.get_results()
-        shots = int(self._azure_job.details.input_params['shots']) \
-            if 'shots' in self._azure_job.details.input_params \
-            else self._backend.options.get('shots')
+        shots = self._shots_count()
 
         if not 'Histogram' in az_result:
             raise "Histogram missing from Job results"
@@ -210,12 +218,12 @@ class AzureQuantumJob(JobV1):
         else:
             raise "Invalid number of items in Job results' histogram."
 
-        if is_simulator:
+        if self.backend().configuration().simulator:
             counts = self._draw_random_sample(sampler_seed, probabilities, shots)
         else:
             counts = {bitstring: np.round(shots * value) for bitstring, value in probabilities.items()}
 
-        return {"counts": counts, "probabilities": histogram}
+        return {"counts": counts, "probabilities": probabilities}
     
     def _format_honeywell_results(self):
         """ Translate IonQ's histogram data into a format that can be consumed by qiskit libraries. """
