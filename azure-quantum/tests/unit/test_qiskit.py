@@ -118,36 +118,13 @@ class TestQiskit(QuantumTestBase):
     @pytest.mark.live_test
     def test_plugins_submit_qiskit_to_ionq(self):
         circuit = self._3_qubit_ghz()
-        self._test_qiskit_submit_ionq(circuit=circuit)
+        self._test_qiskit_submit_ionq(circuit=circuit, num_shots=500, num_shots_actual=500)
 
     @pytest.mark.ionq
     @pytest.mark.live_test
     def test_plugins_submit_qiskit_circuit_as_list_to_ionq(self):
         circuit = self._3_qubit_ghz()
-        self._test_qiskit_submit_ionq(circuit=[circuit])
-
-    @pytest.mark.ionq
-    @pytest.mark.live_test
-    def test_qiskit_submit_ionq_invalid_input_format(self):
-        with unittest.mock.patch.object(
-            Job,
-            self.mock_create_job_id_name,
-            return_value=self.get_test_job_id(),
-        ):
-            workspace = self.create_workspace()
-            provider = AzureQuantumProvider(workspace=workspace)
-            assert "azure-quantum-qiskit" in provider._workspace.user_agent
-            backend = provider.get_backend("ionq.simulator")
-
-            circuit = self._5_qubit_superposition()
-            circuit.metadata = { "some": "data" }
-
-            with pytest.raises(ValueError) as excinfo:
-                qiskit_job = backend.run(
-                    circuit=circuit,
-                    input_data_format="some.invalid.format"
-                )
-            assert "some.invalid.format is not a supported data format for target ionq.simulator." == str(excinfo.value)
+        self._test_qiskit_submit_ionq(circuit=[circuit], num_shots=500, num_shots_actual=500)
 
     @pytest.mark.ionq
     @pytest.mark.live_test
@@ -172,7 +149,7 @@ class TestQiskit(QuantumTestBase):
         from qiskit import assemble
         circuit = self._3_qubit_ghz()
         qobj = assemble(circuit)
-        self._test_qiskit_submit_ionq(circuit=qobj, shots=1024)
+        self._test_qiskit_submit_ionq(circuit=qobj, num_shots=1024, num_shots_actual=1024)
 
     def _qiskit_wait_to_complete(self, qiskit_job, provider):
         job = qiskit_job._azure_job
@@ -194,7 +171,7 @@ class TestQiskit(QuantumTestBase):
             qiskit_job = provider.get_job(job.id)
             self.assertEqual(JobStatus.DONE, qiskit_job.status())
 
-    def _test_qiskit_submit_ionq(self, circuit, **kwargs):
+    def _test_qiskit_submit_ionq(self, circuit, num_shots, num_shots_actual):
 
         with unittest.mock.patch.object(
             Job,
@@ -206,11 +183,9 @@ class TestQiskit(QuantumTestBase):
             assert "azure-quantum-qiskit" in provider._workspace.user_agent
             backend = provider.get_backend("ionq.simulator")
 
-            shots = kwargs.get("shots", backend.options.shots)
-
             qiskit_job = backend.run(
                 circuit=circuit,
-                **kwargs
+                shots=num_shots
             )
 
             # Check job metadata:
@@ -218,7 +193,6 @@ class TestQiskit(QuantumTestBase):
             assert qiskit_job._azure_job.details.provider_id == "ionq"
             assert qiskit_job._azure_job.details.input_data_format == "ionq.circuit.v1"
             assert qiskit_job._azure_job.details.output_data_format == "ionq.quantum-results.v1"
-            assert qiskit_job._azure_job.details.input_params["shots"] == shots
             assert "qiskit" in qiskit_job._azure_job.details.metadata
             assert "name" in qiskit_job._azure_job.details.metadata
             assert "metadata" in qiskit_job._azure_job.details.metadata
@@ -229,9 +203,9 @@ class TestQiskit(QuantumTestBase):
 
             if JobStatus.DONE == qiskit_job.status():
                 result = qiskit_job.result()
-                assert sum(result.data()["counts"].values()) == shots
-                assert np.isclose(result.data()["counts"]["000"], shots//2, 20)
-                assert np.isclose(result.data()["counts"]["111"], shots//2, 20)
+                assert sum(result.data()["counts"].values()) == num_shots_actual
+                assert np.isclose(result.data()["counts"]["000"], num_shots_actual//2, 20)
+                assert np.isclose(result.data()["counts"]["111"], num_shots_actual//2, 20)
                 assert result.data()["probabilities"] == {'000': 0.5, '111': 0.5}
                 counts = result.get_counts()
                 assert counts == result.data()["counts"]
@@ -358,7 +332,6 @@ class TestQiskit(QuantumTestBase):
             assert qiskit_job._azure_job.details.provider_id == provider_id
             assert qiskit_job._azure_job.details.input_data_format == "honeywell.openqasm.v1"
             assert qiskit_job._azure_job.details.output_data_format == "honeywell.quantum-results.v1"
-            assert "count" in qiskit_job._azure_job.details.input_params
             assert "qiskit" in qiskit_job._azure_job.details.metadata
             assert "name" in qiskit_job._azure_job.details.metadata
             assert "metadata" in qiskit_job._azure_job.details.metadata
