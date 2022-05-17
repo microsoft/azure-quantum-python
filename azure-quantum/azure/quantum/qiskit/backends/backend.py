@@ -63,6 +63,7 @@ class AzureBackend(Backend):
 
         logger.info(f"Using QIR as the job's payload format.")
         from qiskit_qir import to_qir_bitcode, to_qir
+        from qiskit_qir import SUPPORTED_INSTRUCTIONS
 
         capability = input_params["targetCapability"] if "targetCapability" in input_params else "AdaptiveProfileExecution"
 
@@ -74,6 +75,10 @@ class AzureBackend(Backend):
             input_params["entryPoint"] = "main"
         if not "arguments" in input_params:
             input_params["arguments"] = []
+
+        # TODO: Skip transpilation this if requested by the user
+        from qiskit import transpile
+        circuit = transpile(circuit, basis_gates = SUPPORTED_INSTRUCTIONS)
 
         qir = bytes(to_qir_bitcode(circuit, capability))
         return (qir, data_format, input_params)
