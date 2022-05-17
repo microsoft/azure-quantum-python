@@ -55,7 +55,7 @@ class AzureBackend(Backend):
             "metadata": json.dumps(circuit.metadata),
         }
 
-    def _translate_input(self, circuit, data_format, input_params, auto_transpile=False):
+    def _translate_input(self, circuit, data_format, input_params):
         """ Translates the input values to the format expected by the AzureBackend. """
         if data_format != "qir.v1":
             target = self.name()
@@ -75,7 +75,7 @@ class AzureBackend(Backend):
         if not "arguments" in input_params:
             input_params["arguments"] = []
 
-        if auto_transpile:
+        if input_params.get("auto_transpile", False):
             from qiskit import transpile
             from qiskit_qir import SUPPORTED_INSTRUCTIONS
             circuit = transpile(circuit, basis_gates = SUPPORTED_INSTRUCTIONS)
@@ -134,15 +134,15 @@ class AzureBackend(Backend):
         if "shots" in input_params:
             input_params["count"] = input_params["shots"]
 
-
-        # By default, we'll transpile into the list of supported instructions
+        # By default, we'll transpile into the list of QIR supported instructions
         # unless the user has indicated that this step should be skipped.
-        auto_transpile = True
-        if "skip-auto-transpile" in kwargs:
-            auto_transpile = not kwargs["skip-auto-transpile"]
+        if "skip-qir-auto-transpile" in kwargs:
+            input_params["auto_transpile"] = not kwargs.pop("skip-auto-transpile")
+        else:
+            input_params["auto_transpile"] = True
 
         # translate
-        (input_data, input_data_format, input_params) = self._translate_input(circuit, input_data_format, input_params, auto_transpile)
+        (input_data, input_data_format, input_params) = self._translate_input(circuit, input_data_format, input_params)
 
         logger.info(f"Submitting new job for backend {self.name()}")
         job = AzureQuantumJob(
