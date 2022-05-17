@@ -83,6 +83,9 @@ class AzureBackend(Backend):
             from qiskit import transpile
             circuit = transpile(circuit, self)
 
+            if logger.isEnabledFor(logging.DEBUG):
+                logger.debug(f"QIR (Post-transpilation):\n{to_qir(circuit, capability)}")
+
         qir = bytes(to_qir_bitcode(circuit, capability))
         return (qir, data_format, input_params)
 
