@@ -55,7 +55,7 @@ class AzureBackend(Backend):
             "metadata": json.dumps(circuit.metadata),
         }
 
-    def _translate_input(self, circuit, data_format, auto_transpile, input_params):
+    def _translate_input(self, circuit, data_format, input_params, auto_transpile=False):
         """ Translates the input values to the format expected by the AzureBackend. """
         if data_format != "qir.v1":
             target = self.name()
@@ -142,7 +142,7 @@ class AzureBackend(Backend):
             auto_transpile = not kwargs["skip-auto-transpile"]
 
         # translate
-        (input_data, input_data_format, input_params) = self._translate_input(circuit, input_data_format, auto_transpile, input_params)
+        (input_data, input_data_format, input_params) = self._translate_input(circuit, input_data_format, input_params, auto_transpile)
 
         logger.info(f"Submitting new job for backend {self.name()}")
         job = AzureQuantumJob(
