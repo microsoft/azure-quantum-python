@@ -24,7 +24,23 @@ To install run: pip install azure-quantum[qiskit]"
 )
 
 # Set of gates supported by QIR targets.
-from qiskit_qir import SUPPORTED_INSTRUCTIONS as qir_supported_instructions
+QIR_BASIS_GATES = [
+    "x",
+    "y",
+    "z",
+    "rx",
+    "ry",
+    "rz",
+    "h",
+    "cx",
+    "cz",
+    "s",
+    "sdg",
+    "t",
+    "tdg",
+    "measure",
+    "reset"
+]
 
 class AzureBackend(Backend):
     """Base class for interfacing with an IonQ backend in Azure Quantum"""
@@ -47,6 +63,7 @@ class AzureBackend(Backend):
 
         logger.info(f"Using QIR as the job's payload format.")
         from qiskit_qir import to_qir_bitcode, to_qir
+        from qiskit_qir import SUPPORTED_INSTRUCTIONS as qir_supported_instructions
 
         capability = input_params["targetCapability"] if "targetCapability" in input_params else "AdaptiveProfileExecution"
 
