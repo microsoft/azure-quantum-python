@@ -126,7 +126,22 @@ class AzureBackend(Backend):
             input_params["count"] = input_params["shots"]
 
         # translate
-        (input_data, input_data_format, input_params) = self._translate_input(circuit, input_data_format, input_params)
+        try:
+            (input_data, input_data_format, input_params) = self._translate_input(circuit, input_data_format, input_params)
+
+        except QubitUseAfterMeasurementError as e:
+            logger.error("QIR translation failed because a qubit was used after measurement without required capability.")
+            raise e
+        except ConditionalBranchingOnResultError as e:
+            logger.error("QIR translation failed because of branching after measurement without required capability.")
+            raise e
+        except CapabilityError as e:
+            logger.error("QIR translation failed on usage not allowed by current capabilities.")
+            raise e
+        except ValueError as e:
+            if "Please transpile using the list of supported gates" in str(e):
+                logger.error("QIR translation failed on usage of unsupported gate.")
+            raise e
 
         logger.info(f"Submitting new job for backend {self.name()}")
         job = AzureQuantumJob(
