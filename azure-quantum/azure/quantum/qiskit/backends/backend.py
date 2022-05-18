@@ -126,6 +126,7 @@ class AzureBackend(Backend):
             input_params["count"] = input_params["shots"]
 
         # translate
+        from qiskit_qir.capability import QubitUseAfterMeasurementError, ConditionalBranchingOnResultError, CapabilityError
         try:
             (input_data, input_data_format, input_params) = self._translate_input(circuit, input_data_format, input_params)
 
