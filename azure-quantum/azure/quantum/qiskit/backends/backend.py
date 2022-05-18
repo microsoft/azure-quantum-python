@@ -13,7 +13,7 @@ from azure.quantum.version import __version__
 from azure.quantum.qiskit.job import AzureQuantumJob
 
 try:
-    from qiskit import QuantumCircuit
+    from qiskit import QuantumCircuit, transpile
     from qiskit.providers import BackendV1 as Backend
     from qiskit.qobj import Qobj, QasmQobj
 
@@ -24,23 +24,7 @@ To install run: pip install azure-quantum[qiskit]"
 )
 
 # Set of gates supported by QIR targets.
-QIR_BASIS_GATES = [
-    "x",
-    "y",
-    "z",
-    "rx",
-    "ry",
-    "rz",
-    "h",
-    "cx",
-    "cz",
-    "s",
-    "sdg",
-    "t",
-    "tdg",
-    "measure",
-    "reset"
-]
+from qiskit_qir import SUPPORTED_INSTRUCTIONS as qir_supported_instructions
 
 class AzureBackend(Backend):
     """Base class for interfacing with an IonQ backend in Azure Quantum"""
@@ -75,10 +59,8 @@ class AzureBackend(Backend):
         if not "arguments" in input_params:
             input_params["arguments"] = []
 
-        if input_params.get("auto_transpile", False):
-            from qiskit import transpile
-            from qiskit_qir import SUPPORTED_INSTRUCTIONS
-            circuit = transpile(circuit, basis_gates = SUPPORTED_INSTRUCTIONS)
+        if not input_params.get("skipTranspile", False):
+            circuit = transpile(circuit, basis_gates = qir_supported_instructions)
 
             # We'll only log the QIR again if we performed a transpilation.
             if logger.isEnabledFor(logging.DEBUG):
@@ -133,13 +115,6 @@ class AzureBackend(Backend):
         # Remove this once all providers accept "count":
         if "shots" in input_params:
             input_params["count"] = input_params["shots"]
-
-        # By default, we'll transpile into the list of QIR supported instructions
-        # unless the user has indicated that this step should be skipped.
-        if "skip-qir-auto-transpile" in kwargs:
-            input_params["auto_transpile"] = not kwargs.pop("skip-auto-transpile")
-        else:
-            input_params["auto_transpile"] = True
 
         # translate
         (input_data, input_data_format, input_params) = self._translate_input(circuit, input_data_format, input_params)
