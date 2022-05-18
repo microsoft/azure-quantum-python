@@ -9,7 +9,7 @@ import json
 from typing import TYPE_CHECKING
 
 from azure.quantum._client.models import JobDetails
-from azure.quantum.job.base_job import BaseJob, DEFAULT_TIMEOUT
+from azure.quantum.job.base_job import BaseJob, ContentType, DEFAULT_TIMEOUT
 from azure.quantum.job.filtered_job import FilteredJob
 
 __all__ = ["Job"]
