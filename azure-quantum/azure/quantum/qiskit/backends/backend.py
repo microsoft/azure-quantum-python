@@ -23,25 +23,6 @@ except ImportError:
 To install run: pip install azure-quantum[qiskit]"
 )
 
-# Set of gates supported by QIR targets.
-QIR_BASIS_GATES = [
-    "x",
-    "y",
-    "z",
-    "rx",
-    "ry",
-    "rz",
-    "h",
-    "cx",
-    "cz",
-    "s",
-    "sdg",
-    "t",
-    "tdg",
-    "measure",
-    "reset"
-]
-
 class AzureBackend(Backend):
     """Base class for interfacing with an IonQ backend in Azure Quantum"""
     backend_name = None
@@ -63,6 +44,8 @@ class AzureBackend(Backend):
 
         logger.info(f"Using QIR as the job's payload format.")
         from qiskit_qir import to_qir_bitcode, to_qir
+
+        # Set of gates supported by QIR targets.
         from qiskit_qir import SUPPORTED_INSTRUCTIONS as qir_supported_instructions
 
         capability = input_params["targetCapability"] if "targetCapability" in input_params else "AdaptiveProfileExecution"
@@ -76,6 +59,7 @@ class AzureBackend(Backend):
         if not "arguments" in input_params:
             input_params["arguments"] = []
 
+        # We'll transpile automatically to the supported gates in QIR unless explicitly skipped.
         if not input_params.get("skipTranspile", False):
             circuit = transpile(circuit, basis_gates = qir_supported_instructions)
 
