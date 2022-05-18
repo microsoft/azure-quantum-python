@@ -63,19 +63,38 @@ class AzureBackend(Backend):
 
         logger.info(f"Using QIR as the job's payload format.")
         from qiskit_qir import to_qir_bitcode, to_qir
+        from qiskit_qir.capability import CapabilityError, QubitUseAfterMeasurementError, ConditionalBranchingOnResultError
 
         capability = input_params["targetCapability"] if "targetCapability" in input_params else "AdaptiveProfileExecution"
 
-        if logger.isEnabledFor(logging.DEBUG):
-            logger.debug(f"QIR:\n{to_qir(circuit, capability)}")
+        try:
+            if logger.isEnabledFor(logging.DEBUG):
+                logger.debug(f"QIR:\n{to_qir(circuit, capability)}")
 
-        # all qir payload needs to define an entryPoint and arguments:
-        if not "entryPoint" in input_params:
-            input_params["entryPoint"] = "main"
-        if not "arguments" in input_params:
-            input_params["arguments"] = []
+            # all qir payload needs to define an entryPoint and arguments:
+            if not "entryPoint" in input_params:
+                input_params["entryPoint"] = "main"
+            if not "arguments" in input_params:
+                input_params["arguments"] = []
 
-        qir = bytes(to_qir_bitcode(circuit, capability))
+            qir = bytes(to_qir_bitcode(circuit, capability))
+
+        except QubitUseAfterMeasurementError as e:
+            logger.error("QIR translation failed because a qubit was used after measurement without required capability.")
+            raise e
+        except ConditionalBranchingOnResultError as e:
+            logger.error("QIR translation failed because of branching after measurement without required capability.")
+            raise e
+        except CapabilityError as e:
+            logger.error("QIR translation failed on usage not allowed by current capabilities.")
+            raise e
+        except ValueError as e:
+            if "Please transpile using the list of supported gates" in str(e):
+                logger.error("QIR translation failed on usage of unsupported gate.")
+            raise e
+        
+
+
         return (qir, data_format, input_params)
 
     def run(self, circuit, **kwargs):
@@ -126,23 +145,7 @@ class AzureBackend(Backend):
             input_params["count"] = input_params["shots"]
 
         # translate
-        from qiskit_qir.capability import QubitUseAfterMeasurementError, ConditionalBranchingOnResultError, CapabilityError
-        try:
-            (input_data, input_data_format, input_params) = self._translate_input(circuit, input_data_format, input_params)
-
-        except QubitUseAfterMeasurementError as e:
-            logger.error("QIR translation failed because a qubit was used after measurement without required capability.")
-            raise e
-        except ConditionalBranchingOnResultError as e:
-            logger.error("QIR translation failed because of branching after measurement without required capability.")
-            raise e
-        except CapabilityError as e:
-            logger.error("QIR translation failed on usage not allowed by current capabilities.")
-            raise e
-        except ValueError as e:
-            if "Please transpile using the list of supported gates" in str(e):
-                logger.error("QIR translation failed on usage of unsupported gate.")
-            raise e
+        (input_data, input_data_format, input_params) = self._translate_input(circuit, input_data_format, input_params)
 
         logger.info(f"Submitting new job for backend {self.name()}")
         job = AzureQuantumJob(
