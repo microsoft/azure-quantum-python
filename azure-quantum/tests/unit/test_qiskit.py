@@ -446,3 +446,33 @@ class TestQiskit(QuantumTestBase):
                 assert hasattr(result.results[0].header, "metadata")
                 assert result.results[0].header.num_qubits == '4'
                 assert result.results[0].header.metadata["some"] == "data"
+
+    @pytest.mark.rigetti
+    @pytest.mark.live_test
+    def test_qiskit_get_rigetti_qpu_targets(self):
+        from azure.quantum.target.rigetti import RigettiTarget
+
+        workspace = self.create_workspace()
+        provider = AzureQuantumProvider(workspace=workspace)
+
+        backend = provider.get_backend(RigettiTarget.ASPEN_11.value)
+        assert backend.name() == RigettiTarget.ASPEN_11.value
+        config = backend.configuration()
+        assert False == config.simulator
+        assert 1 == config.max_experiments
+        assert 38 == config.num_qubits
+        assert "qir.v1" == config.azure["content_type"]
+        assert "rigetti" == config.azure["provider_id"]
+        assert "qir.v1" == config.azure["input_data_format"]
+        assert "microsoft.quantum-results.v1" == config.azure["output_data_format"]
+
+        backend = provider.get_backend(RigettiTarget.ASPEN_M_1.value)
+        assert backend.name() == RigettiTarget.ASPEN_M_1.value
+        config = backend.configuration()
+        assert False == config.simulator
+        assert 1 == config.max_experiments
+        assert 80 == config.num_qubits
+        assert "qir.v1" == config.azure["content_type"]
+        assert "rigetti" == config.azure["provider_id"]
+        assert "qir.v1" == config.azure["input_data_format"]
+        assert "microsoft.quantum-results.v1" == config.azure["output_data_format"]
