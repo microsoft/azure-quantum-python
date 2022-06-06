@@ -9,10 +9,11 @@ from azure.quantum.version import __version__
 from azure.quantum.qiskit.job import AzureQuantumJob
 from azure.quantum.target.rigetti import RigettiTarget
 
-from .backend import AzureBackend, QIR_BASIS_GATES
+from .backend import AzureBackend
 
 from qiskit.providers.models import BackendConfiguration
 from qiskit.providers import Options
+from qiskit_qir import SUPPORTED_INSTRUCTIONS as QIR_BASIS_GATES
 
 if TYPE_CHECKING:
     from azure.quantum.qiskit import AzureQuantumProvider
