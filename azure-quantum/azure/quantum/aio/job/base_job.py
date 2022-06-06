@@ -5,13 +5,13 @@
 import logging
 
 from urllib.parse import urlparse
-from typing import Any, Dict, TYPE_CHECKING
+from typing import Any, Dict, Optional, TYPE_CHECKING
 from urllib.parse import urlparse
 from azure.storage.blob import BlobClient
 
 from azure.quantum.aio.storage import upload_blob, download_blob, ContainerClient
 from azure.quantum._client.models import JobDetails
-from azure.quantum.job.job import BaseJob as SyncBaseJob
+from azure.quantum.job.job import BaseJob as SyncBaseJob, ContentType
 
 
 if TYPE_CHECKING:
@@ -199,7 +199,7 @@ class BaseJob(SyncBaseJob):
     async def upload_input_data(
         container_uri: str,
         input_data: bytes,
-        content_type: str,
+        content_type: Optional[ContentType] = ContentType.json,
         blob_name: str = "inputData",
         encoding: str = "",
         return_sas_token: bool = False
@@ -288,9 +288,9 @@ class BaseJob(SyncBaseJob):
         if container_uri is None:
             container_uri = await self.workspace.get_container_uri(job_id=self.id)
 
-        uploaded_blob_uri = await cls.upload_input_data(
+        uploaded_blob_uri = await self.upload_input_data(
             container_uri = container_uri,
-            blob_name = name,
+            blob_name = blob_name,
             input_data = data,
             **kwargs
         )

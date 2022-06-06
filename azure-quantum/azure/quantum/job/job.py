@@ -9,7 +9,7 @@ import json
 from typing import TYPE_CHECKING
 
 from azure.quantum._client.models import JobDetails
-from azure.quantum.job.base_job import BaseJob, DEFAULT_TIMEOUT
+from azure.quantum.job.base_job import BaseJob, ContentType, DEFAULT_TIMEOUT
 from azure.quantum.job.filtered_job import FilteredJob
 
 __all__ = ["Job"]
@@ -119,8 +119,9 @@ class Job(BaseJob, FilteredJob):
             )
 
         payload = self.download_data(self.details.output_data_uri)
-        payload = payload.decode("utf8")
         try:
+            payload = payload.decode("utf8")
             return json.loads(payload)
-        except json.JSONDecodeError:
+        except:
+            # If errors decoding the data, return the raw payload:
             return payload
