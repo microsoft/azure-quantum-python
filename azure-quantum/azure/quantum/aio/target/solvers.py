@@ -40,19 +40,12 @@ class Solver(Target, SyncSolver):
         from azure.quantum.aio.optimization.problem import Problem
         if isinstance(problem, Problem):
             # Create job from input data
-            name = problem.name
-            blob = problem.to_blob()
-            job = await Job.from_input_data(
-                workspace=self.workspace,
-                name=name,
-                target=self.name,
-                input_data=blob,
-                blob_name="inputData",
-                content_type="application/json",
-                provider_id=self.provider_id,
-                input_data_format=self.input_data_format,
-                output_data_format=self.output_data_format,
+            return await super().submit(
+                input_data=problem,
+                name=problem.name,
                 input_params=self.params,
+                blob_name="inputData",
+                content_type = problem.content_type
             )
         
         else:
