@@ -13,7 +13,7 @@ from azure.quantum.version import __version__
 from azure.quantum.qiskit.job import AzureQuantumJob
 
 try:
-    from qiskit import QuantumCircuit
+    from qiskit import QuantumCircuit, transpile
     from qiskit.providers import BackendV1 as Backend
     from qiskit.qobj import Qobj, QasmQobj
 
@@ -22,25 +22,6 @@ except ImportError:
     "Missing optional 'qiskit' dependencies. \
 To install run: pip install azure-quantum[qiskit]"
 )
-
-# Set of gates supported by QIR targets.
-QIR_BASIS_GATES = [
-    "x",
-    "y",
-    "z",
-    "rx",
-    "ry",
-    "rz",
-    "h",
-    "cx",
-    "cz",
-    "s",
-    "sdg",
-    "t",
-    "tdg",
-    "measure",
-    "reset"
-]
 
 class AzureBackend(Backend):
     """Base class for interfacing with an IonQ backend in Azure Quantum"""
@@ -64,6 +45,9 @@ class AzureBackend(Backend):
         logger.info(f"Using QIR as the job's payload format.")
         from qiskit_qir import to_qir_bitcode, to_qir
 
+        # Set of gates supported by QIR targets.
+        from qiskit_qir import SUPPORTED_INSTRUCTIONS as qir_supported_instructions
+
         capability = input_params["targetCapability"] if "targetCapability" in input_params else "AdaptiveProfileExecution"
 
         if logger.isEnabledFor(logging.DEBUG):
@@ -74,6 +58,14 @@ class AzureBackend(Backend):
             input_params["entryPoint"] = "main"
         if not "arguments" in input_params:
             input_params["arguments"] = []
+
+        # We'll transpile automatically to the supported gates in QIR unless explicitly skipped.
+        if not input_params.get("skipTranspile", False):
+            circuit = transpile(circuit, basis_gates = qir_supported_instructions)
+
+            # We'll only log the QIR again if we performed a transpilation.
+            if logger.isEnabledFor(logging.DEBUG):
+                logger.debug(f"QIR (Post-transpilation):\n{to_qir(circuit, capability)}")
 
         qir = bytes(to_qir_bitcode(circuit, capability))
         return (qir, data_format, input_params)

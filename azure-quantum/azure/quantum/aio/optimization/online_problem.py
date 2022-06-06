@@ -13,5 +13,5 @@ if TYPE_CHECKING:
 
 class OnlineProblem(SyncOnlineProblem):
     async def download(self, workspace: "Workspace") -> Problem:
-        logger.warning("The problem will be downloaded to the client")
+        logger.info("The problem will be downloaded to the client")
         return await Problem.download(self, workspace)

@@ -70,7 +70,7 @@ class StreamingProblem(SyncStreamingProblem):
         problem = cls(
             workspace,
             name,
-            terms,
+            None,   # terms need to be added manually later so it can be awaited
             init_config,
             problem_type,
             metadata,
@@ -101,6 +101,7 @@ class StreamingProblem(SyncStreamingProblem):
                 )
             )
             blob_name = blob_client.blob_name
+            await blob_client.close()
         elif not self.workspace.storage:
             # No storage account is passed, use the linked one
             container_uri = await self.workspace._get_linked_storage_sas_uri(self.id)
@@ -134,7 +135,6 @@ class StreamingProblem(SyncStreamingProblem):
                     upload_size_threshold=self.upload_size_threshold,
                     upload_term_threshold=self.upload_terms_threshold,
                 )
-                uploader_task = create_task(self.uploader.start())
 
             max_coupling = -sys.float_info.max
             min_coupling = sys.float_info.max
@@ -157,9 +157,8 @@ class StreamingProblem(SyncStreamingProblem):
                 self.stats["max_coupling"] = max_coupling
             if self.stats["min_coupling"] > min_coupling:
                 self.stats["min_coupling"] = min_coupling
-            self.terms_queue.put_nowait(terms)
-            if self.uploader is None:
-                await uploader_task
+
+            await self.uploader.upload(terms)
 
     async def download(self):
         """Downloads the uploaded problem as an instance of `Problem`"""
@@ -175,25 +174,29 @@ class StreamingProblem(SyncStreamingProblem):
 
     async def upload(
         self,
-        workspace,
-        container_name: str = "qio-problems",
-        blob_name: str = None
+        workspace=None
     ):
         """Uploads an optimization problem instance
            to the cloud storage linked with the Workspace.
 
-        :param workspace: interaction terms of the problem.
         :return: uri of the uploaded problem
         """
+        if self.uploader is None:
+            raise RuntimeError("You must add terms before uploading")
+
+        if self.uploaded_uri:
+            raise RuntimeError("Problem has already been uploaded.")
+
+        if workspace and self.workspace != workspace:
+            raise RuntimeError("Workspace must match workspace provided in constructor.")
+
         if not self.uploaded_uri:
             self.uploader.blob_properties = {
                 k: str(v) for k, v in {**self.stats, **self.metadata}.items()
             }
-            self.terms_queue.put_nowait(None)
-            while not self.uploader.is_done():
-                await sleep(0.2)
+            await self.uploader.finish_upload()
             blob = self.uploader.blob
-            self.uploaded_uri = blob.getUri(not not self.workspace.storage)
+            self.uploaded_uri = blob.getUri(self.workspace.storage)
             self.uploader = None
             self.terms_queue = None
 
@@ -242,36 +245,9 @@ class JsonStreamingProblemUploader(SyncJsonStreamingProblemUploader):
         self.__upload_size_threshold = upload_size_threshold
         self.__read_pos = 0
 
-    async def start(self):
-        await self._run_queue()
-
     def is_done(self):
         """True if the thread uploader has completed"""
         return self.blob.state == StreamedBlobState.committed
-
-    async def _run_queue(self):
-        continue_processing = True
-        terms = []
-        while continue_processing:
-            try:
-                new_terms = self.problem.terms_queue.get_nowait()
-                if new_terms is None:
-                    continue_processing = False
-                else:
-                    terms = terms + new_terms
-                    if len(terms) < self.__upload_terms_threshold:
-                        continue
-            except Empty or AttributeError:
-                continue_processing = False
-                pass
-            except Exception as e:
-                raise e
-
-            if len(terms) > 0:
-                await self._upload_next(terms)
-                terms = []
-
-        await self._finish_upload()
 
     async def _upload_start(self, terms):
         self.started_upload = True
@@ -283,7 +259,7 @@ class JsonStreamingProblemUploader(SyncJsonStreamingProblemUploader):
             + self._get_terms_string(terms)
         )
 
-    async def _upload_next(self, terms):
+    async def upload(self, terms):
         if not self.started_upload:
             await self._upload_start(terms)
         else:
@@ -296,7 +272,7 @@ class JsonStreamingProblemUploader(SyncJsonStreamingProblemUploader):
         if len(compressed) > 0:
             await self.blob.upload_data(compressed)
 
-    async def _finish_upload(self):
+    async def finish_upload(self):
         if not self.started_upload:
             await self._upload_start([])
 
