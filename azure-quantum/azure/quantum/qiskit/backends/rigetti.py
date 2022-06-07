@@ -45,9 +45,7 @@ class RigettiBackend(AzureBackend):
 
 
 class RigettiSimulatorBackend(RigettiBackend):
-    backend_names = (
-        RigettiTarget.QVM.value,
-    )
+    backend_names = RigettiTarget.simulators()
 
     def __init__(
         self,
@@ -66,7 +64,7 @@ class RigettiSimulatorBackend(RigettiBackend):
                 "description": "Rigetti simulator on Azure Quantum",
                 "basis_gates": QIR_BASIS_GATES,
                 "memory": False,
-                "n_qubits": 38,
+                "n_qubits": RigettiTarget.num_qubits(name),
                 "conditional": False,
                 "max_shots": 10000,
                 "max_experiments": 1,
@@ -81,10 +79,7 @@ class RigettiSimulatorBackend(RigettiBackend):
 
 
 class RigettiQPUBackend(RigettiBackend):
-    backend_names = (
-        RigettiTarget.ASPEN_11.value,
-        RigettiTarget.ASPEN_M_1.value
-    )
+    backend_names = RigettiTarget.qpus()
 
     def __init__(
         self,
@@ -103,7 +98,7 @@ class RigettiQPUBackend(RigettiBackend):
                 "description": "Rigetti QPU on Azure Quantum",
                 "basis_gates": QIR_BASIS_GATES,
                 "memory": False,
-                "n_qubits": 80 if name == RigettiTarget.ASPEN_M_1.value else 38,
+                "n_qubits": RigettiTarget.num_qubits(name),
                 "conditional": False,
                 "max_shots": 10000,
                 "max_experiments": 1,
