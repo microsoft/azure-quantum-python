@@ -407,6 +407,15 @@ class TestQiskit(QuantumTestBase):
             provider = AzureQuantumProvider(workspace=workspace)
             assert "azure-quantum-qiskit" in provider._workspace.user_agent
             backend = provider.get_backend(RigettiTarget.QVM.value)
+            assert backend.name() == RigettiTarget.QVM.value
+            config = backend.configuration()
+            assert True == config.simulator
+            assert 1 == config.max_experiments
+            assert 20 == config.num_qubits
+            assert "qir.v1" == config.azure["content_type"]
+            assert "rigetti" == config.azure["provider_id"]
+            assert "qir.v1" == config.azure["input_data_format"]
+            assert "microsoft.quantum-results.v1" == config.azure["output_data_format"]
             shots = 100
 
             circuit = self._3_qubit_ghz()
