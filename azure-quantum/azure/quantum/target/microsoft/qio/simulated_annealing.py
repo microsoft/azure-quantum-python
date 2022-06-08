@@ -22,7 +22,9 @@ class SimulatedAnnealing(Solver):
         "microsoft.simulatedannealing.cpu",
         "microsoft.simulatedannealing-parameterfree.cpu",
         "microsoft.simulatedannealing.cpu.experimental",
-        "microsoft.simulatedannealing-parameterfree.cpu.experimental"
+        "microsoft.simulatedannealing-parameterfree.cpu.experimental",
+        "microsoft.simulatedannealing.cpu.legacy",
+        "microsoft.simulatedannealing-parameterfree.cpu.experimental.legacy"
     ]
     def __init__(
         self,
@@ -75,10 +77,7 @@ class SimulatedAnnealing(Solver):
                 else "microsoft.simulatedannealing.fpga"
             )
         elif param_free:
-            if "experimental" in name:
-                name = "microsoft.simulatedannealing-parameterfree.cpu.experimental"
-            else:
-                name = "microsoft.simulatedannealing-parameterfree.cpu"
+            name = name.replace(".simulatedannealing.", ".simulatedannealing-parameterfree.")
 
         super().__init__(
             workspace=workspace,
@@ -109,7 +108,7 @@ class SimulatedAnnealing(Solver):
         :return: Target instance
         :rtype: Target
         """
-        if status.id.endswith("cpu") or status.id.endswith("cpu.experimental"):
+        if ".cpu" in status.id:
             platform = HardwarePlatform.CPU
         elif status.id.endswith("fpga"):
             platform = HardwarePlatform.FPGA
@@ -124,11 +123,11 @@ class SimulatedAnnealing(Solver):
         )
 
     def supports_grouped_terms(self):
-        if "experimental" in self.name:
-            return True
-        return False
+        if "legacy" in self.name or "fpga" in self.name:
+            return False
+        return True
     
     def supports_protobuf(self):
-        if "experimental" in self.name:
-            return True
-        return False
+        if "legacy" in self.name or "fpga" in self.name:
+            return False
+        return True
