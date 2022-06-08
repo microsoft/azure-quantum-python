@@ -521,8 +521,8 @@ class TestSolvers(QuantumTestBase):
             "microsoft.paralleltempering-parameterfree.cpu.legacy", good.name
         )
         self.assertEqual({"timeout": 1011}, good.params["params"])
-        self.assertEqual(True, good.supports_grouped_terms())
-        self.assertEqual(True, good.supports_protobuf())
+        self.assertEqual(False, good.supports_grouped_terms())
+        self.assertEqual(False, good.supports_protobuf())
 
         good = ParallelTempering(ws, name = "microsoft.paralleltempering.cpu.legacy", seed=20)
         self.assertIsNotNone(good)
@@ -530,8 +530,8 @@ class TestSolvers(QuantumTestBase):
             "microsoft.paralleltempering-parameterfree.cpu.legacy", good.name
         )
         self.assertEqual({"seed": 20}, good.params["params"])
-        self.assertEqual(True, good.supports_grouped_terms())
-        self.assertEqual(True, good.supports_protobuf())
+        self.assertEqual(False, good.supports_grouped_terms())
+        self.assertEqual(False, good.supports_protobuf())
 
         good = ParallelTempering(
             ws, name = "microsoft.paralleltempering.cpu.legacy", sweeps=20, replicas=3, all_betas=[3, 5, 9]
@@ -552,8 +552,8 @@ class TestSolvers(QuantumTestBase):
             {"sweeps": 20, "replicas": 2, "all_betas": [3, 9]},
             good.params["params"],
         )
-        self.assertEqual(True, good.supports_grouped_terms())
-        self.assertEqual(True, good.supports_protobuf())
+        self.assertEqual(False, good.supports_grouped_terms())
+        self.assertEqual(False, good.supports_protobuf())
 
         with self.assertRaises(ValueError):
             _ = ParallelTempering(
