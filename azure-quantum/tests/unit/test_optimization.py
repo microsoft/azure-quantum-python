@@ -669,7 +669,7 @@ class TestSolvers(QuantumTestBase):
         ws = self.create_workspace()
         good = QuantumMonteCarlo(ws, name = "microsoft.qmc.cpu.legacy", trotter_number=100, seed=4321)
         self.assertIsNotNone(good)
-        self.assertEqual("microsoft.qmc.cpu.leagacy", good.name)
+        self.assertEqual("microsoft.qmc.cpu.legacy", good.name)
         self.assertEqual(
             {"trotter_number": 100, "seed": 4321}, good.params["params"]
         )
@@ -1008,15 +1008,15 @@ class TestSolvers(QuantumTestBase):
         self.assertEqual(
             {"timeout": 1011, "seed": 4321}, good.params["params"]
         )
-        self.assertEqual(False, good.supports_grouped_terms())
-        self.assertEqual(False, good.supports_protobuf())
+        self.assertEqual(True, good.supports_grouped_terms())
+        self.assertEqual(True, good.supports_protobuf())
 
         good = Tabu(ws, tabu_tenure=4)
         self.assertIsNotNone(good)
         self.assertEqual("microsoft.tabu.cpu", good.name)
         self.assertEqual({"tabu_tenure": 4}, good.params["params"])
-        self.assertEqual(False, good.supports_grouped_terms())
-        self.assertEqual(False, good.supports_protobuf())
+        self.assertEqual(True, good.supports_grouped_terms())
+        self.assertEqual(True, good.supports_protobuf())
 
 
     def test_Tabu_experimental_input_params(self):
