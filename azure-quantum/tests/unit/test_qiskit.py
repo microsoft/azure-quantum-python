@@ -411,7 +411,6 @@ class TestQiskit(QuantumTestBase):
             config = backend.configuration()
             assert True == config.simulator
             assert 1 == config.max_experiments
-            assert 20 == config.num_qubits
             assert "qir.v1" == config.azure["content_type"]
             assert "rigetti" == config.azure["provider_id"]
             assert "qir.v1" == config.azure["input_data_format"]
