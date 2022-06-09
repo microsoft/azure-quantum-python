@@ -32,13 +32,13 @@ class RigettiTarget(str, Enum):
     ASPEN_11 = "rigetti.qpu.aspen-11"
     ASPEN_M_1 = "rigetti.qpu.aspen-m-1"
 
-    def simulators():
+    def simulators() -> List[str]:
         """Returns a list of simulator targets"""
         return [
             RigettiTarget.QVM.value,
         ]
 
-    def qpus():
+    def qpus() -> List[str]:
         """Returns a list of QPU targets"""
         return [
             RigettiTarget.ASPEN_11.value,
