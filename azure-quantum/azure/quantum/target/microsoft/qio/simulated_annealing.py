@@ -24,7 +24,7 @@ class SimulatedAnnealing(Solver):
         "microsoft.simulatedannealing.cpu.experimental",
         "microsoft.simulatedannealing-parameterfree.cpu.experimental",
         "microsoft.simulatedannealing.cpu.legacy",
-        "microsoft.simulatedannealing-parameterfree.cpu.experimental.legacy"
+        "microsoft.simulatedannealing-parameterfree.cpu.legacy"
     ]
     def __init__(
         self,
