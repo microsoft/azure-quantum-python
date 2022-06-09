@@ -14,7 +14,8 @@ logger = logging.getLogger(__name__)
 class QuantumMonteCarlo(Solver):
     target_names = (
         "microsoft.qmc.cpu",
-        "microsoft.qmc.cpu.experimental"
+        "microsoft.qmc.cpu.experimental",
+        "microsoft.qmc.cpu.legacy"
     )
     def __init__(
         self,
@@ -71,11 +72,11 @@ class QuantumMonteCarlo(Solver):
         self.set_one_param("restarts", restarts)
 
     def supports_grouped_terms(self):
-        if "experimental" in self.name:
-            return True
-        return False
+        if "legacy" in self.name:
+            return False
+        return True
     
     def supports_protobuf(self):
-        if "experimental" in self.name:
-            return True
-        return False
+        if "legacy" in self.name:
+            return False
+        return True

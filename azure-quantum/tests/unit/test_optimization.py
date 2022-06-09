@@ -425,8 +425,8 @@ class TestSolvers(QuantumTestBase):
             "microsoft.paralleltempering-parameterfree.cpu", good.name
         )
         self.assertEqual({"timeout": 1011}, good.params["params"])
-        self.assertEqual(False, good.supports_grouped_terms())
-        self.assertEqual(False, good.supports_protobuf())
+        self.assertEqual(True, good.supports_grouped_terms())
+        self.assertEqual(True, good.supports_protobuf())
 
         good = ParallelTempering(ws, seed=20)
         self.assertIsNotNone(good)
@@ -434,8 +434,8 @@ class TestSolvers(QuantumTestBase):
             "microsoft.paralleltempering-parameterfree.cpu", good.name
         )
         self.assertEqual({"seed": 20}, good.params["params"])
-        self.assertEqual(False, good.supports_grouped_terms())
-        self.assertEqual(False, good.supports_protobuf())
+        self.assertEqual(True, good.supports_grouped_terms())
+        self.assertEqual(True, good.supports_protobuf())
 
         good = ParallelTempering(
             ws, sweeps=20, replicas=3, all_betas=[3, 5, 9]
@@ -446,8 +446,8 @@ class TestSolvers(QuantumTestBase):
             {"sweeps": 20, "replicas": 3, "all_betas": [3, 5, 9]},
             good.params["params"],
         )
-        self.assertEqual(False, good.supports_grouped_terms())
-        self.assertEqual(False, good.supports_protobuf())
+        self.assertEqual(True, good.supports_grouped_terms())
+        self.assertEqual(True, good.supports_protobuf())
 
         good = ParallelTempering(ws, sweeps=20, all_betas=[3, 9])
         self.assertIsNotNone(good)
@@ -456,8 +456,8 @@ class TestSolvers(QuantumTestBase):
             {"sweeps": 20, "replicas": 2, "all_betas": [3, 9]},
             good.params["params"],
         )
-        self.assertEqual(False, good.supports_grouped_terms())
-        self.assertEqual(False, good.supports_protobuf())
+        self.assertEqual(True, good.supports_grouped_terms())
+        self.assertEqual(True, good.supports_protobuf())
 
         with self.assertRaises(ValueError):
             _ = ParallelTempering(
@@ -512,6 +512,53 @@ class TestSolvers(QuantumTestBase):
                 ws, name = "microsoft.paralleltempering.cpu.experimental", sweeps=20, replicas=3, all_betas=[1, 3, 5, 7, 9]
             )
 
+    def test_ParallelTempering_legacy_input_params(self):
+        ws = self.create_workspace()
+
+        good = ParallelTempering(ws, name = "microsoft.paralleltempering.cpu.legacy", timeout=1011)
+        self.assertIsNotNone(good)
+        self.assertEqual(
+            "microsoft.paralleltempering-parameterfree.cpu.legacy", good.name
+        )
+        self.assertEqual({"timeout": 1011}, good.params["params"])
+        self.assertEqual(False, good.supports_grouped_terms())
+        self.assertEqual(False, good.supports_protobuf())
+
+        good = ParallelTempering(ws, name = "microsoft.paralleltempering.cpu.legacy", seed=20)
+        self.assertIsNotNone(good)
+        self.assertEqual(
+            "microsoft.paralleltempering-parameterfree.cpu.legacy", good.name
+        )
+        self.assertEqual({"seed": 20}, good.params["params"])
+        self.assertEqual(False, good.supports_grouped_terms())
+        self.assertEqual(False, good.supports_protobuf())
+
+        good = ParallelTempering(
+            ws, name = "microsoft.paralleltempering.cpu.legacy", sweeps=20, replicas=3, all_betas=[3, 5, 9]
+        )
+        self.assertIsNotNone(good)
+        self.assertEqual("microsoft.paralleltempering.cpu.legacy", good.name)
+        self.assertEqual(
+            {"sweeps": 20, "replicas": 3, "all_betas": [3, 5, 9]},
+            good.params["params"],
+        )
+        self.assertEqual(False, good.supports_grouped_terms())
+        self.assertEqual(False, good.supports_protobuf())
+
+        good = ParallelTempering(ws, name = "microsoft.paralleltempering.cpu.legacy", sweeps=20, all_betas=[3, 9])
+        self.assertIsNotNone(good)
+        self.assertEqual("microsoft.paralleltempering.cpu.legacy", good.name)
+        self.assertEqual(
+            {"sweeps": 20, "replicas": 2, "all_betas": [3, 9]},
+            good.params["params"],
+        )
+        self.assertEqual(False, good.supports_grouped_terms())
+        self.assertEqual(False, good.supports_protobuf())
+
+        with self.assertRaises(ValueError):
+            _ = ParallelTempering(
+                ws, name = "microsoft.paralleltempering.cpu.legacy", sweeps=20, replicas=3, all_betas=[1, 3, 5, 7, 9]
+            )
 
     def test_SimulatedAnnealing_input_params(self):
         ws = self.create_workspace()
@@ -524,8 +571,8 @@ class TestSolvers(QuantumTestBase):
         self.assertEqual(
             {"timeout": 1011, "seed": 4321}, good.params["params"]
         )
-        self.assertEqual(False, good.supports_grouped_terms())
-        self.assertEqual(False, good.supports_protobuf())
+        self.assertEqual(True, good.supports_grouped_terms())
+        self.assertEqual(True, good.supports_protobuf())
 
         good = SimulatedAnnealing(
             ws, timeout=1011, seed=4321, platform=HardwarePlatform.FPGA
@@ -542,8 +589,8 @@ class TestSolvers(QuantumTestBase):
         self.assertIsNotNone(good)
         self.assertEqual("microsoft.simulatedannealing.cpu", good.name)
         self.assertEqual({"beta_start": 21}, good.params["params"])
-        self.assertEqual(False, good.supports_grouped_terms())
-        self.assertEqual(False, good.supports_protobuf())
+        self.assertEqual(True, good.supports_grouped_terms())
+        self.assertEqual(True, good.supports_protobuf())
 
 
         good = SimulatedAnnealing(
@@ -574,6 +621,27 @@ class TestSolvers(QuantumTestBase):
         self.assertEqual(True, good.supports_grouped_terms())
         self.assertEqual(True, good.supports_protobuf())
 
+    def test_SimulatedAnnealing_legacy_input_params(self):
+        ws = self.create_workspace()
+
+        good = SimulatedAnnealing(ws, name = "microsoft.simulatedannealing.cpu.legacy", timeout=1011, seed=4321)
+        self.assertIsNotNone(good)
+        self.assertEqual(
+            "microsoft.simulatedannealing-parameterfree.cpu.legacy", good.name
+        )
+        self.assertEqual(
+            {"timeout": 1011, "seed": 4321}, good.params["params"]
+        )
+        self.assertEqual(False, good.supports_grouped_terms())
+        self.assertEqual(False, good.supports_protobuf())
+
+        good = SimulatedAnnealing(ws, name = "microsoft.simulatedannealing.cpu.legacy", beta_start=21)
+        self.assertIsNotNone(good)
+        self.assertEqual("microsoft.simulatedannealing.cpu.legacy", good.name)
+        self.assertEqual({"beta_start": 21}, good.params["params"])
+        self.assertEqual(False, good.supports_grouped_terms())
+        self.assertEqual(False, good.supports_protobuf())
+
     def test_QuantumMonteCarlo_input_params(self):
         ws = self.create_workspace()
         good = QuantumMonteCarlo(ws, trotter_number=100, seed=4321)
@@ -582,8 +650,8 @@ class TestSolvers(QuantumTestBase):
         self.assertEqual(
             {"trotter_number": 100, "seed": 4321}, good.params["params"]
         )
-        self.assertEqual(False, good.supports_grouped_terms())
-        self.assertEqual(False, good.supports_protobuf())
+        self.assertEqual(True, good.supports_grouped_terms())
+        self.assertEqual(True, good.supports_protobuf())
 
 
     def test_QuantumMonteCarlo_experimental_input_params(self):
@@ -597,6 +665,16 @@ class TestSolvers(QuantumTestBase):
         self.assertEqual(True, good.supports_grouped_terms())
         self.assertEqual(True, good.supports_protobuf())
 
+    def test_QuantumMonteCarlo_legacy_input_params(self):
+        ws = self.create_workspace()
+        good = QuantumMonteCarlo(ws, name = "microsoft.qmc.cpu.legacy", trotter_number=100, seed=4321)
+        self.assertIsNotNone(good)
+        self.assertEqual("microsoft.qmc.cpu.legacy", good.name)
+        self.assertEqual(
+            {"trotter_number": 100, "seed": 4321}, good.params["params"]
+        )
+        self.assertEqual(False, good.supports_grouped_terms())
+        self.assertEqual(False, good.supports_protobuf())
 
     def test_PopulationAnnealing_input_params(self):
         ws = self.create_workspace()
@@ -930,15 +1008,15 @@ class TestSolvers(QuantumTestBase):
         self.assertEqual(
             {"timeout": 1011, "seed": 4321}, good.params["params"]
         )
-        self.assertEqual(False, good.supports_grouped_terms())
-        self.assertEqual(False, good.supports_protobuf())
+        self.assertEqual(True, good.supports_grouped_terms())
+        self.assertEqual(True, good.supports_protobuf())
 
         good = Tabu(ws, tabu_tenure=4)
         self.assertIsNotNone(good)
         self.assertEqual("microsoft.tabu.cpu", good.name)
         self.assertEqual({"tabu_tenure": 4}, good.params["params"])
-        self.assertEqual(False, good.supports_grouped_terms())
-        self.assertEqual(False, good.supports_protobuf())
+        self.assertEqual(True, good.supports_grouped_terms())
+        self.assertEqual(True, good.supports_protobuf())
 
 
     def test_Tabu_experimental_input_params(self):

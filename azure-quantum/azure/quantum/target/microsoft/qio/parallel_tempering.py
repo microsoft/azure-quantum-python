@@ -18,6 +18,8 @@ class ParallelTempering(Solver):
         "microsoft.paralleltempering-parameterfree.cpu",
         "microsoft.paralleltempering.cpu.experimental",
         "microsoft.paralleltempering-parameterfree.cpu.experimental"
+        "microsoft.paralleltempering.cpu.legacy",
+        "microsoft.paralleltempering-parameterfree.cpu.legacy"
     )
     def __init__(
         self,
@@ -56,10 +58,7 @@ class ParallelTempering(Solver):
         if platform == HardwarePlatform.FPGA:
             name = "microsoft.paralleltempering.fpga"
         elif param_free:
-            if "experimental" in name:
-                name = "microsoft.paralleltempering-parameterfree.cpu.experimental"
-            else:
-                name = "microsoft.paralleltempering-parameterfree.cpu"
+            name = name.replace(".paralleltempering.", ".paralleltempering-parameterfree.")
  
         super().__init__(
             workspace=workspace,
@@ -88,11 +87,11 @@ class ParallelTempering(Solver):
                 )
 
     def supports_grouped_terms(self):
-        if "experimental" in self.name:
-            return True
-        return False
+        if "legacy" in self.name or "fpga" in self.name:
+            return False
+        return True
     
     def supports_protobuf(self):
-        if "experimental" in self.name:
-            return True
-        return False
+        if "legacy" in self.name or "fpga" in self.name:
+            return False
+        return True
