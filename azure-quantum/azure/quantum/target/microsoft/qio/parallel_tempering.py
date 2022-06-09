@@ -16,8 +16,6 @@ class ParallelTempering(Solver):
         "microsoft.paralleltempering.fpga",
         "microsoft.paralleltempering.cpu",
         "microsoft.paralleltempering-parameterfree.cpu",
-        "microsoft.paralleltempering.cpu.experimental",
-        "microsoft.paralleltempering-parameterfree.cpu.experimental"
         "microsoft.paralleltempering.cpu.legacy",
         "microsoft.paralleltempering-parameterfree.cpu.legacy"
     )

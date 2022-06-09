@@ -21,8 +21,6 @@ class SimulatedAnnealing(Solver):
         "microsoft.simulatedannealing.fpga",
         "microsoft.simulatedannealing.cpu",
         "microsoft.simulatedannealing-parameterfree.cpu",
-        "microsoft.simulatedannealing.cpu.experimental",
-        "microsoft.simulatedannealing-parameterfree.cpu.experimental",
         "microsoft.simulatedannealing.cpu.legacy",
         "microsoft.simulatedannealing-parameterfree.cpu.legacy"
     ]
