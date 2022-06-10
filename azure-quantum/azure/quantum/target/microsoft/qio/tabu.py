@@ -16,7 +16,9 @@ class Tabu(Solver):
         "microsoft.tabu.cpu",
         "microsoft.tabu-parameterfree.cpu",
         "microsoft.tabu.cpu.experimental",
-        "microsoft.tabu-parameterfree.cpu.experimental"
+        "microsoft.tabu-parameterfree.cpu.experimental",
+        "microsoft.tabu.cpu.legacy",
+        "microsoft.tabu-parameterfree.cpu.legacy"
     )
     def __init__(
         self,
@@ -52,10 +54,7 @@ class Tabu(Solver):
         """
         param_free = sweeps is None and tabu_tenure is None and restarts is None
         if param_free:
-            if "experimental" in name:
-                name = "microsoft.tabu-parameterfree.cpu.experimental"
-            else:
-                name = "microsoft.tabu-parameterfree.cpu"
+            name = name.replace(".tabu.", ".tabu-parameterfree.")
 
         super().__init__(
             workspace=workspace,
@@ -73,11 +72,11 @@ class Tabu(Solver):
         self.set_one_param("restarts", restarts)
 
     def supports_grouped_terms(self):
-        if "experimental" in self.name:
-            return True
-        return False
+        if "legacy" in self.name:
+            return False
+        return True
     
     def supports_protobuf(self):
-        if "experimental" in self.name:
-            return True
-        return False
+        if "legacy" in self.name:
+            return False
+        return True
