@@ -14,7 +14,7 @@ from qiskit.providers.models import BackendConfiguration
 from qiskit.providers import Options
 from qiskit.qobj import Qobj, QasmQobj
 
-from qiskit_ionq.helpers import ionq_basis_gates, qiskit_circ_to_ionq_circ
+from qiskit_ionq.helpers import GATESET_MAP, qiskit_circ_to_ionq_circ
 
 if TYPE_CHECKING:
     from azure.quantum.qiskit import AzureQuantumProvider
@@ -63,6 +63,12 @@ class IonQBackend(AzureBackend):
         else:
             return super()._translate_input(circuit, data_format, input_params)
 
+    def _set_gateset(self, **kwargs):
+        self._gateset = kwargs.get("gateset", "qis")
+
+    def gateset(self):
+        return self._gateset
+
     def estimate_cost(self, circuit, shots):
         """Estimate the cost for the given circuit."""
         ionq_circ, _, _ = qiskit_circ_to_ionq_circ(circuit)
@@ -74,6 +80,7 @@ class IonQBackend(AzureBackend):
         target = workspace.get_targets(self.name())
         return target.estimate_cost(input_data, num_shots=shots)
 
+
 class IonQSimulatorBackend(IonQBackend):
     backend_names = ("ionq.simulator",)
 
@@ -84,6 +91,7 @@ class IonQSimulatorBackend(IonQBackend):
         **kwargs
     ):
         """Base class for interfacing with an IonQ Simulator backend"""
+        self._set_gateset(**kwargs)
         default_config = BackendConfiguration.from_dict(
             {
                 "backend_name": name,
@@ -92,7 +100,7 @@ class IonQSimulatorBackend(IonQBackend):
                 "local": False,
                 "coupling_map": None,
                 "description": "IonQ simulator on Azure Quantum",
-                "basis_gates": ionq_basis_gates,
+                "basis_gates": GATESET_MAP[self.gateset()],
                 "memory": False,
                 "n_qubits": 29,
                 "conditional": False,
@@ -118,6 +126,7 @@ class IonQQPUBackend(IonQBackend):
         **kwargs
     ):
         """Base class for interfacing with an IonQ QPU backend"""
+        self._set_gateset(**kwargs)
         default_config = BackendConfiguration.from_dict(
             {
                 "backend_name": name,
@@ -126,7 +135,7 @@ class IonQQPUBackend(IonQBackend):
                 "local": False,
                 "coupling_map": None,
                 "description": "IonQ QPU on Azure Quantum",
-                "basis_gates": ionq_basis_gates,
+                "basis_gates": GATESET_MAP[self.gateset()],
                 "memory": False,
                 "n_qubits": 11,
                 "conditional": False,
