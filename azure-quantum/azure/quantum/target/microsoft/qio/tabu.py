@@ -15,8 +15,6 @@ class Tabu(Solver):
     target_names = (
         "microsoft.tabu.cpu",
         "microsoft.tabu-parameterfree.cpu",
-        "microsoft.tabu.cpu.experimental",
-        "microsoft.tabu-parameterfree.cpu.experimental",
         "microsoft.tabu.cpu.legacy",
         "microsoft.tabu-parameterfree.cpu.legacy"
     )
