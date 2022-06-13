@@ -1039,6 +1039,27 @@ class TestSolvers(QuantumTestBase):
         self.assertEqual(True, good.supports_grouped_terms())
         self.assertEqual(True, good.supports_protobuf())
 
+    def test_Tabu_legacy_input_params(self):
+        ws = self.create_workspace()
+
+        good = Tabu(ws, timeout=1011, seed=4321)
+        self.assertIsNotNone(good)
+        self.assertEqual(
+            "microsoft.tabu-parameterfree.cpu.legacy", good.name
+        )
+        self.assertEqual(
+            {"timeout": 1011, "seed": 4321}, good.params["params"]
+        )
+        self.assertEqual(False, good.supports_grouped_terms())
+        self.assertEqual(False, good.supports_protobuf())
+
+        good = Tabu(ws, tabu_tenure=4)
+        self.assertIsNotNone(good)
+        self.assertEqual("microsoft.tabu.cpu.legacy", good.name)
+        self.assertEqual({"tabu_tenure": 4}, good.params["params"])
+        self.assertEqual(False, good.supports_grouped_terms())
+        self.assertEqual(False, good.supports_protobuf())
+
 
 if __name__ == "__main__":
     unittest.main()
