@@ -14,7 +14,6 @@ logger = logging.getLogger(__name__)
 class QuantumMonteCarlo(Solver):
     target_names = (
         "microsoft.qmc.cpu",
-        "microsoft.qmc.cpu.experimental",
         "microsoft.qmc.cpu.legacy"
     )
     def __init__(
