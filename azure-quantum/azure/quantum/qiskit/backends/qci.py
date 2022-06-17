@@ -8,10 +8,11 @@ from typing import TYPE_CHECKING, Union, List
 from azure.quantum.version import __version__
 from azure.quantum.qiskit.job import AzureQuantumJob
 
-from .backend import AzureBackend, QIR_BASIS_GATES
+from .backend import AzureBackend
 
 from qiskit.providers.models import BackendConfiguration
 from qiskit.providers import Options
+from qiskit_qir import SUPPORTED_INSTRUCTIONS as QIR_BASIS_GATES
 
 if TYPE_CHECKING:
     from azure.quantum.qiskit import AzureQuantumProvider
@@ -77,7 +78,7 @@ class QCISimulatorBackend(QCIBackend):
 
 
 class QCIQPUBackend(QCIBackend):
-    backend_names = ("qci.machine1")
+    backend_names = ("qci.machine1",)
 
     def __init__(
         self,
