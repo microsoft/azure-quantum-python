@@ -25,7 +25,7 @@ SOLVER_TYPES = [
     functools.partial(microsoft.SimulatedAnnealing, beta_start=0),
     functools.partial(microsoft.ParallelTempering, sweeps=100),
     functools.partial(microsoft.Tabu, sweeps=100),
-    functools.partial(microsoft.QuantumMonteCarlo, trotter_number=1),
+    functools.partial(microsoft.QuantumMonteCarlo, trotter_number=4),
     functools.partial(microsoft.PopulationAnnealing, sweeps=200),
     functools.partial(microsoft.SubstochasticMonteCarlo, step_limit=280),
     functools.partial(oneqbit.TabuSearch, improvement_cutoff=10),
@@ -121,7 +121,7 @@ class TestJob(QuantumTestBase):
     @pytest.mark.live_test
     @pytest.mark.qio
     def test_job_submit_microsoft_quantum_monte_carlo(self):
-        solver_type = functools.partial(microsoft.QuantumMonteCarlo, trotter_number=1)
+        solver_type = functools.partial(microsoft.QuantumMonteCarlo, trotter_number=4)
         solver_name = "QuantumMonteCarlo"
         self._test_job_submit(solver_name, solver_type)
         self._test_job_submit(solver_name, solver_type, test_grouped=True)
