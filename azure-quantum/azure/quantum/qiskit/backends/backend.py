@@ -48,7 +48,7 @@ class AzureBackend(Backend):
         # Set of gates supported by QIR targets.
         from qiskit_qir import SUPPORTED_INSTRUCTIONS as qir_supported_instructions
 
-        capability = input_params["targetCapability"] if "targetCapability" in input_params else "AdaptiveProfileExecution"
+        capability = input_params["targetCapability"] if "targetCapability" in input_params else "AdaptiveExecution"
 
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug(f"QIR:\n{to_qir(circuit, capability)}")
