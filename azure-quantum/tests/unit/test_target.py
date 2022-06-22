@@ -100,6 +100,13 @@ class TestIonQ(QuantumTestBase):
             if circuit is None:
                 circuit = self._3_qubit_ghz()
             target = IonQ(workspace=workspace)
+            assert "ionq.simulator" == target.name
+            assert "ionq.circuit.v1" == target.input_data_format
+            assert "ionq.quantum-results.v1" == target.output_data_format
+            assert "IonQ" == target.provider_id
+            assert "application/json" == target.content_type
+            assert "" == target.encoding
+
             job = target.submit(
                 circuit=circuit,
                 name="ionq-3ghz-job",
@@ -143,6 +150,19 @@ class TestIonQ(QuantumTestBase):
                 assert job.details.input_params.get("shots") is None
 
             return job
+
+    @pytest.mark.ionq
+    @pytest.mark.live_test
+    def test_ionq_qpu_target(self):
+        workspace = self.create_workspace()
+        target = IonQ(workspace=workspace, name="ionq.qpu")
+        assert "ionq.qpu" == target.name
+        assert "ionq.circuit.v1" == target.input_data_format
+        assert "ionq.quantum-results.v1" == target.output_data_format
+        assert "IonQ" == target.provider_id
+        assert "application/json" == target.content_type
+        assert "" == target.encoding
+
 
 
 class TestHoneywell(QuantumTestBase):
