@@ -190,8 +190,8 @@ class TestStreamingProblem(QuantumTestBase):
         self.test_streaming_problem_large_chunks_compressed()
         self.test_streaming_problem_pubo()
         self.test_streaming_problem_initial_terms()
-        self.test_compare_streaming_problem_initial_config()
-        self.test_compare_streaming_problem_initial_config_pubo()
+        #self.test_compare_streaming_problem_initial_config()
+        #self.test_compare_streaming_problem_initial_config_pubo()
 
 
 if __name__ == "__main__":
