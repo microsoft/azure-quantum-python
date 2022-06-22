@@ -9,12 +9,15 @@
 import unittest
 import warnings
 import pytest
+import json
 
 import numpy as np
 
 from qiskit import QuantumCircuit
 from qiskit.providers import JobStatus
 from qiskit.providers.exceptions import QiskitBackendNotFoundError
+from qiskit_ionq.exceptions import IonQGateError
+from qiskit_ionq import GPIGate, GPI2Gate, MSGate
 
 from azure.quantum.job.job import Job
 from azure.quantum.qiskit import AzureQuantumProvider
@@ -238,6 +241,55 @@ class TestQiskit(QuantumTestBase):
                 assert hasattr(result.results[0].header, "num_qubits")
                 assert hasattr(result.results[0].header, "metadata")
                 
+
+    @pytest.mark.ionq
+    @pytest.mark.live_test
+    def test_qiskit_get_ionq_qpu_target(self):
+        workspace = self.create_workspace()
+        provider = AzureQuantumProvider(workspace=workspace)
+
+        backend = provider.get_backend("ionq.qpu")
+        assert backend.name() == "ionq.qpu"
+        config = backend.configuration()
+        assert False == config.simulator
+        assert 1 == config.max_experiments
+        assert 11 == config.num_qubits
+        assert "application/json" == config.azure["content_type"]
+        assert "ionq" == config.azure["provider_id"]
+        assert "ionq.circuit.v1" == config.azure["input_data_format"]
+        assert "ionq.quantum-results.v1" == config.azure["output_data_format"]
+        assert "qis" == backend.gateset()
+
+    @pytest.mark.ionq
+    @pytest.mark.live_test
+    def test_qiskit_get_ionq_native_gateset(self):
+        # initialize a quantum circuit with native gates (see https://ionq.com/docs/using-native-gates-with-qiskit)
+        native_circuit = QuantumCircuit(2,2)
+        native_circuit.append(MSGate(0, 0), [0, 1])
+        native_circuit.append(GPIGate(0), [0])
+        native_circuit.append(GPI2Gate(1), [1])
+
+        workspace = self.create_workspace()
+        provider = AzureQuantumProvider(workspace=workspace)
+
+        backend = provider.get_backend("ionq.simulator", gateset="native")
+        config = backend.configuration()
+        assert "native" == backend.gateset()
+        # Trying to translate a regular circuit using the native gateset should fail:
+        with pytest.raises(IonQGateError) as exc:
+            (payload, _, _) = backend._translate_input(self._3_qubit_ghz(), config.azure["input_data_format"], {})
+        # however, translating the native circuit should work fine.
+        (payload, _, _) = backend._translate_input(native_circuit, config.azure["input_data_format"], {})
+        payload = json.loads(payload.decode('utf-8'))
+        assert "ms" == payload['circuit'][0]['gate']
+
+        # should also be available with the qpu target
+        backend = provider.get_backend("ionq.qpu", gateset="native")
+        config = backend.configuration()
+        assert "native" == backend.gateset()
+        (payload, _, _) = backend._translate_input(native_circuit, config.azure["input_data_format"], {})
+        payload = json.loads(payload.decode('utf-8'))
+        assert "ms" == payload['circuit'][0]['gate']
 
     @pytest.mark.ionq
     @pytest.mark.live_test
