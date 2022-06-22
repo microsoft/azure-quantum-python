@@ -142,11 +142,11 @@ class TestStreamingProblem(QuantumTestBase):
     @pytest.mark.live_test
     def test_upload_streaming_problem_with_initial_config_pubo(self):
         self.__test_upload_problem(
+            count = 3,
+            terms_thresh = 1,
+            size_thresh = 1,
             problem_type=ProblemType.pubo,
             initial_terms=[
-                count = 3,
-                terms_thresh = 1,
-                size_thresh = 1,
                 Term(c=-9, indices=[0]),
                 Term(c=-3, indices=[1,0]),
                 Term(c=5, indices=[2,0])
