@@ -79,6 +79,42 @@ class TestStreamingProblem(QuantumTestBase):
         local = json.loads(rProblem.serialize())
         self.assertEqual(uploaded, local)
 
+    def __test_upload_problem_with_init_config(
+        self,
+        problem_type: ProblemType = ProblemType.ising,
+        initial_terms: List[Term] = [],
+        initial_config: dict = None,
+        **kwargs
+    ):
+        if not (self.in_recording or self.is_live):
+            # Temporarily disabling this test in playback mode 
+            # due to multiple calls to the storage API
+            # that need to have a request id to distinguish
+            # them while playing back
+            print("Skipping this test in playback mode")
+            return
+
+        ws = self.create_workspace()
+
+        sProblem = StreamingProblem(
+            ws, name="test", problem_type=problem_type, terms=initial_terms
+        )
+        cProblem = StreamingProblem(
+            "test", problem_type=problem_type, terms=initial_terms, init_config=initial_config
+        )
+
+        self.assertEqual(problem_type, sProblem.problem_type)
+        self.assertEqual(problem_type, cProblem.problem_type)
+        self.assertEqual(problem_type.name, sProblem.stats["type"])
+        self.assertEqual(problem_type.name, cProblem.stats["type"])
+        self.assertEqual(len(initial_terms), sProblem.stats["num_terms"])
+        self.assertEqual(len(initial_terms), cProblem.stats["num_terms"])
+
+        uri = cProblem.upload(ws)
+        uploaded = json.loads(cProblem.download().serialize())
+        local = json.loads(cProblem.serialize())
+        self.assertEqual(uploaded, local)
+
     def __kwarg_or_value(self, kwarg, name, default):
         if name in kwarg:
             return kwarg[name]
@@ -124,6 +160,29 @@ class TestStreamingProblem(QuantumTestBase):
             max_coupling=3,
         )
 
+    @pytest.mark.live_test
+    def test_upload_streaming_problem_with_initial_config(self):
+        self.__test_upload_problem_with_init_config(
+            initial_terms=[
+                Term(c=-9, indices=[0]),
+                Term(c=-3, indices=[1,0]),
+                Term(c=5, indices=[2,0])
+            ],
+            initial_config={'0': -1, '1': 1, '2': 1}
+        )
+
+    @pytest.mark.live_test
+    def test_upload_streaming_problem_with_initial_config_pubo(self):
+        self.__test_upload_problem_with_init_config(
+            problem_type=ProblemType.pubo,
+            initial_terms=[
+                Term(c=-9, indices=[0]),
+                Term(c=-3, indices=[1,0]),
+                Term(c=5, indices=[2,0])
+            ],
+            initial_config={'0': 1, '1': 1, '2': 0}
+        )
+
     def check_all(self):
         self.test_streaming_problem_small_chunks()
         self.test_streaming_problem_large_chunks()
@@ -131,6 +190,8 @@ class TestStreamingProblem(QuantumTestBase):
         self.test_streaming_problem_large_chunks_compressed()
         self.test_streaming_problem_pubo()
         self.test_streaming_problem_initial_terms()
+        self.test_upload_streaming_problem_with_initial_config()
+        self.test_upload_streaming_problem_with_initial_config_pubo()
 
 
 if __name__ == "__main__":
