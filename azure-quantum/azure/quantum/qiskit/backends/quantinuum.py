@@ -68,7 +68,7 @@ class QuantinuumBackend(AzureBackend):
 
     @classmethod
     def _default_options(cls):
-        return Options(shots=500)
+        return Options(count=500)
 
     def _azure_config(self):
         return {
