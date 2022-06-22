@@ -128,30 +128,30 @@ class TestStreamingProblem(QuantumTestBase):
     @pytest.mark.live_test
     def test_upload_streaming_problem_with_initial_config(self):
         self.__test_upload_problem(
-            count = 3,
-            terms_thresh = 1,
-            size_thresh = 1,
+            4,
+            1,
+            1,
             initial_terms=[
-                Term(c=-9, indices=[0]),
-                Term(c=-3, indices=[1,0]),
-                Term(c=5, indices=[2,0])
+                Term(w=10, indices=[0, 1, 2]),
+                Term(w=20, indices=[1, 2, 3]),
             ],
-            initial_config={'0': -1, '1': 1, '2': 1}
+            avg_coupling=(4 * 2 + 6) / 6,
+            max_coupling=3
         )
 
     @pytest.mark.live_test
     def test_upload_streaming_problem_with_initial_config_pubo(self):
         self.__test_upload_problem(
-            count = 3,
-            terms_thresh = 1,
-            size_thresh = 1,
+            4,
+            1,
+            1,
             problem_type=ProblemType.pubo,
             initial_terms=[
-                Term(c=-9, indices=[0]),
-                Term(c=-3, indices=[1,0]),
-                Term(c=5, indices=[2,0])
+                Term(w=10, indices=[0, 1, 2]),
+                Term(w=20, indices=[1, 2, 3]),
             ],
-            initial_config={'0': 1, '1': 1, '2': 0}
+            avg_coupling=(4 * 2 + 6) / 6,
+            max_coupling=3
         )
 
     def check_all(self):
