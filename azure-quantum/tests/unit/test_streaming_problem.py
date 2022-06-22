@@ -121,24 +121,10 @@ class TestStreamingProblem(QuantumTestBase):
                 Term(w=10, indices=[0, 1, 2]),
                 Term(w=20, indices=[1, 2, 3]),
             ],
+            initial_config = {'0': 1, '1': 1, '2': 0, '3': 0},
             avg_coupling=(4 * 2 + 6) / 6,
             max_coupling=3,
         )
-
-    def test_streaming_problem_initial_config_string(self):
-        ws = self.create_workspace()
-        sProblem = StreamingProblem(
-            ws, 
-            name="test",
-            problem_type=ProblemType.ising, 
-            terms= [
-                Term(c=-9, indices=[0]),
-                Term(c=-3, indices=[1,0]),
-                Term(c=5, indices=[2,0])
-            ],
-            init_config = {'0': 1, '1': 1, '2': 0}
-        )
-        self.assertEqual(sProblem.uploader._get_initial_config_string(), '"initial_configuration":'  + "{'0': 1, '1': 1, '2': 0},")
     
     def check_all(self):
         self.test_streaming_problem_small_chunks()
@@ -147,8 +133,6 @@ class TestStreamingProblem(QuantumTestBase):
         self.test_streaming_problem_large_chunks_compressed()
         self.test_streaming_problem_pubo()
         self.test_streaming_problem_initial_terms()
-        self.test_streaming_problem_initial_config_string()
-
 
 if __name__ == "__main__":
     unittest.main()
