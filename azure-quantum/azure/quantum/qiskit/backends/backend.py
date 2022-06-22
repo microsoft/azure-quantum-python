@@ -118,8 +118,8 @@ class AzureBackend(Backend):
 
         # Let's clear the kwargs of both properties regardless of which one was used to prevent
         # double specification of the value.
-        kwargs.pop("shots")
-        kwargs.pop("count")
+        kwargs.pop("shots", None)
+        kwargs.pop("count", None)
 
         # Take also into consideration options passed in the kwargs, as the take precedence
         # over default values:
