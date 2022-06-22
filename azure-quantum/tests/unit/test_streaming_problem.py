@@ -168,7 +168,7 @@ class TestStreamingProblem(QuantumTestBase):
                 Term(c=-3, indices=[1,0]),
                 Term(c=5, indices=[2,0])
             ],
-            init_config={'0': -1, '1': 1, '2': 1}
+            initial_config={'0': -1, '1': 1, '2': 1}
         )
 
     @pytest.mark.live_test
@@ -180,7 +180,7 @@ class TestStreamingProblem(QuantumTestBase):
                 Term(c=-3, indices=[1,0]),
                 Term(c=5, indices=[2,0])
             ],
-            init_config={'0': 1, '1': 1, '2': 0}
+            initial_config={'0': 1, '1': 1, '2': 0}
         )
 
     def check_all(self):
@@ -190,8 +190,8 @@ class TestStreamingProblem(QuantumTestBase):
         self.test_streaming_problem_large_chunks_compressed()
         self.test_streaming_problem_pubo()
         self.test_streaming_problem_initial_terms()
-        #self.test_compare_streaming_problem_initial_config()
-        #self.test_compare_streaming_problem_initial_config_pubo()
+        self.test_compare_streaming_problem_initial_config()
+        self.test_compare_streaming_problem_initial_config_pubo()
 
 
 if __name__ == "__main__":
