@@ -100,7 +100,7 @@ class TestStreamingProblem(QuantumTestBase):
             ws, name="test", problem_type=problem_type, terms=initial_terms
         )
         cProblem = StreamingProblem(
-            "test", problem_type=problem_type, terms=initial_terms, initial_config=initial_config
+            "test", problem_type=problem_type, terms=initial_terms, init_config=initial_config
         )
 
         self.assertEqual(problem_type, sProblem.problem_type)
@@ -168,7 +168,7 @@ class TestStreamingProblem(QuantumTestBase):
                 Term(c=-3, indices=[1,0]),
                 Term(c=5, indices=[2,0])
             ],
-            initial_config={'0': 1, '1': 1, '2': 0}
+            init_config={'0': -1, '1': 1, '2': 1}
         )
 
     def check_all(self):
