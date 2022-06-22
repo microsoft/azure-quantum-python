@@ -130,7 +130,6 @@ class TestStreamingProblem(QuantumTestBase):
         sProblem = StreamingProblem(
             ws, 
             name="test", 
-            problem_type=problem_type,
             terms= [
                 Term(c=-9, indices=[0]),
                 Term(c=-3, indices=[1,0]),
