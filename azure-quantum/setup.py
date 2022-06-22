@@ -81,7 +81,7 @@ setuptools.setup(
     install_requires=requirements,
     extras_require={
         "qiskit": [
-            "qiskit-ionq>=0.1.4",
+            "qiskit-ionq>=0.3.3",
             "qiskit-terra>=0.19.1",
             "qiskit-qir>=0.1.0b12"
         ],
