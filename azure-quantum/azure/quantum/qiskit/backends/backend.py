@@ -113,7 +113,7 @@ class AzureBackend(Backend):
         shots_count = \
             kwargs["count"] if "count" in kwargs else \
             kwargs["shots"] if "shots" in kwargs else \
-            input_params["count"] if "shots" in input_params else \
+            input_params["count"] if "count" in input_params else \
             input_params["shots"] if "shots" in input_params else None
 
         # Let's clear the kwargs of both properties regardless of which one was used to prevent
