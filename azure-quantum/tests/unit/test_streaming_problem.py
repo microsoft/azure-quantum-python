@@ -129,13 +129,14 @@ class TestStreamingProblem(QuantumTestBase):
         ws = self.create_workspace()
         sProblem = StreamingProblem(
             ws, 
-            name="test", 
+            name="test",
+            problem_type=ProblemType.ising, 
             terms= [
                 Term(c=-9, indices=[0]),
                 Term(c=-3, indices=[1,0]),
                 Term(c=5, indices=[2,0])
             ],
-            initial_config= {'0': 1, '1': 1, '2': 0}
+            init_config = {'0': 1, '1': 1, '2': 0}
         )
         self.assertEqual(sProblem.uploader._get_initial_config_string(), '"initial_configuration":'  + "{'0': 1, '1': 1, '2': 0},")
     
