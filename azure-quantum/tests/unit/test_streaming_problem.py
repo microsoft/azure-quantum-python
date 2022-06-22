@@ -110,7 +110,7 @@ class TestStreamingProblem(QuantumTestBase):
         self.assertEqual(len(initial_terms), sProblem.stats["num_terms"])
         self.assertEqual(len(initial_terms), cProblem.stats["num_terms"])
 
-        uri = sProblem.upload(ws)
+        uri = cProblem.upload(ws)
         uploaded = json.loads(cProblem.download().serialize())
         local = json.loads(cProblem.serialize())
         self.assertEqual(uploaded, local)
@@ -171,6 +171,18 @@ class TestStreamingProblem(QuantumTestBase):
             init_config={'0': -1, '1': 1, '2': 1}
         )
 
+    @pytest.mark.live_test
+    def test_upload_streaming_problem_with_initial_config_pubo(self):
+        self.__test_upload_problem_with_init_config(
+            problem_type=ProblemType.pubo,
+            initial_terms=[
+                Term(c=-9, indices=[0]),
+                Term(c=-3, indices=[1,0]),
+                Term(c=5, indices=[2,0])
+            ],
+            init_config={'0': 1, '1': 1, '2': 0}
+        )
+
     def check_all(self):
         self.test_streaming_problem_small_chunks()
         self.test_streaming_problem_large_chunks()
@@ -179,6 +191,7 @@ class TestStreamingProblem(QuantumTestBase):
         self.test_streaming_problem_pubo()
         self.test_streaming_problem_initial_terms()
         self.test_compare_streaming_problem_initial_config()
+        self.test_compare_streaming_problem_initial_config_pubo()
 
 
 if __name__ == "__main__":
