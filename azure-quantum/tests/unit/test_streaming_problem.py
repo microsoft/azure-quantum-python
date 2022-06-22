@@ -31,6 +31,7 @@ class TestStreamingProblem(QuantumTestBase):
         size_thresh: int,
         problem_type: ProblemType = ProblemType.ising,
         initial_terms: List[Term] = [],
+        initial_config: Dict[str, int] = None,
         **kwargs
     ):
         if not (self.in_recording or self.is_live):
@@ -44,10 +45,10 @@ class TestStreamingProblem(QuantumTestBase):
         ws = self.create_workspace()
 
         sProblem = StreamingProblem(
-            ws, name="test", problem_type=problem_type, terms=initial_terms
+            ws, name="test", problem_type=problem_type, terms=initial_terms, init_config = initial_config
         )
         rProblem = Problem(
-            "test", problem_type=problem_type, terms=initial_terms
+            "test", problem_type=problem_type, terms=initial_terms, init_config = initial_config
         )
         sProblem.upload_terms_threshold = terms_thresh
         sProblem.upload_size_threshold = size_thresh 
@@ -77,42 +78,6 @@ class TestStreamingProblem(QuantumTestBase):
         uri = sProblem.upload(ws)
         uploaded = json.loads(sProblem.download().serialize())
         local = json.loads(rProblem.serialize())
-        self.assertEqual(uploaded, local)
-
-    def __test_upload_problem_with_init_config(
-        self,
-        problem_type: ProblemType = ProblemType.ising,
-        initial_terms: List[Term] = [],
-        initial_config: Dict[str, int] = None,
-        **kwargs
-    ):
-        if not (self.in_recording or self.is_live):
-            # Temporarily disabling this test in playback mode 
-            # due to multiple calls to the storage API
-            # that need to have a request id to distinguish
-            # them while playing back
-            print("Skipping this test in playback mode")
-            return
-
-        ws = self.create_workspace()
-
-        sProblem = StreamingProblem(
-            ws, name="test", problem_type=problem_type, terms=initial_terms
-        )
-        cProblem = StreamingProblem(
-            "test", problem_type=problem_type, terms=initial_terms, init_config=initial_config
-        )
-
-        self.assertEqual(problem_type, sProblem.problem_type)
-        self.assertEqual(problem_type, cProblem.problem_type)
-        self.assertEqual(problem_type.name, sProblem.stats["type"])
-        self.assertEqual(problem_type.name, cProblem.stats["type"])
-        self.assertEqual(len(initial_terms), sProblem.stats["num_terms"])
-        self.assertEqual(len(initial_terms), cProblem.stats["num_terms"])
-
-        uri = cProblem.upload(ws)
-        uploaded = json.loads(cProblem.download().serialize())
-        local = json.loads(cProblem.serialize())
         self.assertEqual(uploaded, local)
 
     def __kwarg_or_value(self, kwarg, name, default):
@@ -162,7 +127,7 @@ class TestStreamingProblem(QuantumTestBase):
 
     @pytest.mark.live_test
     def test_upload_streaming_problem_with_initial_config(self):
-        self.__test_upload_problem_with_init_config(
+        self.__test_upload_problem(
             initial_terms=[
                 Term(c=-9, indices=[0]),
                 Term(c=-3, indices=[1,0]),
@@ -173,7 +138,7 @@ class TestStreamingProblem(QuantumTestBase):
 
     @pytest.mark.live_test
     def test_upload_streaming_problem_with_initial_config_pubo(self):
-        self.__test_upload_problem_with_init_config(
+        self.__test_upload_problem(
             problem_type=ProblemType.pubo,
             initial_terms=[
                 Term(c=-9, indices=[0]),
