@@ -322,7 +322,7 @@ class JsonStreamingProblemUploader:
     def _get_initial_config_string(self):
         if self.problem.init_config:
             return (
-                '"initial_configuration":'
+                f'{"initial_configuration":}'
                 + json.dumps(self.problem.init_config)
                 + ","
             )
