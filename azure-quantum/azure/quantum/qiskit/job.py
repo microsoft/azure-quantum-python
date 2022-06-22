@@ -228,6 +228,8 @@ class AzureQuantumJob(JobV1):
     def _format_honeywell_results(self):
         """ Translate IonQ's histogram data into a format that can be consumed by qiskit libraries. """
         az_result = self._azure_job.get_results()
+        shots = self._shots_count()
+
         all_bitstrings = [
             bitstrings for classical_register, bitstrings 
             in az_result.items() if classical_register != "access_token"

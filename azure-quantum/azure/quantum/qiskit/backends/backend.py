@@ -113,7 +113,6 @@ class AzureBackend(Backend):
                 input_params[opt] = kwargs.pop(opt)
 
         # Some providers refer as 'shots' the 'count' parameter,
-        # Remove this once all providers accept "count":
         if "shots" in input_params:
             input_params["count"] = input_params["shots"]
 
