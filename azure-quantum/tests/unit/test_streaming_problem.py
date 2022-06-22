@@ -83,7 +83,7 @@ class TestStreamingProblem(QuantumTestBase):
         self,
         problem_type: ProblemType = ProblemType.ising,
         initial_terms: List[Term] = [],
-        initial_config: dict = None,
+        initial_config: Dict[str, int] = None,
         **kwargs
     ):
         if not (self.in_recording or self.is_live):
