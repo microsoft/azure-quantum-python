@@ -9,7 +9,7 @@
 
 import unittest
 import json
-from typing importDict, List
+from typing import Dict, List
 import pytest
 
 from azure.quantum.optimization import (
