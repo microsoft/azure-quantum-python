@@ -125,35 +125,21 @@ class TestStreamingProblem(QuantumTestBase):
             max_coupling=3,
         )
 
-    @pytest.mark.live_test
-    def test_upload_streaming_problem_with_initial_config(self):
-        self.__test_upload_problem(
-            4,
-            1,
-            1,
-            initial_terms=[
-                Term(w=10, indices=[0, 1, 2]),
-                Term(w=20, indices=[1, 2, 3]),
+    def test_streaming_problem_initial_config_string(self):
+        ws = self.create_workspace()
+        sProblem = StreamingProblem(
+            ws, 
+            name="test", 
+            problem_type=problem_type,
+            terms= [
+                Term(c=-9, indices=[0]),
+                Term(c=-3, indices=[1,0]),
+                Term(c=5, indices=[2,0])
             ],
-            avg_coupling=(4 * 2 + 6) / 6,
-            max_coupling=3
+            initial_config= {'0': 1, '1': 1, '2': 0}
         )
-
-    @pytest.mark.live_test
-    def test_upload_streaming_problem_with_initial_config_pubo(self):
-        self.__test_upload_problem(
-            4,
-            1,
-            1,
-            problem_type=ProblemType.pubo,
-            initial_terms=[
-                Term(w=10, indices=[0, 1, 2]),
-                Term(w=20, indices=[1, 2, 3]),
-            ],
-            avg_coupling=(4 * 2 + 6) / 6,
-            max_coupling=3
-        )
-
+        self.assertEqual(sProblem.uploader._get_initial_config_string(), '"initial_configuration":'  + "{'0': 1, '1': 1, '2': 0},")
+    
     def check_all(self):
         self.test_streaming_problem_small_chunks()
         self.test_streaming_problem_large_chunks()
@@ -161,8 +147,7 @@ class TestStreamingProblem(QuantumTestBase):
         self.test_streaming_problem_large_chunks_compressed()
         self.test_streaming_problem_pubo()
         self.test_streaming_problem_initial_terms()
-        self.test_upload_streaming_problem_with_initial_config()
-        self.test_upload_streaming_problem_with_initial_config_pubo()
+        self.test_streaming_problem_initial_config_string()
 
 
 if __name__ == "__main__":
