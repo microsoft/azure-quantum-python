@@ -94,13 +94,12 @@ class QuantinuumBackend(AzureBackend):
         :type circuit: QuantumCircuit
         :param shots: Shot count
         :type shots: int
-        :param count: Shot count (deprecated)
+        :param count: Shot count (alternative to 'shots')
         :type count: int
         """
         if count is not None:
             shots = count
-            warnings.warn(
-                "Input parameter 'count' has been deprecated. Please use 'shots' instead.")
+
         if shots is None:
             raise ValueError("Missing input argument 'shots'.")
 
