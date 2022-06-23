@@ -30,7 +30,7 @@ class QCIBackend(AzureBackend):
 
     @classmethod
     def _default_options(cls):
-        return Options(shots=500, entryPoint="main", arguments=[], targetCapability="AdaptiveProfileExecution")
+        return Options(shots=500, entryPoint="main", arguments=[], targetCapability="AdaptiveExecution")
 
     @classmethod
     def _azure_config(cls):
