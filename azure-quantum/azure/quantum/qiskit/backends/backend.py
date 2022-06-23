@@ -48,7 +48,7 @@ class AzureBackend(Backend):
         # Set of gates supported by QIR targets.
         from qiskit_qir import SUPPORTED_INSTRUCTIONS as qir_supported_instructions
 
-        capability = input_params["targetCapability"] if "targetCapability" in input_params else "AdaptiveProfileExecution"
+        capability = input_params["targetCapability"] if "targetCapability" in input_params else "AdaptiveExecution"
 
         if logger.isEnabledFor(logging.DEBUG):
             logger.debug(f"QIR:\n{to_qir(circuit, capability)}")
@@ -105,17 +105,30 @@ class AzureBackend(Backend):
         metadata = kwargs.pop("metadata") if "metadata" in kwargs else self._prepare_job_metadata(circuit)
 
         # Backend options are mapped to input_params.
+        input_params = vars(self.options)
+
+        # The shots/count number can be specified in different ways for different providers,
+        # so let's get it first. Values in 'kwargs' take precedence over options, and to keep
+        # the convention, 'count' takes precedence over 'shots' afterwards.
+        shots_count = \
+            kwargs["count"] if "count" in kwargs else \
+            kwargs["shots"] if "shots" in kwargs else \
+            input_params["count"] if "count" in input_params else \
+            input_params["shots"] if "shots" in input_params else None
+
+        # Let's clear the kwargs of both properties regardless of which one was used to prevent
+        # double specification of the value.
+        kwargs.pop("shots", None)
+        kwargs.pop("count", None)
+
         # Take also into consideration options passed in the kwargs, as the take precedence
         # over default values:
-        input_params = vars(self.options)
         for opt in kwargs.copy():
             if opt in input_params:
                 input_params[opt] = kwargs.pop(opt)
 
-        # Some providers refer as 'shots' the 'count' parameter,
-        # Remove this once all providers accept "count":
-        if "shots" in input_params:
-            input_params["count"] = input_params["shots"]
+        input_params["count"] = shots_count
+        input_params["shots"] = shots_count
 
         # translate
         (input_data, input_data_format, input_params) = self._translate_input(circuit, input_data_format, input_params)
@@ -136,7 +149,7 @@ class AzureBackend(Backend):
             **kwargs
         )
 
-        logger.info(f"Submitted job with id '{job.id()}' for circuit '{circuit.name}':")
+        logger.info(f"Submitted job with id '{job.id()}' for circuit '{circuit.name}' with shot count of {shots_count}:")
         logger.info(input_data)
 
         return job
