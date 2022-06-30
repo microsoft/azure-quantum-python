@@ -86,7 +86,7 @@ setuptools.setup(
             "qiskit-qir>=0.1.0b12"
         ],
         "cirq": [
-            "cirq-core==0.14.1",
+            "cirq-core==0.15.0",
             "cirq-ionq==0.14.1",
         ]
     }
