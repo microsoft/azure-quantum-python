@@ -527,17 +527,6 @@ class TestQiskit(QuantumTestBase):
         assert "qir.v1" == config.azure["input_data_format"]
         assert "microsoft.quantum-results.v1" == config.azure["output_data_format"]
 
-        backend = provider.get_backend(RigettiTarget.ASPEN_M_1.value)
-        assert backend.name() == RigettiTarget.ASPEN_M_1.value
-        config = backend.configuration()
-        assert False == config.simulator
-        assert 1 == config.max_experiments
-        assert 80 == config.num_qubits
-        assert "qir.v1" == config.azure["content_type"]
-        assert "rigetti" == config.azure["provider_id"]
-        assert "qir.v1" == config.azure["input_data_format"]
-        assert "microsoft.quantum-results.v1" == config.azure["output_data_format"]
-
     @pytest.mark.qci
     @pytest.mark.live_test
     def test_qiskit_submit_to_qci(self):
