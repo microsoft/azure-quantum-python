@@ -282,6 +282,9 @@ class TestQiskit(QuantumTestBase):
         (payload, _, _) = backend._translate_input(native_circuit, config.azure["input_data_format"], {})
         payload = json.loads(payload.decode('utf-8'))
         assert "ms" == payload['circuit'][0]['gate']
+        # We also expect the metadata to be produced correctly for native circuits
+        metadata = backend._prepare_job_metadata(native_circuit)
+        assert 2 == len(metadata["meas_map"])
 
         # should also be available with the qpu target
         backend = provider.get_backend("ionq.qpu", gateset="native")
@@ -290,6 +293,8 @@ class TestQiskit(QuantumTestBase):
         (payload, _, _) = backend._translate_input(native_circuit, config.azure["input_data_format"], {})
         payload = json.loads(payload.decode('utf-8'))
         assert "ms" == payload['circuit'][0]['gate']
+        metadata = backend._prepare_job_metadata(native_circuit)
+        assert 2 == len(metadata["meas_map"])
 
     @pytest.mark.ionq
     @pytest.mark.live_test
