@@ -68,7 +68,7 @@ class IonQBackend(AzureBackend):
 
     def estimate_cost(self, circuit, shots):
         """Estimate the cost for the given circuit."""
-        ionq_circ, _, _ = qiskit_circ_to_ionq_circ(circuit)
+        ionq_circ, _, _ = qiskit_circ_to_ionq_circ(circuit, gateset=self.gateset())
         input_data = {
             "qubits": circuit.num_qubits,
             "circuit": ionq_circ,
