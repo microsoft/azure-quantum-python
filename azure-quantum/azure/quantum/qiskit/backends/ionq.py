@@ -44,7 +44,7 @@ class IonQBackend(AzureBackend):
         }
 
     def _prepare_job_metadata(self, circuit, **kwargs):
-        _, _, meas_map = qiskit_circ_to_ionq_circ(circuit)
+        _, _, meas_map = qiskit_circ_to_ionq_circ(circuit, gateset=self.gateset())
         
         metadata = super()._prepare_job_metadata(circuit, **kwargs);
         metadata["meas_map"] = meas_map
@@ -68,7 +68,7 @@ class IonQBackend(AzureBackend):
 
     def estimate_cost(self, circuit, shots):
         """Estimate the cost for the given circuit."""
-        ionq_circ, _, _ = qiskit_circ_to_ionq_circ(circuit)
+        ionq_circ, _, _ = qiskit_circ_to_ionq_circ(circuit, gateset=self.gateset())
         input_data = {
             "qubits": circuit.num_qubits,
             "circuit": ionq_circ,
