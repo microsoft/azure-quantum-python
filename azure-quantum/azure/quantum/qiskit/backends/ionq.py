@@ -56,6 +56,7 @@ class IonQBackend(AzureBackend):
         if data_format == "ionq.circuit.v1":
             ionq_circ, _, _ = qiskit_circ_to_ionq_circ(circuit, gateset=self.gateset())
             input_data = {
+                "gateset": self.gateset(),
                 "qubits": circuit.num_qubits,
                 "circuit": ionq_circ,
             }
