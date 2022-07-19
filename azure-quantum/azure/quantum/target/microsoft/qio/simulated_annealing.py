@@ -20,9 +20,7 @@ class SimulatedAnnealing(Solver):
         "microsoft.simulatedannealing-parameterfree.fpga",
         "microsoft.simulatedannealing.fpga",
         "microsoft.simulatedannealing.cpu",
-        "microsoft.simulatedannealing-parameterfree.cpu",
-        "microsoft.simulatedannealing.cpu.legacy",
-        "microsoft.simulatedannealing-parameterfree.cpu.legacy"
+        "microsoft.simulatedannealing-parameterfree.cpu"
     ]
     def __init__(
         self,
@@ -121,11 +119,11 @@ class SimulatedAnnealing(Solver):
         )
 
     def supports_grouped_terms(self):
-        if "legacy" in self.name or "fpga" in self.name:
+        if "fpga" in self.name:
             return False
         return True
     
     def supports_protobuf(self):
-        if "legacy" in self.name or "fpga" in self.name:
+        if "fpga" in self.name:
             return False
         return True
