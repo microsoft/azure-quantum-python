@@ -14,9 +14,7 @@ logger = logging.getLogger(__name__)
 class Tabu(Solver):
     target_names = (
         "microsoft.tabu.cpu",
-        "microsoft.tabu-parameterfree.cpu",
-        "microsoft.tabu.cpu.legacy",
-        "microsoft.tabu-parameterfree.cpu.legacy"
+        "microsoft.tabu-parameterfree.cpu"
     )
     def __init__(
         self,
@@ -70,11 +68,7 @@ class Tabu(Solver):
         self.set_one_param("restarts", restarts)
 
     def supports_grouped_terms(self):
-        if "legacy" in self.name:
-            return False
         return True
     
     def supports_protobuf(self):
-        if "legacy" in self.name:
-            return False
         return True

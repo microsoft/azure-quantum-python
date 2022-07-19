@@ -15,9 +15,7 @@ class ParallelTempering(Solver):
     target_names = (
         "microsoft.paralleltempering.fpga",
         "microsoft.paralleltempering.cpu",
-        "microsoft.paralleltempering-parameterfree.cpu",
-        "microsoft.paralleltempering.cpu.legacy",
-        "microsoft.paralleltempering-parameterfree.cpu.legacy"
+        "microsoft.paralleltempering-parameterfree.cpu"
     )
     def __init__(
         self,
@@ -85,11 +83,11 @@ class ParallelTempering(Solver):
                 )
 
     def supports_grouped_terms(self):
-        if "legacy" in self.name or "fpga" in self.name:
+        if "fpga" in self.name:
             return False
         return True
     
     def supports_protobuf(self):
-        if "legacy" in self.name or "fpga" in self.name:
+        if "fpga" in self.name:
             return False
         return True
