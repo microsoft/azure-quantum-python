@@ -38,6 +38,7 @@ class AzureBackend(Backend):
 
     def _translate_input(self, circuit, data_format, input_params):
         """ Translates the input values to the format expected by the AzureBackend. """
+        logging.info(f'Generic backend | data_format: {data_format}, input_params: {input_params}')
         if data_format != "qir.v1":
             target = self.name()
             raise ValueError(f"{data_format} is not a supported data format for target {target}.")
@@ -103,6 +104,7 @@ class AzureBackend(Backend):
         # are calculated from the circuit itself:
         job_name = kwargs.pop("job_name", circuit.name)
         metadata = kwargs.pop("metadata") if "metadata" in kwargs else self._prepare_job_metadata(circuit)
+        logger.info(f'METADATA: {metadata}')
 
         # Backend options are mapped to input_params.
         input_params = vars(self.options)
@@ -151,6 +153,80 @@ class AzureBackend(Backend):
 
         logger.info(f"Submitted job with id '{job.id()}' for circuit '{circuit.name}' with shot count of {shots_count}:")
         logger.info(input_data)
+
+        return job
+    
+    def run_qir_bitcode(self, bitcode_file_path, entry_point_name, **kwargs):
+        """Submits the given circuit to run on an Azure Quantum backend."""
+        # The default of these job parameters come from the AzureBackend configuration:
+        config = self.configuration()
+        blob_name = kwargs.pop("blob_name", config.azure["blob_name"])
+        content_type = kwargs.pop("content_type", config.azure["content_type"])
+        provider_id = kwargs.pop("provider_id", config.azure["provider_id"])
+        input_data_format = kwargs.pop("input_data_format", config.azure["input_data_format"])
+        output_data_format = kwargs.pop("output_data_format", config.azure["output_data_format"])
+
+        # If not provided as kwargs, the values of these parameters 
+        # are calculated from the circuit itself:
+        job_name = kwargs.pop("job_name", "QIR-bitcode")
+        #metadata = kwargs.pop("metadata") if "metadata" in kwargs else self._prepare_job_metadata(circuit)
+        metadata = {}
+
+        # Backend options are mapped to input_params.
+        input_params = vars(self.options)
+
+        # The shots/count number can be specified in different ways for different providers,
+        # so let's get it first. Values in 'kwargs' take precedence over options, and to keep
+        # the convention, 'count' takes precedence over 'shots' afterwards.
+        shots_count = \
+            kwargs["count"] if "count" in kwargs else \
+            kwargs["shots"] if "shots" in kwargs else \
+            input_params["count"] if "count" in input_params else \
+            input_params["shots"] if "shots" in input_params else None
+
+        # Let's clear the kwargs of both properties regardless of which one was used to prevent
+        # double specification of the value.
+        kwargs.pop("shots", None)
+        kwargs.pop("count", None)
+
+        # Take also into consideration options passed in the kwargs, as the take precedence
+        # over default values:
+        for opt in kwargs.copy():
+            if opt in input_params:
+                input_params[opt] = kwargs.pop(opt)
+
+        input_params["count"] = shots_count
+        input_params["shots"] = shots_count
+        logger.info(f'Input params (BEFORE TRANSLATE): {input_params}, {input_data_format}')
+
+        logger.info("Read bitcode file")
+        bitcode_file = open(bitcode_file_path, "rb") # opening for [r]eading as [b]inary
+        bitcode = bitcode_file.read()
+        bitcode_file.close()
+
+        if not "entryPoint" in input_params:
+            input_params["entryPoint"] = entry_point_name
+        if not "arguments" in input_params:
+            input_params["arguments"] = []
+
+        logger.info(f'Input params (AFTER TRANSLATE): {input_params}, {input_data_format}')
+        logger.info(f"Submitting new job for backend {self.name()}")
+        job = AzureQuantumJob(
+            backend=self,
+            target=self.name(),
+            name=job_name,
+            input_data=bitcode,
+            blob_name=blob_name,
+            content_type=content_type,
+            provider_id=provider_id,
+            input_data_format=input_data_format,
+            output_data_format=output_data_format,
+            input_params = input_params,
+            metadata=metadata,
+            **kwargs
+        )
+
+        logger.info(f"Submitted job with id '{job.id()}'")
 
         return job
 

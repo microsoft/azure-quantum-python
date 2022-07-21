@@ -85,13 +85,13 @@ class _DefaultAzureCredential(_ChainedTokenCredential):
             "visual_studio_code_tenant_id", os.environ.get(EnvironmentVariables.AZURE_TENANT_ID)
         )
 
-        self.exclude_token_file_credential = kwargs.pop("exclude_token_file_credential", False)
-        self.exclude_environment_credential = kwargs.pop("exclude_environment_credential", False)
-        self.exclude_managed_identity_credential = kwargs.pop("exclude_managed_identity_credential", False)
+        self.exclude_token_file_credential = kwargs.pop("exclude_token_file_credential", True)
+        self.exclude_environment_credential = kwargs.pop("exclude_environment_credential", True)
+        self.exclude_managed_identity_credential = kwargs.pop("exclude_managed_identity_credential", True)
         self.exclude_shared_token_cache_credential = kwargs.pop("exclude_shared_token_cache_credential", True)
-        self.exclude_visual_studio_code_credential = kwargs.pop("exclude_visual_studio_code_credential", False)
+        self.exclude_visual_studio_code_credential = kwargs.pop("exclude_visual_studio_code_credential", True)
         self.exclude_cli_credential = kwargs.pop("exclude_cli_credential", False)
-        self.exclude_interactive_browser_credential = kwargs.pop("exclude_interactive_browser_credential", True)
+        self.exclude_interactive_browser_credential = kwargs.pop("exclude_interactive_browser_credential", False)
         self.exclude_device_code_credential = kwargs.pop("exclude_device_code_credential", False)
         self.exclude_powershell_credential = kwargs.pop("exclude_powershell_credential", False)
 
