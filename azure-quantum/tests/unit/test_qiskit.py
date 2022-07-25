@@ -282,6 +282,11 @@ class TestQiskit(QuantumTestBase):
         (payload, _, _) = backend._translate_input(native_circuit, config.azure["input_data_format"], {})
         payload = json.loads(payload.decode('utf-8'))
         assert "ms" == payload['circuit'][0]['gate']
+        # Confirm that the payload includes the gateset information.
+        assert "native" == payload['gateset']
+        # We also expect the metadata to be produced correctly for native circuits
+        metadata = backend._prepare_job_metadata(native_circuit)
+        assert 2 == len(metadata["meas_map"])
 
         # should also be available with the qpu target
         backend = provider.get_backend("ionq.qpu", gateset="native")
@@ -290,6 +295,8 @@ class TestQiskit(QuantumTestBase):
         (payload, _, _) = backend._translate_input(native_circuit, config.azure["input_data_format"], {})
         payload = json.loads(payload.decode('utf-8'))
         assert "ms" == payload['circuit'][0]['gate']
+        metadata = backend._prepare_job_metadata(native_circuit)
+        assert 2 == len(metadata["meas_map"])
 
     @pytest.mark.ionq
     @pytest.mark.live_test
@@ -527,13 +534,81 @@ class TestQiskit(QuantumTestBase):
         assert "qir.v1" == config.azure["input_data_format"]
         assert "microsoft.quantum-results.v1" == config.azure["output_data_format"]
 
-        backend = provider.get_backend(RigettiTarget.ASPEN_M_1.value)
-        assert backend.name() == RigettiTarget.ASPEN_M_1.value
+    @pytest.mark.qci
+    @pytest.mark.live_test
+    def test_qiskit_submit_to_qci(self):
+        with unittest.mock.patch.object(
+            Job,
+            self.mock_create_job_id_name,
+            return_value=self.get_test_job_id(),
+        ):
+            workspace = self.create_workspace()
+            provider = AzureQuantumProvider(workspace=workspace)
+            assert "azure-quantum-qiskit" in provider._workspace.user_agent
+            backend = provider.get_backend("qci.simulator")
+            assert backend.name() == "qci.simulator"
+            config = backend.configuration()
+            assert True == config.simulator
+            assert 1 == config.max_experiments
+            assert 29 == config.num_qubits
+            assert "qir.v1" == config.azure["content_type"]
+            assert "qci" == config.azure["provider_id"]
+            assert "qir.v1" == config.azure["input_data_format"]
+            assert "microsoft.quantum-results.v1" == config.azure["output_data_format"]
+            shots = 100
+
+            circuit = self._3_qubit_ghz()
+            circuit.metadata = { "some": "data" }
+
+            qiskit_job = backend.run(
+                circuit=circuit,
+                shots=shots
+            )
+
+            # Check job metadata:
+            assert qiskit_job._azure_job.details.target == "qci.simulator"
+            assert qiskit_job._azure_job.details.provider_id == "qci"
+            assert qiskit_job._azure_job.details.input_data_format == "qir.v1"
+            assert qiskit_job._azure_job.details.output_data_format == "microsoft.quantum-results.v1"
+            assert "qiskit" in qiskit_job._azure_job.details.metadata
+            assert "name" in qiskit_job._azure_job.details.metadata
+            assert "num_qubits" in qiskit_job._azure_job.details.metadata
+            assert "metadata" in qiskit_job._azure_job.details.metadata
+            assert qiskit_job._azure_job.details.metadata["num_qubits"] == '4'
+            assert qiskit_job._azure_job.details.input_params["count"] == shots
+            assert qiskit_job._azure_job.details.input_params["entryPoint"] == "main"
+            assert qiskit_job._azure_job.details.input_params["arguments"] == []
+
+            # Make sure the job is completed before fetching the results
+            self._qiskit_wait_to_complete(qiskit_job, provider)
+
+            if JobStatus.DONE == qiskit_job.status():
+                result = qiskit_job.result()
+                print(result)
+                assert sum(result.data()["counts"].values()) == shots
+                assert np.isclose(result.data()["counts"]["[0, 0, 0]"], shots//2, 20)
+                assert np.isclose(result.data()["counts"]["[1, 1, 1]"], shots//2, 20)
+                counts = result.get_counts()
+                assert counts == result.data()["counts"]
+                assert hasattr(result.results[0].header, "num_qubits")
+                assert hasattr(result.results[0].header, "metadata")
+                assert result.results[0].header.num_qubits == '4'
+                assert result.results[0].header.metadata["some"] == "data"
+
+    @pytest.mark.qci
+    @pytest.mark.live_test
+    def test_qiskit_get_qci_qpu_targets(self):
+        workspace = self.create_workspace()
+        provider = AzureQuantumProvider(workspace=workspace)
+
+        backend = provider.get_backend("qci.machine1")
+        assert backend.name() == "qci.machine1"
         config = backend.configuration()
         assert False == config.simulator
         assert 1 == config.max_experiments
-        assert 80 == config.num_qubits
+        assert 11 == config.num_qubits
         assert "qir.v1" == config.azure["content_type"]
-        assert "rigetti" == config.azure["provider_id"]
+        assert "qci" == config.azure["provider_id"]
         assert "qir.v1" == config.azure["input_data_format"]
         assert "microsoft.quantum-results.v1" == config.azure["output_data_format"]
+
