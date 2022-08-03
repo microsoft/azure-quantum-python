@@ -152,7 +152,7 @@ class IonQQPUBackend(IonQBackend):
 
 
 class IonQAriaBackend(IonQBackend):
-    backend_names = ("ionq.aria",)
+    backend_names = ("ionq.qpu.aria-1",)
 
     def __init__(
         self,
