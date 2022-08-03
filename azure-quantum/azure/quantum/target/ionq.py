@@ -24,6 +24,7 @@ class IonQ(Target):
     target_names = (
         "ionq.qpu",
         "ionq.simulator",
+        "ionq.aria"
     )
 
     def __init__(
