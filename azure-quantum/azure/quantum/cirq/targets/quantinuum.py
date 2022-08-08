@@ -48,13 +48,13 @@ class QuantinuumTarget(Quantinuum, CirqTarget):
 
     @staticmethod
     def _to_cirq_result(result: Dict[str, Any], param_resolver, **kwargs):
-        from cirq import Result
+        from cirq import ResultDict
         measurements = {
             key.lstrip("m_"): np.array([[int(_v)] for _v in value])
             for key, value in result.items()
             if key.startswith("m_")
         }
-        return Result(params=param_resolver, measurements=measurements)
+        return ResultDict(params=param_resolver, measurements=measurements)
 
     def _to_cirq_job(self, azure_job: "AzureJob", program: "cirq.Circuit" = None):
         """Convert Azure job to Cirq job"""

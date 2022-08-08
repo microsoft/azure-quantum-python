@@ -29,6 +29,11 @@ from azure.quantum.qiskit.backends.rigetti import (
     RigettiSimulatorBackend
 )
 
+from azure.quantum.qiskit.backends.qci import (
+    QCIBackend,
+    QCISimulatorBackend,
+)
+
 # Default targets to use when there is no target class
 # associated with a given target ID
 DEFAULT_TARGETS = {}
