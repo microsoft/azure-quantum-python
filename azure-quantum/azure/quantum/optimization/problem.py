@@ -142,6 +142,7 @@ class Problem:
         proto_messages = []
         msg_count = 0
         terms_remaining = len(self.terms)
+        terms_read = 0
         while terms_remaining > 0:   
             proto_problem = ProtoProblem()
             cost_function = proto_problem.cost_function
@@ -152,7 +153,7 @@ class Problem:
                 metadata["name"] = self.name
             # add 1000 terms per proto message
             if terms_remaining - 1000 > 0: 
-                for i in range (1000):
+                for i in range (terms_read,terms_read + 1000):
                     term = cost_function.terms.add()
                     term.c = self.terms[i].c
                     for j in range (len(self.terms[i].ids)):
@@ -166,6 +167,7 @@ class Problem:
                         term.ids.append(self.terms[i].ids[j])
             msg_count += 1
             terms_remaining -= 1000
+            terms_read += 1000
             proto_messages.append(proto_problem.SerializeToString())
         return proto_messages
     
