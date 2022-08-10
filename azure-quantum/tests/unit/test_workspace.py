@@ -122,7 +122,6 @@ class TestWorkspace(QuantumTestBase):
 
     @pytest.mark.qio
     @pytest.mark.live_test
-    @pytest.mark.fpga
     def test_workspace_get_targets_qio(self):
         ws = self.create_workspace()
         targets = ws.get_targets()
@@ -132,7 +131,6 @@ class TestWorkspace(QuantumTestBase):
             'microsoft.populationannealing.cpu',
             'microsoft.qmc.cpu',
             'microsoft.simulatedannealing-parameterfree.cpu',
-            'microsoft.simulatedannealing-parameterfree.fpga',
             'microsoft.substochasticmontecarlo.cpu',
             'microsoft.tabu-parameterfree.cpu',
         ])
