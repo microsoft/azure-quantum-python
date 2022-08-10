@@ -50,9 +50,7 @@ class ParallelTempering(Solver):
         """
         param_free = sweeps is None and replicas is None and all_betas is None
         platform = HardwarePlatform.CPU
-        if platform == HardwarePlatform.FPGA:
-            name = "microsoft.paralleltempering.fpga"
-        elif param_free:
+        if param_free:
             name = name.replace(".paralleltempering.", ".paralleltempering-parameterfree.")
  
         super().__init__(
