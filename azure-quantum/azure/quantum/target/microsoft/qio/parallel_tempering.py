@@ -13,7 +13,6 @@ logger = logging.getLogger(__name__)
 
 class ParallelTempering(Solver):
     target_names = (
-        "microsoft.paralleltempering.fpga",
         "microsoft.paralleltempering.cpu",
         "microsoft.paralleltempering-parameterfree.cpu"
     )
