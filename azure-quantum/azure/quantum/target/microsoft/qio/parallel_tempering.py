@@ -80,11 +80,7 @@ class ParallelTempering(Solver):
                 )
 
     def supports_grouped_terms(self):
-        if "fpga" in self.name:
-            return False
         return True
     
     def supports_protobuf(self):
-        if "fpga" in self.name:
-            return False
         return True
