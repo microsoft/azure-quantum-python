@@ -479,31 +479,12 @@ class TestSolvers(QuantumTestBase):
         self.assertEqual(True, good.supports_grouped_terms())
         self.assertEqual(True, good.supports_protobuf())
 
-        good = SimulatedAnnealing(
-            ws, timeout=1011, seed=4321, platform=HardwarePlatform.FPGA
-        )
-        self.assertIsNotNone(good)
-        self.assertEqual(
-            "microsoft.simulatedannealing-parameterfree.fpga", good.name
-        )
-        self.assertEqual(
-            {"timeout": 1011, "seed": 4321}, good.params["params"]
-        )
-
         good = SimulatedAnnealing(ws, beta_start=21)
         self.assertIsNotNone(good)
         self.assertEqual("microsoft.simulatedannealing.cpu", good.name)
         self.assertEqual({"beta_start": 21}, good.params["params"])
         self.assertEqual(True, good.supports_grouped_terms())
         self.assertEqual(True, good.supports_protobuf())
-
-
-        good = SimulatedAnnealing(
-            ws, beta_start=21, platform=HardwarePlatform.FPGA
-        )
-        self.assertIsNotNone(good)
-        self.assertEqual("microsoft.simulatedannealing.fpga", good.name)
-        self.assertEqual({"beta_start": 21}, good.params["params"])
 
 
     def test_QuantumMonteCarlo_input_params(self):
