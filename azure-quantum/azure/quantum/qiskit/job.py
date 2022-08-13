@@ -213,7 +213,8 @@ class AzureQuantumJob(JobV1):
         if (len(histogram) % 2) == 0:
             items = range(0, len(histogram), 2)
             for i in items:
-                bitstring = re.sub("[^01]", "", histogram[i])  # Qiskit expects a literal bitstring, QIR returns it as an array, remove superfluos characters.
+                bitstring = re.sub("[^01]", "", histogram[i])  # Qiskit expects a literal bitstring, QIR returns it as an array, remove superfluous characters.
+
                 value = histogram[i + 1]
                 probabilities[bitstring] = value
         else:
