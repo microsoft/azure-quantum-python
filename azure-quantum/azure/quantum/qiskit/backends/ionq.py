@@ -160,7 +160,7 @@ class IonQAriaBackend(IonQBackend):
         provider: "AzureQuantumProvider",
         **kwargs
     ):
-        """Base class for interfacing with an IonQ Aria backend"""
+        """Base class for interfacing with an IonQ Aria QPU backend"""
         self._gateset = kwargs.pop("gateset", "qis")
 
         default_config = BackendConfiguration.from_dict(
@@ -170,10 +170,10 @@ class IonQAriaBackend(IonQBackend):
                 "simulator": False,
                 "local": False,
                 "coupling_map": None,
-                "description": "IonQ QPU on Azure Quantum",
+                "description": "IonQ Aria QPU on Azure Quantum",
                 "basis_gates": GATESET_MAP[self._gateset],
                 "memory": False,
-                "n_qubits": 11,
+                "n_qubits": 23,
                 "conditional": False,
                 "max_shots": 10000,
                 "max_experiments": 1,
@@ -182,6 +182,6 @@ class IonQAriaBackend(IonQBackend):
                 "azure": self._azure_config(),
             }
         )
-        logger.info("Initializing IonQAriaBackend")
+        logger.info("Initializing IonQAriaQPUBackend")
         configuration: BackendConfiguration = kwargs.pop("configuration", default_config)
         super().__init__(configuration=configuration, provider=provider, **kwargs)
