@@ -13,11 +13,8 @@ logger = logging.getLogger(__name__)
 
 class ParallelTempering(Solver):
     target_names = (
-        "microsoft.paralleltempering.fpga",
         "microsoft.paralleltempering.cpu",
-        "microsoft.paralleltempering-parameterfree.cpu",
-        "microsoft.paralleltempering.cpu.legacy",
-        "microsoft.paralleltempering-parameterfree.cpu.legacy"
+        "microsoft.paralleltempering-parameterfree.cpu"
     )
     def __init__(
         self,
@@ -53,9 +50,7 @@ class ParallelTempering(Solver):
         """
         param_free = sweeps is None and replicas is None and all_betas is None
         platform = HardwarePlatform.CPU
-        if platform == HardwarePlatform.FPGA:
-            name = "microsoft.paralleltempering.fpga"
-        elif param_free:
+        if param_free:
             name = name.replace(".paralleltempering.", ".paralleltempering-parameterfree.")
  
         super().__init__(
@@ -85,11 +80,7 @@ class ParallelTempering(Solver):
                 )
 
     def supports_grouped_terms(self):
-        if "legacy" in self.name or "fpga" in self.name:
-            return False
         return True
     
     def supports_protobuf(self):
-        if "legacy" in self.name or "fpga" in self.name:
-            return False
         return True

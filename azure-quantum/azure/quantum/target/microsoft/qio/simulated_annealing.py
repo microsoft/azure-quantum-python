@@ -17,12 +17,8 @@ logger = logging.getLogger(__name__)
 
 class SimulatedAnnealing(Solver):
     target_names = [
-        "microsoft.simulatedannealing-parameterfree.fpga",
-        "microsoft.simulatedannealing.fpga",
         "microsoft.simulatedannealing.cpu",
-        "microsoft.simulatedannealing-parameterfree.cpu",
-        "microsoft.simulatedannealing.cpu.legacy",
-        "microsoft.simulatedannealing-parameterfree.cpu.legacy"
+        "microsoft.simulatedannealing-parameterfree.cpu"
     ]
     def __init__(
         self,
@@ -59,7 +55,7 @@ class SimulatedAnnealing(Solver):
             specifies a random seed value.
         :platform:
             specifies hardware platform
-            HardwarePlatform.CPU or HardwarePlatform.FPGA.
+            HardwarePlatform.CPU.
         """
         param_free = (
             beta_start is None
@@ -68,13 +64,7 @@ class SimulatedAnnealing(Solver):
             and restarts is None
         )
 
-        if platform == HardwarePlatform.FPGA:
-            name = (
-                "microsoft.simulatedannealing-parameterfree.fpga"
-                if param_free
-                else "microsoft.simulatedannealing.fpga"
-            )
-        elif param_free:
+        if param_free:
             name = name.replace(".simulatedannealing.", ".simulatedannealing-parameterfree.")
 
         super().__init__(
@@ -108,8 +98,6 @@ class SimulatedAnnealing(Solver):
         """
         if ".cpu" in status.id:
             platform = HardwarePlatform.CPU
-        elif status.id.endswith("fpga"):
-            platform = HardwarePlatform.FPGA
         else:
             raise ValueError(f"SimulatedAnnealing solver with name {status.id} is not supported.")
 
@@ -121,11 +109,7 @@ class SimulatedAnnealing(Solver):
         )
 
     def supports_grouped_terms(self):
-        if "legacy" in self.name or "fpga" in self.name:
-            return False
         return True
     
     def supports_protobuf(self):
-        if "legacy" in self.name or "fpga" in self.name:
-            return False
         return True
