@@ -506,8 +506,8 @@ class TestQiskit(QuantumTestBase):
                 result = qiskit_job.result()
                 print(result)
                 assert sum(result.data()["counts"].values()) == shots
-                assert np.isclose(result.data()["counts"]["[0, 0, 0]"], shots//2, 20)
-                assert np.isclose(result.data()["counts"]["[1, 1, 1]"], shots//2, 20)
+                assert np.isclose(result.data()["counts"]["000"], shots//2, 20)
+                assert np.isclose(result.data()["counts"]["111"], shots//2, 20)
                 counts = result.get_counts()
                 assert counts == result.data()["counts"]
                 assert hasattr(result.results[0].header, "num_qubits")
@@ -586,8 +586,8 @@ class TestQiskit(QuantumTestBase):
                 result = qiskit_job.result()
                 print(result)
                 assert sum(result.data()["counts"].values()) == shots
-                assert np.isclose(result.data()["counts"]["[0, 0, 0]"], shots//2, 20)
-                assert np.isclose(result.data()["counts"]["[1, 1, 1]"], shots//2, 20)
+                assert np.isclose(result.data()["counts"]["000"], shots//2, 20)
+                assert np.isclose(result.data()["counts"]["111"], shots//2, 20)
                 counts = result.get_counts()
                 assert counts == result.data()["counts"]
                 assert hasattr(result.results[0].header, "num_qubits")

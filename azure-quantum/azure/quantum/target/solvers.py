@@ -25,7 +25,6 @@ __all__ = [
 
 class HardwarePlatform(Enum):
     CPU = 1
-    FPGA = 2
 
 
 class RangeSchedule:
