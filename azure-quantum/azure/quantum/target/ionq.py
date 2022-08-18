@@ -115,17 +115,14 @@ class IonQ(Target):
         num_shots: int,
         price_1q: float = None,
         price_2q: float = None,
-        min_price: float=1.0
+        min_price: float = None
     ) -> CostEstimate:
-        """Estimate the cost of submittng a circuit to IonQ targets.
+        """Estimate the cost of submitting a circuit to IonQ targets.
         Optionally, you can provide the number of gate and measurement operations
         manually.
         The actual price charged by the provider may differ from this calculation.
         
         Specify pricing details for your area to get most accurate results.
-        By default, this function charges price_1q=0.00003 USD for a single-qubit gate,
-        price_2q=0.0003 USD for a two-qubit gate with a total minimum price of $1.-
-        per circuit.
 
         For the most current pricing details, see
         https://docs.microsoft.com/azure/quantum/provider-ionq#pricing
@@ -138,12 +135,12 @@ class IonQ(Target):
         :param num_shots: Number of shots, defaults to None
         :type num_shots: int
         :param price_1q: The price of running a single-qubit gate
-            for one shot, defaults to 0.00003
+            for one shot.
         :type price_1q: float, optional
         :param price_2q: The price of running a double-qubit gate
-            for one shot, defaults to 0.0003
+            for one shot.
         :type price_2q: float, optional
-        :param min_price: The minimum price for running a job, defaults to 1.0
+        :param min_price: The minimum price for running a job.
         :type min_price: float, optional
         """
         def is_1q_gate(gate: Dict[str, Any]):
