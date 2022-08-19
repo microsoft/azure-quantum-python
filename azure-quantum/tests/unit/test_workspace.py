@@ -119,6 +119,10 @@ class TestWorkspace(QuantumTestBase):
                 'quantinuum.hqs-lt-s1-apival'
             ])
             assert test_targets.issubset(set([t.name for t in targets]))
+            test_targets = set([
+                'quantinuum.sim.h1-1sc'
+            ])
+            assert test_targets.issubset(set([t.name for t in targets]))
 
     @pytest.mark.qio
     @pytest.mark.live_test

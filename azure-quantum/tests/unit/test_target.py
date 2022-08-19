@@ -218,6 +218,18 @@ class TestHoneywell(QuantumTestBase):
             cost = target.estimate_cost(circuit, num_shots=100e3)
             assert cost.estimated_total == 845.0
 
+            target = Honeywell(workspace=workspace, name="honeywell.hqs-lt-s1-apival") if provider_id == "honeywell" \
+                     else Quantinuum(workspace=workspace, name="quantinuum.sim.h1-1sc")
+
+            cost = target.estimate_cost(circuit, num_shots=100e3)
+            assert cost.estimated_total == 0.0
+
+            target = Honeywell(workspace=workspace, name="honeywell.hqs-lt-s1") if provider_id == "honeywell" \
+                     else Quantinuum(workspace=workspace, name="quantinuum.qpu.h1-1")
+
+            cost = target.estimate_cost(circuit, num_shots=100e3)
+            assert cost.estimated_total == 845.0
+
     @pytest.mark.honeywell
     @pytest.mark.live_test
     def test_job_submit_honeywell(self, provider_id="honeywell"):
