@@ -17,12 +17,15 @@ class Quantinuum(Target):
         "quantinuum.hqs-lt-s1",
         "quantinuum.hqs-lt-s1-apival",
         "quantinuum.hqs-lt-s1-sim",
+        "quantinuum.qpu.h1-1",
+        "quantinuum.sim.h1-1sc",
+        "quantinuum.sim.h1-1e"
     )
 
     def __init__(
         self,
         workspace: Workspace,
-        name: str = "quantinuum.hqs-lt-s1-apival",
+        name: str = "quantinuum.sim.h1-1sc",
         input_data_format: str = "honeywell.openqasm.v1",
         output_data_format: str = "honeywell.quantum-results.v1",
         provider_id: str = "quantinuum",

@@ -112,7 +112,9 @@ class QuantinuumBackend(AzureBackend):
 class QuantinuumAPIValidatorBackend(QuantinuumBackend):
     backend_names = (
         "quantinuum.hqs-lt-s1-apival",
-        "quantinuum.hqs-lt-s2-apival"
+        "quantinuum.hqs-lt-s2-apival",
+        "quantinuum.sim.h1-1sc",
+        "quantinuum.sim.h1-2sc"
     )
 
     def __init__(
@@ -157,7 +159,9 @@ class QuantinuumAPIValidatorBackend(QuantinuumBackend):
 class QuantinuumSimulatorBackend(QuantinuumBackend):
     backend_names = (
         "quantinuum.hqs-lt-s1-sim",
-        "quantinuum.hqs-lt-s2-sim"
+        "quantinuum.hqs-lt-s2-sim",
+        "quantinuum.sim.h1-1e",
+        "quantinuum.sim.h1-2e"
     )
 
     def __init__(
@@ -203,7 +207,9 @@ class QuantinuumSimulatorBackend(QuantinuumBackend):
 class QuantinuumQPUBackend(QuantinuumBackend):
     backend_names = (
         "quantinuum.hqs-lt-s1",
-        "quantinuum.hqs-lt-s2"
+        "quantinuum.hqs-lt-s2",
+        "quantinuum.qpu.h1-1",
+        "quantinuum.qpu.h1-2"
     )
 
     def __init__(
