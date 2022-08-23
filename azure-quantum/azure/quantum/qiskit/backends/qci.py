@@ -7,7 +7,6 @@ import warnings
 from typing import TYPE_CHECKING, Union, List
 from azure.quantum.version import __version__
 from azure.quantum.qiskit.job import AzureQuantumJob
-from azure.quantum.target.rigetti import RigettiTarget
 
 from .backend import AzureBackend
 
@@ -22,30 +21,30 @@ import logging
 logger = logging.getLogger(__name__)
 
 __all__ = [
-    "RigettiSimulatorBackend"
-    "RigettiQPUBackend"
+    "QCISimulatorBackend"
+    "QCIQPUBackend"
 ]
 
-class RigettiBackend(AzureBackend):
-    """Base class for interfacing with a Rigetti backend in Azure Quantum"""
+class QCIBackend(AzureBackend):
+    """Base class for interfacing with a QCI backend in Azure Quantum"""
 
     @classmethod
     def _default_options(cls):
-        return Options(count=500, entryPoint="main", arguments=[], targetCapability="BasicExecution")
+        return Options(shots=500, entryPoint="main", arguments=[], targetCapability="AdaptiveExecution")
 
     @classmethod
     def _azure_config(cls):
         return {
             "blob_name": "inputData",
             "content_type": "qir.v1",
-            "provider_id": "rigetti",
+            "provider_id": "qci",
             "input_data_format": "qir.v1",
             "output_data_format": "microsoft.quantum-results.v1",
         }
 
 
-class RigettiSimulatorBackend(RigettiBackend):
-    backend_names = RigettiTarget.simulators()
+class QCISimulatorBackend(QCIBackend):
+    backend_names = ("qci.simulator",)
 
     def __init__(
         self,
@@ -53,7 +52,7 @@ class RigettiSimulatorBackend(RigettiBackend):
         provider: "AzureQuantumProvider",
         **kwargs
     ):
-        """Base class for interfacing with an Rigetti Simulator backend"""
+        """Base class for interfacing with an QCI Simulator backend"""
         default_config = BackendConfiguration.from_dict(
             {
                 "backend_name": name,
@@ -61,25 +60,25 @@ class RigettiSimulatorBackend(RigettiBackend):
                 "simulator": True,
                 "local": False,
                 "coupling_map": None,
-                "description": "Rigetti simulator on Azure Quantum",
+                "description": "QCI simulator on Azure Quantum",
                 "basis_gates": QIR_BASIS_GATES,
                 "memory": False,
-                "n_qubits": RigettiTarget.num_qubits(name),
+                "n_qubits": 29,
                 "conditional": False,
-                "max_shots": 10000,
+                "max_shots": 1,
                 "max_experiments": 1,
                 "open_pulse": False,
                 "gates": [{"name": "TODO", "parameters": [], "qasm_def": "TODO"}],
                 "azure": self._azure_config(),
             }
         )
-        logger.info("Initializing RigettiSimulatorBackend")
+        logger.info("Initializing QCISimulatorBackend")
         configuration: BackendConfiguration = kwargs.pop("configuration", default_config)
         super().__init__(configuration=configuration, provider=provider, **kwargs)
 
 
-class RigettiQPUBackend(RigettiBackend):
-    backend_names = RigettiTarget.qpus()
+class QCIQPUBackend(QCIBackend):
+    backend_names = ("qci.machine1",)
 
     def __init__(
         self,
@@ -87,7 +86,7 @@ class RigettiQPUBackend(RigettiBackend):
         provider: "AzureQuantumProvider",
         **kwargs
     ):
-        """Base class for interfacing with a Rigetti QPU backend"""
+        """Base class for interfacing with an QCI QPU backend"""
         default_config = BackendConfiguration.from_dict(
             {
                 "backend_name": name,
@@ -95,10 +94,10 @@ class RigettiQPUBackend(RigettiBackend):
                 "simulator": False,
                 "local": False,
                 "coupling_map": None,
-                "description": "Rigetti QPU on Azure Quantum",
+                "description": "QCI QPU on Azure Quantum",
                 "basis_gates": QIR_BASIS_GATES,
                 "memory": False,
-                "n_qubits": RigettiTarget.num_qubits(name),
+                "n_qubits": 11,
                 "conditional": False,
                 "max_shots": 10000,
                 "max_experiments": 1,
@@ -107,6 +106,6 @@ class RigettiQPUBackend(RigettiBackend):
                 "azure": self._azure_config(),
             }
         )
-        logger.info("Initializing RigettiQPUBackend")
+        logger.info("Initializing QCIQPUBackend")
         configuration: BackendConfiguration = kwargs.pop("configuration", default_config)
         super().__init__(configuration=configuration, provider=provider, **kwargs)
