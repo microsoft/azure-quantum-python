@@ -117,13 +117,15 @@ class TestQiskit(QuantumTestBase):
         cost = backend.estimate_cost(circuit, shots=100e3)
         assert np.round(cost.estimated_total) == 66.0
 
-        backend = provider.get_backend("ionq.qpu.aria-1")
-        cost = backend.estimate_cost(circuit, shots=1024)
-        assert np.round(cost.estimated_total) == 1.0
+        ## The following two tests are skipped until we can use a workspace
+        ## with this target available as part of the E2E tests.
+        # backend = provider.get_backend("ionq.qpu.aria-1")
+        # cost = backend.estimate_cost(circuit, shots=1024)
+        # assert np.round(cost.estimated_total) == 1.0
 
-        backend = provider.get_backend("ionq.qpu.aria-1")
-        cost = backend.estimate_cost(circuit, shots=100e3)
-        assert np.round(cost.estimated_total) == 240.0
+        # backend = provider.get_backend("ionq.qpu.aria-1")
+        # cost = backend.estimate_cost(circuit, shots=100e3)
+        # assert np.round(cost.estimated_total) == 240.0
 
     @pytest.mark.ionq
     @pytest.mark.live_test
@@ -268,21 +270,23 @@ class TestQiskit(QuantumTestBase):
         assert "ionq.quantum-results.v1" == config.azure["output_data_format"]
         assert "qis" == backend.gateset()
 
-    @pytest.mark.ionq
-    @pytest.mark.live_test
-    def test_qiskit_get_ionq_qpu_aria_target(self):
-        workspace = self.create_workspace()
-        provider = AzureQuantumProvider(workspace=workspace)
+    ## The following test is skipped until we can use a workspace
+    ## with this target available as part of the E2E tests.
+    # @pytest.mark.ionq
+    # #@pytest.mark.live_test
+    # def test_qiskit_get_ionq_qpu_aria_target(self):
+    #     workspace = self.create_workspace()
+    #     provider = AzureQuantumProvider(workspace=workspace)
 
-        backend = provider.get_backend("ionq.qpu.aria-1")
-        assert backend.name() == "ionq.qpu.aria-1"
-        config = backend.configuration()
-        assert False == config.simulator
-        assert 1 == config.max_experiments
-        assert 23 == config.num_qubits
-        assert "ionq" == config.azure["provider_id"]
-        assert "ionq.circuit.v1" == config.azure["input_data_format"]
-        assert "ionq.quantum-results.v1" == config.azure["output_data_format"]
+    #     backend = provider.get_backend("ionq.qpu.aria-1")
+    #     assert backend.name() == "ionq.qpu.aria-1"
+    #     config = backend.configuration()
+    #     assert False == config.simulator
+    #     assert 1 == config.max_experiments
+    #     assert 23 == config.num_qubits
+    #     assert "ionq" == config.azure["provider_id"]
+    #     assert "ionq.circuit.v1" == config.azure["input_data_format"]
+    #     assert "ionq.quantum-results.v1" == config.azure["output_data_format"]
 
     @pytest.mark.ionq
     @pytest.mark.live_test
