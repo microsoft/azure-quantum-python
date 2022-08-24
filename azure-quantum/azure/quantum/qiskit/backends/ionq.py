@@ -22,7 +22,7 @@ if TYPE_CHECKING:
 import logging
 logger = logging.getLogger(__name__)
 
-__all__ = ["IonQBackend", "IonQQPUBackend", "IonQSimulatorBackend"]
+__all__ = ["IonQBackend", "IonQQPUBackend", "IonQSimulatorBackend", "IonQAriaBackend"]
 
 
 class IonQBackend(AzureBackend):
@@ -147,5 +147,41 @@ class IonQQPUBackend(IonQBackend):
             }
         )
         logger.info("Initializing IonQQPUBackend")
+        configuration: BackendConfiguration = kwargs.pop("configuration", default_config)
+        super().__init__(configuration=configuration, provider=provider, **kwargs)
+
+
+class IonQAriaBackend(IonQBackend):
+    backend_names = ("ionq.qpu.aria-1",)
+
+    def __init__(
+        self,
+        name: str,
+        provider: "AzureQuantumProvider",
+        **kwargs
+    ):
+        """Base class for interfacing with an IonQ Aria QPU backend"""
+        self._gateset = kwargs.pop("gateset", "qis")
+
+        default_config = BackendConfiguration.from_dict(
+            {
+                "backend_name": name,
+                "backend_version": __version__,
+                "simulator": False,
+                "local": False,
+                "coupling_map": None,
+                "description": "IonQ Aria QPU on Azure Quantum",
+                "basis_gates": GATESET_MAP[self._gateset],
+                "memory": False,
+                "n_qubits": 23,
+                "conditional": False,
+                "max_shots": 10000,
+                "max_experiments": 1,
+                "open_pulse": False,
+                "gates": [{"name": "TODO", "parameters": [], "qasm_def": "TODO"}],
+                "azure": self._azure_config(),
+            }
+        )
+        logger.info("Initializing IonQAriaQPUBackend")
         configuration: BackendConfiguration = kwargs.pop("configuration", default_config)
         super().__init__(configuration=configuration, provider=provider, **kwargs)
