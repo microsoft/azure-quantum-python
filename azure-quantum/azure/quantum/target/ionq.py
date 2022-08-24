@@ -123,6 +123,15 @@ class IonQ(Target):
         The actual price charged by the provider may differ from this calculation.
         
         Specify pricing details for your area to get most accurate results.
+        By default, this function charges depending on the target:
+            ionq.qpu:
+                price_1q = 0.00003 USD for a single-qubit gate.
+                price_2q = 0.0003  USD for a two-qubit gate.
+                min_price = 1 USD, total minimum price per circuit.
+            ionq.qpu.aria-1:
+                price_1q = 0.00022 USD for a single-qubit gate.
+                price_2q = 0.00098 USD for a two-qubit gate.
+                min_price = 1 USD, total minimum price per circuit.
 
         For the most current pricing details, see
         https://docs.microsoft.com/azure/quantum/provider-ionq#pricing
