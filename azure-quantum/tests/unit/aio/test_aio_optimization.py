@@ -9,7 +9,7 @@
 
 import json
 from azure.quantum.aio.optimization import Problem, ProblemType
-from azure.quantum.target.solvers import HardwarePlatform, RangeSchedule
+from azure.quantum.target.solvers import RangeSchedule
 from azure.quantum.optimization import Term
 from azure.quantum.aio.target.microsoft.qio import (
     ParallelTempering,

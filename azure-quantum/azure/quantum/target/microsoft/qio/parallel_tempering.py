@@ -6,7 +6,7 @@ import logging
 
 from typing import List, Optional
 
-from azure.quantum.target.solvers import HardwarePlatform, Solver
+from azure.quantum.target.solvers import Solver
 from azure.quantum.workspace import Workspace
 
 logger = logging.getLogger(__name__)
@@ -49,7 +49,6 @@ class ParallelTempering(Solver):
             specifies a random seed value.
         """
         param_free = sweeps is None and replicas is None and all_betas is None
-        platform = HardwarePlatform.CPU
         if param_free:
             name = name.replace(".paralleltempering.", ".paralleltempering-parameterfree.")
  

@@ -11,7 +11,7 @@ import json
 import unittest
 
 from azure.quantum.optimization import Problem, ProblemType, Term, GroupType, SlcTerm
-from azure.quantum.target.solvers import HardwarePlatform, RangeSchedule
+from azure.quantum.target.solvers import RangeSchedule
 from azure.quantum.target import (
     ParallelTempering,
     PopulationAnnealing,

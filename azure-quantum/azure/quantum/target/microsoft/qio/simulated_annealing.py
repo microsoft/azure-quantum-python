@@ -8,7 +8,6 @@ from multiprocessing.sharedctypes import Value
 from typing import Optional
 
 from azure.quantum.target.solvers import Solver
-from azure.quantum.target.solvers import HardwarePlatform
 from azure.quantum.workspace import Workspace
 from azure.quantum._client.models import TargetStatus
 
@@ -30,7 +29,6 @@ class SimulatedAnnealing(Solver):
         restarts: Optional[int] = None,
         timeout: Optional[int] = None,
         seed: Optional[int] = None,
-        platform: Optional[HardwarePlatform] = HardwarePlatform.CPU,
         **kwargs
     ):
         """The constructor of an Simulated Annealing solver.
@@ -53,9 +51,6 @@ class SimulatedAnnealing(Solver):
             solver may run longer than the value specified.
         :param seed:
             specifies a random seed value.
-        :platform:
-            specifies hardware platform
-            HardwarePlatform.CPU.
         """
         param_free = (
             beta_start is None
@@ -96,15 +91,10 @@ class SimulatedAnnealing(Solver):
         :return: Target instance
         :rtype: Target
         """
-        if ".cpu" in status.id:
-            platform = HardwarePlatform.CPU
-        else:
-            raise ValueError(f"SimulatedAnnealing solver with name {status.id} is not supported.")
 
         return super().from_target_status(
             workspace=workspace,
             status=status,
-            platform=platform,
             **kwargs
         )
 
