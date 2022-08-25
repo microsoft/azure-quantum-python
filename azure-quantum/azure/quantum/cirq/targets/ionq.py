@@ -115,22 +115,20 @@ are not installed, throw error with installation instructions."""
         self,
         program: "cirq.Circuit",
         repetitions: int,
-        price_1q: float = 0.00003,
-        price_2q: float = 0.0003,
-        min_price: float = 1) -> float:
+        price_1q: float = None,
+        price_2q: float = None,
+        min_price: float = None) -> float:
         """Estimate cost for running this program
 
         :param program: Cirq quantum program
         :type program: cirq.Circuit
         :param repetitions: Number of repetitions
         :type repetitions: int
-        :param price_1q: The price of running a single-qubit gate
-            for one shot, defaults to 0.00003
+        :param price_1q: The price of running a single-qubit gate.
         :type price_1q: float, optional
-        :param price_2q: The price of running a double-qubit gate
-            for one shot, defaults to 0.0003
+        :param price_2q: The price of running a double-qubit gate.
         :type price_2q: float, optional
-        :param min_price: The minimum price for running a job, defaults to 1.0
+        :param min_price: The minimum price for running a job.
         :type min_price: float, optional
         :return: Price estimate
         :rtype: float
