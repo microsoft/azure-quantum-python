@@ -486,6 +486,16 @@ class TestSolvers(QuantumTestBase):
         self.assertEqual(True, good.supports_grouped_terms())
         self.assertEqual(True, good.supports_protobuf())
 
+        good = SimulatedAnnealing(
+            ws, 
+            timeout=1011, 
+            seed=4321, 
+            platform=HardwarePlatform.CPU)
+        self.assertIsNotNone(good)
+        self.assertEqual(
+            "microsoft.simulatedannealing-parameterfree.cpu", good.name
+        )
+
     def test_Simulated_Annealing_bad_input_params(self):
         ws = self.create_workspace()
 
