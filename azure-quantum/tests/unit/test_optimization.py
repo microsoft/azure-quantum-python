@@ -486,6 +486,20 @@ class TestSolvers(QuantumTestBase):
         self.assertEqual(True, good.supports_grouped_terms())
         self.assertEqual(True, good.supports_protobuf())
 
+    def test_Simulated_Annealing_bad_input_params(self):
+        ws = self.create_workspace()
+
+        bad_solver = None
+        with self.assertRaises(ValueError) as context:
+            bad_solver = SimulatedAnnealing(
+                ws, platform=HardwarePlatform.FPGA
+            )
+        self.assertTrue(
+                ("The FPGA hardware option for Microsoft QIO "
+                "solvers has been deprecated. Please remove "
+                "the 'platform' parameter from your solver "
+                "declaration and resubmit your problem.") in str(context.exception))
+        self.assertTrue(bad_solver is None)
 
     def test_QuantumMonteCarlo_input_params(self):
         ws = self.create_workspace()

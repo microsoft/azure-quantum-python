@@ -64,11 +64,10 @@ class SimulatedAnnealing(Solver):
             and restarts is None
         )
 
-        if platform == HardwarePlatform.FPGA:
-            raise ValueError(f"The FPGA hardware option for Microsoft QIO solvers has been deprecated. Please remove the ‘platform’ parameter from your solver declaration and resubmit your problem.")
-
         if param_free:
             name = name.replace(".simulatedannealing.", ".simulatedannealing-parameterfree.")
+
+        self.check_supported_hardware(platform)
 
         super().__init__(
             workspace=workspace,
