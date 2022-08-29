@@ -67,6 +67,8 @@ class SimulatedAnnealing(Solver):
         if param_free:
             name = name.replace(".simulatedannealing.", ".simulatedannealing-parameterfree.")
 
+        self.check_supported_hardware(platform)
+
         super().__init__(
             workspace=workspace,
             provider_id="Microsoft",
