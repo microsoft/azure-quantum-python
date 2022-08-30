@@ -19,8 +19,7 @@ class Quantinuum(Target):
         "quantinuum.hqs-lt-s1-sim",
         "quantinuum.hqs-lt-s2",
         "quantinuum.hqs-lt-s2-apival",
-        "quantinuum.hqs-lt-s2-sim",
-        "quantinuum.hqs-lt",
+        "quantinuum.hqs-lt-s2-sim"
     )
 
     def __init__(

@@ -23,8 +23,8 @@ logger = logging.getLogger(__name__)
 __all__ = [
     "QuantinuumBackend",
     "QuantinuumQPUBackend",
-    "QuantinuumAPIValidatorBackend",
-    "QuantinuumSimulatorBackend"
+    "QuantinuumSyntaxCheckerBackend",
+    "QuantinuumEmulatorBackend"
 ]
 
 QUANTINUUM_BASIS_GATES = [
@@ -56,7 +56,7 @@ HONEYWELL_PROVIDER_ID = "honeywell"
 HONEYWELL_PROVIDER_NAME = "Honeywell"
 
 class QuantinuumBackend(AzureBackend):
-    """Base class for interfacing with a Quantinuum (formerly Quantinuum) backend in Azure Quantum"""
+    """Base class for interfacing with a Quantinuum backend in Azure Quantum"""
 
     def __init__(self, **kwargs):
         self._provider_id = QUANTINUUM_PROVIDER_ID
@@ -109,7 +109,7 @@ class QuantinuumBackend(AzureBackend):
         return target.estimate_cost(input_data, num_shots=shots)
 
 
-class QuantinuumAPIValidatorBackend(QuantinuumBackend):
+class QuantinuumSyntaxCheckerBackend(QuantinuumBackend):
     backend_names = (
         "quantinuum.hqs-lt-s1-apival",
         "quantinuum.hqs-lt-s2-apival"
@@ -127,6 +127,8 @@ class QuantinuumAPIValidatorBackend(QuantinuumBackend):
             self._provider_id = HONEYWELL_PROVIDER_ID
             self._provider_name = HONEYWELL_PROVIDER_NAME
 
+        self.n_qubits = 20 if name.contains("s1") else 12
+
         default_config = BackendConfiguration.from_dict(
             {
                 "backend_name": name,
@@ -134,10 +136,10 @@ class QuantinuumAPIValidatorBackend(QuantinuumBackend):
                 "simulator": True,
                 "local": False,
                 "coupling_map": None,
-                "description": f"Quantinuum (formerly Honeywell) API validator on Azure Quantum",
+                "description": f"Quantinuum Syntax Checker on Azure Quantum",
                 "basis_gates": QUANTINUUM_BASIS_GATES,
                 "memory": False,
-                "n_qubits": 10,
+                "n_qubits": self.n_qubits,
                 "conditional": False,
                 "max_shots": None,
                 "max_experiments": 1,
@@ -147,14 +149,14 @@ class QuantinuumAPIValidatorBackend(QuantinuumBackend):
             }
         )
         configuration: BackendConfiguration = kwargs.pop("configuration", default_config)
-        logger.info(f"Initializing {self._provider_name}APIValidatorBackend")
+        logger.info(f"Initializing {self._provider_name}SyntaxCheckerBackend")
         super().__init__(configuration=configuration,
                          provider=provider,
                          provider_id=self._provider_id,
                          **kwargs)
 
 
-class QuantinuumSimulatorBackend(QuantinuumBackend):
+class QuantinuumEmulatorBackend(QuantinuumBackend):
     backend_names = (
         "quantinuum.hqs-lt-s1-sim",
         "quantinuum.hqs-lt-s2-sim"
@@ -172,6 +174,8 @@ class QuantinuumSimulatorBackend(QuantinuumBackend):
             self._provider_id = HONEYWELL_PROVIDER_ID
             self._provider_name = HONEYWELL_PROVIDER_NAME
 
+        self.n_qubits = 20 if name.contains("s1") else 12
+
         configuration: BackendConfiguration = kwargs.pop("configuration", None)
         default_config = BackendConfiguration.from_dict(
             {
@@ -180,10 +184,10 @@ class QuantinuumSimulatorBackend(QuantinuumBackend):
                 "simulator": True,
                 "local": False,
                 "coupling_map": None,
-                "description": f"Quantinuum (formerly Honeywell) simulator on Azure Quantum",
+                "description": f"Quantinuum emulator on Azure Quantum",
                 "basis_gates": QUANTINUUM_BASIS_GATES,
                 "memory": False,
-                "n_qubits": 10,
+                "n_qubits": self.n_qubits,
                 "conditional": False,
                 "max_shots": None,
                 "max_experiments": 1,
@@ -193,7 +197,7 @@ class QuantinuumSimulatorBackend(QuantinuumBackend):
             }
         )
         configuration: BackendConfiguration = kwargs.pop("configuration", default_config)
-        logger.info(f"Initializing {self._provider_name}APIValidatorBackend")
+        logger.info(f"Initializing {self._provider_name}EmulatorBackend")
         super().__init__(configuration=configuration,
                          provider=provider,
                          provider_id=self._provider_id,
@@ -218,6 +222,8 @@ class QuantinuumQPUBackend(QuantinuumBackend):
             self._provider_id = HONEYWELL_PROVIDER_ID
             self._provider_name = HONEYWELL_PROVIDER_NAME
 
+        self.n_qubits = 20 if name.contains("s1") else 12
+
         default_config = BackendConfiguration.from_dict(
             {
                 "backend_name": name,
@@ -225,10 +231,10 @@ class QuantinuumQPUBackend(QuantinuumBackend):
                 "simulator": False,
                 "local": False,
                 "coupling_map": None,
-                "description": f"Quantinuum (formerly Honeywell) QPU on Azure Quantum",
+                "description": f"Quantinuum QPU on Azure Quantum",
                 "basis_gates": QUANTINUUM_BASIS_GATES,
                 "memory": False,
-                "n_qubits": 10,
+                "n_qubits": self.n_qubits,
                 "conditional": False,
                 "max_shots": 10000,
                 "max_experiments": 1,
