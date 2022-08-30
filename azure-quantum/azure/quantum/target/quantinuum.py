@@ -17,6 +17,10 @@ class Quantinuum(Target):
         "quantinuum.hqs-lt-s1",
         "quantinuum.hqs-lt-s1-apival",
         "quantinuum.hqs-lt-s1-sim",
+        "quantinuum.hqs-lt-s2",
+        "quantinuum.hqs-lt-s2-apival",
+        "quantinuum.hqs-lt-s2-sim",
+        "quantinuum.hqs-lt",
     )
 
     def __init__(
@@ -55,7 +59,7 @@ class Quantinuum(Target):
         input_params: Dict[str, Any] = None,
         **kwargs
     ) -> Job:
-        """Submit a Quantinuum (formerly Honeywell) program (OpenQASM 2.0 format)
+        """Submit a Quantinuum program (OpenQASM 2.0 format)
 
         :param circuit: Quantum circuit in Quantinuum OpenQASM 2.0 format
         :type circuit: str
@@ -122,9 +126,9 @@ class Quantinuum(Target):
 
             except ImportError:
                 raise ImportError(
-                    "Missing dependency qiskit. Please run `pip install azure-quantum[qiskit]` " \
-"to estimate the circuit cost. Alternatively, specify the number of one-qubit and two-qubit " \
-"gates in the method input arguments.")
+                    """Missing dependency qiskit. Please run `pip install azure-quantum[qiskit]` 
+                       to estimate the circuit cost. Alternatively, specify the number of one-qubit and two-qubit
+                       gates in the method input arguments.""")
 
             else:
                 from qiskit.dagcircuit.dagnode import DAGOpNode
