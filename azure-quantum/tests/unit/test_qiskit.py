@@ -21,6 +21,7 @@ from qiskit_ionq import GPIGate, GPI2Gate, MSGate
 
 from azure.quantum.job.job import Job
 from azure.quantum.qiskit import AzureQuantumProvider
+from azure.quantum.qiskit.backends import QuantinuumSimulatorBackend
 from azure.quantum.qiskit.backends.honeywell import HONEYWELL_PROVIDER_ID
 
 from common import QuantumTestBase, ZERO_UID
@@ -473,10 +474,25 @@ class TestQiskit(QuantumTestBase):
         self._test_qiskit_submit_honeywell(circuit=[circuit], provider_id="quantinuum")
         
     @pytest.mark.quantinuum
-    @pytest.mark.live_test
-    def test_qir_submit_qiskit_to_quantinuum(self):
+    def test_translate_quantinuum_qir(self):
         circuit = self._3_qubit_ghz()
-        self._test_qiskit_submit_honeywell(circuit=circuit, provider_id="quantinuum", input_data_format="qir.v1")
+        workspace = self.create_workspace()
+        provider = AzureQuantumProvider(workspace=workspace)
+        backend = QuantinuumSimulatorBackend("quantinuum.sim.h1-2sc-preview", provider)
+
+        input_format = backend.configuration().azure["input_data_format"]
+        input_params = {
+            "targetCapability": "AdaptiveExecution"
+        }
+
+        (payload, dataformat, params) = backend._translate_input(circuit, input_format, input_params)
+
+        assert isinstance(payload, bytes)
+        assert dataformat == "qir.v1"
+        assert "entryPoint" in params
+        assert "arguments" in params
+        assert "targetCapability" in params
+
 
     @pytest.mark.quantinuum
     @pytest.mark.live_test
