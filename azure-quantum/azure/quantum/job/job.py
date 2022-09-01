@@ -9,7 +9,7 @@ import json
 from typing import TYPE_CHECKING
 
 from azure.quantum._client.models import JobDetails
-from azure.quantum.job.base_job import BaseJob, DEFAULT_TIMEOUT
+from azure.quantum.job.base_job import BaseJob, ContentType, DEFAULT_TIMEOUT
 from azure.quantum.job.filtered_job import FilteredJob
 
 __all__ = ["Job"]
@@ -96,15 +96,14 @@ class Job(BaseJob, FilteredJob):
                 else poll_wait * 1.5
             )
 
-    def get_results(self, timeout_secs: float = DEFAULT_TIMEOUT) -> dict:
+    def get_results(self, timeout_secs: float = DEFAULT_TIMEOUT):
         """Get job results by downloading the results blob from the
         storage container linked via the workspace.
 
         :param timeout_secs: Timeout in seconds, defaults to 300
         :type timeout_secs: int
         :raises RuntimeError: Raises RuntimeError if job execution failed
-        :return: Results dictionary with histogram shots
-        :rtype: dict
+        :return: Results dictionary with histogram shots, or raw results if not a json object.
         """
         if self.results is not None:
             return self.results
@@ -120,8 +119,9 @@ class Job(BaseJob, FilteredJob):
             )
 
         payload = self.download_data(self.details.output_data_uri)
-        payload = payload.decode("utf8")
         try:
+            payload = payload.decode("utf8")
             return json.loads(payload)
-        except json.JSONDecodeError:
+        except:
+            # If errors decoding the data, return the raw payload:
             return payload

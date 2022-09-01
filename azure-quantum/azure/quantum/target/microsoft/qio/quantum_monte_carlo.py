@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 class QuantumMonteCarlo(Solver):
     target_names = (
-        "microsoft.qmc.cpu",
+        "microsoft.qmc.cpu"
     )
     def __init__(
         self,
@@ -68,3 +68,9 @@ class QuantumMonteCarlo(Solver):
         self.set_one_param("transverse_field_stop", transverse_field_stop)
         self.set_one_param("beta_start", beta_start)
         self.set_one_param("restarts", restarts)
+
+    def supports_grouped_terms(self):
+        return True
+    
+    def supports_protobuf(self):
+        return True

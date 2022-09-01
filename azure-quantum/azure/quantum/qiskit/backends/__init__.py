@@ -6,6 +6,7 @@
 from azure.quantum.qiskit.backends.ionq import (
     IonQBackend,
     IonQQPUBackend,
+    IonQAriaBackend,
     IonQSimulatorBackend
 )
 
@@ -21,6 +22,17 @@ from azure.quantum.qiskit.backends.quantinuum import (
     QuantinuumQPUBackend,
     QuantinuumAPIValidatorBackend,
     QuantinuumSimulatorBackend
+)
+
+from azure.quantum.qiskit.backends.rigetti import (
+    RigettiBackend,
+    RigettiQPUBackend,
+    RigettiSimulatorBackend
+)
+
+from azure.quantum.qiskit.backends.qci import (
+    QCIBackend,
+    QCISimulatorBackend,
 )
 
 # Default targets to use when there is no target class

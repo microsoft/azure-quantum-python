@@ -34,6 +34,10 @@ class Target(SyncTarget, abc.ABC):
         :rtype: Job
         """
         input_params = input_params or {}
+        input_data_format = kwargs.pop("input_data_format", self.input_data_format)
+        output_data_format = kwargs.pop("output_data_format", self.output_data_format)
+        content_type = kwargs.pop("content_type", self.content_type)
+        encoding = kwargs.pop("encoding", self.encoding)
         blob = self._encode_input_data(data=input_data)
 
         return await Job.from_input_data(
@@ -41,11 +45,11 @@ class Target(SyncTarget, abc.ABC):
             name=name,
             target=self.name,
             input_data=blob,
-            content_type=self.content_type,
-            encoding=self.encoding,
+            content_type=content_type,
+            encoding=encoding,
             provider_id=self.provider_id,
-            input_data_format=self.input_data_format,
-            output_data_format=self.output_data_format,
+            input_data_format=input_data_format,
+            output_data_format=output_data_format,
             input_params=input_params,
             **kwargs
         )

@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 class Tabu(Solver):
     target_names = (
         "microsoft.tabu.cpu",
-        "microsoft.tabu-parameterfree.cpu",
+        "microsoft.tabu-parameterfree.cpu"
     )
     def __init__(
         self,
@@ -48,8 +48,9 @@ class Tabu(Solver):
         :param seed:
             specifies a random seed value.
         """
-        if sweeps is None and tabu_tenure is None and restarts is None:
-            name = "microsoft.tabu-parameterfree.cpu"
+        param_free = sweeps is None and tabu_tenure is None and restarts is None
+        if param_free:
+            name = name.replace(".tabu.", ".tabu-parameterfree.")
 
         super().__init__(
             workspace=workspace,
@@ -65,3 +66,9 @@ class Tabu(Solver):
         self.set_one_param("timeout", timeout)
         self.set_one_param("seed", seed)
         self.set_one_param("restarts", restarts)
+
+    def supports_grouped_terms(self):
+        return True
+    
+    def supports_protobuf(self):
+        return True

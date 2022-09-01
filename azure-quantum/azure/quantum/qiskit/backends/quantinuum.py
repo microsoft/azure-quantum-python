@@ -81,13 +81,10 @@ class QuantinuumBackend(AzureBackend):
 
     def _translate_input(self, circuit, data_format, input_params):
         """ Translates the input values to the format expected by the AzureBackend. """
-        if input_params["targetCapability"] != "openqasm":
-            data_format = "qir.v1"
-
         if data_format == "honeywell.openqasm.v1":
             return (circuit.qasm(), data_format, input_params)
         else:
-            return super()._translate_input(circuit, data_format, input_params)
+            super()._translate_input(circuit, data_format, input_params)
         
 
     def estimate_cost(self, circuit: QuantumCircuit, shots: int = None, count: int = None):
@@ -97,13 +94,12 @@ class QuantinuumBackend(AzureBackend):
         :type circuit: QuantumCircuit
         :param shots: Shot count
         :type shots: int
-        :param count: Shot count (deprecated)
+        :param count: Shot count (alternative to 'shots')
         :type count: int
         """
         if count is not None:
             shots = count
-            warnings.warn(
-                "Input parameter 'count' has been deprecated. Please use 'shots' instead.")
+
         if shots is None:
             raise ValueError("Missing input argument 'shots'.")
 
@@ -143,7 +139,7 @@ class QuantinuumAPIValidatorBackend(QuantinuumBackend):
                 "memory": False,
                 "n_qubits": 10,
                 "conditional": False,
-                "max_shots": 1,
+                "max_shots": None,
                 "max_experiments": 1,
                 "open_pulse": False,
                 "gates": [{"name": "TODO", "parameters": [], "qasm_def": "TODO"}],
@@ -189,7 +185,7 @@ class QuantinuumSimulatorBackend(QuantinuumBackend):
                 "memory": False,
                 "n_qubits": 10,
                 "conditional": False,
-                "max_shots": 1,
+                "max_shots": None,
                 "max_experiments": 1,
                 "open_pulse": False,
                 "gates": [{"name": "TODO", "parameters": [], "qasm_def": "TODO"}],

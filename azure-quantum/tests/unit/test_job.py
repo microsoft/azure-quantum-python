@@ -25,7 +25,7 @@ SOLVER_TYPES = [
     functools.partial(microsoft.SimulatedAnnealing, beta_start=0),
     functools.partial(microsoft.ParallelTempering, sweeps=100),
     functools.partial(microsoft.Tabu, sweeps=100),
-    functools.partial(microsoft.QuantumMonteCarlo, trotter_number=1),
+    functools.partial(microsoft.QuantumMonteCarlo, trotter_number=4),
     functools.partial(microsoft.PopulationAnnealing, sweeps=200),
     functools.partial(microsoft.SubstochasticMonteCarlo, step_limit=280),
     functools.partial(oneqbit.TabuSearch, improvement_cutoff=10),
@@ -100,8 +100,7 @@ class TestJob(QuantumTestBase):
         solver_name = "SimulatedAnnealing"
         self._test_job_submit(solver_name, solver_type)
         self._test_job_filter(solver_type)
-        with self.assertRaises(ValueError):
-            self._test_job_submit(solver_name, solver_type, test_grouped=True)
+        self._test_job_submit(solver_name, solver_type, test_grouped=True)
 
     @pytest.mark.live_test
     @pytest.mark.qio
@@ -109,8 +108,7 @@ class TestJob(QuantumTestBase):
         solver_type = functools.partial(microsoft.ParallelTempering, sweeps=100)
         solver_name = "ParallelTempering"
         self._test_job_submit(solver_name, solver_type)
-        with self.assertRaises(ValueError):
-            self._test_job_submit(solver_name, solver_type, test_grouped=True)
+        self._test_job_submit(solver_name, solver_type, test_grouped=True)
 
     @pytest.mark.live_test
     @pytest.mark.qio
@@ -118,17 +116,15 @@ class TestJob(QuantumTestBase):
         solver_type = functools.partial(microsoft.Tabu, sweeps=100)
         solver_name = "Tabu"
         self._test_job_submit(solver_name, solver_type)
-        with self.assertRaises(ValueError):
-            self._test_job_submit(solver_name, solver_type, test_grouped=True)
+        self._test_job_submit(solver_name, solver_type, test_grouped=True)
 
     @pytest.mark.live_test
     @pytest.mark.qio
     def test_job_submit_microsoft_quantum_monte_carlo(self):
-        solver_type = functools.partial(microsoft.QuantumMonteCarlo, trotter_number=1)
+        solver_type = functools.partial(microsoft.QuantumMonteCarlo, trotter_number=4)
         solver_name = "QuantumMonteCarlo"
         self._test_job_submit(solver_name, solver_type)
-        with self.assertRaises(ValueError):
-            self._test_job_submit(solver_name, solver_type, test_grouped=True)
+        self._test_job_submit(solver_name, solver_type, test_grouped=True)
 
     @pytest.mark.live_test
     @pytest.mark.qio
@@ -136,8 +132,7 @@ class TestJob(QuantumTestBase):
         solver_type = functools.partial(microsoft.PopulationAnnealing, sweeps=200)
         solver_name = "PopulationAnnealing"
         self._test_job_submit(solver_name, solver_type)
-        # renable after schema change is deployed
-        # self._test_job_submit(solver_name, solver_type, test_grouped=True)
+        self._test_job_submit(solver_name, solver_type, test_grouped=True)
 
     @pytest.mark.live_test
     @pytest.mark.qio
@@ -145,8 +140,7 @@ class TestJob(QuantumTestBase):
         solver_type = functools.partial(microsoft.SubstochasticMonteCarlo, step_limit=280)
         solver_name = "SubstochasticMonteCarlo"
         self._test_job_submit(solver_name, solver_type)
-        # renable after schema change is deployed
-        # self._test_job_submit(solver_name, solver_type, test_grouped=True)
+        self._test_job_submit(solver_name, solver_type, test_grouped=True)
 
     @pytest.mark.live_test
     @pytest.mark.qio
@@ -292,19 +286,19 @@ class TestJob(QuantumTestBase):
             self.assertEqual(False, job.matches_filter(name_match="Test1"))
             self.assertEqual(True, job.matches_filter(name_match="Test-"))
             self.assertEqual(True, job.matches_filter(name_match="Test.+"))
-            # There is a few hundred ms difference in time between local machine
-            # and server, so add 2 seconds to take that into account
-            after_time = datetime.now() + timedelta(seconds=2)
-            # Disabling this assert because we shouldn't use datatime.now() as it
-            # won't work with recordings that were made at a different date
-            # self.assertEqual(False, job.matches_filter(created_after=after_time))
+            
+            # don't run these on playback mode, as the recordings might expire
+            # since we're checking against datetime.now()
+            if not self.is_playback:
+                # Make sure the job creation time is before tomorrow:
+                after_time = datetime.now() + timedelta(days=1)
+                self.assertEqual(False, job.matches_filter(created_after=after_time))
 
-            before_time = datetime.now() - timedelta(days=100)
-            self.assertEqual(True, job.matches_filter(created_after=before_time))
-
-            # test behaviour of datetime.date object
-            before_date = date.today() - timedelta(days=100)
-            self.assertEqual(True, job.matches_filter(created_after=before_date))
+                # Make sure the job creation time is after yesterday:
+                before_time = datetime.now() - timedelta(days=1)
+                self.assertEqual(True, job.matches_filter(created_after=before_time))
+                before_date = date.today() - timedelta(days=1)
+                self.assertEqual(True, job.matches_filter(created_after=before_date))
 
     def _test_job_submit(
         self,
@@ -390,6 +384,45 @@ class TestJob(QuantumTestBase):
             problem_as_json = job.download_data(job.details.input_data_uri)
             downloaded_problem = Problem.deserialize(input_problem=problem_as_json)
 
+            actual = downloaded_problem.serialize()
+            expected = problem.serialize()
+            self.assertEqual(expected, actual)
+
+    @pytest.mark.live_test
+    @pytest.mark.qio
+    def test_job_attachments(self):
+        workspace = self.create_workspace()
+        solver = microsoft.SimulatedAnnealing(workspace)
+
+        with unittest.mock.patch.object(
+            Job,
+            self.mock_create_job_id_name,
+            return_value=self.get_test_job_id(),
+        ):
+            expected_1 = "Some data 1".encode('utf-8')
+            expected_2 = "Some other random data 2".encode('utf-8')
+            problem = self.create_problem(name="test_job_attachments")
+
+            job = solver.submit(problem)
+
+            url1 = job.upload_attachment("test-1", expected_1)
+            self.assertTrue(job.id in url1)
+            self.assertTrue("test-1" in url1)
+
+            url2 = job.upload_attachment("test-2", expected_2)
+            self.assertTrue(job.id in url2)
+            self.assertTrue("test-2" in url2)
+
+            actual_1 = job.download_attachment("test-1")
+            self.assertEqual(expected_1, actual_1)
+
+            actual_2 = job.download_attachment("test-2")
+            self.assertEqual(expected_2, actual_2)
+
+            # Check if download_attachment can successfully download other blobs 
+            # automatically created
+            problem_as_json = job.download_attachment("inputData")
+            downloaded_problem = Problem.deserialize(input_problem=problem_as_json)
             actual = downloaded_problem.serialize()
             expected = problem.serialize()
             self.assertEqual(expected, actual)

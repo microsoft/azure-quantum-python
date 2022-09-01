@@ -5,13 +5,13 @@
 import logging
 
 from urllib.parse import urlparse
-from typing import Any, Dict, TYPE_CHECKING
+from typing import Any, Dict, Optional, TYPE_CHECKING
 from urllib.parse import urlparse
 from azure.storage.blob import BlobClient
 
 from azure.quantum.aio.storage import upload_blob, download_blob, ContainerClient
 from azure.quantum._client.models import JobDetails
-from azure.quantum.job.job import BaseJob as SyncBaseJob
+from azure.quantum.job.job import BaseJob as SyncBaseJob, ContentType
 
 
 if TYPE_CHECKING:
@@ -199,7 +199,7 @@ class BaseJob(SyncBaseJob):
     async def upload_input_data(
         container_uri: str,
         input_data: bytes,
-        content_type: str,
+        content_type: Optional[ContentType] = ContentType.json,
         blob_name: str = "inputData",
         encoding: str = "",
         return_sas_token: bool = False
@@ -252,7 +252,7 @@ class BaseJob(SyncBaseJob):
             blob_client = BlobClient.from_blob_url(
                 blob_uri
             )
-            blob_uri = self.workspace._get_linked_storage_sas_uri(
+            blob_uri = await self.workspace._get_linked_storage_sas_uri(
                 blob_client.container_name, blob_client.blob_name
             )
             payload = await download_blob(blob_uri)
@@ -262,3 +262,65 @@ class BaseJob(SyncBaseJob):
             payload = await download_blob(blob_uri)
 
         return payload
+
+    async def upload_attachment(
+        self,
+        blob_name: str,
+        data: bytes,
+        container_uri: str = None,
+        **kwargs
+    ) -> str:
+        """Uploads an attachment to the job's container file. Attachment's are identified by name.
+        Uploading to an existing attachment overrides its previous content.
+
+        :param name: Attachment name
+        :type name: str
+        :param data: Attachment data in binary format
+        :type input_data: bytes
+        :param container_uri: Container URI, defaults to the job's linked container.
+        :type container_uri: str, Optional
+
+        :return: Uploaded data URI
+        :rtype: str
+        """
+
+        # Use Job's default container if not specified
+        if container_uri is None:
+            container_uri = await self.workspace.get_container_uri(job_id=self.id)
+
+        uploaded_blob_uri = await self.upload_input_data(
+            container_uri = container_uri,
+            blob_name = blob_name,
+            input_data = data,
+            **kwargs
+        )
+        return uploaded_blob_uri
+
+    async def download_attachment(
+        self,
+        name: str,
+        container_uri: str = None
+    ):
+        """ Downloads an attachment from job's container in Azure Storage. Attachments are blobs of data
+            created as part of the Job's execution, or they can be created by uploading directly from Python
+            using the upload_attachment method.
+            
+        :param name: Attachment name
+        :type name: str
+        :param container_uri: Container URI, defaults to the job's linked container.
+        :type container_uri: str, Optional
+
+        :return: Attachment data
+        :rtype: bytes
+        """
+        # Use Job's default container if not specified
+        if container_uri is None:
+            container_uri = await self.workspace.get_container_uri(job_id=self.id)
+        
+        container_client = ContainerClient.from_container_url(container_uri)
+        blob_client = container_client.get_blob_client(name)
+        response = await (await blob_client.download_blob()).readall()
+        await blob_client.close()
+
+        return response
+

@@ -13,9 +13,8 @@ logger = logging.getLogger(__name__)
 
 class ParallelTempering(Solver):
     target_names = (
-        "microsoft.paralleltempering.fpga",
         "microsoft.paralleltempering.cpu",
-        "microsoft.paralleltempering-parameterfree.cpu",
+        "microsoft.paralleltempering-parameterfree.cpu"
     )
     def __init__(
         self,
@@ -51,10 +50,8 @@ class ParallelTempering(Solver):
         """
         param_free = sweeps is None and replicas is None and all_betas is None
         platform = HardwarePlatform.CPU
-        if platform == HardwarePlatform.FPGA:
-            name = "microsoft.paralleltempering.fpga"
-        elif param_free:
-            name = "microsoft.paralleltempering-parameterfree.cpu"
+        if param_free:
+            name = name.replace(".paralleltempering.", ".paralleltempering-parameterfree.")
  
         super().__init__(
             workspace=workspace,
@@ -81,3 +78,9 @@ class ParallelTempering(Solver):
                     "Parameter 'replicas' must equal the"
                     + "length of the 'all_betas' parameters."
                 )
+
+    def supports_grouped_terms(self):
+        return True
+    
+    def supports_protobuf(self):
+        return True

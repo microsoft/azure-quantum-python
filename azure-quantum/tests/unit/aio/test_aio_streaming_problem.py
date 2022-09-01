@@ -84,26 +84,19 @@ class TestStreamingProblem(QuantumTestBase):
         return default
 
     def test_streaming_problem_small_chunks(self):
-        self.get_async_result(self.__test_upload_problem(4, 1, 1, False))
+        self.get_async_result(self.__test_upload_problem(4, 1, 1))
 
     def test_streaming_problem_large_chunks(self):
-        self.get_async_result(self.__test_upload_problem(4, 1000, 10e6, False))
-
-    def test_streaming_problem_small_chunks_compressed(self):
-        self.get_async_result(self.__test_upload_problem(4, 1, 1, True))
-
-    def test_streaming_problem_large_chunks_compressed(self):
-        self.get_async_result(self.__test_upload_problem(4, 1000, 10e6, True))
+        self.get_async_result(self.__test_upload_problem(4, 1000, 10e6))
 
     def test_streaming_problem_pubo(self):
-        self.get_async_result(self.__test_upload_problem(4, 1, 1, False, ProblemType.pubo))
+        self.get_async_result(self.__test_upload_problem(4, 1, 1, ProblemType.pubo))
 
     def test_streaming_problem_initial_terms(self):
         self.get_async_result( self.__test_upload_problem(
             4,
             1,
             1,
-            False,
             initial_terms=[
                 Term(w=10, indices=[0, 1, 2]),
                 Term(w=20, indices=[1, 2, 3]),
@@ -115,7 +108,5 @@ class TestStreamingProblem(QuantumTestBase):
     def check_all(self):
         self.test_streaming_problem_small_chunks()
         self.test_streaming_problem_large_chunks()
-        self.test_streaming_problem_small_chunks_compressed()
-        self.test_streaming_problem_large_chunks_compressed()
         self.test_streaming_problem_pubo()
         self.test_streaming_problem_initial_terms()
