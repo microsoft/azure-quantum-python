@@ -9,6 +9,7 @@ from qiskit.visualization import plot_histogram
 from qiskit.tools.monitor import job_monitor
 
 from azure.quantum.qiskit import AzureQuantumProvider
+from azure.quantum.qiskit.backends import QuantinuumSimulatorBackend
 
 
 # Create a Qiskit's Provider and Backend:
@@ -18,7 +19,7 @@ provider = AzureQuantumProvider(
     name=os.environ["AZURE_QUANTUM_WORKSPACE_NAME"],
     location=os.environ["AZURE_QUANTUM_WORKSPACE_LOCATION"]
 )
-backend = provider.get_backend("honeywell.hqs-lt-s2-apival")
+backend = QuantinuumSimulatorBackend("quantinuum.sim.h1-2sc-preview", provider)
 
 circuit = QuantumCircuit(3, 3, name="my-circuit")
 circuit.h(0)
@@ -26,7 +27,7 @@ circuit.cx(0, 1)
 circuit.cx(1, 2)
 circuit.measure([0,1,2], [0, 1, 2])
 
-job = backend.run(circuit, input_data_format="qir.v1")
+job = backend.run(circuit, targetCapability="AdaptiveExecution")
 
 # Print job, wait for results:
 print(job.id())

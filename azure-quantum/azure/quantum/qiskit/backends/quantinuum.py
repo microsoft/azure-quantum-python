@@ -81,10 +81,11 @@ class QuantinuumBackend(AzureBackend):
 
     def _translate_input(self, circuit, data_format, input_params):
         """ Translates the input values to the format expected by the AzureBackend. """
-        if data_format == "honeywell.openqasm.v1":
+        if input_params["targetCapability"] == "openqasm":
             return (circuit.qasm(), data_format, input_params)
         else:
-            super()._translate_input(circuit, data_format, input_params)
+            # Not using openqasm, assume qir then:
+            return super()._translate_input(circuit, "qir.v1", input_params)
         
 
     def estimate_cost(self, circuit: QuantumCircuit, shots: int = None, count: int = None):
