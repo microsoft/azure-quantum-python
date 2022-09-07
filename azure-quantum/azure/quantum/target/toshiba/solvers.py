@@ -128,7 +128,3 @@ class SimulatedBifurcationMachine(Solver):
         self.set_one_param("algo", algo)
         self.set_one_param("auto", auto)
 
-    def supports_protobuf(self):
-        return True
-
-

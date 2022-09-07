@@ -52,7 +52,8 @@ class RangeSchedule:
 
 proto_valid_solver_names = [
     "PopulationAnnealing",
-    "SubstochasticMonteCarlo"
+    "SubstochasticMonteCarlo",
+    "toshiba.sbm.ising"
 ]
 
 class Solver(Target):
@@ -241,7 +242,7 @@ class Solver(Target):
                 raise ValueError(
                     f"Solver `{self.name} type is not compatible "
                     f"for serialization with protobuf; "
-                    f"Try PopulationAnnealing or SubstochasticMonteCarlo."
+                    f"Try PopulationAnnealing, SubstochasticMonteCarlo or Toshiba's SimulatedBifurcationMachine."
                 )
 
     def supports_grouped_terms(self):
