@@ -433,6 +433,7 @@ class CustomRecordingProcessor(RecordingProcessor):
                 if body:
                     body = self.regex_replace_all(body)
                     response["body"]["string"] = body
+                    response["headers"]["content-length"] ="%s" % len(body)
 
         return response
 
