@@ -21,6 +21,7 @@ from qiskit_ionq import GPIGate, GPI2Gate, MSGate
 
 from azure.quantum.job.job import Job
 from azure.quantum.qiskit import AzureQuantumProvider
+from azure.quantum.qiskit.backends import QuantinuumSimulatorBackend
 from azure.quantum.qiskit.backends.honeywell import HONEYWELL_PROVIDER_ID
 
 from common import QuantumTestBase, ZERO_UID
@@ -381,17 +382,17 @@ class TestQiskit(QuantumTestBase):
 
     @pytest.mark.honeywell
     @pytest.mark.live_test
-    def test_plugins_submit_qiskit_to_honeywell(self, provider_id="honeywell"):
+    def test_plugins_submit_qiskit_to_honeywell(self):
         circuit = self._3_qubit_ghz()
-        self._test_qiskit_submit_honeywell(circuit=circuit, shots=None, provider_id=provider_id)
+        self._test_qiskit_submit_honeywell(circuit=circuit, provider_id="honeywell")
 
     @pytest.mark.honeywell
     @pytest.mark.live_test
-    def test_plugins_submit_qiskit_circuit_as_list_to_honeywell(self, provider_id="honeywell"):
+    def test_plugins_submit_qiskit_circuit_as_list_to_honeywell(self):
         circuit = self._3_qubit_ghz()
-        self._test_qiskit_submit_honeywell(circuit=[circuit], shots=None, provider_id=provider_id)
+        self._test_qiskit_submit_honeywell(circuit=[circuit], provider_id="honeywell")
 
-    @pytest.mark.ionq
+    @pytest.mark.honeywell
     @pytest.mark.live_test
     def test_plugins_submit_qiskit_multi_circuit_experiment_to_honeywell(self, provider_id="honeywell"):
         circuit = self._3_qubit_ghz()
@@ -409,7 +410,7 @@ class TestQiskit(QuantumTestBase):
             )
         assert str(exc.value) == "Multi-experiment jobs are not supported!"
 
-    def _test_qiskit_submit_honeywell(self, circuit, shots, provider_id="honeywell"):
+    def _test_qiskit_submit_honeywell(self, circuit, provider_id="honeywell", **kwargs):
 
         with unittest.mock.patch.object(
             Job,
@@ -419,6 +420,7 @@ class TestQiskit(QuantumTestBase):
             workspace = self.create_workspace()
             provider = AzureQuantumProvider(workspace=workspace)
             backend = provider.get_backend(f"{provider_id}.hqs-lt-s1-apival")
+            expected_data_format = kwargs["input_data_format"] if "input_data_format" in kwargs else "honeywell.openqasm.v1"
             assert f"{provider_id}.hqs-lt-s1-apival" in backend.backend_names
             assert backend.backend_names[0] in [t.name for t in workspace.get_targets(provider_id=provider_id)]
 
@@ -429,21 +431,15 @@ class TestQiskit(QuantumTestBase):
                 num_qubits = circuit.num_qubits
                 circuit.metadata = { "some": "data" }
 
-            if shots is None:
-                qiskit_job = backend.run(
-                    circuit=circuit
-                )
-
-            else:
-                qiskit_job = backend.run(
-                    circuit=circuit,
-                    shots=shots
-                )
+            qiskit_job = backend.run(
+                circuit=circuit,
+                **kwargs
+            )
 
             # Check job metadata:
             assert qiskit_job._azure_job.details.target == f"{provider_id}.hqs-lt-s1-apival"
             assert qiskit_job._azure_job.details.provider_id == provider_id
-            assert qiskit_job._azure_job.details.input_data_format == "honeywell.openqasm.v1"
+            assert qiskit_job._azure_job.details.input_data_format == expected_data_format
             assert qiskit_job._azure_job.details.output_data_format == "honeywell.quantum-results.v1"
             assert "count" in qiskit_job._azure_job.details.input_params
             assert "qiskit" in qiskit_job._azure_job.details.metadata
@@ -468,12 +464,35 @@ class TestQiskit(QuantumTestBase):
     @pytest.mark.quantinuum
     @pytest.mark.live_test
     def test_plugins_submit_qiskit_to_quantinuum(self):
-        self.test_plugins_submit_qiskit_to_honeywell(provider_id="quantinuum")
+        circuit = self._3_qubit_ghz()
+        self._test_qiskit_submit_honeywell(circuit=circuit, provider_id="quantinuum")
 
     @pytest.mark.quantinuum
     @pytest.mark.live_test
     def test_plugins_submit_qiskit_circuit_as_list_to_quantinuum(self):
-        self.test_plugins_submit_qiskit_circuit_as_list_to_honeywell(provider_id="quantinuum")
+        circuit = self._3_qubit_ghz()
+        self._test_qiskit_submit_honeywell(circuit=[circuit], provider_id="quantinuum")
+        
+    @pytest.mark.quantinuum
+    def test_translate_quantinuum_qir(self):
+        circuit = self._3_qubit_ghz()
+        workspace = self.create_workspace()
+        provider = AzureQuantumProvider(workspace=workspace)
+        backend = QuantinuumSimulatorBackend("quantinuum.sim.h1-2sc-preview", provider)
+
+        input_format = backend.configuration().azure["input_data_format"]
+        input_params = {
+            "targetCapability": "AdaptiveExecution"
+        }
+
+        (payload, dataformat, params) = backend._translate_input(circuit, input_format, input_params)
+
+        assert isinstance(payload, bytes)
+        assert dataformat == "qir.v1"
+        assert "entryPoint" in params
+        assert "arguments" in params
+        assert "targetCapability" in params
+
 
     @pytest.mark.quantinuum
     @pytest.mark.live_test
