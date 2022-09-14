@@ -81,7 +81,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.11.0 Python/3.9.13 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Wed, 14 Sep 2022 19:16:11 GMT
+      - Wed, 14 Sep 2022 19:26:29 GMT
       x-ms-version:
       - '2021-04-10'
     method: GET
@@ -89,7 +89,7 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerNotFound</Code><Message>The
-        specified container does not exist.\nRequestId:fb6a31de-601e-0034-436e-c881bf000000\nTime:2022-09-14T19:16:11.1913129Z</Message></Error>"
+        specified container does not exist.\nRequestId:58d13a3f-401e-0051-016f-c82ffb000000\nTime:2022-09-14T19:26:30.1570163Z</Message></Error>"
     headers:
       content-length:
       - '223'
@@ -114,7 +114,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.11.0 Python/3.9.13 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Wed, 14 Sep 2022 19:16:11 GMT
+      - Wed, 14 Sep 2022 19:26:30 GMT
       x-ms-version:
       - '2021-04-10'
     method: PUT
@@ -142,7 +142,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.11.0 Python/3.9.13 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Wed, 14 Sep 2022 19:16:11 GMT
+      - Wed, 14 Sep 2022 19:26:30 GMT
       x-ms-version:
       - '2021-04-10'
     method: GET
@@ -163,12 +163,7 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: b'OPENQASM 2.0;\n        include "qelib1.inc";\n\n        qreg q[3];\n        creg
-      c0[1];\n        creg c1[1];\n        creg c2[1];\n\n        h q[0];\n        cx
-      q[0], q[1];\n        x q[2];\n        h q[2];\n        cx q[2], q[0];\n        h
-      q[2];\n        measure q[0] -> c0[0];\n        if (c0==1) x q[1];\n        measure
-      q[2] -> c1[0];\n        if (c1==1) z q[1];\n        h q[1];\n        measure
-      q[1] -> c2[0];\n        '
+    body: b'\x1f\x8b\x08\x00\xe5*"c\x02\xffU\x8c\xc1\n\xc20\x10D\x7f\xa5\xec\xb9\x91d[\x85\xfa\x15\x82\xdel\x91\x98F(\x98\xa64[AJ\xfe\xdd%=\xd4\x9cvv\xde\xcc\xac\xe0,\xe9^\x93\x86s\xb1\xc2\xa8\x9de\x017\x1bH\\h0\xee\xea\xdf\x1f;\x8b\x16P"\xcaF\xd5B!\x9e\xb0i\x01bY\x80\xf1\x81\x1e\xafe44\xf81Mp:l\x1a\xd4A\x02g\xe8;\xa5\xd1iy\xfa\xf4\xdb\xd9\x056\xee+\x18>\xa2bo\xe8\x93\xa3\xcaBv\xbc\xbb\x91\xe3\x0e0\x03M\x06\xd4\x0ep\x07U\xd6\x10uF\xfe*9\xc0.v1\xfe\x00\xe4\x89\x0bW\x16\x01\x00\x00'
     headers:
       Accept:
       - application/xml
@@ -177,7 +172,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '406'
+      - '170'
       Content-Type:
       - application/octet-stream
       User-Agent:
@@ -185,7 +180,7 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-date:
-      - Wed, 14 Sep 2022 19:16:11 GMT
+      - Wed, 14 Sep 2022 19:26:30 GMT
       x-ms-version:
       - '2021-04-10'
     method: PUT
@@ -202,11 +197,17 @@ interactions:
       code: 201
       message: Created
 - request:
-    body: 'b''{"id": "00000000-0000-0000-0000-000000000000", "name": "honeywell-job",
+    body: 'b''{"id": "00000000-0000-0000-0000-000000000000", "name": "Test-PticmSolver-\\"20210101-000000\\"",
       "containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
       "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData",
-      "inputDataFormat": "honeywell.openqasm.v1", "inputParams": {}, "providerId":
-      "honeywell", "target": "honeywell.hqs-lt-s1-apival", "outputDataFormat": "honeywell.quantum-results.v1"}'''
+      "inputDataFormat": "microsoft.qio.v2", "inputParams": {"auto_set_temperatures":
+      "False", "elite_threshold": "0.3", "frac_icm_thermal_layers": "0.5", "frac_sweeps_fixing":
+      "0.15", "frac_sweeps_idle": "1.0", "frac_sweeps_stagnation": "1.0", "goal":
+      "OPTIMIZE", "high_temp": "2", "low_temp": "0.2", "max_samples_per_layer": "10",
+      "max_total_sweeps": "1000", "num_elite_temps": "4", "num_replicas": "2", "num_sweeps_per_run":
+      "100", "num_temps": "30", "scaling_type": "MEDIAN", "seed": "42", "var_fixing_type":
+      "NO_FIXING"}, "providerId": "1qbit", "target": "1qbit.pticm", "outputDataFormat":
+      "microsoft.qio-results.v1"}'''
     headers:
       Accept:
       - application/json
@@ -215,7 +216,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '590'
+      - '1046'
       Content-Type:
       - application/json
       User-Agent:
