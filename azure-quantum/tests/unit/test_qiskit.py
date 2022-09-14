@@ -21,6 +21,7 @@ from qiskit_ionq import GPIGate, GPI2Gate, MSGate
 
 from azure.quantum.job.job import Job
 from azure.quantum.qiskit import AzureQuantumProvider
+from azure.quantum.qiskit.job import AzureQuantumJob
 from azure.quantum.qiskit.backends import QuantinuumSimulatorBackend
 from azure.quantum.qiskit.backends.honeywell import HONEYWELL_PROVIDER_ID
 
@@ -55,6 +56,13 @@ class TestQiskit(QuantumTestBase):
             circuit.h(q)
         circuit.measure([0], [0])
         return circuit
+
+    def test_azure_to_qiskit(self):
+        bitstring = "1010101011"
+        azure_register = f"[{','.join(bitstring)}]"
+
+        assert AzureQuantumJob._azure_to_qiskit(azure_register) == bitstring
+        assert AzureQuantumJob._azure_to_qiskit(bitstring) == bitstring
 
     def test_qiskit_submit_ionq_5_qubit_superposition(self):
         with unittest.mock.patch.object(
