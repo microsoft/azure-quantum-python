@@ -205,7 +205,9 @@ class AzureQuantumJob(JobV1):
             obj = ast.literal_eval(obj)
 
         if isinstance(obj, tuple):
-            # tuples are used to hold different classical registers
+            # the outermost implied container is a tuple, and each item is
+            # associated with a classical register. Azure and Qiskit order the
+            # registers in opposite directions, so reverse here to match.
             return " ".join([AzureQuantumJob._azure_to_qiskit(term) for term in reversed(obj)])
         elif isinstance(obj, list):
             # a list is for an individual classical register
