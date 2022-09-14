@@ -92,7 +92,6 @@ class TestWorkspace(QuantumTestBase):
         targets = ws.get_targets()
         assert None not in targets
         test_targets = set([
-            'honeywell.hqs-lt-s1-apival',
             'ionq.simulator'
         ])
         assert test_targets.issubset(set([t.name for t in targets]))
