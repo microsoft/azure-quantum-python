@@ -59,13 +59,13 @@ class TestQiskit(QuantumTestBase):
         return circuit
 
     def test_azure_to_qiskit(self):
-        bits = random.choices(["0", "1"], k=10)
+        bits = random.choices(["0", "1"], k=50)
         bitstring = "".join(bits)
         azure_register = f"[{','.join(bits)}]"
-        azure_registers = ",".join(f"[{bit}]" for bit in bits)
+        azure_registers = ",".join(f"[{bit}, 1, 0]" for bit in bits)
 
         assert AzureQuantumJob._azure_to_qiskit(azure_register) == bitstring
-        assert AzureQuantumJob._azure_to_qiskit(azure_registers) == " ".join(reversed(bits))
+        assert AzureQuantumJob._azure_to_qiskit(azure_registers) == " ".join(f"{bit}10" for bit in reversed(bits))
         assert AzureQuantumJob._azure_to_qiskit(bitstring) == bitstring
 
     def test_qiskit_submit_ionq_5_qubit_superposition(self):
