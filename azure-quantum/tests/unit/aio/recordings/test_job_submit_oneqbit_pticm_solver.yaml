@@ -1,58 +1,38 @@
 interactions:
 - request:
-    body: client_id=PLACEHOLDER&grant_type=client_credentials&client_info=1&client_secret=+EDw8Q~cbkbeadF.mrC6bAXxFEspQDblyNyuRkcfT&claims=PLACEHOLDER&scope=https%3A%2F%2Fquantum.microsoft.com%2F.default
+    body: '{''client_id'': ''00000000-0000-0000-0000-000000000000'', ''client_secret'':
+      ''PLACEHOLDER'', ''grant_type'': ''client_credentials'', ''scope'': ''https://quantum.microsoft.com/.default''}'
     headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate, br
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '294'
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
       - azsdk-python-identity/1.10.0 Python/3.9.13 (Windows-10-10.0.22000-SP0)
-      x-client-cpu:
-      - x64
-      x-client-current-telemetry:
-      - 4|730,0|
-      x-client-os:
-      - win32
-      x-client-sku:
-      - MSAL.Python
-      x-client-ver:
-      - 1.18.0
     method: POST
     uri: https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token
   response:
     body:
       string: '{"token_type": "Bearer", "expires_in": 86399, "ext_expires_in": 86399,
-        "refresh_in": 43199, "access_token": "fake_token"}'
+        "access_token": "fake_token"}'
     headers:
       content-length:
-      - '1741'
+      - '1722'
       content-type:
       - application/json; charset=utf-8
     status:
       code: 200
       message: OK
+    url: https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token
 - request:
     body: 'b''{"containerName": "job-00000000-0000-0000-0000-000000000000"}'''
     headers:
       Accept:
       - application/json
-      Accept-Encoding:
-      - gzip, deflate, br
-      Connection:
-      - keep-alive
       Content-Length:
       - '61'
       Content-Type:
       - application/json
       User-Agent:
-      - testapp azsdk-python-quantum/0.0.0.1 Python/3.9.13 (Windows-10-10.0.22000-SP0)
+      - async-testapp azsdk-python-quantum/0.0.0.1 Python/3.9.13 (Windows-10-10.0.22000-SP0)
     method: POST
     uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/storage/sasUri
   response:
@@ -69,19 +49,16 @@ interactions:
     status:
       code: 200
       message: OK
+    url: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/storage/sasUri
 - request:
     body: null
     headers:
       Accept:
       - application/xml
-      Accept-Encoding:
-      - gzip, deflate, br
-      Connection:
-      - keep-alive
       User-Agent:
       - azsdk-python-storage-blob/12.11.0 Python/3.9.13 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Wed, 14 Sep 2022 19:16:11 GMT
+      - Wed, 14 Sep 2022 19:27:09 GMT
       x-ms-version:
       - '2021-04-10'
     method: GET
@@ -89,7 +66,7 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerNotFound</Code><Message>The
-        specified container does not exist.\nRequestId:fb6a31de-601e-0034-436e-c881bf000000\nTime:2022-09-14T19:16:11.1913129Z</Message></Error>"
+        specified container does not exist.\nRequestId:e2ec6812-c01e-004f-1f6f-c8c323000000\nTime:2022-09-14T19:27:09.8460697Z</Message></Error>"
     headers:
       content-length:
       - '223'
@@ -100,21 +77,16 @@ interactions:
     status:
       code: 404
       message: The specified container does not exist.
+    url: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?restype=container&sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
 - request:
     body: null
     headers:
       Accept:
       - application/xml
-      Accept-Encoding:
-      - gzip, deflate, br
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
       User-Agent:
       - azsdk-python-storage-blob/12.11.0 Python/3.9.13 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Wed, 14 Sep 2022 19:16:11 GMT
+      - Wed, 14 Sep 2022 19:27:09 GMT
       x-ms-version:
       - '2021-04-10'
     method: PUT
@@ -130,19 +102,16 @@ interactions:
     status:
       code: 201
       message: Created
+    url: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?restype=container&sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
 - request:
     body: null
     headers:
       Accept:
       - application/xml
-      Accept-Encoding:
-      - gzip, deflate, br
-      Connection:
-      - keep-alive
       User-Agent:
       - azsdk-python-storage-blob/12.11.0 Python/3.9.13 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Wed, 14 Sep 2022 19:16:11 GMT
+      - Wed, 14 Sep 2022 19:27:09 GMT
       x-ms-version:
       - '2021-04-10'
     method: GET
@@ -162,22 +131,14 @@ interactions:
     status:
       code: 200
       message: OK
+    url: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?restype=container&sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
 - request:
-    body: b'OPENQASM 2.0;\n        include "qelib1.inc";\n\n        qreg q[3];\n        creg
-      c0[1];\n        creg c1[1];\n        creg c2[1];\n\n        h q[0];\n        cx
-      q[0], q[1];\n        x q[2];\n        h q[2];\n        cx q[2], q[0];\n        h
-      q[2];\n        measure q[0] -> c0[0];\n        if (c0==1) x q[1];\n        measure
-      q[2] -> c1[0];\n        if (c1==1) z q[1];\n        h q[1];\n        measure
-      q[1] -> c2[0];\n        '
+    body: b'\x1f\x8b\x08\x00\r+"c\x02\xffU\x8c\xc1\n\xc20\x10D\x7f\xa5\xec\xb9\x91d[\x91\xfa\x15\x82\xdel\x91\x98F(\x98\xa64[AJ\xfe\xdd%=\xd4\x9cvv\xde\xcc\xac\xe0,\xe9^\x93\x86s\xb1\xc2\xa8\x9de\x017\x1bH\\h0\xee\xea\xdf\x1f;\x8b\x16P"\xcaF\xd5B!\x9ed\xd3\x02\xc4\xb2\x00\xe3\x03=^\xcbhh\xf0c\x9a\xe0t\xd84\xa8\x83\x04\xce\xd0wJ\xa3\xd3\xf2\xf4\xe9\xb7\xb3\x0bl\xdcW0|D\xc5\xde\xd0\'G\x95\x85\xecxw#\xc7\x1d`\x06\x9a\x0c\xa8\x1d\xe0\x0e\xaa\xac!\xea\x8c\xfcUr\x80]\xecb\xfc\x01.6b(\x16\x01\x00\x00'
     headers:
       Accept:
       - application/xml
-      Accept-Encoding:
-      - gzip, deflate, br
-      Connection:
-      - keep-alive
       Content-Length:
-      - '406'
+      - '170'
       Content-Type:
       - application/octet-stream
       User-Agent:
@@ -185,7 +146,7 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-date:
-      - Wed, 14 Sep 2022 19:16:11 GMT
+      - Wed, 14 Sep 2022 19:27:10 GMT
       x-ms-version:
       - '2021-04-10'
     method: PUT
@@ -201,25 +162,22 @@ interactions:
     status:
       code: 201
       message: Created
+    url: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
 - request:
-    body: 'b''{"id": "00000000-0000-0000-0000-000000000000", "name": "honeywell-job",
+    body: 'b''{"id": "00000000-0000-0000-0000-000000000000", "name": "Test-PticmSolver-\\"20210101-000000\\"",
       "containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
       "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData",
-      "inputDataFormat": "honeywell.openqasm.v1", "inputParams": {}, "providerId":
-      "honeywell", "target": "honeywell.hqs-lt-s1-apival", "outputDataFormat": "honeywell.quantum-results.v1"}'''
+      "inputDataFormat": "microsoft.qio.v2", "inputParams": {"num_sweeps_per_run":
+      "99"}, "providerId": "1qbit", "target": "1qbit.pticm", "outputDataFormat": "microsoft.qio-results.v1"}'''
     headers:
       Accept:
       - application/json
-      Accept-Encoding:
-      - gzip, deflate, br
-      Connection:
-      - keep-alive
       Content-Length:
-      - '590'
+      - '609'
       Content-Type:
       - application/json
       User-Agent:
-      - testapp azsdk-python-quantum/0.0.0.1 Python/3.9.13 (Windows-10-10.0.22000-SP0)
+      - async-testapp azsdk-python-quantum/0.0.0.1 Python/3.9.13 (Windows-10-10.0.22000-SP0)
     method: PUT
     uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000000
   response:
@@ -235,4 +193,5 @@ interactions:
     status:
       code: 403
       message: Forbidden
+    url: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000000
 version: 1
