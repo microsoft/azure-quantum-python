@@ -81,7 +81,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.11.0 Python/3.9.13 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Wed, 14 Sep 2022 19:16:11 GMT
+      - Wed, 14 Sep 2022 19:26:31 GMT
       x-ms-version:
       - '2021-04-10'
     method: GET
@@ -89,7 +89,7 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerNotFound</Code><Message>The
-        specified container does not exist.\nRequestId:fb6a31de-601e-0034-436e-c881bf000000\nTime:2022-09-14T19:16:11.1913129Z</Message></Error>"
+        specified container does not exist.\nRequestId:9b0d5755-f01e-0044-766f-c83848000000\nTime:2022-09-14T19:26:31.7608891Z</Message></Error>"
     headers:
       content-length:
       - '223'
@@ -114,7 +114,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.11.0 Python/3.9.13 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Wed, 14 Sep 2022 19:16:11 GMT
+      - Wed, 14 Sep 2022 19:26:31 GMT
       x-ms-version:
       - '2021-04-10'
     method: PUT
@@ -142,7 +142,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.11.0 Python/3.9.13 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Wed, 14 Sep 2022 19:16:11 GMT
+      - Wed, 14 Sep 2022 19:26:31 GMT
       x-ms-version:
       - '2021-04-10'
     method: GET
@@ -163,12 +163,7 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: b'OPENQASM 2.0;\n        include "qelib1.inc";\n\n        qreg q[3];\n        creg
-      c0[1];\n        creg c1[1];\n        creg c2[1];\n\n        h q[0];\n        cx
-      q[0], q[1];\n        x q[2];\n        h q[2];\n        cx q[2], q[0];\n        h
-      q[2];\n        measure q[0] -> c0[0];\n        if (c0==1) x q[1];\n        measure
-      q[2] -> c1[0];\n        if (c1==1) z q[1];\n        h q[1];\n        measure
-      q[1] -> c2[0];\n        '
+    body: b'\x1f\x8b\x08\x00\xe6*"c\x02\xffU\xccA\x0e\x83 \x10\x05\xd0\xab\x98YK\x03\x83mb\xafQwJ\x1aD\x9a\xba\x10\x8d`\x93\x86p\xf7\x12\\PV\x0c\xff\xcd|\x0f\x8bvr\x92N\xc2\xbd\xf2`\xe4\xa2\xe3\x00\x9d\xb6\x8etr<\x1eZ\xee\xeaM\x06@\x8aH[\xd6\x10\x86x\xe3t\x00\x08u\x05j\xb5\xee\xf9:\x8cr\xf3jR\xc3G\xef\xf6\x9c\x81](\xc4\x1d\xf7\xddR\xe7v\x8ck\xfa\xeb}\xb11\xe8=\xa8\xf8\x10\x1e\xb3yJ\t\xab+*b\xef)\xd7\x0cX@[\x00\xcb\x80\x19xqA\x9aB\xfeNJ@\x11D\x08?\x0fM\x8f\xf2\x15\x01\x00\x00'
     headers:
       Accept:
       - application/xml
@@ -177,7 +172,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '406'
+      - '168'
       Content-Type:
       - application/octet-stream
       User-Agent:
@@ -185,7 +180,7 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-date:
-      - Wed, 14 Sep 2022 19:16:11 GMT
+      - Wed, 14 Sep 2022 19:26:32 GMT
       x-ms-version:
       - '2021-04-10'
     method: PUT
@@ -202,11 +197,13 @@ interactions:
       code: 201
       message: Created
 - request:
-    body: 'b''{"id": "00000000-0000-0000-0000-000000000000", "name": "honeywell-job",
+    body: 'b''{"id": "00000000-0000-0000-0000-000000000000", "name": "Test-TabuSearch-\\"20210101-000000\\"",
       "containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
       "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData",
-      "inputDataFormat": "honeywell.openqasm.v1", "inputParams": {}, "providerId":
-      "honeywell", "target": "honeywell.hqs-lt-s1-apival", "outputDataFormat": "honeywell.quantum-results.v1"}'''
+      "inputDataFormat": "microsoft.qio.v2", "inputParams": {"improvement_cutoff":
+      "2", "improvement_tolerance": "1e-09", "seed": "123", "tabu_tenure": "2", "tabu_tenure_rand_max":
+      "2", "timeout": "2"}, "providerId": "1qbit", "target": "1qbit.tabu", "outputDataFormat":
+      "microsoft.qio-results.v1"}'''
     headers:
       Accept:
       - application/json
@@ -215,7 +212,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '590'
+      - '720'
       Content-Type:
       - application/json
       User-Agent:
