@@ -708,8 +708,8 @@ class TestQiskit(QuantumTestBase):
             # Make sure the job is completed before fetching the results
             self._qiskit_wait_to_complete(qiskit_job, provider)
 
-            assert JobStatus.DONE == qiskit_job.status()
-            result = qiskit_job.result()
-            print(result)
-            assert sum(result.data()["counts"].values()) == shots
-            assert result.data()["counts"][expectation] == shots
+            if JobStatus.DONE == qiskit_job.status():
+                result = qiskit_job.result()
+                print(result)
+                assert sum(result.data()["counts"].values()) == shots
+                assert result.data()["counts"][expectation] == shots
