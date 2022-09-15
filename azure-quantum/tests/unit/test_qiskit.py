@@ -58,15 +58,15 @@ class TestQiskit(QuantumTestBase):
         circuit.measure([0], [0])
         return circuit
 
-    def test_azure_to_qiskit(self):
+    def test_qir_to_qiskit_bitstring(self):
         bits = random.choices(["0", "1"], k=50)
         bitstring = "".join(bits)
         azure_register = f"[{','.join(bits)}]"
         azure_registers = ",".join(f"[{bit}, 1, 0]" for bit in bits)
 
-        assert AzureQuantumJob._azure_to_qiskit(azure_register) == bitstring
-        assert AzureQuantumJob._azure_to_qiskit(azure_registers) == " ".join(f"{bit}10" for bit in reversed(bits))
-        assert AzureQuantumJob._azure_to_qiskit(bitstring) == bitstring
+        assert AzureQuantumJob._qir_to_qiskit_bitstring(azure_register) == bitstring
+        assert AzureQuantumJob._qir_to_qiskit_bitstring(azure_registers) == " ".join(f"{bit}10" for bit in reversed(bits))
+        assert AzureQuantumJob._qir_to_qiskit_bitstring(bitstring) == bitstring
 
     def test_qiskit_submit_ionq_5_qubit_superposition(self):
         with unittest.mock.patch.object(

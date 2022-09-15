@@ -199,7 +199,7 @@ class AzureQuantumJob(JobV1):
         return {"counts": counts, "probabilities": probabilities}
 
     @staticmethod
-    def _azure_to_qiskit(obj):
+    def _qir_to_qiskit_bitstring(obj):
         """Convert the data structure from Azure into the "schema" used by Qiskit """
         if isinstance(obj, str) and not re.match(r"[\d\s]+$", obj):
             obj = ast.literal_eval(obj)
@@ -208,7 +208,7 @@ class AzureQuantumJob(JobV1):
             # the outermost implied container is a tuple, and each item is
             # associated with a classical register. Azure and Qiskit order the
             # registers in opposite directions, so reverse here to match.
-            return " ".join([AzureQuantumJob._azure_to_qiskit(term) for term in reversed(obj)])
+            return " ".join([AzureQuantumJob._qir_to_qiskit_bitstring(term) for term in reversed(obj)])
         elif isinstance(obj, list):
             # a list is for an individual classical register
             return "".join([str(bit) for bit in obj])
@@ -231,7 +231,7 @@ class AzureQuantumJob(JobV1):
         if (len(histogram) % 2) == 0:
             items = range(0, len(histogram), 2)
             for i in items:
-                bitstring = AzureQuantumJob._azure_to_qiskit(histogram[i])
+                bitstring = AzureQuantumJob._qir_to_qiskit_bitstring(histogram[i])
 
                 value = histogram[i + 1]
                 probabilities[bitstring] = value
