@@ -44,7 +44,7 @@ class QCIBackend(AzureBackend):
 
 
 class QCISimulatorBackend(QCIBackend):
-    backend_names = ("qci.simulator",)
+    backend_names = ("qci.simulator","qci.simulator.noisy")
 
     def __init__(
         self,
