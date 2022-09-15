@@ -99,7 +99,7 @@ class QCIQPUBackend(QCIBackend):
                 "memory": False,
                 "n_qubits": 11,
                 "conditional": True,
-                "max_shots": 1e6,
+                "max_shots": 10000,
                 "max_experiments": 1,
                 "open_pulse": False,
                 "gates": [{"name": "TODO", "parameters": [], "qasm_def": "TODO"}],
