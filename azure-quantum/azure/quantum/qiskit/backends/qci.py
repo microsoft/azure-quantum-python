@@ -44,7 +44,7 @@ class QCIBackend(AzureBackend):
 
 
 class QCISimulatorBackend(QCIBackend):
-    backend_names = ("qci.simulator",)
+    backend_names = ("qci.simulator","qci.simulator.noisy")
 
     def __init__(
         self,
@@ -64,8 +64,8 @@ class QCISimulatorBackend(QCIBackend):
                 "basis_gates": QIR_BASIS_GATES,
                 "memory": False,
                 "n_qubits": 29,
-                "conditional": False,
-                "max_shots": 1,
+                "conditional": True,
+                "max_shots": 1e6,
                 "max_experiments": 1,
                 "open_pulse": False,
                 "gates": [{"name": "TODO", "parameters": [], "qasm_def": "TODO"}],
@@ -98,7 +98,7 @@ class QCIQPUBackend(QCIBackend):
                 "basis_gates": QIR_BASIS_GATES,
                 "memory": False,
                 "n_qubits": 11,
-                "conditional": False,
+                "conditional": True,
                 "max_shots": 10000,
                 "max_experiments": 1,
                 "open_pulse": False,
