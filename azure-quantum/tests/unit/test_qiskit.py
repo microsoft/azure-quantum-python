@@ -14,7 +14,7 @@ import random
 
 import numpy as np
 
-from qiskit import QuantumCircuit
+from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister
 from qiskit.providers import JobStatus
 from qiskit.providers.exceptions import QiskitBackendNotFoundError
 from qiskit_ionq.exceptions import IonQGateError
@@ -56,6 +56,15 @@ class TestQiskit(QuantumTestBase):
         for q in range(5):
             circuit.h(q)
         circuit.measure([0], [0])
+        return circuit
+
+    def _endianness(self, pos=0):
+        assert pos < 3
+        qr = QuantumRegister(3)
+        cr = [ClassicalRegister(3) for _ in range(3)]
+        circuit = QuantumCircuit(qr, *cr, name=f"endian{pos}cr3")
+        circuit.x(pos)
+        circuit.measure(qr[pos], cr[pos][pos])
         return circuit
 
     def test_qir_to_qiskit_bitstring(self):
@@ -671,3 +680,36 @@ class TestQiskit(QuantumTestBase):
         assert "qir.v1" == config.azure["input_data_format"]
         assert "microsoft.quantum-results.v1" == config.azure["output_data_format"]
 
+    @pytest.mark.qci
+    @pytest.mark.live_test
+    @pytest.mark.parametrize("endian_pos, expectation",
+        [(0,"000 000 001"), (1,"000 010 000"), (2,"100 000 000")]
+    )
+    def test_qiskit_endianness_submit_to_qci(self, endian_pos, expectation):
+        with unittest.mock.patch.object(
+            Job,
+            self.mock_create_job_id_name,
+            return_value=self.get_test_job_id(),
+        ):
+            workspace = self.create_workspace()
+            provider = AzureQuantumProvider(workspace=workspace)
+            backend = provider.get_backend("qci.simulator")
+            shots = 100
+
+            circuit = self._endianness(pos=endian_pos)
+            circuit.metadata = { "some": "data" }
+
+            qiskit_job = backend.run(
+                circuit=circuit,
+                shots=shots
+            )
+            assert qiskit_job._azure_job.details.metadata["num_qubits"] == '3'
+
+            # Make sure the job is completed before fetching the results
+            self._qiskit_wait_to_complete(qiskit_job, provider)
+
+            assert JobStatus.DONE == qiskit_job.status()
+            result = qiskit_job.result()
+            print(result)
+            assert sum(result.data()["counts"].values()) == shots
+            assert result.data()["counts"][expectation] == shots
