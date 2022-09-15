@@ -680,12 +680,12 @@ class TestQiskit(QuantumTestBase):
         assert "qir.v1" == config.azure["input_data_format"]
         assert "microsoft.quantum-results.v1" == config.azure["output_data_format"]
 
+    # @pytest.mark.parametrize("endian_pos, expectation",
+    #     [(0,"000 000 001"), (1,"000 010 000"), (2,"100 000 000")]
+    # )
     @pytest.mark.qci
     @pytest.mark.live_test
-    @pytest.mark.parametrize("endian_pos, expectation",
-        [(0,"000 000 001"), (1,"000 010 000"), (2,"100 000 000")]
-    )
-    def test_qiskit_endianness_submit_to_qci(self, endian_pos, expectation):
+    def test_qiskit_endianness_submit_to_qci(self, endian_pos=0, expectation="000 000 001"):
         with unittest.mock.patch.object(
             Job,
             self.mock_create_job_id_name,
