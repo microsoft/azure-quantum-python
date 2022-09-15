@@ -36,7 +36,7 @@ class AzureBackend(Backend):
             "metadata": json.dumps(circuit.metadata),
         }
 
-    def _translate_input(self, circuit, data_format, input_params):
+    def _translate_input(self, circuit, data_format, input_params, to_qir_kwargs={}):
         """ Translates the input values to the format expected by the AzureBackend. """
         if data_format != "qir.v1":
             target = self.name()
@@ -51,7 +51,7 @@ class AzureBackend(Backend):
         capability = input_params["targetCapability"] if "targetCapability" in input_params else "AdaptiveExecution"
 
         if logger.isEnabledFor(logging.DEBUG):
-            logger.debug(f"QIR:\n{to_qir(circuit, capability)}")
+            logger.debug(f"QIR:\n{to_qir(circuit, capability, **to_qir_kwargs)}")
 
         # all qir payload needs to define an entryPoint and arguments:
         if not "entryPoint" in input_params:
@@ -65,9 +65,9 @@ class AzureBackend(Backend):
 
             # We'll only log the QIR again if we performed a transpilation.
             if logger.isEnabledFor(logging.DEBUG):
-                logger.debug(f"QIR (Post-transpilation):\n{to_qir(circuit, capability)}")
+                logger.debug(f"QIR (Post-transpilation):\n{to_qir(circuit, capability, **to_qir_kwargs)}")
 
-        qir = bytes(to_qir_bitcode(circuit, capability))
+        qir = bytes(to_qir_bitcode(circuit, capability, **to_qir_kwargs))
         return (qir, data_format, input_params)
 
     def run(self, circuit, **kwargs):
@@ -98,6 +98,9 @@ class AzureBackend(Backend):
         provider_id = kwargs.pop("provider_id", config.azure["provider_id"])
         input_data_format = kwargs.pop("input_data_format", config.azure["input_data_format"])
         output_data_format = kwargs.pop("output_data_format", config.azure["output_data_format"])
+
+        # Override QIR translation parameters
+        to_qir_kwargs = config.azure.get("to_qir_kwargs", {})
 
         # If not provided as kwargs, the values of these parameters 
         # are calculated from the circuit itself:
@@ -131,7 +134,7 @@ class AzureBackend(Backend):
         input_params["shots"] = shots_count
 
         # translate
-        (input_data, input_data_format, input_params) = self._translate_input(circuit, input_data_format, input_params)
+        (input_data, input_data_format, input_params) = self._translate_input(circuit, input_data_format, input_params, to_qir_kwargs)
 
         logger.info(f"Submitting new job for backend {self.name()}")
         job = AzureQuantumJob(
