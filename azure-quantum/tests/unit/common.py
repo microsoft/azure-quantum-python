@@ -127,16 +127,24 @@ class QuantumTestBase(ReplayableTest):
             '"id": "{}"'.format(ZERO_UID),
         )
         regex_replacer.register_regex(
+            r'"containerName":\s*"([a-f0-9]+[-]){4}[a-f0-9]+"',
+            '"containerName": "{}"'.format(ZERO_UID),
+        )
+        regex_replacer.register_regex(
+            r'blob.core.windows.net/([a-f0-9]+[-]){4}[a-f0-9]+',
+            'blob.core.windows.net/{}'.format(ZERO_UID),
+        )
+        regex_replacer.register_regex(
             r"/resourceGroups/[a-z0-9-]+/", f'/resourceGroups/{RESOURCE_GROUP}/'
         )
         regex_replacer.register_regex(
             r"/workspaces/[a-z0-9-]+/", f'/workspaces/{WORKSPACE}/'
         )
         regex_replacer.register_regex(
-            r"https://[^\.]+.blob.core.windows.net/", f'https://{STORAGE}.blob.core.windows.net/'
+            r"https://[^\.]+.blob.core.windows.net", f'https://{STORAGE}.blob.core.windows.net'
         )
         regex_replacer.register_regex(
-            r"https://[^\.]+.quantum.azure.com/", f'https://{LOCATION}.quantum.azure.com/'
+            r"https://[^\.]+.quantum.azure.com", f'https://{LOCATION}.quantum.azure.com'
         )
         regex_replacer.register_regex(
             r"/workspaces/[a-z0-9-]+/", f'/workspaces/{WORKSPACE}/'
@@ -146,6 +154,7 @@ class QuantumTestBase(ReplayableTest):
         regex_replacer.register_regex(r"sv=[^&]+\&", "sv=PLACEHOLDER&")
         regex_replacer.register_regex(r"se=[^&]+\&", "se=PLACEHOLDER&")
         regex_replacer.register_regex(r"client_id=[^&]+\&", "client_id=PLACEHOLDER&")
+        regex_replacer.register_regex(r"client_secret=[^&]+\&", "client_secret=PLACEHOLDER&")
         regex_replacer.register_regex(r"claims=[^&]+\&", "claims=PLACEHOLDER&")
         regex_replacer.register_regex(r"code_verifier=[^&]+\&", "code_verifier=PLACEHOLDER&")
         regex_replacer.register_regex(r"code=[^&]+\&", "code_verifier=PLACEHOLDER&")
