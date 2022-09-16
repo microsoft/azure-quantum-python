@@ -141,28 +141,21 @@ class TestQuantinuum(QuantumTestBase):
             workspace = self.create_async_workspace()
             circuit = self._teleport()
             target = Quantinuum(workspace=workspace) if kwargs.get("provider_id") != "honeywell" else Honeywell(workspace=workspace)
-            try:
-                job = await target.submit(circuit)
-            except HttpResponseError as e:
-                if "InvalidJobDefinition" not in e.message \
-                and "The provider specified does not exist" not in e.message:
-                    raise(e)
-                warnings.warn(e.message)
-            else:
-                # Make sure the job is completed before fetching the results
-                # playback currently does not work for repeated calls
-                if not self.is_playback:
-                    self.pause_recording()
-                    try:
-                        # Set a timeout for Honeywell recording
-                        await job.wait_until_completed(max_poll_wait_secs=60)
-                    except TimeoutError:
-                        warnings.warn("Quantinuum (formerly Honeywell) execution exceeded timeout. Skipping fetching results.")
-                    self.resume_recording()
+            job = await target.submit(circuit)
+            # Make sure the job is completed before fetching the results
+            # playback currently does not work for repeated calls
+            if not self.is_playback:
+                self.pause_recording()
+                try:
+                    # Set a timeout for Honeywell recording
+                    await job.wait_until_completed(max_poll_wait_secs=60)
+                except TimeoutError:
+                    warnings.warn("Quantinuum (formerly Honeywell) execution exceeded timeout. Skipping fetching results.")
+                self.resume_recording()
 
-                job = await workspace.get_job(job.id)
-                self.assertEqual(True, job.has_completed())
+            job = await workspace.get_job(job.id)
+            self.assertEqual(True, job.has_completed())
 
-                results = await job.get_results()
-                assert results["c0"] == ["0"]
-                assert results["c1"] == ["000"]
+            results = await job.get_results()
+            assert results["c0"] == ["0"]
+            assert results["c1"] == ["000"]

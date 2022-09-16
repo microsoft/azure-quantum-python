@@ -105,7 +105,7 @@ class AzureBackend(Backend):
         metadata = kwargs.pop("metadata") if "metadata" in kwargs else self._prepare_job_metadata(circuit)
 
         # Backend options are mapped to input_params.
-        input_params = vars(self.options)
+        input_params = vars(self.options).copy()
 
         # The shots/count number can be specified in different ways for different providers,
         # so let's get it first. Values in 'kwargs' take precedence over options, and to keep
