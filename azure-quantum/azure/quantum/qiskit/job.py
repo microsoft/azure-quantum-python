@@ -14,6 +14,7 @@ except ImportError:
 To install run: pip install azure-quantum[qiskit]"
     )
 
+import ast
 import json
 import re
 from azure.quantum import Job
@@ -204,6 +205,23 @@ class AzureQuantumJob(JobV1):
 
         return {"counts": counts, "probabilities": probabilities}
 
+    @staticmethod
+    def _qir_to_qiskit_bitstring(obj):
+        """Convert the data structure from Azure into the "schema" used by Qiskit """
+        if isinstance(obj, str) and not re.match(r"[\d\s]+$", obj):
+            obj = ast.literal_eval(obj)
+
+        if isinstance(obj, tuple):
+            # the outermost implied container is a tuple, and each item is
+            # associated with a classical register. Azure and Qiskit order the
+            # registers in opposite directions, so reverse here to match.
+            return " ".join([AzureQuantumJob._qir_to_qiskit_bitstring(term) for term in reversed(obj)])
+        elif isinstance(obj, list):
+            # a list is for an individual classical register
+            return "".join([str(bit) for bit in obj])
+        else:
+            return str(obj)
+
     def _format_microsoft_results(self, sampler_seed=None):
         """ Translate Microsoft's job results histogram into a format that can be consumed by qiskit libraries. """
         az_result = self._azure_job.get_results()
@@ -220,7 +238,7 @@ class AzureQuantumJob(JobV1):
         if (len(histogram) % 2) == 0:
             items = range(0, len(histogram), 2)
             for i in items:
-                bitstring = re.sub("[^01]", "", histogram[i])  # Qiskit expects a literal bitstring, QIR returns it as an array, remove superfluous characters.
+                bitstring = AzureQuantumJob._qir_to_qiskit_bitstring(histogram[i])
 
                 value = histogram[i + 1]
                 probabilities[bitstring] = value
