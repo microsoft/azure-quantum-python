@@ -75,8 +75,6 @@ class TestQuantinuum(QuantumTestBase):
 
             cost = target.estimate_cost(circuit, num_shots=100e3)
             assert cost.estimated_total == 0.0
-            # >>>>> The old simulator got 0.0, but now we get 845.0  <<<< Is this OK?
-            # assert cost.estimated_total == 845.0
 
             target = Quantinuum(workspace=workspace, name="quantinuum.qpu.h1-1")
 

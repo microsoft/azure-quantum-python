@@ -144,13 +144,11 @@ class Quantinuum(Target):
                         else:
                             N_2q += 1
 
-        # >>>>> if "sim" in self.name:
         if ("sim" in self.name and "sc" not in self.name) or "e" in self.name:
             currency_code = "EHQC"
         else:
             currency_code = "HQC"
 
-        # >>>>> if "apival" in self.name:
         if "apival" in self.name or "sc" in self.name:
             HQC = 0.0
         else:
