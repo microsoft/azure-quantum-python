@@ -19,7 +19,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 __all__ = [
-    "MicrosoftBackend", "MicrosoftResourceEstimatorBackend"
+    "MicrosoftBackend", "MicrosoftResourceEstimationBackend"
 ]
 
 class MicrosoftBackend(AzureBackend):
@@ -40,7 +40,7 @@ class MicrosoftBackend(AzureBackend):
             "to_qir_kwargs": {"record_output": False, "use_static_qubit_alloc": False, "use_static_result_alloc": False}
         }
 
-class MicrosoftResourceEstimatorBackend(MicrosoftBackend):
+class MicrosoftResourceEstimationBackend(MicrosoftBackend):
     """Backend class for interfacing with the resources estimator target"""
 
     backend_names = ("microsoft.estimator",)
@@ -70,6 +70,6 @@ class MicrosoftResourceEstimatorBackend(MicrosoftBackend):
                 "azure": self._azure_config()
             }
         )
-        logger.info("Initializing MicrosoftResourceEstimatorBackend")
+        logger.info("Initializing MicrosoftResourceEstimationBackend")
         configuration: BackendConfiguration = kwargs.pop("configuration", default_config)
         super().__init__(configuration=configuration, provider=provider, **kwargs)

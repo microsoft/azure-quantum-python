@@ -37,7 +37,7 @@ from azure.quantum.qiskit.backends.qci import (
 
 from azure.quantum.qiskit.backends.microsoft import (
     MicrosoftBackend,
-    MicrosoftResourceEstimatorBackend
+    MicrosoftResourceEstimationBackend
 )
 
 # Default targets to use when there is no target class
