@@ -34,7 +34,7 @@ class MicrosoftBackend(AzureBackend):
         return {
             "blob_name": "inputData",
             "content_type": "qir.v1",
-            "provider_id": "microsoft.simulator",
+            "provider_id": "microsoft-qc",
             "input_data_format": "qir.v1",
             "output_data_format": "microsoft.resource-estimates.v1",
             "to_qir_kwargs": {"record_output": False, "use_static_qubit_alloc": False, "use_static_result_alloc": False}
@@ -43,7 +43,7 @@ class MicrosoftBackend(AzureBackend):
 class MicrosoftResourcesEstimatorBackend(MicrosoftBackend):
     """Backend class for interfacing with the resources estimator target"""
 
-    backend_names = ("microsoft.simulator.resources-estimator",)
+    backend_names = ("microsoft.estimator",)
 
     @classmethod
     def _default_options(cls):
