@@ -9,11 +9,11 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '293'
+      - '163'
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - azsdk-python-identity/1.10.0 Python/3.9.13 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-identity/1.11.0 Python/3.9.13 (Windows-10-10.0.22622-SP0)
       x-client-cpu:
       - x64
       x-client-current-telemetry:
@@ -32,7 +32,7 @@ interactions:
         "refresh_in": 43199, "access_token": "fake_token"}'
     headers:
       content-length:
-      - '1741'
+      - '121'
       content-type:
       - application/json; charset=utf-8
     status:
@@ -48,23 +48,28 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - testapp azsdk-python-quantum/0.0.0.1 Python/3.9.13 (Windows-10-10.0.22000-SP0)
+      - testapp azsdk-python-quantum/0.0.0.1 Python/3.9.13 (Windows-10-10.0.22622-SP0)
     method: GET
     uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/quotas
   response:
     body:
       string: '{"value": [{"dimension": "combined_job_hours", "scope": "Workspace",
-        "providerId": "Microsoft", "utilization": 0.012021769194444448, "holds": 0.0,
-        "limit": 5.0, "period": "Monthly"}, {"dimension": "combined_job_hours", "scope":
-        "Subscription", "providerId": "Microsoft", "utilization": 0.012021769194444448,
+        "providerId": "Microsoft", "utilization": 0.0008830494722222222, "holds":
+        0.0, "limit": 20.0, "period": "Monthly"}, {"dimension": "combined_job_hours",
+        "scope": "Subscription", "providerId": "Microsoft", "utilization": 0.0008830494722222222,
         "holds": 0.0, "limit": 1000.0, "period": "Monthly"}, {"dimension": "concurrent_cpu_jobs",
         "scope": "Workspace", "providerId": "Microsoft", "utilization": 0.0, "holds":
-        0.0, "limit": 5.0, "period": "None"}, {"dimension": "qgs", "scope": "Subscription",
-        "providerId": "ionq", "utilization": 200004.0, "holds": 0.0, "limit": 16666667.0,
-        "period": "Infinite"}], "nextLink": null, "access_token": "fake_token"}'
+        0.0, "limit": 5.0, "period": "None"}, {"dimension": "simulator_job_hours",
+        "scope": "Workspace", "providerId": "Microsoft.Simulator", "utilization":
+        0.0, "holds": 0.0, "limit": 20.0, "period": "Monthly"}, {"dimension": "simulator_job_hours",
+        "scope": "Subscription", "providerId": "Microsoft.Simulator", "utilization":
+        0.0, "holds": 0.0, "limit": 1000.0, "period": "Monthly"}, {"dimension": "concurrent_simulator_jobs",
+        "scope": "Workspace", "providerId": "Microsoft.Simulator", "utilization":
+        0.0, "holds": 0.0, "limit": 5.0, "period": "None"}], "nextLink": null, "access_token":
+        "fake_token"}'
     headers:
       content-length:
-      - '625'
+      - '1073'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
