@@ -144,7 +144,7 @@ class Quantinuum(Target):
                         else:
                             N_2q += 1
 
-        if ("sim" in self.name and "sc" not in self.name) or "e" in self.name:
+        if "-sim" in self.name or "sim.h1-1e" in self.name or "sim.h1-2e" in self.name:
             currency_code = "EHQC"
         else:
             currency_code = "HQC"
