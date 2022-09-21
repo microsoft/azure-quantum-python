@@ -395,10 +395,12 @@ class CustomRecordingProcessor(RecordingProcessor):
                 body = body.decode("utf-8")
                 body = self.regex_replace_all(body)
                 request.body = body.encode("utf-8")
+                request.headers["content-length"] = ["%s" % len(request.body)]
             else:
                 body = str(body)
                 body = self.regex_replace_all(body)
                 request.body = body
+                request.headers["content-length"] = ["%s" % len(body)]
 
         return request
 
@@ -487,7 +489,9 @@ class InteractiveAccessTokenReplacer(RecordingProcessor):
                         del body[property]
         except (KeyError, ValueError):
             return response
-        response['body']['string'] = json.dumps(body)
+        body = json.dumps(body)
+        response['body']['string'] = body
+        response['headers']['content-length'] = ["%s" % len(body)]
         return response
 
 
