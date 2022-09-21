@@ -27,7 +27,7 @@ class MicrosoftBackend(AzureBackend):
 
     @classmethod
     def _default_options(cls):
-        return Options(entryPoint="main", arguments=[], targetCapibility="BasicExecution")
+        return Options(entryPoint="main", arguments=[], targetCapability="BasicExecution")
 
     @classmethod
     def _azure_config(cls):
@@ -41,7 +41,7 @@ class MicrosoftBackend(AzureBackend):
         }
 
 class MicrosoftResourceEstimationBackend(MicrosoftBackend):
-    """Backend class for interfacing with the resources estimator target"""
+    """Backend class for interfacing with the resource estimator target"""
 
     backend_names = ("microsoft.estimator",)
 
@@ -50,7 +50,7 @@ class MicrosoftResourceEstimationBackend(MicrosoftBackend):
         return Options(entryPoint="main", arguments=[], targetCapability="BasicExecution", errorBudget=1e-3, qubit={}, faultToleranceProtocol="surface_code")
 
     def __init__(self, name: str, provider: "AzureQuantumProvider", **kwargs):
-        """Constructor for class to interface with the resources estimator target"""
+        """Constructor for class to interface with the resource estimator target"""
         default_config = BackendConfiguration.from_dict(
             {
                 "backend_name": name,
@@ -58,7 +58,7 @@ class MicrosoftResourceEstimationBackend(MicrosoftBackend):
                 "simulator": True,
                 "local": False,
                 "coupling_map": None,
-                "description": "Resources estimator on Azure Quantum",
+                "description": "Resource estimator on Azure Quantum",
                 "basis_gates": QIR_BASIS_GATES,
                 "memory": False,
                 "n_qubits": 0xffffffffffffffff, # NOTE: maximum 64-bit unsigned value
