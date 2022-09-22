@@ -76,6 +76,7 @@ class TestCirq(QuantumTestBase):
         assert "ionq.simulator" in target_names
         assert "quantinuum.hqs-lt-s1-apival" in target_names
         assert "quantinuum.sim.h1-1sc" in target_names
+        assert "quantinuum.sim.h1-2sc" in target_names
 
     def test_plugins_estimate_cost_cirq_ionq(self):
         workspace = self.create_workspace()
@@ -209,6 +210,13 @@ class TestCirq(QuantumTestBase):
         cost = service.estimate_cost(
             program=self._3_qubit_ghz_cirq(),
             repetitions=100e3,
+            target="quantinuum.sim.h1-2sc"
+        )
+        assert cost.estimated_total == 0.0
+
+        cost = service.estimate_cost(
+            program=self._3_qubit_ghz_cirq(),
+            repetitions=100e3,
             target="quantinuum.hqs-lt-s1"
         )
         assert np.round(cost.estimated_total) == 725.0
@@ -217,6 +225,13 @@ class TestCirq(QuantumTestBase):
             program=self._3_qubit_ghz_cirq(),
             repetitions=100e3,
             target="quantinuum.qpu.h1-1"
+        )
+        assert np.round(cost.estimated_total) == 725.0
+
+        cost = service.estimate_cost(
+            program=self._3_qubit_ghz_cirq(),
+            repetitions=100e3,
+            target="quantinuum.qpu.h1-2"
         )
         assert np.round(cost.estimated_total) == 725.0
 
