@@ -76,7 +76,6 @@ class TestCirq(QuantumTestBase):
         assert "ionq.simulator" in target_names
         assert "quantinuum.hqs-lt-s1-apival" in target_names
         assert "quantinuum.sim.h1-1sc" in target_names
-        assert "quantinuum.sim.h1-1e" in target_names
 
     def test_plugins_estimate_cost_cirq_ionq(self):
         workspace = self.create_workspace()
