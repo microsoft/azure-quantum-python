@@ -82,35 +82,28 @@ class TestQuantinuum(QuantumTestBase):
             workspace = self.create_workspace()
             circuit = self._teleport()
             target = Quantinuum(workspace=workspace)
-            try:
-                job = target.submit(circuit)
-            except HttpResponseError as e:
-                if "InvalidJobDefinition" not in e.message \
-                and "The provider specified does not exist" not in e.message:
-                    raise(e)
-                warnings.warn(e.message)
-            else:
-                # Make sure the job is completed before fetching the results
-                # playback currently does not work for repeated calls
-                if not self.is_playback:
-                    self.pause_recording()
-                    self.assertEqual(False, job.has_completed())
-                    try:
-                        # Set a timeout for recording
-                        job.wait_until_completed(timeout_secs=60)
-                    except TimeoutError:
-                        warnings.warn("Quantinuum execution exceeded timeout. Skipping fetching results.")
-                    else:
-                        # Check if job succeeded
-                        self.assertEqual(True, job.has_completed())
-                        assert job.details.status == "Succeeded"
-                    self.resume_recording()
+            job = target.submit(circuit)
+            # Make sure the job is completed before fetching the results
+            # playback currently does not work for repeated calls
+            if not self.is_playback:
+                self.pause_recording()
+                self.assertEqual(False, job.has_completed())
+                try:
+                    # Set a timeout for recording
+                    job.wait_until_completed(timeout_secs=60)
+                except TimeoutError:
+                    warnings.warn("Quantinuum execution exceeded timeout. Skipping fetching results.")
+                else:
+                    # Check if job succeeded
+                    self.assertEqual(True, job.has_completed())
+                    assert job.details.status == "Succeeded"
+                self.resume_recording()
 
-                job = workspace.get_job(job.id)
-                self.assertEqual(True, job.has_completed())
+            job = workspace.get_job(job.id)
+            self.assertEqual(True, job.has_completed())
 
-                if job.has_completed():
-                    results = job.get_results()
-                    assert results["c0"] == ["0"]
-                    assert results["c1"] == ["0"]
+            if job.has_completed():
+                results = job.get_results()
+                assert results["c0"] == ["0"]
+                assert results["c1"] == ["0"]
 
