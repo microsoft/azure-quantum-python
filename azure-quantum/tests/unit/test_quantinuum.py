@@ -71,6 +71,16 @@ class TestQuantinuum(QuantumTestBase):
             cost = target.estimate_cost(circuit, num_shots=100e3)
             assert cost.estimated_total == 845.0
 
+            target = Quantinuum(workspace=workspace, name="quantinuum.sim.h1-1sc")
+
+            cost = target.estimate_cost(circuit, num_shots=100e3)
+            assert cost.estimated_total == 0.0
+
+            target = Quantinuum(workspace=workspace, name="quantinuum.qpu.h1-1")
+
+            cost = target.estimate_cost(circuit, num_shots=100e3)
+            assert cost.estimated_total == 845.0
+
     @pytest.mark.quantinuum
     @pytest.mark.live_test
     def test_job_submit_quantinuum(self):

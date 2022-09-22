@@ -17,12 +17,15 @@ class Quantinuum(Target):
         "quantinuum.hqs-lt-s1",
         "quantinuum.hqs-lt-s1-apival",
         "quantinuum.hqs-lt-s1-sim",
+        "quantinuum.qpu.h1-1",
+        "quantinuum.sim.h1-1sc",
+        "quantinuum.sim.h1-1e"
     )
 
     def __init__(
         self,
         workspace: Workspace,
-        name: str = "quantinuum.hqs-lt-s1-apival",
+        name: str = "quantinuum.sim.h1-1sc",
         input_data_format: str = "honeywell.openqasm.v1",
         output_data_format: str = "honeywell.quantum-results.v1",
         provider_id: str = "quantinuum",
@@ -141,12 +144,12 @@ class Quantinuum(Target):
                         else:
                             N_2q += 1
 
-        if "sim" in self.name:
+        if "-sim" in self.name or "sim.h1-1e" in self.name or "sim.h1-2e" in self.name:
             currency_code = "EHQC"
         else:
             currency_code = "HQC"
 
-        if "apival" in self.name:
+        if "apival" in self.name or "sc" in self.name:
             HQC = 0.0
         else:
             HQC = 5 + num_shots * (N_1q + 10 * N_2q + 5 * N_m) / 5000
