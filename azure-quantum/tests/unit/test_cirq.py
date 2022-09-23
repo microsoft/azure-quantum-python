@@ -250,7 +250,7 @@ class TestCirq(QuantumTestBase):
 
             except TimeoutError as e:
                 # Pass on timeout
-                warnings.warn("Quantinuum (formerly Honeywell) execution exceeded timeout. \
+                warnings.warn("Quantinuum execution exceeded timeout. \
                     Skipping fetching results.")
                 if self.is_playback:
                     raise e
@@ -260,10 +260,10 @@ class TestCirq(QuantumTestBase):
                 # failed and on timeout.
                 # See: https://github.com/quantumlib/Cirq/issues/4507
                 if 'Job failed' in str(e) or self.is_playback:
-                    warnings.warn(f"Quantinuum (formerly Honeywell) job execution failed: {str(e)}")
+                    warnings.warn(f"Quantinuum job execution failed: {str(e)}")
                     raise e
                 else:
-                    warnings.warn("Quantinuum (formerly Honeywell) execution exceeded timeout. \
+                    warnings.warn("Quantinuum execution exceeded timeout. \
                     Skipping fetching results.")
 
             else:

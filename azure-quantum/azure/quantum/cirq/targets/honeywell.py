@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 
 
 class HoneywellTarget(QuantinuumTarget):
-    """Base class for interfacing with an Quantinuum (formerly Honeywell) backend in Azure Quantum"""
+    """Base class for interfacing with an Quantinuum backend in Azure Quantum"""
 
     def __init__(
         self,
