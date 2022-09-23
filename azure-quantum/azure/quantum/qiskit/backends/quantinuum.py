@@ -130,6 +130,8 @@ class QuantinuumAPIValidatorBackend(QuantinuumBackend):
             self._provider_id = HONEYWELL_PROVIDER_ID
             self._provider_name = HONEYWELL_PROVIDER_NAME
 
+        self.n_qubits = 20 if name.contains("h1-1") or name.contains("s1") else 12
+
         default_config = BackendConfiguration.from_dict(
             {
                 "backend_name": name,
@@ -140,7 +142,7 @@ class QuantinuumAPIValidatorBackend(QuantinuumBackend):
                 "description": f"Quantinuum API validator on Azure Quantum",
                 "basis_gates": QUANTINUUM_BASIS_GATES,
                 "memory": False,
-                "n_qubits": 10,
+                "n_qubits": self.n_qubits,
                 "conditional": False,
                 "max_shots": None,
                 "max_experiments": 1,
@@ -177,6 +179,8 @@ class QuantinuumSimulatorBackend(QuantinuumBackend):
             self._provider_id = HONEYWELL_PROVIDER_ID
             self._provider_name = HONEYWELL_PROVIDER_NAME
 
+        self.n_qubits = 20 if name.contains("h1-1") or name.contains("s1") else 12
+
         configuration: BackendConfiguration = kwargs.pop("configuration", None)
         default_config = BackendConfiguration.from_dict(
             {
@@ -188,7 +192,7 @@ class QuantinuumSimulatorBackend(QuantinuumBackend):
                 "description": f"Quantinuum simulator on Azure Quantum",
                 "basis_gates": QUANTINUUM_BASIS_GATES,
                 "memory": False,
-                "n_qubits": 10,
+                "n_qubits": self.n_qubits,
                 "conditional": False,
                 "max_shots": None,
                 "max_experiments": 1,
@@ -225,6 +229,8 @@ class QuantinuumQPUBackend(QuantinuumBackend):
             self._provider_id = HONEYWELL_PROVIDER_ID
             self._provider_name = HONEYWELL_PROVIDER_NAME
 
+        self.n_qubits = 20 if name.contains("h1-1") or name.contains("s1") else 12
+
         default_config = BackendConfiguration.from_dict(
             {
                 "backend_name": name,
@@ -235,7 +241,7 @@ class QuantinuumQPUBackend(QuantinuumBackend):
                 "description": f"Quantinuum QPU on Azure Quantum",
                 "basis_gates": QUANTINUUM_BASIS_GATES,
                 "memory": False,
-                "n_qubits": 10,
+                "n_qubits": self.n_qubits,
                 "conditional": False,
                 "max_shots": 10000,
                 "max_experiments": 1,
