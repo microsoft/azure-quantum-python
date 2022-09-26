@@ -33,7 +33,7 @@ __all__ = [
 
 
 class HoneywellBackend(QuantinuumBackend):
-    """Base class for interfacing with a Quantinuum backend in Azure Quantum"""
+    """Base class for interfacing with a Quantinuum (formerly Honeywell) backend in Azure Quantum"""
 
     def __init__(
         self,
