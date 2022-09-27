@@ -516,6 +516,7 @@ class TestQiskit(QuantumTestBase):
 
 
     @pytest.mark.quantinuum
+    @pytest.mark.live_test
     def test_configuration_quantinuum_backends(self):
         workspace = self.create_workspace()
         provider = AzureQuantumProvider(workspace=workspace)
