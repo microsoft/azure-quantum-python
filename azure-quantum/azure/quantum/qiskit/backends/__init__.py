@@ -20,8 +20,8 @@ from azure.quantum.qiskit.backends.honeywell import (
 from azure.quantum.qiskit.backends.quantinuum import (
     QuantinuumBackend,
     QuantinuumQPUBackend,
-    QuantinuumAPIValidatorBackend,
-    QuantinuumSimulatorBackend
+    QuantinuumSyntaxCheckerBackend,
+    QuantinuumEmulatorBackend
 )
 
 from azure.quantum.qiskit.backends.rigetti import (

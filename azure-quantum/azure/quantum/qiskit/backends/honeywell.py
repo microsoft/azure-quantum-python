@@ -6,8 +6,8 @@ from typing import TYPE_CHECKING, Union, List
 from azure.quantum.version import __version__
 from azure.quantum.qiskit.backends.quantinuum import (
     QuantinuumBackend,
-    QuantinuumAPIValidatorBackend,
-    QuantinuumSimulatorBackend,
+    QuantinuumSyntaxCheckerBackend,
+    QuantinuumEmulatorBackend,
     QuantinuumQPUBackend,
     HONEYWELL_PROVIDER_ID
     )
@@ -49,7 +49,7 @@ class HoneywellBackend(QuantinuumBackend):
         return super().run(circuit, **kwargs)
 
 
-class HoneywellAPIValidatorBackend(QuantinuumAPIValidatorBackend):
+class HoneywellAPIValidatorBackend(QuantinuumSyntaxCheckerBackend):
     backend_names = (
         "honeywell.hqs-lt-s1-apival",
         "honeywell.hqs-lt-s2-apival"
@@ -67,7 +67,7 @@ class HoneywellAPIValidatorBackend(QuantinuumAPIValidatorBackend):
                          **kwargs)
 
 
-class HoneywellSimulatorBackend(QuantinuumSimulatorBackend):
+class HoneywellSimulatorBackend(QuantinuumEmulatorBackend):
     backend_names = (
         "honeywell.hqs-lt-s1-sim",
         "honeywell.hqs-lt-s2-sim"

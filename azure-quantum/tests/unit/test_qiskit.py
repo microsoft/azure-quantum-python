@@ -23,7 +23,7 @@ from qiskit_ionq import GPIGate, GPI2Gate, MSGate
 from azure.quantum.job.job import Job
 from azure.quantum.qiskit import AzureQuantumProvider
 from azure.quantum.qiskit.job import AzureQuantumJob
-from azure.quantum.qiskit.backends import QuantinuumSimulatorBackend
+from azure.quantum.qiskit.backends import QuantinuumEmulatorBackend
 from azure.quantum.qiskit.backends.honeywell import HONEYWELL_PROVIDER_ID
 
 from common import QuantumTestBase, ZERO_UID
@@ -499,7 +499,7 @@ class TestQiskit(QuantumTestBase):
         circuit = self._3_qubit_ghz()
         workspace = self.create_workspace()
         provider = AzureQuantumProvider(workspace=workspace)
-        backend = QuantinuumSimulatorBackend("quantinuum.sim.h1-2sc-preview", provider)
+        backend = QuantinuumEmulatorBackend("quantinuum.sim.h1-2sc-preview", provider)
 
         input_format = backend.configuration().azure["input_data_format"]
         input_params = {
@@ -513,6 +513,28 @@ class TestQiskit(QuantumTestBase):
         assert "entryPoint" in params
         assert "arguments" in params
         assert "targetCapability" in params
+
+
+    @pytest.mark.quantinuum
+    def test_configuration_quantinuum_backends(self):
+        workspace = self.create_workspace()
+        provider = AzureQuantumProvider(workspace=workspace)
+
+        # The following backends should have 20 qubits
+        for target_name in ["quantinuum.hqs-lt-s1",        "quantinuum.qpu.h1-1",
+                            "quantinuum.hqs-lt-s1-apival", "quantinuum.sim.h1-1sc",
+                            "quantinuum.hqs-lt-s1-sim",    "quantinuum.sim.h1-1e"]:
+            config = provider.get_backend(target_name).configuration()
+            # We check for name so the test log includes it when reporting a failure
+            assert target_name is not None and 20 == config.num_qubits
+
+        # The following backends should have 12 qubits
+        for target_name in ["quantinuum.hqs-lt-s2",        "quantinuum.qpu.h1-2",
+                            "quantinuum.hqs-lt-s2-apival", "quantinuum.sim.h1-2sc",
+                            "quantinuum.hqs-lt-s2-sim",    "quantinuum.sim.h1-2e"]:
+            config = provider.get_backend(target_name).configuration()
+            # We check for name so the test log includes it when reporting a failure
+            assert target_name is not None and 12 == config.num_qubits
 
 
     @pytest.mark.quantinuum
