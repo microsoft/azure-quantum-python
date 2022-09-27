@@ -150,7 +150,7 @@ class TestQuantinuum(QuantumTestBase):
                     # Set a timeout for Honeywell recording
                     await job.wait_until_completed(max_poll_wait_secs=60)
                 except TimeoutError:
-                    warnings.warn("Quantinuum (formerly Honeywell) execution exceeded timeout. Skipping fetching results.")
+                    warnings.warn("Quantinuum execution exceeded timeout. Skipping fetching results.")
                 self.resume_recording()
 
             job = await workspace.get_job(job.id)

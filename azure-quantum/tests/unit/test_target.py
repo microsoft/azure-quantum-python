@@ -230,6 +230,18 @@ class TestHoneywell(QuantumTestBase):
             cost = target.estimate_cost(circuit, num_shots=100e3)
             assert cost.estimated_total == 845.0
 
+            target = Honeywell(workspace=workspace, name="honeywell.hqs-lt-s2-apival") if provider_id == "honeywell" \
+                     else Quantinuum(workspace=workspace, name="quantinuum.sim.h1-2sc")
+
+            cost = target.estimate_cost(circuit, num_shots=100e3)
+            assert cost.estimated_total == 0.0
+
+            target = Honeywell(workspace=workspace, name="honeywell.hqs-lt-s2") if provider_id == "honeywell" \
+                     else Quantinuum(workspace=workspace, name="quantinuum.qpu.h1-2")
+
+            cost = target.estimate_cost(circuit, num_shots=100e3)
+            assert cost.estimated_total == 845.0
+
     @pytest.mark.honeywell
     @pytest.mark.live_test
     def test_job_submit_honeywell(self, provider_id="honeywell"):
@@ -253,7 +265,7 @@ class TestHoneywell(QuantumTestBase):
                     # Set a timeout for Honeywell recording
                     job.wait_until_completed(timeout_secs=60)
                 except TimeoutError:
-                    warnings.warn("Quantinuum (formerly Honeywell) execution exceeded timeout. Skipping fetching results.")
+                    warnings.warn("Quantinuum execution exceeded timeout. Skipping fetching results.")
                 else:
                     # Check if job succeeded
                     self.assertEqual(True, job.has_completed())

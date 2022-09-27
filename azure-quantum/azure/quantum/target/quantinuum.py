@@ -12,14 +12,15 @@ from azure.quantum._client.models import CostEstimate, UsageEvent
 
 
 class Quantinuum(Target):
-    """Quantinuum (formerly Honeywell) target."""
+    """Quantinuum target."""
     target_names = (
-        "quantinuum.hqs-lt-s1",
-        "quantinuum.hqs-lt-s1-apival",
-        "quantinuum.hqs-lt-s1-sim",
-        "quantinuum.qpu.h1-1",
-        "quantinuum.sim.h1-1sc",
-        "quantinuum.sim.h1-1e"
+        # Note: Target names on the same line are equivalent.
+        "quantinuum.hqs-lt-s1",        "quantinuum.qpu.h1-1",
+        "quantinuum.hqs-lt-s1-apival", "quantinuum.sim.h1-1sc",
+        "quantinuum.hqs-lt-s1-sim",    "quantinuum.sim.h1-1e",
+        "quantinuum.hqs-lt-s2",        "quantinuum.qpu.h1-2",
+        "quantinuum.hqs-lt-s2-apival", "quantinuum.sim.h1-2sc",
+        "quantinuum.hqs-lt-s2-sim",    "quantinuum.sim.h1-2e"
     )
 
     def __init__(
@@ -58,7 +59,7 @@ class Quantinuum(Target):
         input_params: Dict[str, Any] = None,
         **kwargs
     ) -> Job:
-        """Submit a Quantinuum (formerly Honeywell) program (OpenQASM 2.0 format)
+        """Submit a Quantinuum program (OpenQASM 2.0 format)
 
         :param circuit: Quantum circuit in Quantinuum OpenQASM 2.0 format
         :type circuit: str

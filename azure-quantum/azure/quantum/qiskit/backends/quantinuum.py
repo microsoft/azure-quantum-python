@@ -23,8 +23,8 @@ logger = logging.getLogger(__name__)
 __all__ = [
     "QuantinuumBackend",
     "QuantinuumQPUBackend",
-    "QuantinuumAPIValidatorBackend",
-    "QuantinuumSimulatorBackend"
+    "QuantinuumSyntaxCheckerBackend",
+    "QuantinuumEmulatorBackend"
 ]
 
 QUANTINUUM_BASIS_GATES = [
@@ -86,7 +86,11 @@ class QuantinuumBackend(AzureBackend):
         else:
             # Not using openqasm, assume qir then:
             return super()._translate_input(circuit, "qir.v1", input_params, to_qir_kwargs)
-        
+
+    def _initialize_n_qubits(self, name):
+        name = name.lower()
+        self.n_qubits = 20 if "h1-1" in name or "s1" in name else 12
+        return self.n_qubits
 
     def estimate_cost(self, circuit: QuantumCircuit, shots: int = None, count: int = None):
         """Estimate cost for running this circuit
@@ -110,12 +114,11 @@ class QuantinuumBackend(AzureBackend):
         return target.estimate_cost(input_data, num_shots=shots)
 
 
-class QuantinuumAPIValidatorBackend(QuantinuumBackend):
+class QuantinuumSyntaxCheckerBackend(QuantinuumBackend):
     backend_names = (
-        "quantinuum.hqs-lt-s1-apival",
-        "quantinuum.hqs-lt-s2-apival",
-        "quantinuum.sim.h1-1sc",
-        "quantinuum.sim.h1-2sc"
+        # Note: Target names on the same line are equivalent.
+        "quantinuum.hqs-lt-s1-apival", "quantinuum.sim.h1-1sc",
+        "quantinuum.hqs-lt-s2-apival", "quantinuum.sim.h1-2sc"
     )
 
     def __init__(
@@ -130,6 +133,7 @@ class QuantinuumAPIValidatorBackend(QuantinuumBackend):
             self._provider_id = HONEYWELL_PROVIDER_ID
             self._provider_name = HONEYWELL_PROVIDER_NAME
 
+        self._initialize_n_qubits(name)
         default_config = BackendConfiguration.from_dict(
             {
                 "backend_name": name,
@@ -137,10 +141,10 @@ class QuantinuumAPIValidatorBackend(QuantinuumBackend):
                 "simulator": True,
                 "local": False,
                 "coupling_map": None,
-                "description": f"Quantinuum (formerly Honeywell) API validator on Azure Quantum",
+                "description": f"Quantinuum Syntax Checker on Azure Quantum",
                 "basis_gates": QUANTINUUM_BASIS_GATES,
                 "memory": False,
-                "n_qubits": 10,
+                "n_qubits": self.n_qubits,
                 "conditional": False,
                 "max_shots": None,
                 "max_experiments": 1,
@@ -150,19 +154,18 @@ class QuantinuumAPIValidatorBackend(QuantinuumBackend):
             }
         )
         configuration: BackendConfiguration = kwargs.pop("configuration", default_config)
-        logger.info(f"Initializing {self._provider_name}APIValidatorBackend")
+        logger.info(f"Initializing {self._provider_name}SyntaxCheckerBackend")
         super().__init__(configuration=configuration,
                          provider=provider,
                          provider_id=self._provider_id,
                          **kwargs)
 
 
-class QuantinuumSimulatorBackend(QuantinuumBackend):
+class QuantinuumEmulatorBackend(QuantinuumBackend):
     backend_names = (
-        "quantinuum.hqs-lt-s1-sim",
-        "quantinuum.hqs-lt-s2-sim",
-        "quantinuum.sim.h1-1e",
-        "quantinuum.sim.h1-2e"
+        # Note: Target names on the same line are equivalent.
+        "quantinuum.hqs-lt-s1-sim", "quantinuum.sim.h1-1e",
+        "quantinuum.hqs-lt-s2-sim", "quantinuum.sim.h1-2e"
     )
 
     def __init__(
@@ -177,6 +180,7 @@ class QuantinuumSimulatorBackend(QuantinuumBackend):
             self._provider_id = HONEYWELL_PROVIDER_ID
             self._provider_name = HONEYWELL_PROVIDER_NAME
 
+        self._initialize_n_qubits(name)
         configuration: BackendConfiguration = kwargs.pop("configuration", None)
         default_config = BackendConfiguration.from_dict(
             {
@@ -185,10 +189,10 @@ class QuantinuumSimulatorBackend(QuantinuumBackend):
                 "simulator": True,
                 "local": False,
                 "coupling_map": None,
-                "description": f"Quantinuum (formerly Honeywell) simulator on Azure Quantum",
+                "description": f"Quantinuum emulator on Azure Quantum",
                 "basis_gates": QUANTINUUM_BASIS_GATES,
                 "memory": False,
-                "n_qubits": 10,
+                "n_qubits": self.n_qubits,
                 "conditional": False,
                 "max_shots": None,
                 "max_experiments": 1,
@@ -198,7 +202,7 @@ class QuantinuumSimulatorBackend(QuantinuumBackend):
             }
         )
         configuration: BackendConfiguration = kwargs.pop("configuration", default_config)
-        logger.info(f"Initializing {self._provider_name}APIValidatorBackend")
+        logger.info(f"Initializing {self._provider_name}EmulatorBackend")
         super().__init__(configuration=configuration,
                          provider=provider,
                          provider_id=self._provider_id,
@@ -207,10 +211,9 @@ class QuantinuumSimulatorBackend(QuantinuumBackend):
 
 class QuantinuumQPUBackend(QuantinuumBackend):
     backend_names = (
-        "quantinuum.hqs-lt-s1",
-        "quantinuum.hqs-lt-s2",
-        "quantinuum.qpu.h1-1",
-        "quantinuum.qpu.h1-2"
+        # Note: Target names on the same line are equivalent.
+        "quantinuum.hqs-lt-s1", "quantinuum.qpu.h1-1",
+        "quantinuum.hqs-lt-s2", "quantinuum.qpu.h1-2"
     )
 
     def __init__(
@@ -225,6 +228,7 @@ class QuantinuumQPUBackend(QuantinuumBackend):
             self._provider_id = HONEYWELL_PROVIDER_ID
             self._provider_name = HONEYWELL_PROVIDER_NAME
 
+        self._initialize_n_qubits(name)
         default_config = BackendConfiguration.from_dict(
             {
                 "backend_name": name,
@@ -232,10 +236,10 @@ class QuantinuumQPUBackend(QuantinuumBackend):
                 "simulator": False,
                 "local": False,
                 "coupling_map": None,
-                "description": f"Quantinuum (formerly Honeywell) QPU on Azure Quantum",
+                "description": f"Quantinuum QPU on Azure Quantum",
                 "basis_gates": QUANTINUUM_BASIS_GATES,
                 "memory": False,
-                "n_qubits": 10,
+                "n_qubits": self.n_qubits,
                 "conditional": False,
                 "max_shots": 10000,
                 "max_experiments": 1,
