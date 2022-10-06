@@ -17,6 +17,7 @@ $PackageDir = Split-Path -parent $PSScriptRoot;
 $PackageName = $PackageDir | Split-Path -Leaf;
 $RootDir = Split-Path -parent $PackageDir;
 Import-Module (Join-Path $RootDir "build" "conda-utils.psm1");
+Import-Module (Join-Path $RootDir "build" "package-utils.psm1");
 
 if ($True -eq $SkipInstall) {
     Write-Host "##[info]Skipping install."
@@ -72,4 +73,9 @@ if (Test-Path Env:AZURE_QUANTUM_CAPABILITIES) {
     $MarkExpr = "live_test"
 }
 
-python -m pytest --junitxml=junit/test-results.xml -v -m $MarkExpr
+pip install pytest pytest-azurepipelines | Write-Host
+
+$logs = Join-Path $env:BUILD_ARTIFACTSTAGINGDIRECTORY "qdk-python-logs.txt"
+" ==> Generating logs to $logs" | Write-Host
+
+python -m pytest --junitxml=junit/test-results.xml --log-level=INFO --log-file=$logs -v -m $MarkExpr
