@@ -74,12 +74,12 @@ if (Test-Path Env:AZURE_QUANTUM_CAPABILITIES) {
 
 pip install pytest pytest-azurepipelines | Write-Host
 
-$logs = Join-Path $env:BUILD_ARTIFACTSTAGINGDIRECTORY "qdk-python-logs.txt"
+$logs = Join-Path $env:BUILD_ARTIFACTSTAGINGDIRECTORY "logs" "qdk-python.txt"
 " ==> Generating logs to $logs" | Write-Host
 
 python -m pytest -v `
     --junitxml=junit/test-results.xml `
-    --log-level=DEBUG `
+    --log-level=INFO `
     --log-file-format="%(asctime)s %(levelname)s %(message)s" `
     --log-file=$logs `
     -m $MarkExpr 
