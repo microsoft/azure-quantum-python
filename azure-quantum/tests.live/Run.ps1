@@ -78,4 +78,9 @@ pip install pytest pytest-azurepipelines | Write-Host
 $logs = Join-Path $env:BUILD_ARTIFACTSTAGINGDIRECTORY "qdk-python-logs.txt"
 " ==> Generating logs to $logs" | Write-Host
 
-python -m pytest --junitxml=junit/test-results.xml --log-level=INFO --log-file=$logs -v -m $MarkExpr
+python -m pytest -v `
+    --junitxml=junit/test-results.xml `
+    --log-level=DEBUG `
+    --log-file-format="%(asctime)s %(levelname)s %(message)s" `
+    --log-file=$logs `
+    -m $MarkExpr 
