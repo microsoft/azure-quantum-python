@@ -47,7 +47,14 @@ class MicrosoftResourceEstimationBackend(MicrosoftBackend):
 
     @classmethod
     def _default_options(cls):
-        return Options(entryPoint="main", arguments=[], targetCapability="AdaptiveExecution", errorBudget=1e-3, qubit={}, faultToleranceProtocol="surface_code")
+        return Options(
+            entryPoint="main",
+            arguments=[],
+            targetCapability="AdaptiveExecution",
+            errorBudget=1e-3,
+            qubitParams={"name":"qubit_gate_ns_e3"},
+            qecScheme={"name":"surface_code"}
+        )
 
     def __init__(self, name: str, provider: "AzureQuantumProvider", **kwargs):
         """Constructor for class to interface with the resource estimator target"""
