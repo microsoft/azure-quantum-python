@@ -52,18 +52,12 @@ QUANTINUUM_BASIS_GATES = [
 QUANTINUUM_PROVIDER_ID = "quantinuum"
 QUANTINUUM_PROVIDER_NAME = "Quantinuum"
 
-HONEYWELL_PROVIDER_ID = "honeywell"
-HONEYWELL_PROVIDER_NAME = "Honeywell"
-
 class QuantinuumBackend(AzureBackend):
-    """Base class for interfacing with a Quantinuum (formerly Quantinuum) backend in Azure Quantum"""
+    """Base class for interfacing with a Quantinuum (formerly Honeywell) backend in Azure Quantum"""
 
     def __init__(self, **kwargs):
         self._provider_id = QUANTINUUM_PROVIDER_ID
         self._provider_name = QUANTINUUM_PROVIDER_NAME
-        if kwargs.pop("provider_id", None) == HONEYWELL_PROVIDER_ID:
-            self._provider_id = HONEYWELL_PROVIDER_ID
-            self._provider_name = HONEYWELL_PROVIDER_NAME
         super().__init__(**kwargs)
 
     @classmethod
@@ -129,9 +123,6 @@ class QuantinuumSyntaxCheckerBackend(QuantinuumBackend):
     ):
         self._provider_id = QUANTINUUM_PROVIDER_ID
         self._provider_name = QUANTINUUM_PROVIDER_NAME
-        if kwargs.pop("provider_id", None) == "honeywell":
-            self._provider_id = HONEYWELL_PROVIDER_ID
-            self._provider_name = HONEYWELL_PROVIDER_NAME
 
         self._initialize_n_qubits(name)
         default_config = BackendConfiguration.from_dict(
@@ -176,9 +167,6 @@ class QuantinuumEmulatorBackend(QuantinuumBackend):
     ):
         self._provider_id = QUANTINUUM_PROVIDER_ID
         self._provider_name = QUANTINUUM_PROVIDER_NAME
-        if kwargs.pop("provider_id", None) == "honeywell":
-            self._provider_id = HONEYWELL_PROVIDER_ID
-            self._provider_name = HONEYWELL_PROVIDER_NAME
 
         self._initialize_n_qubits(name)
         configuration: BackendConfiguration = kwargs.pop("configuration", None)
@@ -224,9 +212,6 @@ class QuantinuumQPUBackend(QuantinuumBackend):
     ):
         self._provider_id = QUANTINUUM_PROVIDER_ID
         self._provider_name = QUANTINUUM_PROVIDER_NAME
-        if kwargs.pop("provider_id", None) == "honeywell":
-            self._provider_id = HONEYWELL_PROVIDER_ID
-            self._provider_name = HONEYWELL_PROVIDER_NAME
 
         self._initialize_n_qubits(name)
         default_config = BackendConfiguration.from_dict(

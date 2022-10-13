@@ -262,15 +262,6 @@ class QuantumTestBase(ReplayableTest):
 
         return workspace
 
-    @deprecate(message="Remove this method when Quantinuum provider is deployed to production")
-    def get_test_quantinuum_enabled(self):
-        if (self.is_playback):
-            return True
-        self.pause_recording()
-        workspace = self.create_workspace()
-        targets = workspace.get_targets(provider_id="quantinuum")
-        self.resume_recording()
-        return len(targets) > 0
 
     def mock_wait(self, job_wait_until_completed):
         # Workaround for issue #118

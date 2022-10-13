@@ -96,36 +96,24 @@ class TestWorkspace(QuantumTestBase):
         ])
         assert test_targets.issubset(set([t.name for t in targets]))
     
-    @pytest.mark.honeywell
+    @pytest.mark.quantinuum
     @pytest.mark.live_test
-    def test_workspace_get_targets_honeywell(self):
+    def test_workspace_get_targets_quantinuum(self):
         ws = self.create_workspace()
         targets = ws.get_targets()
         assert None not in targets
         test_targets = set([
-            'honeywell.hqs-lt-s1-apival'
+            'quantinuum.hqs-lt-s1-apival'
         ])
         assert test_targets.issubset(set([t.name for t in targets]))
-
-    @pytest.mark.honeywell
-    @pytest.mark.live_test
-    def test_workspace_get_targets_quantinuum(self):
-        if self.get_test_quantinuum_enabled():
-            ws = self.create_workspace()
-            targets = ws.get_targets()
-            assert None not in targets
-            test_targets = set([
-                'quantinuum.hqs-lt-s1-apival'
-            ])
-            assert test_targets.issubset(set([t.name for t in targets]))
-            test_targets = set([
-                'quantinuum.sim.h1-1sc'
-            ])
-            assert test_targets.issubset(set([t.name for t in targets]))
-            test_targets = set([
-                'quantinuum.sim.h1-2sc'
-            ])
-            assert test_targets.issubset(set([t.name for t in targets]))
+        test_targets = set([
+            'quantinuum.sim.h1-1sc'
+        ])
+        assert test_targets.issubset(set([t.name for t in targets]))
+        test_targets = set([
+            'quantinuum.sim.h1-2sc'
+        ])
+        assert test_targets.issubset(set([t.name for t in targets]))
 
     @pytest.mark.qio
     @pytest.mark.live_test
