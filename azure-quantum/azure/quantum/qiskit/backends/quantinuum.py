@@ -148,7 +148,6 @@ class QuantinuumSyntaxCheckerBackend(QuantinuumBackend):
         logger.info(f"Initializing {self._provider_name}SyntaxCheckerBackend")
         super().__init__(configuration=configuration,
                          provider=provider,
-                         provider_id=self._provider_id,
                          **kwargs)
 
 
@@ -193,7 +192,6 @@ class QuantinuumEmulatorBackend(QuantinuumBackend):
         logger.info(f"Initializing {self._provider_name}EmulatorBackend")
         super().__init__(configuration=configuration,
                          provider=provider,
-                         provider_id=self._provider_id,
                          **kwargs)
 
 
@@ -236,6 +234,5 @@ class QuantinuumQPUBackend(QuantinuumBackend):
         configuration: BackendConfiguration = kwargs.pop("configuration", default_config)
         logger.info(f"Initializing {self._provider_name}QPUBackend")
         super().__init__(configuration=configuration,
-                         provider=provider, 
-                         provider_id=self._provider_id,
+                         provider=provider,
                          **kwargs)

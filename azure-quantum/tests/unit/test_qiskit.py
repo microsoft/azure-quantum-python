@@ -24,7 +24,6 @@ from azure.quantum.job.job import Job
 from azure.quantum.qiskit import AzureQuantumProvider
 from azure.quantum.qiskit.job import AzureQuantumJob
 from azure.quantum.qiskit.backends import QuantinuumEmulatorBackend
-from azure.quantum.qiskit.backends.quantinuum import QUANTINUUM_PROVIDER_ID
 
 from common import QuantumTestBase, ZERO_UID
 
@@ -443,7 +442,7 @@ class TestQiskit(QuantumTestBase):
             backend = provider.get_backend("quantinuum.hqs-lt-s1-apival")
             expected_data_format = kwargs["input_data_format"] if "input_data_format" in kwargs else "honeywell.openqasm.v1"
             assert "quantinuum.hqs-lt-s1-apival" in backend.backend_names
-            assert backend.backend_names[0] in [t.name for t in workspace.get_targets(provider_id=provider_id)]
+            assert backend.backend_names[0] in [t.name for t in workspace.get_targets(provider_id="quantinuum")]
 
             if isinstance(circuit, list):
                 num_qubits = circuit[0].num_qubits
@@ -458,8 +457,8 @@ class TestQiskit(QuantumTestBase):
             )
 
             # Check job metadata:
-            assert qiskit_job._azure_job.details.target == f"{provider_id}.hqs-lt-s1-apival"
-            assert qiskit_job._azure_job.details.provider_id == provider_id
+            assert qiskit_job._azure_job.details.target == "quantinuum.hqs-lt-s1-apival"
+            assert qiskit_job._azure_job.details.provider_id == "quantinuum"
             assert qiskit_job._azure_job.details.input_data_format == expected_data_format
             assert qiskit_job._azure_job.details.output_data_format == "honeywell.quantum-results.v1"
             assert "count" in qiskit_job._azure_job.details.input_params
