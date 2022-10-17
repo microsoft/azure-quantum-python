@@ -35,7 +35,7 @@ AzureJobStatusMap = {
 # Constants for output data format:
 MICROSOFT_OUTPUT_DATA_FORMAT = "microsoft.quantum-results.v1"
 IONQ_OUTPUT_DATA_FORMAT = "ionq.quantum-results.v1"
-HONEYWELL_OUTPUT_DATA_FORMAT = "honeywell.quantum-results.v1"
+QUANTINUUM_OUTPUT_DATA_FORMAT = "honeywell.quantum-results.v1"
 RESOURCE_ESTIMATOR_OUTPUT_DATA_FORMAT = "microsoft.resource-estimates.v1"
 
 class AzureQuantumJob(JobV1):
@@ -143,8 +143,8 @@ class AzureQuantumJob(JobV1):
             elif (self._azure_job.details.output_data_format == IONQ_OUTPUT_DATA_FORMAT):
                 job_result["data"] = self._format_ionq_results(sampler_seed=sampler_seed)
 
-            elif (self._azure_job.details.output_data_format == HONEYWELL_OUTPUT_DATA_FORMAT):
-                job_result["data"] = self._format_honeywell_results()
+            elif (self._azure_job.details.output_data_format == QUANTINUUM_OUTPUT_DATA_FORMAT):
+                job_result["data"] = self._format_quantinuum_results()
 
             else:
                 job_result["data"] = self._format_unknown_results()
@@ -252,8 +252,8 @@ class AzureQuantumJob(JobV1):
 
         return {"counts": counts, "probabilities": probabilities}
     
-    def _format_honeywell_results(self):
-        """ Translate IonQ's histogram data into a format that can be consumed by qiskit libraries. """
+    def _format_quantinuum_results(self):
+        """ Translate Quantinuum's histogram data into a format that can be consumed by qiskit libraries. """
         az_result = self._azure_job.get_results()
         all_bitstrings = [
             bitstrings for classical_register, bitstrings 

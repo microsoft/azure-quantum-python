@@ -37,9 +37,6 @@ function PyTestMarkExpr() {
     if ($AzureQuantumCapabilities -notcontains "submit.ionq") {
         $MarkExpr += " and not ionq"
     }
-    if ($AzureQuantumCapabilities -notcontains "submit.honeywell") {
-        $MarkExpr += " and not honeywell"
-    }
     if ($AzureQuantumCapabilities -notcontains "submit.1qbit") {
         $MarkExpr += " and not oneqbit"
     }

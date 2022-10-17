@@ -10,13 +10,6 @@ from azure.quantum.qiskit.backends.ionq import (
     IonQSimulatorBackend
 )
 
-from azure.quantum.qiskit.backends.honeywell import (
-    HoneywellBackend,
-    HoneywellQPUBackend,
-    HoneywellAPIValidatorBackend,
-    HoneywellSimulatorBackend
-)
-
 from azure.quantum.qiskit.backends.quantinuum import (
     QuantinuumBackend,
     QuantinuumQPUBackend,
