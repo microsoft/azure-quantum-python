@@ -28,7 +28,7 @@ class ResourceEstimatorResult(Result):
                     <summary style="display:list-item">
                         <strong>{group['title']}</strong>
                     </summary>
-                <table>"""
+                    <table>"""
             for entry in group['entries']:
                 val = self.data()
                 for key in entry['path'].split("/"):
