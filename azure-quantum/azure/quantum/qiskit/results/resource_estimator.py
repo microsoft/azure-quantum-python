@@ -47,7 +47,7 @@ class ResourceEstimatorResult(Result):
                 """
             html += "</table></details>"
 
-        html += f"<details> <summary style='display:list-item'><strong>Assumptions</strong></summary><ul>"
+        html += f"<details><summary style=\"display:list-item\"><strong>Assumptions</strong></summary><ul>"
         for assumption in self.data()['reportData']['assumptions']:
             html += f"<li>{md.convert(assumption)}</li>"
         html += "</ul></details>"
@@ -134,7 +134,7 @@ class ResourceEstimatorResultSummary(Result):
                 """
             html += "</table></details>"
 
-        html += f"<details> <summary style='display:list-item'><strong>Assumptions</strong></summary><ul>"
+        html += f"<details><summary style=\'display:list-item\'><strong>Assumptions</strong></summary><ul>"
         for assumption in self.data()['reportData']['assumptions']:
             html += f"<li>{md.convert(assumption)}</li>"
         html += "</ul></details>"
