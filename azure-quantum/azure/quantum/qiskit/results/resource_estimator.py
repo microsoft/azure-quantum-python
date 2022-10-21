@@ -1,12 +1,11 @@
 try:
     from qiskit.result import Result
+    import markdown
 except ImportError:
     raise ImportError(
         "Missing optional 'qiskit' dependencies. \
 To install run: pip install azure-quantum[qiskit]"
     )
-
-import markdown
 
 class ResourceEstimatorResult(Result):
     def __init__(
