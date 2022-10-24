@@ -66,7 +66,7 @@ if (Test-Path Env:AZURE_QUANTUM_CAPABILITIES) {
     $MarkExpr = "live_test"
 }
 
-pip install pytest pytest-azurepipelines | Write-Host
+pip install pytest | Write-Host
 
 $logs = Join-Path $env:BUILD_ARTIFACTSTAGINGDIRECTORY "logs" "qdk-python.txt"
 " ==> Generating logs to $logs" | Write-Host
