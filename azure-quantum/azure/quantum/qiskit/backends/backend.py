@@ -14,6 +14,7 @@ from azure.quantum.qiskit.job import AzureQuantumJob
 
 try:
     from qiskit import QuantumCircuit, transpile
+    from qiskit.transpiler.passes import RemoveBarriers
     from qiskit.providers import BackendV1 as Backend
     from qiskit.qobj import Qobj, QasmQobj
 
@@ -45,8 +46,6 @@ class AzureBackend(Backend):
         logger.info(f"Using QIR as the job's payload format.")
         from qiskit_qir import to_qir_bitcode, to_qir
 
-        # Set of gates supported by QIR targets.
-        from qiskit_qir import SUPPORTED_INSTRUCTIONS as qir_supported_instructions
 
         capability = input_params["targetCapability"] if "targetCapability" in input_params else "AdaptiveExecution"
 
@@ -61,6 +60,10 @@ class AzureBackend(Backend):
 
         # We'll transpile automatically to the supported gates in QIR unless explicitly skipped.
         if not input_params.get("skipTranspile", False):
+            # Set of gates supported by QIR targets.
+            config = self.configuration()
+            qir_supported_instructions = config["basis_gates"]
+            circuit = RemoveBarriers()(circuit) if "barrier" not in qir_supported_instructions else circuit
             circuit = transpile(circuit, basis_gates = qir_supported_instructions)
 
             # We'll only log the QIR again if we performed a transpilation.
