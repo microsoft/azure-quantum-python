@@ -62,7 +62,7 @@ class AzureBackend(Backend):
         if not input_params.get("skipTranspile", False):
             # Set of gates supported by QIR targets.
             config = self.configuration()
-            qir_supported_instructions = config["basis_gates"]
+            qir_supported_instructions = config.basis_gates
             circuit = RemoveBarriers()(circuit) if "barrier" not in qir_supported_instructions else circuit
             circuit = transpile(circuit, basis_gates = qir_supported_instructions)
 
