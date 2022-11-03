@@ -66,6 +66,15 @@ class TestQiskit(QuantumTestBase):
         circuit.measure(qr[pos], cr[pos][pos])
         return circuit
 
+    def _controlled_s(self):
+        circuit = QuantumCircuit(3)
+        circuit.t(0)
+        circuit.t(1)
+        circuit.cx(0, 1)
+        circuit.tdg(1)
+        circuit.cx(0, 1)
+        return circuit
+
     def test_qir_to_qiskit_bitstring(self):
         bits = random.choices(["0", "1"], k=50)
         bitstring = "".join(bits)
@@ -714,3 +723,61 @@ class TestQiskit(QuantumTestBase):
                 print(result)
                 assert sum(result.data()["counts"].values()) == shots
                 assert result.data()["counts"][expectation] == shots
+
+    @pytest.mark.microsoft_qc
+    @pytest.mark.live_test
+    def test_qiskit_controlled_s_to_resource_estimator(self):
+        with unittest.mock.patch.object(
+            Job,
+            self.mock_create_job_id_name,
+            return_value=self.get_test_job_id(),
+        ):
+            workspace = self.create_workspace()
+            provider = AzureQuantumProvider(workspace=workspace)
+            backend = provider.get_backend("microsoft.estimator")
+
+            circuit = self._controlled_s()
+
+            qiskit_job = backend.run(circuit=circuit)
+            assert qiskit_job._azure_job.details.metadata["num_qubits"] == '3'
+
+            # Make sure the job is completed before fetching results
+            self._qiskit_wait_to_complete(qiskit_job, provider)
+
+            if JobStatus.DONE == qiskit_job.status():
+                result = qiskit_job.result()
+                print(result.data())
+                assert result.data()["physicalCounts"]["physicalQubits"] == 12936
+                assert result.data()["physicalCounts"]["runtime"] == 36400
+                assert result.data()["jobParams"]["qubitParams"]["name"] == "qubit_gate_ns_e3"
+                assert result.data()["jobParams"]["qecScheme"]["name"] == "surface_code"
+                assert result.data()["jobParams"]["errorBudget"] == 0.001
+
+    @pytest.mark.microsoft_qc
+    @pytest.mark.live_test
+    def test_qiskit_controlled_s_to_resource_estimator_with_high_error_rate(self):
+        with unittest.mock.patch.object(
+            Job,
+            self.mock_create_job_id_name,
+            return_value=self.get_test_job_id(),
+        ):
+            workspace = self.create_workspace()
+            provider = AzureQuantumProvider(workspace=workspace)
+            backend = provider.get_backend("microsoft.estimator")
+
+            circuit = self._controlled_s()
+
+            qiskit_job = backend.run(circuit=circuit, qubitParams={"name": "qubit_gate_ns_e4"}, errorBudget=0.01)
+            assert qiskit_job._azure_job.details.metadata["num_qubits"] == '3'
+
+            # Make sure the job is completed before fetching results
+            self._qiskit_wait_to_complete(qiskit_job, provider)
+
+            if JobStatus.DONE == qiskit_job.status():
+                result = qiskit_job.result()
+                print(result.data())
+                assert result.data()["physicalCounts"]["physicalQubits"] == 1296
+                assert result.data()["physicalCounts"]["runtime"] == 15600
+                assert result.data()["jobParams"]["qubitParams"]["name"] == "qubit_gate_ns_e4"
+                assert result.data()["jobParams"]["qecScheme"]["name"] == "surface_code"
+                assert result.data()["jobParams"]["errorBudget"] == 0.01
