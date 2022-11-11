@@ -66,7 +66,7 @@ class AzureBackend(Backend):
             # We'll only log the QIR again if we performed a transpilation.
             if logger.isEnabledFor(logging.DEBUG):
                 logger.debug(f"QIR (Post-transpilation):\n{to_qir(circuit, capability, **to_qir_kwargs)}")
-        emit_barrier_calls = "barrier" in qir_supported_instructions
+        emit_barrier_calls = "barrier" in config.basis_gates
         qir = bytes(to_qir_bitcode(circuit, capability, emit_barrier_calls=emit_barrier_calls, **to_qir_kwargs))
         return (qir, data_format, input_params)
 
