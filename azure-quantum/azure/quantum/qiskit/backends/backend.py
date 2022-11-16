@@ -61,7 +61,7 @@ class AzureBackend(Backend):
         if not input_params.get("skipTranspile", False):
             # Set of gates supported by QIR targets.
             config = self.configuration()
-            circuit = transpile(circuit, basis_gates=config.basis_gates)
+            circuit = transpile(circuit, basis_gates=config.basis_gates, optimization_level=0)
 
             # We'll only log the QIR again if we performed a transpilation.
             if logger.isEnabledFor(logging.DEBUG):
