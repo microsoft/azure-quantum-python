@@ -45,8 +45,6 @@ class AzureBackend(Backend):
         logger.info(f"Using QIR as the job's payload format.")
         from qiskit_qir import to_qir_bitcode, to_qir
 
-        # Set of gates supported by QIR targets.
-        from qiskit_qir import SUPPORTED_INSTRUCTIONS as qir_supported_instructions
 
         capability = input_params["targetCapability"] if "targetCapability" in input_params else "AdaptiveExecution"
 
@@ -61,13 +59,15 @@ class AzureBackend(Backend):
 
         # We'll transpile automatically to the supported gates in QIR unless explicitly skipped.
         if not input_params.get("skipTranspile", False):
-            circuit = transpile(circuit, basis_gates = qir_supported_instructions)
+            # Set of gates supported by QIR targets.
+            config = self.configuration()
+            circuit = transpile(circuit, basis_gates=config.basis_gates, optimization_level=0)
 
             # We'll only log the QIR again if we performed a transpilation.
             if logger.isEnabledFor(logging.DEBUG):
                 logger.debug(f"QIR (Post-transpilation):\n{to_qir(circuit, capability, **to_qir_kwargs)}")
-
-        qir = bytes(to_qir_bitcode(circuit, capability, **to_qir_kwargs))
+        emit_barrier_calls = "barrier" in config.basis_gates
+        qir = bytes(to_qir_bitcode(circuit, capability, emit_barrier_calls=emit_barrier_calls, **to_qir_kwargs))
         return (qir, data_format, input_params)
 
     def run(self, circuit, **kwargs):
