@@ -31,7 +31,7 @@ class IonQBackend(AzureBackend):
 
     @classmethod
     def _default_options(cls):
-        return Options(shots=500)
+        return Options(shots=500, targetCapability="ionq")
 
     @classmethod
     def _azure_config(cls):
@@ -53,7 +53,7 @@ class IonQBackend(AzureBackend):
 
     def _translate_input(self, circuit, data_format, input_params, to_qir_kwargs={}):
         """ Translates the input values to the format expected by the AzureBackend. """
-        if data_format == "ionq.circuit.v1":
+        if data_format == "ionq.circuit.v1" and not input_params["targetCapability"] == "BasicExecution":
             ionq_circ, _, _ = qiskit_circ_to_ionq_circ(circuit, gateset=self.gateset())
             input_data = {
                 "gateset": self.gateset(),
@@ -62,7 +62,7 @@ class IonQBackend(AzureBackend):
             }
             return (IonQ._encode_input_data(input_data), data_format, input_params)
         else:
-            return super()._translate_input(circuit, data_format, input_params, to_qir_kwargs)
+            return super()._translate_input(circuit, "qir.v1", input_params, to_qir_kwargs)
 
     def gateset(self):
         return self._gateset

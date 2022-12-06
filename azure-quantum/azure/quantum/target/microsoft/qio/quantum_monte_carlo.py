@@ -12,9 +12,9 @@ from azure.quantum.workspace import Workspace
 logger = logging.getLogger(__name__)
 
 class QuantumMonteCarlo(Solver):
-    target_names = (
+    target_names = [
         "microsoft.qmc.cpu"
-    )
+    ]
     def __init__(
         self,
         workspace: Workspace,

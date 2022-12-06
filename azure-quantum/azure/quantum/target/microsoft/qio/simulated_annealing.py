@@ -16,10 +16,10 @@ logger = logging.getLogger(__name__)
 
 
 class SimulatedAnnealing(Solver):
-    target_names = [
+    target_names = (
         "microsoft.simulatedannealing.cpu",
         "microsoft.simulatedannealing-parameterfree.cpu"
-    ]
+    )
     def __init__(
         self,
         workspace: Workspace,
