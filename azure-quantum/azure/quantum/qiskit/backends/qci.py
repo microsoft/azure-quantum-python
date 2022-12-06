@@ -12,7 +12,28 @@ from .backend import AzureBackend
 
 from qiskit.providers.models import BackendConfiguration
 from qiskit.providers import Options
-from qiskit_qir import SUPPORTED_INSTRUCTIONS as QIR_BASIS_GATES
+
+QIR_BASIS_GATES = [
+    "measure",
+    "m",
+    "barrier",
+    "cx",
+    "cz",
+    "h",
+    "reset",
+    "rx",
+    "ry",
+    "rz",
+    "s",
+    "sdg",
+    "swap",
+    "t",
+    "tdg",
+    "x",
+    "y",
+    "z",
+    "id"
+]
 
 if TYPE_CHECKING:
     from azure.quantum.qiskit import AzureQuantumProvider
