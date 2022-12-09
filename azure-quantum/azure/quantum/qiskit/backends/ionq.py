@@ -31,7 +31,7 @@ class IonQBackend(AzureBackend):
 
     @classmethod
     def _default_options(cls):
-        return Options(shots=500, targetCapability="ionq")
+        return Options(shots=500)
 
     @classmethod
     def _azure_config(cls):
