@@ -36,38 +36,66 @@ class AzureBackend(Backend):
             "metadata": json.dumps(circuit.metadata),
         }
 
-    def _translate_input(self, circuit, data_format, input_params, to_qir_kwargs={}):
+    def to_qir_bitcode_with_entry_points(self, circuits: List[QuantumCircuit], capability, emit_barrier_calls, **kwargs):
+        #from qiskit_qir import to_qir_bitcode
+        from qiskit_qir import to_qir
+        firstCircuit = circuits[0]
+        qir = to_qir(firstCircuit, capability, emit_barrier_calls=emit_barrier_calls, **kwargs)
+        return (qir, [{"entryPoint": "ghz", "arguments": []}, {"entryPoint": "teleport", "arguments": []}])
+
+    def _translate_input(self, circuits: Union[QuantumCircuit, List[QuantumCircuit]], data_format, input_params, to_qir_kwargs={}):
         """ Translates the input values to the format expected by the AzureBackend. """
+        if isinstance(circuits, QuantumCircuit):
+            circuits = [circuits]
+        elif isinstance(circuits, List[QuantumCircuit]):
+            pass
+        else:
+            raise ValueError("Input must be Union[QuantumCircuit, List[QuantumCircuit]]")
+
+        if len(circuits) == 0:
+            raise ValueError("No QuantumCircuits provided")
+
         if data_format != "qir.v1":
             target = self.name()
             raise ValueError(f"{data_format} is not a supported data format for target {target}.")
 
         logger.info(f"Using QIR as the job's payload format.")
-        from qiskit_qir import to_qir_bitcode, to_qir
-
+        # from qiskit_qir import to_qir_bitcode_with_entry_points, to_qir
+        from qiskit_qir import to_qir
 
         capability = input_params["targetCapability"] if "targetCapability" in input_params else "AdaptiveExecution"
 
         if logger.isEnabledFor(logging.DEBUG):
-            logger.debug(f"QIR:\n{to_qir(circuit, capability, **to_qir_kwargs)}")
-
-        # all qir payload needs to define an entryPoint and arguments:
-        if not "entryPoint" in input_params:
-            input_params["entryPoint"] = "main"
-        if not "arguments" in input_params:
-            input_params["arguments"] = []
+            logger.debug(f"QIR:\n{to_qir(circuits, capability, **to_qir_kwargs)}")
 
         # We'll transpile automatically to the supported gates in QIR unless explicitly skipped.
         if not input_params.get("skipTranspile", False):
             # Set of gates supported by QIR targets.
             config = self.configuration()
-            circuit = transpile(circuit, basis_gates=config.basis_gates, optimization_level=0)
+            circuits = [transpile(circuit, basis_gates=config.basis_gates, optimization_level=0) for circuit in circuits]
 
             # We'll only log the QIR again if we performed a transpilation.
             if logger.isEnabledFor(logging.DEBUG):
-                logger.debug(f"QIR (Post-transpilation):\n{to_qir(circuit, capability, **to_qir_kwargs)}")
+                logger.debug(f"QIR (Post-transpilation):\n{to_qir(circuits, capability, **to_qir_kwargs)}")
+
         emit_barrier_calls = "barrier" in config.basis_gates
-        qir = bytes(to_qir_bitcode(circuit, capability, emit_barrier_calls=emit_barrier_calls, **to_qir_kwargs))
+        qir, entry_points = self.to_qir_bitcode_with_entry_points(circuits, capability, emit_barrier_calls=emit_barrier_calls, **to_qir_kwargs)
+        
+        if len(entry_points) == 1:
+            entry_point = entry_points[0]
+            # define an entryPoint and arguments:
+            if not "entryPoint" in input_params:
+                input_params["entryPoint"] = entry_point["entryPoint"] if "entryPoint" in entry_point else "main" 
+            if not "arguments" in input_params:
+                input_params["arguments"] = entry_point["arguments"] if "arguments" in entry_point else []
+        else:
+            # define entryPoints which contain arguments
+            input_params["entryPoints"] = entry_points
+            if "entryPoint" in input_params:
+                del input_params["entryPoint"]
+            if "arguments" in input_params:
+                del input_params["arguments"]
+
         return (qir, data_format, input_params)
 
     def run(self, circuit, **kwargs):
@@ -135,6 +163,15 @@ class AzureBackend(Backend):
 
         # translate
         (input_data, input_data_format, input_params) = self._translate_input(circuit, input_data_format, input_params, to_qir_kwargs)
+
+        if "entryPoints" in input_params and len(input_params["entryPoints"]) > 1:
+            output_data_format = "microsoft.quantum-results.v2"
+
+        print(f"Input format: {input_data_format}")
+        print(f"Output format: {output_data_format}")
+        print(f"Input params: {input_params}")
+
+        raise Exception("stopping before submission")
 
         logger.info(f"Submitting new job for backend {self.name()}")
         job = AzureQuantumJob(
