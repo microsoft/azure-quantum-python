@@ -172,29 +172,6 @@ class TestQiskit(QuantumTestBase):
 
     @pytest.mark.ionq
     @pytest.mark.live_test
-    def test_qiskit_submit_ionq_invalid_input_format(self):
-        with unittest.mock.patch.object(
-            Job,
-            self.mock_create_job_id_name,
-            return_value=self.get_test_job_id(),
-        ):
-            workspace = self.create_workspace()
-            provider = AzureQuantumProvider(workspace=workspace)
-            assert "azure-quantum-qiskit" in provider._workspace.user_agent
-            backend = provider.get_backend("ionq.simulator")
-
-            circuit = self._5_qubit_superposition()
-            circuit.metadata = { "some": "data" }
-
-            with pytest.raises(ValueError) as excinfo:
-                qiskit_job = backend.run(
-                    circuit=circuit,
-                    input_data_format="some.invalid.format"
-                )
-            assert "some.invalid.format is not a supported data format for target ionq.simulator." == str(excinfo.value)
-
-    @pytest.mark.ionq
-    @pytest.mark.live_test
     def test_plugins_submit_qiskit_multi_circuit_experiment_to_ionq(self):
         circuit = self._3_qubit_ghz()
 
