@@ -31,7 +31,7 @@ class IonQBackend(AzureBackend):
 
     @classmethod
     def _default_options(cls):
-        return Options(shots=500)
+        return Options(shots=500, targetCapability="ionq")
 
     @classmethod
     def _azure_config(cls):
@@ -53,6 +53,9 @@ class IonQBackend(AzureBackend):
 
     def _translate_input(self, circuit, data_format, input_params, to_qir_kwargs={}):
         """ Translates the input values to the format expected by the AzureBackend. """
+        if "targetCapability" in input_params and input_params["targetCapability"] == "ionq":
+            del input_params["targetCapability"]
+
         if "targetCapability" in input_params:
             return super()._translate_input(circuit, "qir.v1", input_params, to_qir_kwargs)
         else:
