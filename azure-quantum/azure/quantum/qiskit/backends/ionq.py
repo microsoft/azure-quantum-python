@@ -53,9 +53,9 @@ class IonQBackend(AzureBackend):
 
     def _translate_input(self, circuit, data_format, input_params, to_qir_kwargs={}):
         """ Translates the input values to the format expected by the AzureBackend. """
-        if input_params["targetCapabilty"] == "ionq":
+        if "targetCapabilty" in input_params and input_params["targetCapabilty"] == "ionq":
             del input_params["targetCapability"]
-            
+
         if "targetCapability" in input_params:
             return super()._translate_input(circuit, "qir.v1", input_params, to_qir_kwargs)
         else:
