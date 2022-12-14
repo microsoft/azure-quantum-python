@@ -41,7 +41,7 @@ class AzureBackend(Backend):
         from qiskit_qir import to_qir
         firstCircuit = circuits[0]
         qir = to_qir(firstCircuit, capability, emit_barrier_calls=emit_barrier_calls, **kwargs)
-        return (qir, [{"entryPoint": "ghz", "arguments": []}, {"entryPoint": "teleport", "arguments": []}])
+        return (qir, ["ghz", "teleport", "other"])
 
     def _translate_input(self, circuits: Union[QuantumCircuit, List[QuantumCircuit]], data_format, input_params, to_qir_kwargs={}):
         """ Translates the input values to the format expected by the AzureBackend. """
@@ -82,15 +82,14 @@ class AzureBackend(Backend):
         qir, entry_points = self.to_qir_bitcode_with_entry_points(circuits, capability, emit_barrier_calls=emit_barrier_calls, **to_qir_kwargs)
         
         if len(entry_points) == 1:
-            entry_point = entry_points[0]
             # define an entryPoint and arguments:
             if not "entryPoint" in input_params:
-                input_params["entryPoint"] = entry_point["entryPoint"] if "entryPoint" in entry_point else "main" 
+                input_params["entryPoint"] = entry_points[0]
             if not "arguments" in input_params:
-                input_params["arguments"] = entry_point["arguments"] if "arguments" in entry_point else []
+                input_params["arguments"] = []
         else:
             # define entryPoints which contain arguments
-            input_params["entryPoints"] = entry_points
+            input_params["entryPoints"] = [{"entryPoint": name, "arguments": []} for name in entry_points]
             if "entryPoint" in input_params:
                 del input_params["entryPoint"]
             if "arguments" in input_params:
@@ -171,7 +170,7 @@ class AzureBackend(Backend):
         print(f"Output format: {output_data_format}")
         print(f"Input params: {input_params}")
 
-        raise Exception("stopping before submission")
+        #raise Exception("stopping before submission")
 
         logger.info(f"Submitting new job for backend {self.name()}")
         job = AzureQuantumJob(

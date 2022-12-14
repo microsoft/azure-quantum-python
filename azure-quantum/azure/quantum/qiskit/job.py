@@ -34,6 +34,7 @@ AzureJobStatusMap = {
 
 # Constants for output data format:
 MICROSOFT_OUTPUT_DATA_FORMAT = "microsoft.quantum-results.v1"
+MICROSOFT_BATCHING_OUTPUT_DATA_FORMAT = "microsoft.quantum-results.v2"
 IONQ_OUTPUT_DATA_FORMAT = "ionq.quantum-results.v1"
 QUANTINUUM_OUTPUT_DATA_FORMAT = "honeywell.quantum-results.v1"
 RESOURCE_ESTIMATOR_OUTPUT_DATA_FORMAT = "microsoft.resource-estimates.v1"
@@ -84,7 +85,7 @@ class AzureQuantumJob(JobV1):
         results = self._format_results(sampler_seed=sampler_seed)
 
         result_dict = {
-            "results" : [results],
+            "results" : results,
             "job_id" : self._azure_job.details.id,
             "backend_name" : self._backend.name(),
             "backend_version" : self._backend.version,
@@ -125,8 +126,23 @@ class AzureQuantumJob(JobV1):
 
         return shots
 
-    def _format_results(self, sampler_seed=None):
-        """ Populates the results datastructures in a format that is compatible with qiskit libraries. """
+    def _get_entry_point_names(self):
+        input_params = self._azure_job.details.input_params
+        if "entryPoints" in input_params:
+            entry_points = input_params["entryPoints"]
+            entry_point_names = []
+            for entry_point in entry_points:
+                if not "entryPoint" in entry_point:
+                    raise "Entry point input_param is missing an 'entryPoint' field"
+                entry_point_names.append(entry_point["entryPoint"])
+            return entry_point_names if len(entry_point_names) > 0 else ["main"]
+        elif "entryPoint" in input_params:
+            return [input_params["entryPoint"]]
+        else:
+            return ["main"]
+            
+
+    def _format_nonbatching_results(self, sampler_seed):
         success = self._azure_job.details.status == "Succeeded"
 
         job_result = {
@@ -150,11 +166,46 @@ class AzureQuantumJob(JobV1):
                 job_result["data"] = self._format_unknown_results()
 
         job_result["header"] = self._azure_job.details.metadata
-        if "metadata" in job_result["header"]:
+        if "metadata" in job_result["header"] and not job_result["header"]["metadata"] is None:
             job_result["header"]["metadata"] = json.loads(job_result["header"]["metadata"])
 
         job_result["shots"] = self._shots_count()
         return job_result
+
+    def _format_batching_results(self, sample_results=None):
+        success = self._azure_job.details.status == "Succeeded"
+
+        if not success:
+            return [{
+                "data": {},
+                "success": False,
+                "header": {},
+            }]
+        
+        entry_point_names = self._get_entry_point_names()
+
+        header = self._azure_job.details.metadata
+        if "metadata" in header and not header["metadata"] is None:
+            header["metadata"] = json.loads(header["metadata"])
+        results = self._format_microsoft_batching_results(sample_results)
+        
+        if len(results) != len(entry_point_names):
+            raise "The number of experiment results does not match the number of experiment names"
+
+        return [{
+            "data": result,
+            "success": True,
+            "header": header,
+            "shots": total_count,
+            "name": name
+        } for name, (total_count, result) in zip(entry_point_names, results)]
+
+    def _format_results(self, sampler_seed=None, sample_results=None):
+        """ Populates the results datastructures in a format that is compatible with qiskit libraries. """
+        if self._azure_job.details.output_data_format == MICROSOFT_BATCHING_OUTPUT_DATA_FORMAT:
+            return self._format_batching_results(sample_results)
+        else:
+            return [self._format_nonbatching_results(sampler_seed)]
 
     def _draw_random_sample(self, sampler_seed, probabilities, shots):
         _norm = sum(probabilities.values())
@@ -251,6 +302,52 @@ class AzureQuantumJob(JobV1):
             counts = {bitstring: np.round(shots * value) for bitstring, value in probabilities.items()}
 
         return {"counts": counts, "probabilities": probabilities}
+
+    def _format_microsoft_batching_results(self, sample_results=None):
+        """ Translate Microsoft's batching job results histograms into a format that can be consumed by qiskit libraries. """
+        az_result = sample_results if not sample_results is None else self._azure_job.get_results()
+
+        if not "DataFormat" in az_result:
+            raise "DataFormat missing from Job results"
+
+        if az_result["DataFormat"] != MICROSOFT_BATCHING_OUTPUT_DATA_FORMAT:
+            raise f"DataFormat is not {MICROSOFT_BATCHING_OUTPUT_DATA_FORMAT}"
+
+        if not "Results" in az_result:
+            raise "Results missing from Job results"
+
+        histograms = []
+        results = az_result["Results"]
+        for circuit_results in results:
+            counts = {}
+            probabilities = {}
+
+            if not "TotalCount" in circuit_results:
+                raise "TotalCount missing from Job results"
+
+            total_count = circuit_results["TotalCount"]
+
+            if total_count <= 0:
+                raise "TotalCount must be a positive non-zero integer"
+
+            if not "Histogram" in circuit_results:
+                raise "Histogram missing from Job results"
+        
+            histogram = circuit_results["Histogram"]
+            for result in histogram:
+                if not "Display" in result:
+                    raise "Dispaly missing from histogram result"
+
+                if not "Count" in result:
+                    raise "Count missing from histogram result"
+
+                bitstring = AzureQuantumJob._qir_to_qiskit_bitstring(result["Display"])
+                count = result["Count"]
+                probability = count / total_count
+                counts[bitstring] = count
+                probabilities[bitstring] = probability
+            histograms.append((total_count, {"counts": counts, "probabilities": probabilities}))
+        return histograms
     
     def _format_quantinuum_results(self):
         """ Translate Quantinuum's histogram data into a format that can be consumed by qiskit libraries. """
