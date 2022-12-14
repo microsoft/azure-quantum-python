@@ -24,6 +24,7 @@ from azure.quantum.job.job import Job
 from azure.quantum.qiskit import AzureQuantumProvider
 from azure.quantum.qiskit.job import AzureQuantumJob
 from azure.quantum.qiskit.backends import QuantinuumEmulatorBackend
+from azure.quantum.qiskit.backends import IonQSimulatorBackend
 
 from common import QuantumTestBase, ZERO_UID
 
@@ -171,29 +172,6 @@ class TestQiskit(QuantumTestBase):
 
     @pytest.mark.ionq
     @pytest.mark.live_test
-    def test_qiskit_submit_ionq_invalid_input_format(self):
-        with unittest.mock.patch.object(
-            Job,
-            self.mock_create_job_id_name,
-            return_value=self.get_test_job_id(),
-        ):
-            workspace = self.create_workspace()
-            provider = AzureQuantumProvider(workspace=workspace)
-            assert "azure-quantum-qiskit" in provider._workspace.user_agent
-            backend = provider.get_backend("ionq.simulator")
-
-            circuit = self._5_qubit_superposition()
-            circuit.metadata = { "some": "data" }
-
-            with pytest.raises(ValueError) as excinfo:
-                qiskit_job = backend.run(
-                    circuit=circuit,
-                    input_data_format="some.invalid.format"
-                )
-            assert "some.invalid.format is not a supported data format for target ionq.simulator." == str(excinfo.value)
-
-    @pytest.mark.ionq
-    @pytest.mark.live_test
     def test_plugins_submit_qiskit_multi_circuit_experiment_to_ionq(self):
         circuit = self._3_qubit_ghz()
 
@@ -248,6 +226,7 @@ class TestQiskit(QuantumTestBase):
             provider = AzureQuantumProvider(workspace=workspace)
             assert "azure-quantum-qiskit" in provider._workspace.user_agent
             backend = provider.get_backend("ionq.simulator")
+            expected_data_format = kwargs["input_data_format"] if "input_data_format" in kwargs else "ionq.circuit.v1"
 
             shots = kwargs.get("shots", backend.options.shots)
 
@@ -259,7 +238,7 @@ class TestQiskit(QuantumTestBase):
             # Check job metadata:
             assert qiskit_job._azure_job.details.target == "ionq.simulator"
             assert qiskit_job._azure_job.details.provider_id == "ionq"
-            assert qiskit_job._azure_job.details.input_data_format == "ionq.circuit.v1"
+            assert qiskit_job._azure_job.details.input_data_format == expected_data_format
             assert qiskit_job._azure_job.details.output_data_format == "ionq.quantum-results.v1"
             assert qiskit_job._azure_job.details.input_params["shots"] == shots
             assert "qiskit" in qiskit_job._azure_job.details.metadata
@@ -280,6 +259,27 @@ class TestQiskit(QuantumTestBase):
                 assert counts == result.data()["counts"]
                 assert hasattr(result.results[0].header, "num_qubits")
                 assert hasattr(result.results[0].header, "metadata")
+
+    
+    @pytest.mark.ionq
+    def test_translate_ionq_qir(self):
+        circuit = self._3_qubit_ghz()
+        workspace = self.create_workspace()
+        provider = AzureQuantumProvider(workspace=workspace)
+        backend = IonQSimulatorBackend("ionq.simulator", provider)
+
+        input_format = backend.configuration().azure["input_data_format"]
+        input_params = {
+            "targetCapability": "BasicExecution"
+        }
+
+        (payload, dataformat, params) = backend._translate_input(circuit, input_format, input_params)
+
+        assert isinstance(payload, bytes)
+        assert dataformat == "qir.v1"
+        assert "entryPoint" in params
+        assert "arguments" in params
+        assert "targetCapability" in params
                 
 
     @pytest.mark.ionq
