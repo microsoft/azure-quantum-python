@@ -170,22 +170,44 @@ class TestQiskit(QuantumTestBase):
         circuit = self._3_qubit_ghz()
         self._test_qiskit_submit_ionq(circuit=[circuit])
 
+    # @pytest.mark.ionq
+    # @pytest.mark.live_test
+    # def test_plugins_submit_qiskit_multi_circuit_experiment_to_ionq(self):
+    #     circuit = self._3_qubit_ghz()
+
+    #     workspace = self.create_workspace()
+    #     provider = AzureQuantumProvider(workspace=workspace)
+    #     assert "azure-quantum-qiskit" in provider._workspace.user_agent
+    #     backend = provider.get_backend("ionq.simulator")
+
+    #     with pytest.raises(NotImplementedError) as exc:
+    #         backend.run(
+    #             circuit=[circuit, circuit],
+    #             shots=500
+    #         )
+    #     assert str(exc.value) == "Multi-experiment jobs are not supported!"
+
     @pytest.mark.ionq
     @pytest.mark.live_test
     def test_plugins_submit_qiskit_multi_circuit_experiment_to_ionq(self):
-        circuit = self._3_qubit_ghz()
-
+        circuits = [self._3_qubit_ghz(), self._5_qubit_superposition()]
+        
         workspace = self.create_workspace()
         provider = AzureQuantumProvider(workspace=workspace)
         assert "azure-quantum-qiskit" in provider._workspace.user_agent
         backend = provider.get_backend("ionq.simulator")
+        
+        job = backend.run(
+            circuit=circuits,
+            shots=500,
+            targetCapability="BasicExecution"
+        )
 
-        with pytest.raises(NotImplementedError) as exc:
-            backend.run(
-                circuit=[circuit, circuit],
-                shots=500
-            )
-        assert str(exc.value) == "Multi-experiment jobs are not supported!"
+        # Test the input translation
+        assert job._azure_job.details.output_data_format == "microsoft.quantum-results.v2"
+        assert "entryPoints" in job._azure_job.details.input_params
+        assert not "entryPoint" in job._azure_job.details.input_params
+        assert not "arguments" in job._azure_job.details.input_params
 
     @pytest.mark.ionq
     @pytest.mark.live_test
