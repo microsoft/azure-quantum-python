@@ -187,10 +187,30 @@ class TestQiskit(QuantumTestBase):
     #         )
     #     assert str(exc.value) == "Multi-experiment jobs are not supported!"
 
+    def _get_mock_Result(self, job):
+        import json
+        f = open(r"C:\Repos\azure-quantum\src\JobScheduler\JobScheduler.Translation.Test\TranslatorTest\Samples\Output\QirBatchingV1_1\Translated\BatchMultiEntries.json", "r")
+        output_data = json.load(f)
+        f.close()
+        job._azure_job.details.status = "Succeeded"
+        results = job._format_results(sample_results=output_data)
+
+        result_dict = {
+            "results" : results,
+            "job_id" : job._azure_job.details.id,
+            "backend_name" : job._backend.name(),
+            "backend_version" : job._backend.version,
+            "qobj_id" : job._azure_job.details.name,
+            "success" : True,
+            "error_data" : None if job._azure_job.details.error_data is None else job._azure_job.details.error_data.as_dict()
+        }
+        from qiskit.result import Result
+        return Result.from_dict(result_dict)
+    
     @pytest.mark.ionq
     @pytest.mark.live_test
     def test_plugins_submit_qiskit_multi_circuit_experiment_to_ionq(self):
-        circuits = [self._3_qubit_ghz(), self._5_qubit_superposition()]
+        circuits = [self._3_qubit_ghz(), self._5_qubit_superposition(), self._3_qubit_ghz()]
         
         workspace = self.create_workspace()
         provider = AzureQuantumProvider(workspace=workspace)
@@ -208,6 +228,21 @@ class TestQiskit(QuantumTestBase):
         assert "entryPoints" in job._azure_job.details.input_params
         assert not "entryPoint" in job._azure_job.details.input_params
         assert not "arguments" in job._azure_job.details.input_params
+
+        # Dummy data to use until qiskit API is updated
+        result = self._get_mock_Result(job)
+
+        # Make sure the job is completed before fetching the results
+        # self._qiskit_wait_to_complete(job, provider)
+
+        # if JobStatus.DONE == job.status():
+        #     result = job.result()
+        print(f"\n ghz: {result.data('ghz')}")
+        assert result.data('ghz')["counts"] == { '1': 2, '0': 1 }
+        print(f"\n teleport: {result.data('teleport')}")
+        assert result.data('teleport')["counts"] == { '00': 1, '10': 2 }
+        print(f"\n other: {result.data('other')}")
+        assert result.data('other')["counts"] == { '14 0': 2, '-3 1': 1 }
 
     @pytest.mark.ionq
     @pytest.mark.live_test

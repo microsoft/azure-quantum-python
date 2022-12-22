@@ -30,11 +30,11 @@ class AzureBackend(Backend):
     def _prepare_job_metadata(self, circuit):
         """ Returns the metadata relative to the given circuit that will be attached to the Job"""
         return {
-            "qiskit": True,
-            "name": circuit.name,
-            "num_qubits": circuit.num_qubits,
-            "metadata": json.dumps(circuit.metadata),
-        }
+                "qiskit": True,
+                "name": circuit.name,
+                "num_qubits": circuit.num_qubits,
+                "metadata": json.dumps(circuit.metadata),
+            }
 
     def to_qir_bitcode_with_entry_points(self, circuits: List[QuantumCircuit], capability, emit_barrier_calls, **kwargs):
         #from qiskit_qir import to_qir_bitcode
@@ -119,6 +119,7 @@ class AzureBackend(Backend):
         
         # Guaranteed single circuit
         first_circuit = circuit[0] if isinstance(circuit, (list, tuple)) else circuit
+        job_name = kwargs.pop("job_name", first_circuit.name)
 
         # The default of these job parameters come from the AzureBackend configuration:
         config = self.configuration()
@@ -130,11 +131,6 @@ class AzureBackend(Backend):
 
         # Override QIR translation parameters
         to_qir_kwargs = config.azure.get("to_qir_kwargs", {})
-
-        # If not provided as kwargs, the values of these parameters 
-        # are calculated from the circuit itself:
-        job_name = kwargs.pop("job_name", first_circuit.name)
-        metadata = kwargs.pop("metadata") if "metadata" in kwargs else self._prepare_job_metadata(first_circuit)
 
         # Backend options are mapped to input_params.
         input_params = vars(self.options).copy()
@@ -165,8 +161,26 @@ class AzureBackend(Backend):
         # translate
         (input_data, input_data_format, input_params) = self._translate_input(circuit, input_data_format, input_params, to_qir_kwargs)
 
+        # If not provided as kwargs, the metadata
+        # is calculated from the circuit itself:
+        metadata = kwargs.pop("metadata") if "metadata" in kwargs else None
+
         if "entryPoints" in input_params and len(input_params["entryPoints"]) > 1:
             output_data_format = "microsoft.quantum-results.v2"
+            if metadata is None:
+                entry_points = input_params["entryPoints"]
+
+                if len(circuit) != len(entry_points):
+                    raise "The number of experiment results does not match the number of experiment names"
+
+                # Update circuit names with entry point names
+                for (c, ep) in zip(circuit, entry_points):
+                    c.name = ep["entryPoint"]
+
+                metadata =  {c.name: json.dumps(self._prepare_job_metadata(c)) for c in circuit}
+
+        elif metadata is None:
+            metadata = self._prepare_job_metadata(circuit)
 
         logger.info(f"Submitting new job for backend {self.name()}")
         job = AzureQuantumJob(
@@ -184,7 +198,7 @@ class AzureBackend(Backend):
             **kwargs
         )
 
-        logger.info(f"Submitted job with id '{job.id()}' for circuit '{first_circuit.name}' with shot count of {shots_count}:")
+        logger.info(f"Submitted job with id '{job.id()}' for job '{job_name}' with shot count of {shots_count}:")
         logger.info(input_data)
 
         return job

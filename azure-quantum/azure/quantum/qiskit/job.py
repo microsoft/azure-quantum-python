@@ -77,12 +77,12 @@ class AzureQuantumJob(JobV1):
         self._azure_job.submit()
         return
 
-    def result(self, timeout=None, sampler_seed=None):
+    def result(self, timeout=None, sampler_seed=None, sample_results=None):
         """Return the results of the job."""
         self._azure_job.wait_until_completed(timeout_secs=timeout)
 
         success = self._azure_job.details.status == "Succeeded"
-        results = self._format_results(sampler_seed=sampler_seed)
+        results = self._format_results(sampler_seed=sampler_seed, sample_results=sample_results)
 
         result_dict = {
             "results" : results,
@@ -180,13 +180,17 @@ class AzureQuantumJob(JobV1):
                 "data": {},
                 "success": False,
                 "header": {},
+                "shots": 0,
             }]
         
         entry_point_names = self._get_entry_point_names()
 
-        header = self._azure_job.details.metadata
-        if "metadata" in header and not header["metadata"] is None:
-            header["metadata"] = json.loads(header["metadata"])
+        headers = self._azure_job.details.metadata
+        for (name, header) in headers.items():
+            header = json.loads(header)
+            if "metadata" in header and not header["metadata"] is None:
+                header["metadata"] = json.loads(header["metadata"])
+            headers[name] = header
         results = self._format_microsoft_batching_results(sample_results)
         
         if len(results) != len(entry_point_names):
@@ -195,7 +199,7 @@ class AzureQuantumJob(JobV1):
         return [{
             "data": result,
             "success": True,
-            "header": header,
+            "header": headers[name],
             "shots": total_count,
             "name": name
         } for name, (total_count, result) in zip(entry_point_names, results)]
