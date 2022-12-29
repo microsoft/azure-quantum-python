@@ -229,7 +229,7 @@ class TestQiskit(QuantumTestBase):
         assert not "entryPoint" in job._azure_job.details.input_params
         assert not "arguments" in job._azure_job.details.input_params
 
-        # Dummy data to use until qiskit API is updated
+        # Dummy data to use until job submission works
         result = self._get_mock_Result(job)
 
         # Make sure the job is completed before fetching the results
@@ -237,12 +237,12 @@ class TestQiskit(QuantumTestBase):
 
         # if JobStatus.DONE == job.status():
         #     result = job.result()
-        print(f"\n ghz: {result.data('ghz')}")
-        assert result.data('ghz')["counts"] == { '1': 2, '0': 1 }
-        print(f"\n teleport: {result.data('teleport')}")
-        assert result.data('teleport')["counts"] == { '00': 1, '10': 2 }
-        print(f"\n other: {result.data('other')}")
-        assert result.data('other')["counts"] == { '14 0': 2, '-3 1': 1 }
+        print(f"\n Qiskit Sample - 3-qubit GHZ circuit: {result.data('Qiskit Sample - 3-qubit GHZ circuit')}")
+        assert result.data('Qiskit Sample - 3-qubit GHZ circuit')["counts"] == { '1': 2, '0': 1 }
+        print(f"\n circuit-86: {result.data('circuit-86')}")
+        assert result.data('circuit-86')["counts"] == { '00': 1, '10': 2 }
+        print(f"\n Qiskit Sample - 3-qubit GHZ circuit.1: {result.data('Qiskit Sample - 3-qubit GHZ circuit.1')}")
+        assert result.data('Qiskit Sample - 3-qubit GHZ circuit.1')["counts"] == { '14 0': 2, '-3 1': 1 }
 
     @pytest.mark.ionq
     @pytest.mark.live_test

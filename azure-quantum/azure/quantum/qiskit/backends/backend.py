@@ -36,13 +36,6 @@ class AzureBackend(Backend):
                 "metadata": json.dumps(circuit.metadata),
             }
 
-    def to_qir_bitcode_with_entry_points(self, circuits: List[QuantumCircuit], capability, emit_barrier_calls, **kwargs):
-        #from qiskit_qir import to_qir_bitcode
-        from qiskit_qir import to_qir
-        firstCircuit = circuits[0]
-        qir = to_qir(firstCircuit, capability, emit_barrier_calls=emit_barrier_calls, **kwargs)
-        return (qir, ["ghz", "teleport", "other"])
-
     def _translate_input(self, circuits: Union[QuantumCircuit, List[QuantumCircuit]], data_format, input_params, to_qir_kwargs={}):
         """ Translates the input values to the format expected by the AzureBackend. """
         
@@ -61,8 +54,7 @@ class AzureBackend(Backend):
             raise ValueError(f"{data_format} is not a supported data format for target {target}.")
 
         logger.info(f"Using QIR as the job's payload format.")
-        # from qiskit_qir import to_qir_bitcode_with_entry_points, to_qir
-        from qiskit_qir import to_qir
+        from qiskit_qir import to_qir_bitcode_with_entry_points, to_qir
 
         capability = input_params["targetCapability"] if "targetCapability" in input_params else "AdaptiveExecution"
 
@@ -80,7 +72,7 @@ class AzureBackend(Backend):
                 logger.debug(f"QIR (Post-transpilation):\n{to_qir(circuits, capability, **to_qir_kwargs)}")
 
         emit_barrier_calls = "barrier" in config.basis_gates
-        qir, entry_points = self.to_qir_bitcode_with_entry_points(circuits, capability, emit_barrier_calls=emit_barrier_calls, **to_qir_kwargs)
+        qir, entry_points = to_qir_bitcode_with_entry_points(circuits, capability, emit_barrier_calls=emit_barrier_calls, **to_qir_kwargs)
         
         if len(entry_points) == 1:
             # define an entryPoint and arguments:
