@@ -237,11 +237,11 @@ class TestQiskit(QuantumTestBase):
 
         # if JobStatus.DONE == job.status():
         #     result = job.result()
-        print(f"\n Qiskit Sample - 3-qubit GHZ circuit: {result.data('Qiskit Sample - 3-qubit GHZ circuit')}")
+        # print(f"\n Qiskit Sample - 3-qubit GHZ circuit: {result.data('Qiskit Sample - 3-qubit GHZ circuit')}")
         assert result.data('Qiskit Sample - 3-qubit GHZ circuit')["counts"] == { '1': 2, '0': 1 }
-        print(f"\n circuit-86: {result.data('circuit-86')}")
+        # print(f"\n circuit-86: {result.data('circuit-86')}")
         assert result.data('circuit-86')["counts"] == { '00': 1, '10': 2 }
-        print(f"\n Qiskit Sample - 3-qubit GHZ circuit.1: {result.data('Qiskit Sample - 3-qubit GHZ circuit.1')}")
+        # print(f"\n Qiskit Sample - 3-qubit GHZ circuit.1: {result.data('Qiskit Sample - 3-qubit GHZ circuit.1')}")
         assert result.data('Qiskit Sample - 3-qubit GHZ circuit.1')["counts"] == { '14 0': 2, '-3 1': 1 }
 
     @pytest.mark.ionq

@@ -59,6 +59,10 @@ class IonQBackend(AzureBackend):
         if "targetCapability" in input_params:
             return super()._translate_input(circuit, "qir.v1", input_params, to_qir_kwargs)
         else:
+            if isinstance(circuit, (list, tuple)):
+                if len(circuit) > 1:
+                    raise NotImplementedError("Multi-experiment jobs are not supported!")
+                circuit = circuit[0]
             ionq_circ, _, _ = qiskit_circ_to_ionq_circ(circuit, gateset=self.gateset())
             input_data = {
                 "gateset": self.gateset(),
