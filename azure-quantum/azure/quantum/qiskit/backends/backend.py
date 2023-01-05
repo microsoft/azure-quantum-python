@@ -163,7 +163,7 @@ class AzureBackend(Backend):
                 entry_points = input_params["entryPoints"]
 
                 if len(circuit) != len(entry_points):
-                    raise "The number of experiment results does not match the number of experiment names"
+                    raise ValueError("The number of experiment results does not match the number of experiment names")
 
                 # Update circuit names with entry point names
                 for (c, ep) in zip(circuit, entry_points):

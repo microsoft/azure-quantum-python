@@ -237,11 +237,8 @@ class TestQiskit(QuantumTestBase):
 
         # if JobStatus.DONE == job.status():
         #     result = job.result()
-        # print(f"\n Qiskit Sample - 3-qubit GHZ circuit: {result.data('Qiskit Sample - 3-qubit GHZ circuit')}")
         assert result.data('Qiskit Sample - 3-qubit GHZ circuit')["counts"] == { '1': 2, '0': 1 }
-        # print(f"\n circuit-86: {result.data('circuit-86')}")
         assert result.data('circuit-86')["counts"] == { '00': 1, '10': 2 }
-        # print(f"\n Qiskit Sample - 3-qubit GHZ circuit.1: {result.data('Qiskit Sample - 3-qubit GHZ circuit.1')}")
         assert result.data('Qiskit Sample - 3-qubit GHZ circuit.1')["counts"] == { '14 0': 2, '-3 1': 1 }
 
     @pytest.mark.ionq
@@ -356,24 +353,6 @@ class TestQiskit(QuantumTestBase):
         assert "ionq.circuit.v1" == config.azure["input_data_format"]
         assert "ionq.quantum-results.v1" == config.azure["output_data_format"]
         assert "qis" == backend.gateset()
-
-    ## The following test is skipped until we can use a workspace
-    ## with this target available as part of the E2E tests.
-    # @pytest.mark.ionq
-    # #@pytest.mark.live_test
-    # def test_qiskit_get_ionq_qpu_aria_target(self):
-    #     workspace = self.create_workspace()
-    #     provider = AzureQuantumProvider(workspace=workspace)
-
-    #     backend = provider.get_backend("ionq.qpu.aria-1")
-    #     assert backend.name() == "ionq.qpu.aria-1"
-    #     config = backend.configuration()
-    #     assert False == config.simulator
-    #     assert 1 == config.max_experiments
-    #     assert 23 == config.num_qubits
-    #     assert "ionq" == config.azure["provider_id"]
-    #     assert "ionq.circuit.v1" == config.azure["input_data_format"]
-    #     assert "ionq.quantum-results.v1" == config.azure["output_data_format"]
 
     @pytest.mark.ionq
     @pytest.mark.live_test

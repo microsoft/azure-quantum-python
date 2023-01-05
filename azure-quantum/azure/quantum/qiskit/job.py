@@ -133,7 +133,7 @@ class AzureQuantumJob(JobV1):
             entry_point_names = []
             for entry_point in entry_points:
                 if not "entryPoint" in entry_point:
-                    raise "Entry point input_param is missing an 'entryPoint' field"
+                    raise ValueError("Entry point input_param is missing an 'entryPoint' field")
                 entry_point_names.append(entry_point["entryPoint"])
             return entry_point_names if len(entry_point_names) > 0 else ["main"]
         elif "entryPoint" in input_params:
@@ -194,7 +194,7 @@ class AzureQuantumJob(JobV1):
         results = self._format_microsoft_batching_results(sample_results)
         
         if len(results) != len(entry_point_names):
-            raise "The number of experiment results does not match the number of experiment names"
+            raise ValueError("The number of experiment results does not match the number of experiment names")
 
         return [{
             "data": result,
@@ -245,7 +245,7 @@ class AzureQuantumJob(JobV1):
         num_qubits = self._azure_job.details.metadata.get("num_qubits")
 
         if not 'histogram' in az_result:
-            raise "Histogram missing from IonQ Job results"
+            raise ValueError("Histogram missing from IonQ Job results")
 
         counts = defaultdict(int)
         probabilities = defaultdict(int)
@@ -283,7 +283,7 @@ class AzureQuantumJob(JobV1):
         shots = self._shots_count()
 
         if not 'Histogram' in az_result:
-            raise "Histogram missing from Job results"
+            raise ValueError("Histogram missing from Job results")
 
         histogram = az_result['Histogram']
         counts = {}
@@ -298,7 +298,7 @@ class AzureQuantumJob(JobV1):
                 value = histogram[i + 1]
                 probabilities[bitstring] = value
         else:
-            raise "Invalid number of items in Job results' histogram."
+            raise ValueError("Invalid number of items in Job results' histogram.")
 
         if self.backend().configuration().simulator:
             counts = self._draw_random_sample(sampler_seed, probabilities, shots)
@@ -312,13 +312,13 @@ class AzureQuantumJob(JobV1):
         az_result = sample_results if not sample_results is None else self._azure_job.get_results()
 
         if not "DataFormat" in az_result:
-            raise "DataFormat missing from Job results"
+            raise ValueError("DataFormat missing from Job results")
 
         if az_result["DataFormat"] != MICROSOFT_BATCHING_OUTPUT_DATA_FORMAT:
-            raise f"DataFormat is not {MICROSOFT_BATCHING_OUTPUT_DATA_FORMAT}"
+            raise ValueError(f"DataFormat is not {MICROSOFT_BATCHING_OUTPUT_DATA_FORMAT}")
 
         if not "Results" in az_result:
-            raise "Results missing from Job results"
+            raise ValueError("Results missing from Job results")
 
         histograms = []
         results = az_result["Results"]
@@ -327,23 +327,23 @@ class AzureQuantumJob(JobV1):
             probabilities = {}
 
             if not "TotalCount" in circuit_results:
-                raise "TotalCount missing from Job results"
+                raise ValueError("TotalCount missing from Job results")
 
             total_count = circuit_results["TotalCount"]
 
             if total_count <= 0:
-                raise "TotalCount must be a positive non-zero integer"
+                raise ValueError("TotalCount must be a positive non-zero integer")
 
             if not "Histogram" in circuit_results:
-                raise "Histogram missing from Job results"
+                raise ValueError("Histogram missing from Job results")
         
             histogram = circuit_results["Histogram"]
             for result in histogram:
                 if not "Display" in result:
-                    raise "Dispaly missing from histogram result"
+                    raise ValueError("Dispaly missing from histogram result")
 
                 if not "Count" in result:
-                    raise "Count missing from histogram result"
+                    raise ValueError("Count missing from histogram result")
 
                 bitstring = AzureQuantumJob._qir_to_qiskit_bitstring(result["Display"])
                 count = result["Count"]
