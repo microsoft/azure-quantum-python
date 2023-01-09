@@ -49,13 +49,7 @@ Status="Completed".
 When the intention is to simply playback the recordings without recording it again, sometimes the Python VCR framework may give an error "Cannot Overwrite Existing Cassette".
 
 #### Cause ####
-The way VCR works is by working like a HTTP proxy.
-
-If the request (coming from the SDK api calls) is found (by matching the full URI and HTTP headers) on the recorded file, it will playback the corresponding response. Otherwise, if not found, it will attempt to do a live cal to the web API and will try to record the results at the end. But if there is a recording file (cassete) already, it will give the error you are mentioning.
-
-The environment variables to control whether to playback records or run live and re-create them is just a little logic to decide if we want to delete the recording files first before running the tests (which will force a call to the live APIs and re-record the calls).
-
-But it does not handle the case when the recording file is there but a specific HTTP request/response can’t be found in the existing recording, which gives the error you are seeing.
+The VCR works like a HTTP proxy. It attempts to find the request by matching the full URI and HTTP headers in the recorded file. If found, it will playback the corresponding response. Otherwise, it will attempt to do a live call to the web API and will try to record the results at the end. When it tries to do a recording, if there is already a recording file, it will give the error `CannotOverwriteExistingCassetteException`.
 
 This error could also be caused if the recorded files are manually updated and do not really match the requests that the SDK will actually request.
 
