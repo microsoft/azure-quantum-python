@@ -54,7 +54,7 @@ The VCR works like a HTTP proxy. It attempts to find the request by matching the
 This error could also be caused if the recorded files are manually updated and do not really match the requests that the SDK will actually request.
 
 #### Potential solutions ####
-1) One way to remove the error is to delete the existing recording file and let it do all the live calls, and create a new recording file that contains all the requests/responses that the tests need. Then, next time, you should be able to simple playback the recordings with no errors.
+1) One way to remove the error is to delete the existing recording file and let it do all the live calls and create a new recording file that contains all the requests/responses that the tests need. After that, you should be able to simple playback the recordings with no errors.
 
 2) If the error still persist after trying (1), then probably there is something unique in the URL or HTTP headers of the HTTP request that changes every time you run the tests. In this case, we need to either make that thing constant in the tests, or if they are genuinely unique, we need to replace that unique value in the request recording pipeline such that, at least in the recording file, it will be unique.
 
