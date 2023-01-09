@@ -170,28 +170,79 @@ class TestQiskit(QuantumTestBase):
         circuit = self._3_qubit_ghz()
         self._test_qiskit_submit_ionq(circuit=[circuit])
 
-    # @pytest.mark.ionq
-    # @pytest.mark.live_test
-    # def test_plugins_submit_qiskit_multi_circuit_experiment_to_ionq(self):
-    #     circuit = self._3_qubit_ghz()
-
-    #     workspace = self.create_workspace()
-    #     provider = AzureQuantumProvider(workspace=workspace)
-    #     assert "azure-quantum-qiskit" in provider._workspace.user_agent
-    #     backend = provider.get_backend("ionq.simulator")
-
-    #     with pytest.raises(NotImplementedError) as exc:
-    #         backend.run(
-    #             circuit=[circuit, circuit],
-    #             shots=500
-    #         )
-    #     assert str(exc.value) == "Multi-experiment jobs are not supported!"
-
     def _get_mock_Result(self, job):
         import json
-        f = open(r"C:\Repos\azure-quantum\src\JobScheduler\JobScheduler.Translation.Test\TranslatorTest\Samples\Output\QirBatchingV1_1\Translated\BatchMultiEntries.json", "r")
-        output_data = json.load(f)
-        f.close()
+        jsonStr = """{
+\"DataFormat\": \"microsoft.quantum-results.v2\",
+\"Results\":
+    [
+        {
+        \"Histogram\":
+            [
+                {
+                \"Count\": 2,
+                \"Display\": \"1\",
+                \"Outcome\": 1
+                },
+                {
+                \"Count\": 1,
+                \"Display\": \"0\",
+                \"Outcome\": 0
+                }
+            ],
+        \"TotalCount\": 3
+        },
+        {
+        \"Histogram\":
+            [
+                {
+                \"Count\": 1,
+                \"Display\": \"[0, 0]\",
+                \"Outcome\":
+                    [
+                    0,
+                    0
+                    ]
+                },
+                {
+                \"Count\": 2,
+                \"Display\": \"[1, 0]\",
+                \"Outcome\":
+                    [
+                    1,
+                    0
+                    ]
+                }
+            ],
+        \"TotalCount\": 3
+        },
+        {
+        \"Histogram\":
+            [
+                {
+                \"Count\": 2,
+                \"Display\": \"(0, 14)\",
+                \"Outcome\":
+                    {
+                    \"Item1\": 0,
+                    \"Item2\": 14
+                    }
+                },
+                {
+                \"Count\": 1,
+                \"Display\": \"(1, -3)\",
+                \"Outcome\":
+                    {
+                    \"Item1\": 1,
+                    \"Item2\": -3
+                    }
+                }
+            ],
+        \"TotalCount\": 3
+        }
+    ]
+}"""
+        output_data = json.loads(jsonStr)
         job._azure_job.details.status = "Succeeded"
         results = job._format_results(sample_results=output_data)
 
