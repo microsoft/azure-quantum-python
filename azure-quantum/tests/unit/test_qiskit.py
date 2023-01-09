@@ -263,34 +263,39 @@ class TestQiskit(QuantumTestBase):
     def test_plugins_submit_qiskit_multi_circuit_experiment_to_ionq(self):
         circuits = [self._3_qubit_ghz(), self._5_qubit_superposition(), self._3_qubit_ghz()]
         
-        workspace = self.create_workspace()
-        provider = AzureQuantumProvider(workspace=workspace)
-        assert "azure-quantum-qiskit" in provider._workspace.user_agent
-        backend = provider.get_backend("ionq.simulator")
-        
-        job = backend.run(
-            circuit=circuits,
-            shots=500,
-            targetCapability="BasicExecution"
-        )
+        with unittest.mock.patch.object(
+            Job,
+            self.mock_create_job_id_name,
+            return_value=self.get_test_job_id(),
+        ):
+            workspace = self.create_workspace()
+            provider = AzureQuantumProvider(workspace=workspace)
+            assert "azure-quantum-qiskit" in provider._workspace.user_agent
+            backend = provider.get_backend("ionq.simulator")
+            
+            job = backend.run(
+                circuit=circuits,
+                shots=500,
+                targetCapability="BasicExecution"
+            )
 
-        # Test the input translation
-        assert job._azure_job.details.output_data_format == "microsoft.quantum-results.v2"
-        assert "entryPoints" in job._azure_job.details.input_params
-        assert not "entryPoint" in job._azure_job.details.input_params
-        assert not "arguments" in job._azure_job.details.input_params
+            # Test the input translation
+            assert job._azure_job.details.output_data_format == "microsoft.quantum-results.v2"
+            assert "entryPoints" in job._azure_job.details.input_params
+            assert not "entryPoint" in job._azure_job.details.input_params
+            assert not "arguments" in job._azure_job.details.input_params
 
-        # Dummy data to use until job submission works
-        result = self._get_mock_Result(job)
+            # Dummy data to use until job submission works
+            result = self._get_mock_Result(job)
 
-        # Make sure the job is completed before fetching the results
-        # self._qiskit_wait_to_complete(job, provider)
+            # Make sure the job is completed before fetching the results
+            # self._qiskit_wait_to_complete(job, provider)
 
-        # if JobStatus.DONE == job.status():
-        #     result = job.result()
-        assert result.data('Qiskit Sample - 3-qubit GHZ circuit')["counts"] == { '1': 2, '0': 1 }
-        assert result.data('circuit-86')["counts"] == { '00': 1, '10': 2 }
-        assert result.data('Qiskit Sample - 3-qubit GHZ circuit.1')["counts"] == { '14 0': 2, '-3 1': 1 }
+            # if JobStatus.DONE == job.status():
+            #     result = job.result()
+            assert result.data('Qiskit Sample - 3-qubit GHZ circuit')["counts"] == { '1': 2, '0': 1 }
+            assert result.data('circuit-86')["counts"] == { '00': 1, '10': 2 }
+            assert result.data('Qiskit Sample - 3-qubit GHZ circuit.1')["counts"] == { '14 0': 2, '-3 1': 1 }
 
     @pytest.mark.ionq
     @pytest.mark.live_test
