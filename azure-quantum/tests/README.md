@@ -46,7 +46,7 @@ Status="Completed".
 
 ### Cannot Overwrite Existing Cassette Exception ###
 
-Even when you intend to simply playback the recordings, without recording it again, sometimes the Python VCR framework may give you an error like "Cannot Overwrite Existing Cassette".
+When the intention is to simply playback the recordings without recording it again, sometimes the Python VCR framework may give an error "Cannot Overwrite Existing Cassette".
 
 #### Cause ####
 The way VCR works is by working like a HTTP proxy.
