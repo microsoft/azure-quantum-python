@@ -767,7 +767,7 @@ class TestQiskit(QuantumTestBase):
 
             circuit = self._controlled_s()
 
-            qiskit_job = backend.run(circuit=circuit, qubitParams={"name": "qubit_gate_ns_e4"}, errorBudget=0.01)
+            qiskit_job = backend.run(circuit=circuit, qubitParams={"name": "qubit_gate_ns_e4"}, errorBudget=0.0001)
             assert qiskit_job._azure_job.details.metadata["num_qubits"] == '3'
 
             # Make sure the job is completed before fetching results
@@ -776,8 +776,8 @@ class TestQiskit(QuantumTestBase):
             if JobStatus.DONE == qiskit_job.status():
                 result = qiskit_job.result()
                 print(result.data())
-                assert result.data()["physicalCounts"]["physicalQubits"] == 1296
-                assert result.data()["physicalCounts"]["runtime"] == 15600
+                assert result.data()["physicalCounts"]["physicalQubits"] == 3600
+                assert result.data()["physicalCounts"]["runtime"] == 26000
                 assert result.data()["jobParams"]["qubitParams"]["name"] == "qubit_gate_ns_e4"
                 assert result.data()["jobParams"]["qecScheme"]["name"] == "surface_code"
-                assert result.data()["jobParams"]["errorBudget"] == 0.01
+                assert result.data()["jobParams"]["errorBudget"] == 0.0001
