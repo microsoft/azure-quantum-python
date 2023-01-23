@@ -6,14 +6,24 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._jobs_operations import JobsOperations
-from ._providers_operations import ProvidersOperations
-from ._storage_operations import StorageOperations
-from ._quotas_operations import QuotasOperations
+from ._operations import JobsOperations
+from ._operations import ProvidersOperations
+from ._operations import StorageOperations
+from ._operations import QuotasOperations
+from ._operations import SessionsOperations
+from ._operations import TopLevelItemsOperations
+
+from ._patch import __all__ as _patch_all
+from ._patch import *  # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    'JobsOperations',
-    'ProvidersOperations',
-    'StorageOperations',
-    'QuotasOperations',
+    "JobsOperations",
+    "ProvidersOperations",
+    "StorageOperations",
+    "QuotasOperations",
+    "SessionsOperations",
+    "TopLevelItemsOperations",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()
