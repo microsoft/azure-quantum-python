@@ -15,7 +15,7 @@ from azure.quantum._client.models import CostEstimate, UsageEvent
 COST_1QUBIT_GATE_MAP = {
     "ionq.simulator" : 0.0,
     "ionq.qpu" : 0.00003,
-    "ionq.qpu.aria-1" : 0.00022
+    "ionq.qpu.aria-1" : 0.0002205
 }
 
 COST_2QUBIT_GATE_MAP = {
