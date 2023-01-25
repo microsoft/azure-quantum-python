@@ -152,6 +152,8 @@ class Quantinuum(Target):
 
         if "apival" in self.name or "sc" in self.name:
             HQC = 0.0
+        else if currency_code == "EHQC":
+            HQC = 5 + 2 * num_shots * (N_1q + 10 * N_2q + 5 * N_m) / 5000
         else:
             HQC = 5 + num_shots * (N_1q + 10 * N_2q + 5 * N_m) / 5000
 
