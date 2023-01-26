@@ -59,9 +59,17 @@ with open("./README.md", "r") as fh:
     long_description = fh.read()
 
 # LIST OF REQUIREMENTS #
-# Get list of requirements from requirements.txt
 with open("./requirements.txt", "r") as fh:
     requirements = fh.readlines()
+
+with open("./requirements-qiskit.txt", "r") as fh:
+    requirements_qiskit = fh.readlines()
+
+with open("./requirements-cirq.txt", "r") as fh:
+    requirements_cirq = fh.readlines()
+
+with open("./requirements-dev.txt", "r") as fh:
+    requirements_dev = fh.readlines()
 
 # SETUPTOOLS INVOCATION #
 setuptools.setup(
@@ -80,16 +88,8 @@ setuptools.setup(
     ],
     install_requires=requirements,
     extras_require={
-        "qiskit": [
-            "qiskit-ionq>=0.3.3",
-            "qiskit-terra>=0.19.1",
-            "qiskit-qir>=0.2,<0.3",
-            "Markdown>=3.4.1",
-            "python-markdown-math>=0.8"
-        ],
-        "cirq": [
-            "cirq-core>=1.0.0",
-            "cirq-ionq>=1.0.0",
-        ]
+        "qiskit": requirements_qiskit,
+        "cirq": requirements_cirq,
+        "dev": requirements_dev
     }
 )
