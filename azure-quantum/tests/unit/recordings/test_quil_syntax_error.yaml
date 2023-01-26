@@ -5,7 +5,7 @@ interactions:
       Accept:
       - application/json
       Accept-Encoding:
-      - gzip, deflate, br
+      - gzip, deflate
       Connection:
       - keep-alive
       Content-Length:
@@ -13,7 +13,7 @@ interactions:
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - azsdk-python-identity/1.11.0 Python/3.9.13 (Windows-10-10.0.22622-SP0)
+      - azsdk-python-identity/1.12.0 Python/3.9.15 (Windows-10-10.0.22621-SP0)
       x-client-cpu:
       - x64
       x-client-current-telemetry:
@@ -23,7 +23,7 @@ interactions:
       x-client-sku:
       - MSAL.Python
       x-client-ver:
-      - 1.18.0
+      - 1.20.0
     method: POST
     uri: https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token
   response:
@@ -44,7 +44,7 @@ interactions:
       Accept:
       - application/json
       Accept-Encoding:
-      - gzip, deflate, br
+      - gzip, deflate
       Connection:
       - keep-alive
       Content-Length:
@@ -52,14 +52,16 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - testapp azsdk-python-quantum/0.0.0.1 Python/3.9.13 (Windows-10-10.0.22622-SP0)
+      - testapp azsdk-python-quantum/0.0.0.1 Python/3.9.15 (Windows-10-10.0.22621-SP0)
     method: POST
-    uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/storage/sasUri
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/storage/sasUri?api-version=2022-09-12-preview
   response:
     body:
       string: '{"sasUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
         "access_token": "fake_token"}'
     headers:
+      connection:
+      - keep-alive
       content-length:
       - '190'
       content-type:
@@ -75,13 +77,13 @@ interactions:
       Accept:
       - application/xml
       Accept-Encoding:
-      - gzip, deflate, br
+      - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-blob/12.13.1 Python/3.9.13 (Windows-10-10.0.22622-SP0)
+      - azsdk-python-storage-blob/12.14.1 Python/3.9.15 (Windows-10-10.0.22621-SP0)
       x-ms-date:
-      - Tue, 20 Sep 2022 23:47:11 GMT
+      - Thu, 26 Jan 2023 19:58:48 GMT
       x-ms-version:
       - '2021-08-06'
     method: GET
@@ -89,7 +91,7 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerNotFound</Code><Message>The
-        specified container does not exist.\nRequestId:5c9c3200-501e-0012-304b-cde43d000000\nTime:2022-09-20T23:47:11.7022902Z</Message></Error>"
+        specified container does not exist.\nRequestId:5ee60d60-401e-000c-6ac0-31257f000000\nTime:2023-01-26T19:58:49.0584466Z</Message></Error>"
     headers:
       content-length:
       - '223'
@@ -106,15 +108,15 @@ interactions:
       Accept:
       - application/xml
       Accept-Encoding:
-      - gzip, deflate, br
+      - gzip, deflate
       Connection:
       - keep-alive
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-blob/12.13.1 Python/3.9.13 (Windows-10-10.0.22622-SP0)
+      - azsdk-python-storage-blob/12.14.1 Python/3.9.15 (Windows-10-10.0.22621-SP0)
       x-ms-date:
-      - Tue, 20 Sep 2022 23:47:11 GMT
+      - Thu, 26 Jan 2023 19:58:49 GMT
       x-ms-version:
       - '2021-08-06'
     method: PUT
@@ -136,13 +138,13 @@ interactions:
       Accept:
       - application/xml
       Accept-Encoding:
-      - gzip, deflate, br
+      - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-blob/12.13.1 Python/3.9.13 (Windows-10-10.0.22622-SP0)
+      - azsdk-python-storage-blob/12.14.1 Python/3.9.15 (Windows-10-10.0.22621-SP0)
       x-ms-date:
-      - Tue, 20 Sep 2022 23:47:11 GMT
+      - Thu, 26 Jan 2023 19:58:49 GMT
       x-ms-version:
       - '2021-08-06'
     method: GET
@@ -169,7 +171,7 @@ interactions:
       Accept:
       - application/xml
       Accept-Encoding:
-      - gzip, deflate, br
+      - gzip, deflate
       Connection:
       - keep-alive
       Content-Length:
@@ -177,11 +179,11 @@ interactions:
       Content-Type:
       - application/octet-stream
       User-Agent:
-      - azsdk-python-storage-blob/12.13.1 Python/3.9.13 (Windows-10-10.0.22622-SP0)
+      - azsdk-python-storage-blob/12.14.1 Python/3.9.15 (Windows-10-10.0.22621-SP0)
       x-ms-blob-type:
       - BlockBlob
       x-ms-date:
-      - Tue, 20 Sep 2022 23:47:12 GMT
+      - Thu, 26 Jan 2023 19:58:49 GMT
       x-ms-version:
       - '2021-08-06'
     method: PUT
@@ -199,40 +201,84 @@ interactions:
       message: Created
 - request:
     body: 'b''{"id": "00000000-0000-0000-0000-000000000000", "name": "qdk-python-test",
-      "containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+      "providerId": "rigetti", "target": "rigetti.sim.qvm", "itemType": "Job", "containerUri":
+      "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
       "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData",
-      "inputDataFormat": "rigetti.quil.v1", "inputParams": {}, "providerId": "rigetti",
-      "target": "rigetti.sim.qvm", "outputDataFormat": "rigetti.quil-results.v1"}'''
+      "inputDataFormat": "rigetti.quil.v1", "inputParams": {}, "outputDataFormat":
+      "rigetti.quil-results.v1"}'''
     headers:
       Accept:
       - application/json
       Accept-Encoding:
-      - gzip, deflate, br
+      - gzip, deflate
       Connection:
       - keep-alive
       Content-Length:
-      - '510'
+      - '529'
       Content-Type:
       - application/json
       User-Agent:
-      - testapp azsdk-python-quantum/0.0.0.1 Python/3.9.13 (Windows-10-10.0.22622-SP0)
+      - testapp azsdk-python-quantum/0.0.0.1 Python/3.9.15 (Windows-10-10.0.22621-SP0)
     method: PUT
-    uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000000
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000000?api-version=2022-09-12-preview
   response:
     body:
       string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
         "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
-        "inputDataFormat": "rigetti.quil.v1", "inputParams": {}, "providerId": "rigetti",
-        "target": "rigetti.sim.qvm", "metadata": null, "name": "qdk-python-test",
-        "id": "00000000-0000-0000-0000-000000000000", "status": "Waiting", "outputDataFormat":
+        "inputDataFormat": "rigetti.quil.v1", "inputParams": {}, "metadata": null,
+        "sessionId": null, "status": "Waiting", "jobType": "Unknown", "outputDataFormat":
         "rigetti.quil-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-00000000-0000-0000-0000-000000000000/outputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
-        "creationTime": "2022-09-20T23:47:12.2101934+00:00", "beginExecutionTime":
-        null, "endExecutionTime": null, "cancellationTime": null, "costEstimate":
-        null, "errorData": null, "isCancelling": false, "tags": [], "access_token":
+        "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
+        null, "errorData": null, "isCancelling": false, "tags": [], "name": "qdk-python-test",
+        "id": "00000000-0000-0000-0000-000000000000", "providerId": "rigetti", "target":
+        "rigetti.sim.qvm", "creationTime": "2023-01-26T19:58:49.9908829+00:00", "endExecutionTime":
+        null, "costEstimate": null, "itemType": "Job", "access_token": "fake_token"}'
+    headers:
+      connection:
+      - keep-alive
+      content-length:
+      - '1115'
+      content-type:
+      - application/json; charset=utf-8
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - testapp azsdk-python-quantum/0.0.0.1 Python/3.9.15 (Windows-10-10.0.22621-SP0)
+    method: GET
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000000?api-version=2022-09-12-preview
+  response:
+    body:
+      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3Dqdk-python-test-d8287b50-9db3-11ed-834a-6045bdaa2ba8.input.json",
+        "inputDataFormat": "rigetti.quil.v1", "inputParams": {}, "metadata": null,
+        "sessionId": null, "status": "Failed", "jobType": "QuantumComputing", "outputDataFormat":
+        "rigetti.quil-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/outputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3Dqdk-python-test-d8287b50-9db3-11ed-834a-6045bdaa2ba8.output.json",
+        "beginExecutionTime": "2023-01-26T19:58:52.7233181Z", "cancellationTime":
+        null, "quantumComputingData": {"count": 1}, "errorData": {"code": "InvalidInputData",
+        "message": "QVM reported a problem running your program: Encountered the invalid
+        instruction\n\n    a\n\nwhich could not be executed because the operator a
+        is not known"}, "isCancelling": false, "tags": [], "name": "qdk-python-test",
+        "id": "00000000-0000-0000-0000-000000000000", "providerId": "rigetti", "target":
+        "rigetti.sim.qvm", "creationTime": "2023-01-26T19:58:49.9908829+00:00", "endExecutionTime":
+        "2023-01-26T19:58:56.1918415Z", "costEstimate": null, "itemType": "Job", "access_token":
         "fake_token"}'
     headers:
+      connection:
+      - keep-alive
       content-length:
-      - '1025'
+      - '1555'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -246,67 +292,34 @@ interactions:
       Accept:
       - application/json
       Accept-Encoding:
-      - gzip, deflate, br
+      - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - testapp azsdk-python-quantum/0.0.0.1 Python/3.9.13 (Windows-10-10.0.22622-SP0)
+      - testapp azsdk-python-quantum/0.0.0.1 Python/3.9.15 (Windows-10-10.0.22621-SP0)
     method: GET
-    uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000000
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000000?api-version=2022-09-12-preview
   response:
     body:
       string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
-        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3Dqdk-python-test-8b707914-393e-11ed-8c64-b831b5915c7e.input.json",
-        "inputDataFormat": "rigetti.quil.v1", "inputParams": {}, "providerId": "rigetti",
-        "target": "rigetti.sim.qvm", "metadata": null, "name": "qdk-python-test",
-        "id": "00000000-0000-0000-0000-000000000000", "status": "Failed", "outputDataFormat":
-        "rigetti.quil-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/outputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3Dqdk-python-test-8b707914-393e-11ed-8c64-b831b5915c7e.output.json",
-        "creationTime": "2022-09-20T23:47:12.2101934+00:00", "beginExecutionTime":
-        "2022-09-20T23:47:19.6011817Z", "endExecutionTime": "2022-09-20T23:47:19.9915165Z",
-        "cancellationTime": null, "costEstimate": null, "errorData": {"code": "InvalidInputData",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3Dqdk-python-test-d8287b50-9db3-11ed-834a-6045bdaa2ba8.input.json",
+        "inputDataFormat": "rigetti.quil.v1", "inputParams": {}, "metadata": null,
+        "sessionId": null, "status": "Failed", "jobType": "QuantumComputing", "outputDataFormat":
+        "rigetti.quil-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/outputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3Dqdk-python-test-d8287b50-9db3-11ed-834a-6045bdaa2ba8.output.json",
+        "beginExecutionTime": "2023-01-26T19:58:52.7233181Z", "cancellationTime":
+        null, "quantumComputingData": {"count": 1}, "errorData": {"code": "InvalidInputData",
         "message": "QVM reported a problem running your program: Encountered the invalid
         instruction\n\n    a\n\nwhich could not be executed because the operator a
-        is not known"}, "isCancelling": false, "tags": [], "access_token": "fake_token"}'
+        is not known"}, "isCancelling": false, "tags": [], "name": "qdk-python-test",
+        "id": "00000000-0000-0000-0000-000000000000", "providerId": "rigetti", "target":
+        "rigetti.sim.qvm", "creationTime": "2023-01-26T19:58:49.9908829+00:00", "endExecutionTime":
+        "2023-01-26T19:58:56.1918415Z", "costEstimate": null, "itemType": "Job", "access_token":
+        "fake_token"}'
     headers:
-      content-length:
-      - '1448'
-      content-type:
-      - application/json; charset=utf-8
-      transfer-encoding:
-      - chunked
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate, br
-      Connection:
+      connection:
       - keep-alive
-      User-Agent:
-      - testapp azsdk-python-quantum/0.0.0.1 Python/3.9.13 (Windows-10-10.0.22622-SP0)
-    method: GET
-    uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000000
-  response:
-    body:
-      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
-        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3Dqdk-python-test-8b707914-393e-11ed-8c64-b831b5915c7e.input.json",
-        "inputDataFormat": "rigetti.quil.v1", "inputParams": {}, "providerId": "rigetti",
-        "target": "rigetti.sim.qvm", "metadata": null, "name": "qdk-python-test",
-        "id": "00000000-0000-0000-0000-000000000000", "status": "Failed", "outputDataFormat":
-        "rigetti.quil-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/outputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3Dqdk-python-test-8b707914-393e-11ed-8c64-b831b5915c7e.output.json",
-        "creationTime": "2022-09-20T23:47:12.2101934+00:00", "beginExecutionTime":
-        "2022-09-20T23:47:19.6011817Z", "endExecutionTime": "2022-09-20T23:47:19.9915165Z",
-        "cancellationTime": null, "costEstimate": null, "errorData": {"code": "InvalidInputData",
-        "message": "QVM reported a problem running your program: Encountered the invalid
-        instruction\n\n    a\n\nwhich could not be executed because the operator a
-        is not known"}, "isCancelling": false, "tags": [], "access_token": "fake_token"}'
-    headers:
       content-length:
-      - '1448'
+      - '1555'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:

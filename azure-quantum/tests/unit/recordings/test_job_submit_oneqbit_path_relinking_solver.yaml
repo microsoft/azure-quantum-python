@@ -5,7 +5,7 @@ interactions:
       Accept:
       - application/json
       Accept-Encoding:
-      - gzip, deflate, br
+      - gzip, deflate
       Connection:
       - keep-alive
       Content-Length:
@@ -13,7 +13,7 @@ interactions:
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - azsdk-python-identity/1.11.0 Python/3.9.13 (Windows-10-10.0.22622-SP0)
+      - azsdk-python-identity/1.12.0 Python/3.9.15 (Windows-10-10.0.22621-SP0)
       x-client-cpu:
       - x64
       x-client-current-telemetry:
@@ -23,7 +23,7 @@ interactions:
       x-client-sku:
       - MSAL.Python
       x-client-ver:
-      - 1.18.0
+      - 1.20.0
     method: POST
     uri: https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token
   response:
@@ -44,7 +44,7 @@ interactions:
       Accept:
       - application/json
       Accept-Encoding:
-      - gzip, deflate, br
+      - gzip, deflate
       Connection:
       - keep-alive
       Content-Length:
@@ -52,14 +52,16 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - testapp azsdk-python-quantum/0.0.0.1 Python/3.9.13 (Windows-10-10.0.22622-SP0)
+      - testapp azsdk-python-quantum/0.0.0.1 Python/3.9.15 (Windows-10-10.0.22621-SP0)
     method: POST
-    uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/storage/sasUri
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/storage/sasUri?api-version=2022-09-12-preview
   response:
     body:
       string: '{"sasUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
         "access_token": "fake_token"}'
     headers:
+      connection:
+      - keep-alive
       content-length:
       - '190'
       content-type:
@@ -75,13 +77,13 @@ interactions:
       Accept:
       - application/xml
       Accept-Encoding:
-      - gzip, deflate, br
+      - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-blob/12.13.1 Python/3.9.13 (Windows-10-10.0.22622-SP0)
+      - azsdk-python-storage-blob/12.14.1 Python/3.9.15 (Windows-10-10.0.22621-SP0)
       x-ms-date:
-      - Wed, 21 Sep 2022 00:14:32 GMT
+      - Thu, 26 Jan 2023 20:58:00 GMT
       x-ms-version:
       - '2021-08-06'
     method: GET
@@ -89,7 +91,7 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerNotFound</Code><Message>The
-        specified container does not exist.\nRequestId:37b03396-701e-0015-3c4f-cd885e000000\nTime:2022-09-21T00:14:32.5736659Z</Message></Error>"
+        specified container does not exist.\nRequestId:933e9eb5-601e-000b-5fc8-31491c000000\nTime:2023-01-26T20:58:00.8465130Z</Message></Error>"
     headers:
       content-length:
       - '223'
@@ -106,15 +108,15 @@ interactions:
       Accept:
       - application/xml
       Accept-Encoding:
-      - gzip, deflate, br
+      - gzip, deflate
       Connection:
       - keep-alive
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-blob/12.13.1 Python/3.9.13 (Windows-10-10.0.22622-SP0)
+      - azsdk-python-storage-blob/12.14.1 Python/3.9.15 (Windows-10-10.0.22621-SP0)
       x-ms-date:
-      - Wed, 21 Sep 2022 00:14:32 GMT
+      - Thu, 26 Jan 2023 20:58:00 GMT
       x-ms-version:
       - '2021-08-06'
     method: PUT
@@ -136,13 +138,13 @@ interactions:
       Accept:
       - application/xml
       Accept-Encoding:
-      - gzip, deflate, br
+      - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-blob/12.13.1 Python/3.9.13 (Windows-10-10.0.22622-SP0)
+      - azsdk-python-storage-blob/12.14.1 Python/3.9.15 (Windows-10-10.0.22621-SP0)
       x-ms-date:
-      - Wed, 21 Sep 2022 00:14:32 GMT
+      - Thu, 26 Jan 2023 20:58:00 GMT
       x-ms-version:
       - '2021-08-06'
     method: GET
@@ -163,24 +165,24 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: b"\x1f\x8b\x08\x00fW*c\x02\xffU\x8c\xc1\x0e\x820\x10D\x7f\x85\xec\xd9\x9av\xc1\x18\xfc\n\xa3\xde\x84\x98\nU\x1b\xa1%t11\xa4\xffnS\x0e\xd8\xd3\xce\xce\x9b\x99\x19zE\xb2\x95$\xe1\x90\xcd`d\xaf\x82\x80\x8br\xc4\x8e\x92^'\xd5i\xf3\xd6\xe6y\xb6\xddG\x8d\xac\x02\xe4\x88\xbcD\xce\xc4^\x149\xaf\x00\xfc&\x83\xc6:\xba=&\xd3\x90\xb6&N\x85\xb4[4\x88-\x87\x90\xa1\xef\x10\xc7\x87\xe9n\xe3\xaf\xc6\xde\x05\xe3:C\x13\x0e\xcb\x83\xa7\xdb\xe8\x88M\xc6\xeb\xb0\xbb\x90\xdd\n0\x01e\x02\xc4\np\x05y\xd2`EB\xfe*)\xc0\xda\xd7\xde\xff\x00\x90\xec\xb1\xb5\x1e\x01\x00\x00"
+    body: b'\x1f\x8b\x08\x00V\xe9\xd2c\x02\xffU\x8c\xcd\x0e\xc2 \x10\x84_\xa5\xd9s1@\xad\x7fOa\xd4\x9bm\x0c\xb6\xa8\xc4\x16\x9a\xb251\x84w\x97\xd0C\xe5\xb4\xb3\xf3\xcd\x8c\x83^\xa2h\x05\n8d\x0e\xb4\xe8e\x10p\x91\x16\xc9Q\xe0\xeb$;\xa5\xdfJ?\xcf\xa6\xfb\xc8\x91T\xc0)/(\xe3\x1b\xc2x\xb9-w\x15\x80\xcf3h\x8c\xc5\xdbc\xd2\r*\xa3\xe3TH\xdbY\x03[Q\x08\x19\xfc\x0eq|\x98\xee&\xfer\xecm0\xae\x0e\x9apH\x11<\xd5F\x87\xe5\x19\xad\xc3\xeeL\xca\x05\xf0\x04\xec\x13\xc0\x16\xc0\x17P$\r\xb2N\xc8_%\x05\xbc\xf6\xb5\xf7?\xbd\xcb\x15j\x1e\x01\x00\x00'
     headers:
       Accept:
       - application/xml
       Accept-Encoding:
-      - gzip, deflate, br
+      - gzip, deflate
       Connection:
       - keep-alive
       Content-Length:
-      - '550'
+      - '525'
       Content-Type:
       - application/octet-stream
       User-Agent:
-      - azsdk-python-storage-blob/12.13.1 Python/3.9.13 (Windows-10-10.0.22622-SP0)
+      - azsdk-python-storage-blob/12.14.1 Python/3.9.15 (Windows-10-10.0.22621-SP0)
       x-ms-blob-type:
       - BlockBlob
       x-ms-date:
-      - Wed, 21 Sep 2022 00:14:32 GMT
+      - Thu, 26 Jan 2023 20:58:01 GMT
       x-ms-version:
       - '2021-08-06'
     method: PUT
@@ -198,44 +200,47 @@ interactions:
       message: Created
 - request:
     body: 'b''{"id": "00000000-0000-0000-0000-000000000000", "name": "Test-PathRelinkingSolver-\\"20210101-000000\\"",
-      "containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+      "providerId": "1qbit", "target": "1qbit.pathrelinking", "itemType": "Job", "containerUri":
+      "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
       "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData",
       "inputDataFormat": "microsoft.qio.v2", "inputParams": {"distance_scale": "0.33",
       "greedy_path_relinking": "False", "ref_set_count": "10", "seed": "123", "timeout":
-      "0"}, "providerId": "1qbit", "target": "1qbit.pathrelinking", "outputDataFormat":
-      "microsoft.qio-results.v1"}'''
+      "0"}, "outputDataFormat": "microsoft.qio-results.v1"}'''
     headers:
       Accept:
       - application/json
       Accept-Encoding:
-      - gzip, deflate, br
+      - gzip, deflate
       Connection:
       - keep-alive
       Content-Length:
-      - '657'
+      - '676'
       Content-Type:
       - application/json
       User-Agent:
-      - testapp azsdk-python-quantum/0.0.0.1 Python/3.9.13 (Windows-10-10.0.22622-SP0)
+      - testapp azsdk-python-quantum/0.0.0.1 Python/3.9.15 (Windows-10-10.0.22621-SP0)
     method: PUT
-    uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000000
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000000?api-version=2022-09-12-preview
   response:
     body:
       string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
         "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData",
         "inputDataFormat": "microsoft.qio.v2", "inputParams": {"distance_scale": "0.33",
         "greedy_path_relinking": "False", "ref_set_count": "10", "seed": "123", "timeout":
-        "0"}, "providerId": "1qbit", "target": "1qbit.pathrelinking", "metadata":
-        null, "name": "Test-PathRelinkingSolver-\"20210101-000000\"", "id": "00000000-0000-0000-0000-000000000000",
-        "status": "Waiting", "outputDataFormat": "microsoft.qio-results.v1", "outputDataUri":
+        "0"}, "metadata": null, "sessionId": null, "status": "Waiting", "jobType":
+        "Optimization", "outputDataFormat": "microsoft.qio-results.v1", "outputDataUri":
         "https://mystorage.blob.core.windows.net:443/job-00000000-0000-0000-0000-000000000000/outputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
-        "creationTime": "2022-09-21T00:14:32.9275955+00:00", "beginExecutionTime":
-        null, "endExecutionTime": null, "cancellationTime": null, "costEstimate":
-        null, "errorData": null, "isCancelling": false, "tags": [], "access_token":
+        "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
+        null, "errorData": null, "isCancelling": false, "tags": [], "name": "Test-PathRelinkingSolver-\"20210101-000000\"",
+        "id": "00000000-0000-0000-0000-000000000000", "providerId": "1qbit", "target":
+        "1qbit.pathrelinking", "creationTime": "2023-01-26T20:58:01.5966728+00:00",
+        "endExecutionTime": null, "costEstimate": null, "itemType": "Job", "access_token":
         "fake_token"}'
     headers:
+      connection:
+      - keep-alive
       content-length:
-      - '1112'
+      - '1207'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -249,30 +254,33 @@ interactions:
       Accept:
       - application/json
       Accept-Encoding:
-      - gzip, deflate, br
+      - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - testapp azsdk-python-quantum/0.0.0.1 Python/3.9.13 (Windows-10-10.0.22622-SP0)
+      - testapp azsdk-python-quantum/0.0.0.1 Python/3.9.15 (Windows-10-10.0.22621-SP0)
     method: GET
-    uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000000
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000000?api-version=2022-09-12-preview
   response:
     body:
       string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
-        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-PathRelinkingSolver-%252220210101-000000%2522-5cc36386-3942-11ed-83f6-b831b5915c7e.input.json",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-PathRelinkingSolver-%252220210101-000000%2522-1d17abd7-9dbc-11ed-881a-6045bdaa2ba8.input.json",
         "inputDataFormat": "microsoft.qio.v2", "inputParams": {"distance_scale": "0.33",
         "greedy_path_relinking": "False", "ref_set_count": "10", "seed": "123", "timeout":
-        "0"}, "providerId": "1qbit", "target": "1qbit.pathrelinking", "metadata":
-        null, "name": "Test-PathRelinkingSolver-\"20210101-000000\"", "id": "00000000-0000-0000-0000-000000000000",
-        "status": "Succeeded", "outputDataFormat": "microsoft.qio-results.v1", "outputDataUri":
-        "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-PathRelinkingSolver-%252220210101-000000%2522-5cc36386-3942-11ed-83f6-b831b5915c7e.output.json",
-        "creationTime": "2022-09-21T00:14:32.9275955+00:00", "beginExecutionTime":
-        "2022-09-21T00:14:33.504359+00:00", "endExecutionTime": "2022-09-21T00:14:34.013547+00:00",
-        "cancellationTime": null, "costEstimate": null, "errorData": null, "isCancelling":
-        false, "tags": [], "access_token": "fake_token"}'
+        "0"}, "metadata": null, "sessionId": null, "status": "Succeeded", "jobType":
+        "Optimization", "outputDataFormat": "microsoft.qio-results.v1", "outputDataUri":
+        "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-PathRelinkingSolver-%252220210101-000000%2522-1d17abd7-9dbc-11ed-881a-6045bdaa2ba8.output.json",
+        "beginExecutionTime": "2023-01-26T20:58:05.382417+00:00", "cancellationTime":
+        null, "quantumComputingData": null, "errorData": null, "isCancelling": false,
+        "tags": [], "name": "Test-PathRelinkingSolver-\"20210101-000000\"", "id":
+        "00000000-0000-0000-0000-000000000000", "providerId": "1qbit", "target": "1qbit.pathrelinking",
+        "creationTime": "2023-01-26T20:58:01.5966728+00:00", "endExecutionTime": "2023-01-26T20:58:06.230056+00:00",
+        "costEstimate": null, "itemType": "Job", "access_token": "fake_token"}'
     headers:
+      connection:
+      - keep-alive
       content-length:
-      - '1482'
+      - '1577'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -286,19 +294,19 @@ interactions:
       Accept:
       - application/xml
       Accept-Encoding:
-      - gzip, deflate, br
+      - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-blob/12.13.1 Python/3.9.13 (Windows-10-10.0.22622-SP0)
+      - azsdk-python-storage-blob/12.14.1 Python/3.9.15 (Windows-10-10.0.22621-SP0)
       x-ms-date:
-      - Wed, 21 Sep 2022 00:14:35 GMT
+      - Thu, 26 Jan 2023 20:58:08 GMT
       x-ms-range:
       - bytes=0-33554431
       x-ms-version:
       - '2021-08-06'
     method: GET
-    uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-PathRelinkingSolver-%252220210101-000000%2522-5cc36386-3942-11ed-83f6-b831b5915c7e.output.json
+    uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-PathRelinkingSolver-%252220210101-000000%2522-1d17abd7-9dbc-11ed-881a-6045bdaa2ba8.output.json
   response:
     body:
       string: '{"input_data_uri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
@@ -312,15 +320,15 @@ interactions:
       content-length:
       - '489'
       content-range:
-      - bytes 0-480/481
+      - bytes 0-485/486
       content-type:
       - application/octet-stream
       x-ms-blob-content-md5:
-      - 5WuAfqNDu4QGEQxHXv4nEQ==
+      - dYrkspYovhmL0Gc7mTDD8g==
       x-ms-blob-type:
       - BlockBlob
       x-ms-creation-time:
-      - Wed, 21 Sep 2022 00:14:33 GMT
+      - Thu, 26 Jan 2023 20:58:04 GMT
       x-ms-lease-state:
       - available
       x-ms-lease-status:
@@ -338,30 +346,33 @@ interactions:
       Accept:
       - application/json
       Accept-Encoding:
-      - gzip, deflate, br
+      - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - testapp azsdk-python-quantum/0.0.0.1 Python/3.9.13 (Windows-10-10.0.22622-SP0)
+      - testapp azsdk-python-quantum/0.0.0.1 Python/3.9.15 (Windows-10-10.0.22621-SP0)
     method: GET
-    uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000000
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000000?api-version=2022-09-12-preview
   response:
     body:
       string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
-        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-PathRelinkingSolver-%252220210101-000000%2522-5cc36386-3942-11ed-83f6-b831b5915c7e.input.json",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-PathRelinkingSolver-%252220210101-000000%2522-1d17abd7-9dbc-11ed-881a-6045bdaa2ba8.input.json",
         "inputDataFormat": "microsoft.qio.v2", "inputParams": {"distance_scale": "0.33",
         "greedy_path_relinking": "False", "ref_set_count": "10", "seed": "123", "timeout":
-        "0"}, "providerId": "1qbit", "target": "1qbit.pathrelinking", "metadata":
-        null, "name": "Test-PathRelinkingSolver-\"20210101-000000\"", "id": "00000000-0000-0000-0000-000000000000",
-        "status": "Succeeded", "outputDataFormat": "microsoft.qio-results.v1", "outputDataUri":
-        "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-PathRelinkingSolver-%252220210101-000000%2522-5cc36386-3942-11ed-83f6-b831b5915c7e.output.json",
-        "creationTime": "2022-09-21T00:14:32.9275955+00:00", "beginExecutionTime":
-        "2022-09-21T00:14:33.504359+00:00", "endExecutionTime": "2022-09-21T00:14:34.013547+00:00",
-        "cancellationTime": null, "costEstimate": null, "errorData": null, "isCancelling":
-        false, "tags": [], "access_token": "fake_token"}'
+        "0"}, "metadata": null, "sessionId": null, "status": "Succeeded", "jobType":
+        "Optimization", "outputDataFormat": "microsoft.qio-results.v1", "outputDataUri":
+        "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-PathRelinkingSolver-%252220210101-000000%2522-1d17abd7-9dbc-11ed-881a-6045bdaa2ba8.output.json",
+        "beginExecutionTime": "2023-01-26T20:58:05.382417+00:00", "cancellationTime":
+        null, "quantumComputingData": null, "errorData": null, "isCancelling": false,
+        "tags": [], "name": "Test-PathRelinkingSolver-\"20210101-000000\"", "id":
+        "00000000-0000-0000-0000-000000000000", "providerId": "1qbit", "target": "1qbit.pathrelinking",
+        "creationTime": "2023-01-26T20:58:01.5966728+00:00", "endExecutionTime": "2023-01-26T20:58:06.230056+00:00",
+        "costEstimate": null, "itemType": "Job", "access_token": "fake_token"}'
     headers:
+      connection:
+      - keep-alive
       content-length:
-      - '1482'
+      - '1577'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:

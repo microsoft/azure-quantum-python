@@ -5,7 +5,7 @@ interactions:
       Accept:
       - application/json
       Accept-Encoding:
-      - gzip, deflate, br
+      - gzip, deflate
       Connection:
       - keep-alive
       Content-Length:
@@ -13,7 +13,7 @@ interactions:
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - azsdk-python-identity/1.11.0 Python/3.9.13 (Windows-10-10.0.22622-SP0)
+      - azsdk-python-identity/1.12.0 Python/3.9.15 (Windows-10-10.0.22621-SP0)
       x-client-cpu:
       - x64
       x-client-current-telemetry:
@@ -23,7 +23,7 @@ interactions:
       x-client-sku:
       - MSAL.Python
       x-client-ver:
-      - 1.18.0
+      - 1.20.0
     method: POST
     uri: https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token
   response:
@@ -44,7 +44,7 @@ interactions:
       Accept:
       - application/json
       Accept-Encoding:
-      - gzip, deflate, br
+      - gzip, deflate
       Connection:
       - keep-alive
       Content-Length:
@@ -52,14 +52,16 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - testapp azsdk-python-quantum/0.0.0.1 Python/3.9.13 (Windows-10-10.0.22622-SP0)
+      - testapp azsdk-python-quantum/0.0.0.1 Python/3.9.15 (Windows-10-10.0.22621-SP0)
     method: POST
-    uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/storage/sasUri
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/storage/sasUri?api-version=2022-09-12-preview
   response:
     body:
       string: '{"sasUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
         "access_token": "fake_token"}'
     headers:
+      connection:
+      - keep-alive
       content-length:
       - '190'
       content-type:
@@ -75,13 +77,13 @@ interactions:
       Accept:
       - application/xml
       Accept-Encoding:
-      - gzip, deflate, br
+      - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-blob/12.13.1 Python/3.9.13 (Windows-10-10.0.22622-SP0)
+      - azsdk-python-storage-blob/12.14.1 Python/3.9.15 (Windows-10-10.0.22621-SP0)
       x-ms-date:
-      - Wed, 21 Sep 2022 00:14:45 GMT
+      - Thu, 26 Jan 2023 20:57:58 GMT
       x-ms-version:
       - '2021-08-06'
     method: GET
@@ -89,7 +91,7 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerNotFound</Code><Message>The
-        specified container does not exist.\nRequestId:49b70b67-e01e-0091-5f4f-cdfa5f000000\nTime:2022-09-21T00:14:46.0548387Z</Message></Error>"
+        specified container does not exist.\nRequestId:94df06eb-401e-0051-69c8-312ffb000000\nTime:2023-01-26T20:57:59.0543176Z</Message></Error>"
     headers:
       content-length:
       - '223'
@@ -106,15 +108,15 @@ interactions:
       Accept:
       - application/xml
       Accept-Encoding:
-      - gzip, deflate, br
+      - gzip, deflate
       Connection:
       - keep-alive
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-blob/12.13.1 Python/3.9.13 (Windows-10-10.0.22622-SP0)
+      - azsdk-python-storage-blob/12.14.1 Python/3.9.15 (Windows-10-10.0.22621-SP0)
       x-ms-date:
-      - Wed, 21 Sep 2022 00:14:46 GMT
+      - Thu, 26 Jan 2023 20:57:59 GMT
       x-ms-version:
       - '2021-08-06'
     method: PUT
@@ -136,13 +138,13 @@ interactions:
       Accept:
       - application/xml
       Accept-Encoding:
-      - gzip, deflate, br
+      - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-blob/12.13.1 Python/3.9.13 (Windows-10-10.0.22622-SP0)
+      - azsdk-python-storage-blob/12.14.1 Python/3.9.15 (Windows-10-10.0.22621-SP0)
       x-ms-date:
-      - Wed, 21 Sep 2022 00:14:46 GMT
+      - Thu, 26 Jan 2023 20:57:59 GMT
       x-ms-version:
       - '2021-08-06'
     method: GET
@@ -163,25 +165,25 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: b'\x1f\x8b\x08\x00tW*c\x02\xffU\xccM\n\xc3 \x10\x05\xe0\xab\xc8\xacc\xd1\x89\xa5\xa4\xd7hv\x89\x14c,\xcd"?DS(\xe2\xdd+fa]9\xbeo\xe6y\x98\x8dS\xa3r\n\xee\xc4\xc3\xa2f\x13\x07h\x8du\xb4U\xc3\xf10j\xd7o\xda\x032D\xd6
-      \xa3\xfc\xc6\x85\x10=@\xa8\x08\xe8\xd5\xba\xe7\xebX\xb4\x9b\xd6%5|\xccn\xcf\x19\xf8\x85A\xdcq\xdf-un\xc7\xb0\xa6\xbf\xd9g\x1b\x83\xce\x83\x8e\x0f\xadc6\x8d)\xe1\x15a2\xf6\x9er\xcd\x80\x054\x05\xf0\x0c\x98\xa1..\xa8(\xe4\xef\xa4\x04\x94A\x86\xf0\x03;5\xc9\x17\x15\x01\x00\x00'
+    body: b'\x1f\x8b\x08\x00R\xe9\xd2c\x02\xffU\xccA\x0e\x83 \x10\x05\xd0\xab\x98YK\x03\xa3\xb4i\xafQw\xd54\x884u\x01\x18\xc1&\r\xe1\xee%\xb8\xb0\xac\x18\xfe\x9b\xf9\x01\xb4\xf2b\x12^\xc0\xad\n`\x84Vi\x80N9O:1nw%V\xf9&=
+      \xc5\x862<\x13\x86\xfc\xc2\xdb\x1e \xd6\x15H\xeb\xfc\xf3\xb5\x19\xe9gkr\xc3G\xadn\x9f\x81\x9d(\xa4\x1d\xff]r\xe7\xb2\x8d6\xff\xd5\xaa]\n\x1e\x01dzH\x93\xb2y\xca\t\xab+:\xa4\xde]\xf8\x01X\xc0\xb5\x00v\x00\x1e\xd0\x14\x17\xa4-\xe4\xef\xa4\x04\x1c\xe2\x10\xe3\x0f\xcb\xd7\xfd\x04\x15\x01\x00\x00'
     headers:
       Accept:
       - application/xml
       Accept-Encoding:
-      - gzip, deflate, br
+      - gzip, deflate
       Connection:
       - keep-alive
       Content-Length:
-      - '489'
+      - '503'
       Content-Type:
       - application/octet-stream
       User-Agent:
-      - azsdk-python-storage-blob/12.13.1 Python/3.9.13 (Windows-10-10.0.22622-SP0)
+      - azsdk-python-storage-blob/12.14.1 Python/3.9.15 (Windows-10-10.0.22621-SP0)
       x-ms-blob-type:
       - BlockBlob
       x-ms-date:
-      - Wed, 21 Sep 2022 00:14:46 GMT
+      - Thu, 26 Jan 2023 20:57:59 GMT
       x-ms-version:
       - '2021-08-06'
     method: PUT
@@ -199,44 +201,46 @@ interactions:
       message: Created
 - request:
     body: 'b''{"id": "00000000-0000-0000-0000-000000000000", "name": "Test-TabuSearch-\\"20210101-000000\\"",
-      "containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+      "providerId": "1qbit", "target": "1qbit.tabu", "itemType": "Job", "containerUri":
+      "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
       "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData",
       "inputDataFormat": "microsoft.qio.v2", "inputParams": {"improvement_cutoff":
       "2", "improvement_tolerance": "1e-09", "seed": "123", "tabu_tenure": "2", "tabu_tenure_rand_max":
-      "2", "timeout": "2"}, "providerId": "1qbit", "target": "1qbit.tabu", "outputDataFormat":
-      "microsoft.qio-results.v1"}'''
+      "2", "timeout": "2"}, "outputDataFormat": "microsoft.qio-results.v1"}'''
     headers:
       Accept:
       - application/json
       Accept-Encoding:
-      - gzip, deflate, br
+      - gzip, deflate
       Connection:
       - keep-alive
       Content-Length:
-      - '666'
+      - '685'
       Content-Type:
       - application/json
       User-Agent:
-      - testapp azsdk-python-quantum/0.0.0.1 Python/3.9.13 (Windows-10-10.0.22622-SP0)
+      - testapp azsdk-python-quantum/0.0.0.1 Python/3.9.15 (Windows-10-10.0.22621-SP0)
     method: PUT
-    uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000000
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000000?api-version=2022-09-12-preview
   response:
     body:
       string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
-        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData",
         "inputDataFormat": "microsoft.qio.v2", "inputParams": {"improvement_cutoff":
         "2", "improvement_tolerance": "1e-09", "seed": "123", "tabu_tenure": "2",
-        "tabu_tenure_rand_max": "2", "timeout": "2"}, "providerId": "1qbit", "target":
-        "1qbit.tabu", "metadata": null, "name": "Test-TabuSearch-\"20210101-000000\"",
-        "id": "00000000-0000-0000-0000-000000000000", "status": "Waiting", "outputDataFormat":
+        "tabu_tenure_rand_max": "2", "timeout": "2"}, "metadata": null, "sessionId":
+        null, "status": "Waiting", "jobType": "Optimization", "outputDataFormat":
         "microsoft.qio-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-00000000-0000-0000-0000-000000000000/outputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
-        "creationTime": "2022-09-21T00:14:46.701644+00:00", "beginExecutionTime":
-        null, "endExecutionTime": null, "cancellationTime": null, "costEstimate":
-        null, "errorData": null, "isCancelling": false, "tags": [], "access_token":
-        "fake_token"}'
+        "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
+        null, "errorData": null, "isCancelling": false, "tags": [], "name": "Test-TabuSearch-\"20210101-000000\"",
+        "id": "00000000-0000-0000-0000-000000000000", "providerId": "1qbit", "target":
+        "1qbit.tabu", "creationTime": "2023-01-26T20:58:00.263615+00:00", "endExecutionTime":
+        null, "costEstimate": null, "itemType": "Job", "access_token": "fake_token"}'
     headers:
+      connection:
+      - keep-alive
       content-length:
-      - '1178'
+      - '1215'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -250,30 +254,33 @@ interactions:
       Accept:
       - application/json
       Accept-Encoding:
-      - gzip, deflate, br
+      - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - testapp azsdk-python-quantum/0.0.0.1 Python/3.9.13 (Windows-10-10.0.22622-SP0)
+      - testapp azsdk-python-quantum/0.0.0.1 Python/3.9.15 (Windows-10-10.0.22621-SP0)
     method: GET
-    uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000000
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000000?api-version=2022-09-12-preview
   response:
     body:
       string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
-        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-TabuSearch-%252220210101-000000%2522-652eed34-3942-11ed-af1e-b831b5915c7e.input.json",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-TabuSearch-%252220210101-000000%2522-1ae7e92c-9dbc-11ed-9cb3-6045bdaa2ba8.input.json",
         "inputDataFormat": "microsoft.qio.v2", "inputParams": {"improvement_cutoff":
         "2", "improvement_tolerance": "1e-09", "seed": "123", "tabu_tenure": "2",
-        "tabu_tenure_rand_max": "2", "timeout": "2"}, "providerId": "1qbit", "target":
-        "1qbit.tabu", "metadata": null, "name": "Test-TabuSearch-\"20210101-000000\"",
-        "id": "00000000-0000-0000-0000-000000000000", "status": "Succeeded", "outputDataFormat":
-        "microsoft.qio-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-TabuSearch-%252220210101-000000%2522-652eed34-3942-11ed-af1e-b831b5915c7e.output.json",
-        "creationTime": "2022-09-21T00:14:46.701644+00:00", "beginExecutionTime":
-        "2022-09-21T00:14:47.141539+00:00", "endExecutionTime": "2022-09-21T00:14:47.561586+00:00",
-        "cancellationTime": null, "costEstimate": null, "errorData": null, "isCancelling":
-        false, "tags": [], "access_token": "fake_token"}'
+        "tabu_tenure_rand_max": "2", "timeout": "2"}, "metadata": null, "sessionId":
+        null, "status": "Succeeded", "jobType": "Optimization", "outputDataFormat":
+        "microsoft.qio-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-TabuSearch-%252220210101-000000%2522-1ae7e92c-9dbc-11ed-9cb3-6045bdaa2ba8.output.json",
+        "beginExecutionTime": "2023-01-26T20:58:01.709536+00:00", "cancellationTime":
+        null, "quantumComputingData": null, "errorData": null, "isCancelling": false,
+        "tags": [], "name": "Test-TabuSearch-\"20210101-000000\"", "id": "00000000-0000-0000-0000-000000000000",
+        "providerId": "1qbit", "target": "1qbit.tabu", "creationTime": "2023-01-26T20:58:00.263615+00:00",
+        "endExecutionTime": "2023-01-26T20:58:02.642416+00:00", "costEstimate": null,
+        "itemType": "Job", "access_token": "fake_token"}'
     headers:
+      connection:
+      - keep-alive
       content-length:
-      - '1472'
+      - '1567'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -287,19 +294,19 @@ interactions:
       Accept:
       - application/xml
       Accept-Encoding:
-      - gzip, deflate, br
+      - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-blob/12.13.1 Python/3.9.13 (Windows-10-10.0.22622-SP0)
+      - azsdk-python-storage-blob/12.14.1 Python/3.9.15 (Windows-10-10.0.22621-SP0)
       x-ms-date:
-      - Wed, 21 Sep 2022 00:14:49 GMT
+      - Thu, 26 Jan 2023 20:58:04 GMT
       x-ms-range:
       - bytes=0-33554431
       x-ms-version:
       - '2021-08-06'
     method: GET
-    uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-TabuSearch-%252220210101-000000%2522-652eed34-3942-11ed-af1e-b831b5915c7e.output.json
+    uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-TabuSearch-%252220210101-000000%2522-1ae7e92c-9dbc-11ed-9cb3-6045bdaa2ba8.output.json
   response:
     body:
       string: '{"input_data_uri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
@@ -314,15 +321,15 @@ interactions:
       content-length:
       - '514'
       content-range:
-      - bytes 0-497/498
+      - bytes 0-504/505
       content-type:
       - application/octet-stream
       x-ms-blob-content-md5:
-      - kk22ZzW44qi8CmWLE3WBZA==
+      - Bc9qS3nPWoGJoJ2OC59EDQ==
       x-ms-blob-type:
       - BlockBlob
       x-ms-creation-time:
-      - Wed, 21 Sep 2022 00:14:46 GMT
+      - Thu, 26 Jan 2023 20:58:01 GMT
       x-ms-lease-state:
       - available
       x-ms-lease-status:
@@ -340,30 +347,33 @@ interactions:
       Accept:
       - application/json
       Accept-Encoding:
-      - gzip, deflate, br
+      - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - testapp azsdk-python-quantum/0.0.0.1 Python/3.9.13 (Windows-10-10.0.22622-SP0)
+      - testapp azsdk-python-quantum/0.0.0.1 Python/3.9.15 (Windows-10-10.0.22621-SP0)
     method: GET
-    uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000000
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000000?api-version=2022-09-12-preview
   response:
     body:
       string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
-        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-TabuSearch-%252220210101-000000%2522-652eed34-3942-11ed-af1e-b831b5915c7e.input.json",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-TabuSearch-%252220210101-000000%2522-1ae7e92c-9dbc-11ed-9cb3-6045bdaa2ba8.input.json",
         "inputDataFormat": "microsoft.qio.v2", "inputParams": {"improvement_cutoff":
         "2", "improvement_tolerance": "1e-09", "seed": "123", "tabu_tenure": "2",
-        "tabu_tenure_rand_max": "2", "timeout": "2"}, "providerId": "1qbit", "target":
-        "1qbit.tabu", "metadata": null, "name": "Test-TabuSearch-\"20210101-000000\"",
-        "id": "00000000-0000-0000-0000-000000000000", "status": "Succeeded", "outputDataFormat":
-        "microsoft.qio-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-TabuSearch-%252220210101-000000%2522-652eed34-3942-11ed-af1e-b831b5915c7e.output.json",
-        "creationTime": "2022-09-21T00:14:46.701644+00:00", "beginExecutionTime":
-        "2022-09-21T00:14:47.141539+00:00", "endExecutionTime": "2022-09-21T00:14:47.561586+00:00",
-        "cancellationTime": null, "costEstimate": null, "errorData": null, "isCancelling":
-        false, "tags": [], "access_token": "fake_token"}'
+        "tabu_tenure_rand_max": "2", "timeout": "2"}, "metadata": null, "sessionId":
+        null, "status": "Succeeded", "jobType": "Optimization", "outputDataFormat":
+        "microsoft.qio-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-TabuSearch-%252220210101-000000%2522-1ae7e92c-9dbc-11ed-9cb3-6045bdaa2ba8.output.json",
+        "beginExecutionTime": "2023-01-26T20:58:01.709536+00:00", "cancellationTime":
+        null, "quantumComputingData": null, "errorData": null, "isCancelling": false,
+        "tags": [], "name": "Test-TabuSearch-\"20210101-000000\"", "id": "00000000-0000-0000-0000-000000000000",
+        "providerId": "1qbit", "target": "1qbit.tabu", "creationTime": "2023-01-26T20:58:00.263615+00:00",
+        "endExecutionTime": "2023-01-26T20:58:02.642416+00:00", "costEstimate": null,
+        "itemType": "Job", "access_token": "fake_token"}'
     headers:
+      connection:
+      - keep-alive
       content-length:
-      - '1472'
+      - '1567'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:

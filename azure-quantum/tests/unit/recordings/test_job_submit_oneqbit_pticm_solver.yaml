@@ -5,7 +5,7 @@ interactions:
       Accept:
       - application/json
       Accept-Encoding:
-      - gzip, deflate, br
+      - gzip, deflate
       Connection:
       - keep-alive
       Content-Length:
@@ -13,7 +13,7 @@ interactions:
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - azsdk-python-identity/1.11.0 Python/3.9.13 (Windows-10-10.0.22622-SP0)
+      - azsdk-python-identity/1.12.0 Python/3.9.15 (Windows-10-10.0.22621-SP0)
       x-client-cpu:
       - x64
       x-client-current-telemetry:
@@ -23,7 +23,7 @@ interactions:
       x-client-sku:
       - MSAL.Python
       x-client-ver:
-      - 1.18.0
+      - 1.20.0
     method: POST
     uri: https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token
   response:
@@ -44,7 +44,7 @@ interactions:
       Accept:
       - application/json
       Accept-Encoding:
-      - gzip, deflate, br
+      - gzip, deflate
       Connection:
       - keep-alive
       Content-Length:
@@ -52,14 +52,16 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - testapp azsdk-python-quantum/0.0.0.1 Python/3.9.13 (Windows-10-10.0.22622-SP0)
+      - testapp azsdk-python-quantum/0.0.0.1 Python/3.9.15 (Windows-10-10.0.22621-SP0)
     method: POST
-    uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/storage/sasUri
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/storage/sasUri?api-version=2022-09-12-preview
   response:
     body:
       string: '{"sasUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
         "access_token": "fake_token"}'
     headers:
+      connection:
+      - keep-alive
       content-length:
       - '190'
       content-type:
@@ -75,13 +77,13 @@ interactions:
       Accept:
       - application/xml
       Accept-Encoding:
-      - gzip, deflate, br
+      - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-blob/12.13.1 Python/3.9.13 (Windows-10-10.0.22622-SP0)
+      - azsdk-python-storage-blob/12.14.1 Python/3.9.15 (Windows-10-10.0.22621-SP0)
       x-ms-date:
-      - Wed, 21 Sep 2022 00:14:36 GMT
+      - Thu, 26 Jan 2023 20:57:58 GMT
       x-ms-version:
       - '2021-08-06'
     method: GET
@@ -89,7 +91,7 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerNotFound</Code><Message>The
-        specified container does not exist.\nRequestId:ccc8fcf5-601e-0009-514f-cdda3e000000\nTime:2022-09-21T00:14:36.9337932Z</Message></Error>"
+        specified container does not exist.\nRequestId:06edbbd8-601e-0079-2bc8-314e53000000\nTime:2023-01-26T20:57:59.6437302Z</Message></Error>"
     headers:
       content-length:
       - '223'
@@ -106,15 +108,15 @@ interactions:
       Accept:
       - application/xml
       Accept-Encoding:
-      - gzip, deflate, br
+      - gzip, deflate
       Connection:
       - keep-alive
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-blob/12.13.1 Python/3.9.13 (Windows-10-10.0.22622-SP0)
+      - azsdk-python-storage-blob/12.14.1 Python/3.9.15 (Windows-10-10.0.22621-SP0)
       x-ms-date:
-      - Wed, 21 Sep 2022 00:14:36 GMT
+      - Thu, 26 Jan 2023 20:57:59 GMT
       x-ms-version:
       - '2021-08-06'
     method: PUT
@@ -136,13 +138,13 @@ interactions:
       Accept:
       - application/xml
       Accept-Encoding:
-      - gzip, deflate, br
+      - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-blob/12.13.1 Python/3.9.13 (Windows-10-10.0.22622-SP0)
+      - azsdk-python-storage-blob/12.14.1 Python/3.9.15 (Windows-10-10.0.22621-SP0)
       x-ms-date:
-      - Wed, 21 Sep 2022 00:14:36 GMT
+      - Thu, 26 Jan 2023 20:57:59 GMT
       x-ms-version:
       - '2021-08-06'
     method: GET
@@ -163,24 +165,25 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: b'\x1f\x8b\x08\x00kW*c\x02\xffU\x8c\xc1\n\xc20\x10D\x7f\xa5\xec\xd9H\xb2m\x91\xfa\x15\x82\xdel\x91\x98F(\x98\xa64[AJ\xfe\xdd%=\xd4\x9cvv\xde\xcc\xac\xe0,\xe9^\x93\x86s\xb1\xc2\xa8\x9de\x017\x1bH\\h0\xee\xea\xdf\x1f;\x8b\x16P"\xca\x06\xa5P\'U\x95u\x0b\x10\x0f\x05\x18\x1f\xe8\xf1ZFC\x83\x1f\xd3\x04\xa7\xc3\xa6A\x1d%p\x86\xbeS\x1a\x9d\x96\xa7O\xbf\x9d]`\xe3\xbe\x82\xe1#J\xf6\x86>9\xeaP\xc8\x8ew7R\xef\x003\xd0d@\xed\x00wPf\rQe\xe4\xaf\x92\x03\xecb\x17\xe3\x0fi6\xc5\x89\x16\x01\x00\x00'
+    body: b'\x1f\x8b\x08\x00U\xe9\xd2c\x02\xffU\x8c\xc1\n\xc20\x10D\x7f\xa5\xec\xd9H\xb2\xb5\x16\xfd\nAo\xb6HL#\x14LS\x9a\xad
+      %\xff\xee\x92\x1ejN;;of\x16p\x96t\xa7I\xc3\xb9X`\xd0\xce\xb2\x80\x9b\r$.\xd4\x1bw\xf5\xef\x8f\x9dD\x03(\xb1\x94\n\x8fBaUWu\x03\x10w\x05\x18\x1f\xe8\xf1\x9a\x07C\xbd\x1f\xd2\x04\xa7\xc3\xaaA\xed%p\x86\xbec\x1a\x1d\xe7\xa7O\xbf\x9d\\`\xe3\xbe\x80\xe1#J\xf6\xfa.9jW\xc8\x96wWRm\x003p\xca\x80\xda\x00n\xa0\xcc\x1a\xe2\x90\x91\xbfJ\x0e\xb0\x8dm\x8c?N\xa2\x80\xc6\x16\x01\x00\x00'
     headers:
       Accept:
       - application/xml
       Accept-Encoding:
-      - gzip, deflate, br
+      - gzip, deflate
       Connection:
       - keep-alive
       Content-Length:
-      - '486'
+      - '490'
       Content-Type:
       - application/octet-stream
       User-Agent:
-      - azsdk-python-storage-blob/12.13.1 Python/3.9.13 (Windows-10-10.0.22622-SP0)
+      - azsdk-python-storage-blob/12.14.1 Python/3.9.15 (Windows-10-10.0.22621-SP0)
       x-ms-blob-type:
       - BlockBlob
       x-ms-date:
-      - Wed, 21 Sep 2022 00:14:37 GMT
+      - Thu, 26 Jan 2023 20:58:00 GMT
       x-ms-version:
       - '2021-08-06'
     method: PUT
@@ -198,7 +201,8 @@ interactions:
       message: Created
 - request:
     body: 'b''{"id": "00000000-0000-0000-0000-000000000000", "name": "Test-PticmSolver-\\"20210101-000000\\"",
-      "containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+      "providerId": "1qbit", "target": "1qbit.pticm", "itemType": "Job", "containerUri":
+      "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
       "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData",
       "inputDataFormat": "microsoft.qio.v2", "inputParams": {"auto_set_temperatures":
       "False", "elite_threshold": "0.3", "frac_icm_thermal_layers": "0.5", "frac_sweeps_fixing":
@@ -206,44 +210,45 @@ interactions:
       "OPTIMIZE", "high_temp": "2", "low_temp": "0.2", "max_samples_per_layer": "10",
       "max_total_sweeps": "1000", "num_elite_temps": "4", "num_replicas": "2", "num_sweeps_per_run":
       "100", "num_temps": "30", "scaling_type": "MEDIAN", "seed": "42", "var_fixing_type":
-      "NO_FIXING"}, "providerId": "1qbit", "target": "1qbit.pticm", "outputDataFormat":
-      "microsoft.qio-results.v1"}'''
+      "NO_FIXING"}, "outputDataFormat": "microsoft.qio-results.v1"}'''
     headers:
       Accept:
       - application/json
       Accept-Encoding:
-      - gzip, deflate, br
+      - gzip, deflate
       Connection:
       - keep-alive
       Content-Length:
-      - '992'
+      - '1011'
       Content-Type:
       - application/json
       User-Agent:
-      - testapp azsdk-python-quantum/0.0.0.1 Python/3.9.13 (Windows-10-10.0.22622-SP0)
+      - testapp azsdk-python-quantum/0.0.0.1 Python/3.9.15 (Windows-10-10.0.22621-SP0)
     method: PUT
-    uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000000
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000000?api-version=2022-09-12-preview
   response:
     body:
       string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
-        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData",
         "inputDataFormat": "microsoft.qio.v2", "inputParams": {"auto_set_temperatures":
         "False", "elite_threshold": "0.3", "frac_icm_thermal_layers": "0.5", "frac_sweeps_fixing":
         "0.15", "frac_sweeps_idle": "1.0", "frac_sweeps_stagnation": "1.0", "goal":
         "OPTIMIZE", "high_temp": "2", "low_temp": "0.2", "max_samples_per_layer":
         "10", "max_total_sweeps": "1000", "num_elite_temps": "4", "num_replicas":
         "2", "num_sweeps_per_run": "100", "num_temps": "30", "scaling_type": "MEDIAN",
-        "seed": "42", "var_fixing_type": "NO_FIXING"}, "providerId": "1qbit", "target":
-        "1qbit.pticm", "metadata": null, "name": "Test-PticmSolver-\"20210101-000000\"",
-        "id": "00000000-0000-0000-0000-000000000000", "status": "Waiting", "outputDataFormat":
+        "seed": "42", "var_fixing_type": "NO_FIXING"}, "metadata": null, "sessionId":
+        null, "status": "Waiting", "jobType": "Optimization", "outputDataFormat":
         "microsoft.qio-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-00000000-0000-0000-0000-000000000000/outputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
-        "creationTime": "2022-09-21T00:14:37.313813+00:00", "beginExecutionTime":
-        null, "endExecutionTime": null, "cancellationTime": null, "costEstimate":
-        null, "errorData": null, "isCancelling": false, "tags": [], "access_token":
-        "fake_token"}'
+        "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
+        null, "errorData": null, "isCancelling": false, "tags": [], "name": "Test-PticmSolver-\"20210101-000000\"",
+        "id": "00000000-0000-0000-0000-000000000000", "providerId": "1qbit", "target":
+        "1qbit.pticm", "creationTime": "2023-01-26T20:58:00.5767745+00:00", "endExecutionTime":
+        null, "costEstimate": null, "itemType": "Job", "access_token": "fake_token"}'
     headers:
+      connection:
+      - keep-alive
       content-length:
-      - '1504'
+      - '1542'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -257,34 +262,37 @@ interactions:
       Accept:
       - application/json
       Accept-Encoding:
-      - gzip, deflate, br
+      - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - testapp azsdk-python-quantum/0.0.0.1 Python/3.9.13 (Windows-10-10.0.22622-SP0)
+      - testapp azsdk-python-quantum/0.0.0.1 Python/3.9.15 (Windows-10-10.0.22621-SP0)
     method: GET
-    uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000000
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000000?api-version=2022-09-12-preview
   response:
     body:
       string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
-        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-PticmSolver-%252220210101-000000%2522-5fad1358-3942-11ed-97f4-b831b5915c7e.input.json",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-PticmSolver-%252220210101-000000%2522-1c60d2c9-9dbc-11ed-8c55-6045bdaa2ba8.input.json",
         "inputDataFormat": "microsoft.qio.v2", "inputParams": {"auto_set_temperatures":
         "False", "elite_threshold": "0.3", "frac_icm_thermal_layers": "0.5", "frac_sweeps_fixing":
         "0.15", "frac_sweeps_idle": "1.0", "frac_sweeps_stagnation": "1.0", "goal":
         "OPTIMIZE", "high_temp": "2", "low_temp": "0.2", "max_samples_per_layer":
         "10", "max_total_sweeps": "1000", "num_elite_temps": "4", "num_replicas":
         "2", "num_sweeps_per_run": "100", "num_temps": "30", "scaling_type": "MEDIAN",
-        "seed": "42", "var_fixing_type": "NO_FIXING"}, "providerId": "1qbit", "target":
-        "1qbit.pticm", "metadata": null, "name": "Test-PticmSolver-\"20210101-000000\"",
-        "id": "00000000-0000-0000-0000-000000000000", "status": "Succeeded", "outputDataFormat":
-        "microsoft.qio-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-PticmSolver-%252220210101-000000%2522-5fad1358-3942-11ed-97f4-b831b5915c7e.output.json",
-        "creationTime": "2022-09-21T00:14:37.313813+00:00", "beginExecutionTime":
-        "2022-09-21T00:14:37.712308+00:00", "endExecutionTime": "2022-09-21T00:14:38.476917+00:00",
-        "cancellationTime": null, "costEstimate": null, "errorData": null, "isCancelling":
-        false, "tags": [], "access_token": "fake_token"}'
+        "seed": "42", "var_fixing_type": "NO_FIXING"}, "metadata": null, "sessionId":
+        null, "status": "Succeeded", "jobType": "Optimization", "outputDataFormat":
+        "microsoft.qio-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-PticmSolver-%252220210101-000000%2522-1c60d2c9-9dbc-11ed-8c55-6045bdaa2ba8.output.json",
+        "beginExecutionTime": "2023-01-26T20:58:03.488814+00:00", "cancellationTime":
+        null, "quantumComputingData": null, "errorData": null, "isCancelling": false,
+        "tags": [], "name": "Test-PticmSolver-\"20210101-000000\"", "id": "00000000-0000-0000-0000-000000000000",
+        "providerId": "1qbit", "target": "1qbit.pticm", "creationTime": "2023-01-26T20:58:00.5767745+00:00",
+        "endExecutionTime": "2023-01-26T20:58:04.572146+00:00", "costEstimate": null,
+        "itemType": "Job", "access_token": "fake_token"}'
     headers:
+      connection:
+      - keep-alive
       content-length:
-      - '1800'
+      - '1896'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -298,19 +306,19 @@ interactions:
       Accept:
       - application/xml
       Accept-Encoding:
-      - gzip, deflate, br
+      - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-blob/12.13.1 Python/3.9.13 (Windows-10-10.0.22622-SP0)
+      - azsdk-python-storage-blob/12.14.1 Python/3.9.15 (Windows-10-10.0.22621-SP0)
       x-ms-date:
-      - Wed, 21 Sep 2022 00:14:39 GMT
+      - Thu, 26 Jan 2023 20:58:07 GMT
       x-ms-range:
       - bytes=0-33554431
       x-ms-version:
       - '2021-08-06'
     method: GET
-    uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-PticmSolver-%252220210101-000000%2522-5fad1358-3942-11ed-97f4-b831b5915c7e.output.json
+    uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-PticmSolver-%252220210101-000000%2522-1c60d2c9-9dbc-11ed-8c55-6045bdaa2ba8.output.json
   response:
     body:
       string: '{"input_data_uri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
@@ -339,15 +347,15 @@ interactions:
       content-length:
       - '1627'
       content-range:
-      - bytes 0-1572/1573
+      - bytes 0-1577/1578
       content-type:
       - application/octet-stream
       x-ms-blob-content-md5:
-      - uLibO0K8ElInRtHj4eOOcg==
+      - fcyLVNb5KGswlKYilr6bGA==
       x-ms-blob-type:
       - BlockBlob
       x-ms-creation-time:
-      - Wed, 21 Sep 2022 00:14:37 GMT
+      - Thu, 26 Jan 2023 20:58:02 GMT
       x-ms-lease-state:
       - available
       x-ms-lease-status:
@@ -365,34 +373,37 @@ interactions:
       Accept:
       - application/json
       Accept-Encoding:
-      - gzip, deflate, br
+      - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - testapp azsdk-python-quantum/0.0.0.1 Python/3.9.13 (Windows-10-10.0.22622-SP0)
+      - testapp azsdk-python-quantum/0.0.0.1 Python/3.9.15 (Windows-10-10.0.22621-SP0)
     method: GET
-    uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000000
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000000?api-version=2022-09-12-preview
   response:
     body:
       string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
-        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-PticmSolver-%252220210101-000000%2522-5fad1358-3942-11ed-97f4-b831b5915c7e.input.json",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-PticmSolver-%252220210101-000000%2522-1c60d2c9-9dbc-11ed-8c55-6045bdaa2ba8.input.json",
         "inputDataFormat": "microsoft.qio.v2", "inputParams": {"auto_set_temperatures":
         "False", "elite_threshold": "0.3", "frac_icm_thermal_layers": "0.5", "frac_sweeps_fixing":
         "0.15", "frac_sweeps_idle": "1.0", "frac_sweeps_stagnation": "1.0", "goal":
         "OPTIMIZE", "high_temp": "2", "low_temp": "0.2", "max_samples_per_layer":
         "10", "max_total_sweeps": "1000", "num_elite_temps": "4", "num_replicas":
         "2", "num_sweeps_per_run": "100", "num_temps": "30", "scaling_type": "MEDIAN",
-        "seed": "42", "var_fixing_type": "NO_FIXING"}, "providerId": "1qbit", "target":
-        "1qbit.pticm", "metadata": null, "name": "Test-PticmSolver-\"20210101-000000\"",
-        "id": "00000000-0000-0000-0000-000000000000", "status": "Succeeded", "outputDataFormat":
-        "microsoft.qio-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-PticmSolver-%252220210101-000000%2522-5fad1358-3942-11ed-97f4-b831b5915c7e.output.json",
-        "creationTime": "2022-09-21T00:14:37.313813+00:00", "beginExecutionTime":
-        "2022-09-21T00:14:37.712308+00:00", "endExecutionTime": "2022-09-21T00:14:38.476917+00:00",
-        "cancellationTime": null, "costEstimate": null, "errorData": null, "isCancelling":
-        false, "tags": [], "access_token": "fake_token"}'
+        "seed": "42", "var_fixing_type": "NO_FIXING"}, "metadata": null, "sessionId":
+        null, "status": "Succeeded", "jobType": "Optimization", "outputDataFormat":
+        "microsoft.qio-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-PticmSolver-%252220210101-000000%2522-1c60d2c9-9dbc-11ed-8c55-6045bdaa2ba8.output.json",
+        "beginExecutionTime": "2023-01-26T20:58:03.488814+00:00", "cancellationTime":
+        null, "quantumComputingData": null, "errorData": null, "isCancelling": false,
+        "tags": [], "name": "Test-PticmSolver-\"20210101-000000\"", "id": "00000000-0000-0000-0000-000000000000",
+        "providerId": "1qbit", "target": "1qbit.pticm", "creationTime": "2023-01-26T20:58:00.5767745+00:00",
+        "endExecutionTime": "2023-01-26T20:58:04.572146+00:00", "costEstimate": null,
+        "itemType": "Job", "access_token": "fake_token"}'
     headers:
+      connection:
+      - keep-alive
       content-length:
-      - '1800'
+      - '1896'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -406,7 +417,7 @@ interactions:
       Accept:
       - application/json
       Accept-Encoding:
-      - gzip, deflate, br
+      - gzip, deflate
       Connection:
       - keep-alive
       Content-Length:
@@ -414,7 +425,7 @@ interactions:
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - azsdk-python-identity/1.11.0 Python/3.9.13 (Windows-10-10.0.22622-SP0)
+      - azsdk-python-identity/1.12.0 Python/3.9.15 (Windows-10-10.0.22621-SP0)
       x-client-cpu:
       - x64
       x-client-current-telemetry:
@@ -424,7 +435,7 @@ interactions:
       x-client-sku:
       - MSAL.Python
       x-client-ver:
-      - 1.18.0
+      - 1.20.0
     method: POST
     uri: https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token
   response:
@@ -445,7 +456,7 @@ interactions:
       Accept:
       - application/json
       Accept-Encoding:
-      - gzip, deflate, br
+      - gzip, deflate
       Connection:
       - keep-alive
       Content-Length:
@@ -453,14 +464,16 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - testapp azsdk-python-quantum/0.0.0.1 Python/3.9.13 (Windows-10-10.0.22622-SP0)
+      - testapp azsdk-python-quantum/0.0.0.1 Python/3.9.15 (Windows-10-10.0.22621-SP0)
     method: POST
-    uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/storage/sasUri
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/storage/sasUri?api-version=2022-09-12-preview
   response:
     body:
       string: '{"sasUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
         "access_token": "fake_token"}'
     headers:
+      connection:
+      - keep-alive
       content-length:
       - '190'
       content-type:
@@ -476,13 +489,13 @@ interactions:
       Accept:
       - application/xml
       Accept-Encoding:
-      - gzip, deflate, br
+      - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-blob/12.13.1 Python/3.9.13 (Windows-10-10.0.22622-SP0)
+      - azsdk-python-storage-blob/12.14.1 Python/3.9.15 (Windows-10-10.0.22621-SP0)
       x-ms-date:
-      - Wed, 21 Sep 2022 00:14:41 GMT
+      - Thu, 26 Jan 2023 20:58:09 GMT
       x-ms-version:
       - '2021-08-06'
     method: GET
@@ -490,7 +503,7 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerNotFound</Code><Message>The
-        specified container does not exist.\nRequestId:ea19ed71-901e-00a4-404f-cd964b000000\nTime:2022-09-21T00:14:41.3168648Z</Message></Error>"
+        specified container does not exist.\nRequestId:d8bddd1f-701e-0017-52c8-311b7c000000\nTime:2023-01-26T20:58:10.2519729Z</Message></Error>"
     headers:
       content-length:
       - '223'
@@ -507,15 +520,15 @@ interactions:
       Accept:
       - application/xml
       Accept-Encoding:
-      - gzip, deflate, br
+      - gzip, deflate
       Connection:
       - keep-alive
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-blob/12.13.1 Python/3.9.13 (Windows-10-10.0.22622-SP0)
+      - azsdk-python-storage-blob/12.14.1 Python/3.9.15 (Windows-10-10.0.22621-SP0)
       x-ms-date:
-      - Wed, 21 Sep 2022 00:14:41 GMT
+      - Thu, 26 Jan 2023 20:58:10 GMT
       x-ms-version:
       - '2021-08-06'
     method: PUT
@@ -537,13 +550,13 @@ interactions:
       Accept:
       - application/xml
       Accept-Encoding:
-      - gzip, deflate, br
+      - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-blob/12.13.1 Python/3.9.13 (Windows-10-10.0.22622-SP0)
+      - azsdk-python-storage-blob/12.14.1 Python/3.9.15 (Windows-10-10.0.22621-SP0)
       x-ms-date:
-      - Wed, 21 Sep 2022 00:14:41 GMT
+      - Thu, 26 Jan 2023 20:58:10 GMT
       x-ms-version:
       - '2021-08-06'
     method: GET
@@ -564,24 +577,25 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: b'\x1f\x8b\x08\x00oW*c\x02\xffU\x8c\xc1\n\xc20\x10D\x7f\xa5\xec\xb9\x91d[\x91\xfa\x15\x82\xdel\x91\x98F(\x98\xa64[AJ\xfe\xdd%=\xd4\x9cvv\xde\xcc\xac\xe0,\xe9^\x93\x86s\xb1\xc2\xa8\x9de\x017\x1bH\\h0\xee\xea\xdf\x1f;\x8b\x16P"\xca\x06\xa5P\'UWM\x0b\x10\xcb\x02\x8c\x0f\xf4x-\xa3\xa1\xc1\x8fi\x82\xd3a\xd3\xa0\x0e\x128C\xdf)\x8dN\xcb\xd3\xa7\xdf\xce.\xb0q_\xc1\xf0\x11\x15{C\x9f\x1cU\x16\xb2\xe3\xdd\x8d\x1cw\x80\x19h2\xa0v\x80;\xa8\xb2\x86\xa83\xf2W\xc9\x01v\xb1\x8b\xf1\x07Z\x16\xab\xdf\x16\x01\x00\x00'
+    body: b'\x1f\x8b\x08\x00`\xe9\xd2c\x02\xffU\x8c\xc1\n\xc20\x10D\x7f\xa5\xec\xd9H\xb2\xb5R\xfd\nAo\xb6HL#\x14LS\x9a\xad
+      %\xff\xee\x92\x1ejN;;of\x16p\x96t\xa7I\xc3\xb9X`\xd0\xce\xb2\x80\x9b\r$.\xd4\x1bw\xf5\xef\x8f\x9dD\x03(\xb1\x94\n\x8fBaU\xcb\xba\x01\x88\xbb\x02\x8c\x0f\xf4x\xcd\x83\xa1\xde\x0fi\x82\xd3a\xd5\xa0\xf6\x128C\xdf1\x8d\x8e\xf3\xd3\xa7\xdfN.\xb0q_\xc0\xf0\x11%{}\x97\x1c\xb5+d\xcb\xbb+\xa96\x80\x198e@m\x007Pf\rq\xc8\xc8_%\x07\xd8\xc66\xc6\x1f\xe4\x1b\xf7\x92\x16\x01\x00\x00'
     headers:
       Accept:
       - application/xml
       Accept-Encoding:
-      - gzip, deflate, br
+      - gzip, deflate
       Connection:
       - keep-alive
       Content-Length:
-      - '503'
+      - '484'
       Content-Type:
       - application/octet-stream
       User-Agent:
-      - azsdk-python-storage-blob/12.13.1 Python/3.9.13 (Windows-10-10.0.22622-SP0)
+      - azsdk-python-storage-blob/12.14.1 Python/3.9.15 (Windows-10-10.0.22621-SP0)
       x-ms-blob-type:
       - BlockBlob
       x-ms-date:
-      - Wed, 21 Sep 2022 00:14:41 GMT
+      - Thu, 26 Jan 2023 20:58:10 GMT
       x-ms-version:
       - '2021-08-06'
     method: PUT
@@ -599,7 +613,8 @@ interactions:
       message: Created
 - request:
     body: 'b''{"id": "00000000-0000-0000-0000-000000000000", "name": "Test-PticmSolver-\\"20210101-000000\\"",
-      "containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+      "providerId": "1qbit", "target": "1qbit.pticm", "itemType": "Job", "containerUri":
+      "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
       "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData",
       "inputDataFormat": "microsoft.qio.v2", "inputParams": {"auto_set_temperatures":
       "False", "elite_threshold": "0.3", "frac_icm_thermal_layers": "0.5", "frac_sweeps_fixing":
@@ -607,23 +622,22 @@ interactions:
       "OPTIMIZE", "high_temp": "2", "low_temp": "0.2", "max_samples_per_layer": "10",
       "max_total_sweeps": "1000", "num_elite_temps": "4", "num_replicas": "2", "num_sweeps_per_run":
       "100", "num_temps": "30", "scaling_type": "MEDIAN", "seed": "42", "var_fixing_type":
-      "NO_FIXING"}, "providerId": "1qbit", "target": "1qbit.pticm", "outputDataFormat":
-      "microsoft.qio-results.v1"}'''
+      "NO_FIXING"}, "outputDataFormat": "microsoft.qio-results.v1"}'''
     headers:
       Accept:
       - application/json
       Accept-Encoding:
-      - gzip, deflate, br
+      - gzip, deflate
       Connection:
       - keep-alive
       Content-Length:
-      - '992'
+      - '1011'
       Content-Type:
       - application/json
       User-Agent:
-      - testapp azsdk-python-quantum/0.0.0.1 Python/3.9.13 (Windows-10-10.0.22622-SP0)
+      - testapp azsdk-python-quantum/0.0.0.1 Python/3.9.15 (Windows-10-10.0.22621-SP0)
     method: PUT
-    uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000000
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000000?api-version=2022-09-12-preview
   response:
     body:
       string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
@@ -634,17 +648,19 @@ interactions:
         "OPTIMIZE", "high_temp": "2", "low_temp": "0.2", "max_samples_per_layer":
         "10", "max_total_sweeps": "1000", "num_elite_temps": "4", "num_replicas":
         "2", "num_sweeps_per_run": "100", "num_temps": "30", "scaling_type": "MEDIAN",
-        "seed": "42", "var_fixing_type": "NO_FIXING"}, "providerId": "1qbit", "target":
-        "1qbit.pticm", "metadata": null, "name": "Test-PticmSolver-\"20210101-000000\"",
-        "id": "00000000-0000-0000-0000-000000000000", "status": "Waiting", "outputDataFormat":
+        "seed": "42", "var_fixing_type": "NO_FIXING"}, "metadata": null, "sessionId":
+        null, "status": "Waiting", "jobType": "Optimization", "outputDataFormat":
         "microsoft.qio-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-00000000-0000-0000-0000-000000000000/outputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
-        "creationTime": "2022-09-21T00:14:42.0582693+00:00", "beginExecutionTime":
-        null, "endExecutionTime": null, "cancellationTime": null, "costEstimate":
-        null, "errorData": null, "isCancelling": false, "tags": [], "access_token":
-        "fake_token"}'
+        "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
+        null, "errorData": null, "isCancelling": false, "tags": [], "name": "Test-PticmSolver-\"20210101-000000\"",
+        "id": "00000000-0000-0000-0000-000000000000", "providerId": "1qbit", "target":
+        "1qbit.pticm", "creationTime": "2023-01-26T20:58:11.1986868+00:00", "endExecutionTime":
+        null, "costEstimate": null, "itemType": "Job", "access_token": "fake_token"}'
     headers:
+      connection:
+      - keep-alive
       content-length:
-      - '1505'
+      - '1600'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -658,34 +674,37 @@ interactions:
       Accept:
       - application/json
       Accept-Encoding:
-      - gzip, deflate, br
+      - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - testapp azsdk-python-quantum/0.0.0.1 Python/3.9.13 (Windows-10-10.0.22622-SP0)
+      - testapp azsdk-python-quantum/0.0.0.1 Python/3.9.15 (Windows-10-10.0.22621-SP0)
     method: GET
-    uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000000
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000000?api-version=2022-09-12-preview
   response:
     body:
       string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
-        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-PticmSolver-%252220210101-000000%2522-624ff407-3942-11ed-8c82-b831b5915c7e.input.json",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-PticmSolver-%252220210101-000000%2522-22d644d2-9dbc-11ed-b6c0-6045bdaa2ba8.input.json",
         "inputDataFormat": "microsoft.qio.v2", "inputParams": {"auto_set_temperatures":
         "False", "elite_threshold": "0.3", "frac_icm_thermal_layers": "0.5", "frac_sweeps_fixing":
         "0.15", "frac_sweeps_idle": "1.0", "frac_sweeps_stagnation": "1.0", "goal":
         "OPTIMIZE", "high_temp": "2", "low_temp": "0.2", "max_samples_per_layer":
         "10", "max_total_sweeps": "1000", "num_elite_temps": "4", "num_replicas":
         "2", "num_sweeps_per_run": "100", "num_temps": "30", "scaling_type": "MEDIAN",
-        "seed": "42", "var_fixing_type": "NO_FIXING"}, "providerId": "1qbit", "target":
-        "1qbit.pticm", "metadata": null, "name": "Test-PticmSolver-\"20210101-000000\"",
-        "id": "00000000-0000-0000-0000-000000000000", "status": "Succeeded", "outputDataFormat":
-        "microsoft.qio-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-PticmSolver-%252220210101-000000%2522-624ff407-3942-11ed-8c82-b831b5915c7e.output.json",
-        "creationTime": "2022-09-21T00:14:42.0582693+00:00", "beginExecutionTime":
-        "2022-09-21T00:14:42.424376+00:00", "endExecutionTime": "2022-09-21T00:14:43.24341+00:00",
-        "cancellationTime": null, "costEstimate": null, "errorData": null, "isCancelling":
-        false, "tags": [], "access_token": "fake_token"}'
+        "seed": "42", "var_fixing_type": "NO_FIXING"}, "metadata": null, "sessionId":
+        null, "status": "Succeeded", "jobType": "Optimization", "outputDataFormat":
+        "microsoft.qio-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-PticmSolver-%252220210101-000000%2522-22d644d2-9dbc-11ed-b6c0-6045bdaa2ba8.output.json",
+        "beginExecutionTime": "2023-01-26T20:58:12.060494+00:00", "cancellationTime":
+        null, "quantumComputingData": null, "errorData": null, "isCancelling": false,
+        "tags": [], "name": "Test-PticmSolver-\"20210101-000000\"", "id": "00000000-0000-0000-0000-000000000000",
+        "providerId": "1qbit", "target": "1qbit.pticm", "creationTime": "2023-01-26T20:58:11.1986868+00:00",
+        "endExecutionTime": "2023-01-26T20:58:12.84509+00:00", "costEstimate": null,
+        "itemType": "Job", "access_token": "fake_token"}'
     headers:
+      connection:
+      - keep-alive
       content-length:
-      - '1800'
+      - '1895'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -699,19 +718,19 @@ interactions:
       Accept:
       - application/xml
       Accept-Encoding:
-      - gzip, deflate, br
+      - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-blob/12.13.1 Python/3.9.13 (Windows-10-10.0.22622-SP0)
+      - azsdk-python-storage-blob/12.14.1 Python/3.9.15 (Windows-10-10.0.22621-SP0)
       x-ms-date:
-      - Wed, 21 Sep 2022 00:14:44 GMT
+      - Thu, 26 Jan 2023 20:58:14 GMT
       x-ms-range:
       - bytes=0-33554431
       x-ms-version:
       - '2021-08-06'
     method: GET
-    uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-PticmSolver-%252220210101-000000%2522-624ff407-3942-11ed-8c82-b831b5915c7e.output.json
+    uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-PticmSolver-%252220210101-000000%2522-22d644d2-9dbc-11ed-b6c0-6045bdaa2ba8.output.json
   response:
     body:
       string: '{"input_data_uri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
@@ -730,7 +749,7 @@ interactions:
         0.7003, 0.684815, 0.705295, 0.731269, 0.714286, 0.734266, 0.727273, 0.71978,
         0.720779, 0.677822, 0.602398, 0.531968, 0.388112 ]", "runs_counter": "9",
         "scaling_factor": "4", "scaling_type": "MEDIAN", "seed": "42", "solver_name":
-        "PTICM", "sweeps_to_best": "1", "time_to_best": "4", "total_sweeps": "1000",
+        "PTICM", "sweeps_to_best": "1", "time_to_best": "2", "total_sweeps": "1000",
         "var_fixing_type": "NO_FIXING"}, "solutions": [{"configuration": {"0": "1",
         "1": "1", "2": "0", "3": "1"}, "cost": -5.0}], "target": "1qbit.pticm", "version":
         "1.0", "access_token": "fake_token"}'
@@ -740,15 +759,15 @@ interactions:
       content-length:
       - '1627'
       content-range:
-      - bytes 0-1572/1573
+      - bytes 0-1577/1578
       content-type:
       - application/octet-stream
       x-ms-blob-content-md5:
-      - FIxkD1pfrDC1rZur7c+DFg==
+      - 9KyQFpH/hiiG1g+GQAf6ew==
       x-ms-blob-type:
       - BlockBlob
       x-ms-creation-time:
-      - Wed, 21 Sep 2022 00:14:42 GMT
+      - Thu, 26 Jan 2023 20:58:11 GMT
       x-ms-lease-state:
       - available
       x-ms-lease-status:
@@ -766,34 +785,37 @@ interactions:
       Accept:
       - application/json
       Accept-Encoding:
-      - gzip, deflate, br
+      - gzip, deflate
       Connection:
       - keep-alive
       User-Agent:
-      - testapp azsdk-python-quantum/0.0.0.1 Python/3.9.13 (Windows-10-10.0.22622-SP0)
+      - testapp azsdk-python-quantum/0.0.0.1 Python/3.9.15 (Windows-10-10.0.22621-SP0)
     method: GET
-    uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000000
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000000?api-version=2022-09-12-preview
   response:
     body:
       string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
-        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-PticmSolver-%252220210101-000000%2522-624ff407-3942-11ed-8c82-b831b5915c7e.input.json",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-PticmSolver-%252220210101-000000%2522-22d644d2-9dbc-11ed-b6c0-6045bdaa2ba8.input.json",
         "inputDataFormat": "microsoft.qio.v2", "inputParams": {"auto_set_temperatures":
         "False", "elite_threshold": "0.3", "frac_icm_thermal_layers": "0.5", "frac_sweeps_fixing":
         "0.15", "frac_sweeps_idle": "1.0", "frac_sweeps_stagnation": "1.0", "goal":
         "OPTIMIZE", "high_temp": "2", "low_temp": "0.2", "max_samples_per_layer":
         "10", "max_total_sweeps": "1000", "num_elite_temps": "4", "num_replicas":
         "2", "num_sweeps_per_run": "100", "num_temps": "30", "scaling_type": "MEDIAN",
-        "seed": "42", "var_fixing_type": "NO_FIXING"}, "providerId": "1qbit", "target":
-        "1qbit.pticm", "metadata": null, "name": "Test-PticmSolver-\"20210101-000000\"",
-        "id": "00000000-0000-0000-0000-000000000000", "status": "Succeeded", "outputDataFormat":
-        "microsoft.qio-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-PticmSolver-%252220210101-000000%2522-624ff407-3942-11ed-8c82-b831b5915c7e.output.json",
-        "creationTime": "2022-09-21T00:14:42.0582693+00:00", "beginExecutionTime":
-        "2022-09-21T00:14:42.424376+00:00", "endExecutionTime": "2022-09-21T00:14:43.24341+00:00",
-        "cancellationTime": null, "costEstimate": null, "errorData": null, "isCancelling":
-        false, "tags": [], "access_token": "fake_token"}'
+        "seed": "42", "var_fixing_type": "NO_FIXING"}, "metadata": null, "sessionId":
+        null, "status": "Succeeded", "jobType": "Optimization", "outputDataFormat":
+        "microsoft.qio-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-PticmSolver-%252220210101-000000%2522-22d644d2-9dbc-11ed-b6c0-6045bdaa2ba8.output.json",
+        "beginExecutionTime": "2023-01-26T20:58:12.060494+00:00", "cancellationTime":
+        null, "quantumComputingData": null, "errorData": null, "isCancelling": false,
+        "tags": [], "name": "Test-PticmSolver-\"20210101-000000\"", "id": "00000000-0000-0000-0000-000000000000",
+        "providerId": "1qbit", "target": "1qbit.pticm", "creationTime": "2023-01-26T20:58:11.1986868+00:00",
+        "endExecutionTime": "2023-01-26T20:58:12.84509+00:00", "costEstimate": null,
+        "itemType": "Job", "access_token": "fake_token"}'
     headers:
+      connection:
+      - keep-alive
       content-length:
-      - '1800'
+      - '1895'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
