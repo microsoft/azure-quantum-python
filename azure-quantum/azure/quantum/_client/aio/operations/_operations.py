@@ -280,6 +280,7 @@ class JobsOperations:
             resource_group_name=self._config.resource_group_name,
             workspace_name=self._config.workspace_name,
             content_type=content_type,
+            api_version=self._config.api_version,
             json=_json,
             content=_content,
             headers=_headers,
@@ -337,6 +338,7 @@ class JobsOperations:
             subscription_id=self._config.subscription_id,
             resource_group_name=self._config.resource_group_name,
             workspace_name=self._config.workspace_name,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
@@ -443,6 +445,7 @@ class JobsOperations:
             resource_group_name=self._config.resource_group_name,
             workspace_name=self._config.workspace_name,
             content_type=content_type,
+            api_version=self._config.api_version,
             json=_json,
             content=_content,
             headers=_headers,

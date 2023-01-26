@@ -113,8 +113,12 @@ def build_jobs_create_request(
     job_id: str, subscription_id: str, resource_group_name: str, workspace_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: Literal["2022-09-12-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2022-09-12-preview")
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -134,19 +138,26 @@ def build_jobs_create_request(
 
     _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
     # Construct headers
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="PUT", url=_url, headers=_headers, **kwargs)
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_jobs_cancel_request(
     job_id: str, subscription_id: str, resource_group_name: str, workspace_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+    api_version: Literal["2022-09-12-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2022-09-12-preview")
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -166,18 +177,25 @@ def build_jobs_cancel_request(
 
     _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="DELETE", url=_url, headers=_headers, **kwargs)
+    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_jobs_patch_request(
     job_id: str, subscription_id: str, resource_group_name: str, workspace_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: Literal["2022-09-12-preview"] = kwargs.pop(
+        "api_version", _params.pop("api-version", "2022-09-12-preview")
+    )
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -197,12 +215,15 @@ def build_jobs_patch_request(
 
     _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
     # Construct headers
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="PATCH", url=_url, headers=_headers, **kwargs)
+    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_providers_get_status_request(
@@ -754,6 +775,7 @@ class JobsOperations:
             resource_group_name=self._config.resource_group_name,
             workspace_name=self._config.workspace_name,
             content_type=content_type,
+            api_version=self._config.api_version,
             json=_json,
             content=_content,
             headers=_headers,
@@ -811,6 +833,7 @@ class JobsOperations:
             subscription_id=self._config.subscription_id,
             resource_group_name=self._config.resource_group_name,
             workspace_name=self._config.workspace_name,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
@@ -917,6 +940,7 @@ class JobsOperations:
             resource_group_name=self._config.resource_group_name,
             workspace_name=self._config.workspace_name,
             content_type=content_type,
+            api_version=self._config.api_version,
             json=_json,
             content=_content,
             headers=_headers,
