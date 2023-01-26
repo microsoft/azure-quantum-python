@@ -12,6 +12,7 @@ from typing import Any, TYPE_CHECKING
 from azure.core import PipelineClient
 from azure.core.rest import HttpRequest, HttpResponse
 
+from . import models as _models
 from ._configuration import QuantumClientConfiguration
 from ._serialization import Deserializer, Serializer
 from .operations import (
@@ -78,8 +79,10 @@ class QuantumClient:  # pylint: disable=client-accepts-api-version-keyword
         )
         self._client = PipelineClient(base_url=endpoint, config=self._config, **kwargs)
 
-        self._serialize = Serializer()
-        self._deserialize = Deserializer()
+        client_models = {k: v for k, v in _models._models.__dict__.items() if isinstance(v, type)}
+        client_models.update({k: v for k, v in _models.__dict__.items() if isinstance(v, type)})
+        self._serialize = Serializer(client_models)
+        self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
         self.jobs = JobsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.providers = ProvidersOperations(self._client, self._config, self._serialize, self._deserialize)
@@ -117,5 +120,5 @@ class QuantumClient:  # pylint: disable=client-accepts-api-version-keyword
         self._client.__enter__()
         return self
 
-    def __exit__(self, *exc_details) -> None:
+    def __exit__(self, *exc_details: Any) -> None:
         self._client.__exit__(*exc_details)

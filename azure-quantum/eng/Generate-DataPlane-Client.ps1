@@ -66,6 +66,7 @@ $AutoRestConfig = $SwaggerRepoUrl.StartsWith("https://") `
 
 Write-Verbose "Installing latest AutoRest client"
 npm install -g autorest@latest | Write-Verbose
+autorest --reset | Write-Verbose
 
 if ([string]::IsNullOrEmpty($SwaggerTagVersion))
 {

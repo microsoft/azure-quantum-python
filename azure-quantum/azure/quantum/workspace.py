@@ -199,7 +199,7 @@ class Workspace:
             subscription_id=self.subscription_id,
             resource_group_name=self.resource_group,
             workspace_name=self.name,
-            base_url=base_url,
+            endpoint=base_url,
             user_agent=self.user_agent
         )
         return client
