@@ -11,7 +11,7 @@ try
     conda env update -f environment.yml --prune
     conda activate azurequantum
 
-    pip install -e .[qiskit,cirq]
+    pip install -e .[qiskit,cirq,dev]
 }
 finally
 {
