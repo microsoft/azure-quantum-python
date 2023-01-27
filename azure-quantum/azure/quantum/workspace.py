@@ -22,7 +22,6 @@ from azure.quantum._client.operations import (
 )
 from azure.quantum._client.models import BlobDetails, JobStatus, SessionStatus
 from azure.quantum import Job, Session
-from azure.quantum.job.workspace_item_factory import WorkspaceItemFactory
 from azure.quantum.job.workspace_item import WorkspaceItemFilter
 from azure.quantum.storage import create_container_using_client, get_container_uri, ContainerClient
 
@@ -361,10 +360,12 @@ class Workspace:
     ) -> List[Union[Job, Session]]:
         """Get a list of top level items for the given workspace.
 
+        :param filter: a filter to be applied on the top level items, defaults to None
+        :type filter: WorkspaceItemFilter, optional
         :return: Workspace items
         :rtype: List[WorkspaceItem]
         """
-
+        from azure.quantum.job.workspace_item_factory import WorkspaceItemFactory
         client = self._get_top_level_items_client()
         odata_filter = filter.as_odata if filter is not None else None
         item_details_list = client.list(filter = odata_filter)
@@ -374,6 +375,28 @@ class Workspace:
                 WorkspaceItemFactory.__new__(
                     workspace=self,
                     item_details=item_details))
+        return result
+
+    def list_sessions(
+        self,
+        filter: WorkspaceItemFilter = None
+    ) -> List[Session]:
+        """Get a list sessions for the given workspace.
+
+        :param filter: a filter to be applied on the sessions, defaults to None
+        :type filter: WorkspaceItemFilter, optional
+        :return: Workspace items
+        :rtype: List[WorkspaceItem]
+        """
+        client = self._get_sessions_client()
+        odata_filter = filter.as_odata if filter is not None else None
+        session_details_list = client.list(filter = odata_filter)
+        result = []
+        for session_details in session_details_list:
+            result.append(
+                Session(
+                    workspace=self,
+                    session_details=session_details))
         return result
 
     def create_session(
@@ -391,28 +414,6 @@ class Workspace:
         created_after: Optional[datetime] = None
     ) -> List[Job]:
         pass
-
-    def list_sessions(
-        self,
-        name_match: str = None,
-        status: Optional[SessionStatus] = None,
-        created_after: Optional[datetime] = None
-    ) -> List[Job]:
-        """Returns list of jobs that meet optional (limited) filter criteria. 
-            :param name_match: regex expression for job name matching
-            :param status: filter by job status
-            :param created_after: filter jobs after time of job creation
-        """
-        client = self._get_jobs_client()
-        jobs = client.list()
-
-        result = []
-        for j in jobs:
-            deserialized_job = Job(self, j)
-            if deserialized_job.matches_filter(name_match, status, created_after):
-                result.append(deserialized_job)
-
-        return result
 
     def get_session(
         self,

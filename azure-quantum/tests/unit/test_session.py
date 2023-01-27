@@ -30,3 +30,11 @@ class TestSession(QuantumTestBase):
         result_types = map(type, result)
         self.assertIn(Job, result_types)
         self.assertIn(Session, result_types)
+
+    @pytest.mark.live_test
+    @pytest.mark.session
+    def test_session_list_sessions(self):
+        workspace = self.create_workspace()
+        result = workspace.list_sessions()
+        result_types = map(type, result)
+        self.assertIn(Session, result_types)
