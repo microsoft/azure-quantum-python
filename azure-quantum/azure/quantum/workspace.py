@@ -401,15 +401,8 @@ class Workspace:
 
     def create_session(
         self,
-        session_id
+        session_id:str
     ) -> Session:
-        """Get a list sessions for the given workspace.
-
-        :param filter: a filter to be applied on the sessions, defaults to None
-        :type filter: WorkspaceItemFilter, optional
-        :return: Workspace items
-        :rtype: List[WorkspaceItem]
-        """
         client = self._get_sessions_client()
         from azure.quantum._client.models._enums import SessionJobFailurePolicy;
         import uuid
@@ -431,19 +424,26 @@ class Workspace:
 
     def end_session(
         self,
-        name_match: str = None,
-        status: Optional[JobStatus] = None,
-        created_after: Optional[datetime] = None
-    ) -> List[Job]:
-        pass
+        session_id:str
+    ) -> Session:
+        client = self._get_sessions_client()
+        client.end(session_id=session_id)
+        session_details = client.end(session_id=session_id)
+        result = Session(
+                    workspace=self,
+                    session_details=session_details)
+        return result
 
     def get_session(
         self,
-        name_match: str = None,
-        status: Optional[JobStatus] = None,
-        created_after: Optional[datetime] = None
-    ) -> List[Job]:
-        pass
+        session_id:str
+    ) -> Session:
+        client = self._get_sessions_client()
+        session_details = client.get(session_id=session_id)
+        result = Session(
+                    workspace=self,
+                    session_details=session_details)
+        return result
 
     def list_session_jobs(
         self,

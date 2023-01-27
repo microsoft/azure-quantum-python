@@ -50,3 +50,28 @@ class TestSession(QuantumTestBase):
         result = workspace.create_session(session_id=session_id)
         self.assertIsInstance(result, Session)
 
+    @pytest.mark.live_test
+    @pytest.mark.session
+    def test_session_get_session(self):
+        workspace = self.create_workspace()
+        session_id = None
+        from common import ZERO_UID
+        if self.is_playback:
+            session_id = ZERO_UID
+        result = workspace.create_session(session_id=session_id)
+        self.assertIsInstance(result, Session)
+        result = workspace.get_session(session_id=result.id)
+        self.assertIsInstance(result, Session)
+
+    @pytest.mark.live_test
+    @pytest.mark.session
+    def test_session_end_session(self):
+        workspace = self.create_workspace()
+        session_id = None
+        from common import ZERO_UID
+        if self.is_playback:
+            session_id = ZERO_UID
+        result = workspace.create_session(session_id=session_id)
+        self.assertIsInstance(result, Session)
+        result = workspace.end_session(session_id=result.id)
+        self.assertIsInstance(result, Session)
