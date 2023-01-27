@@ -117,7 +117,10 @@ class QuantumTestBase(ReplayableTest):
             r"jobs/([a-f0-9]+[-]){4}[a-f0-9]+", "jobs/" + ZERO_UID
         )
         regex_replacer.register_regex(
-            r"job-([a-f0-9]+[-]){4}[a-f0-9]+", "job-" + ZERO_UID
+            r"session-([a-f0-9]+[-]){4}[a-f0-9]+", "session-" + ZERO_UID
+        )
+        regex_replacer.register_regex(
+            r"sessions/([a-f0-9]+[-]){4}[a-f0-9]+", "sessions/" + ZERO_UID
         )
         regex_replacer.register_regex(
             r"\d{8}-\d{6}", "20210101-000000"

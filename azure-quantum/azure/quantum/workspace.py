@@ -20,7 +20,7 @@ from azure.quantum._client.operations import (
     SessionsOperations,
     TopLevelItemsOperations
 )
-from azure.quantum._client.models import BlobDetails, JobStatus, SessionStatus
+from azure.quantum._client.models import BlobDetails, JobStatus, SessionStatus, SessionDetails
 from azure.quantum import Job, Session
 from azure.quantum.job.workspace_item import WorkspaceItemFilter
 from azure.quantum.storage import create_container_using_client, get_container_uri, ContainerClient
@@ -356,7 +356,7 @@ class Workspace:
 
     def list_top_level_items(
         self,
-        filter: WorkspaceItemFilter = None
+        filter: Optional[WorkspaceItemFilter] = None
     ) -> List[Union[Job, Session]]:
         """Get a list of top level items for the given workspace.
 
@@ -379,7 +379,7 @@ class Workspace:
 
     def list_sessions(
         self,
-        filter: WorkspaceItemFilter = None
+        filter: Optional[WorkspaceItemFilter] = None
     ) -> List[Session]:
         """Get a list sessions for the given workspace.
 
@@ -401,11 +401,33 @@ class Workspace:
 
     def create_session(
         self,
-        name_match: str = None,
-        status: Optional[JobStatus] = None,
-        created_after: Optional[datetime] = None
-    ) -> List[Job]:
-        pass
+        session_id
+    ) -> Session:
+        """Get a list sessions for the given workspace.
+
+        :param filter: a filter to be applied on the sessions, defaults to None
+        :type filter: WorkspaceItemFilter, optional
+        :return: Workspace items
+        :rtype: List[WorkspaceItem]
+        """
+        client = self._get_sessions_client()
+        from azure.quantum._client.models._enums import SessionJobFailurePolicy;
+        import uuid
+        id = session_id if session_id is not None else str(uuid.uuid1())
+        session_details = SessionDetails(
+            id=id,
+            name=f"session{id}",
+            provider_id="ionq",
+            target="ionq.simulator",
+            job_failure_policy=SessionJobFailurePolicy.ABORT,
+        )
+        session_details = client.create(
+            session_id=session_details.id,
+            session=session_details)
+        result = Session(
+                    workspace=self,
+                    session_details=session_details)
+        return result
 
     def end_session(
         self,

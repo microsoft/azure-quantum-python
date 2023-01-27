@@ -38,3 +38,15 @@ class TestSession(QuantumTestBase):
         result = workspace.list_sessions()
         result_types = map(type, result)
         self.assertIn(Session, result_types)
+
+    @pytest.mark.live_test
+    @pytest.mark.session
+    def test_session_create_session(self):
+        workspace = self.create_workspace()
+        session_id = None
+        from common import ZERO_UID
+        if self.is_playback:
+            session_id = ZERO_UID
+        result = workspace.create_session(session_id=session_id)
+        self.assertIsInstance(result, Session)
+
