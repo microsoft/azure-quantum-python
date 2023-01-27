@@ -13,6 +13,7 @@ from azure.storage.blob import BlobClient
 
 from azure.quantum.storage import upload_blob, download_blob, ContainerClient
 from azure.quantum._client.models import JobDetails
+from azure.quantum.job.workspace_item import WorkspaceItem
 
 
 if TYPE_CHECKING:
@@ -27,7 +28,7 @@ class ContentType(str, Enum):
     json = "application/json"
     protobuf = "application/x-protobuf"
 
-class BaseJob(abc.ABC):
+class BaseJob(WorkspaceItem):
     # Optionally override these to create a Provider-specific Job subclass
     """
     Base job class with methods to create a job from raw blob data,

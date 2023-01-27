@@ -10,19 +10,20 @@ import re
 from typing import Any, Dict, Iterable, List, Optional, TYPE_CHECKING, Tuple, Union
 from deprecated import deprecated
 
-# Temporarily replacing the DefaultAzureCredential with
-# a custom _DefaultAzureCredential
-#   from azure.identity import DefaultAzureCredential
 from azure.quantum._authentication import _DefaultAzureCredential
 
 from azure.quantum._client import QuantumClient
 from azure.quantum._client.operations import (
     JobsOperations,
     StorageOperations,
-    QuotasOperations
+    QuotasOperations,
+    SessionsOperations,
+    TopLevelItemsOperations
 )
-from azure.quantum._client.models import BlobDetails, JobStatus
-from azure.quantum import Job
+from azure.quantum._client.models import BlobDetails, JobStatus, SessionStatus
+from azure.quantum import Job, Session
+from azure.quantum.job.workspace_item_factory import WorkspaceItemFactory
+from azure.quantum.job.workspace_item import WorkspaceItemFilter
 from azure.quantum.storage import create_container_using_client, get_container_uri, ContainerClient
 
 from .version import __version__
@@ -233,6 +234,12 @@ class Workspace:
                 if self._client is not None:
                     self._client = self._create_client()
 
+    def _get_top_level_items_client(self) -> TopLevelItemsOperations:
+        return self._client.top_level_items
+
+    def _get_sessions_client(self) -> SessionsOperations:
+        return self._client.sessions
+
     def _get_jobs_client(self) -> JobsOperations:
         return self._client.jobs
 
@@ -348,20 +355,81 @@ class Workspace:
         client = self._get_quotas_client()
         return [q.as_dict() for q in client.list()]
 
-    @deprecated(version='0.17.2105', reason="This method is deprecated and no longer necessary to be called")
-    def login(self, refresh: bool = False) -> object:
-        """DEPRECATED. 
-        This method is deprecated and no longer necessary to be called.
-        It will simply return self.credentials.
+    def list_top_level_items(
+        self,
+        filter: WorkspaceItemFilter = None
+    ) -> List[Union[Job, Session]]:
+        """Get a list of top level items for the given workspace.
 
-        :param refresh:
-            the refresh parameter has no effect and is ignored
-
-        :returns:
-            the self.credentials
+        :return: Workspace items
+        :rtype: List[WorkspaceItem]
         """
-        return self.credentials
-    
+
+        client = self._get_top_level_items_client()
+        odata_filter = filter.as_odata if filter is not None else None
+        item_details_list = client.list(filter = odata_filter)
+        result = []
+        for item_details in item_details_list:
+            result.append(
+                WorkspaceItemFactory.__new__(
+                    workspace=self,
+                    item_details=item_details))
+        return result
+
+    def create_session(
+        self,
+        name_match: str = None,
+        status: Optional[JobStatus] = None,
+        created_after: Optional[datetime] = None
+    ) -> List[Job]:
+        pass
+
+    def end_session(
+        self,
+        name_match: str = None,
+        status: Optional[JobStatus] = None,
+        created_after: Optional[datetime] = None
+    ) -> List[Job]:
+        pass
+
+    def list_sessions(
+        self,
+        name_match: str = None,
+        status: Optional[SessionStatus] = None,
+        created_after: Optional[datetime] = None
+    ) -> List[Job]:
+        """Returns list of jobs that meet optional (limited) filter criteria. 
+            :param name_match: regex expression for job name matching
+            :param status: filter by job status
+            :param created_after: filter jobs after time of job creation
+        """
+        client = self._get_jobs_client()
+        jobs = client.list()
+
+        result = []
+        for j in jobs:
+            deserialized_job = Job(self, j)
+            if deserialized_job.matches_filter(name_match, status, created_after):
+                result.append(deserialized_job)
+
+        return result
+
+    def get_session(
+        self,
+        name_match: str = None,
+        status: Optional[JobStatus] = None,
+        created_after: Optional[datetime] = None
+    ) -> List[Job]:
+        pass
+
+    def list_session_jobs(
+        self,
+        name_match: str = None,
+        status: Optional[JobStatus] = None,
+        created_after: Optional[datetime] = None
+    ) -> List[Job]:
+        pass
+
     def get_container_uri(
         self,
         job_id: str = None,
