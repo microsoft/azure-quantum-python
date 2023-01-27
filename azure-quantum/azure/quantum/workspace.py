@@ -447,11 +447,19 @@ class Workspace:
 
     def list_session_jobs(
         self,
-        name_match: str = None,
-        status: Optional[JobStatus] = None,
-        created_after: Optional[datetime] = None
+        session_id: str,
+        filter: Optional[WorkspaceItemFilter] = None
     ) -> List[Job]:
-        pass
+        client = self._get_sessions_client()
+        odata_filter = filter.as_odata if filter is not None else None
+        job_details_list = client.jobs_list(session_id = session_id,
+                                            filter = odata_filter)
+        result = []
+        for job_details in job_details_list:
+            result.append(
+                Job(workspace=self,
+                    job_details=job_details))
+        return result
 
     def get_container_uri(
         self,

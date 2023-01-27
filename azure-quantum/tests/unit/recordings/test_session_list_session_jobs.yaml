@@ -1,0 +1,230 @@
+interactions:
+- request:
+    body: client_id=PLACEHOLDER&grant_type=client_credentials&client_info=1&client_secret=PLACEHOLDER&claims=PLACEHOLDER&scope=https%3A%2F%2Fquantum.microsoft.com%2F.default
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '163'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      User-Agent:
+      - azsdk-python-identity/1.12.0 Python/3.9.15 (Windows-10-10.0.22621-SP0)
+      x-client-cpu:
+      - x64
+      x-client-current-telemetry:
+      - 4|730,0|
+      x-client-os:
+      - win32
+      x-client-sku:
+      - MSAL.Python
+      x-client-ver:
+      - 1.20.0
+    method: POST
+    uri: https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token
+  response:
+    body:
+      string: '{"token_type": "Bearer", "expires_in": 86399, "ext_expires_in": 86399,
+        "refresh_in": 43199, "access_token": "fake_token"}'
+    headers:
+      content-length:
+      - '121'
+      content-type:
+      - application/json; charset=utf-8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: 'b''{"id": "00000000-0000-0000-0000-000000000000", "name": "sessioned872010-9e0c-11ed-9624-6045bdaa2ba8",
+      "providerId": "ionq", "target": "ionq.simulator", "itemType": "Session", "jobFailurePolicy":
+      "Abort"}'''
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '206'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - testapp azsdk-python-quantum/0.0.0.1 Python/3.9.15 (Windows-10-10.0.22621-SP0)
+    method: PUT
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/sessions/00000000-0000-0000-0000-000000000000?api-version=2022-09-12-preview
+  response:
+    body:
+      string: '{"status": "Waiting", "jobFailurePolicy": "Abort", "name": "sessioned872010-9e0c-11ed-9624-6045bdaa2ba8",
+        "id": "00000000-0000-0000-0000-000000000000", "providerId": "ionq", "target":
+        "ionq.simulator", "creationTime": "2023-01-27T06:36:29.8553041Z", "endExecutionTime":
+        null, "costEstimate": null, "itemType": "Session", "access_token": "fake_token"}'
+    headers:
+      connection:
+      - keep-alive
+      content-length:
+      - '350'
+      content-type:
+      - application/json; charset=utf-8
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
+- request:
+    body: 'b''{"id": "00000000-0000-0000-0000-000000000000", "name": "job-00000000-0000-0000-0000-000000000000",
+      "providerId": "ionq", "target": "ionq.simulator", "itemType": "Job", "sessionId":
+      "ed872010-9e0c-11ed-9624-6045bdaa2ba8", "containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData",
+      "inputDataFormat": "mydataformat", "outputDataFormat": "mydataformat"}'''
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '404'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - testapp azsdk-python-quantum/0.0.0.1 Python/3.9.15 (Windows-10-10.0.22621-SP0)
+    method: PUT
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000000?api-version=2022-09-12-preview
+  response:
+    body:
+      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData",
+        "inputDataUri": "https://mystorage.blob.core.windows.net:443/job-00000000-0000-0000-0000-000000000000/inputData/inputData",
+        "inputDataFormat": "mydataformat", "inputParams": {}, "metadata": null, "sessionId":
+        "ed872010-9e0c-11ed-9624-6045bdaa2ba8", "status": "Waiting", "jobType": "Unknown",
+        "outputDataFormat": "mydataformat", "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-00000000-0000-0000-0000-000000000000/inputData/outputData",
+        "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
+        null, "errorData": null, "isCancelling": false, "tags": [], "name": "job-00000000-0000-0000-0000-000000000000",
+        "id": "00000000-0000-0000-0000-000000000000", "providerId": "ionq", "target":
+        "ionq.simulator", "creationTime": "2023-01-27T06:36:30.0455874+00:00", "endExecutionTime":
+        null, "costEstimate": null, "itemType": "Job", "access_token": "fake_token"}'
+    headers:
+      connection:
+      - keep-alive
+      content-length:
+      - '1000'
+      content-type:
+      - application/json; charset=utf-8
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - testapp azsdk-python-quantum/0.0.0.1 Python/3.9.15 (Windows-10-10.0.22621-SP0)
+    method: GET
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/sessions/00000000-0000-0000-0000-000000000000/jobs?api-version=2022-09-12-preview
+  response:
+    body:
+      string: '{"value": [{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData",
+        "inputDataUri": "https://mystorage.blob.core.windows.net:443/job-00000000-0000-0000-0000-000000000000/inputData/inputData",
+        "inputDataFormat": "mydataformat", "inputParams": {}, "metadata": null, "sessionId":
+        "ed872010-9e0c-11ed-9624-6045bdaa2ba8", "status": "Failed", "jobType": "Unknown",
+        "outputDataFormat": "mydataformat", "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-00000000-0000-0000-0000-000000000000/inputData/outputData",
+        "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
+        null, "errorData": {"code": "InputDataNotFound", "message": "The input data
+        for the job could not be found. Please ensure the data at inputDataUri exists."},
+        "isCancelling": false, "tags": [], "name": "job-00000000-0000-0000-0000-000000000000",
+        "id": "00000000-0000-0000-0000-000000000000", "providerId": "ionq", "target":
+        "ionq.simulator", "creationTime": "2023-01-27T06:36:30.0455874Z", "endExecutionTime":
+        null, "costEstimate": null, "itemType": "Job"}], "nextLink": null, "access_token":
+        "fake_token"}'
+    headers:
+      connection:
+      - keep-alive
+      content-length:
+      - '1158'
+      content-type:
+      - application/json; charset=utf-8
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - testapp azsdk-python-quantum/0.0.0.1 Python/3.9.15 (Windows-10-10.0.22621-SP0)
+    method: POST
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/sessions/00000000-0000-0000-0000-000000000000:end?api-version=2022-09-12-preview
+  response:
+    body:
+      string: '{"status": "Failed", "jobFailurePolicy": "Abort", "name": "sessioned872010-9e0c-11ed-9624-6045bdaa2ba8",
+        "id": "00000000-0000-0000-0000-000000000000", "providerId": "ionq", "target":
+        "ionq.simulator", "creationTime": "2023-01-27T06:36:29.8553041Z", "endExecutionTime":
+        "2023-01-27T06:36:30.3073992Z", "costEstimate": null, "itemType": "Session",
+        "access_token": "fake_token"}'
+    headers:
+      connection:
+      - keep-alive
+      content-length:
+      - '375'
+      content-type:
+      - application/json; charset=utf-8
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - testapp azsdk-python-quantum/0.0.0.1 Python/3.9.15 (Windows-10-10.0.22621-SP0)
+    method: POST
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/sessions/00000000-0000-0000-0000-000000000000:end?api-version=2022-09-12-preview
+  response:
+    body:
+      string: '{"status": "Failed", "jobFailurePolicy": "Abort", "name": "sessioned872010-9e0c-11ed-9624-6045bdaa2ba8",
+        "id": "00000000-0000-0000-0000-000000000000", "providerId": "ionq", "target":
+        "ionq.simulator", "creationTime": "2023-01-27T06:36:29.8553041Z", "endExecutionTime":
+        "2023-01-27T06:36:30.3073992Z", "costEstimate": null, "itemType": "Session",
+        "access_token": "fake_token"}'
+    headers:
+      connection:
+      - keep-alive
+      content-length:
+      - '375'
+      content-type:
+      - application/json; charset=utf-8
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
+version: 1

@@ -6,15 +6,10 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 ##
-import unittest
-import os
-import functools
 import pytest
-from datetime import date, datetime, timedelta
 
 from common import QuantumTestBase, ZERO_UID
-from azure.quantum.job.base_job import ContentType
-from azure.quantum import Job, Session
+from azure.quantum import Job, Session, JobDetails
 
 class TestSession(QuantumTestBase):
     """TestSession
@@ -74,4 +69,49 @@ class TestSession(QuantumTestBase):
         result = workspace.create_session(session_id=session_id)
         self.assertIsInstance(result, Session)
         result = workspace.end_session(session_id=result.id)
+        self.assertIsInstance(result, Session)
+
+    @pytest.mark.live_test
+    @pytest.mark.session
+    def test_session_list_session_jobs(self):
+        workspace = self.create_workspace()
+
+        import uuid
+        session_id = None
+        from common import ZERO_UID
+        if self.is_playback:
+            session_id = ZERO_UID
+
+        job_id = str(uuid.uuid1())
+        from common import ZERO_UID
+        if self.is_playback:
+            job_id = ZERO_UID
+
+        session = workspace.create_session(session_id=session_id)
+        self.assertIsInstance(session, Session)
+        job = workspace.submit_job(
+            Job(workspace=workspace,
+                job_details=JobDetails(id=job_id,
+                                       name=f"job-{job_id}",
+                                       provider_id="ionq",
+                                       target="ionq.simulator",
+                                       container_uri="https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData",
+                                       input_data_format="mydataformat",
+                                       output_data_format="mydataformat",
+                                       session_id=session.id)
+                                 ))
+
+        jobs = workspace.list_session_jobs(session_id=session.id)
+        self.assertEqual(len(jobs), 1)
+        self.assertEqual(job.id, jobs[0].id)
+        self.assertEqual(job.details.id, jobs[0].details.id)
+        self.assertEqual(job.details.name, jobs[0].details.name)
+        self.assertEqual(job.details.provider_id, jobs[0].details.provider_id)
+        self.assertEqual(job.details.target, jobs[0].details.target)
+        self.assertEqual(job.details.container_uri, jobs[0].details.container_uri)
+        self.assertEqual(job.details.input_data_format, jobs[0].details.input_data_format)
+        self.assertEqual(job.details.output_data_format, jobs[0].details.output_data_format)
+        self.assertEqual(job.details.session_id, jobs[0].details.session_id)
+
+        result = workspace.end_session(session_id=session.id)
         self.assertIsInstance(result, Session)

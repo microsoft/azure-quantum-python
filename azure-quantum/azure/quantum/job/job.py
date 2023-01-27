@@ -12,8 +12,9 @@ from azure.quantum._client.models import JobDetails
 from azure.quantum.job.base_job import BaseJob, ContentType, DEFAULT_TIMEOUT
 from azure.quantum.job.filtered_job import FilteredJob
 from azure.quantum.job.workspace_item import WorkspaceItem
+from azure.quantum._client.models import JobDetails
 
-__all__ = ["Job"]
+__all__ = ["Job", "JobDetails"]
 
 logger = logging.getLogger(__name__)
 
