@@ -61,13 +61,16 @@ with open("./README.md", "r") as fh:
 # LIST OF REQUIREMENTS #
 with open("./requirements.txt", "r") as fh:
     requirements = fh.readlines()
-
 with open("./requirements-qiskit.txt", "r") as fh:
     requirements_qiskit = fh.readlines()
-
 with open("./requirements-cirq.txt", "r") as fh:
     requirements_cirq = fh.readlines()
-
+with open("./requirements-quil.txt", "r") as fh:
+    requirements_quil= fh.readlines()
+with open("./requirements-qir.txt", "r") as fh:
+    requirements_qir = fh.readlines()
+with open("./requirements-qsharp.txt", "r") as fh:
+    requirements_qsharp = fh.readlines()
 with open("./requirements-dev.txt", "r") as fh:
     requirements_dev = fh.readlines()
 
@@ -90,6 +93,9 @@ setuptools.setup(
     extras_require={
         "qiskit": requirements_qiskit,
         "cirq": requirements_cirq,
+        "quil": requirements_quil,
+        "qir": requirements_qir,
+        "qsharp": requirements_qsharp,
         "dev": requirements_dev
     }
 )
