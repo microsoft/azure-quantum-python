@@ -7,6 +7,7 @@
 # Licensed under the MIT License.
 ##
 
+import pytest
 import unittest
 
 import cirq
@@ -109,14 +110,36 @@ class TestJobFactory(unittest.TestCase):
         qir_bitcode = qir_module.bitcode()
         return qir_bitcode
 
-    def test_a(self):
+    @pytest.mark.cirq
+    def test_get_cirq_circuit_bell_state(self):
         self.assertIsInstance(self.get_cirq_circuit_bell_state(), cirq.Circuit)
+
+    @pytest.mark.qsharp
+    def test_get_cirq_circuit_bell_state(self):
         self.assertIsInstance(self.get_qsharp_code_bell_state(), str)
+
+    @pytest.mark.qsharp
+    def test_get_cirq_circuit_bell_state(self):
         self.assertIsInstance(self.get_qsharp_callable_bell_state(), QSharpCallable)
+
+    @pytest.mark.qsharp
+    def test_get_cirq_circuit_bell_state(self):
         self.assertIsInstance(self.get_qsharp_qir_bitcode_bell_state("rigetti.sim.qvm"), bytes)
+
+    @pytest.mark.qiskit
+    def test_get_cirq_circuit_bell_state(self):
         self.assertIsInstance(self.get_qiskit_circuit_bell_state(), qiskit.QuantumCircuit)
+
+    @pytest.mark.quil
+    def test_get_cirq_circuit_bell_state(self):
         self.assertIsInstance(self.get_quil_code_bell_state(), str)
+
+    @pytest.mark.quil
+    def test_get_cirq_circuit_bell_state(self):
         self.assertIsInstance(self.get_pyquil_program_bell_state(), quil.Program)
+
+    @pytest.mark.qir
+    def test_get_cirq_circuit_bell_state(self):
         self.assertIsInstance(self.get_qir_bitcode_bell_state(), bytes)
 
 

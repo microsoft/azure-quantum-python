@@ -34,6 +34,9 @@ function PyTestMarkExpr() {
         [string[]] $AzureQuantumCapabilities
     )
     $MarkExpr = "live_test";
+    if ($AzureQuantumCapabilities -notcontains "feature.sessions") {
+        $MarkExpr += " and not session"
+    }
     if ($AzureQuantumCapabilities -notcontains "submit.ionq") {
         $MarkExpr += " and not ionq"
     }
