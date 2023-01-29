@@ -9,6 +9,7 @@
 
 import pytest
 import unittest
+from typing import Union
 
 import cirq
 import qiskit
@@ -16,8 +17,9 @@ from  pyquil import quil
 import qsharp
 from qsharp.loader import QSharpCallable
 
-class TestJobFactory(unittest.TestCase):
-    def get_cirq_circuit_bell_state(self) -> cirq.Circuit:
+class JobPayloadFactory():
+    @staticmethod
+    def get_cirq_circuit_bell_state() -> cirq.Circuit:
         q0 = cirq.LineQubit(0)
         q1 = cirq.LineQubit(1)
         circuit = cirq.Circuit(
@@ -28,7 +30,8 @@ class TestJobFactory(unittest.TestCase):
         )
         return circuit
 
-    def get_qsharp_code_bell_state(self) -> str:
+    @staticmethod
+    def get_qsharp_code_bell_state() -> str:
         return """
         open Microsoft.Quantum.Intrinsic;
 
@@ -41,18 +44,20 @@ class TestJobFactory(unittest.TestCase):
         }
         """
 
-    def get_qsharp_callable_bell_state(self) -> QSharpCallable:
-        return qsharp.compile(self.get_qsharp_code_bell_state())
+    @staticmethod
+    def get_qsharp_callable_bell_state() -> QSharpCallable:
+        return qsharp.compile(JobPayloadFactory.get_qsharp_code_bell_state())
 
-    def get_qsharp_qir_bitcode_bell_state(self, target:str) -> QSharpCallable:
-        qsharpCallable = self.get_qsharp_callable_bell_state()
+    @staticmethod
+    def get_qsharp_qir_bitcode_bell_state(target:Union[None,str] = None) -> QSharpCallable:
+        qsharpCallable = JobPayloadFactory.get_qsharp_callable_bell_state()
         import base64
         qir_bitcodeBase64 = qsharpCallable.as_qir(output_format="BitcodeBase64", target=target)
         qir_bitcode = base64.b64decode(qir_bitcodeBase64)
         return qir_bitcode
-
         
-    def get_qiskit_circuit_bell_state(self) -> qiskit.QuantumCircuit:
+    @staticmethod
+    def get_qiskit_circuit_bell_state() -> qiskit.QuantumCircuit:
         circuit = qiskit.QuantumCircuit(2, 2)
         circuit.name = "BellState"
         circuit.h(0)
@@ -60,7 +65,8 @@ class TestJobFactory(unittest.TestCase):
         circuit.measure([0,1], [0,1])
         return circuit
 
-    def get_quil_code_bell_state(self) -> str:
+    @staticmethod
+    def get_quil_code_bell_state() -> str:
         return """
         DECLARE ro BIT[2]
         H 0
@@ -69,7 +75,8 @@ class TestJobFactory(unittest.TestCase):
         MEASURE 1 ro [1]
         """
 
-    def get_pyquil_program_bell_state(self) -> quil.Program:
+    @staticmethod
+    def get_pyquil_program_bell_state() -> quil.Program:
         from pyquil.gates import MEASURE, H, CNOT
         from pyquil.quilbase import Declare
         program = quil.Program(
@@ -81,7 +88,8 @@ class TestJobFactory(unittest.TestCase):
         )
         return program
 
-    def get_qir_bitcode_bell_state(self) -> bytes:
+    @staticmethod
+    def get_qir_bitcode_bell_state() -> bytes:
         from pyqir.generator import BasicQisBuilder, SimpleModule, types
         def record_output(module : SimpleModule):
             array_start_record_output = module.add_external_function(
@@ -110,39 +118,35 @@ class TestJobFactory(unittest.TestCase):
         qir_bitcode = qir_module.bitcode()
         return qir_bitcode
 
+class TestJobPayloadFactory(unittest.TestCase):
     @pytest.mark.cirq
     def test_get_cirq_circuit_bell_state(self):
-        self.assertIsInstance(self.get_cirq_circuit_bell_state(), cirq.Circuit)
+        self.assertIsInstance(JobPayloadFactory.get_cirq_circuit_bell_state(), cirq.Circuit)
 
     @pytest.mark.qsharp
     def test_get_cirq_circuit_bell_state(self):
-        self.assertIsInstance(self.get_qsharp_code_bell_state(), str)
+        self.assertIsInstance(JobPayloadFactory.get_qsharp_code_bell_state(), str)
 
     @pytest.mark.qsharp
     def test_get_cirq_circuit_bell_state(self):
-        self.assertIsInstance(self.get_qsharp_callable_bell_state(), QSharpCallable)
+        self.assertIsInstance(JobPayloadFactory.get_qsharp_callable_bell_state(), QSharpCallable)
 
     @pytest.mark.qsharp
     def test_get_cirq_circuit_bell_state(self):
-        self.assertIsInstance(self.get_qsharp_qir_bitcode_bell_state("rigetti.sim.qvm"), bytes)
+        self.assertIsInstance(JobPayloadFactory.get_qsharp_qir_bitcode_bell_state("rigetti.sim.qvm"), bytes)
 
     @pytest.mark.qiskit
     def test_get_cirq_circuit_bell_state(self):
-        self.assertIsInstance(self.get_qiskit_circuit_bell_state(), qiskit.QuantumCircuit)
+        self.assertIsInstance(JobPayloadFactory.get_qiskit_circuit_bell_state(), qiskit.QuantumCircuit)
 
     @pytest.mark.quil
     def test_get_cirq_circuit_bell_state(self):
-        self.assertIsInstance(self.get_quil_code_bell_state(), str)
+        self.assertIsInstance(JobPayloadFactory.get_quil_code_bell_state(), str)
 
     @pytest.mark.quil
     def test_get_cirq_circuit_bell_state(self):
-        self.assertIsInstance(self.get_pyquil_program_bell_state(), quil.Program)
+        self.assertIsInstance(JobPayloadFactory.get_pyquil_program_bell_state(), quil.Program)
 
     @pytest.mark.qir
     def test_get_cirq_circuit_bell_state(self):
-        self.assertIsInstance(self.get_qir_bitcode_bell_state(), bytes)
-
-
-
-
-
+        self.assertIsInstance(JobPayloadFactory.get_qir_bitcode_bell_state(), bytes)

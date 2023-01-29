@@ -2,13 +2,14 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 ##
-from typing import TYPE_CHECKING, Any, Dict
+from typing import TYPE_CHECKING, Any, Dict, Union, Optional
 import io
 import json
-from typing import Any, Dict
 
-from azure.quantum._client.models import TargetStatus
+from azure.quantum._client.models import TargetStatus, SessionDetails
+from azure.quantum._client.models._enums import SessionJobFailurePolicy
 from azure.quantum.job.job import Job
+from azure.quantum.job.session import Session
 from azure.quantum.job.base_job import ContentType
 if TYPE_CHECKING:
     from azure.quantum import Workspace
@@ -45,6 +46,7 @@ class Target:
         self.encoding = encoding
         self._average_queue_time = average_queue_time
         self._current_availability = current_availability
+        self.current_session: Session = None
 
     def __repr__(self):
         return f"<Target name=\"{self.name}\", \
@@ -165,3 +167,20 @@ target '{self.name}' of provider '{self.provider_id}' not found."
         input_params: Dict[str, Any] = None
     ):
         return NotImplementedError("Price estimation is not implemented yet for this target.")
+
+    def start_session(
+        self,
+        session_details: Optional[SessionDetails] = None,
+        session_id: Optional[str] = None,
+        session_name: Optional[str] = None,
+        job_failure_policy: Union[str, SessionJobFailurePolicy, None] = None,
+        **kwargs
+    ) -> Session:
+        session = Session(session_details=session_details,
+                          session_id=session_id,
+                          session_name=session_name,
+                          job_failure_policy=job_failure_policy,
+                          target=self,
+                          workspace=self.workspace,
+                          **kwargs)
+        return session.start()

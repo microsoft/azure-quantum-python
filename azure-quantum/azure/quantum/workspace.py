@@ -21,6 +21,7 @@ from azure.quantum._client.operations import (
     TopLevelItemsOperations
 )
 from azure.quantum._client.models import BlobDetails, JobStatus, SessionStatus, SessionDetails
+from azure.quantum._client.models._enums import SessionJobFailurePolicy;
 from azure.quantum import Job, Session
 from azure.quantum.job.workspace_item import WorkspaceItemFilter
 from azure.quantum.storage import create_container_using_client, get_container_uri, ContainerClient
@@ -369,12 +370,8 @@ class Workspace:
         client = self._get_top_level_items_client()
         odata_filter = filter.as_odata if filter is not None else None
         item_details_list = client.list(filter = odata_filter)
-        result = []
-        for item_details in item_details_list:
-            result.append(
-                WorkspaceItemFactory.__new__(
-                    workspace=self,
-                    item_details=item_details))
+        result = [WorkspaceItemFactory.__new__(workspace=self,item_details=item_details) 
+                  for item_details in item_details_list]
         return result
 
     def list_sessions(
@@ -391,48 +388,46 @@ class Workspace:
         client = self._get_sessions_client()
         odata_filter = filter.as_odata if filter is not None else None
         session_details_list = client.list(filter = odata_filter)
-        result = []
-        for session_details in session_details_list:
-            result.append(
-                Session(
-                    workspace=self,
-                    session_details=session_details))
+        result = [Session(workspace=self,session_details=session_details) 
+                  for session_details in session_details_list]
         return result
 
-    def create_session(
+    def start_session(
         self,
-        session_id:str
-    ) -> Session:
+        session: Session,
+        end_target_previous_session: bool = False,
+        **kwargs
+    ):
+        if session.target:
+            if (end_target_previous_session 
+                and session.target.current_session):
+                session.target.current_session.end()
+            session.target.current_session = session
+
         client = self._get_sessions_client()
-        from azure.quantum._client.models._enums import SessionJobFailurePolicy;
-        import uuid
-        id = session_id if session_id is not None else str(uuid.uuid1())
-        session_details = SessionDetails(
-            id=id,
-            name=f"session{id}",
-            provider_id="ionq",
-            target="ionq.simulator",
-            job_failure_policy=SessionJobFailurePolicy.ABORT,
-        )
-        session_details = client.create(
-            session_id=session_details.id,
-            session=session_details)
-        result = Session(
-                    workspace=self,
-                    session_details=session_details)
-        return result
+        session.details = client.create(
+            session_id=session.id,
+            session=session.details)
 
     def end_session(
         self,
-        session_id:str
-    ) -> Session:
+        session: Session
+    ):
+        if (session.details.status == SessionStatus.FAILED
+            or session.details.status == SessionStatus.FAILURE_S_
+            or session.details.status == SessionStatus.TIMED_OUT
+            or session.details.status == SessionStatus.SUCCEEDED):
+            logger.warning("Skipping attempt to end session '%s' that has already ended with status '%s'.",
+                           session.id,
+                           session.details.status)
+            return session
+
         client = self._get_sessions_client()
-        client.end(session_id=session_id)
-        session_details = client.end(session_id=session_id)
-        result = Session(
-                    workspace=self,
-                    session_details=session_details)
-        return result
+        session.details = client.end(session_id=session.id)
+        if session.target:
+            if (session.target.current_session
+                and session.target.current_session.id == session.id):
+                session.target.current_session.details = session.details
 
     def get_session(
         self,
@@ -440,9 +435,7 @@ class Workspace:
     ) -> Session:
         client = self._get_sessions_client()
         session_details = client.get(session_id=session_id)
-        result = Session(
-                    workspace=self,
-                    session_details=session_details)
+        result = Session(workspace=self,session_details=session_details)
         return result
 
     def list_session_jobs(
@@ -454,11 +447,8 @@ class Workspace:
         odata_filter = filter.as_odata if filter is not None else None
         job_details_list = client.jobs_list(session_id = session_id,
                                             filter = odata_filter)
-        result = []
-        for job_details in job_details_list:
-            result.append(
-                Job(workspace=self,
-                    job_details=job_details))
+        result = [Job(workspace=self, job_details=job_details)
+                  for job_details in job_details_list]
         return result
 
     def get_container_uri(

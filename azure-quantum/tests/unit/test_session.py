@@ -9,13 +9,24 @@
 import pytest
 
 from common import QuantumTestBase, ZERO_UID
-from azure.quantum import Job, Session, JobDetails
+from azure.quantum import Job, Session, JobDetails, SessionStatus
 
 class TestSession(QuantumTestBase):
     """TestSession
 
     Tests for Session
+
+    TODO:
+    - Attempt to end a session that has already ended
+    - Start a session in a target that already has a current session
     """
+
+    def _get_test_id(self):
+        session_id = None
+        from common import ZERO_UID
+        if self.is_playback:
+            session_id = ZERO_UID
+        return session_id
 
     @pytest.mark.live_test
     @pytest.mark.session
@@ -36,59 +47,70 @@ class TestSession(QuantumTestBase):
 
     @pytest.mark.live_test
     @pytest.mark.session
-    def test_session_create_session(self):
+    def test_session_start_session(self):
         workspace = self.create_workspace()
-        session_id = None
-        from common import ZERO_UID
-        if self.is_playback:
-            session_id = ZERO_UID
-        result = workspace.create_session(session_id=session_id)
-        self.assertIsInstance(result, Session)
+        session_id = self._get_test_id()
+        session = Session(workspace=workspace,
+                          session_id=session_id,
+                          target="ionq.simulator")
+        self.assertIsNone(session.details.status)
+        session.start()
+        self.assertEqual(session.details.status, SessionStatus.WAITING)
 
     @pytest.mark.live_test
     @pytest.mark.session
     def test_session_get_session(self):
         workspace = self.create_workspace()
-        session_id = None
-        from common import ZERO_UID
-        if self.is_playback:
-            session_id = ZERO_UID
-        result = workspace.create_session(session_id=session_id)
-        self.assertIsInstance(result, Session)
-        result = workspace.get_session(session_id=result.id)
-        self.assertIsInstance(result, Session)
+        session_id = self._get_test_id()
+        session = Session(workspace=workspace,
+                          session_id=session_id,
+                          target="ionq.simulator")
+        self.assertIsNone(session.details.status)
+
+        session.start()
+        self.assertEqual(session.details.status, SessionStatus.WAITING)
+
+        obtained_session = workspace.get_session(session_id=session_id)
+        self.assertIsInstance(obtained_session, Session)
+        self.assertEqual(obtained_session.id, session.id)
+        self.assertEqual(obtained_session.details.id, session.details.id)
+        self.assertEqual(obtained_session.details.target, session.details.target)
+        self.assertEqual(obtained_session.details.provider_id, session.details.provider_id)
+        self.assertEqual(obtained_session.details.name, session.details.name)
+        self.assertEqual(obtained_session.details.status, session.details.status)
 
     @pytest.mark.live_test
     @pytest.mark.session
     def test_session_end_session(self):
         workspace = self.create_workspace()
-        session_id = None
-        from common import ZERO_UID
-        if self.is_playback:
-            session_id = ZERO_UID
-        result = workspace.create_session(session_id=session_id)
-        self.assertIsInstance(result, Session)
-        result = workspace.end_session(session_id=result.id)
-        self.assertIsInstance(result, Session)
+        session_id = self._get_test_id()
+        session = Session(workspace=workspace,
+                          session_id=session_id,
+                          target="ionq.simulator")
+        self.assertIsNone(session.details.status)
+
+        session.start()
+        self.assertEqual(session.details.status, SessionStatus.WAITING)
+
+        session.end()
+        self.assertEqual(session.details.status, SessionStatus.SUCCEEDED)
+
 
     @pytest.mark.live_test
     @pytest.mark.session
     def test_session_list_session_jobs(self):
         workspace = self.create_workspace()
 
-        import uuid
-        session_id = None
-        from common import ZERO_UID
-        if self.is_playback:
-            session_id = ZERO_UID
+        session_id = self._get_test_id()
+        session = Session(workspace=workspace,
+                          session_id=session_id,
+                          target="ionq.simulator")
+        self.assertIsNone(session.details.status)
 
-        job_id = str(uuid.uuid1())
-        from common import ZERO_UID
-        if self.is_playback:
-            job_id = ZERO_UID
+        session.start()
+        self.assertEqual(session.details.status, SessionStatus.WAITING)
 
-        session = workspace.create_session(session_id=session_id)
-        self.assertIsInstance(session, Session)
+        job_id = self._get_test_id()
         job = workspace.submit_job(
             Job(workspace=workspace,
                 job_details=JobDetails(id=job_id,
@@ -113,5 +135,5 @@ class TestSession(QuantumTestBase):
         self.assertEqual(job.details.output_data_format, jobs[0].details.output_data_format)
         self.assertEqual(job.details.session_id, jobs[0].details.session_id)
 
-        result = workspace.end_session(session_id=session.id)
-        self.assertIsInstance(result, Session)
+        session.end()
+        self.assertNotEqual(session.details.status, SessionStatus.WAITING)

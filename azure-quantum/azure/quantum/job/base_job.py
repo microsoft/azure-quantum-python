@@ -34,10 +34,19 @@ class BaseJob(WorkspaceItem):
     Base job class with methods to create a job from raw blob data,
     upload blob data and download results.
     """
+
     @staticmethod
     def create_job_id() -> str:
         """Create a unique id for a new job."""
         return str(uuid.uuid1())
+
+    @property
+    def details(self) -> JobDetails:
+        return self._details
+
+    @details.setter
+    def details(self, value: JobDetails):
+        self._details = value
 
     @property
     def container_name(self):
