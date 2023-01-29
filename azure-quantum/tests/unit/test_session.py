@@ -47,18 +47,6 @@ class TestSession(QuantumTestBase):
 
     @pytest.mark.live_test
     @pytest.mark.session
-    def test_session_start_session(self):
-        workspace = self.create_workspace()
-        session_id = self._get_test_id()
-        session = Session(workspace=workspace,
-                          session_id=session_id,
-                          target="ionq.simulator")
-        self.assertIsNone(session.details.status)
-        session.start()
-        self.assertEqual(session.details.status, SessionStatus.WAITING)
-
-    @pytest.mark.live_test
-    @pytest.mark.session
     def test_session_get_session(self):
         workspace = self.create_workspace()
         session_id = self._get_test_id()
@@ -81,7 +69,7 @@ class TestSession(QuantumTestBase):
 
     @pytest.mark.live_test
     @pytest.mark.session
-    def test_session_end_session(self):
+    def test_session_start_end(self):
         workspace = self.create_workspace()
         session_id = self._get_test_id()
         session = Session(workspace=workspace,
