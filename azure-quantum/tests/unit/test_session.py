@@ -137,3 +137,36 @@ class TestSession(QuantumTestBase):
 
         session.end()
         self.assertNotEqual(session.details.status, SessionStatus.WAITING)
+
+
+    @pytest.mark.live_test
+    @pytest.mark.session
+    def test_session_target_start_session(self):
+        workspace = self.create_workspace()
+        target = workspace.get_targets("ionq.simulator")
+
+        self.assertIsNone(target.current_session)
+
+        session_id = self._get_test_id()
+        session = target.start_session(session_id=session_id)
+        self.assertEqual(target.current_session, session)
+        self.assertEqual(session.details.status, SessionStatus.WAITING)
+        session.end()
+        self.assertEqual(session.details.status, SessionStatus.SUCCEEDED)
+
+
+    @pytest.mark.live_test
+    @pytest.mark.session
+    def test_session_with_target_start_session(self):
+        workspace = self.create_workspace()
+        target = workspace.get_targets("ionq.simulator")
+
+        self.assertIsNone(target.current_session)
+
+        session_id = self._get_test_id()
+        with target.start_session(session_id=session_id) as session:
+            self.assertEqual(target.current_session, session)
+            self.assertEqual(session.details.status, SessionStatus.WAITING)
+
+        self.assertEqual(session.details.status, SessionStatus.SUCCEEDED)
+
