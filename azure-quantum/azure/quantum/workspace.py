@@ -429,6 +429,12 @@ class Workspace:
                 and session.target.current_session.id == session.id):
                 session.target.current_session.details = session.details
 
+    def refresh_session(
+        self,
+        session: Session
+    ):
+        session.details = self.get_session(session_id=session.id).details
+
     def get_session(
         self,
         session_id:str

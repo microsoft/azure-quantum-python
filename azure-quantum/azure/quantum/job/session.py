@@ -92,8 +92,14 @@ class Session(WorkspaceItem):
         self.workspace.end_session(self)
         return self
 
-    def __enter__(self) -> "Session":
+    def refresh(self) -> "Session":
+        self.workspace.refresh_session(self)
         return self
 
-    def __exit__(self, type, value, traceback) -> "Session":
-        return self.end()
+    def __enter__(self):
+        return self
+
+    def __exit__(self, type, value, traceback):
+        session = self.end()
+        if isinstance(value, Exception):
+            raise
