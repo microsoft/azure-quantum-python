@@ -15,6 +15,7 @@ import cirq
 import qiskit
 from  pyquil import quil
 import qsharp
+import azure.quantum.optimization as optimization
 from qsharp.loader import QSharpCallable
 
 class JobPayloadFactory():
@@ -23,7 +24,7 @@ class JobPayloadFactory():
         q0 = cirq.LineQubit(0)
         q1 = cirq.LineQubit(1)
         circuit = cirq.Circuit(
-            cirq.H(q0),  # H gate
+            cirq.H(q0),
             cirq.CNOT(q0, q1),
             cirq.measure(q0, key='q0'),
             cirq.measure(q1, key='q1')
@@ -117,6 +118,18 @@ class JobPayloadFactory():
         record_output(qir_module)
         qir_bitcode = qir_module.bitcode()
         return qir_bitcode
+    
+    @staticmethod
+    def get_qio_ising_problem() -> optimization.Problem:
+        problem = optimization.Problem(name="Ising Problem",
+                                       problem_type=optimization.ProblemType.ising)
+        terms = [
+            optimization.Term(c=1, indices=[0]),
+            optimization.Term(c=2, indices=[1,0]),
+        ]
+        problem.add_terms(terms=terms)
+        return problem
+
 
 class TestJobPayloadFactory(unittest.TestCase):
     @pytest.mark.cirq
@@ -150,3 +163,7 @@ class TestJobPayloadFactory(unittest.TestCase):
     @pytest.mark.qir
     def test_get_cirq_circuit_bell_state(self):
         self.assertIsInstance(JobPayloadFactory.get_qir_bitcode_bell_state(), bytes)
+
+    @pytest.mark.qio
+    def test_get_cirq_circuit_bell_state(self):
+        self.assertIsInstance(JobPayloadFactory.get_qio_ising_problem(), optimization.Problem)

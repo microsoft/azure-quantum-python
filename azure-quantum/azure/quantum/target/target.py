@@ -151,6 +151,7 @@ target '{self.name}' of provider '{self.provider_id}' not found."
             input_data_format=input_data_format,
             output_data_format=output_data_format,
             input_params=input_params,
+            session_id=self.get_current_session_id(),
             **kwargs
         )
 
@@ -167,6 +168,9 @@ target '{self.name}' of provider '{self.provider_id}' not found."
         input_params: Dict[str, Any] = None
     ):
         return NotImplementedError("Price estimation is not implemented yet for this target.")
+
+    def get_current_session_id(self) -> Optional[str]:
+        return self.current_session.id if self.current_session else None
 
     def start_session(
         self,

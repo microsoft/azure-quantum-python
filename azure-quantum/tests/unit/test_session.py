@@ -9,6 +9,7 @@
 import pytest
 
 from common import QuantumTestBase, ZERO_UID
+from test_job_payload_factory import JobPayloadFactory
 from azure.quantum import Job, Session, JobDetails, SessionStatus
 
 class TestSession(QuantumTestBase):
@@ -158,3 +159,118 @@ class TestSession(QuantumTestBase):
 
         self.assertEqual(session.details.status, SessionStatus.SUCCEEDED)
 
+
+    @pytest.mark.live_test
+    @pytest.mark.session
+    def test_session_with_target_job(self):
+        workspace = self.create_workspace()
+        target = workspace.get_targets("ionq.simulator")
+
+        self.assertIsNone(target.current_session)
+
+        session_id = self._get_test_id()
+        with target.start_session(session_id=session_id) as session:
+            self.assertEqual(target.current_session, session)
+            self.assertEqual(session.details.status, SessionStatus.WAITING)
+
+        self.assertEqual(session.details.status, SessionStatus.SUCCEEDED)
+
+
+    @pytest.mark.live_test
+    @pytest.mark.session
+    @pytest.mark.qio
+    def test_session_job_qio_ising(self):
+        self.pause_recording()
+
+        workspace = self.create_workspace()
+        problem = JobPayloadFactory.get_qio_ising_problem()
+
+        from azure.quantum.optimization import ParallelTempering
+        solver = ParallelTempering(workspace, timeout=100)
+
+        session_id = self._get_test_id()
+        with solver.start_session(session_id=session_id) as session:
+            session_id = session.id
+            problem.name = "Problem 1"
+            solver.optimize(problem)
+            problem.name = "Problem 2"
+            solver.optimize(problem)
+            problem.name = "Problem 3"
+            solver.optimize(problem)
+
+        session_jobs = workspace.list_session_jobs(session_id=session_id)
+        self.assertEqual(len(session_jobs), 3)
+        self.assertEqual(session_jobs[0].details.name, "Problem 1")
+        self.assertEqual(session_jobs[1].details.name, "Problem 2")
+        self.assertEqual(session_jobs[2].details.name, "Problem 3")
+
+
+    @pytest.mark.live_test
+    @pytest.mark.session
+    @pytest.mark.cirq
+    def test_session_job_cirq_circuit(self):
+        self.pause_recording()
+
+        workspace = self.create_workspace()
+        # target = workspace.get_targets("ionq.simulator")
+        from azure.quantum.cirq.targets.ionq import IonQTarget
+        target = IonQTarget(workspace=workspace,
+                            name="ionq.simulator")
+
+        circuit = JobPayloadFactory.get_cirq_circuit_bell_state()
+
+        session_id = self._get_test_id()
+        with target.start_session(session_id=session_id) as session:
+            self.assertEqual(session.details.status, SessionStatus.WAITING)
+            session_id = session.id
+            job1 = target.submit(program=circuit, name="Job 1")
+            job1 = workspace.get_job(job_id=job1._job["id"])
+
+            target.submit(program=circuit, name="Job 2")
+            target.submit(program=circuit, name="Job 3")
+
+            job1.wait_until_completed()
+            session.refresh()
+            self.assertEqual(session.details.status, SessionStatus.EXECUTING)
+
+        session_jobs = workspace.list_session_jobs(session_id=session_id)
+        self.assertEqual(len(session_jobs), 3)
+        self.assertEqual(session_jobs[0].details.name, "Job 1")
+        self.assertEqual(session_jobs[1].details.name, "Job 2")
+        self.assertEqual(session_jobs[2].details.name, "Job 3")
+
+        [job.wait_until_completed() for job in session_jobs]
+        session = workspace.get_session(session_id=session_id)
+        self.assertEqual(session.details.status, SessionStatus.SUCCEEDED)
+
+
+    @pytest.mark.live_test
+    @pytest.mark.session
+    def test_session_job_qir(self):
+        workspace = self.create_workspace()
+        target = workspace.get_targets("rigetti.sim.qvm")
+
+        session_id = self._get_test_id()
+        job_id = self._get_test_id()
+        job_name = f"job-{job_id}"
+        shots = 100
+        qir_bitcode = JobPayloadFactory.get_qsharp_qir_bitcode_bell_state(target=target.name)
+        
+        job = target.submit(
+            input_data=qir_bitcode,
+            input_data_format="qir.v1",
+            content_type="qir.v1",
+            encoding="",
+            output_data_format="microsoft.quantum-results.v1",
+            name=job_name, 
+            job_id=job_id,
+            input_params={
+                "count": shots,
+                "shots": shots,
+                "targetCapability": "BasicExecution",
+                "entryPoint": "ENTRYPOINT__BellState_Code",
+                "arguments": []
+            }
+        )
+
+        result = job.get_results(timeout_secs=240)

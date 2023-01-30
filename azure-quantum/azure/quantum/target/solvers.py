@@ -149,7 +149,8 @@ class Solver(Target):
                 provider_id=self.provider_id,
                 input_data_format=self.input_data_format,
                 output_data_format=self.output_data_format,
-                input_params=self.params
+                input_params=self.params,
+                session_id=self.get_current_session_id()
             )
 
         return job

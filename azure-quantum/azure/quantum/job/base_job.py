@@ -68,6 +68,7 @@ class BaseJob(WorkspaceItem):
         input_data_format: str = None,
         output_data_format: str = None,
         input_params: Dict[str, Any] = None,
+        session_id: Optional[str] = None,
         **kwargs
     ) -> "BaseJob":
         """Create a new Azure Quantum job based on a raw input_data payload.
@@ -135,6 +136,7 @@ class BaseJob(WorkspaceItem):
             output_data_format=output_data_format,
             provider_id=provider_id,
             input_params=input_params,
+            session_id=session_id,
             **kwargs
         )
 
@@ -152,6 +154,7 @@ class BaseJob(WorkspaceItem):
         job_id: str = None,
         input_params: Dict[str, Any] = None,
         submit_job: bool = True,
+        session_id: Optional[str] = None,
         **kwargs
     ) -> "BaseJob":
         """Create new Job from URI if input data is already uploaded
@@ -203,6 +206,7 @@ class BaseJob(WorkspaceItem):
             provider_id=provider_id,
             target=target,
             input_params=input_params,
+            session_id=session_id,
             **kwargs
         )
         job = cls(workspace, details, **kwargs)
