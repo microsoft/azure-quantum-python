@@ -1,15 +1,11 @@
-#!/bin/env python
-# -*- coding: utf-8 -*-
 ##
-# job-factory.py: Creates job payloads and definitions for tests
-##
-# Copyright (c) Microsoft Corporation. All rights reserved.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 ##
 
 import pytest
 import unittest
-from typing import Union
+from typing import Union, Tuple
 
 import cirq
 import qiskit
@@ -32,8 +28,8 @@ class JobPayloadFactory():
         return circuit
 
     @staticmethod
-    def get_qsharp_code_bell_state() -> str:
-        return """
+    def get_qsharp_code_bell_state() -> Tuple[str, str]:
+        return ("""
         open Microsoft.Quantum.Intrinsic;
 
         operation BellState() : (Result,Result) {
@@ -43,20 +39,25 @@ class JobPayloadFactory():
             CNOT(q0, q1);
             return (M(q0), M(q1));
         }
-        """
+        """, "ENTRYPOINT__BellState")
 
     @staticmethod
-    def get_qsharp_callable_bell_state() -> QSharpCallable:
-        return qsharp.compile(JobPayloadFactory.get_qsharp_code_bell_state())
+    def get_qsharp_callable_bell_state() -> Tuple[QSharpCallable, str]:
+        (qsharp_code, entrypoint) = JobPayloadFactory.get_qsharp_code_bell_state()
+        return (qsharp.compile(qsharp_code), entrypoint)
 
     @staticmethod
-    def get_qsharp_qir_bitcode_bell_state(target:Union[None,str] = None) -> QSharpCallable:
-        qsharpCallable = JobPayloadFactory.get_qsharp_callable_bell_state()
-        import base64
-        qir_bitcodeBase64 = qsharpCallable.as_qir(output_format="BitcodeBase64", target=target)
-        qir_bitcode = base64.b64decode(qir_bitcodeBase64)
-        return qir_bitcode
-        
+    def get_qsharp_qir_bitcode_bell_state(target:Union[None,str] = None) -> Tuple[bytes, str]:
+        (qsharpCallable, entrypoint) = JobPayloadFactory.get_qsharp_callable_bell_state()
+        qir_bitcode = qsharpCallable._repr_qir_(target=target)
+        return (qir_bitcode, entrypoint)
+
+    @staticmethod
+    def get_qsharp_qir_text_bell_state(target:Union[None,str] = None) -> Tuple[str, str]:
+        (qsharpCallable, entrypoint) = JobPayloadFactory.get_qsharp_callable_bell_state()
+        qir_text = qsharpCallable.as_qir(output_format="IR", target=target)
+        return (qir_text, entrypoint)
+
     @staticmethod
     def get_qiskit_circuit_bell_state() -> qiskit.QuantumCircuit:
         circuit = qiskit.QuantumCircuit(2, 2)
