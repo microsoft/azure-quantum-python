@@ -8,12 +8,10 @@ import json
 import logging
 logger = logging.getLogger(__name__)
 
-from typing import TYPE_CHECKING, Union, List, Optional
+from typing import TYPE_CHECKING
 from azure.quantum.version import __version__
-from azure.quantum._client.models import TargetStatus, SessionDetails
-from azure.quantum._client.models._enums import SessionJobFailurePolicy
 from azure.quantum.qiskit.job import AzureQuantumJob
-from azure.quantum.job.session import Session, SessionHost
+from azure.quantum.job.session import SessionHost
 
 if TYPE_CHECKING:
     from azure.quantum import Workspace
