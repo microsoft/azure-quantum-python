@@ -397,12 +397,6 @@ class Workspace:
         session: Session,
         **kwargs
     ):
-        if session.target:
-            if session.target.current_session:
-                from azure.quantum.target.target import TargetAlreadyHasASessionError
-                raise TargetAlreadyHasASessionError(session.target.current_session.id)
-            session.target.current_session = session
-
         client = self._get_sessions_client()
         session.details = client.create(
             session_id=session.id,

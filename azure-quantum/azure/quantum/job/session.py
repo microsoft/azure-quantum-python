@@ -6,12 +6,13 @@ import logging
 import time
 import json
 
-from typing import TYPE_CHECKING, Optional, Union
+from typing import TYPE_CHECKING, Optional, Union, Protocol, Any
+from abc import abstractmethod
 
 from azure.quantum._client.models import SessionDetails, SessionStatus, SessionJobFailurePolicy
 from azure.quantum.job.workspace_item import WorkspaceItem
 
-__all__ = ["Session"]
+__all__ = ["Session", "SessionHost", "AlreadyHasASessionError"]
 
 if TYPE_CHECKING:
     from azure.quantum.workspace import Workspace
@@ -103,3 +104,62 @@ class Session(WorkspaceItem):
         session = self.end()
         if isinstance(value, Exception):
             raise
+
+
+class AlreadyHasASessionError(Exception):
+    """Exception raised when trying to start a new session `target.start_session()`
+       and the current target instance already has a session associated with it.
+    """
+
+    def __init__(self, session_id):
+        self.message = f"""The current target instance already has a session ({session_id}) associated with it.
+                           If you want to start a new session, you should obtain a new target instance.
+                           A new target instance can be obtained with `workspace.get_targets("provider_id.target_name")`
+                           Qiskit: `target` is the same concept as a Qiskit `backend`. It can be obtained with `provider.get_backend("provider_id.target_name")`.
+                           Cirq: a new target instance can be obtained with `service.get_target("provider_id.target_name")`.
+                           """
+        super().__init__(self.message)
+
+
+class SessionHost(Protocol):
+    _current_session: Optional[Session] = None
+
+    @property
+    def current_session(self) -> Optional[Session]:
+        return self._current_session
+
+    @current_session.setter
+    def current_session(self, session: Optional[Session]):
+        self._current_session = session
+
+    def get_current_session_id(self) -> Optional[str]:
+        return self.current_session.id if self.current_session else None
+
+    @abstractmethod
+    def _get_azure_workspace(self) -> "Workspace":
+        raise NotImplementedError
+
+    @abstractmethod
+    def _get_azure_target_id(self) -> str:
+        raise NotImplementedError
+
+    def start_session(
+        self,
+        session_details: Optional[SessionDetails] = None,
+        session_id: Optional[str] = None,
+        session_name: Optional[str] = None,
+        job_failure_policy: Union[str, SessionJobFailurePolicy, None] = None,
+        **kwargs
+    ) -> Session:
+        if self.current_session:
+            raise AlreadyHasASessionError(session.target.current_session.id)
+
+        session = Session(session_details=session_details,
+                          session_id=session_id,
+                          session_name=session_name,
+                          job_failure_policy=job_failure_policy,
+                          workspace=self._get_azure_workspace(),
+                          target=self._get_azure_target_id(),
+                          **kwargs)
+        self.current_session = session
+        return session.start()

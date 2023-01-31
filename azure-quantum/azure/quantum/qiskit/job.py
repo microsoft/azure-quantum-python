@@ -51,6 +51,7 @@ class AzureQuantumJob(JobV1):
         if azure_job is None:
             azure_job = Job.from_input_data(
                 workspace=backend.provider().get_workspace(),
+                session_id=backend.get_current_session_id(),
                 **kwargs
             )
 

@@ -247,6 +247,7 @@ class TestSession(QuantumTestBase):
     @pytest.mark.live_test
     @pytest.mark.session
     def test_session_job_qir(self):
+        self.pause_recording()
         workspace = self.create_workspace()
         target = workspace.get_targets("rigetti.sim.qvm")
 
@@ -254,7 +255,7 @@ class TestSession(QuantumTestBase):
         job_id = self._get_test_id()
         job_name = f"job-{job_id}"
         shots = 100
-        qir_bitcode = JobPayloadFactory.get_qsharp_qir_bitcode_bell_state(target=target.name)
+        (qir_bitcode, entrypoint) = JobPayloadFactory.get_qsharp_qir_bitcode_bell_state(target=target.name)
         
         job = target.submit(
             input_data=qir_bitcode,
@@ -268,9 +269,36 @@ class TestSession(QuantumTestBase):
                 "count": shots,
                 "shots": shots,
                 "targetCapability": "BasicExecution",
-                "entryPoint": "ENTRYPOINT__BellState_Code",
+                "entryPoint": entrypoint,
                 "arguments": []
             }
         )
 
         result = job.get_results(timeout_secs=240)
+
+
+    def test_session_job_qiskit(self):
+        self.pause_recording()
+
+        from azure.quantum.qiskit import AzureQuantumProvider
+        workspace = self.create_workspace()
+        provider = AzureQuantumProvider(workspace=workspace)
+        backend = provider.get_backend("ionq.simulator")
+        backend2 = provider.get_backend("ionq.simulator")
+        self.assertIs(backend, backend)
+        self.assertIsNot(backend, backend2)
+
+        circuit = JobPayloadFactory.get_qiskit_circuit_bell_state()
+
+        session_id = self._get_test_id()
+        with backend.start_session(session_id=session_id) as session:
+            session_id = session.id
+            job1 = backend.run(circuit=circuit, shots=100, job_name="Job 1")
+            job2 = backend.run(circuit=circuit, shots=100, job_name="Job 2")
+            job3 = backend.run(circuit=circuit, shots=100, job_name="Job 3")
+
+        session_jobs = workspace.list_session_jobs(session_id=session_id)
+        self.assertEqual(len(session_jobs), 3)
+        self.assertEqual(session_jobs[0].details.name, "Job 1")
+        self.assertEqual(session_jobs[1].details.name, "Job 2")
+        self.assertEqual(session_jobs[2].details.name, "Job 3")

@@ -3,36 +3,20 @@
 # Licensed under the MIT License.
 ##
 from typing import TYPE_CHECKING, Any, Dict, Union, Optional
+from abc import ABC
 import io
 import json
 
 from azure.quantum._client.models import TargetStatus, SessionDetails
 from azure.quantum._client.models._enums import SessionJobFailurePolicy
 from azure.quantum.job.job import Job
-from azure.quantum.job.session import Session
+from azure.quantum.job.session import Session, SessionHost
 from azure.quantum.job.base_job import ContentType
+
 if TYPE_CHECKING:
     from azure.quantum import Workspace
 
-class TargetAlreadyHasASessionError(Exception):
-    """Exception raised when trying to start a new session `target.start_session()`
-       and the current target instance already has a session associated with it.
-    
-    Attributes:
-        session_id -- the id of the existing session associated with the current target instance
-    """
-
-    def __init__(self, session_id):
-        self.message = f"""The current target instance already has a session ({session_id}) associated with it. 
-                           If you want to start a new session, you should obtain a new target instance.
-                           A new target instance can be obtained with `workspace.get_targets("provider_id.target_name")`
-                           Qiskit: `target` is the same concept as a Qiskit `backend`. It can be obtained with `provider.get_backend("provider_id.target_name")`.
-                           Cirq: a new target instance can be obtained with `service.get_target("provider_id.target_name")`.
-                           """
-        super().__init__(self.message)
-
-
-class Target:
+class Target(ABC, SessionHost):
     """Azure Quantum Target."""
     # Target IDs that are compatible with this Target class.
     # This variable is used by TargetFactory. To set the default
@@ -63,7 +47,6 @@ class Target:
         self.encoding = encoding
         self._average_queue_time = average_queue_time
         self._current_availability = current_availability
-        self.current_session: Session = None
 
     def __repr__(self):
         return f"<Target name=\"{self.name}\", \
@@ -186,22 +169,8 @@ target '{self.name}' of provider '{self.provider_id}' not found."
     ):
         return NotImplementedError("Price estimation is not implemented yet for this target.")
 
-    def get_current_session_id(self) -> Optional[str]:
-        return self.current_session.id if self.current_session else None
+    def _get_azure_workspace(self) -> "Workspace":
+        return self.workspace
 
-    def start_session(
-        self,
-        session_details: Optional[SessionDetails] = None,
-        session_id: Optional[str] = None,
-        session_name: Optional[str] = None,
-        job_failure_policy: Union[str, SessionJobFailurePolicy, None] = None,
-        **kwargs
-    ) -> Session:
-        session = Session(session_details=session_details,
-                          session_id=session_id,
-                          session_name=session_name,
-                          job_failure_policy=job_failure_policy,
-                          target=self,
-                          workspace=self.workspace,
-                          **kwargs)
-        return session.start()
+    def _get_azure_target_id(self) -> str:
+        return self.name

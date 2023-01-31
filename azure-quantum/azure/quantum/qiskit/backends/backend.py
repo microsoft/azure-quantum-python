@@ -8,9 +8,15 @@ import json
 import logging
 logger = logging.getLogger(__name__)
 
-from typing import TYPE_CHECKING, Union, List
+from typing import TYPE_CHECKING, Union, List, Optional
 from azure.quantum.version import __version__
+from azure.quantum._client.models import TargetStatus, SessionDetails
+from azure.quantum._client.models._enums import SessionJobFailurePolicy
 from azure.quantum.qiskit.job import AzureQuantumJob
+from azure.quantum.job.session import Session, SessionHost
+
+if TYPE_CHECKING:
+    from azure.quantum import Workspace
 
 try:
     from qiskit import QuantumCircuit, transpile
@@ -23,7 +29,7 @@ except ImportError:
 To install run: pip install azure-quantum[qiskit]"
 )
 
-class AzureBackend(Backend):
+class AzureBackend(Backend, SessionHost):
     """Base class for interfacing with an IonQ backend in Azure Quantum"""
     backend_name = None
 
@@ -160,3 +166,9 @@ class AzureBackend(Backend):
     def retrieve_job(self, job_id) -> AzureQuantumJob:
         """ Returns the Job instance associated with the given id."""
         return self._provider.get_job(job_id)
+
+    def _get_azure_workspace(self) -> "Workspace":
+        return self.provider().get_workspace()
+
+    def _get_azure_target_id(self) -> str:
+        return self.name()
