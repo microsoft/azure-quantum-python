@@ -395,13 +395,12 @@ class Workspace:
     def start_session(
         self,
         session: Session,
-        end_target_previous_session: bool = False,
         **kwargs
     ):
         if session.target:
-            if (end_target_previous_session 
-                and session.target.current_session):
-                session.target.current_session.end()
+            if session.target.current_session:
+                from azure.quantum.target.target import TargetAlreadyHasASessionError
+                raise TargetAlreadyHasASessionError(session.target.current_session.id)
             session.target.current_session = session
 
         client = self._get_sessions_client()

@@ -14,6 +14,23 @@ from azure.quantum.job.base_job import ContentType
 if TYPE_CHECKING:
     from azure.quantum import Workspace
 
+class TargetAlreadyHasASessionError(Exception):
+    """Exception raised when trying to start a new session `target.start_session()`
+       and the current target instance already has a session associated with it.
+    
+    Attributes:
+        session_id -- the id of the existing session associated with the current target instance
+    """
+
+    def __init__(self, session_id):
+        self.message = f"""The current target instance already has a session ({session_id}) associated with it. 
+                           If you want to start a new session, you should obtain a new target instance.
+                           A new target instance can be obtained with `workspace.get_targets("provider_id.target_name")`
+                           Qiskit: `target` is the same concept as a Qiskit `backend`. It can be obtained with `provider.get_backend("provider_id.target_name")`.
+                           Cirq: a new target instance can be obtained with `service.get_target("provider_id.target_name")`.
+                           """
+        super().__init__(self.message)
+
 
 class Target:
     """Azure Quantum Target."""
