@@ -143,11 +143,11 @@ class TestJobPayloadFactory(unittest.TestCase):
 
     @pytest.mark.qsharp
     def test_get_cirq_circuit_bell_state(self):
-        self.assertIsInstance(JobPayloadFactory.get_qsharp_callable_bell_state(), QSharpCallable)
+        self.assertIsInstance(JobPayloadFactory.get_qsharp_callable_bell_state(), Tuple[QSharpCallable, str])
 
     @pytest.mark.qsharp
     def test_get_cirq_circuit_bell_state(self):
-        self.assertIsInstance(JobPayloadFactory.get_qsharp_qir_bitcode_bell_state("rigetti.sim.qvm"), bytes)
+        self.assertIsInstance(JobPayloadFactory.get_qsharp_qir_bitcode_bell_state("rigetti.sim.qvm"), Tuple[bytes, str])
 
     @pytest.mark.qiskit
     def test_get_cirq_circuit_bell_state(self):
