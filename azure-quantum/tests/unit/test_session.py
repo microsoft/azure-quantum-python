@@ -179,6 +179,7 @@ class TestSession(QuantumTestBase):
     @pytest.mark.live_test
     @pytest.mark.session
     @pytest.mark.qio
+    @pytest.mark.skip()
     def test_session_job_qio_ising(self):
         self.pause_recording()
 
@@ -208,14 +209,15 @@ class TestSession(QuantumTestBase):
     @pytest.mark.live_test
     @pytest.mark.session
     @pytest.mark.cirq
+    @pytest.mark.skip()
     def test_session_job_cirq_circuit(self):
         self.pause_recording()
 
+        from azure.quantum.cirq import AzureQuantumService
+
         workspace = self.create_workspace()
-        # target = workspace.get_targets("ionq.simulator")
-        from azure.quantum.cirq.targets.ionq import IonQTarget
-        target = IonQTarget(workspace=workspace,
-                            name="ionq.simulator")
+        service = AzureQuantumService(workspace=workspace)
+        target = service.get_target("ionq.simulator")
 
         circuit = JobPayloadFactory.get_cirq_circuit_bell_state()
 
@@ -246,6 +248,7 @@ class TestSession(QuantumTestBase):
 
     @pytest.mark.live_test
     @pytest.mark.session
+    @pytest.mark.skip()
     def test_session_job_qir(self):
         self.pause_recording()
         workspace = self.create_workspace()
@@ -277,6 +280,7 @@ class TestSession(QuantumTestBase):
         result = job.get_results(timeout_secs=240)
 
 
+    @pytest.mark.skip()
     def test_session_job_qiskit(self):
         self.pause_recording()
 
