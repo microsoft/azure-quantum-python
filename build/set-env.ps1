@@ -18,8 +18,3 @@ If (-not (Test-Path -Path $Env:PYTHON_OUTDIR)) { [IO.Directory]::CreateDirectory
 
 If ($null -eq $Env:ENABLE_PYTHON) { $Env:ENABLE_PYTHON =  "true" }
 
-# Workaround for issue https://github.com/microsoft/qdk-python/issues/220
-$RequirementsTxt = Join-Path $PSScriptRoot "../azure-quantum/requirements.txt"
-(Get-Content $RequirementsTxt) `
-    -replace 'azure-core>=1.21.1', 'azure-core>=1.19.1' |
-  Out-File $RequirementsTxt
