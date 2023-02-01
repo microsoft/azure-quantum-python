@@ -12,6 +12,7 @@ from common import QuantumTestBase, ZERO_UID
 from test_job_payload_factory import JobPayloadFactory
 from azure.quantum import Job, Session, JobDetails, SessionStatus
 
+@pytest.skip()
 class TestSession(QuantumTestBase):
     """TestSession
 

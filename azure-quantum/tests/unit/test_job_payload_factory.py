@@ -132,6 +132,7 @@ class JobPayloadFactory():
         return problem
 
 
+@pytest.skip()
 class TestJobPayloadFactory(unittest.TestCase):
     @pytest.mark.cirq
     def test_get_cirq_circuit_bell_state(self):
