@@ -59,7 +59,7 @@ class Session(WorkspaceItem):
             import re
             session_id = session_id if session_id is not None else str(uuid.uuid1())
             session_name = session_name if session_name is not None else f"session-{session_id}"
-            provider_id = provider_id if provider_id is not None else re.match("(\w+)\.", target_name).group(1)
+            provider_id = provider_id if provider_id is not None else re.match(r"(\w+)\.", target_name).group(1)
             session_details = SessionDetails(id=session_id,
                                              name=session_name,
                                              provider_id=provider_id,

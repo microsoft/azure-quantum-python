@@ -83,7 +83,7 @@ requirements = read_requirements("requirements.txt")
 extras_require = {}
 all_requirements = []
 for extra_requirement_file in glob.glob("requirements-*.txt"):
-    extra_option = re.match("requirements-(\w+)\.txt", extra_requirement_file).group(1)
+    extra_option = re.match(r"requirements-(\w+)\.txt", extra_requirement_file).group(1)
     extra_requirements = read_requirements(extra_requirement_file)
     extras_require[extra_option] = extra_requirements
     all_requirements.extend(extra_requirements)
