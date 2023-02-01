@@ -69,4 +69,4 @@ if (Test-Path $qsharpPythonWheelPath -PathType Leaf) {
     pip install --user --verbose qsharp | Write-Host
 }
 
-return 0
+exit 0
