@@ -16,5 +16,11 @@ If ($null -eq $Env:DROPS_DIR) { $Env:DROPS_DIR =  [IO.Path]::GetFullPath((Join-P
 If ($null -eq $Env:PYTHON_OUTDIR) { $Env:PYTHON_OUTDIR =  (Join-Path $Env:DROPS_DIR "wheels") }
 If (-not (Test-Path -Path $Env:PYTHON_OUTDIR)) { [IO.Directory]::CreateDirectory($Env:PYTHON_OUTDIR) }
 
+If ($null -eq $Env:NUGET_OUTDIR) { $Env:NUGET_OUTDIR =  (Join-Path $Env:DROPS_DIR "nugets") }
+If (-not (Test-Path -Path $Env:NUGET_OUTDIR)) { [IO.Directory]::CreateDirectory($Env:NUGET_OUTDIR) }
+
+If ($null -eq $Env:TOOLS_DIR) { $Env:TOOLS_DIR =  [IO.Path]::GetFullPath((Join-Path $PSScriptRoot ".tools")) }
+If (-not (Test-Path -Path $Env:TOOLS_DIR)) { [IO.Directory]::CreateDirectory($Env:TOOLS_DIR) }
+
 If ($null -eq $Env:ENABLE_PYTHON) { $Env:ENABLE_PYTHON =  "true" }
 
