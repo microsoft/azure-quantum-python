@@ -51,13 +51,13 @@ class IonQBackend(AzureBackend):
         
         return metadata
 
-    def _translate_input(self, circuit, data_format, input_params, to_qir_kwargs={}):
+    def _translate_input(self, circuit, input_data_format, output_data_format, input_params, to_qir_kwargs={}):
         """ Translates the input values to the format expected by the AzureBackend. """
         if "targetCapability" in input_params and input_params["targetCapability"] == "ionq":
             del input_params["targetCapability"]
 
         if "targetCapability" in input_params:
-            return super()._translate_input(circuit, "qir.v1", input_params, to_qir_kwargs)
+            return super()._translate_input(circuit, "qir.v1", output_data_format, input_params, to_qir_kwargs)
         else:
             ionq_circ, _, _ = qiskit_circ_to_ionq_circ(circuit, gateset=self.gateset())
             input_data = {
@@ -65,7 +65,7 @@ class IonQBackend(AzureBackend):
                 "qubits": circuit.num_qubits,
                 "circuit": ionq_circ,
             }
-            return (IonQ._encode_input_data(input_data), data_format, input_params)
+            return (IonQ._encode_input_data(input_data), input_data_format, output_data_format, input_params)
 
     def gateset(self):
         return self._gateset

@@ -269,14 +269,16 @@ class TestQiskit(QuantumTestBase):
         backend = IonQSimulatorBackend("ionq.simulator", provider)
 
         input_format = backend.configuration().azure["input_data_format"]
+        output_format = backend.configuration().azure["output_data_format"]
         input_params = {
             "targetCapability": "BasicExecution"
         }
 
-        (payload, dataformat, params) = backend._translate_input(circuit, input_format, input_params)
+        (payload, dataformat, output_format, params) = backend._translate_input(circuit, input_format, output_format, input_params)
 
         assert isinstance(payload, bytes)
         assert dataformat == "qir.v1"
+        assert output_format == "ionq.quantum-results.v1"
         assert "entryPoint" in params
         assert "arguments" in params
         assert "targetCapability" in params
@@ -335,9 +337,9 @@ class TestQiskit(QuantumTestBase):
         assert "native" == backend.gateset()
         # Trying to translate a regular circuit using the native gateset should fail:
         with pytest.raises(IonQGateError) as exc:
-            (payload, _, _) = backend._translate_input(self._3_qubit_ghz(), config.azure["input_data_format"], {})
+            (payload, _, _, _) = backend._translate_input(self._3_qubit_ghz(), config.azure["input_data_format"], config.azure["output_data_format"], {})
         # however, translating the native circuit should work fine.
-        (payload, _, _) = backend._translate_input(native_circuit, config.azure["input_data_format"], {})
+        (payload, _, _, _) = backend._translate_input(native_circuit, config.azure["input_data_format"], config.azure["output_data_format"], {})
         payload = json.loads(payload.decode('utf-8'))
         assert "ms" == payload['circuit'][0]['gate']
         # Confirm that the payload includes the gateset information.
@@ -350,7 +352,7 @@ class TestQiskit(QuantumTestBase):
         backend = provider.get_backend("ionq.qpu", gateset="native")
         config = backend.configuration()
         assert "native" == backend.gateset()
-        (payload, _, _) = backend._translate_input(native_circuit, config.azure["input_data_format"], {})
+        (payload, _, _, _) = backend._translate_input(native_circuit, config.azure["input_data_format"], config.azure["output_data_format"], {})
         payload = json.loads(payload.decode('utf-8'))
         assert "ms" == payload['circuit'][0]['gate']
         metadata = backend._prepare_job_metadata(native_circuit)
@@ -494,14 +496,16 @@ class TestQiskit(QuantumTestBase):
         backend = QuantinuumEmulatorBackend("quantinuum.sim.h1-2sc-preview", provider)
 
         input_format = backend.configuration().azure["input_data_format"]
+        output_format = backend.configuration().azure["output_data_format"]
         input_params = {
             "targetCapability": "AdaptiveExecution"
         }
 
-        (payload, dataformat, params) = backend._translate_input(circuit, input_format, input_params)
+        (payload, dataformat, output_format, params) = backend._translate_input(circuit, input_format, output_format, input_params)
 
         assert isinstance(payload, bytes)
         assert dataformat == "qir.v1"
+        assert output_format == "honeywell.quantum-results.v1"
         assert "entryPoint" in params
         assert "arguments" in params
         assert "targetCapability" in params
