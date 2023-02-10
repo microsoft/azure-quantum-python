@@ -601,12 +601,12 @@ class TestQiskit(QuantumTestBase):
         workspace = self.create_workspace()
         provider = AzureQuantumProvider(workspace=workspace)
 
-        backend = provider.get_backend(RigettiTarget.ASPEN_11.value)
-        assert backend.name() == RigettiTarget.ASPEN_11.value
+        backend = provider.get_backend(RigettiTarget.ASPEN_M_2.value)
+        assert backend.name() == RigettiTarget.ASPEN_M_2.value
         config = backend.configuration()
         assert False == config.simulator
         assert 1 == config.max_experiments
-        assert 38 == config.num_qubits
+        assert 80 == config.num_qubits
         assert "qir.v1" == config.azure["content_type"]
         assert "rigetti" == config.azure["provider_id"]
         assert "qir.v1" == config.azure["input_data_format"]
