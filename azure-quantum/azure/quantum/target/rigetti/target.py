@@ -29,7 +29,6 @@ class RigettiTarget(str, Enum):
     QVM = "rigetti.sim.qvm"
     """A simulator target for Quil. See https://github.com/quil-lang/qvm for more info."""
 
-    ASPEN_11 = "rigetti.qpu.aspen-11"
     ASPEN_M_2 = "rigetti.qpu.aspen-m-2"
     ASPEN_M_3 = "rigetti.qpu.aspen-m-3"
 
@@ -42,7 +41,6 @@ class RigettiTarget(str, Enum):
     def qpus() -> List[str]:
         """Returns a list of QPU targets"""
         return [
-            RigettiTarget.ASPEN_11.value,
             RigettiTarget.ASPEN_M_2.value,
             RigettiTarget.ASPEN_M_3.value,
         ]
@@ -51,8 +49,6 @@ class RigettiTarget(str, Enum):
         """Returns the number of qubits supported by the given target"""
         if target_name == RigettiTarget.QVM.value:
             return 20
-        elif target_name == RigettiTarget.ASPEN_11.value:
-            return 38
         elif target_name == RigettiTarget.ASPEN_M_2.value:
             return 80
         elif target_name == RigettiTarget.ASPEN_M_3.value:
