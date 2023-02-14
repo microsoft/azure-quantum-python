@@ -44,6 +44,9 @@ class ResourceEstimatorBatchResult(Result):
         if "header" in in_data:
             in_data["header"] = QobjHeader.from_dict(in_data.pop("header"))
         return cls(**in_data)
+    
+    def __len__(self):
+        return len(self.results)
 
     def _repr_html_(self):
         return self._repr_html_success_() if self.success else self._repr_html_error_()
