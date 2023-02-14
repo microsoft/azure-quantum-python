@@ -54,7 +54,7 @@ class ResourceEstimatorBatchResult(Result):
     def _repr_html_success_(self):
         num_items = len(self.results)
         if num_items > self.MAX_DEFAULT_ITEMS_IN_TABLE:
-            html = f"<p><b>Info:</b> <i>The overview table is cut off after {self.MAX_DEFAULT_ITEMS_IN_TABLE} items.  If you want to see all items, suffix the result variable with <code>[0:{num_items - 1}]</code></i></p>"
+            html = f"<p><b>Info:</b> <i>The overview table is cut off after {self.MAX_DEFAULT_ITEMS_IN_TABLE} items.  If you want to see all items, suffix the result variable with <code>[0:{num_items}]</code></i></p>"
             return html + batch_result_html_table(self, range(self.MAX_DEFAULT_ITEMS_IN_TABLE))
         else:
             return batch_result_html_table(self, range(len(self.results)))
