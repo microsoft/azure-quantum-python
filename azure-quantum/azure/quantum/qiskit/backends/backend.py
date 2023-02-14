@@ -36,11 +36,11 @@ class AzureBackend(Backend):
             "metadata": json.dumps(circuit.metadata),
         }
 
-    def _translate_input(self, circuit, input_data_format, output_data_format, input_params, to_qir_kwargs={}):
+    def _translate_input(self, circuit, data_format, input_params, to_qir_kwargs={}):
         """ Translates the input values to the format expected by the AzureBackend. """
-        if input_data_format != "qir.v1":
+        if data_format != "qir.v1":
             target = self.name()
-            raise ValueError(f"{input_data_format} is not a supported data format for target {target}.")
+            raise ValueError(f"{data_format} is not a supported data format for target {target}.")
 
         logger.info(f"Using QIR as the job's payload format.")
         from qiskit_qir import to_qir_bitcode, to_qir
@@ -68,7 +68,7 @@ class AzureBackend(Backend):
                 logger.debug(f"QIR (Post-transpilation):\n{to_qir(circuit, capability, **to_qir_kwargs)}")
         emit_barrier_calls = "barrier" in config.basis_gates
         qir = bytes(to_qir_bitcode(circuit, capability, emit_barrier_calls=emit_barrier_calls, **to_qir_kwargs))
-        return (qir, input_data_format, output_data_format, input_params)
+        return (qir, data_format, input_params)
 
     def run(self, circuit, **kwargs):
         """Submits the given circuit to run on an Azure Quantum backend."""        
@@ -134,7 +134,7 @@ class AzureBackend(Backend):
         input_params["shots"] = shots_count
 
         # translate
-        (input_data, input_data_format, output_data_format, input_params) = self._translate_input(circuit, input_data_format, output_data_format, input_params, to_qir_kwargs)
+        (input_data, input_data_format, input_params) = self._translate_input(circuit, input_data_format, input_params, to_qir_kwargs)
 
         logger.info(f"Submitting new job for backend {self.name()}")
         job = AzureQuantumJob(

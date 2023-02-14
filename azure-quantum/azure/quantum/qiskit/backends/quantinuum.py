@@ -73,13 +73,13 @@ class QuantinuumBackend(AzureBackend):
             "output_data_format": "honeywell.quantum-results.v1",
         }
 
-    def _translate_input(self, circuit, input_data_format, output_data_format, input_params, to_qir_kwargs={}):
+    def _translate_input(self, circuit, data_format, input_params, to_qir_kwargs={}):
         """ Translates the input values to the format expected by the AzureBackend. """
         if input_params["targetCapability"] == "openqasm":
-            return (circuit.qasm(), input_data_format, output_data_format, input_params)
+            return (circuit.qasm(), data_format, input_params)
         else:
             # Not using openqasm, assume qir then:
-            return super()._translate_input(circuit, "qir.v1", input_params, output_data_format, to_qir_kwargs)
+            return super()._translate_input(circuit, "qir.v1", input_params, to_qir_kwargs)
 
     def _initialize_n_qubits(self, name):
         name = name.lower()

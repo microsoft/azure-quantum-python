@@ -37,7 +37,6 @@ MICROSOFT_OUTPUT_DATA_FORMAT = "microsoft.quantum-results.v1"
 IONQ_OUTPUT_DATA_FORMAT = "ionq.quantum-results.v1"
 QUANTINUUM_OUTPUT_DATA_FORMAT = "honeywell.quantum-results.v1"
 RESOURCE_ESTIMATOR_OUTPUT_DATA_FORMAT = "microsoft.resource-estimates.v1"
-RESOURCE_ESTIMATOR_OUTPUT_DATA_FORMAT_ITEMS = "microsoft.resource-estimate-items.v1"
 
 class AzureQuantumJob(JobV1):
     def __init__(
@@ -97,9 +96,8 @@ class AzureQuantumJob(JobV1):
         result_type = Result
         output_data_format = self._azure_job.details.output_data_format
         if output_data_format == RESOURCE_ESTIMATOR_OUTPUT_DATA_FORMAT:
-            result_type = ResourceEstimatorResult
-        elif output_data_format == RESOURCE_ESTIMATOR_OUTPUT_DATA_FORMAT_ITEMS:
-            result_type = ResourceEstimatorBatchResult
+            is_simple_job = not isinstance(results['data'], list)
+            result_type = ResourceEstimatorResult if is_simple_job else ResourceEstimatorBatchResult
 
         return result_type.from_dict(result_dict)
 

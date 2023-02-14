@@ -103,13 +103,9 @@ class MicrosoftResourceEstimationBackend(MicrosoftBackend):
         configuration: BackendConfiguration = kwargs.pop("configuration", default_config)
         super().__init__(configuration=configuration, provider=provider, **kwargs)
 
-    def _translate_input(self, circuit, input_data_format, output_data_format, input_params, to_qir_kwargs={}):
+    def _translate_input(self, circuit, input_data_format, input_params, to_qir_kwargs={}):
         # Delete `items` key from input_data_format if it hasn't been set
         if not input_params.get("items", None):
             del input_params["items"]
-            # value is already set, but let's be explicit
-            output_data_format = "microsoft.resource-estimates.v1"
-        else:
-            output_data_format = "microsoft.resource-estimate-items.v1"
 
-        return MicrosoftBackend._translate_input(self, circuit, input_data_format, output_data_format, input_params, to_qir_kwargs)
+        return MicrosoftBackend._translate_input(self, circuit, input_data_format, input_params, to_qir_kwargs)
