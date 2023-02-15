@@ -42,7 +42,7 @@ class ResourceEstimatorBatchResult(Result):
         if "header" in in_data:
             in_data["header"] = QobjHeader.from_dict(in_data.pop("header"))
         return cls(**in_data)
-    
+
     def __len__(self):
         """
         Returns the number of items in the batching job.
@@ -70,24 +70,33 @@ class ResourceEstimatorBatchResult(Result):
             html += f"""<br>Error code: {self.error_data['code']}
                 <br>Error message: {self.error_data['message']}"""
         return html
-    
-    def plot(self):
+
+    def plot(self, **kwargs):
         """
         Plots all result items in a space time plot, where the x-axis shows
         total runtime, and the y-axis shows total number of physical qubits.
         Both axes are in log-scale.
+
+        Attributes:
+            labels (list): List of labels for the legend.
         """
         import matplotlib.pyplot as plt
 
-        num_items = len(self.results)
-        [xs, ys] = zip(*[(self.data(i)['physicalCounts']['runtime'], self.data(i)['physicalCounts']['physicalQubits']) for i in range(num_items)])
+        labels = kwargs.pop("labels", [])
+
+        [xs, ys] = zip(*[(self.data(i)['physicalCounts']['runtime'], self.data(i)['physicalCounts']['physicalQubits']) for i in range(len(self))])
+
+        _ = plt.figure(figsize=(15, 8))
 
         plt.ylabel('Physical qubits')
         plt.xlabel('Runtime')
         plt.loglog()
-        plt.scatter(x=xs, y=ys)
-        for i in range(num_items):
-            plt.annotate(f"{i}", (xs[i], ys[i]))
+        for i, (x, y) in enumerate(zip(xs, ys)):
+            if isinstance(labels, list) and i < len(labels):
+                label = labels[i]
+            else:
+                label = str(i)
+            plt.scatter(x=[x], y=[y], label=label, marker="os+x"[i % 4])
 
         nsec = 1
         usec = 1e3 * nsec
@@ -108,6 +117,7 @@ class ResourceEstimatorBatchResult(Result):
         cutoff = next((i for i, x in enumerate(time_units) if x > max(xs)), len(time_units) - 1) + 1
 
         plt.xticks(time_units[0:cutoff], time_labels[0:cutoff], rotation=90)
+        plt.legend(loc="upper left")
         plt.show()
 
     def __getitem__(self, key):
