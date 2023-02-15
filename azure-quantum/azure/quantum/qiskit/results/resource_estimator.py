@@ -11,7 +11,11 @@ To install run: pip install azure-quantum[qiskit]"
     )
 
 class ResourceEstimatorBatchResult(Result):
-    MAX_DEFAULT_ITEMS_IN_TABLE = 6
+    """
+    A customized result for a resource estimation batching job.
+    """
+
+    MAX_DEFAULT_ITEMS_IN_TABLE = 5
 
     def __init__(
             self,
@@ -19,21 +23,15 @@ class ResourceEstimatorBatchResult(Result):
     ) -> None:
         super().__init__(**kwargs)
 
+        # Creates individual result items for each item in the batch results
         self.result_items = [ResourceEstimatorResult(**{**kwargs, "results": [result]}) for result in self.results]
 
     @classmethod
     def from_dict(cls, data):
-        """Create a new ExperimentResultData object from a dictionary.
-
-        Args:
-            data (dict): A dictionary representing the Result to create. It
-                         will be in the same format as output by
-                         :meth:`to_dict`.
-        Returns:
-            Result: The ``Result`` object from the input dictionary.
-
         """
-
+        Overrides default behavior from Result.from_dict to account for batching
+        data.
+        """
         in_data = copy.copy(data)
 
         # We know that we have exactly one result here
@@ -46,18 +44,25 @@ class ResourceEstimatorBatchResult(Result):
         return cls(**in_data)
     
     def __len__(self):
+        """
+        Returns the number of items in the batching job.
+        """
         return len(self.results)
 
     def _repr_html_(self):
+        """
+        HTML representation of the result object; dispatches based on job
+        success.
+        """
         return self._repr_html_success_() if self.success else self._repr_html_error_()
 
     def _repr_html_success_(self):
         num_items = len(self.results)
         if num_items > self.MAX_DEFAULT_ITEMS_IN_TABLE:
             html = f"<p><b>Info:</b> <i>The overview table is cut off after {self.MAX_DEFAULT_ITEMS_IN_TABLE} items.  If you want to see all items, suffix the result variable with <code>[0:{num_items}]</code></i></p>"
-            return html + batch_result_html_table(self, range(self.MAX_DEFAULT_ITEMS_IN_TABLE))
+            return html + _batch_result_html_table(self, range(self.MAX_DEFAULT_ITEMS_IN_TABLE))
         else:
-            return batch_result_html_table(self, range(len(self.results)))
+            return _batch_result_html_table(self, range(len(self.results)))
 
     def _repr_html_error_(self):
         html = "<b>Job not successful</b>"
@@ -67,6 +72,11 @@ class ResourceEstimatorBatchResult(Result):
         return html
     
     def plot(self):
+        """
+        Plots all result items in a space time plot, where the x-axis shows
+        total runtime, and the y-axis shows total number of physical qubits.
+        Both axes are in log-scale.
+        """
         import matplotlib.pyplot as plt
 
         num_items = len(self.results)
@@ -103,19 +113,29 @@ class ResourceEstimatorBatchResult(Result):
     def __getitem__(self, key):
         if isinstance(key, slice):
             from IPython.display import display, HTML
-            display(HTML(batch_result_html_table(self, range(len(self.results))[key])))
+            display(HTML(_batch_result_html_table(self, range(len(self.results))[key])))
         else:
             return self.result_items[key]
 
 class ResourceEstimatorResult(Result):
+    """
+    A customized result for a resource estimation job.
+    """
+
     def __init__(
         self,
         **kwargs
     ) -> None:
         super().__init__(**kwargs)
+
+        # We also create a summary view based on a different result type.
         self.summary = ResourceEstimatorResultSummary(**kwargs)
 
     def _repr_html_(self):
+        """
+        HTML representation of the result object; dispatches based on job
+        success.
+        """
         return self._repr_html_success_() if self.success else self._repr_html_error_()
 
     def _repr_html_success_(self):
@@ -248,7 +268,7 @@ class ResourceEstimatorResultSummary(Result):
                 <br>Error message: {self.error_data['message']}"""
         return html
 
-def batch_result_html_table(result, indices):
+def _batch_result_html_table(result, indices):
     html = ""
 
     md = markdown.Markdown(extensions=['mdx_math'])
