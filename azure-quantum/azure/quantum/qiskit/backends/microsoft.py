@@ -74,7 +74,8 @@ class MicrosoftResourceEstimationBackend(MicrosoftBackend):
             targetCapability="AdaptiveExecution",
             errorBudget=1e-3,
             qubitParams={"name":"qubit_gate_ns_e3"},
-            qecScheme={"name":"surface_code"}
+            qecScheme={"name":"surface_code"},
+            items=None
         )
 
     def __init__(self, name: str, provider: "AzureQuantumProvider", **kwargs):
@@ -101,3 +102,10 @@ class MicrosoftResourceEstimationBackend(MicrosoftBackend):
         logger.info("Initializing MicrosoftResourceEstimationBackend")
         configuration: BackendConfiguration = kwargs.pop("configuration", default_config)
         super().__init__(configuration=configuration, provider=provider, **kwargs)
+
+    def _translate_input(self, circuit, input_data_format, input_params, to_qir_kwargs={}):
+        # Delete `items` key from input_data_format if it hasn't been set
+        if not input_params.get("items", None):
+            del input_params["items"]
+
+        return MicrosoftBackend._translate_input(self, circuit, input_data_format, input_params, to_qir_kwargs)
