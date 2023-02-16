@@ -95,7 +95,7 @@ class AzureQuantumJob(JobV1):
 
         result_type = Result
         if self._azure_job.details.output_data_format == RESOURCE_ESTIMATOR_OUTPUT_DATA_FORMAT:
-            is_simple_job = not isinstance(results['data'], list)
+            is_simple_job = results['success'] and not isinstance(results['data'], list)
             result_type = ResourceEstimatorResult if is_simple_job else ResourceEstimatorBatchResult
 
         return result_type.from_dict(result_dict)
