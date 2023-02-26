@@ -2,19 +2,23 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 ##
-import warnings
 import json
 
 import logging
+
 logger = logging.getLogger(__name__)
 
-from typing import TYPE_CHECKING, Union, List
+from typing import Union, List
 from azure.quantum.version import __version__
 from azure.quantum.qiskit.job import AzureQuantumJob
+from abc import abstractmethod
 
 try:
     from qiskit import QuantumCircuit, transpile
     from qiskit.providers import BackendV1 as Backend
+    from qiskit.providers import Options
+    from qiskit.providers import Provider
+    from qiskit.providers.models import BackendConfiguration
     from qiskit.qobj import Qobj, QasmQobj
 
 except ImportError:
@@ -23,8 +27,116 @@ except ImportError:
 To install run: pip install azure-quantum[qiskit]"
 )
 
-class AzureBackend(Backend):
-    """Base class for interfacing with an IonQ backend in Azure Quantum"""
+class AzureBackendBase(Backend):
+    def __init__(self, configuration: BackendConfiguration, provider: Provider=None, **fields):
+        super().__init__(configuration, provider, **fields)
+
+    @classmethod
+    @abstractmethod
+    def _default_options(cls) -> Options:
+        pass
+
+    @abstractmethod
+    def _azure_config(self) -> dict[str, str]:
+        pass
+
+class AzureQirBackend(AzureBackendBase):
+    def __init__(self, configuration: BackendConfiguration, provider: Provider=None, **fields):
+        super().__init__(configuration, provider, **fields)
+
+    @classmethod
+    def _azure_config(cls) -> dict[str, str]:
+        return {
+            "blob_name": "inputData",
+            "content_type": "qir.v1",
+            "input_data_format": "qir.v1",
+            "output_data_format": "microsoft.quantum-results.v2",
+        }
+
+    def run(self, run_input: Union[QuantumCircuit, List[QuantumCircuit]], **options) -> AzureQuantumJob:
+        circuits = list([])
+        if isinstance(run_input, QuantumCircuit):
+            circuits = [run_input]
+        else:
+            circuits = run_input
+
+        if not circuits:
+            raise ValueError("No QuantumCircuits provided")
+        
+        max_circuits_per_job = self.configuration().max_experiments
+        if len(circuits) > max_circuits_per_job:
+            raise NotImplementedError(f"This backend only supports running a maximum of {max_circuits_per_job} circuits per job.")
+
+        record_output: bool = True
+        
+        # Backend options are mapped to input_params.
+        input_params = vars(self.options).copy()
+
+        targetCapability = options.pop("targetCapability", self.options.get("targetCapability", "AdaptiveExecution"))
+        from qiskit_qir import to_qir_bitcode_with_entry_points
+        (input_data, entry_points) = to_qir_bitcode_with_entry_points(
+            circuits, targetCapability, record_output=record_output
+        )
+
+        # The shots/count number can be specified in different ways for different providers,
+        # so let's get it first. Values in 'kwargs' take precedence over options, and to keep
+        # the convention, 'count' takes precedence over 'shots' afterwards.
+        shots_count = \
+            options["count"] if "count" in options else \
+            options["shots"] if "shots" in options else \
+            input_params["count"] if "count" in input_params else \
+            input_params["shots"] if "shots" in input_params else None
+
+        # define entryPoints which contain arguments
+        input_params["shots"] = shots_count
+        input_params["count"] = shots_count
+
+        if len(circuits) == 1:
+            # TODO: Do we need to support both entry point defs?
+            input_params["entryPoint"] = entry_points[0]
+            input_params["arguments"] = []
+        else:
+            input_params["items"] = [
+                {"entryPoint": name, "arguments": []} for name in entry_points
+            ]
+
+        job_name = ""
+        if len(entry_points) > 1:
+            job_name = f"batch-{len(entry_points)}-{shots_count}"
+        else:
+            job_name = circuits[0].name
+        job_name = options.pop("job_name", job_name)
+
+        # The default of these job parameters come from the AzureBackend configuration:
+        config = self.configuration()
+        blob_name = options.pop("blob_name", config.azure["blob_name"])
+        content_type = options.pop("content_type", config.azure["content_type"])
+        provider_id = options.pop("provider_id", config.azure["provider_id"])
+        input_data_format = options.pop("input_data_format", config.azure["input_data_format"])
+        output_data_format = options.pop("output_data_format", config.azure["output_data_format"])
+
+        logger.info(f"Submitting new job for backend {self.name()}")
+        job = AzureQuantumJob(
+            backend=self,
+            target=self.name(),
+            name=job_name,
+            input_data=input_data,
+            blob_name=blob_name,
+            content_type=content_type,
+            provider_id=provider_id,
+            input_data_format=input_data_format,
+            output_data_format=output_data_format,
+            input_params = input_params,
+            **options
+        )
+
+        logger.info(f"Submitted job with id '{job.id()}' with shot count of {shots_count}:")
+        logger.info(input_data)
+
+        return job
+
+class AzureBackend(AzureBackendBase):
+    """Base class for interfacing with a backend in Azure Quantum"""
     backend_name = None
 
     def _prepare_job_metadata(self, circuit):

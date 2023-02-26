@@ -58,7 +58,7 @@ class MicrosoftBackend(AzureBackend):
             "provider_id": "microsoft-qc",
             "input_data_format": "qir.v1",
             "output_data_format": "microsoft.resource-estimates.v1",
-            "to_qir_kwargs": {"record_output": False, "use_static_qubit_alloc": False, "use_static_result_alloc": False}
+            "to_qir_kwargs": {"record_output": False}
         }
 
 class MicrosoftResourceEstimationBackend(MicrosoftBackend):

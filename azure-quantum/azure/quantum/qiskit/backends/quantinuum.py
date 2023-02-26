@@ -2,29 +2,27 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 ##
-import warnings
 
-from typing import TYPE_CHECKING, Union, List
 from azure.quantum.version import __version__
-from azure.quantum.qiskit.job import AzureQuantumJob
 
-from .backend import AzureBackend
+from .backend import AzureBackend, AzureQirBackend
 
 from qiskit import QuantumCircuit
 from qiskit.providers.models import BackendConfiguration
 from qiskit.providers import Options
-
-if TYPE_CHECKING:
-    from azure.quantum.qiskit import AzureQuantumProvider
+from qiskit.providers import Provider
 
 import logging
+
 logger = logging.getLogger(__name__)
 
 __all__ = [
-    "QuantinuumBackend",
-    "QuantinuumQPUBackend",
     "QuantinuumSyntaxCheckerBackend",
-    "QuantinuumEmulatorBackend"
+    "QuantinuumEmulatorBackend",
+    "QuantinuumQPUBackend",
+    "QuantinuumEmulatorQirBackend",
+    "QuantinuumSyntaxCheckerQirBackend",
+    "QuantinuumQPUQirBackend",
 ]
 
 QUANTINUUM_BASIS_GATES = [
@@ -46,81 +44,49 @@ QUANTINUUM_BASIS_GATES = [
     "vdg",
     "zz",
     "measure",
-    "reset"
+    "reset",
 ]
 
 QUANTINUUM_PROVIDER_ID = "quantinuum"
 QUANTINUUM_PROVIDER_NAME = "Quantinuum"
 
-class QuantinuumBackend(AzureBackend):
-    """Base class for interfacing with a Quantinuum (formerly Honeywell) backend in Azure Quantum"""
 
-    def __init__(self, **kwargs):
+class QuantinuumQirBackendBase(AzureQirBackend):
+    def __init__(
+        self, configuration: BackendConfiguration, provider: Provider = None, **fields
+    ):
         self._provider_id = QUANTINUUM_PROVIDER_ID
         self._provider_name = QUANTINUUM_PROVIDER_NAME
-        super().__init__(**kwargs)
+        super().__init__(configuration, provider, **fields)
 
     @classmethod
-    def _default_options(cls):
-        return Options(count=500, targetCapability="openqasm")
+    def _default_options(cls) -> Options:
+        return Options(shots=500, targetCapability="BasicExecution")
 
-    def _azure_config(self):
-        return {
-            "blob_name": "inputData",
-            "content_type": "application/qasm",
-            "provider_id": self._provider_id,
-            "input_data_format": "honeywell.openqasm.v1",
-            "output_data_format": "honeywell.quantum-results.v1",
-        }
-
-    def _translate_input(self, circuit, data_format, input_params, to_qir_kwargs={}):
-        """ Translates the input values to the format expected by the AzureBackend. """
-        if input_params["targetCapability"] == "openqasm":
-            return (circuit.qasm(), data_format, input_params)
-        else:
-            # Not using openqasm, assume qir then:
-            return super()._translate_input(circuit, "qir.v1", input_params, to_qir_kwargs)
+    def _azure_config(cls) -> dict[str, str]:
+        config = super()._azure_config()
+        config.update(
+            {
+                "provider_id": QUANTINUUM_PROVIDER_ID,
+                "output_data_format": "microsoft.quantum-results.v1",
+            }
+        )
+        return config
 
     def _initialize_n_qubits(self, name):
         name = name.lower()
         self.n_qubits = 20 if "h1-1" in name or "s1" in name else 12
         return self.n_qubits
 
-    def estimate_cost(self, circuit: QuantumCircuit, shots: int = None, count: int = None):
-        """Estimate cost for running this circuit
 
-        :param circuit: Qiskit quantum circuit
-        :type circuit: QuantumCircuit
-        :param shots: Shot count
-        :type shots: int
-        :param count: Shot count (alternative to 'shots')
-        :type count: int
-        """
-        if count is not None:
-            shots = count
-
-        if shots is None:
-            raise ValueError("Missing input argument 'shots'.")
-
-        input_data = circuit.qasm()
-        workspace = self.provider().get_workspace()
-        target = workspace.get_targets(self.name())
-        return target.estimate_cost(input_data, num_shots=shots)
-
-
-class QuantinuumSyntaxCheckerBackend(QuantinuumBackend):
+class QuantinuumSyntaxCheckerQirBackend(QuantinuumQirBackendBase):
     backend_names = (
         # Note: Target names on the same line are equivalent.
         "quantinuum.hqs-lt-s1-apival", "quantinuum.sim.h1-1sc",
         "quantinuum.hqs-lt-s2-apival", "quantinuum.sim.h1-2sc"
     )
 
-    def __init__(
-        self,
-        name: str,
-        provider: "AzureQuantumProvider",
-        **kwargs
-    ):
+    def __init__(self, name: str, provider: "AzureQuantumProvider", **kwargs):
         self._provider_id = QUANTINUUM_PROVIDER_ID
         self._provider_name = QUANTINUUM_PROVIDER_NAME
 
@@ -144,26 +110,21 @@ class QuantinuumSyntaxCheckerBackend(QuantinuumBackend):
                 "azure": self._azure_config(),
             }
         )
-        configuration: BackendConfiguration = kwargs.pop("configuration", default_config)
-        logger.info(f"Initializing {self._provider_name}SyntaxCheckerBackend")
-        super().__init__(configuration=configuration,
-                         provider=provider,
-                         **kwargs)
+        configuration: BackendConfiguration = kwargs.pop(
+            "configuration", default_config
+        )
+        logger.info(f"Initializing {self._provider_name}SyntaxCheckerQirBackend")
+        super().__init__(configuration=configuration, provider=provider, **kwargs)
 
 
-class QuantinuumEmulatorBackend(QuantinuumBackend):
+class QuantinuumEmulatorQirBackend(QuantinuumQirBackendBase):
     backend_names = (
         # Note: Target names on the same line are equivalent.
         "quantinuum.hqs-lt-s1-sim", "quantinuum.sim.h1-1e",
         "quantinuum.hqs-lt-s2-sim", "quantinuum.sim.h1-2e"
     )
 
-    def __init__(
-        self,
-        name: str,
-        provider: "AzureQuantumProvider",
-        **kwargs
-    ):
+    def __init__(self, name: str, provider: "AzureQuantumProvider", **kwargs):
         self._provider_id = QUANTINUUM_PROVIDER_ID
         self._provider_name = QUANTINUUM_PROVIDER_NAME
 
@@ -188,26 +149,21 @@ class QuantinuumEmulatorBackend(QuantinuumBackend):
                 "azure": self._azure_config(),
             }
         )
-        configuration: BackendConfiguration = kwargs.pop("configuration", default_config)
-        logger.info(f"Initializing {self._provider_name}EmulatorBackend")
-        super().__init__(configuration=configuration,
-                         provider=provider,
-                         **kwargs)
+        configuration: BackendConfiguration = kwargs.pop(
+            "configuration", default_config
+        )
+        logger.info(f"Initializing {self._provider_name}EmulatorQirBackend")
+        super().__init__(configuration=configuration, provider=provider, **kwargs)
 
 
-class QuantinuumQPUBackend(QuantinuumBackend):
+class QuantinuumQPUQirBackend(QuantinuumQirBackendBase):
     backend_names = (
         # Note: Target names on the same line are equivalent.
         "quantinuum.hqs-lt-s1", "quantinuum.qpu.h1-1",
         "quantinuum.hqs-lt-s2", "quantinuum.qpu.h1-2"
     )
 
-    def __init__(
-        self,
-        name: str,
-        provider: "AzureQuantumProvider",
-        **kwargs
-    ):
+    def __init__(self, name: str, provider: "AzureQuantumProvider", **kwargs):
         self._provider_id = QUANTINUUM_PROVIDER_ID
         self._provider_name = QUANTINUUM_PROVIDER_NAME
 
@@ -231,8 +187,177 @@ class QuantinuumQPUBackend(QuantinuumBackend):
                 "azure": self._azure_config(),
             }
         )
-        configuration: BackendConfiguration = kwargs.pop("configuration", default_config)
+        configuration: BackendConfiguration = kwargs.pop(
+            "configuration", default_config
+        )
+        logger.info(f"Initializing {self._provider_name}QPUQirBackend")
+        super().__init__(configuration=configuration, provider=provider, **kwargs)
+
+
+class QuantinuumBackend(AzureBackend):
+    """Base class for interfacing with a Quantinuum (formerly Honeywell) backend in Azure Quantum"""
+
+    def __init__(self, **kwargs):
+        self._provider_id = QUANTINUUM_PROVIDER_ID
+        self._provider_name = QUANTINUUM_PROVIDER_NAME
+        super().__init__(**kwargs)
+
+    @classmethod
+    def _default_options(cls):
+        return Options(count=500)
+
+    def _azure_config(self):
+        return {
+            "blob_name": "inputData",
+            "content_type": "application/qasm",
+            "provider_id": self._provider_id,
+            "input_data_format": "honeywell.openqasm.v1",
+            "output_data_format": "honeywell.quantum-results.v1",
+            "is_default": True,
+        }
+
+    def _translate_input(self, circuit, data_format, input_params, to_qir_kwargs={}):
+        """Translates the input values to the format expected by the AzureBackend."""
+        return (circuit.qasm(), data_format, input_params)
+
+    def estimate_cost(
+        self, circuit: QuantumCircuit, shots: int = None, count: int = None
+    ):
+        """Estimate cost for running this circuit
+
+        :param circuit: Qiskit quantum circuit
+        :type circuit: QuantumCircuit
+        :param shots: Shot count
+        :type shots: int
+        :param count: Shot count (alternative to 'shots')
+        :type count: int
+        """
+        if count is not None:
+            shots = count
+
+        if shots is None:
+            raise ValueError("Missing input argument 'shots'.")
+
+        input_data = circuit.qasm()
+        workspace = self.provider().get_workspace()
+        target = workspace.get_targets(self.name())
+        return target.estimate_cost(input_data, num_shots=shots)
+
+    def _initialize_n_qubits(self, name):
+        name = name.lower()
+        self.n_qubits = 20 if "h1-1" in name or "s1" in name else 12
+        return self.n_qubits
+
+class QuantinuumSyntaxCheckerBackend(QuantinuumBackend):
+    backend_names = (
+        # Note: Target names on the same line are equivalent.
+        "quantinuum.hqs-lt-s1-apival", "quantinuum.sim.h1-1sc",
+        "quantinuum.hqs-lt-s2-apival", "quantinuum.sim.h1-2sc"
+    )
+
+    def __init__(self, name: str, provider: "AzureQuantumProvider", **kwargs):
+        self._provider_id = QUANTINUUM_PROVIDER_ID
+        self._provider_name = QUANTINUUM_PROVIDER_NAME
+
+        self._initialize_n_qubits(name)
+        default_config = BackendConfiguration.from_dict(
+            {
+                "backend_name": name,
+                "backend_version": __version__,
+                "simulator": True,
+                "local": False,
+                "coupling_map": None,
+                "description": f"Quantinuum Syntax Checker on Azure Quantum",
+                "basis_gates": QUANTINUUM_BASIS_GATES,
+                "memory": False,
+                "n_qubits": self.n_qubits,
+                "conditional": False,
+                "max_shots": None,
+                "max_experiments": 1,
+                "open_pulse": False,
+                "gates": [{"name": "TODO", "parameters": [], "qasm_def": "TODO"}],
+                "azure": self._azure_config(),
+            }
+        )
+        configuration: BackendConfiguration = kwargs.pop(
+            "configuration", default_config
+        )
+        logger.info(f"Initializing {self._provider_name}SyntaxCheckerBackend")
+        super().__init__(configuration=configuration, provider=provider, **kwargs)
+
+
+class QuantinuumEmulatorBackend(QuantinuumBackend):
+    backend_names = (
+        # Note: Target names on the same line are equivalent.
+        "quantinuum.hqs-lt-s1-sim", "quantinuum.sim.h1-1e",
+        "quantinuum.hqs-lt-s2-sim", "quantinuum.sim.h1-2e"
+    )
+
+    def __init__(self, name: str, provider: "AzureQuantumProvider", **kwargs):
+        self._provider_id = QUANTINUUM_PROVIDER_ID
+        self._provider_name = QUANTINUUM_PROVIDER_NAME
+
+        self._initialize_n_qubits(name)
+        configuration: BackendConfiguration = kwargs.pop("configuration", None)
+        default_config = BackendConfiguration.from_dict(
+            {
+                "backend_name": name,
+                "backend_version": __version__,
+                "simulator": True,
+                "local": False,
+                "coupling_map": None,
+                "description": f"Quantinuum emulator on Azure Quantum",
+                "basis_gates": QUANTINUUM_BASIS_GATES,
+                "memory": False,
+                "n_qubits": self.n_qubits,
+                "conditional": False,
+                "max_shots": None,
+                "max_experiments": 1,
+                "open_pulse": False,
+                "gates": [{"name": "TODO", "parameters": [], "qasm_def": "TODO"}],
+                "azure": self._azure_config(),
+            }
+        )
+        configuration: BackendConfiguration = kwargs.pop(
+            "configuration", default_config
+        )
+        logger.info(f"Initializing {self._provider_name}EmulatorBackend")
+        super().__init__(configuration=configuration, provider=provider, **kwargs)
+
+
+class QuantinuumQPUBackend(QuantinuumBackend):
+    backend_names = (
+        # Note: Target names on the same line are equivalent.
+        "quantinuum.hqs-lt-s1", "quantinuum.qpu.h1-1",
+        "quantinuum.hqs-lt-s2", "quantinuum.qpu.h1-2"
+    )
+
+    def __init__(self, name: str, provider: "AzureQuantumProvider", **kwargs):
+        self._provider_id = QUANTINUUM_PROVIDER_ID
+        self._provider_name = QUANTINUUM_PROVIDER_NAME
+
+        self._initialize_n_qubits(name)
+        default_config = BackendConfiguration.from_dict(
+            {
+                "backend_name": name,
+                "backend_version": __version__,
+                "simulator": False,
+                "local": False,
+                "coupling_map": None,
+                "description": f"Quantinuum QPU on Azure Quantum",
+                "basis_gates": QUANTINUUM_BASIS_GATES,
+                "memory": False,
+                "n_qubits": self.n_qubits,
+                "conditional": False,
+                "max_shots": 10000,
+                "max_experiments": 1,
+                "open_pulse": False,
+                "gates": [{"name": "TODO", "parameters": [], "qasm_def": "TODO"}],
+                "azure": self._azure_config(),
+            }
+        )
+        configuration: BackendConfiguration = kwargs.pop(
+            "configuration", default_config
+        )
         logger.info(f"Initializing {self._provider_name}QPUBackend")
-        super().__init__(configuration=configuration,
-                         provider=provider,
-                         **kwargs)
+        super().__init__(configuration=configuration, provider=provider, **kwargs)
