@@ -49,7 +49,7 @@ class RigettiBackend(AzureQirBackend):
     def _default_options(cls):
         return Options(count=500, targetCapability="BasicExecution")
 
-    def _azure_config(cls) -> dict[str, str]:
+    def _azure_config(self) -> dict[str, str]:
         config = super()._azure_config()
         config.update(
             {

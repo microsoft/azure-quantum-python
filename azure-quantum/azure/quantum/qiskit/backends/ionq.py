@@ -41,11 +41,12 @@ class IonQQirBackendBase(AzureQirBackend):
     def _default_options(cls) -> Options:
         return Options(shots=500, targetCapability="BasicExecution")
 
-    def _azure_config(cls) -> dict[str, str]:
+    def _azure_config(self) -> dict[str, str]:
         config = super()._azure_config()
         config.update(
             {
                 "provider_id": "ionq",
+                "output_data_format": "microsoft.quantum-results.v2",
             }
         )
         return config
@@ -156,8 +157,7 @@ class IonQBackend(AzureBackend):
     def _default_options(cls):
         return Options(shots=500)
 
-    @classmethod
-    def _azure_config(cls):
+    def _azure_config(self):
         return {
             "blob_name": "inputData",
             "content_type": "application/json",
