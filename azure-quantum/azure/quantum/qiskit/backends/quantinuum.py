@@ -73,10 +73,9 @@ class QuantinuumQirBackendBase(AzureQirBackend):
         )
         return config
 
-    def _initialize_n_qubits(self, name):
+    def _get_n_qubits(self, name):
         name = name.lower()
-        self.n_qubits = 20 if "h1-1" in name or "s1" in name else 12
-        return self.n_qubits
+        return 20 if "h1-1" in name or "s1" in name else 12
 
 
 class QuantinuumSyntaxCheckerQirBackend(QuantinuumQirBackendBase):
@@ -90,7 +89,6 @@ class QuantinuumSyntaxCheckerQirBackend(QuantinuumQirBackendBase):
         self._provider_id = QUANTINUUM_PROVIDER_ID
         self._provider_name = QUANTINUUM_PROVIDER_NAME
 
-        self._initialize_n_qubits(name)
         default_config = BackendConfiguration.from_dict(
             {
                 "backend_name": name,
@@ -101,7 +99,7 @@ class QuantinuumSyntaxCheckerQirBackend(QuantinuumQirBackendBase):
                 "description": f"Quantinuum Syntax Checker on Azure Quantum",
                 "basis_gates": QUANTINUUM_BASIS_GATES,
                 "memory": False,
-                "n_qubits": self.n_qubits,
+                "n_qubits": self._get_n_qubits(name),
                 "conditional": False,
                 "max_shots": None,
                 "max_experiments": 1,
@@ -128,8 +126,6 @@ class QuantinuumEmulatorQirBackend(QuantinuumQirBackendBase):
         self._provider_id = QUANTINUUM_PROVIDER_ID
         self._provider_name = QUANTINUUM_PROVIDER_NAME
 
-        self._initialize_n_qubits(name)
-        configuration: BackendConfiguration = kwargs.pop("configuration", None)
         default_config = BackendConfiguration.from_dict(
             {
                 "backend_name": name,
@@ -140,7 +136,7 @@ class QuantinuumEmulatorQirBackend(QuantinuumQirBackendBase):
                 "description": f"Quantinuum emulator on Azure Quantum",
                 "basis_gates": QUANTINUUM_BASIS_GATES,
                 "memory": False,
-                "n_qubits": self.n_qubits,
+                "n_qubits": self._get_n_qubits(name),
                 "conditional": False,
                 "max_shots": None,
                 "max_experiments": 1,
@@ -167,7 +163,6 @@ class QuantinuumQPUQirBackend(QuantinuumQirBackendBase):
         self._provider_id = QUANTINUUM_PROVIDER_ID
         self._provider_name = QUANTINUUM_PROVIDER_NAME
 
-        self._initialize_n_qubits(name)
         default_config = BackendConfiguration.from_dict(
             {
                 "backend_name": name,
@@ -178,7 +173,7 @@ class QuantinuumQPUQirBackend(QuantinuumQirBackendBase):
                 "description": f"Quantinuum QPU on Azure Quantum",
                 "basis_gates": QUANTINUUM_BASIS_GATES,
                 "memory": False,
-                "n_qubits": self.n_qubits,
+                "n_qubits": self._get_n_qubits(name),
                 "conditional": False,
                 "max_shots": 10000,
                 "max_experiments": 1,
@@ -243,10 +238,9 @@ class QuantinuumBackend(AzureBackend):
         target = workspace.get_targets(self.name())
         return target.estimate_cost(input_data, num_shots=shots)
 
-    def _initialize_n_qubits(self, name):
+    def _get_n_qubits(self, name):
         name = name.lower()
-        self.n_qubits = 20 if "h1-1" in name or "s1" in name else 12
-        return self.n_qubits
+        return 20 if "h1-1" in name or "s1" in name else 12
 
 class QuantinuumSyntaxCheckerBackend(QuantinuumBackend):
     backend_names = (
@@ -259,7 +253,6 @@ class QuantinuumSyntaxCheckerBackend(QuantinuumBackend):
         self._provider_id = QUANTINUUM_PROVIDER_ID
         self._provider_name = QUANTINUUM_PROVIDER_NAME
 
-        self._initialize_n_qubits(name)
         default_config = BackendConfiguration.from_dict(
             {
                 "backend_name": name,
@@ -270,7 +263,7 @@ class QuantinuumSyntaxCheckerBackend(QuantinuumBackend):
                 "description": f"Quantinuum Syntax Checker on Azure Quantum",
                 "basis_gates": QUANTINUUM_BASIS_GATES,
                 "memory": False,
-                "n_qubits": self.n_qubits,
+                "n_qubits": self._get_n_qubits(name),
                 "conditional": False,
                 "max_shots": None,
                 "max_experiments": 1,
@@ -297,8 +290,6 @@ class QuantinuumEmulatorBackend(QuantinuumBackend):
         self._provider_id = QUANTINUUM_PROVIDER_ID
         self._provider_name = QUANTINUUM_PROVIDER_NAME
 
-        self._initialize_n_qubits(name)
-        configuration: BackendConfiguration = kwargs.pop("configuration", None)
         default_config = BackendConfiguration.from_dict(
             {
                 "backend_name": name,
@@ -309,7 +300,7 @@ class QuantinuumEmulatorBackend(QuantinuumBackend):
                 "description": f"Quantinuum emulator on Azure Quantum",
                 "basis_gates": QUANTINUUM_BASIS_GATES,
                 "memory": False,
-                "n_qubits": self.n_qubits,
+                "n_qubits": self._get_n_qubits(name),
                 "conditional": False,
                 "max_shots": None,
                 "max_experiments": 1,
@@ -336,7 +327,6 @@ class QuantinuumQPUBackend(QuantinuumBackend):
         self._provider_id = QUANTINUUM_PROVIDER_ID
         self._provider_name = QUANTINUUM_PROVIDER_NAME
 
-        self._initialize_n_qubits(name)
         default_config = BackendConfiguration.from_dict(
             {
                 "backend_name": name,
@@ -347,7 +337,7 @@ class QuantinuumQPUBackend(QuantinuumBackend):
                 "description": f"Quantinuum QPU on Azure Quantum",
                 "basis_gates": QUANTINUUM_BASIS_GATES,
                 "memory": False,
-                "n_qubits": self.n_qubits,
+                "n_qubits": self._get_n_qubits(name),
                 "conditional": False,
                 "max_shots": 10000,
                 "max_experiments": 1,
