@@ -6,7 +6,7 @@
 from typing import TYPE_CHECKING
 from azure.quantum.version import __version__
 
-from .backend import AzureBackend
+from .backend import AzureQirBackend
 
 from qiskit.providers.models import BackendConfiguration
 from qiskit.providers import Options
@@ -43,23 +43,23 @@ __all__ = [
     "MicrosoftBackend", "MicrosoftResourceEstimationBackend"
 ]
 
-class MicrosoftBackend(AzureBackend):
+class MicrosoftBackend(AzureQirBackend):
     """Base class for interfacing with a Microsoft backend in Azure Quantum"""
 
     @classmethod
     def _default_options(cls):
         return Options(entryPoint="main", arguments=[], targetCapability="AdaptiveExecution")
 
-    @classmethod
-    def _azure_config(cls):
-        return {
-            "blob_name": "inputData",
-            "content_type": "qir.v1",
-            "provider_id": "microsoft-qc",
-            "input_data_format": "qir.v1",
-            "output_data_format": "microsoft.resource-estimates.v1",
-            "to_qir_kwargs": {"record_output": False}
-        }
+    def _azure_config(self):
+        config = super()._azure_config()
+        config.update(
+            {
+                "provider_id": "microsoft-qc",
+                "output_data_format": "microsoft.resource-estimates.v1",
+                "to_qir_kwargs": {"record_output": False}
+            }
+        )
+        return config
 
 class MicrosoftResourceEstimationBackend(MicrosoftBackend):
     """Backend class for interfacing with the resource estimator target"""
