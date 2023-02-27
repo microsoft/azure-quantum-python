@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 ##
 from collections import defaultdict
+from typing import Any, Dict, List, Union
 import numpy as np
 
 try:
@@ -85,7 +86,7 @@ class AzureQuantumJob(JobV1):
         results = self._format_results(sampler_seed=sampler_seed)
 
         result_dict = {
-            "results" : results,
+            "results" : results if isinstance(results, list) else [results],
             "job_id" : self._azure_job.details.id,
             "backend_name" : self._backend.name(),
             "backend_version" : self._backend.version,
@@ -127,7 +128,7 @@ class AzureQuantumJob(JobV1):
 
         return shots
 
-    def _format_results(self, sampler_seed=None):
+    def _format_results(self, sampler_seed=None) -> Union[List[Dict[str, Any]], Dict[str, Any]]:
         """ Populates the results datastructures in a format that is compatible with qiskit libraries. """
 
         if (self._azure_job.details.output_data_format == MICROSOFT_OUTPUT_DATA_FORMAT_V2):
@@ -159,7 +160,7 @@ class AzureQuantumJob(JobV1):
             job_result["header"]["metadata"] = json.loads(job_result["header"]["metadata"])
 
         job_result["shots"] = self._shots_count()
-        return [job_result]
+        return job_result
 
     def _draw_random_sample(self, sampler_seed, probabilities, shots):
         _norm = sum(probabilities.values())
@@ -338,7 +339,7 @@ class AzureQuantumJob(JobV1):
         else:
             return ["main"]
 
-    def _format_microsoft_v2_results(self):
+    def _format_microsoft_v2_results(self) -> List[Dict[str, Any]]:
         success = self.details.status == "Succeeded"
 
         if not success:
