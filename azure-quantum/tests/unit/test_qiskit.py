@@ -102,7 +102,7 @@ class TestQiskit(QuantumTestBase):
             circuit.metadata = { "some": "data" }
 
             qiskit_job = backend.run(
-                circuit=circuit,
+                circuit,
                 shots=num_shots
             )
 
@@ -162,13 +162,13 @@ class TestQiskit(QuantumTestBase):
     @pytest.mark.live_test
     def test_plugins_submit_qiskit_to_ionq(self):
         circuit = self._3_qubit_ghz()
-        self._test_qiskit_submit_ionq(circuit=circuit)
+        self._test_qiskit_submit_ionq(circuit)
 
     @pytest.mark.ionq
     @pytest.mark.live_test
     def test_plugins_submit_qiskit_circuit_as_list_to_ionq(self):
         circuit = self._3_qubit_ghz()
-        self._test_qiskit_submit_ionq(circuit=[circuit])
+        self._test_qiskit_submit_ionq([circuit])
 
     @pytest.mark.ionq
     @pytest.mark.live_test
@@ -231,7 +231,7 @@ class TestQiskit(QuantumTestBase):
             shots = kwargs.get("shots", backend.options.shots)
 
             qiskit_job = backend.run(
-                circuit=circuit,
+                circuit,
                 **kwargs
             )
 
@@ -369,7 +369,7 @@ class TestQiskit(QuantumTestBase):
             backend = provider.get_backend("ionq.simulator")
             circuit = self._3_qubit_ghz()
             qiskit_job = backend.run(
-                circuit=circuit,
+                circuit,
                 shots=100
             )
 
@@ -413,13 +413,13 @@ class TestQiskit(QuantumTestBase):
     @pytest.mark.live_test
     def test_plugins_submit_qiskit_to_quantinuum(self):
         circuit = self._3_qubit_ghz()
-        self._test_qiskit_submit_quantinuum(circuit=circuit)
+        self._test_qiskit_submit_quantinuum(circuit)
 
     @pytest.mark.quantinuum
     @pytest.mark.live_test
     def test_plugins_submit_qiskit_circuit_as_list_to_quantinuum(self):
         circuit = self._3_qubit_ghz()
-        self._test_qiskit_submit_quantinuum(circuit=[circuit])
+        self._test_qiskit_submit_quantinuum([circuit])
 
     @pytest.mark.quantinuum
     @pytest.mark.live_test
@@ -461,7 +461,7 @@ class TestQiskit(QuantumTestBase):
                 circuit.metadata = { "some": "data" }
 
             qiskit_job = backend.run(
-                circuit=circuit,
+                circuit,
                 **kwargs
             )
 
@@ -559,7 +559,7 @@ class TestQiskit(QuantumTestBase):
             circuit.metadata = { "some": "data" }
 
             qiskit_job = backend.run(
-                circuit=circuit,
+                circuit,
                 count=shots
             )
 
@@ -639,7 +639,7 @@ class TestQiskit(QuantumTestBase):
             circuit.metadata = { "some": "data" }
 
             qiskit_job = backend.run(
-                circuit=circuit,
+                circuit,
                 shots=shots
             )
 
@@ -710,7 +710,7 @@ class TestQiskit(QuantumTestBase):
             circuit.metadata = { "some": "data" }
 
             qiskit_job = backend.run(
-                circuit=circuit,
+                circuit,
                 shots=shots
             )
             assert qiskit_job._azure_job.details.metadata["num_qubits"] == '3'
@@ -738,7 +738,7 @@ class TestQiskit(QuantumTestBase):
 
             circuit = self._controlled_s()
 
-            qiskit_job = backend.run(circuit=circuit)
+            qiskit_job = backend.run(circuit)
             assert qiskit_job._azure_job.details.metadata["num_qubits"] == '3'
 
             # Make sure the job is completed before fetching results
@@ -766,7 +766,7 @@ class TestQiskit(QuantumTestBase):
 
             circuit = self._controlled_s()
 
-            qiskit_job = backend.run(circuit=circuit, qubitParams={"name": "qubit_gate_ns_e4"}, errorBudget=0.0001)
+            qiskit_job = backend.run(circuit, qubitParams={"name": "qubit_gate_ns_e4"}, errorBudget=0.0001)
             assert qiskit_job._azure_job.details.metadata["num_qubits"] == '3'
 
             # Make sure the job is completed before fetching results
@@ -796,7 +796,7 @@ class TestQiskit(QuantumTestBase):
 
             item1 = {"qubitParams": {"name": "qubit_gate_ns_e3"}, "errorBudget": 1e-4}
             item2 = {"qubitParams": {"name": "qubit_gate_ns_e4"}, "errorBudget": 1e-4}
-            qiskit_job = backend.run(circuit=circuit, items=[item1, item2])
+            qiskit_job = backend.run(circuit, items=[item1, item2])
             assert qiskit_job._azure_job.details.metadata["num_qubits"] == '3'
 
             # Make sure the job is completed before fetching results
