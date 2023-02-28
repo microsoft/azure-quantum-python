@@ -601,12 +601,12 @@ class TestQiskit(QuantumTestBase):
         workspace = self.create_workspace()
         provider = AzureQuantumProvider(workspace=workspace)
 
-        backend = provider.get_backend(RigettiTarget.ASPEN_11.value)
-        assert backend.name() == RigettiTarget.ASPEN_11.value
+        backend = provider.get_backend(RigettiTarget.ASPEN_M_2.value)
+        assert backend.name() == RigettiTarget.ASPEN_M_2.value
         config = backend.configuration()
         assert False == config.simulator
         assert 1 == config.max_experiments
-        assert 38 == config.num_qubits
+        assert 80 == config.num_qubits
         assert "qir.v1" == config.azure["content_type"]
         assert "rigetti" == config.azure["provider_id"]
         assert "qir.v1" == config.azure["input_data_format"]
@@ -746,7 +746,6 @@ class TestQiskit(QuantumTestBase):
 
             if JobStatus.DONE == qiskit_job.status():
                 result = qiskit_job.result()
-                print(result.data())
                 assert result.data()["physicalCounts"]["physicalQubits"] == 12936
                 assert result.data()["physicalCounts"]["runtime"] == 36400
                 assert result.data()["jobParams"]["qubitParams"]["name"] == "qubit_gate_ns_e3"
@@ -775,9 +774,48 @@ class TestQiskit(QuantumTestBase):
 
             if JobStatus.DONE == qiskit_job.status():
                 result = qiskit_job.result()
-                print(result.data())
                 assert result.data()["physicalCounts"]["physicalQubits"] == 3600
                 assert result.data()["physicalCounts"]["runtime"] == 26000
                 assert result.data()["jobParams"]["qubitParams"]["name"] == "qubit_gate_ns_e4"
                 assert result.data()["jobParams"]["qecScheme"]["name"] == "surface_code"
                 assert result.data()["jobParams"]["errorBudget"] == 0.0001
+
+    @pytest.mark.microsoft_qc
+    @pytest.mark.live_test
+    def test_qiskit_controlled_s_to_resource_estimator_with_items(self):
+        with unittest.mock.patch.object(
+            Job,
+            self.mock_create_job_id_name,
+            return_value=self.get_test_job_id(),
+        ):
+            workspace = self.create_workspace()
+            provider = AzureQuantumProvider(workspace=workspace)
+            backend = provider.get_backend("microsoft.estimator")
+
+            circuit = self._controlled_s()
+
+            item1 = {"qubitParams": {"name": "qubit_gate_ns_e3"}, "errorBudget": 1e-4}
+            item2 = {"qubitParams": {"name": "qubit_gate_ns_e4"}, "errorBudget": 1e-4}
+            qiskit_job = backend.run(circuit=circuit, items=[item1, item2])
+            assert qiskit_job._azure_job.details.metadata["num_qubits"] == '3'
+
+            # Make sure the job is completed before fetching results
+            self._qiskit_wait_to_complete(qiskit_job, provider)
+
+            print(qiskit_job)
+            print(dir(qiskit_job))
+
+            if JobStatus.DONE == qiskit_job.status():
+                result = qiskit_job.result()
+
+                assert result.data(0)["physicalCounts"]["physicalQubits"] == 21384
+                assert result.data(0)["physicalCounts"]["runtime"] == 46800
+                assert result.data(0)["jobParams"]["qubitParams"]["name"] == "qubit_gate_ns_e3"
+                assert result.data(0)["jobParams"]["qecScheme"]["name"] == "surface_code"
+                assert result.data(0)["jobParams"]["errorBudget"] == 0.0001
+
+                assert result.data(1)["physicalCounts"]["physicalQubits"] == 3600
+                assert result.data(1)["physicalCounts"]["runtime"] == 26000
+                assert result.data(1)["jobParams"]["qubitParams"]["name"] == "qubit_gate_ns_e4"
+                assert result.data(1)["jobParams"]["qecScheme"]["name"] == "surface_code"
+                assert result.data(1)["jobParams"]["errorBudget"] == 0.0001

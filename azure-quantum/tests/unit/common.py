@@ -66,7 +66,7 @@ class QuantumTestBase(ReplayableTest):
         recording_processors = [
             self._pause_recording_processor,
             regex_replacer,
-            AccessTokenReplacer(),
+            AccessTokenReplacerWithListException(),
             InteractiveAccessTokenReplacer(),
             SubscriptionRecordingProcessor(ZERO_UID),
             AuthenticationMetadataFilter(),
@@ -463,6 +463,26 @@ class AuthenticationMetadataFilter(RecordingProcessor):
             return None
         return request
 
+class AccessTokenReplacerWithListException(AccessTokenReplacer):
+    """
+    Replace the access token for service principal authentication in a response body.
+
+    This is customized for responses that return lists.
+    """
+
+    def __init__(self, replacement='fake_token'):
+        self._replacement = replacement
+
+    def process_response(self, response):
+        import json
+        try:
+            body = json.loads(response['body']['string'])
+            if not isinstance(body, list):
+                body['access_token'] = self._replacement
+        except (KeyError, ValueError):
+            return response
+        response['body']['string'] = json.dumps(body)
+        return response
 
 class InteractiveAccessTokenReplacer(RecordingProcessor):
     """Replace the access token for interactive authentication in a response body."""
