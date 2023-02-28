@@ -12,7 +12,6 @@ from common import QuantumTestBase, ZERO_UID
 from test_job_payload_factory import JobPayloadFactory
 from azure.quantum import Job, Session, JobDetails, SessionStatus
 
-@pytest.skip()
 class TestSession(QuantumTestBase):
     """TestSession
 
@@ -29,6 +28,13 @@ class TestSession(QuantumTestBase):
         if self.is_playback:
             session_id = ZERO_UID
         return session_id
+
+    def _get_job_id(self):
+        job_id = Job.create_job_id()
+        from common import ZERO_UID
+        if self.is_playback:
+            job_id = ZERO_UID
+        return job_id
 
     @pytest.mark.live_test
     @pytest.mark.session
@@ -55,9 +61,10 @@ class TestSession(QuantumTestBase):
         session = Session(workspace=workspace,
                           session_id=session_id,
                           target="ionq.simulator")
+        session_id = session.id if session_id is None else session.id
         self.assertIsNone(session.details.status)
 
-        session.start()
+        session.open()
         self.assertEqual(session.details.status, SessionStatus.WAITING)
 
         obtained_session = workspace.get_session(session_id=session_id)
@@ -79,10 +86,10 @@ class TestSession(QuantumTestBase):
                           target="ionq.simulator")
         self.assertIsNone(session.details.status)
 
-        session.start()
+        session.open()
         self.assertEqual(session.details.status, SessionStatus.WAITING)
 
-        session.end()
+        session.close()
         self.assertEqual(session.details.status, SessionStatus.SUCCEEDED)
 
 
@@ -97,10 +104,10 @@ class TestSession(QuantumTestBase):
                           target="ionq.simulator")
         self.assertIsNone(session.details.status)
 
-        session.start()
+        session.open()
         self.assertEqual(session.details.status, SessionStatus.WAITING)
 
-        job_id = self._get_test_id()
+        job_id = self._get_job_id()
         job = workspace.submit_job(
             Job(workspace=workspace,
                 job_details=JobDetails(id=job_id,
@@ -125,8 +132,8 @@ class TestSession(QuantumTestBase):
         self.assertEqual(job.details.output_data_format, jobs[0].details.output_data_format)
         self.assertEqual(job.details.session_id, jobs[0].details.session_id)
 
-        session.end()
-        self.assertNotEqual(session.details.status, SessionStatus.WAITING)
+        session.close()
+        self.assertNotEquals(session.details.status, SessionStatus.WAITING)
 
 
     @pytest.mark.live_test
@@ -141,7 +148,7 @@ class TestSession(QuantumTestBase):
         session = target.start_session(session_id=session_id)
         self.assertEqual(target.current_session, session)
         self.assertEqual(session.details.status, SessionStatus.WAITING)
-        session.end()
+        session.close()
         self.assertEqual(session.details.status, SessionStatus.SUCCEEDED)
 
 

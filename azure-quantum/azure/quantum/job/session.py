@@ -85,12 +85,12 @@ class Session(WorkspaceItem):
     def target(self) -> "Target":
         return self._target
 
-    def start(self) -> "Session":
-        self.workspace.start_session(self)
+    def open(self) -> "Session":
+        self.workspace.open_session(self)
         return self
 
-    def end(self) -> "Session":
-        self.workspace.end_session(self)
+    def close(self) -> "Session":
+        self.workspace.close_session(self)
         return self
 
     def refresh(self) -> "Session":
@@ -101,7 +101,7 @@ class Session(WorkspaceItem):
         return self
 
     def __exit__(self, type, value, traceback):
-        session = self.end()
+        session = self.close()
         if isinstance(value, Exception):
             raise
 
@@ -162,4 +162,4 @@ class SessionHost(Protocol):
                           target=self._get_azure_target_id(),
                           **kwargs)
         self.current_session = session
-        return session.start()
+        return session.open()

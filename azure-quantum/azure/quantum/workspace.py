@@ -392,31 +392,22 @@ class Workspace:
                   for session_details in session_details_list]
         return result
 
-    def start_session(
+    def open_session(
         self,
         session: Session,
         **kwargs
     ):
         client = self._get_sessions_client()
-        session.details = client.create(
+        session.details = client.open(
             session_id=session.id,
             session=session.details)
 
-    def end_session(
+    def close_session(
         self,
         session: Session
     ):
-        if (session.details.status == SessionStatus.FAILED
-            or session.details.status == SessionStatus.FAILURE_S_
-            or session.details.status == SessionStatus.TIMED_OUT
-            or session.details.status == SessionStatus.SUCCEEDED):
-            logger.warning("Skipping attempt to end session '%s' that has already ended with status '%s'.",
-                           session.id,
-                           session.details.status)
-            return session
-
         client = self._get_sessions_client()
-        session.details = client.end(session_id=session.id)
+        session.details = client.close(session_id=session.id)
         if session.target:
             if (session.target.current_session
                 and session.target.current_session.id == session.id):
