@@ -293,8 +293,8 @@ class JobDetails(ItemDetails):  # pylint: disable=too-many-instance-attributes
     :vartype cost_estimate: ~azure.quantum._client.models.CostEstimate
     :ivar error_data: An error response from Azure.
     :vartype error_data: ~azure.quantum._client.models.ErrorData
-    :ivar job_type: The type of job. Known values are: "Unknown", "QuantumComputing",
-     "QuantumComputingBatch", and "Optimization".
+    :ivar job_type: The type of job. Known values are: "Unknown", "QuantumComputing", and
+     "Optimization".
     :vartype job_type: str or ~azure.quantum._client.models.JobType
     :ivar session_id: The ID of the session that the job is part of.
     :vartype session_id: str

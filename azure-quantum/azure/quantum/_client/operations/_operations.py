@@ -388,7 +388,7 @@ def build_sessions_get_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_sessions_create_request(
+def build_sessions_open_request(
     session_id: str, subscription_id: str, resource_group_name: str, workspace_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -428,7 +428,7 @@ def build_sessions_create_request(
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_sessions_end_request(
+def build_sessions_close_request(
     session_id: str, subscription_id: str, resource_group_name: str, workspace_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -440,7 +440,7 @@ def build_sessions_end_request(
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Quantum/workspaces/{workspaceName}/sessions/{sessionId}:end"  # pylint: disable=line-too-long
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Quantum/workspaces/{workspaceName}/sessions/{sessionId}:close"  # pylint: disable=line-too-long
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
@@ -1441,14 +1441,14 @@ class SessionsOperations:
         return deserialized
 
     @overload
-    def create(
+    def open(
         self, session_id: str, session: _models.SessionDetails, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.SessionDetails:
-        """Create a session.
+        """Open a session.
 
         :param session_id: Id of the session. Required.
         :type session_id: str
-        :param session: The complete metadata of the session to create. Required.
+        :param session: The complete metadata of the session to be opened. Required.
         :type session: ~azure.quantum._client.models.SessionDetails
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -1459,14 +1459,14 @@ class SessionsOperations:
         """
 
     @overload
-    def create(
+    def open(
         self, session_id: str, session: IO, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.SessionDetails:
-        """Create a session.
+        """Open a session.
 
         :param session_id: Id of the session. Required.
         :type session_id: str
-        :param session: The complete metadata of the session to create. Required.
+        :param session: The complete metadata of the session to be opened. Required.
         :type session: IO
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -1477,15 +1477,15 @@ class SessionsOperations:
         """
 
     @distributed_trace
-    def create(
+    def open(
         self, session_id: str, session: Union[_models.SessionDetails, IO], **kwargs: Any
     ) -> _models.SessionDetails:
-        """Create a session.
+        """Open a session.
 
         :param session_id: Id of the session. Required.
         :type session_id: str
-        :param session: The complete metadata of the session to create. Is either a SessionDetails type
-         or a IO type. Required.
+        :param session: The complete metadata of the session to be opened. Is either a SessionDetails
+         type or a IO type. Required.
         :type session: ~azure.quantum._client.models.SessionDetails or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -1516,7 +1516,7 @@ class SessionsOperations:
         else:
             _json = self._serialize.body(session, "SessionDetails")
 
-        request = build_sessions_create_request(
+        request = build_sessions_open_request(
             session_id=session_id,
             subscription_id=self._config.subscription_id,
             resource_group_name=self._config.resource_group_name,
@@ -1553,8 +1553,8 @@ class SessionsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def end(self, session_id: str, **kwargs: Any) -> _models.SessionDetails:
-        """End a session.
+    def close(self, session_id: str, **kwargs: Any) -> _models.SessionDetails:
+        """Close a session.
 
         :param session_id: Id of the session. Required.
         :type session_id: str
@@ -1575,7 +1575,7 @@ class SessionsOperations:
 
         cls: ClsType[_models.SessionDetails] = kwargs.pop("cls", None)
 
-        request = build_sessions_end_request(
+        request = build_sessions_close_request(
             session_id=session_id,
             subscription_id=self._config.subscription_id,
             resource_group_name=self._config.resource_group_name,

@@ -34,11 +34,11 @@ from ...operations._operations import (
     build_jobs_patch_request,
     build_providers_get_status_request,
     build_quotas_list_request,
-    build_sessions_create_request,
-    build_sessions_end_request,
+    build_sessions_close_request,
     build_sessions_get_request,
     build_sessions_jobs_list_request,
     build_sessions_list_request,
+    build_sessions_open_request,
     build_storage_sas_uri_request,
     build_top_level_items_list_request,
 )
@@ -946,14 +946,14 @@ class SessionsOperations:
         return deserialized
 
     @overload
-    async def create(
+    async def open(
         self, session_id: str, session: _models.SessionDetails, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.SessionDetails:
-        """Create a session.
+        """Open a session.
 
         :param session_id: Id of the session. Required.
         :type session_id: str
-        :param session: The complete metadata of the session to create. Required.
+        :param session: The complete metadata of the session to be opened. Required.
         :type session: ~azure.quantum._client.models.SessionDetails
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -964,14 +964,14 @@ class SessionsOperations:
         """
 
     @overload
-    async def create(
+    async def open(
         self, session_id: str, session: IO, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.SessionDetails:
-        """Create a session.
+        """Open a session.
 
         :param session_id: Id of the session. Required.
         :type session_id: str
-        :param session: The complete metadata of the session to create. Required.
+        :param session: The complete metadata of the session to be opened. Required.
         :type session: IO
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -982,15 +982,15 @@ class SessionsOperations:
         """
 
     @distributed_trace_async
-    async def create(
+    async def open(
         self, session_id: str, session: Union[_models.SessionDetails, IO], **kwargs: Any
     ) -> _models.SessionDetails:
-        """Create a session.
+        """Open a session.
 
         :param session_id: Id of the session. Required.
         :type session_id: str
-        :param session: The complete metadata of the session to create. Is either a SessionDetails type
-         or a IO type. Required.
+        :param session: The complete metadata of the session to be opened. Is either a SessionDetails
+         type or a IO type. Required.
         :type session: ~azure.quantum._client.models.SessionDetails or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
@@ -1021,7 +1021,7 @@ class SessionsOperations:
         else:
             _json = self._serialize.body(session, "SessionDetails")
 
-        request = build_sessions_create_request(
+        request = build_sessions_open_request(
             session_id=session_id,
             subscription_id=self._config.subscription_id,
             resource_group_name=self._config.resource_group_name,
@@ -1058,8 +1058,8 @@ class SessionsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def end(self, session_id: str, **kwargs: Any) -> _models.SessionDetails:
-        """End a session.
+    async def close(self, session_id: str, **kwargs: Any) -> _models.SessionDetails:
+        """Close a session.
 
         :param session_id: Id of the session. Required.
         :type session_id: str
@@ -1080,7 +1080,7 @@ class SessionsOperations:
 
         cls: ClsType[_models.SessionDetails] = kwargs.pop("cls", None)
 
-        request = build_sessions_end_request(
+        request = build_sessions_close_request(
             session_id=session_id,
             subscription_id=self._config.subscription_id,
             resource_group_name=self._config.resource_group_name,

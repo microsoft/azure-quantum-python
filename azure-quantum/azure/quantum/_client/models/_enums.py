@@ -41,7 +41,6 @@ class JobType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     UNKNOWN = "Unknown"
     QUANTUM_COMPUTING = "QuantumComputing"
-    QUANTUM_COMPUTING_BATCH = "QuantumComputingBatch"
     OPTIMIZATION = "Optimization"
 
 
