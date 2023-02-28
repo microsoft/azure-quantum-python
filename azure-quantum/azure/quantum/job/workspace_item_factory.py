@@ -31,6 +31,6 @@ class WorkspaceItemFactory():
         if isinstance(item_details, JobDetails):
             return Job(workspace, job_details=item_details)
         elif isinstance(item_details, SessionDetails):
-            return Session(workspace, session_details=item_details)
+            return Session(workspace, details=item_details)
         else:
             raise TypeError("item_details must be of type `SessionDetails` or `JobDetails`.")

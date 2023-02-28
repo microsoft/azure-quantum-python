@@ -31,37 +31,37 @@ class Session(WorkspaceItem):
     def __init__(
             self,
             workspace: "Workspace",
-            session_details: Optional[SessionDetails] = None,
+            details: Optional[SessionDetails] = None,
             target: Union[str, "Target", None] = None,
             provider_id: Optional[str] = None,
-            session_id: Optional[str] = None,
-            session_name: Optional[str] = None,
+            id: Optional[str] = None,
+            name: Optional[str] = None,
             job_failure_policy: Union[str, SessionJobFailurePolicy, None] = None,
             **kwargs):
         from azure.quantum.target import Target
         target_name = target.name if isinstance(target, Target) else target
         self._target = target if isinstance(target, Target) else None
 
-        if (session_details is not None) and (
+        if (details is not None) and (
             (isinstance(target, str)) or
             (provider_id is not None) or
-            (session_id is not None) or
-            (session_name is not None) or
+            (id is not None) or
+            (name is not None) or
             (job_failure_policy is not None)):
             raise ValueError("""If `session_details` is passed, you should not pass `target`, 
                                 `provider_id`, `session_id`, `session_name` or `job_failure_policy`.""")
 
-        if (session_details is None) and (target is None):
+        if (details is None) and (target is None):
             raise ValueError("If `session_details` is not passed, you should at least pass the `target`.")
 
-        if session_details is None:
+        if details is None:
             import uuid
             import re
-            session_id = session_id if session_id is not None else str(uuid.uuid1())
-            session_name = session_name if session_name is not None else f"session-{session_id}"
+            id = id if id is not None else str(uuid.uuid1())
+            name = name if name is not None else f"session-{id}"
             provider_id = provider_id if provider_id is not None else re.match(r"(\w+)\.", target_name).group(1)
-            session_details = SessionDetails(id=session_id,
-                                             name=session_name,
+            details = SessionDetails(id=id,
+                                             name=name,
                                              provider_id=provider_id,
                                              target=target_name,
                                              job_failure_policy=job_failure_policy,
@@ -69,7 +69,7 @@ class Session(WorkspaceItem):
 
         super().__init__(
             workspace=workspace,
-            details=session_details,
+            details=details,
             **kwargs
         )
 
@@ -145,18 +145,18 @@ class SessionHost(Protocol):
 
     def start_session(
         self,
-        session_details: Optional[SessionDetails] = None,
-        session_id: Optional[str] = None,
-        session_name: Optional[str] = None,
+        details: Optional[SessionDetails] = None,
+        id: Optional[str] = None,
+        name: Optional[str] = None,
         job_failure_policy: Union[str, SessionJobFailurePolicy, None] = None,
         **kwargs
     ) -> Session:
         if self.current_session:
-            raise AlreadyHasASessionError(session.target.current_session.id)
+            self.current_session.close()
 
-        session = Session(session_details=session_details,
-                          session_id=session_id,
-                          session_name=session_name,
+        session = Session(details=details,
+                          id=id,
+                          name=name,
                           job_failure_policy=job_failure_policy,
                           workspace=self._get_azure_workspace(),
                           target=self._get_azure_target_id(),

@@ -388,7 +388,7 @@ class Workspace:
         client = self._get_sessions_client()
         odata_filter = filter.as_odata if filter is not None else None
         session_details_list = client.list(filter = odata_filter)
-        result = [Session(workspace=self,session_details=session_details) 
+        result = [Session(workspace=self,details=session_details) 
                   for session_details in session_details_list]
         return result
 
@@ -425,7 +425,7 @@ class Workspace:
     ) -> Session:
         client = self._get_sessions_client()
         session_details = client.get(session_id=session_id)
-        result = Session(workspace=self,session_details=session_details)
+        result = Session(workspace=self,details=session_details)
         return result
 
     def list_session_jobs(
