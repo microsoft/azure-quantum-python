@@ -91,10 +91,10 @@ function Install-Package() {
       $ParentPath = Split-Path -parent $PSScriptRoot
       $AbsPackageDir = Join-Path $ParentPath $PackageName
       Write-Host "##[info]Install package $AbsPackageDir in development mode for env $EnvName"
-      pip install -e $AbsPackageDir
+      pip install -e "$AbsPackageDir[all]"
     } else {
       Write-Host "##[info]Install package $PackageName for env $EnvName"
-      pip install $PackageName
+      pip install "$PackageName[all]"
     }
 }
 
