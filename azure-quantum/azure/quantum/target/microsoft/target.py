@@ -1,7 +1,12 @@
+##
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# Licensed under the MIT License.
+##
 from ...job.base_job import ContentType
 from ...workspace import Workspace
 from ..target import Target
 from . import MicrosoftEstimatorJob
+
 
 class MicrosoftEstimator(Target):
     """
