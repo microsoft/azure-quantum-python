@@ -7,10 +7,13 @@
 # Licensed under the MIT License.
 ##
 import pytest
+import unittest
+import unittest.mock
 from os import path
 
-from common import QuantumTestBase
+from common import QuantumTestBase, ZERO_UID
 
+from azure.quantum.job.job import Job
 from azure.quantum.target.microsoft import MicrosoftEstimatorJob
 
 class TestMicrosoftQC(QuantumTestBase):
@@ -18,6 +21,13 @@ class TestMicrosoftQC(QuantumTestBase):
     
     Tests the azure.quantum.target.microsoft module.
     """
+
+    mock_create_job_id_name = "create_job_id"
+    create_job_id = Job.create_job_id
+
+    def get_test_job_id(self):
+        return ZERO_UID if self.is_playback \
+               else Job.create_job_id()
 
     def _ccnot_bitcode(self) -> bytes:
         """
@@ -35,14 +45,19 @@ class TestMicrosoftQC(QuantumTestBase):
 
         Checks whether job and results have expected type.
         """
-        ws = self.create_workspace()
-        estimator = ws.get_targets("microsoft.estimator")
+        with unittest.mock.patch.object(
+            Job,
+            self.mock_create_job_id_name,
+            return_value=self.get_test_job_id(),
+        ):
+            ws = self.create_workspace()
+            estimator = ws.get_targets("microsoft.estimator")
 
-        ccnot = self._ccnot_bitcode()
-        job = estimator.submit(ccnot)
-        assert type(job) == MicrosoftEstimatorJob
+            ccnot = self._ccnot_bitcode()
+            job = estimator.submit(ccnot)
+            assert type(job) == MicrosoftEstimatorJob
 
-        job.wait_until_completed()
-        result = job.get_results()
+            job.wait_until_completed()
+            result = job.get_results()
 
-        assert type(result) == dict
+            assert type(result) == dict
