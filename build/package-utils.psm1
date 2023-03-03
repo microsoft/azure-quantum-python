@@ -163,6 +163,6 @@ function Invoke-Tests() {
     pip install pytest pytest-azurepipelines pytest-cov | Write-Host
     # Run tests
     $PkgName = $PackageName.replace("-", ".")
-    pytest --cov-report term --cov=$PkgName --junitxml test-output-$PackageName.xml $AbsPackageDir | Write-Host
+    pytest --no-header -vv --cov-report term --cov=$PkgName --junitxml test-output-$PackageName.xml $AbsPackageDir | Write-Host
     return ($LASTEXITCODE -eq 0)
 }
