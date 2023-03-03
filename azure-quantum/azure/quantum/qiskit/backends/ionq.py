@@ -46,7 +46,6 @@ class IonQQirBackendBase(AzureQirBackend):
         config.update(
             {
                 "provider_id": "ionq",
-                "output_data_format": "microsoft.quantum-results.v2",
             }
         )
         return config
@@ -175,7 +174,7 @@ class IonQBackend(AzureBackend):
 
         return metadata
 
-    def _translate_input(self, circuit, data_format, input_params, to_qir_kwargs={}):
+    def _translate_input(self, circuit):
         """ Translates the input values to the format expected by the AzureBackend. """
         ionq_circ, _, _ = qiskit_circ_to_ionq_circ(circuit, gateset=self.gateset())
         input_data = {
@@ -183,7 +182,7 @@ class IonQBackend(AzureBackend):
             "qubits": circuit.num_qubits,
             "circuit": ionq_circ,
         }
-        return (IonQ._encode_input_data(input_data), data_format, input_params)
+        return IonQ._encode_input_data(input_data)
 
     def gateset(self):
         return self._gateset

@@ -213,7 +213,10 @@ see https://aka.ms/AQ/Docs/AddProvider"
         configuration_filters = {}
         unknown_filters = {}
         for key, value in kwargs.items():
-            if all(
+            # If `any` of the backends has the key in its configuration, filter by it.
+            # qiskit API for this requires `all` backends to have the key in
+            # their configuration to be considered for filtering
+            if any(
                 _has_config_value(backend.configuration(), key) for backend in backends
             ):
                 configuration_filters[key] = value

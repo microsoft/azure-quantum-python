@@ -53,7 +53,6 @@ class QCIBackend(AzureQirBackend):
         config.update(
             {
                 "provider_id": "qci",
-                "output_data_format": "microsoft.quantum-results.v1",
             }
         )
         return config

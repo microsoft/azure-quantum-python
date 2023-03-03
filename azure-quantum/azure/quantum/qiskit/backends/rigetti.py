@@ -54,7 +54,6 @@ class RigettiBackend(AzureQirBackend):
         config.update(
             {
                 "provider_id": "rigetti",
-                "output_data_format": "microsoft.quantum-results.v1",
             }
         )
         return config

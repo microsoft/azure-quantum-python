@@ -68,7 +68,6 @@ class QuantinuumQirBackendBase(AzureQirBackend):
         config.update(
             {
                 "provider_id": QUANTINUUM_PROVIDER_ID,
-                "output_data_format": "microsoft.quantum-results.v1",
             }
         )
         return config
@@ -82,7 +81,7 @@ class QuantinuumSyntaxCheckerQirBackend(QuantinuumQirBackendBase):
     backend_names = (
         # Note: Target names on the same line are equivalent.
         "quantinuum.hqs-lt-s1-apival", "quantinuum.sim.h1-1sc",
-        "quantinuum.hqs-lt-s2-apival", "quantinuum.sim.h1-2sc"
+        "quantinuum.hqs-lt-s2-apival", "quantinuum.sim.h1-2sc",
     )
 
     def __init__(self, name: str, provider: "AzureQuantumProvider", **kwargs):
@@ -119,7 +118,7 @@ class QuantinuumEmulatorQirBackend(QuantinuumQirBackendBase):
     backend_names = (
         # Note: Target names on the same line are equivalent.
         "quantinuum.hqs-lt-s1-sim", "quantinuum.sim.h1-1e",
-        "quantinuum.hqs-lt-s2-sim", "quantinuum.sim.h1-2e"
+        "quantinuum.hqs-lt-s2-sim", "quantinuum.sim.h1-2e",
     )
 
     def __init__(self, name: str, provider: "AzureQuantumProvider", **kwargs):
@@ -156,7 +155,7 @@ class QuantinuumQPUQirBackend(QuantinuumQirBackendBase):
     backend_names = (
         # Note: Target names on the same line are equivalent.
         "quantinuum.hqs-lt-s1", "quantinuum.qpu.h1-1",
-        "quantinuum.hqs-lt-s2", "quantinuum.qpu.h1-2"
+        "quantinuum.hqs-lt-s2", "quantinuum.qpu.h1-2",
     )
 
     def __init__(self, name: str, provider: "AzureQuantumProvider", **kwargs):
@@ -211,9 +210,9 @@ class QuantinuumBackend(AzureBackend):
             "is_default": True,
         }
 
-    def _translate_input(self, circuit, data_format, input_params, to_qir_kwargs={}):
+    def _translate_input(self, circuit):
         """Translates the input values to the format expected by the AzureBackend."""
-        return (circuit.qasm(), data_format, input_params)
+        return circuit.qasm()
 
     def estimate_cost(
         self, circuit: QuantumCircuit, shots: int = None, count: int = None
@@ -242,11 +241,12 @@ class QuantinuumBackend(AzureBackend):
         name = name.lower()
         return 20 if "h1-1" in name or "s1" in name else 12
 
+
 class QuantinuumSyntaxCheckerBackend(QuantinuumBackend):
     backend_names = (
         # Note: Target names on the same line are equivalent.
         "quantinuum.hqs-lt-s1-apival", "quantinuum.sim.h1-1sc",
-        "quantinuum.hqs-lt-s2-apival", "quantinuum.sim.h1-2sc"
+        "quantinuum.hqs-lt-s2-apival", "quantinuum.sim.h1-2sc",
     )
 
     def __init__(self, name: str, provider: "AzureQuantumProvider", **kwargs):
@@ -283,7 +283,7 @@ class QuantinuumEmulatorBackend(QuantinuumBackend):
     backend_names = (
         # Note: Target names on the same line are equivalent.
         "quantinuum.hqs-lt-s1-sim", "quantinuum.sim.h1-1e",
-        "quantinuum.hqs-lt-s2-sim", "quantinuum.sim.h1-2e"
+        "quantinuum.hqs-lt-s2-sim", "quantinuum.sim.h1-2e",
     )
 
     def __init__(self, name: str, provider: "AzureQuantumProvider", **kwargs):
@@ -320,7 +320,7 @@ class QuantinuumQPUBackend(QuantinuumBackend):
     backend_names = (
         # Note: Target names on the same line are equivalent.
         "quantinuum.hqs-lt-s1", "quantinuum.qpu.h1-1",
-        "quantinuum.hqs-lt-s2", "quantinuum.qpu.h1-2"
+        "quantinuum.hqs-lt-s2", "quantinuum.qpu.h1-2",
     )
 
     def __init__(self, name: str, provider: "AzureQuantumProvider", **kwargs):
