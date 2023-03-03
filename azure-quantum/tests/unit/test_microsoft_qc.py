@@ -46,18 +46,25 @@ class TestMicrosoftQC(QuantumTestBase):
         Checks whether job and results have expected type.
         """
         with unittest.mock.patch.object(
-            Job,
+            MicrosoftEstimatorJob,
             self.mock_create_job_id_name,
             return_value=self.get_test_job_id(),
         ):
-            ws = self.create_workspace()
-            estimator = ws.get_targets("microsoft.estimator")
+            # Modify the Job.wait_until_completed method
+            # such that it only records once
+            # See: https://github.com/microsoft/qdk-python/issues/118
+            with unittest.mock.patch.object(
+                Job,
+                "wait_until_completed",
+                self.mock_wait(Job.wait_until_completed)
+            ):
+                ws = self.create_workspace()
+                estimator = ws.get_targets("microsoft.estimator")
 
-            ccnot = self._ccnot_bitcode()
-            job = estimator.submit(ccnot)
-            assert type(job) == MicrosoftEstimatorJob
+                ccnot = self._ccnot_bitcode()
+                job = estimator.submit(ccnot)
+                assert type(job) == MicrosoftEstimatorJob
+                job.wait_until_completed()
+                result = job.get_results()
 
-            job.wait_until_completed()
-            result = job.get_results()
-
-            assert type(result) == dict
+                assert type(result) == dict
