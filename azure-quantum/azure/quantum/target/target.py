@@ -20,6 +20,11 @@ class Target:
     # This variable is used by TargetFactory. To set the default
     # target class for a given provider, specify the
     # default_targets constructor argument.
+    #
+    # If you provide a custom job class (derived from
+    # azurem.quantum.job.job.Job) for this target, you must pass this type to
+    # __init__ via the job_cls parameter.  This is then used by the target's
+    # submit and get_job method.
     target_names = ()
 
     def __init__(
@@ -35,6 +40,13 @@ class Target:
         current_availability: str = "",
         job_cls: Type[Job] = Job
     ):
+        """
+        Initializes a new target.
+
+        :param job_cls: The job class used by submit and get_job.  The default
+            is Job.
+        :type job_cls: Type[Job]
+        """
         if not provider_id and "." in name:
             provider_id = name.split(".")[0]
         self.workspace = workspace
