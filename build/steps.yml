@@ -16,6 +16,7 @@ steps:
        -CondaEnvironmentSuffix '${{ parameters.CondaEnvironmentSuffix }}' `
        -FromSource $True
   displayName: Create ${{ parameters.PackageName }}${{ parameters.CondaEnvironmentSuffix}} conda environment and install ${{ parameters.PackageName }} package from source
+  workingDirectory: '$(System.DefaultWorkingDirectory)'
 
 - pwsh: |
     (& "$(CondaPath)/conda" "shell.powershell" "hook") | Out-String | Invoke-Expression
