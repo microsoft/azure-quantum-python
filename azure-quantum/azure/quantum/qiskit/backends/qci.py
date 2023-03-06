@@ -5,11 +5,11 @@
 
 from typing import TYPE_CHECKING
 from azure.quantum.version import __version__
-
+from abc import abstractmethod
 from .backend import AzureQirBackend
 
 from qiskit.providers.models import BackendConfiguration
-from qiskit.providers import Options
+from qiskit.providers import Options, Provider
 
 QIR_BASIS_GATES = [
     "measure",
@@ -44,6 +44,12 @@ __all__ = ["QCISimulatorBackend" "QCIQPUBackend"]
 
 
 class QCIBackend(AzureQirBackend):
+    @abstractmethod
+    def __init__(
+        self, configuration: BackendConfiguration, provider: Provider = None, **fields
+    ):
+        super().__init__(configuration, provider, **fields)
+
     @classmethod
     def _default_options(cls) -> Options:
         return Options(shots=500, targetCapability="AdaptiveExecution")

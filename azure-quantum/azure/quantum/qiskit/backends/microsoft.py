@@ -6,11 +6,11 @@
 from typing import TYPE_CHECKING, Any, Dict, List
 from azure.quantum.version import __version__
 from qiskit import QuantumCircuit
-
+from abc import abstractmethod
 from .backend import AzureQirBackend
 
 from qiskit.providers.models import BackendConfiguration
-from qiskit.providers import Options
+from qiskit.providers import Options, Provider
 
 QIR_BASIS_GATES = [
     "measure",
@@ -46,6 +46,12 @@ __all__ = ["MicrosoftBackend", "MicrosoftResourceEstimationBackend"]
 
 class MicrosoftBackend(AzureQirBackend):
     """Base class for interfacing with a Microsoft backend in Azure Quantum"""
+
+    @abstractmethod
+    def __init__(
+        self, configuration: BackendConfiguration, provider: Provider = None, **fields
+    ):
+        super().__init__(configuration, provider, **fields)
 
     @classmethod
     def _default_options(cls):
@@ -116,4 +122,4 @@ class MicrosoftResourceEstimationBackend(MicrosoftBackend):
         if not input_params.get("items", None):
             del input_params["items"]
 
-        return super()._translate_input(self, circuits, input_params)
+        return super()._translate_input(circuits, input_params)

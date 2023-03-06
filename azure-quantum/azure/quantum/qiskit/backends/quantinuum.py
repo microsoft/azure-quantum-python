@@ -6,7 +6,7 @@
 from azure.quantum.version import __version__
 
 from .backend import AzureBackend, AzureQirBackend
-
+from abc import abstractmethod
 from qiskit import QuantumCircuit
 from qiskit.providers.models import BackendConfiguration
 from qiskit.providers import Options
@@ -52,11 +52,10 @@ QUANTINUUM_PROVIDER_NAME = "Quantinuum"
 
 
 class QuantinuumQirBackendBase(AzureQirBackend):
+    @abstractmethod
     def __init__(
         self, configuration: BackendConfiguration, provider: Provider = None, **fields
     ):
-        self._provider_id = QUANTINUUM_PROVIDER_ID
-        self._provider_name = QUANTINUUM_PROVIDER_NAME
         super().__init__(configuration, provider, **fields)
 
     @classmethod
@@ -191,10 +190,11 @@ class QuantinuumQPUQirBackend(QuantinuumQirBackendBase):
 class QuantinuumBackend(AzureBackend):
     """Base class for interfacing with a Quantinuum (formerly Honeywell) backend in Azure Quantum"""
 
-    def __init__(self, **kwargs):
-        self._provider_id = QUANTINUUM_PROVIDER_ID
-        self._provider_name = QUANTINUUM_PROVIDER_NAME
-        super().__init__(**kwargs)
+    @abstractmethod
+    def __init__(
+        self, configuration: BackendConfiguration, provider: Provider = None, **fields
+    ):
+        super().__init__(configuration, provider, **fields)
 
     @classmethod
     def _default_options(cls):

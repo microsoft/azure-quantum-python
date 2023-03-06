@@ -33,6 +33,7 @@ To install run: pip install azure-quantum[qiskit]"
 
 
 class AzureBackendBase(Backend):
+    @abstractmethod
     def __init__(
         self, configuration: BackendConfiguration, provider: Provider = None, **fields
     ):
@@ -139,6 +140,7 @@ class AzureBackendBase(Backend):
 
 
 class AzureQirBackend(AzureBackendBase):
+    @abstractmethod
     def __init__(
         self, configuration: BackendConfiguration, provider: Provider = None, **fields
     ):
@@ -154,6 +156,8 @@ class AzureQirBackend(AzureBackendBase):
     def run(
         self, run_input: Union[QuantumCircuit, List[QuantumCircuit]], **options
     ) -> AzureQuantumJob:
+        # TODO: override doc comments instead of using the base class doc comments
+
         circuits = list([])
         if isinstance(run_input, QuantumCircuit):
             circuits = [run_input]
@@ -266,6 +270,12 @@ class AzureQirBackend(AzureBackendBase):
 class AzureBackend(AzureBackendBase):
     """Base class for interfacing with a backend in Azure Quantum"""
 
+    @abstractmethod
+    def __init__(
+        self, configuration: BackendConfiguration, provider: Provider = None, **fields
+    ):
+        super().__init__(configuration, provider, **fields)
+
     backend_name = None
 
     def _prepare_job_metadata(self, circuit):
@@ -283,6 +293,8 @@ class AzureBackend(AzureBackendBase):
 
     def run(self, circuit, **kwargs):
         """Submits the given circuit to run on an Azure Quantum backend."""
+        options = kwargs
+        
         # Some Qiskit features require passing lists of circuits, so unpack those here.
         # We currently only support single-experiment jobs.
         if isinstance(circuit, (list, tuple)):
@@ -297,21 +309,21 @@ class AzureBackend(AzureBackendBase):
 
             circuits, run, _ = disassemble(circuit)
             circuit = circuits[0]
-            if kwargs.get("shots") is None:
+            if options.get("shots") is None:
                 # Note that the default number of shots for QObj is 1024
                 # unless the user specifies the backend.
-                kwargs["shots"] = run["shots"]
+                options["shots"] = run["shots"]
 
-        # If not provided as kwargs, the values of these parameters
+        # If not provided as options, the values of these parameters
         # are calculated from the circuit itself:
-        job_name = kwargs.pop("job_name", circuit.name)
-        metadata = kwargs.pop("metadata", self._prepare_job_metadata(circuit))
+        job_name = options.pop("job_name", circuit.name)
+        metadata = options.pop("metadata", self._prepare_job_metadata(circuit))
 
-        input_params = self._get_input_params(**kwargs)
+        input_params = self._get_input_params(**options)
 
         input_data = self._translate_input(circuit)
 
-        job = super()._run(job_name, input_data, input_params, metadata, **kwargs)
+        job = super()._run(job_name, input_data, input_params, metadata, **options)
 
         shots_count = input_params["count"]
         logger.info(

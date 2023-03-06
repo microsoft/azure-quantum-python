@@ -22,6 +22,7 @@ from azure.quantum.qiskit.job import AzureQuantumJob
 from azure.quantum.qiskit.backends import *
 from itertools import groupby
 import warnings
+import inspect
 
 # Target ID keyword for parameter-free solvers
 PARAMETER_FREE = "parameterfree"
@@ -132,18 +133,20 @@ see https://aka.ms/AQ/Docs/AddProvider"
             candidates.append((status.id, provider_id))
         return candidates
 
-    def _get_leaf_subclasses(self, subtype: Type[Backend]):
+    def _get_candidate_subclasses(self, subtype: Type[Backend]):
+        if not inspect.isabstract(subtype):
+            yield subtype
+
         subclasses = subtype.__subclasses__()
         if subclasses:
             for subclass in subclasses:
-                for leaf in self._get_leaf_subclasses(subclass):
+                for leaf in self._get_candidate_subclasses(subclass):
                     yield leaf
-        else:
-            yield subtype
+
 
     def _init_backends(self) -> Dict[str, List[Backend]]:
         instances: Dict[str, List[Backend]] = {}
-        subclasses = list(self._get_leaf_subclasses(subtype=AzureBackendBase))
+        subclasses = list(self._get_candidate_subclasses(subtype=AzureBackendBase))
 
         for backend_cls in subclasses:
             backend_names = self._backend_names(backend_cls)
