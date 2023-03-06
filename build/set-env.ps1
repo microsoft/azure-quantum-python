@@ -11,7 +11,7 @@ If ($null -eq $Env:BUILD_VERBOSITY) { $Env:BUILD_VERBOSITY = "m"}
 If ($null -eq $Env:ASSEMBLY_VERSION) { $Env:ASSEMBLY_VERSION = "$Env:BUILD_BUILDNUMBER"}
 If ($null -eq $Env:PYTHON_VERSION) { $Env:PYTHON_VERSION = "${Env:ASSEMBLY_VERSION}a1" }
 
-If ($null -eq $Env:DROPS_DIR) { $Env:DROPS_DIR =  [IO.Path]::GetFullPath((Join-Path $PSScriptRoot "..\drops")) }
+If ($null -eq $Env:DROPS_DIR) { $Env:DROPS_DIR =  [IO.Path]::GetFullPath((Join-Path $PSScriptRoot "..\drop\drops")) }
 
 If ($null -eq $Env:PYTHON_OUTDIR) { $Env:PYTHON_OUTDIR =  (Join-Path $Env:DROPS_DIR "wheels") }
 If (-not (Test-Path -Path $Env:PYTHON_OUTDIR)) { [IO.Directory]::CreateDirectory($Env:PYTHON_OUTDIR) }
