@@ -253,16 +253,10 @@ class AzureQirBackend(AzureBackendBase):
             circuits, targetCapability, **to_qir_kwargs
         )
 
-        # TODO: Do we ever forsee the need to support separate arguments for each entry point?
         arguments = input_params.pop("arguments", [])
-        if len(entry_points) == 1:
-            # TODO: Do we need to support both entry point defs?
-            input_params["entryPoint"] = entry_points[0]
-            input_params["arguments"] = arguments
-        else:
-            input_params["items"] = [
-                {"entryPoint": name, "arguments": arguments} for name in entry_points
-            ]
+        input_params["items"] = [
+            {"entryPoint": name, "arguments": arguments} for name in entry_points
+        ]
 
         return input_data
 
