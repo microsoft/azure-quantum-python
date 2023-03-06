@@ -56,6 +56,23 @@ class AzureQuantumProvider(Provider):
         """
 
         backends = self.backends(name=name, **kwargs)
+
+        if len(backends) > 1:
+            def all_same(iterable):
+                group_iter = groupby(iterable)
+                return next(group_iter, True) and not next(group_iter, False)
+
+            # If all backends have the same name, filter for default backend
+            if all_same(backend.name() for backend in backends):
+                backends = list(
+                    filter(
+                        lambda backend: self._match_all(
+                            backend.configuration().to_dict(), {"is_default": True}
+                        ),
+                        backends,
+                    )
+                )
+
         if len(backends) > 1:
             raise QiskitBackendNotFoundError(
                 "More than one backend matches the criteria"
@@ -175,6 +192,27 @@ see https://aka.ms/AQ/Docs/AddProvider"
                 f"Backend {backend_cls} could not be instantiated: {err}"
             ) from err
 
+    def _match_all(self, obj, criteria):
+        """Return True if all items in criteria matches items in obj."""
+        return all(
+            self._match_config(obj, key_, value_) for key_, value_ in criteria.items()
+        )
+
+    def _match_config(self, obj, key, value):
+        """Return True if the criteria matches the base config or azure config."""
+        return obj.get(key, None) == value or self._match_azure_config(
+            obj, key, value
+        )
+
+    def _match_azure_config(self, obj, key, value):
+        """Return True if the criteria matches the azure config."""
+        azure_config = obj.get("azure", {})
+        return azure_config.get(key, None) == value
+
+    def _has_config_value(self, obj, key):
+        """Return True if the key is found in the root config or azure config."""
+        return key in obj or key in obj.get("azure", {})
+
     def _filter_backends(
         self, backends: List[Backend], filters=None, **kwargs
     ) -> List[Backend]:
@@ -192,35 +230,15 @@ see https://aka.ms/AQ/Docs/AddProvider"
                 conditions.
         """
 
-        def _match_all(obj, criteria):
-            """Return True if all items in criteria matches items in obj."""
-            return all(
-                _match_config(obj, key_, value_) for key_, value_ in criteria.items()
-            )
-
-        def _match_config(obj, key, value):
-            """Return True if the criteria matches the base config or azure config."""
-            return getattr(obj, key, None) == value or _match_azure_config(
-                obj, key, value
-            )
-
-        def _match_azure_config(obj, key, value):
-            """Return True if the criteria matches the azure config."""
-            azure_config = obj.to_dict().get("azure", {})
-            return azure_config.get(key, None) == value
-
-        def _has_config_value(obj, key):
-            """Return True if the key is found in the root config or azure config."""
-            return key in obj or key in obj.to_dict().get("azure", {})
-
         configuration_filters = {}
         unknown_filters = {}
         for key, value in kwargs.items():
             # If `any` of the backends has the key in its configuration, filter by it.
             # qiskit API for this requires `all` backends to have the key in
             # their configuration to be considered for filtering
+            print(f"Looking for {key} with {value}")
             if any(
-                _has_config_value(backend.configuration(), key) for backend in backends
+                self._has_config_value(backend.configuration().to_dict(), key) for backend in backends
             ):
                 configuration_filters[key] = value
             else:
@@ -229,8 +247,8 @@ see https://aka.ms/AQ/Docs/AddProvider"
         if configuration_filters:
             backends = list(
                 filter(
-                    lambda backend: _match_all(
-                        backend.configuration(), configuration_filters
+                    lambda backend: self._match_all(
+                        backend.configuration().to_dict(), configuration_filters
                     ),
                     backends,
                 )
@@ -243,19 +261,4 @@ see https://aka.ms/AQ/Docs/AddProvider"
 
         backends = list(filter(filters, backends))
         
-        if len(backends) > 1:
-            def all_same(iterable):
-                group_iter = groupby(iterable)
-                return next(group_iter, True) and not next(group_iter, False)
-
-            # If all backends have the same name, filter for default backend
-            if all_same(backend.name() for backend in backends):
-                backends = list(
-                    filter(
-                        lambda backend: _match_all(
-                            backend.configuration(), {"is_default": True}
-                        ),
-                        backends,
-                    )
-                )
         return backends
