@@ -1,0 +1,15 @@
+##
+# Sets the version of .NET and Python to use.
+##
+
+steps:
+- task: UseDotNet@2
+  displayName: 'Use .NET Core SDK'
+  inputs:
+    packageType: sdk
+    useGlobalJson: true
+
+- task: UsePythonVersion@0
+  inputs:
+    versionSpec: 3.9
+  displayName: 'Use Python 3.9'
