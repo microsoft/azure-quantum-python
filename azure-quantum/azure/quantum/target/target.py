@@ -151,7 +151,7 @@ target '{self.name}' of provider '{self.provider_id}' not found."
             input_data_format=input_data_format,
             output_data_format=output_data_format,
             input_params=input_params,
-            session_id=self.get_current_session_id(),
+            session_id=self.get_latest_session_id(),
             **kwargs
         )
 

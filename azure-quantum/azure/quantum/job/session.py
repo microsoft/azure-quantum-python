@@ -125,15 +125,15 @@ class SessionHost(Protocol):
     _current_session: Optional[Session] = None
 
     @property
-    def current_session(self) -> Optional[Session]:
+    def latest_session(self) -> Optional[Session]:
         return self._current_session
 
-    @current_session.setter
-    def current_session(self, session: Optional[Session]):
+    @latest_session.setter
+    def latest_session(self, session: Optional[Session]):
         self._current_session = session
 
-    def get_current_session_id(self) -> Optional[str]:
-        return self.current_session.id if self.current_session else None
+    def get_latest_session_id(self) -> Optional[str]:
+        return self.latest_session.id if self.latest_session else None
 
     @abstractmethod
     def _get_azure_workspace(self) -> "Workspace":
@@ -151,8 +151,8 @@ class SessionHost(Protocol):
         job_failure_policy: Union[str, SessionJobFailurePolicy, None] = None,
         **kwargs
     ) -> Session:
-        if self.current_session:
-            self.current_session.close()
+        if self.latest_session:
+            self.latest_session.close()
 
         session = Session(details=details,
                           id=id,
@@ -161,5 +161,5 @@ class SessionHost(Protocol):
                           workspace=self._get_azure_workspace(),
                           target=self._get_azure_target_id(),
                           **kwargs)
-        self.current_session = session
+        self.latest_session = session
         return session.open()

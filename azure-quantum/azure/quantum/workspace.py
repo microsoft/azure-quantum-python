@@ -409,9 +409,9 @@ class Workspace:
         client = self._get_sessions_client()
         session.details = client.close(session_id=session.id)
         if session.target:
-            if (session.target.current_session
-                and session.target.current_session.id == session.id):
-                session.target.current_session.details = session.details
+            if (session.target.latest_session
+                and session.target.latest_session.id == session.id):
+                session.target.latest_session.details = session.details
 
     def refresh_session(
         self,

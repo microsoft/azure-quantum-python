@@ -138,11 +138,11 @@ class TestSession(QuantumTestBase):
         workspace = self.create_workspace()
         target = workspace.get_targets("ionq.simulator")
 
-        self.assertIsNone(target.current_session)
+        self.assertIsNone(target.latest_session)
 
         session_id = self._get_test_id()
         session = target.start_session(session_id=session_id)
-        self.assertEqual(target.current_session, session)
+        self.assertEqual(target.latest_session, session)
         self.assertEqual(session.details.status, SessionStatus.WAITING)
         session.close()
         self.assertEqual(session.details.status, SessionStatus.SUCCEEDED)
@@ -154,11 +154,11 @@ class TestSession(QuantumTestBase):
         workspace = self.create_workspace()
         target = workspace.get_targets("ionq.simulator")
 
-        self.assertIsNone(target.current_session)
+        self.assertIsNone(target.latest_session)
 
         session_id = self._get_test_id()
         with target.start_session(session_id=session_id) as session:
-            self.assertEqual(target.current_session, session)
+            self.assertEqual(target.latest_session, session)
             self.assertEqual(session.details.status, SessionStatus.WAITING)
 
         self.assertEqual(session.details.status, SessionStatus.SUCCEEDED)
@@ -170,11 +170,11 @@ class TestSession(QuantumTestBase):
         workspace = self.create_workspace()
         target = workspace.get_targets("ionq.simulator")
 
-        self.assertIsNone(target.current_session)
+        self.assertIsNone(target.latest_session)
 
         session_id = self._get_test_id()
         with target.start_session(session_id=session_id) as session:
-            self.assertEqual(target.current_session, session)
+            self.assertEqual(target.latest_session, session)
             self.assertEqual(session.details.status, SessionStatus.WAITING)
 
         self.assertEqual(session.details.status, SessionStatus.SUCCEEDED)

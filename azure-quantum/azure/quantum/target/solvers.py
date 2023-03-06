@@ -150,7 +150,7 @@ class Solver(Target):
                 input_data_format=self.input_data_format,
                 output_data_format=self.output_data_format,
                 input_params=self.params,
-                session_id=self.get_current_session_id()
+                session_id=self.get_latest_session_id()
             )
 
         return job
