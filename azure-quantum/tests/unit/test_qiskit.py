@@ -16,17 +16,58 @@ import numpy as np
 
 from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister
 from qiskit.providers import JobStatus
+from qiskit.providers.models import BackendConfiguration
 from qiskit.providers.exceptions import QiskitBackendNotFoundError
 from qiskit_ionq.exceptions import IonQGateError
 from qiskit_ionq import GPIGate, GPI2Gate, MSGate
 
 from azure.quantum.job.job import Job
 from azure.quantum.qiskit import AzureQuantumProvider
-from azure.quantum.qiskit.job import MICROSOFT_OUTPUT_DATA_FORMAT, AzureQuantumJob
+from azure.quantum.qiskit.job import MICROSOFT_OUTPUT_DATA_FORMAT, MICROSOFT_OUTPUT_DATA_FORMAT_V2, AzureQuantumJob
+from azure.quantum.qiskit.backends.backend import AzureQirBackend
 from azure.quantum.qiskit.backends.quantinuum import QuantinuumEmulatorQirBackend
 from azure.quantum.qiskit.backends.ionq import IonQSimulatorQirBackend
 
 from common import QuantumTestBase, ZERO_UID
+
+class SampleQirBackend(AzureQirBackend):
+    def __init__(
+        self, configuration: BackendConfiguration, provider: "AzureQuantumProvider", **fields
+    ):
+        default_config = BackendConfiguration.from_dict(
+        {
+            "backend_name": fields.pop("name", "sample"),
+            "backend_version": fields.pop("version", "1.0"),
+            "simulator": False,
+            "local": False,
+            "coupling_map": None,
+            "description": "Simple backend for testing",
+            "basis_gates": [],
+            "memory": False,
+            "n_qubits": 11,
+            "conditional": False,
+            "max_shots": 10000,
+            "max_experiments": fields.pop("max_experiments", 1),
+            "open_pulse": False,
+            "gates": [{"name": "TODO", "parameters": [], "qasm_def": "TODO"}],
+            "azure": self._azure_config(**fields),
+        })
+    
+        configuration: BackendConfiguration = fields.pop(
+            "configuration", default_config
+        )
+        super().__init__(configuration=configuration, provider=provider, **fields)
+
+    def _azure_config(self, **fields) -> dict[str, str]:
+        values = {
+            "blob_name": "inputData",
+            "content_type": "qir.v1",
+            "input_data_format": "qir.v1",
+        }
+        if "output_data_format" in fields:
+            values["output_data_format"] = fields.pop("output_data_format")
+        return values
+
 
 class TestQiskit(QuantumTestBase):
     """TestIonq
@@ -934,3 +975,26 @@ class TestQiskit(QuantumTestBase):
                 assert result.data(1)["jobParams"]["qubitParams"]["name"] == "qubit_gate_ns_e4"
                 assert result.data(1)["jobParams"]["qecScheme"]["name"] == "surface_code"
                 assert result.data(1)["jobParams"]["errorBudget"] == 0.0001
+
+    def test_backend_without_azure_config_format_defaults_to_ms_format(self):
+        backend = SampleQirBackend(None)
+        output_data_format = backend._get_output_data_format()
+        assert output_data_format == MICROSOFT_OUTPUT_DATA_FORMAT
+
+    def test_backend_with_azure_config_format_defaults_to_that_format(self):
+        expected = "test_format"
+        backend = SampleQirBackend(None, fields={"output_data_format": expected})
+        actual = backend._get_output_data_format()
+        assert expected == actual
+
+    def test_backend_without_azure_config_format_and_multiple_experiment_support_defaults_to_ms_format_v2(self):
+        backend = SampleQirBackend()
+        output_data_format = backend._get_output_data_format({"max_experiments": 2})
+        assert output_data_format == MICROSOFT_OUTPUT_DATA_FORMAT_V2
+
+    def test_backend_with_azure_config_format_is_overridden_with_explicit_format(self):
+        azure_congfig_value = "test_format"
+        backend = SampleQirBackend(None, fields={"output_data_format": azure_congfig_value})
+        expected = "test_format_v2"
+        actual = backend._get_output_data_format({"output_data_format": expected})
+        assert expected == actual
