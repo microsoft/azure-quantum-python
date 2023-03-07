@@ -16,9 +16,10 @@ from common import QuantumTestBase, ZERO_UID
 from azure.quantum.job.job import Job
 from azure.quantum.target.microsoft import MicrosoftEstimatorJob
 
+
 class TestMicrosoftQC(QuantumTestBase):
     """TestMicrosoftQC
-    
+
     Tests the azure.quantum.target.microsoft module.
     """
 
@@ -65,6 +66,9 @@ class TestMicrosoftQC(QuantumTestBase):
                 job = estimator.submit(ccnot)
                 assert type(job) == MicrosoftEstimatorJob
                 job.wait_until_completed()
+                if job.details.status != "Succeeded":
+                    raise Exception(f"Job {job.id} not succeeded in "
+                                    "test_estimator_non_batching_job")
                 result = job.get_results()
 
                 assert type(result) == dict
