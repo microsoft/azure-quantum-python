@@ -113,16 +113,8 @@ function NewCondaEnvForPackage {
         Write-Host "##[info]Skipping creating $EnvName; env already exists."
 
     } else {
-        # If it does not exist, create conda environment
-        #Write-Host "##[info]Create new Conda environment $EnvName"
-        #conda create -q -y -n $EnvName python notebook jupyter_client *>&1
-        Write-Host "##[info]Install dependencies from '$EnvPath'"
-        #conda env update --quiet --file $EnvPath *>&1
+        Write-Host "##[info]Create Conda env $EnvName from '$EnvPath'"
         conda env create --quiet --file $EnvPath *>&1
-        Write-Host "##[info]Conda list '$EnvPath'"
-        conda list
-        Write-Host "##[info]Pip list '$EnvPath'"
-        pip list
     }
 }
 
