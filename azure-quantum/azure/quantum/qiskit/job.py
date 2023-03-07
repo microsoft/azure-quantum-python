@@ -18,7 +18,7 @@ import ast
 import json
 import re
 from azure.quantum import Job
-from azure.quantum.qiskit.results.resource_estimator import ResourceEstimatorResult, ResourceEstimatorBatchResult
+from azure.quantum.qiskit.results.resource_estimator import ResourceEstimatorResult
 
 import logging
 logger = logging.getLogger(__name__)
@@ -95,8 +95,7 @@ class AzureQuantumJob(JobV1):
 
         result_type = Result
         if self._azure_job.details.output_data_format == RESOURCE_ESTIMATOR_OUTPUT_DATA_FORMAT:
-            is_simple_job = results['success'] and not isinstance(results['data'], list)
-            result_type = ResourceEstimatorResult if is_simple_job else ResourceEstimatorBatchResult
+            result_type = ResourceEstimatorResult
 
         return result_type.from_dict(result_dict)
 

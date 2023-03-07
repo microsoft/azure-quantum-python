@@ -4,7 +4,7 @@
 ##
 from ... import Job
 from ..._client.models import JobDetails
-
+from .result import MicrosoftEstimatorResult
 
 class MicrosoftEstimatorJob(Job):
     """
@@ -13,3 +13,9 @@ class MicrosoftEstimatorJob(Job):
 
     def __init__(self, workspace, job_details: JobDetails, **kwargs):
         super().__init__(workspace, job_details, **kwargs)
+
+    def get_results(self, timeout_secs: float = ...) -> MicrosoftEstimatorResult:
+        results = super().get_results(timeout_secs)
+
+        # TODO: check for failed result
+        return MicrosoftEstimatorResult(results)

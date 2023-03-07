@@ -84,8 +84,6 @@ setuptools.setup(
             "qiskit-ionq>=0.3.3",
             "qiskit-terra>=0.19.1",
             "qiskit-qir>=0.2,<0.3",
-            "Markdown>=3.4.1",
-            "python-markdown-math>=0.8"
         ],
         "cirq": [
             "cirq-core>=1.0.0",
