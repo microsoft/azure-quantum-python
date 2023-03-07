@@ -8,7 +8,7 @@ parameters:
 
 steps:
 - pwsh: |
-    "Python path: $(python -c 'import site; print(site.getuserbase())')/bin" | Write-Host
+    "Python path: $($(CondaPath)/python -c 'import site; print(site.getuserbase())')/bin" | Write-Host
     "##vso[task.prependpath]$('test')" | Write-Host
   displayName: Add Python to Path
 
