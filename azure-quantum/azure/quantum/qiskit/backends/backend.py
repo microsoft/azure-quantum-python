@@ -5,6 +5,7 @@
 import json
 
 import logging
+import warnings
 
 logger = logging.getLogger(__name__)
 
@@ -138,6 +139,30 @@ class AzureBackendBase(Backend):
 
         return job
 
+    def _normalize_run_input_params(self, run_input, **options):
+        if "circuit" not in options:
+            # circuit is not provided, check if there is run_input
+            if run_input:
+                return run_input
+            else:
+                raise ValueError("No input provided.")
+
+        if run_input:
+            # even though circuit is provided, we still have run_input
+            warnings.warn(DeprecationWarning("The circuit parameter has been deprecated and will be ignored."))
+            return run_input
+        else:
+            warnings.warn(DeprecationWarning("The circuit parameter has been deprecated. Please use the run_input parameter."))
+
+        # we don't have run_input
+        # we know we have circuit parameter, but it may be empty
+        circuit = options.get("circuit")
+        
+        if circuit:
+            return circuit
+        else:
+            raise ValueError("No input provided.")
+
 
 class AzureQirBackend(AzureBackendBase):
     @abstractmethod
@@ -154,7 +179,7 @@ class AzureQirBackend(AzureBackendBase):
         }
 
     def run(
-        self, run_input: Union[QuantumCircuit, List[QuantumCircuit]], **options
+        self, run_input: Union[QuantumCircuit, List[QuantumCircuit]] = [], **options
     ) -> AzureQuantumJob:
         """Run on the backend.
 
@@ -175,15 +200,15 @@ class AzureQirBackend(AzureBackendBase):
         Returns:
             Job: The job object for the run
         """
+        run_input = self._normalize_run_input_params(run_input, **options)
+        options.pop("run_input", None)
+        options.pop("circuit", None)
 
         circuits = list([])
         if isinstance(run_input, QuantumCircuit):
             circuits = [run_input]
         else:
             circuits = run_input
-
-        if not circuits:
-            raise ValueError("No QuantumCircuits provided")
 
         max_circuits_per_job = self.configuration().max_experiments
         if len(circuits) > max_circuits_per_job:
@@ -303,9 +328,12 @@ class AzureBackend(AzureBackendBase):
     def _translate_input(self, circuit):
         pass
 
-    def run(self, circuit, **kwargs):
+    def run(self, run_input = None, **kwargs):
         """Submits the given circuit to run on an Azure Quantum backend."""
         options = kwargs
+        circuit = self._normalize_run_input_params(run_input, **options)
+        options.pop("run_input", None)
+        options.pop("circuit", None)
         
         # Some Qiskit features require passing lists of circuits, so unpack those here.
         # We currently only support single-experiment jobs.

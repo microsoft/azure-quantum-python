@@ -6,6 +6,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 ##
+from typing import Any, Dict, List, Union
 import unittest
 import warnings
 import pytest
@@ -24,13 +25,13 @@ from qiskit_ionq import GPIGate, GPI2Gate, MSGate
 from azure.quantum.job.job import Job
 from azure.quantum.qiskit import AzureQuantumProvider
 from azure.quantum.qiskit.job import MICROSOFT_OUTPUT_DATA_FORMAT, MICROSOFT_OUTPUT_DATA_FORMAT_V2, AzureQuantumJob
-from azure.quantum.qiskit.backends.backend import AzureQirBackend
+from azure.quantum.qiskit.backends.backend import AzureBackend, AzureBackendBase, AzureQirBackend
 from azure.quantum.qiskit.backends.quantinuum import QuantinuumEmulatorQirBackend
 from azure.quantum.qiskit.backends.ionq import IonQSimulatorQirBackend
 
 from common import QuantumTestBase, ZERO_UID
 
-class SampleQirBackend(AzureQirBackend):
+class NoopQirBackend(AzureQirBackend):
     def __init__(
         self, configuration: BackendConfiguration, provider: "AzureQuantumProvider", **fields
     ):
@@ -50,7 +51,57 @@ class SampleQirBackend(AzureQirBackend):
             "max_experiments": fields.pop("max_experiments", 1),
             "open_pulse": False,
             "gates": [{"name": "TODO", "parameters": [], "qasm_def": "TODO"}],
-            "azure": self._azure_config(**fields),
+            "azure": self._azure_config(fields.pop("output_data_format", None)),
+        })
+
+        configuration: BackendConfiguration = fields.pop(
+            "configuration", default_config
+        )
+
+        super().__init__(configuration=configuration, provider=provider, **fields)
+
+    def run(
+        self, run_input: Union[QuantumCircuit, List[QuantumCircuit]] = [], **options
+    ):
+        return self._normalize_run_input_params(run_input, **options)
+    
+    def _azure_config(self, output_data_format = None) -> dict[str, str]:
+        values = {
+            "blob_name": "inputData",
+            "content_type": "qir.v1",
+            "input_data_format": "qir.v1",
+        }
+        if output_data_format:
+            values["output_data_format"] = output_data_format
+        return values
+
+    def _default_options(cls):
+        return None
+
+    def _translate_input(self, circuits: List[QuantumCircuit], input_params: Dict[str, Any]) -> bytes:
+        return None
+
+class NoopPassThruBackend(AzureBackend):
+    def __init__(
+        self, configuration: BackendConfiguration, provider: "AzureQuantumProvider", **fields
+    ):
+        default_config = BackendConfiguration.from_dict(
+        {
+            "backend_name": fields.pop("name", "sample"),
+            "backend_version": fields.pop("version", "1.0"),
+            "simulator": False,
+            "local": False,
+            "coupling_map": None,
+            "description": "Simple backend for testing",
+            "basis_gates": [],
+            "memory": False,
+            "n_qubits": 11,
+            "conditional": False,
+            "max_shots": 10000,
+            "max_experiments": fields.pop("max_experiments", 1),
+            "open_pulse": False,
+            "gates": [{"name": "TODO", "parameters": [], "qasm_def": "TODO"}],
+            "azure": self._azure_config(fields),
         })
     
         configuration: BackendConfiguration = fields.pop(
@@ -58,15 +109,17 @@ class SampleQirBackend(AzureQirBackend):
         )
         super().__init__(configuration=configuration, provider=provider, **fields)
 
-    def _azure_config(self, **fields) -> dict[str, str]:
-        values = {
-            "blob_name": "inputData",
-            "content_type": "qir.v1",
-            "input_data_format": "qir.v1",
-        }
-        if "output_data_format" in fields:
-            values["output_data_format"] = fields.pop("output_data_format")
-        return values
+    def run(self, run_input = None, **kwargs):
+        return self._normalize_run_input_params(run_input, **kwargs)
+
+    def _azure_config(self, fields) -> dict[str, str]:
+        return fields
+    
+    def _default_options(cls):
+        return None
+
+    def _translate_input(self, circuit):
+        return None
 
 
 class TestQiskit(QuantumTestBase):
@@ -116,6 +169,64 @@ class TestQiskit(QuantumTestBase):
         circuit.tdg(1)
         circuit.cx(0, 1)
         return circuit
+    
+    
+    def test_unnamed_run_input_passes_through(self):
+        backend = NoopPassThruBackend(None, "AzureQuantumProvider")
+        assert backend.run("default") == "default"
+        backend = NoopQirBackend(None, "AzureQuantumProvider")
+        assert backend.run("default") == "default"
+
+    def test_named_run_input_passes_through(self):
+        backend = NoopPassThruBackend(None, "AzureQuantumProvider")
+        assert backend.run(run_input="default") == "default"
+        backend = NoopQirBackend(None, "AzureQuantumProvider")
+        assert backend.run(run_input="default") == "default"
+
+    def test_named_circuit_passes_through(self):
+        backend = NoopPassThruBackend(None, "AzureQuantumProvider")
+        assert backend.run(circuit="default") == "default"
+        backend = NoopQirBackend(None, "AzureQuantumProvider")
+        assert backend.run(circuit="default") == "default"
+
+    def test_both_named_circuit_and_run_input_chooses_run_input(self):
+        backend = NoopPassThruBackend(None, "AzureQuantumProvider")
+        assert backend.run(run_input="a", circuit="b") == "a"
+        backend = NoopQirBackend(None, "AzureQuantumProvider")
+        assert backend.run(run_input="a", circuit="b") == "a"
+
+    def test_no_input_raises(self):
+        backend = NoopPassThruBackend(None, "AzureQuantumProvider")
+        with pytest.raises(ValueError) as exc_info:
+            backend.run()
+        backend = NoopQirBackend(None, "AzureQuantumProvider")
+        with pytest.raises(ValueError) as exc_info:
+            backend.run()
+
+    def test_empty_input_raises(self):
+        backend = NoopPassThruBackend(None, "AzureQuantumProvider")
+        with pytest.raises(ValueError) as exc_info:
+            backend.run([])
+        with pytest.raises(ValueError) as exc_info:
+            backend.run(run_input=[])
+        with pytest.raises(ValueError) as exc_info:
+            backend.run(circuit=[])
+        with pytest.raises(ValueError) as exc_info:
+            backend.run(run_input=[], circuit=[])
+        with pytest.raises(ValueError) as exc_info:
+            backend.run([], circuit=[])
+
+        backend = NoopQirBackend(None, "AzureQuantumProvider")
+        with pytest.raises(ValueError) as exc_info:
+            backend.run([])
+        with pytest.raises(ValueError) as exc_info:
+            backend.run(run_input=[])
+        with pytest.raises(ValueError) as exc_info:
+            backend.run(circuit=[])
+        with pytest.raises(ValueError) as exc_info:
+            backend.run(run_input=[], circuit=[])
+        with pytest.raises(ValueError) as exc_info:
+            backend.run([], circuit=[])
 
     def test_qir_to_qiskit_bitstring(self):
         bits = random.choices(["0", "1"], k=50)
@@ -977,24 +1088,24 @@ class TestQiskit(QuantumTestBase):
                 assert result.data(1)["jobParams"]["errorBudget"] == 0.0001
 
     def test_backend_without_azure_config_format_defaults_to_ms_format(self):
-        backend = SampleQirBackend(None)
+        backend = NoopQirBackend(None, "AzureQuantumProvider")
         output_data_format = backend._get_output_data_format()
         assert output_data_format == MICROSOFT_OUTPUT_DATA_FORMAT
 
     def test_backend_with_azure_config_format_defaults_to_that_format(self):
         expected = "test_format"
-        backend = SampleQirBackend(None, fields={"output_data_format": expected})
+        backend = NoopQirBackend(None, "AzureQuantumProvider", output_data_format = expected)
         actual = backend._get_output_data_format()
         assert expected == actual
 
     def test_backend_without_azure_config_format_and_multiple_experiment_support_defaults_to_ms_format_v2(self):
-        backend = SampleQirBackend()
-        output_data_format = backend._get_output_data_format({"max_experiments": 2})
+        backend = NoopQirBackend(None, "AzureQuantumProvider", **{"max_experiments": 2})
+        output_data_format = backend._get_output_data_format()
         assert output_data_format == MICROSOFT_OUTPUT_DATA_FORMAT_V2
 
     def test_backend_with_azure_config_format_is_overridden_with_explicit_format(self):
         azure_congfig_value = "test_format"
-        backend = SampleQirBackend(None, fields={"output_data_format": azure_congfig_value})
+        backend = NoopQirBackend(None, "AzureQuantumProvider", output_data_format = azure_congfig_value)
         expected = "test_format_v2"
-        actual = backend._get_output_data_format({"output_data_format": expected})
+        actual = backend._get_output_data_format(**{"output_data_format": expected})
         assert expected == actual
