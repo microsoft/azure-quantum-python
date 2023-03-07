@@ -17,5 +17,4 @@ class MicrosoftEstimatorJob(Job):
     def get_results(self, timeout_secs: float = ...) -> MicrosoftEstimatorResult:
         results = super().get_results(timeout_secs)
 
-        # TODO: check for failed result
         return MicrosoftEstimatorResult(results)
