@@ -3,14 +3,23 @@
 ##
 
 steps:
+- powershell: echo $env:PATH
+- powershell: echo $(Test-Path "$env:AGENT_TOOLSDIRECTORY/dotnet")
+
+- task: DotNetCoreInstaller@1
+  displayName: 'Install .NET SDK'
+  inputs:
+    packageType: sdk
+
+- powershell: echo $env:PATH
+- powershell: echo $(Test-Path "$env:AGENT_TOOLSDIRECTORY/dotnet")
+
 - task: UseDotNet@2
   displayName: 'Use .NET SDK'
   inputs:
     packageType: sdk
 
-- powershell: echo $(Agent.ToolsDirectory)
 - powershell: echo $env:PATH
-- powershell: echo $env:AGENT_TOOLSDIRECTORY
 - powershell: echo $(Test-Path "$env:AGENT_TOOLSDIRECTORY/dotnet")
 
 - task: UsePythonVersion@0
