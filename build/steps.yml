@@ -7,14 +7,6 @@ parameters:
   default: ''
 
 steps:
-# This step is needed to successfully install Jupyter on the user base (pip install --user)
-# and later install the IQ# kernel.
-- pwsh: |
-    $PythonUserBase = "$($(CondaPath)/python -c 'import site; print(site.getuserbase())')/bin"
-    "PythonUserBase: $PythonUserBase" | Write-Host
-    "##vso[task.prependpath]$PythonUserBase" | Write-Host
-  displayName: Add Python user base to PATH
-
 - pwsh: |
     (& "$(CondaPath)/conda" "shell.powershell" "hook") | Out-String | Invoke-Expression
     ./bootstrap.ps1 `
