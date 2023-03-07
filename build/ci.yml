@@ -49,11 +49,6 @@ jobs:
       packageType: sdk
       version:  $(Build.Dotnet.Version)
 
-  - task: UsePythonVersion@0
-    displayName: 'Use Python $(Build.Python.Version)'
-    inputs:
-      versionSpec: $(Build.Python.Version)
-
   - template: steps.yml
     parameters:
       PackageName: $(PackageName)
