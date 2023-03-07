@@ -114,12 +114,14 @@ function NewCondaEnvForPackage {
 
     } else {
         # If it does not exist, create conda environment
-        Write-Host "##[info]Build '$EnvPath' for Conda environment $EnvName"
-
-        conda create -q -y -n $EnvName python
-        conda activate $EnvName
-        pip install --user notebook jupyter_client
-        conda env update --file $EnvPath
+        Write-Host "##[info]Create new empty Conda environment $EnvName"
+        conda create -q -y -n $EnvName python *>&1
+        Write-Host "##[info]Activate Conda environment $EnvName"
+        conda activate $EnvName *>&1
+        Write-Host "##[info]Install jupyter_client on user base"
+        pip install --user notebook jupyter_client --quiet *>&1
+        Write-Host "##[info]Install dependencies from '$EnvPath'"
+        conda env update --file $EnvPath *>&1
     }
 }
 
