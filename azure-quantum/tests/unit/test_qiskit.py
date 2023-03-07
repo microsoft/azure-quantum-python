@@ -272,21 +272,37 @@ class TestQiskit(QuantumTestBase):
     def test_ionq_simulator_has_qir_target(self):
         workspace = self.create_workspace()
         provider = AzureQuantumProvider(workspace=workspace)
-        provider.get_backend("ionq.simulator", input_data_format="qir.v1")
+        backend = provider.get_backend("ionq.simulator", input_data_format="qir.v1")
+        config = backend.configuration()
+        input_data_format = config.azure["input_data_format"]
+        assert input_data_format == "qir.v1"
 
     @pytest.mark.ionq
     @pytest.mark.live_test
     def test_ionq_simulator_has_native_gateset_target(self):
         workspace = self.create_workspace()
         provider = AzureQuantumProvider(workspace=workspace)
-        provider.get_backend("ionq.simulator", gateset="native")
+        backend = provider.get_backend("ionq.simulator", gateset="native")
+        config = backend.configuration()
+        assert config.gateset == "native"
 
     @pytest.mark.ionq
     @pytest.mark.live_test
     def test_ionq_simulator_has_qis_gateset_target(self):
         workspace = self.create_workspace()
         provider = AzureQuantumProvider(workspace=workspace)
-        provider.get_backend("ionq.simulator", gateset="qis")
+        backend = provider.get_backend("ionq.simulator", gateset="qis")
+        config = backend.configuration()
+        assert config.gateset == "qis"
+
+    @pytest.mark.ionq
+    @pytest.mark.live_test
+    def test_ionq_simulator_default_target_has_qis_gateset(self):
+        workspace = self.create_workspace()
+        provider = AzureQuantumProvider(workspace=workspace)
+        backend = provider.get_backend("ionq.simulator")
+        config = backend.configuration()
+        assert config.gateset == "qis"
 
     @pytest.mark.ionq
     @pytest.mark.live_test
@@ -300,22 +316,38 @@ class TestQiskit(QuantumTestBase):
     def test_ionq_qpu_has_qir_target(self):
         workspace = self.create_workspace()
         provider = AzureQuantumProvider(workspace=workspace)
-        provider.get_backend("ionq.qpu", input_data_format="qir.v1")
+        backend = provider.get_backend("ionq.qpu", input_data_format="qir.v1")
+        config = backend.configuration()
+        input_data_format = config.azure["input_data_format"]
+        assert input_data_format == "qir.v1"
 
     @pytest.mark.ionq
     @pytest.mark.live_test
     def test_ionq_qpu_has_native_gateset_target(self):
         workspace = self.create_workspace()
         provider = AzureQuantumProvider(workspace=workspace)
-        provider.get_backend("ionq.qpu", gateset="native")
+        backend = provider.get_backend("ionq.qpu", gateset="native")
+        config = backend.configuration()
+        assert config.gateset == "native"
 
     @pytest.mark.ionq
     @pytest.mark.live_test
     def test_ionq_qpu_has_qis_gateset_target(self):
         workspace = self.create_workspace()
         provider = AzureQuantumProvider(workspace=workspace)
-        provider.get_backend("ionq.qpu", gateset="qis")
+        backend = provider.get_backend("ionq.qpu", gateset="qis")
+        config = backend.configuration()
+        assert config.gateset == "qis"
     
+    @pytest.mark.ionq
+    @pytest.mark.live_test
+    def test_ionq_qpu_default_target_has_qis_gateset(self):
+        workspace = self.create_workspace()
+        provider = AzureQuantumProvider(workspace=workspace)
+        backend = provider.get_backend("ionq.qpu")
+        config = backend.configuration()
+        assert config.gateset == "qis"
+
     @pytest.mark.ionq
     def test_translate_ionq_qir(self):
         circuit = self._3_qubit_ghz()
