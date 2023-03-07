@@ -36,7 +36,7 @@ Write-Host "From source: $FromSource";
 
 Write-Host "PATH: $env:PATH";
 Write-Host "Path: $env:Path";
-Write-Host "dotnet: $(&(which dotnet))";
+#Write-Host "dotnet: $(&(which dotnet))";
 Write-Host "Agent.ToolsDirectory: $(Agent.ToolsDirectory)";
 Write-Host "Agent.ToolsDirectory: $(Test-Path "$(Agent.ToolsDirectory)/dotnet")";
 
