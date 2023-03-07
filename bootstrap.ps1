@@ -41,11 +41,11 @@ Import-Module (Join-Path $PSScriptRoot "build/package-utils.psm1");
 Enable-Conda
 
 # Create environment
-New-CondaEnvironment -PackageName $PackageName -CondaEnvironmentSuffix $CondaEnvironmentSuffix *>&1
+New-CondaEnvironment -PackageName $PackageName -CondaEnvironmentSuffix $CondaEnvironmentSuffix *>&1 | Write-Host
 
 # Install package in environment
-Install-PackageInEnv -PackageName $PackageName -CondaEnvironmentSuffix $CondaEnvironmentSuffix -FromSource $FromSource *>&1
+Install-PackageInEnv -PackageName $PackageName -CondaEnvironmentSuffix $CondaEnvironmentSuffix -FromSource $FromSource *>&1 | Write-Host
 
 # Installs IQ# dotnet tool, IQ# kernel and the qsharp Python package
 # Used for running tests between the Azure Quantum Python SDK and IQ# (Q#+QIR job submission)
-& (Join-Path $PSScriptRoot "build/install-iqsharp.ps1");
+&(Join-Path $PSScriptRoot "build/install-iqsharp.ps1") | Write-Host
