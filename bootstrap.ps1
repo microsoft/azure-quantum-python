@@ -29,13 +29,19 @@ if ($False -eq $FromWheel) {
 } else {
   $FromSource = $False;
 }
-Write-Host $FromSource;
+Write-Host "From source: $FromSource";
 
 # Set env vars
-& (Join-Path $PSScriptRoot "build" "set-env.ps1");
+& (Join-Path $PSScriptRoot "build/set-env.ps1");
+
+Write-Host "PATH: $env:PATH";
+Write-Host "Path: $env:Path";
+Write-Host "dotnet: $(&(which dotnet))";
+Write-Host "Agent.ToolsDirectory: $(Agent.ToolsDirectory)";
+Write-Host "Agent.ToolsDirectory: $(Test-Path "$(Agent.ToolsDirectory)/dotnet")";
 
 # Import Conda utils
-Import-Module (Join-Path $PSScriptRoot "build" "package-utils.psm1");
+Import-Module (Join-Path $PSScriptRoot "build/package-utils.psm1");
 
 # Enable conda hook
 Enable-Conda

@@ -22,7 +22,8 @@ $iqsharpNugetPackagePath = !($Env:NUGET_OUTDIR) ? $iqsharpNugetPackage : (Join-P
 if (Test-Path $iqsharpNugetPackagePath -PathType Leaf) {
     # Uninstall if different version is already installed
     try {
-        $currentInstalledVersion = dotnet tool list --tool-path $Env:TOOLS_DIR | Select-String -Pattern "microsoft.quantum.iqsharp\s+(.*)\s+" | foreach { $matches[1] }
+        $currentInstalledVersion = dotnet tool list --tool-path $Env:TOOLS_DIR `
+            | Select-String -Pattern "microsoft.quantum.iqsharp\s+(.*)\s+" | foreach { $matches[1] }
         if ($currentInstalledVersion -and ($currentInstalledVersion -ne $Env:NUGET_VERSION)) {
             Write-Host "IQ# dotnet tool is already installed with a different version."
             Write-Host "Uninstalling version $currentInstalledVersion"
