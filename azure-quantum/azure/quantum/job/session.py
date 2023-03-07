@@ -2,9 +2,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 ##
-import logging
-import time
-import json
 
 from typing import TYPE_CHECKING, Optional, Union, Protocol, Any
 from abc import abstractmethod
@@ -106,21 +103,6 @@ class Session(WorkspaceItem):
             raise
 
 
-class AlreadyHasASessionError(Exception):
-    """Exception raised when trying to start a new session `target.start_session()`
-       and the current target instance already has a session associated with it.
-    """
-
-    def __init__(self, session_id):
-        self.message = f"""The current target instance already has a session ({session_id}) associated with it.
-                           If you want to start a new session, you should obtain a new target instance.
-                           A new target instance can be obtained with `workspace.get_targets("provider_id.target_name")`
-                           Qiskit: `target` is the same concept as a Qiskit `backend`. It can be obtained with `provider.get_backend("provider_id.target_name")`.
-                           Cirq: a new target instance can be obtained with `service.get_target("provider_id.target_name")`.
-                           """
-        super().__init__(self.message)
-
-
 class SessionHost(Protocol):
     _current_session: Optional[Session] = None
 
@@ -143,7 +125,7 @@ class SessionHost(Protocol):
     def _get_azure_target_id(self) -> str:
         raise NotImplementedError
 
-    def start_session(
+    def open_session(
         self,
         details: Optional[SessionDetails] = None,
         id: Optional[str] = None,

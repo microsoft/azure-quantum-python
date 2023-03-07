@@ -74,7 +74,7 @@ class TestSession(QuantumTestBase):
 
     @pytest.mark.live_test
     @pytest.mark.session
-    def test_session_start_end(self):
+    def test_session_open_end(self):
         workspace = self.create_workspace()
         session_id = self._get_test_id()
         session = Session(workspace=workspace,
@@ -134,14 +134,14 @@ class TestSession(QuantumTestBase):
 
     @pytest.mark.live_test
     @pytest.mark.session
-    def test_session_target_start_session(self):
+    def test_session_target_open_session(self):
         workspace = self.create_workspace()
         target = workspace.get_targets("ionq.simulator")
 
         self.assertIsNone(target.latest_session)
 
         session_id = self._get_test_id()
-        session = target.start_session(session_id=session_id)
+        session = target.open_session(session_id=session_id)
         self.assertEqual(target.latest_session, session)
         self.assertEqual(session.details.status, SessionStatus.WAITING)
         session.close()
@@ -150,14 +150,14 @@ class TestSession(QuantumTestBase):
 
     @pytest.mark.live_test
     @pytest.mark.session
-    def test_session_with_target_start_session(self):
+    def test_session_with_target_open_session(self):
         workspace = self.create_workspace()
         target = workspace.get_targets("ionq.simulator")
 
         self.assertIsNone(target.latest_session)
 
         session_id = self._get_test_id()
-        with target.start_session(session_id=session_id) as session:
+        with target.open_session(session_id=session_id) as session:
             self.assertEqual(target.latest_session, session)
             self.assertEqual(session.details.status, SessionStatus.WAITING)
 
@@ -173,7 +173,7 @@ class TestSession(QuantumTestBase):
         self.assertIsNone(target.latest_session)
 
         session_id = self._get_test_id()
-        with target.start_session(session_id=session_id) as session:
+        with target.open_session(session_id=session_id) as session:
             self.assertEqual(target.latest_session, session)
             self.assertEqual(session.details.status, SessionStatus.WAITING)
 
@@ -194,7 +194,7 @@ class TestSession(QuantumTestBase):
         solver = ParallelTempering(workspace, timeout=100)
 
         session_id = self._get_test_id()
-        with solver.start_session(session_id=session_id) as session:
+        with solver.open_session(session_id=session_id) as session:
             session_id = session.id
             problem.name = "Problem 1"
             solver.optimize(problem)
@@ -226,7 +226,7 @@ class TestSession(QuantumTestBase):
         circuit = JobPayloadFactory.get_cirq_circuit_bell_state()
 
         session_id = self._get_test_id()
-        with target.start_session(session_id=session_id) as session:
+        with target.open_session(session_id=session_id) as session:
             self.assertEqual(session.details.status, SessionStatus.WAITING)
             session_id = session.id
             job1 = target.submit(program=circuit, name="Job 1")
@@ -299,7 +299,7 @@ class TestSession(QuantumTestBase):
         circuit = JobPayloadFactory.get_qiskit_circuit_bell_state()
 
         session_id = self._get_test_id()
-        with backend.start_session(session_id=session_id) as session:
+        with backend.open_session(session_id=session_id) as session:
             session_id = session.id
             job1 = backend.run(circuit=circuit, shots=100, job_name="Job 1")
             job2 = backend.run(circuit=circuit, shots=100, job_name="Job 2")
