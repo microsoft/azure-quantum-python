@@ -156,7 +156,25 @@ class AzureQirBackend(AzureBackendBase):
     def run(
         self, run_input: Union[QuantumCircuit, List[QuantumCircuit]], **options
     ) -> AzureQuantumJob:
-        # TODO: override doc comments instead of using the base class doc comments
+        """Run on the backend.
+
+        This method returns a 
+        :class:`~azure.quantum.qiskit.job.AzureQuantumJob` object
+        that runs circuits. This is an async call.
+
+        Args:
+            run_input (QuantumCircuit or List[QuantumCircuit]): An individual or a
+            list of :class:`~qiskit.circuits.QuantumCircuit` to run on the backend.
+              
+            options: Any kwarg options to pass to the backend for running the
+            config. If a key is also present in the options
+            attribute/object then the expectation is that the value
+            specified will be used instead of what's set in the options
+            object.
+
+        Returns:
+            Job: The job object for the run
+        """
 
         circuits = list([])
         if isinstance(run_input, QuantumCircuit):
