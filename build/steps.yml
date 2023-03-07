@@ -8,6 +8,11 @@ parameters:
 
 steps:
 - pwsh: |
+    "Python path: $(python -c "import site; print(site.getuserbase())")/bin" | Write-Host
+    "##vso[task.prependpath]$("")" | Write-Host
+  displayName: Add Python to Path
+
+- pwsh: |
     (& "$(CondaPath)/conda" "shell.powershell" "hook") | Out-String | Invoke-Expression
     ./bootstrap.ps1 `
        -PackageName '${{ parameters.PackageName }}' `

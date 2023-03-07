@@ -14,6 +14,7 @@ variables:
   Build.Minor: 1
   Drops.Dir: $(Build.ArtifactStagingDirectory)/drops
   Build.Dotnet.Version: '6.0.302'
+  Build.Python.Version: '3.9'
 
 schedules:
 - cron: "0 9 * * Sat"
@@ -47,6 +48,13 @@ jobs:
     inputs:
       packageType: sdk
       version:  $(Build.Dotnet.Version)
+
+  - task: UsePythonVersion@0
+    displayName: 'Use Python $(Build.Python.Version)'
+    inputs:
+      versionSpec: $(Build.Python.Version)
+      architecture: 'x64'
+
   - template: steps.yml
     parameters:
       PackageName: $(PackageName)
