@@ -283,7 +283,7 @@ class AzureQuantumJob(JobV1):
 
     def _translate_microsoft_v2_results(self):
         """ Translate Microsoft's batching job results histograms into a format that can be consumed by qiskit libraries. """
-        az_result = self.get_results()
+        az_result = self._azure_job.get_results()
 
         if not "DataFormat" in az_result:
             raise ValueError("DataFormat missing from Job results")
@@ -325,22 +325,18 @@ class AzureQuantumJob(JobV1):
         return histograms
 
     def _get_entry_point_names(self):
-        input_params = self.details.input_params
-        if "items" in input_params:
-            entry_points = input_params["items"]
-            entry_point_names = []
-            for entry_point in entry_points:
-                if not "entryPoint" in entry_point:
-                    raise ValueError("Entry point input_param is missing an 'entryPoint' field")
-                entry_point_names.append(entry_point["entryPoint"])
-            return entry_point_names if len(entry_point_names) > 0 else ["main"]
-        elif "entryPoint" in input_params:
-            return [input_params["entryPoint"]]
-        else:
-            return ["main"]
+        input_params = self._azure_job.details.input_params
+        # All V2 output is a list of entry points
+        entry_points = input_params["items"]
+        entry_point_names = []
+        for entry_point in entry_points:
+            if not "entryPoint" in entry_point:
+                raise ValueError("Entry point input_param is missing an 'entryPoint' field")
+            entry_point_names.append(entry_point["entryPoint"])
+        return entry_point_names if len(entry_point_names) > 0 else ["main"]
 
     def _format_microsoft_v2_results(self) -> List[Dict[str, Any]]:
-        success = self.details.status == "Succeeded"
+        success = self._azure_job.details.status == "Succeeded"
 
         if not success:
             return [{
