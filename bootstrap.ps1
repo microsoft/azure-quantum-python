@@ -34,11 +34,6 @@ Write-Host "From source: $FromSource";
 # Set env vars
 & (Join-Path $PSScriptRoot "build/set-env.ps1");
 
-Write-Host "PATH: $env:PATH";
-#Write-Host "dotnet: $(&(which dotnet))";
-Write-Host "Agent.ToolsDirectory: $env:AGENT_TOOLSDIRECTORY";
-Write-Host "dotnet exists: $(Test-Path "$env:AGENT_TOOLSDIRECTORY/dotnet")";
-
 # Import Conda utils
 Import-Module (Join-Path $PSScriptRoot "build/package-utils.psm1");
 

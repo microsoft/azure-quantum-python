@@ -7,8 +7,6 @@ parameters:
   default: ''
 
 steps:
-- template: steps-frameworks.yml
-
 - pwsh: |
     (& "$(CondaPath)/conda" "shell.powershell" "hook") | Out-String | Invoke-Expression
     ./bootstrap.ps1 `
