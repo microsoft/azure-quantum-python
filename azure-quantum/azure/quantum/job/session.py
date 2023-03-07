@@ -9,7 +9,7 @@ from abc import abstractmethod
 from azure.quantum._client.models import SessionDetails, SessionStatus, SessionJobFailurePolicy
 from azure.quantum.job.workspace_item import WorkspaceItem
 
-__all__ = ["Session", "SessionHost", "AlreadyHasASessionError"]
+__all__ = ["Session", "SessionHost"]
 
 if TYPE_CHECKING:
     from azure.quantum.workspace import Workspace
