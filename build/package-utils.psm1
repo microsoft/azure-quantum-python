@@ -118,7 +118,8 @@ function NewCondaEnvForPackage {
 
         conda create -q -y -n $EnvName python
         conda activate $EnvName
-        pip install --quiet --user notebook jupyter_client
+        pip install --user notebook jupyter_client
+        #$(python -c "import site; print(site.getuserbase())")/bin
         conda env update --quiet --name $EnvName --file $EnvPath
     }
 }
