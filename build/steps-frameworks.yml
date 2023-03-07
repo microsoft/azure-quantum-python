@@ -9,6 +9,9 @@ steps:
     packageType: sdk
 
 - powershell: echo $(Agent.ToolsDirectory)
+- powershell: echo $env:PATH
+- powershell: echo $env:AGENT_TOOLSDIRECTORY
+- powershell: echo $(Test-Path "$env:AGENT_TOOLSDIRECTORY/dotnet")
 
 - task: UsePythonVersion@0
   inputs:
