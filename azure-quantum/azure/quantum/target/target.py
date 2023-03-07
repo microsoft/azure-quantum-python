@@ -2,13 +2,13 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 ##
-from typing import TYPE_CHECKING, Any, Dict
+from typing import TYPE_CHECKING, Any, Dict, Union, Type
 import io
 import json
 from typing import Any, Dict
 
 from azure.quantum._client.models import TargetStatus
-from azure.quantum.job.job import Job
+from azure.quantum.job.job import Job, BaseJob
 from azure.quantum.job.base_job import ContentType
 if TYPE_CHECKING:
     from azure.quantum import Workspace
@@ -20,6 +20,11 @@ class Target:
     # This variable is used by TargetFactory. To set the default
     # target class for a given provider, specify the
     # default_targets constructor argument.
+    #
+    # If you provide a custom job class (derived from
+    # azurem.quantum.job.job.Job) for this target, you must pass this type to
+    # __init__ via the job_cls parameter.  This is then used by the target's
+    # submit and get_job method.
     target_names = ()
 
     def __init__(
@@ -31,9 +36,17 @@ class Target:
         provider_id: str = "",
         content_type: ContentType = ContentType.json,
         encoding: str = "",
-        average_queue_time: float = None,
-        current_availability: str = ""
+        average_queue_time: Union[float, None] = None,
+        current_availability: str = "",
+        job_cls: Type[Job] = Job
     ):
+        """
+        Initializes a new target.
+
+        :param job_cls: The job class used by submit and get_job.  The default
+            is Job.
+        :type job_cls: Type[Job]
+        """
         if not provider_id and "." in name:
             provider_id = name.split(".")[0]
         self.workspace = workspace
@@ -45,6 +58,7 @@ class Target:
         self.encoding = encoding
         self._average_queue_time = average_queue_time
         self._current_availability = current_availability
+        self._job_cls = job_cls
 
     def __repr__(self):
         return f"<Target name=\"{self.name}\", \
@@ -115,9 +129,9 @@ target '{self.name}' of provider '{self.provider_id}' not found."
         self,
         input_data: Any,
         name: str = "azure-quantum-job",
-        input_params: Dict[str, Any] = None,
+        input_params: Union[Dict[str, Any], None] = None,
         **kwargs
-    ) -> Job:
+    ) -> BaseJob:
         """Submit input data and return Job.
 
         Provide input_data_format, output_data_format and content_type
@@ -138,7 +152,7 @@ target '{self.name}' of provider '{self.provider_id}' not found."
         content_type = kwargs.pop("content_type", self.content_type)
         encoding = kwargs.pop("encoding", self.encoding)
         blob = self._encode_input_data(data=input_data)
-        return Job.from_input_data(
+        return self._job_cls.from_input_data(
             workspace=self.workspace,
             name=name,
             target=self.name,
@@ -151,6 +165,15 @@ target '{self.name}' of provider '{self.provider_id}' not found."
             input_params=input_params,
             **kwargs
         )
+    
+    def get_job(self, job_id: str) -> Job:
+        """Returns the job corresponding to the given id.
+        
+        :param job_id: Job id
+        """
+        client = self.workspace._get_jobs_client()
+        details = client.get(job_id)
+        return self._job_cls(self.workspace, details)
 
     def supports_protobuf(self):
         """
@@ -162,6 +185,6 @@ target '{self.name}' of provider '{self.provider_id}' not found."
     def estimate_cost(
         self,
         input_data: Any,
-        input_params: Dict[str, Any] = None
+        input_params: Union[Dict[str, Any], None] = None
     ):
         return NotImplementedError("Price estimation is not implemented yet for this target.")
