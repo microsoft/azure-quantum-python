@@ -119,6 +119,10 @@ function NewCondaEnvForPackage {
         Write-Host "##[info]Install dependencies from '$EnvPath'"
         #conda env update --quiet --file $EnvPath *>&1
         conda env create --quiet --file $EnvPath *>&1
+        Write-Host "##[info]Conda list '$EnvPath'"
+        conda list
+        Write-Host "##[info]Pip list '$EnvPath'"
+        pip list
     }
 }
 
