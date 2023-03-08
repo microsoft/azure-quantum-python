@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 ##
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Dict
 from azure.quantum import __version__
 from azure.quantum.target.ionq import IonQ
 from abc import abstractmethod
@@ -53,7 +53,7 @@ class IonQQirBackendBase(AzureQirBackend):
     def _default_options(cls) -> Options:
         return Options(shots=500, targetCapability="BasicExecution")
 
-    def _azure_config(self) -> dict[str, str]:
+    def _azure_config(self) -> Dict[str, str]:
         config = super()._azure_config()
         config.update(
             {
@@ -174,7 +174,7 @@ class IonQBackend(AzureBackend):
     def _default_options(cls):
         return Options(shots=500)
 
-    def _azure_config(self):
+    def _azure_config(self) -> Dict[str, str]:
         return {
             "blob_name": "inputData",
             "content_type": "application/json",
@@ -256,7 +256,7 @@ class IonQSimulatorNativeBackend(IonQSimulatorBackend):
             kwargs["gateset"] = "native"
         super().__init__(name, provider, **kwargs)
 
-    def _azure_config(self) -> dict[str, str]:
+    def _azure_config(self) -> Dict[str, str]:
         config = super()._azure_config()
         config.update(
             {
@@ -305,7 +305,7 @@ class IonQQPUNativeBackend(IonQQPUBackend):
             kwargs["gateset"] = "native"
         super().__init__(name, provider, **kwargs)
 
-    def _azure_config(self) -> dict[str, str]:
+    def _azure_config(self) -> Dict[str, str]:
         config = super()._azure_config()
         config.update(
             {
@@ -354,7 +354,7 @@ class IonQAriaNativeBackend(IonQAriaBackend):
             kwargs["gateset"] = "native"
         super().__init__(name, provider, **kwargs)
 
-    def _azure_config(self) -> dict[str, str]:
+    def _azure_config(self) -> Dict[str, str]:
         config = super()._azure_config()
         config.update(
             {

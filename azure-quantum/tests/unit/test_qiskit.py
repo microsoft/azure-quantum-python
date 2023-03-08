@@ -65,7 +65,7 @@ class NoopQirBackend(AzureQirBackend):
     ):
         return self._normalize_run_input_params(run_input, **options)
     
-    def _azure_config(self, output_data_format = None) -> dict[str, str]:
+    def _azure_config(self, output_data_format = None) -> Dict[str, str]:
         values = {
             "blob_name": "inputData",
             "content_type": "qir.v1",
@@ -112,7 +112,7 @@ class NoopPassThruBackend(AzureBackend):
     def run(self, run_input = None, **kwargs):
         return self._normalize_run_input_params(run_input, **kwargs)
 
-    def _azure_config(self, fields) -> dict[str, str]:
+    def _azure_config(self, fields) -> Dict[str, str]:
         return fields
     
     def _default_options(cls):

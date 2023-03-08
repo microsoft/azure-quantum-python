@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 ##
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Dict
 from azure.quantum.version import __version__
 from abc import abstractmethod
 from .backend import AzureQirBackend
@@ -54,7 +54,7 @@ class QCIBackend(AzureQirBackend):
     def _default_options(cls) -> Options:
         return Options(shots=500, targetCapability="AdaptiveExecution")
 
-    def _azure_config(self) -> dict[str, str]:
+    def _azure_config(self) -> Dict[str, str]:
         config = super()._azure_config()
         config.update(
             {

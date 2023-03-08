@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 ##
 
+from typing import Dict
 from azure.quantum.version import __version__
 
 from .backend import AzureBackend, AzureQirBackend
@@ -62,7 +63,7 @@ class QuantinuumQirBackendBase(AzureQirBackend):
     def _default_options(cls) -> Options:
         return Options(shots=500, targetCapability="BasicExecution")
 
-    def _azure_config(self) -> dict[str, str]:
+    def _azure_config(self) -> Dict[str, str]:
         config = super()._azure_config()
         config.update(
             {
@@ -200,7 +201,7 @@ class QuantinuumBackend(AzureBackend):
     def _default_options(cls):
         return Options(count=500)
 
-    def _azure_config(self):
+    def _azure_config(self) -> Dict[str, str]:
         return {
             "blob_name": "inputData",
             "content_type": "application/qasm",

@@ -57,7 +57,7 @@ class MicrosoftBackend(AzureQirBackend):
     def _default_options(cls):
         return Options(targetCapability="AdaptiveExecution")
 
-    def _azure_config(self):
+    def _azure_config(self) -> Dict[str, str]:
         config = super()._azure_config()
         config.update(
             {

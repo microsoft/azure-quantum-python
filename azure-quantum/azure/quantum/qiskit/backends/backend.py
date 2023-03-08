@@ -46,7 +46,7 @@ class AzureBackendBase(Backend):
         pass
 
     @abstractmethod
-    def _azure_config(self) -> dict[str, str]:
+    def _azure_config(self) -> Dict[str, str]:
         pass
 
     def retrieve_job(self, job_id) -> AzureQuantumJob:
@@ -171,7 +171,7 @@ class AzureQirBackend(AzureBackendBase):
     ):
         super().__init__(configuration, provider, **fields)
 
-    def _azure_config(self) -> dict[str, str]:
+    def _azure_config(self) -> Dict[str, str]:
         return {
             "blob_name": "inputData",
             "content_type": "qir.v1",
