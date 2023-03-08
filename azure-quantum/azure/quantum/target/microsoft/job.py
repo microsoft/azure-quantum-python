@@ -2,8 +2,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 ##
-import json
-
 from ... import Job
 from ..._client.models import JobDetails
 from .result import MicrosoftEstimatorResult
@@ -20,7 +18,7 @@ class MicrosoftEstimatorJob(Job):
         try:
             results = super().get_results(timeout_secs)
             return MicrosoftEstimatorResult(results)
-        except RuntimeError as error:
+        except RuntimeError:
             error_obj = self.details.error_data
             message = "Cannot retrieve results as job execution failed " \
                       f"({error_obj.code}: {error_obj.message})"
