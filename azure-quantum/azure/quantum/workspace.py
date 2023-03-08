@@ -275,9 +275,16 @@ class Workspace:
 
     def get_job(self, job_id: str) -> Job:
         """Returns the job corresponding to the given id."""
+        from azure.quantum.target.target_factory import TargetFactory
+        from azure.quantum.target import Target
+
         client = self._get_jobs_client()
         details = client.get(job_id)
-        return Job(self, details)
+        target_factory = TargetFactory(base_cls=Target, workspace=self)
+        target = target_factory.create_target(
+            details.provider_id,
+            details.target)
+        return target._job_cls(self, details)
 
     def list_jobs(
         self,

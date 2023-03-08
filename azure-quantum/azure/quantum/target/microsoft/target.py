@@ -26,6 +26,9 @@ class MicrosoftEstimator(Target):
         # There is only a single target name for this target
         assert name == self.target_names[0]
 
+        # make sure to not pass argument twice
+        kwargs.pop("provider_id", None)
+
         super().__init__(
             workspace=workspace,
             name=name,

@@ -165,15 +165,6 @@ target '{self.name}' of provider '{self.provider_id}' not found."
             input_params=input_params,
             **kwargs
         )
-    
-    def get_job(self, job_id: str) -> Job:
-        """Returns the job corresponding to the given id.
-        
-        :param job_id: Job id
-        """
-        client = self.workspace._get_jobs_client()
-        details = client.get(job_id)
-        return self._job_cls(self.workspace, details)
 
     def supports_protobuf(self):
         """
