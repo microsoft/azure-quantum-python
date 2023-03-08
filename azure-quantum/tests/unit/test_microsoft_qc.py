@@ -7,9 +7,10 @@
 # Licensed under the MIT License.
 ##
 import pytest
-import unittest
 from unittest.mock import patch
+
 from os import path
+import re
 
 from common import QuantumTestBase, ZERO_UID
 
@@ -44,12 +45,14 @@ class TestMicrosoftQC(QuantumTestBase):
         Sets up some mock patches for job IDs and wait_until_completed.
         """
         super().setUp()
-        self.patch_job_id = patch.object(MicrosoftEstimatorJob,
+        self.patch_job_id = patch.object(
+            MicrosoftEstimatorJob,
             self.mock_create_job_id_name,
             return_value=self.get_test_job_id())
         # Modify the Job.wait_until_completed method such that it only records
         # once, see: https://github.com/microsoft/qdk-python/issues/118
-        self.patch_wait = patch.object(Job,
+        self.patch_wait = patch.object(
+            Job,
             "wait_until_completed",
             self.mock_wait(Job.wait_until_completed)
         )
@@ -102,10 +105,9 @@ class TestMicrosoftQC(QuantumTestBase):
         assert type(job) == MicrosoftEstimatorJob
         job.wait_until_completed()
         assert job.details.status == "Failed"
-        with pytest.raises(RuntimeError) as error:
-            _ = job.get_results()
 
-        expected_message = "Cannot retrieve results as job execution failed " \
-                           "(InvalidInputError: The error budget must be " \
-                           "between 0.0 and 1.0, provided input was `2`)"
-        assert str(error.value.args[0]) == expected_message
+        expected = "Cannot retrieve results as job execution failed " \
+                   "(InvalidInputError: The error budget must be " \
+                   "between 0.0 and 1.0, provided input was `2`)"
+        with pytest.raises(RuntimeError, match=re.escape(expected)):
+            _ = job.get_results()
