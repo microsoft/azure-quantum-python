@@ -4,8 +4,18 @@
 ##
 from typing import Any, Dict, List, Optional, Union
 
-from IPython.display import HTML
 import markdown
+
+
+class HTMLWrapper:
+    """
+    Simple HTML wrapper to expose _repr_html_ for Jupyter clients.
+    """
+    def __init__(self, content: str):
+        self.content = content
+
+    def _repr_html_(self):
+        return self.content
 
 
 class MicrosoftEstimatorResult(dict):
@@ -19,7 +29,7 @@ class MicrosoftEstimatorResult(dict):
 
             self._is_simple = True
             self._repr = _item_result_table(self)
-            self.summary = HTML(_item_result_summary_table(self))
+            self.summary = HTMLWrapper(_item_result_summary_table(self))
         elif isinstance(data, list):
             super().__init__({idx: MicrosoftEstimatorResult(item_data) for idx, item_data in enumerate(data)})
 
@@ -63,7 +73,7 @@ class MicrosoftEstimatorResult(dict):
         if isinstance(key, slice):
             if self._is_simple:
                 raise ValueError("Cannot pass slice to '__getitem__' for non-batching job")
-            return HTML(_batch_result_table(self, range(len(self))[key]))
+            return HTMLWrapper(_batch_result_table(self, range(len(self))[key]))
         else:
             return super().__getitem__(key)
 
