@@ -42,7 +42,7 @@ class TestMicrosoftQC(QuantumTestBase):
     @pytest.mark.live_test
     def test_estimator_non_batching_job(self):
         """
-        Submits a job default job parameters.
+        Submits a job with default job parameters.
 
         Checks whether job and results have expected type.
         """
@@ -72,3 +72,41 @@ class TestMicrosoftQC(QuantumTestBase):
                 result = job.get_results()
 
                 assert type(result) == dict
+
+    @pytest.mark.microsoft_qc
+    @pytest.mark.live_test
+    def test_estimator_failing_job(self):
+        """
+        Submits a job with wrong parameters.
+
+        Checks whether error handling is correct.
+        """
+        with unittest.mock.patch.object(
+            MicrosoftEstimatorJob,
+            self.mock_create_job_id_name,
+            return_value=self.get_test_job_id(),
+        ):
+            # Modify the Job.wait_until_completed method
+            # such that it only records once
+            # See: https://github.com/microsoft/qdk-python/issues/118
+            with unittest.mock.patch.object(
+                Job,
+                "wait_until_completed",
+                self.mock_wait(Job.wait_until_completed)
+            ):
+                ws = self.create_workspace()
+                estimator = ws.get_targets("microsoft.estimator")
+
+                ccnot = self._ccnot_bitcode()
+                job = estimator.submit(ccnot, input_params={"errorBudget": 2})
+                assert type(job) == MicrosoftEstimatorJob
+                job.wait_until_completed()
+                assert job.details.status == "Failed"
+                with pytest.raises(RuntimeError) as error:
+                    _ = job.get_results()
+
+                expected_message = "Cannot retrieve results as job " \
+                                   "execution failed (InvalidInputError: " \
+                                   "The error budget must be between 0.0 " \
+                                   "and 1.0, provided input was `2`)"
+                assert str(error.value.args[0]) == expected_message
