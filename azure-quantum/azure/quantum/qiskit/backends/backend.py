@@ -74,7 +74,7 @@ class AzureBackendBase(Backend):
 
         return output_data_format
 
-    def _get_input_params(self, **options) -> Dict[str, Any]:
+    def _get_input_params(self, options) -> Dict[str, Any]:
         # Backend options are mapped to input_params.
         input_params: Dict[str, Any] = vars(self.options).copy()
 
@@ -97,6 +97,9 @@ class AzureBackendBase(Backend):
         # double specification of the value.
         options.pop("shots", None)
         options.pop("count", None)
+
+        if "items" in options:
+            input_params["items"] = options.pop("items")
 
         # Take also into consideration options passed in the options, as the take precedence
         # over default values:
@@ -217,7 +220,7 @@ class AzureQirBackend(AzureBackendBase):
             )
 
         # config normalization
-        input_params = self._get_input_params(**options)
+        input_params = self._get_input_params(options)
 
         shots_count = input_params["count"]
 
@@ -296,10 +299,11 @@ class AzureQirBackend(AzureBackendBase):
             circuits, targetCapability, **to_qir_kwargs
         )
 
-        arguments = input_params.pop("arguments", [])
-        input_params["items"] = [
-            {"entryPoint": name, "arguments": arguments} for name in entry_points
-        ]
+        if not "items" in input_params:
+            arguments = input_params.pop("arguments", [])
+            input_params["items"] = [
+                {"entryPoint": name, "arguments": arguments} for name in entry_points
+            ]
 
         return input_data
 

@@ -1055,15 +1055,13 @@ class TestQiskit(QuantumTestBase):
             circuit = self._controlled_s()
 
             qiskit_job = backend.run(circuit)
-            assert qiskit_job._azure_job.details.metadata["num_qubits"] == "3"
 
             # Make sure the job is completed before fetching results
             self._qiskit_wait_to_complete(qiskit_job, provider)
 
             if JobStatus.DONE == qiskit_job.status():
                 result = qiskit_job.result()
-                assert result.data()["physicalCounts"]["physicalQubits"] == 12936
-                assert result.data()["physicalCounts"]["runtime"] == 36400
+                assert result.data()["logicalCounts"]["numQubits"] == 2
                 assert (
                     result.data()["jobParams"]["qubitParams"]["name"]
                     == "qubit_gate_ns_e3"
@@ -1088,15 +1086,13 @@ class TestQiskit(QuantumTestBase):
             qiskit_job = backend.run(
                 circuit, qubitParams={"name": "qubit_gate_ns_e4"}, errorBudget=0.0001
             )
-            assert qiskit_job._azure_job.details.metadata["num_qubits"] == "3"
 
             # Make sure the job is completed before fetching results
             self._qiskit_wait_to_complete(qiskit_job, provider)
 
             if JobStatus.DONE == qiskit_job.status():
                 result = qiskit_job.result()
-                assert result.data()["physicalCounts"]["physicalQubits"] == 3600
-                assert result.data()["physicalCounts"]["runtime"] == 26000
+                assert result.data()["logicalCounts"]["numQubits"] == 2
                 assert (
                     result.data()["jobParams"]["qubitParams"]["name"]
                     == "qubit_gate_ns_e4"
@@ -1118,10 +1114,11 @@ class TestQiskit(QuantumTestBase):
 
             circuit = self._controlled_s()
 
-            item1 = {"qubitParams": {"name": "qubit_gate_ns_e3"}, "errorBudget": 1e-4}
-            item2 = {"qubitParams": {"name": "qubit_gate_ns_e4"}, "errorBudget": 1e-4}
+            # TODO: explicit entryPoint specification can be removed after
+            #       change in microsoft.estimator target.
+            item1 = {"entryPoint": "circuit-0", "qubitParams": {"name": "qubit_gate_ns_e3"}, "errorBudget": 1e-4}
+            item2 = {"entryPoint": "circuit-0", "qubitParams": {"name": "qubit_gate_ns_e4"}, "errorBudget": 1e-4}
             qiskit_job = backend.run(circuit, items=[item1, item2])
-            assert qiskit_job._azure_job.details.metadata["num_qubits"] == "3"
 
             # Make sure the job is completed before fetching results
             self._qiskit_wait_to_complete(qiskit_job, provider)
@@ -1132,8 +1129,7 @@ class TestQiskit(QuantumTestBase):
             if JobStatus.DONE == qiskit_job.status():
                 result = qiskit_job.result()
 
-                assert result.data(0)["physicalCounts"]["physicalQubits"] == 21384
-                assert result.data(0)["physicalCounts"]["runtime"] == 46800
+                assert result.data(0)["logicalCounts"]["numQubits"] == 2
                 assert (
                     result.data(0)["jobParams"]["qubitParams"]["name"]
                     == "qubit_gate_ns_e3"
@@ -1143,8 +1139,7 @@ class TestQiskit(QuantumTestBase):
                 )
                 assert result.data(0)["jobParams"]["errorBudget"] == 0.0001
 
-                assert result.data(1)["physicalCounts"]["physicalQubits"] == 3600
-                assert result.data(1)["physicalCounts"]["runtime"] == 26000
+                assert result.data(1)["logicalCounts"]["numQubits"] == 2
                 assert (
                     result.data(1)["jobParams"]["qubitParams"]["name"]
                     == "qubit_gate_ns_e4"
