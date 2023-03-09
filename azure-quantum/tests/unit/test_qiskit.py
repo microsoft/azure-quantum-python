@@ -1175,5 +1175,7 @@ class TestQiskit(QuantumTestBase):
             None, "AzureQuantumProvider", output_data_format=azure_congfig_value
         )
         expected = "test_format_v2"
-        actual = backend._get_output_data_format(**{"output_data_format": expected})
+        options = {"output_data_format": expected}
+        actual = backend._get_output_data_format(options)
+        assert "output_data_format" not in options
         assert expected == actual

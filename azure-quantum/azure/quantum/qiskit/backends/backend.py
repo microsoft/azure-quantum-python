@@ -53,7 +53,7 @@ class AzureBackendBase(Backend):
         """Returns the Job instance associated with the given id."""
         return self._provider.get_job(job_id)
 
-    def _get_output_data_format(self, **options) -> str:
+    def _get_output_data_format(self, options : Dict[str, Any] = {}) -> str:
         config: BackendConfiguration = self.configuration()
         # output data format default depends on the number of experiments. QIR backends
         # that don't define a default in their azure config will use this value
@@ -123,7 +123,7 @@ class AzureBackendBase(Backend):
         input_data_format = options.pop(
             "input_data_format", config.azure["input_data_format"]
         )
-        output_data_format = self._get_output_data_format(**options)
+        output_data_format = self._get_output_data_format(options)
 
         job = AzureQuantumJob(
             backend=self,
@@ -363,7 +363,7 @@ class AzureBackend(AzureBackendBase):
         job_name = options.pop("job_name", circuit.name)
         metadata = options.pop("metadata", self._prepare_job_metadata(circuit))
 
-        input_params = self._get_input_params(**options)
+        input_params = self._get_input_params(options)
 
         input_data = self._translate_input(circuit)
 
