@@ -551,7 +551,7 @@ class TestQiskit(QuantumTestBase):
         workspace = self.create_workspace()
         provider = AzureQuantumProvider(workspace=workspace)
         backend = IonQSimulatorQirBackend("ionq.simulator", provider)
-        input_params = backend._get_input_params()
+        input_params = backend._get_input_params({})
 
         payload = backend._translate_input(circuit, input_params)
         config = backend.configuration()
