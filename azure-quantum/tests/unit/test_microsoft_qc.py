@@ -70,5 +70,11 @@ class TestMicrosoftQC(QuantumTestBase):
                     raise Exception(f"Job {job.id} not succeeded in "
                                     "test_estimator_non_batching_job")
                 result = job.get_results()
-
                 assert type(result) == dict
+
+                # Retrieve job by ID
+                job2 = ws.get_job(job.id)
+                assert type(job2) == type(job)
+                result2 = job2.get_results()
+                assert type(result2) == type(result)
+
