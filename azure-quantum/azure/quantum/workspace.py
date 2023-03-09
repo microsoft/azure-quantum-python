@@ -281,10 +281,11 @@ class Workspace:
         client = self._get_jobs_client()
         details = client.get(job_id)
         target_factory = TargetFactory(base_cls=Target, workspace=self)
-        target = target_factory.create_target(
+        target_cls = target_factory._target_cls(
             details.provider_id,
             details.target)
-        return target._job_cls(self, details)
+        job_cls = target_cls._get_job_class()
+        return job_cls(self, details)
 
     def list_jobs(
         self,
