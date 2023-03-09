@@ -37,15 +37,10 @@ class Target:
         content_type: ContentType = ContentType.json,
         encoding: str = "",
         average_queue_time: Union[float, None] = None,
-        current_availability: str = "",
-        job_cls: Type[Job] = Job
+        current_availability: str = ""
     ):
         """
         Initializes a new target.
-
-        :param job_cls: The job class used by submit and get_job.  The default
-            is Job.
-        :type job_cls: Type[Job]
         """
         if not provider_id and "." in name:
             provider_id = name.split(".")[0]
@@ -58,7 +53,6 @@ class Target:
         self.encoding = encoding
         self._average_queue_time = average_queue_time
         self._current_availability = current_availability
-        self._job_cls = job_cls
 
     def __repr__(self):
         return f"<Target name=\"{self.name}\", \
@@ -84,7 +78,16 @@ avg. queue time={self._average_queue_time} s, {self._current_availability}>"
             current_availability=status.current_availability,
             **kwargs
         )
-    
+
+    @classmethod
+    def _get_job_class(cls) -> Type[Job]:
+        """
+        Returns the job class associated to this target.
+
+        The job class used by submit and get_job.  The default is Job.
+        """
+        return Job
+
     def refresh(self):
         """Update the target availability and queue time"""
         targets = self.workspace._get_target_status(self.name, self.provider_id)
@@ -152,7 +155,8 @@ target '{self.name}' of provider '{self.provider_id}' not found."
         content_type = kwargs.pop("content_type", self.content_type)
         encoding = kwargs.pop("encoding", self.encoding)
         blob = self._encode_input_data(data=input_data)
-        return self._job_cls.from_input_data(
+        job_cls = type(self)._get_job_class()
+        return job_cls.from_input_data(
             workspace=self.workspace,
             name=name,
             target=self.name,
@@ -165,15 +169,6 @@ target '{self.name}' of provider '{self.provider_id}' not found."
             input_params=input_params,
             **kwargs
         )
-    
-    def get_job(self, job_id: str) -> Job:
-        """Returns the job corresponding to the given id.
-        
-        :param job_id: Job id
-        """
-        client = self.workspace._get_jobs_client()
-        details = client.get(job_id)
-        return self._job_cls(self.workspace, details)
 
     def supports_protobuf(self):
         """
