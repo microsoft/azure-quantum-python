@@ -25,6 +25,8 @@ try:
     from qiskit.providers import Provider
     from qiskit.providers.models import BackendConfiguration
     from qiskit.qobj import Qobj, QasmQobj
+    from pyqir import Module
+    from qiskit_qir import to_qir_module
 
 except ImportError:
     raise ImportError(
@@ -244,13 +246,12 @@ class AzureQirBackend(AzureBackendBase):
 
     def _generate_qir(
         self, circuits, targetCapability, **to_qir_kwargs
-    ) -> Tuple[bytes, List[str]]:
-        from qiskit_qir import to_qir_bitcode_with_entry_points
+    ) -> Tuple[Module, List[str]]:
 
         config = self.configuration()
         # Barriers aren't removed by transpilation and must be explicitly removed in the Qiskit to QIR translation.
         emit_barrier_calls = "barrier" in config.basis_gates
-        return to_qir_bitcode_with_entry_points(
+        return to_qir_module(
             circuits,
             targetCapability,
             emit_barrier_calls=emit_barrier_calls,
@@ -258,10 +259,8 @@ class AzureQirBackend(AzureBackendBase):
         )
 
     def _get_qir_str(self, circuits, targetCapability, **to_qir_kwargs) -> str:
-        from pyqir import Module
-
-        input_data, _ = self._generate_qir(circuits, targetCapability, **to_qir_kwargs)
-        return str(Module.from_bitcode(input_data))
+        module, _ = self._generate_qir(circuits, targetCapability, **to_qir_kwargs)
+        return str(module)
 
     def _translate_input(
         self, circuits: List[QuantumCircuit], input_params: Dict[str, Any]
@@ -295,7 +294,7 @@ class AzureQirBackend(AzureBackendBase):
                 qir = self._get_qir_str(circuits, targetCapability, **to_qir_kwargs)
                 logger.debug(f"QIR (Post-transpilation):\n{qir}")
 
-        (input_data, entry_points) = self._generate_qir(
+        (module, entry_points) = self._generate_qir(
             circuits, targetCapability, **to_qir_kwargs
         )
 
@@ -305,7 +304,7 @@ class AzureQirBackend(AzureBackendBase):
                 {"entryPoint": name, "arguments": arguments} for name in entry_points
             ]
 
-        return input_data
+        return module.bitcode
 
 
 class AzureBackend(AzureBackendBase):
