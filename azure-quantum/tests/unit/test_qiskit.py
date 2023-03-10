@@ -800,7 +800,7 @@ class TestQiskit(QuantumTestBase):
             "quantinuum.sim.h1-2sc-preview", provider
         )
 
-        input_params = backend._get_input_params()
+        input_params = backend._get_input_params({})
         payload = backend._translate_input(circuit, input_params)
 
         config = backend.configuration()
