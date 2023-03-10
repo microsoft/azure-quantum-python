@@ -1059,6 +1059,7 @@ class TestQiskit(QuantumTestBase):
             # Make sure the job is completed before fetching results
             self._qiskit_wait_to_complete(qiskit_job, provider)
 
+            assert qiskit_job.status() == JobStatus.DONE
             if JobStatus.DONE == qiskit_job.status():
                 result = qiskit_job.result()
                 assert result.data()["logicalCounts"]["numQubits"] == 2
@@ -1083,22 +1084,24 @@ class TestQiskit(QuantumTestBase):
 
             circuit = self._controlled_s()
 
+            # TODO: change this back to not use items explicitly
             qiskit_job = backend.run(
-                circuit, qubitParams={"name": "qubit_gate_ns_e4"}, errorBudget=0.0001
+                circuit, items=[{"entryPoint": circuit.name, "qubitParams": {"name": "qubit_gate_ns_e4"}, "errorBudget": 0.0001}]
             )
 
             # Make sure the job is completed before fetching results
             self._qiskit_wait_to_complete(qiskit_job, provider)
 
+            assert qiskit_job.status() == JobStatus.DONE
             if JobStatus.DONE == qiskit_job.status():
                 result = qiskit_job.result()
-                assert result.data()["logicalCounts"]["numQubits"] == 2
+                assert result.data(0)["logicalCounts"]["numQubits"] == 2
                 assert (
                     result.data()["jobParams"]["qubitParams"]["name"]
                     == "qubit_gate_ns_e4"
                 )
-                assert result.data()["jobParams"]["qecScheme"]["name"] == "surface_code"
-                assert result.data()["jobParams"]["errorBudget"] == 0.0001
+                assert result.data(0)["jobParams"]["qecScheme"]["name"] == "surface_code"
+                assert result.data(0)["jobParams"]["errorBudget"] == 0.0001
 
     @pytest.mark.microsoft_qc
     @pytest.mark.live_test
@@ -1116,16 +1119,14 @@ class TestQiskit(QuantumTestBase):
 
             # TODO: explicit entryPoint specification can be removed after
             #       change in microsoft.estimator target.
-            item1 = {"entryPoint": "circuit-0", "qubitParams": {"name": "qubit_gate_ns_e3"}, "errorBudget": 1e-4}
-            item2 = {"entryPoint": "circuit-0", "qubitParams": {"name": "qubit_gate_ns_e4"}, "errorBudget": 1e-4}
+            item1 = {"entryPoint": circuit.name, "qubitParams": {"name": "qubit_gate_ns_e3"}, "errorBudget": 1e-4}
+            item2 = {"entryPoint": circuit.name, "qubitParams": {"name": "qubit_gate_ns_e4"}, "errorBudget": 1e-4}
             qiskit_job = backend.run(circuit, items=[item1, item2])
 
             # Make sure the job is completed before fetching results
             self._qiskit_wait_to_complete(qiskit_job, provider)
 
-            print(qiskit_job)
-            print(dir(qiskit_job))
-
+            assert qiskit_job.status() == JobStatus.DONE
             if JobStatus.DONE == qiskit_job.status():
                 result = qiskit_job.result()
 
