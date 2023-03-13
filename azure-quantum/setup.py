@@ -83,7 +83,7 @@ setuptools.setup(
         "qiskit": [
             "qiskit-ionq>=0.3.3",
             "qiskit-terra>=0.19.1",
-            "qiskit-qir>=0.2,<0.3",
+            "qiskit-qir>=0.2,<0.4",
             "Markdown>=3.4.1",
             "python-markdown-math>=0.8"
         ],
