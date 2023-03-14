@@ -23,7 +23,6 @@ from azure.quantum._client.operations import (
 from azure.quantum._client.models import BlobDetails, JobStatus, SessionStatus, SessionDetails
 from azure.quantum._client.models._enums import SessionJobFailurePolicy;
 from azure.quantum import Job, Session
-from azure.quantum.job.workspace_item import WorkspaceItemFilter
 from azure.quantum.storage import create_container_using_client, get_container_uri, ContainerClient
 
 from .version import __version__
@@ -356,38 +355,30 @@ class Workspace:
         return [q.as_dict() for q in client.list()]
 
     def list_top_level_items(
-        self,
-        filter: Optional[WorkspaceItemFilter] = None
+        self
     ) -> List[Union[Job, Session]]:
         """Get a list of top level items for the given workspace.
 
-        :param filter: a filter to be applied on the top level items, defaults to None
-        :type filter: WorkspaceItemFilter, optional
         :return: Workspace items
         :rtype: List[WorkspaceItem]
         """
         from azure.quantum.job.workspace_item_factory import WorkspaceItemFactory
         client = self._get_top_level_items_client()
-        odata_filter = filter.as_odata if filter is not None else None
-        item_details_list = client.list(filter = odata_filter)
+        item_details_list = client.list()
         result = [WorkspaceItemFactory.__new__(workspace=self,item_details=item_details) 
                   for item_details in item_details_list]
         return result
 
     def list_sessions(
-        self,
-        filter: Optional[WorkspaceItemFilter] = None
+        self
     ) -> List[Session]:
         """Get a list sessions for the given workspace.
 
-        :param filter: a filter to be applied on the sessions, defaults to None
-        :type filter: WorkspaceItemFilter, optional
         :return: Workspace items
         :rtype: List[WorkspaceItem]
         """
         client = self._get_sessions_client()
-        odata_filter = filter.as_odata if filter is not None else None
-        session_details_list = client.list(filter = odata_filter)
+        session_details_list = client.list()
         result = [Session(workspace=self,details=session_details) 
                   for session_details in session_details_list]
         return result
@@ -430,13 +421,10 @@ class Workspace:
 
     def list_session_jobs(
         self,
-        session_id: str,
-        filter: Optional[WorkspaceItemFilter] = None
+        session_id: str
     ) -> List[Job]:
         client = self._get_sessions_client()
-        odata_filter = filter.as_odata if filter is not None else None
-        job_details_list = client.jobs_list(session_id = session_id,
-                                            filter = odata_filter)
+        job_details_list = client.jobs_list(session_id = session_id)
         result = [Job(workspace=self, job_details=job_details)
                   for job_details in job_details_list]
         return result

@@ -116,6 +116,7 @@ class TestSession(QuantumTestBase):
                                        session_id=session.id)
                                  ))
 
+        jobs = session.list_jobs()
         jobs = workspace.list_session_jobs(session_id=session.id)
         self.assertEqual(len(jobs), 1)
         self.assertEqual(job.id, jobs[0].id)

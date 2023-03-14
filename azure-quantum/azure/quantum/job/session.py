@@ -3,11 +3,12 @@
 # Licensed under the MIT License.
 ##
 
-from typing import TYPE_CHECKING, Optional, Union, Protocol, Any
+from typing import TYPE_CHECKING, Optional, Union, Protocol, Any, List
 from abc import abstractmethod
 
 from azure.quantum._client.models import SessionDetails, SessionStatus, SessionJobFailurePolicy
 from azure.quantum.job.workspace_item import WorkspaceItem
+from azure.quantum.job import Job
 
 __all__ = ["Session", "SessionHost"]
 
@@ -93,6 +94,11 @@ class Session(WorkspaceItem):
     def refresh(self) -> "Session":
         self.workspace.refresh_session(self)
         return self
+
+    def list_jobs(
+        self
+    ) -> List[Job]:
+        return self.workspace.list_session_jobs(session_id=self.id)
 
     def __enter__(self):
         return self
