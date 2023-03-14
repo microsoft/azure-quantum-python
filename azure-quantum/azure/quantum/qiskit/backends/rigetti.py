@@ -2,17 +2,16 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 ##
-import warnings
 
-from typing import TYPE_CHECKING, Union, List
+from typing import TYPE_CHECKING, Dict
 from azure.quantum.version import __version__
-from azure.quantum.qiskit.job import AzureQuantumJob
 from azure.quantum.target.rigetti import RigettiTarget
-
-from .backend import AzureBackend
+from abc import abstractmethod
+from .backend import AzureQirBackend
 
 from qiskit.providers.models import BackendConfiguration
-from qiskit.providers import Options
+from qiskit.providers import Options, Provider
+
 QIR_BASIS_GATES = [
     "measure",
     "m",
@@ -30,47 +29,46 @@ QIR_BASIS_GATES = [
     "x",
     "y",
     "z",
-    "id"
+    "id",
 ]
 
 if TYPE_CHECKING:
     from azure.quantum.qiskit import AzureQuantumProvider
 
 import logging
+
 logger = logging.getLogger(__name__)
 
-__all__ = [
-    "RigettiSimulatorBackend"
-    "RigettiQPUBackend"
-]
+__all__ = ["RigettiSimulatorBackend" "RigettiQPUBackend"]
 
-class RigettiBackend(AzureBackend):
+
+class RigettiBackend(AzureQirBackend):
     """Base class for interfacing with a Rigetti backend in Azure Quantum"""
+
+    @abstractmethod
+    def __init__(
+        self, configuration: BackendConfiguration, provider: Provider = None, **fields
+    ):
+        super().__init__(configuration, provider, **fields)
 
     @classmethod
     def _default_options(cls):
-        return Options(count=500, entryPoint="main", arguments=[], targetCapability="BasicExecution")
+        return Options(count=500, targetCapability="BasicExecution")
 
-    @classmethod
-    def _azure_config(cls):
-        return {
-            "blob_name": "inputData",
-            "content_type": "qir.v1",
-            "provider_id": "rigetti",
-            "input_data_format": "qir.v1",
-            "output_data_format": "microsoft.quantum-results.v1",
-        }
+    def _azure_config(self) -> Dict[str, str]:
+        config = super()._azure_config()
+        config.update(
+            {
+                "provider_id": "rigetti",
+            }
+        )
+        return config
 
 
 class RigettiSimulatorBackend(RigettiBackend):
     backend_names = RigettiTarget.simulators()
 
-    def __init__(
-        self,
-        name: str,
-        provider: "AzureQuantumProvider",
-        **kwargs
-    ):
+    def __init__(self, name: str, provider: "AzureQuantumProvider", **kwargs):
         """Base class for interfacing with an Rigetti Simulator backend"""
         default_config = BackendConfiguration.from_dict(
             {
@@ -92,19 +90,16 @@ class RigettiSimulatorBackend(RigettiBackend):
             }
         )
         logger.info("Initializing RigettiSimulatorBackend")
-        configuration: BackendConfiguration = kwargs.pop("configuration", default_config)
+        configuration: BackendConfiguration = kwargs.pop(
+            "configuration", default_config
+        )
         super().__init__(configuration=configuration, provider=provider, **kwargs)
 
 
 class RigettiQPUBackend(RigettiBackend):
     backend_names = RigettiTarget.qpus()
 
-    def __init__(
-        self,
-        name: str,
-        provider: "AzureQuantumProvider",
-        **kwargs
-    ):
+    def __init__(self, name: str, provider: "AzureQuantumProvider", **kwargs):
         """Base class for interfacing with a Rigetti QPU backend"""
         default_config = BackendConfiguration.from_dict(
             {
@@ -126,5 +121,7 @@ class RigettiQPUBackend(RigettiBackend):
             }
         )
         logger.info("Initializing RigettiQPUBackend")
-        configuration: BackendConfiguration = kwargs.pop("configuration", default_config)
+        configuration: BackendConfiguration = kwargs.pop(
+            "configuration", default_config
+        )
         super().__init__(configuration=configuration, provider=provider, **kwargs)
