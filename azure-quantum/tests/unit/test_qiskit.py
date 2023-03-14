@@ -1048,6 +1048,10 @@ class TestQiskit(QuantumTestBase):
             self.mock_create_job_id_name,
             return_value=self.get_test_job_id(),
         ):
+            from pyqir import rt
+            patcher = unittest.mock.patch.object(rt, "initialize")
+            patcher.start()
+
             workspace = self.create_workspace()
             provider = AzureQuantumProvider(workspace=workspace)
             backend = provider.get_backend("microsoft.estimator")
@@ -1058,6 +1062,8 @@ class TestQiskit(QuantumTestBase):
 
             # Make sure the job is completed before fetching results
             self._qiskit_wait_to_complete(qiskit_job, provider)
+
+            patcher.stop()
 
             assert qiskit_job.status() == JobStatus.DONE
             if JobStatus.DONE == qiskit_job.status():
@@ -1078,30 +1084,35 @@ class TestQiskit(QuantumTestBase):
             self.mock_create_job_id_name,
             return_value=self.get_test_job_id(),
         ):
+            from pyqir import rt
+            patcher = unittest.mock.patch.object(rt, "initialize")
+            patcher.start()
+
             workspace = self.create_workspace()
             provider = AzureQuantumProvider(workspace=workspace)
             backend = provider.get_backend("microsoft.estimator")
 
             circuit = self._controlled_s()
 
-            # TODO: change this back to not use items explicitly
             qiskit_job = backend.run(
-                circuit, items=[{"entryPoint": circuit.name, "qubitParams": {"name": "qubit_gate_ns_e4"}, "errorBudget": 0.0001}]
+                circuit, qubitParams={"name": "qubit_gate_ns_e4"}, errorBudget=0.0001
             )
 
             # Make sure the job is completed before fetching results
             self._qiskit_wait_to_complete(qiskit_job, provider)
 
+            patcher.stop()
+
             assert qiskit_job.status() == JobStatus.DONE
             if JobStatus.DONE == qiskit_job.status():
                 result = qiskit_job.result()
-                assert result.data(0)["logicalCounts"]["numQubits"] == 2
+                assert result.data()["logicalCounts"]["numQubits"] == 2
                 assert (
                     result.data()["jobParams"]["qubitParams"]["name"]
                     == "qubit_gate_ns_e4"
                 )
-                assert result.data(0)["jobParams"]["qecScheme"]["name"] == "surface_code"
-                assert result.data(0)["jobParams"]["errorBudget"] == 0.0001
+                assert result.data()["jobParams"]["qecScheme"]["name"] == "surface_code"
+                assert result.data()["jobParams"]["errorBudget"] == 0.0001
 
     @pytest.mark.microsoft_qc
     @pytest.mark.live_test
@@ -1111,20 +1122,24 @@ class TestQiskit(QuantumTestBase):
             self.mock_create_job_id_name,
             return_value=self.get_test_job_id(),
         ):
+            from pyqir import rt
+            patcher = unittest.mock.patch.object(rt, "initialize")
+            patcher.start()
+
             workspace = self.create_workspace()
             provider = AzureQuantumProvider(workspace=workspace)
             backend = provider.get_backend("microsoft.estimator")
 
             circuit = self._controlled_s()
 
-            # TODO: explicit entryPoint specification can be removed after
-            #       change in microsoft.estimator target.
-            item1 = {"entryPoint": circuit.name, "qubitParams": {"name": "qubit_gate_ns_e3"}, "errorBudget": 1e-4}
-            item2 = {"entryPoint": circuit.name, "qubitParams": {"name": "qubit_gate_ns_e4"}, "errorBudget": 1e-4}
+            item1 = {"qubitParams": {"name": "qubit_gate_ns_e3"}, "errorBudget": 1e-4}
+            item2 = {"qubitParams": {"name": "qubit_gate_ns_e4"}, "errorBudget": 1e-4}
             qiskit_job = backend.run(circuit, items=[item1, item2])
 
             # Make sure the job is completed before fetching results
             self._qiskit_wait_to_complete(qiskit_job, provider)
+
+            patcher.stop()
 
             assert qiskit_job.status() == JobStatus.DONE
             if JobStatus.DONE == qiskit_job.status():
