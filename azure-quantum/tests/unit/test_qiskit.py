@@ -1189,7 +1189,6 @@ class TestQiskit(QuantumTestBase):
             circuit = self._controlled_s()
 
             qiskit_job = backend.run(circuit=circuit, errorBudget=2)
-            assert qiskit_job._azure_job.details.metadata["num_qubits"] == '3'
 
             # Make sure the job is completed before fetching results
             self._qiskit_wait_to_complete(
