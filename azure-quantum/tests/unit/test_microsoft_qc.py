@@ -122,7 +122,6 @@ class TestMicrosoftQC(QuantumTestBase):
             _ = job.get_results()
 
     @pytest.mark.microsoft_qc
-    @pytest.mark.live_test
     def test_estimator_failing_job_client_validation(self):
         """
         Submits a job with wrong parameters.
