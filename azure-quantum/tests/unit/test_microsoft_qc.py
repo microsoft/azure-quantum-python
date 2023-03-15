@@ -128,6 +128,9 @@ class TestMicrosoftQC(QuantumTestBase):
 
         Checks whether error handling is correct.
         """
+
+        # This test will not send any request (not even authentication),
+        # because the error is caught before submit can send a request.
         ws = self.create_workspace()
         estimator = MicrosoftEstimator(ws)
 
