@@ -16,10 +16,8 @@ import re
 from common import QuantumTestBase, ZERO_UID
 
 from azure.quantum.job.job import Job
-from azure.quantum.target.microsoft import MicrosoftEstimatorJob
-from azure.quantum.target.microsoft.result import MicrosoftEstimatorResult
-from azure.quantum.target.microsoft.target import MicrosoftEstimatorParams, \
-    MicrosoftEstimator
+from azure.quantum.target.microsoft import MicrosoftEstimator, \
+    MicrosoftEstimatorJob, MicrosoftEstimatorResult, MicrosoftEstimatorParams
 
 
 class TestMicrosoftQC(QuantumTestBase):
