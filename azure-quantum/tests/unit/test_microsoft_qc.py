@@ -7,6 +7,7 @@
 # Licensed under the MIT License.
 ##
 import pytest
+from pytest import raises
 from unittest.mock import patch
 
 from os import path
@@ -17,6 +18,7 @@ from common import QuantumTestBase, ZERO_UID
 from azure.quantum.job.job import Job
 from azure.quantum.target.microsoft import MicrosoftEstimatorJob
 from azure.quantum.target.microsoft.result import MicrosoftEstimatorResult
+from azure.quantum.target.microsoft.target import MicrosoftEstimatorParams
 
 
 class TestMicrosoftQC(QuantumTestBase):
@@ -115,5 +117,61 @@ class TestMicrosoftQC(QuantumTestBase):
         expected = "Cannot retrieve results as job execution failed " \
                    "(InvalidInputError: The error budget must be " \
                    "between 0.0 and 1.0, provided input was `2`)"
-        with pytest.raises(RuntimeError, match=re.escape(expected)):
+        with raises(RuntimeError, match=re.escape(expected)):
             _ = job.get_results()
+
+    def test_estimator_params_validation(self):
+        """
+        Checks validation cases for reource estimation parameters.
+        """
+        params = MicrosoftEstimatorParams()
+
+        params.error_budget = 0.1
+        params.as_dict()
+
+        params.error_budget = 2
+        expected = "error_budget must be value between 0 and 1"
+        with raises(ValueError, match=expected):
+            params.as_dict()
+
+        params.error_budget = 0
+        expected = "error_budget must be value between 0 and 1"
+        with raises(ValueError, match=expected):
+            params.as_dict()
+
+        # Qubit parameters
+        params = MicrosoftEstimatorParams()
+        params.qubit_params.instruction_set = "invalid"
+        with raises(ValueError, match="instruction_set must be GateBased or "
+                                      "Majorana"):
+            params.as_dict()
+
+        params = MicrosoftEstimatorParams()
+        params.qubit_params.t_gate_error_rate = 0
+        with raises(ValueError, match="t_gate_error_rate must be between 0 "
+                                      "and 1"):
+            params.as_dict()
+
+        params = MicrosoftEstimatorParams()
+        params.qubit_params.t_gate_time = 20
+        with raises(TypeError, match="expected string or bytes-like object"):
+            params.as_dict()
+
+        params = MicrosoftEstimatorParams()
+        params.qubit_params.t_gate_time = "20"
+        with raises(ValueError, match="t_gate_time is not a valid time "
+                                      "string; use a suffix s, ms, us, or ns"):
+            params.as_dict()
+
+        params = MicrosoftEstimatorParams()
+        params.qubit_params.t_gate_time = "1 ns"
+        with raises(LookupError, match="instruction_set must be set for "
+                                       "custom qubit parameters"):
+            params.as_dict()
+
+        params = MicrosoftEstimatorParams()
+        params.qubit_params.instruction_set = "gateBased"
+        params.qubit_params.t_gate_time = "1 ns"
+        with raises(LookupError, match="one_qubit_measurement_time must be "
+                                       "set"):
+            params.as_dict()

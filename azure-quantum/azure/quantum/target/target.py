@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 ##
-from typing import TYPE_CHECKING, Any, Dict, Union, Type
+from typing import TYPE_CHECKING, Any, Dict, Optional, Union, Type
 import io
 import json
 from typing import Any, Dict
@@ -10,6 +10,7 @@ from typing import Any, Dict
 from azure.quantum._client.models import TargetStatus
 from azure.quantum.job.job import Job, BaseJob
 from azure.quantum.job.base_job import ContentType
+from azure.quantum.target.params import InputParams
 if TYPE_CHECKING:
     from azure.quantum import Workspace
 
@@ -37,7 +38,8 @@ class Target:
         content_type: ContentType = ContentType.json,
         encoding: str = "",
         average_queue_time: Union[float, None] = None,
-        current_availability: str = ""
+        current_availability: str = "",
+        supports_batching: bool = False
     ):
         """
         Initializes a new target.
@@ -53,6 +55,7 @@ class Target:
         self.encoding = encoding
         self._average_queue_time = average_queue_time
         self._current_availability = current_availability
+        self._supports_batching = supports_batching
 
     def __repr__(self):
         return f"<Target name=\"{self.name}\", \
@@ -149,7 +152,10 @@ target '{self.name}' of provider '{self.provider_id}' not found."
         :return: Azure Quantum job
         :rtype: Job
         """
-        input_params = input_params or {}
+        if isinstance(input_params, InputParams):
+            input_params = input_params.as_dict()
+        else:
+            input_params = input_params or {}
         input_data_format = kwargs.pop("input_data_format", self.input_data_format)
         output_data_format = kwargs.pop("output_data_format", self.output_data_format)
         content_type = kwargs.pop("content_type", self.content_type)
@@ -169,6 +175,19 @@ target '{self.name}' of provider '{self.provider_id}' not found."
             input_params=input_params,
             **kwargs
         )
+
+    def make_params(self, num_items: Optional[int] = None):
+        """
+        Returns an input parameter object for convenient creation of input
+        parameters.
+
+        For batching jobs, you can specify a value for num_items, if supported
+        by the target.
+        """
+        if not self._supports_batching and num_items is not None:
+            raise NotImplementedError("Batching is not implemented for this "
+                                      "target.")
+        return InputParams(num_items=num_items)
 
     def supports_protobuf(self):
         """
