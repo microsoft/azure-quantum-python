@@ -11,6 +11,7 @@ import warnings
 import pytest
 import json
 import random
+import re
 
 import numpy as np
 
@@ -195,7 +196,11 @@ class TestQiskit(QuantumTestBase):
         qobj = assemble(circuit)
         self._test_qiskit_submit_ionq(circuit=qobj, shots=1024)
 
-    def _qiskit_wait_to_complete(self, qiskit_job, provider):
+    def _qiskit_wait_to_complete(
+            self,
+            qiskit_job,
+            provider,
+            expected_status=JobStatus.DONE):
         job = qiskit_job._azure_job
         self.pause_recording()
         try:
@@ -211,9 +216,9 @@ class TestQiskit(QuantumTestBase):
             # See: https://github.com/microsoft/qdk-python/issues/118
             job.refresh()
 
-            self.assertEqual(JobStatus.DONE, qiskit_job.status())
+            self.assertEqual(expected_status, qiskit_job.status())
             qiskit_job = provider.get_job(job.id)
-            self.assertEqual(JobStatus.DONE, qiskit_job.status())
+            self.assertEqual(expected_status, qiskit_job.status())
 
     def _test_qiskit_submit_ionq(self, circuit, **kwargs):
 
@@ -802,9 +807,6 @@ class TestQiskit(QuantumTestBase):
             # Make sure the job is completed before fetching results
             self._qiskit_wait_to_complete(qiskit_job, provider)
 
-            print(qiskit_job)
-            print(dir(qiskit_job))
-
             if JobStatus.DONE == qiskit_job.status():
                 result = qiskit_job.result()
 
@@ -819,3 +821,36 @@ class TestQiskit(QuantumTestBase):
                 assert result.data(1)["jobParams"]["qubitParams"]["name"] == "qubit_gate_ns_e4"
                 assert result.data(1)["jobParams"]["qecScheme"]["name"] == "surface_code"
                 assert result.data(1)["jobParams"]["errorBudget"] == 0.0001
+
+    @pytest.mark.microsoft_qc
+    @pytest.mark.live_test
+    def test_qiskit_controlled_s_to_resource_estimator_failed(self):
+        with unittest.mock.patch.object(
+            Job,
+            self.mock_create_job_id_name,
+            return_value=self.get_test_job_id()
+        ):
+            workspace = self.create_workspace()
+            provider = AzureQuantumProvider(workspace=workspace)
+            backend = provider.get_backend("microsoft.estimator")
+
+            circuit = self._controlled_s()
+
+            qiskit_job = backend.run(circuit=circuit, errorBudget=2)
+            assert qiskit_job._azure_job.details.metadata["num_qubits"] == '3'
+
+            # Make sure the job is completed before fetching results
+            self._qiskit_wait_to_complete(
+                qiskit_job,
+                provider,
+                expected_status=JobStatus.ERROR)
+
+            assert JobStatus.ERROR == qiskit_job.status()
+            
+            expected = "Cannot retrieve results as job execution failed " \
+                       "(InvalidInputError: The error budget must be " \
+                       "between 0.0 and 1.0, provided input was `2`)"
+            with pytest.raises(RuntimeError, match=re.escape(expected)):
+                _ = qiskit_job.result()
+
+

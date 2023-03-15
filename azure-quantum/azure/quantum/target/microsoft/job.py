@@ -4,7 +4,7 @@
 ##
 from ... import Job
 from ..._client.models import JobDetails
-
+from .result import MicrosoftEstimatorResult
 
 class MicrosoftEstimatorJob(Job):
     """
@@ -13,3 +13,14 @@ class MicrosoftEstimatorJob(Job):
 
     def __init__(self, workspace, job_details: JobDetails, **kwargs):
         super().__init__(workspace, job_details, **kwargs)
+
+    def get_results(self, timeout_secs: float = ...) -> MicrosoftEstimatorResult:
+        try:
+            results = super().get_results(timeout_secs)
+            return MicrosoftEstimatorResult(results)
+        except RuntimeError:
+            error_obj = self.details.error_data
+            message = "Cannot retrieve results as job execution failed " \
+                      f"({error_obj.code}: {error_obj.message})"
+            raise RuntimeError(message)
+
