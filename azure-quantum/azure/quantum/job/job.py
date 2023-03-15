@@ -5,6 +5,8 @@
 import logging
 import time
 import json
+import io
+import zipfile
 
 from typing import TYPE_CHECKING
 
@@ -119,9 +121,14 @@ class Job(BaseJob, FilteredJob):
             )
 
         payload = self.download_data(self.details.output_data_uri)
+        attachment = self.download_attachment("additionalOutputData.zip", "https://stalchocro.blob.core.windows.net/job-b1b94e9a-a80f-11ed-b5dc-d83bbfb571aa")
+        file = io.BytesIO(attachment)
+        zip = zipfile.ZipFile(file)
+        summaryHtml = zip.read("additionalOutputData/summary.html")
+        html = summaryHtml.decode("utf8")
         try:
             payload = payload.decode("utf8")
-            return json.loads(payload)
+            return json.loads(payload), html
         except:
             # If errors decoding the data, return the raw payload:
-            return payload
+            return payload, html

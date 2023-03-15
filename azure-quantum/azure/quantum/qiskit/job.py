@@ -147,7 +147,8 @@ class AzureQuantumJob(JobV1):
                 job_result["data"] = self._format_quantinuum_results()
 
             else:
-                job_result["data"] = self._format_unknown_results()
+                data, html = self._format_unknown_results()
+                job_result["data"] = {"data": data, "html": html}
 
         job_result["header"] = self._azure_job.details.metadata
         if "metadata" in job_result["header"]:
@@ -272,5 +273,5 @@ class AzureQuantumJob(JobV1):
 
     def _format_unknown_results(self):
         """ This method is called to format Job results data when the job output is in an unknown format."""
-        az_result = self._azure_job.get_results()
-        return az_result
+        az_result, html_to_render = self._azure_job.get_results()
+        return az_result, html_to_render

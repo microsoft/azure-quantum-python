@@ -16,7 +16,8 @@ class ResourceEstimatorResult(Result):
         self.summary = ResourceEstimatorResultSummary(**kwargs)
 
     def _repr_html_(self):
-        return self._repr_html_success_() if self.success else self._repr_html_error_()
+        return self.data()['html']
+        #return self._repr_html_success_() if self.success else self._repr_html_error_()
 
     def _repr_html_success_(self):
         html = ""
@@ -69,7 +70,8 @@ class ResourceEstimatorResultSummary(Result):
         super().__init__(**kwargs)
 
     def _repr_html_(self):
-        return self._repr_html_success_() if self.success else self._repr_html_error_()
+        return "changed"
+        # return self._repr_html_success_() if self.success else self._repr_html_error_()
 
     def _repr_html_success_(self):
         html = """
