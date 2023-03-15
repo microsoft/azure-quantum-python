@@ -18,7 +18,8 @@ from common import QuantumTestBase, ZERO_UID
 from azure.quantum.job.job import Job
 from azure.quantum.target.microsoft import MicrosoftEstimatorJob
 from azure.quantum.target.microsoft.result import MicrosoftEstimatorResult
-from azure.quantum.target.microsoft.target import MicrosoftEstimatorParams
+from azure.quantum.target.microsoft.target import MicrosoftEstimatorParams, \
+    MicrosoftEstimator
 
 
 class TestMicrosoftQC(QuantumTestBase):
@@ -78,7 +79,7 @@ class TestMicrosoftQC(QuantumTestBase):
         Checks whether job and results have expected type.
         """
         ws = self.create_workspace()
-        estimator = ws.get_targets("microsoft.estimator")
+        estimator = MicrosoftEstimator(ws)
 
         ccnot = self._ccnot_bitcode()
         job = estimator.submit(ccnot)
@@ -106,7 +107,7 @@ class TestMicrosoftQC(QuantumTestBase):
         Checks whether error handling is correct.
         """
         ws = self.create_workspace()
-        estimator = ws.get_targets("microsoft.estimator")
+        estimator = MicrosoftEstimator(ws)
 
         ccnot = self._ccnot_bitcode()
         job = estimator.submit(ccnot, input_params={"errorBudget": 2})
@@ -119,6 +120,24 @@ class TestMicrosoftQC(QuantumTestBase):
                    "between 0.0 and 1.0, provided input was `2`)"
         with raises(RuntimeError, match=re.escape(expected)):
             _ = job.get_results()
+
+    @pytest.mark.microsoft_qc
+    @pytest.mark.live_test
+    def test_estimator_failing_job_client_validation(self):
+        """
+        Submits a job with wrong parameters.
+
+        Checks whether error handling is correct.
+        """
+        ws = self.create_workspace()
+        estimator = MicrosoftEstimator(ws)
+
+        ccnot = self._ccnot_bitcode()
+        params = estimator.make_params()
+        params.error_budget = 2
+        expected = "error_budget must be value between 0 and 1"
+        with raises(ValueError, match=expected):
+            estimator.submit(ccnot, input_params=params)
 
     def test_estimator_params_validation(self):
         """

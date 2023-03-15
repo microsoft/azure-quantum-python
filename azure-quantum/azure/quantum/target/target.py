@@ -135,9 +135,9 @@ target '{self.name}' of provider '{self.provider_id}' not found."
         self,
         input_data: Any,
         name: str = "azure-quantum-job",
-        input_params: Union[Dict[str, Any], None] = None,
+        input_params: Union[Dict[str, Any], InputParams, None] = None,
         **kwargs
-    ) -> BaseJob:
+    ) -> Job:
         """Submit input data and return Job.
 
         Provide input_data_format, output_data_format and content_type

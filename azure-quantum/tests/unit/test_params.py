@@ -69,10 +69,10 @@ class TestWorkspace(QuantumTestBase):
         params.entry_point = "run_program"
         params.items[0].entry_point = "other_program"
         params.file_uris["base"] = "https://some_link"
-        params.error_budget = 1.23
+        params.error_budget = 0.23
         assert params.as_dict() == {
             'entryPoint': 'run_program',
-            'errorBudget': 1.23,
+            'errorBudget': 0.23,
             'items': [{'entryPoint': 'other_program'}, {}],
             'fileUris': {'base': 'https://some_link'}}
 
