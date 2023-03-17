@@ -6,7 +6,7 @@ interactions:
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - azsdk-python-identity/1.10.0 Python/3.9.13 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-identity/1.12.0 Python/3.9.16 (Windows-10-10.0.22000-SP0)
       content-length:
       - '172'
     method: POST
@@ -34,14 +34,16 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - async-testapp azsdk-python-quantum/0.0.0.1 Python/3.9.13 (Windows-10-10.0.22000-SP0)
+      - async-testapp azsdk-python-quantum/0.0.0.1 Python/3.9.16 (Windows-10-10.0.22000-SP0)
     method: POST
-    uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/storage/sasUri
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/storage/sasUri?api-version=2022-09-12-preview
   response:
     body:
       string: '{"sasUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
         "access_token": "fake_token"}'
     headers:
+      connection:
+      - keep-alive
       content-length:
       - '190'
       content-type:
@@ -51,31 +53,31 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/storage/sasUri
+    url: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/storage/sasUri?api-version=2022-09-12-preview
 - request:
     body: null
     headers:
       Accept:
       - application/xml
       User-Agent:
-      - azsdk-python-storage-blob/12.14.0 Python/3.9.13 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-storage-blob/12.15.0 Python/3.9.16 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Thu, 13 Oct 2022 22:35:00 GMT
+      - Fri, 17 Mar 2023 22:01:56 GMT
       x-ms-version:
-      - '2021-08-06'
+      - '2021-12-02'
     method: GET
     uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?restype=container&sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerNotFound</Code><Message>The
-        specified container does not exist.\nRequestId:dbfaa815-301e-0006-6454-df81c8000000\nTime:2022-10-13T22:35:00.9665387Z</Message></Error>"
+        specified container does not exist.\nRequestId:29e45263-b01e-0055-341c-59a2fc000000\nTime:2023-03-17T22:01:56.5657905Z</Message></Error>"
     headers:
       content-length:
       - '223'
       content-type:
       - application/xml
       x-ms-version:
-      - '2021-08-06'
+      - '2021-12-02'
     status:
       code: 404
       message: The specified container does not exist.
@@ -86,11 +88,11 @@ interactions:
       Accept:
       - application/xml
       User-Agent:
-      - azsdk-python-storage-blob/12.14.0 Python/3.9.13 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-storage-blob/12.15.0 Python/3.9.16 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Thu, 13 Oct 2022 22:35:01 GMT
+      - Fri, 17 Mar 2023 22:01:56 GMT
       x-ms-version:
-      - '2021-08-06'
+      - '2021-12-02'
     method: PUT
     uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?restype=container&sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
   response:
@@ -100,7 +102,7 @@ interactions:
       content-length:
       - '0'
       x-ms-version:
-      - '2021-08-06'
+      - '2021-12-02'
     status:
       code: 201
       message: Created
@@ -111,11 +113,11 @@ interactions:
       Accept:
       - application/xml
       User-Agent:
-      - azsdk-python-storage-blob/12.14.0 Python/3.9.13 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-storage-blob/12.15.0 Python/3.9.16 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Thu, 13 Oct 2022 22:35:01 GMT
+      - Fri, 17 Mar 2023 22:01:56 GMT
       x-ms-version:
-      - '2021-08-06'
+      - '2021-12-02'
     method: GET
     uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?restype=container&sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
   response:
@@ -129,13 +131,13 @@ interactions:
       x-ms-lease-status:
       - unlocked
       x-ms-version:
-      - '2021-08-06'
+      - '2021-12-02'
     status:
       code: 200
       message: OK
     url: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?restype=container&sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
 - request:
-    body: b'\x1f\x8b\x08\x00\x94\x92Hc\x02\xffU\xcc\xc1\n\xc3 \x0c\x06\xe0W\x91\x9c\xdbQ\xedv\xd8^e\x94bm\xc6:PKM\x0bC|\xf7\x05{p\x9e\x8c\xff\x97?\x11,\x92\x9e5ix\x88\x08N[\xe4\x01\x08\x03\x8d\x1f?\x8d\x9aH\x9b\xb7EG\x01R#\xc0x\x86\xd7\xee\x0c-\xde\xe5\xca\x81[8g\x90\x97\x0ex\x87\xbek>\xb2\xee\x93\xcf\x7f\xdcl\xe0\xe0\x19\xc1\xf0\xd3\xf6\x9c-sNd#\xba\x81\xef\x9er+\xa0*\xb8W
+    body: b'\x1f\x8b\x08\x00S\xe3\x14d\x02\xffU\xcc\xc1\n\xc3 \x0c\x06\xe0W\x91\x9c\xdbQ\xedv\xd8^e\x94bm\xc6:PKM\x0bC|\xf7\x05{p\x9e\x8c\xff\x97?\x11,\x92\x9e5ix\x88\x08N[\xe4\x01\x08\x03\x8d\x1f?\x8d\x9aH\x9b\xb7EG\x01R#\xc0x\x86\xd7\xee\x0c-\xde\xe5\xca\x81[8g\x90\x97\x0ex\x87\xbek>\xb2\xee\x93\xcf\x7f\xdcl\xe0\xe0\x19\xc1\xf0\xd3\xf6\x9c-sNd#\xba\x81\xef\x9er+\xa0*\xb8W
       \x0b\xa8\x02}\xd5h\xaf\x95\xfcUjPC\x1aR\xfa\x01\xcc\xacx\xfb\x06\x01\x00\x00'
     headers:
       Accept:
@@ -145,13 +147,13 @@ interactions:
       Content-Type:
       - application/octet-stream
       User-Agent:
-      - azsdk-python-storage-blob/12.14.0 Python/3.9.13 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-storage-blob/12.15.0 Python/3.9.16 (Windows-10-10.0.22000-SP0)
       x-ms-blob-type:
       - BlockBlob
       x-ms-date:
-      - Thu, 13 Oct 2022 22:35:01 GMT
+      - Fri, 17 Mar 2023 22:01:56 GMT
       x-ms-version:
-      - '2021-08-06'
+      - '2021-12-02'
     method: PUT
     uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
   response:
@@ -161,45 +163,47 @@ interactions:
       content-length:
       - '0'
       x-ms-version:
-      - '2021-08-06'
+      - '2021-12-02'
     status:
       code: 201
       message: Created
     url: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
 - request:
     body: 'b''{"id": "00000000-0000-0000-0000-000000000000", "name": "test_job_attachments",
-      "containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+      "providerId": "Microsoft", "target": "microsoft.simulatedannealing-parameterfree.cpu",
+      "itemType": "Job", "containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
       "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData",
-      "inputDataFormat": "microsoft.qio.v2", "inputParams": {"params": {}}, "providerId":
-      "Microsoft", "target": "microsoft.simulatedannealing-parameterfree.cpu", "outputDataFormat":
+      "inputDataFormat": "microsoft.qio.v2", "inputParams": {"params": {}}, "outputDataFormat":
       "microsoft.qio-results.v2"}'''
     headers:
       Accept:
       - application/json
       Content-Length:
-      - '562'
+      - '581'
       Content-Type:
       - application/json
       User-Agent:
-      - async-testapp azsdk-python-quantum/0.0.0.1 Python/3.9.13 (Windows-10-10.0.22000-SP0)
+      - async-testapp azsdk-python-quantum/0.0.0.1 Python/3.9.16 (Windows-10-10.0.22000-SP0)
     method: PUT
-    uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000000
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000000?api-version=2022-09-12-preview
   response:
     body:
       string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
-        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
-        "inputDataFormat": "microsoft.qio.v2", "inputParams": {"params": {}}, "providerId":
-        "microsoft", "target": "microsoft.simulatedannealing-parameterfree.cpu", "metadata":
-        null, "name": "test_job_attachments", "id": "00000000-0000-0000-0000-000000000000",
-        "status": "Waiting", "outputDataFormat": "microsoft.qio-results.v2", "outputDataUri":
-        "https://mystorage.blob.core.windows.net:443/job-00000000-0000-0000-0000-000000000000/outputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
-        "creationTime": "2022-10-13T22:35:01.4613589+00:00", "beginExecutionTime":
-        null, "endExecutionTime": null, "cancellationTime": null, "costEstimate":
-        null, "errorData": null, "isCancelling": false, "tags": [], "access_token":
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData",
+        "inputDataFormat": "microsoft.qio.v2", "inputParams": {"params": {}}, "metadata":
+        null, "sessionId": null, "status": "Waiting", "jobType": "Optimization", "outputDataFormat":
+        "microsoft.qio-results.v2", "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-00000000-0000-0000-0000-000000000000/outputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
+        null, "errorData": null, "isCancelling": false, "tags": [], "name": "test_job_attachments",
+        "id": "00000000-0000-0000-0000-000000000000", "providerId": "microsoft", "target":
+        "microsoft.simulatedannealing-parameterfree.cpu", "creationTime": "2023-03-17T22:01:57.2502072+00:00",
+        "endExecutionTime": null, "costEstimate": null, "itemType": "Job", "access_token":
         "fake_token"}'
     headers:
+      connection:
+      - keep-alive
       content-length:
-      - '1077'
+      - '1114'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -207,7 +211,7 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000000
+    url: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000000?api-version=2022-09-12-preview
 - request:
     body: 'b''{"containerName": "job-00000000-0000-0000-0000-000000000000"}'''
     headers:
@@ -218,14 +222,16 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - async-testapp azsdk-python-quantum/0.0.0.1 Python/3.9.13 (Windows-10-10.0.22000-SP0)
+      - async-testapp azsdk-python-quantum/0.0.0.1 Python/3.9.16 (Windows-10-10.0.22000-SP0)
     method: POST
-    uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/storage/sasUri
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/storage/sasUri?api-version=2022-09-12-preview
   response:
     body:
       string: '{"sasUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
         "access_token": "fake_token"}'
     headers:
+      connection:
+      - keep-alive
       content-length:
       - '190'
       content-type:
@@ -235,18 +241,18 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/storage/sasUri
+    url: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/storage/sasUri?api-version=2022-09-12-preview
 - request:
     body: null
     headers:
       Accept:
       - application/xml
       User-Agent:
-      - azsdk-python-storage-blob/12.14.0 Python/3.9.13 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-storage-blob/12.15.0 Python/3.9.16 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Thu, 13 Oct 2022 22:35:01 GMT
+      - Fri, 17 Mar 2023 22:01:58 GMT
       x-ms-version:
-      - '2021-08-06'
+      - '2021-12-02'
     method: GET
     uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?restype=container&sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
   response:
@@ -260,7 +266,7 @@ interactions:
       x-ms-lease-status:
       - unlocked
       x-ms-version:
-      - '2021-08-06'
+      - '2021-12-02'
     status:
       code: 200
       message: OK
@@ -271,11 +277,11 @@ interactions:
       Accept:
       - application/xml
       User-Agent:
-      - azsdk-python-storage-blob/12.14.0 Python/3.9.13 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-storage-blob/12.15.0 Python/3.9.16 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Thu, 13 Oct 2022 22:35:01 GMT
+      - Fri, 17 Mar 2023 22:01:58 GMT
       x-ms-version:
-      - '2021-08-06'
+      - '2021-12-02'
     method: GET
     uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?restype=container&sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
   response:
@@ -289,7 +295,7 @@ interactions:
       x-ms-lease-status:
       - unlocked
       x-ms-version:
-      - '2021-08-06'
+      - '2021-12-02'
     status:
       code: 200
       message: OK
@@ -304,13 +310,13 @@ interactions:
       Content-Type:
       - application/octet-stream
       User-Agent:
-      - azsdk-python-storage-blob/12.14.0 Python/3.9.13 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-storage-blob/12.15.0 Python/3.9.16 (Windows-10-10.0.22000-SP0)
       x-ms-blob-type:
       - BlockBlob
       x-ms-date:
-      - Thu, 13 Oct 2022 22:35:02 GMT
+      - Fri, 17 Mar 2023 22:01:58 GMT
       x-ms-version:
-      - '2021-08-06'
+      - '2021-12-02'
     method: PUT
     uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/test-1?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
   response:
@@ -320,7 +326,7 @@ interactions:
       content-length:
       - '0'
       x-ms-version:
-      - '2021-08-06'
+      - '2021-12-02'
     status:
       code: 201
       message: Created
@@ -335,14 +341,16 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - async-testapp azsdk-python-quantum/0.0.0.1 Python/3.9.13 (Windows-10-10.0.22000-SP0)
+      - async-testapp azsdk-python-quantum/0.0.0.1 Python/3.9.16 (Windows-10-10.0.22000-SP0)
     method: POST
-    uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/storage/sasUri
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/storage/sasUri?api-version=2022-09-12-preview
   response:
     body:
       string: '{"sasUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
         "access_token": "fake_token"}'
     headers:
+      connection:
+      - keep-alive
       content-length:
       - '190'
       content-type:
@@ -352,18 +360,18 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/storage/sasUri
+    url: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/storage/sasUri?api-version=2022-09-12-preview
 - request:
     body: null
     headers:
       Accept:
       - application/xml
       User-Agent:
-      - azsdk-python-storage-blob/12.14.0 Python/3.9.13 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-storage-blob/12.15.0 Python/3.9.16 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Thu, 13 Oct 2022 22:35:02 GMT
+      - Fri, 17 Mar 2023 22:01:59 GMT
       x-ms-version:
-      - '2021-08-06'
+      - '2021-12-02'
     method: GET
     uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?restype=container&sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
   response:
@@ -377,7 +385,7 @@ interactions:
       x-ms-lease-status:
       - unlocked
       x-ms-version:
-      - '2021-08-06'
+      - '2021-12-02'
     status:
       code: 200
       message: OK
@@ -388,11 +396,11 @@ interactions:
       Accept:
       - application/xml
       User-Agent:
-      - azsdk-python-storage-blob/12.14.0 Python/3.9.13 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-storage-blob/12.15.0 Python/3.9.16 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Thu, 13 Oct 2022 22:35:02 GMT
+      - Fri, 17 Mar 2023 22:01:59 GMT
       x-ms-version:
-      - '2021-08-06'
+      - '2021-12-02'
     method: GET
     uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?restype=container&sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
   response:
@@ -406,7 +414,7 @@ interactions:
       x-ms-lease-status:
       - unlocked
       x-ms-version:
-      - '2021-08-06'
+      - '2021-12-02'
     status:
       code: 200
       message: OK
@@ -421,13 +429,13 @@ interactions:
       Content-Type:
       - application/octet-stream
       User-Agent:
-      - azsdk-python-storage-blob/12.14.0 Python/3.9.13 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-storage-blob/12.15.0 Python/3.9.16 (Windows-10-10.0.22000-SP0)
       x-ms-blob-type:
       - BlockBlob
       x-ms-date:
-      - Thu, 13 Oct 2022 22:35:02 GMT
+      - Fri, 17 Mar 2023 22:01:59 GMT
       x-ms-version:
-      - '2021-08-06'
+      - '2021-12-02'
     method: PUT
     uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/test-2?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
   response:
@@ -437,7 +445,7 @@ interactions:
       content-length:
       - '0'
       x-ms-version:
-      - '2021-08-06'
+      - '2021-12-02'
     status:
       code: 201
       message: Created
@@ -452,14 +460,16 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - async-testapp azsdk-python-quantum/0.0.0.1 Python/3.9.13 (Windows-10-10.0.22000-SP0)
+      - async-testapp azsdk-python-quantum/0.0.0.1 Python/3.9.16 (Windows-10-10.0.22000-SP0)
     method: POST
-    uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/storage/sasUri
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/storage/sasUri?api-version=2022-09-12-preview
   response:
     body:
       string: '{"sasUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
         "access_token": "fake_token"}'
     headers:
+      connection:
+      - keep-alive
       content-length:
       - '190'
       content-type:
@@ -469,18 +479,18 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/storage/sasUri
+    url: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/storage/sasUri?api-version=2022-09-12-preview
 - request:
     body: null
     headers:
       Accept:
       - application/xml
       User-Agent:
-      - azsdk-python-storage-blob/12.14.0 Python/3.9.13 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-storage-blob/12.15.0 Python/3.9.16 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Thu, 13 Oct 2022 22:35:02 GMT
+      - Fri, 17 Mar 2023 22:02:00 GMT
       x-ms-version:
-      - '2021-08-06'
+      - '2021-12-02'
     method: GET
     uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?restype=container&sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
   response:
@@ -494,7 +504,7 @@ interactions:
       x-ms-lease-status:
       - unlocked
       x-ms-version:
-      - '2021-08-06'
+      - '2021-12-02'
     status:
       code: 200
       message: OK
@@ -505,13 +515,13 @@ interactions:
       Accept:
       - application/xml
       User-Agent:
-      - azsdk-python-storage-blob/12.14.0 Python/3.9.13 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-storage-blob/12.15.0 Python/3.9.16 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Thu, 13 Oct 2022 22:35:03 GMT
+      - Fri, 17 Mar 2023 22:02:00 GMT
       x-ms-range:
       - bytes=0-33554431
       x-ms-version:
-      - '2021-08-06'
+      - '2021-12-02'
     method: GET
     uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/test-1?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
   response:
@@ -531,7 +541,7 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-creation-time:
-      - Thu, 13 Oct 2022 22:35:02 GMT
+      - Fri, 17 Mar 2023 22:01:58 GMT
       x-ms-lease-state:
       - available
       x-ms-lease-status:
@@ -539,7 +549,7 @@ interactions:
       x-ms-server-encrypted:
       - 'true'
       x-ms-version:
-      - '2021-08-06'
+      - '2021-12-02'
     status:
       code: 206
       message: Partial Content
@@ -554,14 +564,16 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - async-testapp azsdk-python-quantum/0.0.0.1 Python/3.9.13 (Windows-10-10.0.22000-SP0)
+      - async-testapp azsdk-python-quantum/0.0.0.1 Python/3.9.16 (Windows-10-10.0.22000-SP0)
     method: POST
-    uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/storage/sasUri
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/storage/sasUri?api-version=2022-09-12-preview
   response:
     body:
       string: '{"sasUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
         "access_token": "fake_token"}'
     headers:
+      connection:
+      - keep-alive
       content-length:
       - '190'
       content-type:
@@ -571,18 +583,18 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/storage/sasUri
+    url: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/storage/sasUri?api-version=2022-09-12-preview
 - request:
     body: null
     headers:
       Accept:
       - application/xml
       User-Agent:
-      - azsdk-python-storage-blob/12.14.0 Python/3.9.13 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-storage-blob/12.15.0 Python/3.9.16 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Thu, 13 Oct 2022 22:35:03 GMT
+      - Fri, 17 Mar 2023 22:02:01 GMT
       x-ms-version:
-      - '2021-08-06'
+      - '2021-12-02'
     method: GET
     uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?restype=container&sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
   response:
@@ -596,7 +608,7 @@ interactions:
       x-ms-lease-status:
       - unlocked
       x-ms-version:
-      - '2021-08-06'
+      - '2021-12-02'
     status:
       code: 200
       message: OK
@@ -607,13 +619,13 @@ interactions:
       Accept:
       - application/xml
       User-Agent:
-      - azsdk-python-storage-blob/12.14.0 Python/3.9.13 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-storage-blob/12.15.0 Python/3.9.16 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Thu, 13 Oct 2022 22:35:03 GMT
+      - Fri, 17 Mar 2023 22:02:01 GMT
       x-ms-range:
       - bytes=0-33554431
       x-ms-version:
-      - '2021-08-06'
+      - '2021-12-02'
     method: GET
     uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/test-2?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
   response:
@@ -633,7 +645,7 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-creation-time:
-      - Thu, 13 Oct 2022 22:35:02 GMT
+      - Fri, 17 Mar 2023 22:01:59 GMT
       x-ms-lease-state:
       - available
       x-ms-lease-status:
@@ -641,7 +653,7 @@ interactions:
       x-ms-server-encrypted:
       - 'true'
       x-ms-version:
-      - '2021-08-06'
+      - '2021-12-02'
     status:
       code: 206
       message: Partial Content
@@ -656,14 +668,16 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - async-testapp azsdk-python-quantum/0.0.0.1 Python/3.9.13 (Windows-10-10.0.22000-SP0)
+      - async-testapp azsdk-python-quantum/0.0.0.1 Python/3.9.16 (Windows-10-10.0.22000-SP0)
     method: POST
-    uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/storage/sasUri
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/storage/sasUri?api-version=2022-09-12-preview
   response:
     body:
       string: '{"sasUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
         "access_token": "fake_token"}'
     headers:
+      connection:
+      - keep-alive
       content-length:
       - '190'
       content-type:
@@ -673,18 +687,18 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/storage/sasUri
+    url: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/storage/sasUri?api-version=2022-09-12-preview
 - request:
     body: null
     headers:
       Accept:
       - application/xml
       User-Agent:
-      - azsdk-python-storage-blob/12.14.0 Python/3.9.13 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-storage-blob/12.15.0 Python/3.9.16 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Thu, 13 Oct 2022 22:35:03 GMT
+      - Fri, 17 Mar 2023 22:02:02 GMT
       x-ms-version:
-      - '2021-08-06'
+      - '2021-12-02'
     method: GET
     uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?restype=container&sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
   response:
@@ -698,7 +712,7 @@ interactions:
       x-ms-lease-status:
       - unlocked
       x-ms-version:
-      - '2021-08-06'
+      - '2021-12-02'
     status:
       code: 200
       message: OK
@@ -709,13 +723,13 @@ interactions:
       Accept:
       - application/xml
       User-Agent:
-      - azsdk-python-storage-blob/12.14.0 Python/3.9.13 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-storage-blob/12.15.0 Python/3.9.16 (Windows-10-10.0.22000-SP0)
       x-ms-date:
-      - Thu, 13 Oct 2022 22:35:04 GMT
+      - Fri, 17 Mar 2023 22:02:02 GMT
       x-ms-range:
       - bytes=0-33554431
       x-ms-version:
-      - '2021-08-06'
+      - '2021-12-02'
     method: GET
     uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
   response:
@@ -734,11 +748,11 @@ interactions:
       content-type:
       - application/json
       x-ms-blob-content-md5:
-      - OThFNp5ScIhXOynrwffWEg==
+      - nxm0DPs6+ARR2+Fl9zOR7Q==
       x-ms-blob-type:
       - BlockBlob
       x-ms-creation-time:
-      - Thu, 13 Oct 2022 22:35:01 GMT
+      - Fri, 17 Mar 2023 22:01:56 GMT
       x-ms-lease-state:
       - available
       x-ms-lease-status:
@@ -746,7 +760,7 @@ interactions:
       x-ms-server-encrypted:
       - 'true'
       x-ms-version:
-      - '2021-08-06'
+      - '2021-12-02'
     status:
       code: 206
       message: Partial Content
