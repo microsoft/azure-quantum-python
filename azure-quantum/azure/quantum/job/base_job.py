@@ -13,6 +13,7 @@ from azure.storage.blob import BlobClient
 
 from azure.quantum.storage import upload_blob, download_blob, ContainerClient
 from azure.quantum._client.models import JobDetails
+from azure.quantum.job.workspace_item import WorkspaceItem
 
 
 if TYPE_CHECKING:
@@ -27,16 +28,25 @@ class ContentType(str, Enum):
     json = "application/json"
     protobuf = "application/x-protobuf"
 
-class BaseJob(abc.ABC):
+class BaseJob(WorkspaceItem):
     # Optionally override these to create a Provider-specific Job subclass
     """
     Base job class with methods to create a job from raw blob data,
     upload blob data and download results.
     """
+
     @staticmethod
     def create_job_id() -> str:
         """Create a unique id for a new job."""
         return str(uuid.uuid1())
+
+    @property
+    def details(self) -> JobDetails:
+        return self._details
+
+    @details.setter
+    def details(self, value: JobDetails):
+        self._details = value
 
     @property
     def container_name(self):
@@ -58,6 +68,7 @@ class BaseJob(abc.ABC):
         input_data_format: str = None,
         output_data_format: str = None,
         input_params: Dict[str, Any] = None,
+        session_id: Optional[str] = None,
         **kwargs
     ) -> "BaseJob":
         """Create a new Azure Quantum job based on a raw input_data payload.
@@ -125,6 +136,7 @@ class BaseJob(abc.ABC):
             output_data_format=output_data_format,
             provider_id=provider_id,
             input_params=input_params,
+            session_id=session_id,
             **kwargs
         )
 
@@ -142,6 +154,7 @@ class BaseJob(abc.ABC):
         job_id: str = None,
         input_params: Dict[str, Any] = None,
         submit_job: bool = True,
+        session_id: Optional[str] = None,
         **kwargs
     ) -> "BaseJob":
         """Create new Job from URI if input data is already uploaded
@@ -193,6 +206,7 @@ class BaseJob(abc.ABC):
             provider_id=provider_id,
             target=target,
             input_params=input_params,
+            session_id=session_id,
             **kwargs
         )
         job = cls(workspace, details, **kwargs)

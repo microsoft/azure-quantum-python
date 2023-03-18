@@ -5,16 +5,19 @@
 from typing import TYPE_CHECKING, Any, Dict
 import io
 import json
+import abc
 from typing import Any, Dict
 
-from azure.quantum._client.models import TargetStatus
+from azure.quantum._client.models import TargetStatus, SessionDetails
+from azure.quantum._client.models._enums import SessionJobFailurePolicy
 from azure.quantum.job.job import Job
+from azure.quantum.job.session import Session, SessionHost
 from azure.quantum.job.base_job import ContentType
 if TYPE_CHECKING:
     from azure.quantum import Workspace
 
 
-class Target:
+class Target(abc.ABC, SessionHost):
     """Azure Quantum Target."""
     # Target IDs that are compatible with this Target class.
     # This variable is used by TargetFactory. To set the default
@@ -149,6 +152,7 @@ target '{self.name}' of provider '{self.provider_id}' not found."
             input_data_format=input_data_format,
             output_data_format=output_data_format,
             input_params=input_params,
+            session_id=self.get_latest_session_id(),
             **kwargs
         )
 
@@ -165,3 +169,9 @@ target '{self.name}' of provider '{self.provider_id}' not found."
         input_params: Dict[str, Any] = None
     ):
         return NotImplementedError("Price estimation is not implemented yet for this target.")
+
+    def _get_azure_workspace(self) -> "Workspace":
+        return self.workspace
+
+    def _get_azure_target_id(self) -> str:
+        return self.name

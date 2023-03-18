@@ -12,7 +12,7 @@ from azure.quantum._client.models import JobDetails
 from azure.quantum.job.base_job import BaseJob, ContentType, DEFAULT_TIMEOUT
 from azure.quantum.job.filtered_job import FilteredJob
 
-__all__ = ["Job"]
+__all__ = ["Job", "JobDetails"]
 
 logger = logging.getLogger(__name__)
 
@@ -34,10 +34,12 @@ class Job(BaseJob, FilteredJob):
     """
 
     def __init__(self, workspace: "Workspace", job_details: JobDetails, **kwargs):
-        self.workspace = workspace
-        self.details = job_details
-        self.id = job_details.id
         self.results = None
+        super().__init__(
+            workspace=workspace,
+            details=job_details,
+            **kwargs
+        )
     
     def submit(self):
         """Submit a job to Azure Quantum."""

@@ -17,6 +17,7 @@ from azure.quantum.qiskit.job import (
     AzureQuantumJob,
 )
 from abc import abstractmethod
+from azure.quantum.job.session import SessionHost
 
 try:
     from qiskit import QuantumCircuit, transpile
@@ -35,7 +36,7 @@ To install run: pip install azure-quantum[qiskit]"
     )
 
 
-class AzureBackendBase(Backend):
+class AzureBackendBase(Backend, SessionHost):
     @abstractmethod
     def __init__(
         self, configuration: BackendConfiguration, provider: Provider = None, **fields
@@ -168,6 +169,11 @@ class AzureBackendBase(Backend):
         else:
             raise ValueError("No input provided.")
 
+    def _get_azure_workspace(self) -> "Workspace":
+        return self.provider().get_workspace()
+
+    def _get_azure_target_id(self) -> str:
+        return self.name()
 
 class AzureQirBackend(AzureBackendBase):
     @abstractmethod
