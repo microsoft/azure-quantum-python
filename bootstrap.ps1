@@ -45,3 +45,7 @@ New-CondaEnvironment -PackageName $PackageName -CondaEnvironmentSuffix $CondaEnv
 
 # Install package in environment
 Install-PackageInEnv -PackageName $PackageName -CondaEnvironmentSuffix $CondaEnvironmentSuffix -FromSource $FromSource
+
+# Install IQ# in the azurequantum conda env
+Use-CondaEnv "azurequantum"
+& (Join-Path $PSScriptRoot "build" "install-iqsharp.ps1");
