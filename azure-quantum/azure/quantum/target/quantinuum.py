@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 ##
-import io
 from typing import Any, Dict
 
 from azure.quantum.target.target import Target
@@ -45,15 +44,9 @@ class Quantinuum(Target):
             **kwargs
         )
 
-    @staticmethod
-    def _encode_input_data(data: str) -> bytes:
-        stream = io.BytesIO()
-        stream.write(data.encode())
-        return stream.getvalue()
-
     def submit(
         self,
-        circuit: str,
+        circuit: str = None,
         name: str = "quantinuum-job",
         num_shots: int = None,
         input_params: Dict[str, Any] = None,
@@ -72,6 +65,11 @@ class Quantinuum(Target):
         :return: Azure Quantum job
         :rtype: Job
         """
+        input_data = kwargs.pop("input_data", circuit)
+        if input_data is None:
+            raise ValueError(
+                "Either the `circuit` parameter or the `input_data` parameter must be have a value."
+            )
         if input_params is None:
             input_params = {}
         if num_shots is not None:
@@ -79,7 +77,7 @@ class Quantinuum(Target):
             input_params["count"] = num_shots
 
         return super().submit(
-            input_data=circuit,
+            input_data=input_data,
             name=name,
             input_params=input_params,
             **kwargs
