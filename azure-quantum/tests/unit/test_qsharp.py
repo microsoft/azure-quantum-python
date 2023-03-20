@@ -42,8 +42,7 @@ class TestQSharpQIRJob(QuantumTestBase):
         ):
             workspace = self.create_workspace()
             target = workspace.get_targets(target_name)
-            # target = workspace.get_targets("quantinuum.sim.h1-2sc-preview")
-            job = target.submit(input_data=self.qsharp_callable, name="Job 1")
+            job = target.submit(input_data=self.qsharp_callable)
 
             self.pause_recording()
             try:
