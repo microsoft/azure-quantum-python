@@ -47,8 +47,15 @@ New-CondaEnvironment -PackageName $PackageName -CondaEnvironmentSuffix $CondaEnv
 Install-PackageInEnv -PackageName $PackageName -CondaEnvironmentSuffix $CondaEnvironmentSuffix -FromSource $FromSource
 
 if ($PackageName -eq "azure-quantum") {
+  # Since we may be using the Q# container image instead 
+  # of a regular build agent image, we may need to install the .NET SDK
+  $installDotnet = !(Get-Command dotnet -ErrorAction SilentlyContinue)
+  if ($installDotnet) {
+    sudo apt-get update
+    sudo apt-get install -y dotnet-sdk-6.0  
+  }
+
   # Installs IQ# dotnet tool, IQ# kernel and the qsharp Python package
   # Used for running tests between the Azure Quantum Python SDK and IQ# (Q#+QIR job submission)
-  Use-CondaEnv "azurequantum"
   & (Join-Path $PSScriptRoot "build" "install-iqsharp.ps1");
 }
