@@ -51,8 +51,8 @@ if ($PackageName -eq "azure-quantum") {
   # of a regular build agent image, we may need to install the .NET SDK
   $installDotnet = !(Get-Command dotnet -ErrorAction SilentlyContinue)
   if ($installDotnet) {
-    sudo apt-get update
-    sudo apt-get install -y dotnet-sdk-6.0  
+    apt-get update
+    apt-get install -y dotnet-sdk-6.0  
   }
 
   # Installs IQ# dotnet tool, IQ# kernel and the qsharp Python package
