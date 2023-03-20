@@ -52,7 +52,9 @@ if ($PackageName -eq "azure-quantum") {
   $installDotnet = !(Get-Command dotnet -ErrorAction SilentlyContinue)
   if ($installDotnet) {
     apt-get update
-    apt-get install -y dotnet-sdk-6.0  
+    apt-get install -y dotnet-sdk-6.0
+    $env:DOTNET_ROOT=$env:HOME/.dotnet
+    $env:PATH=$env:PATH:$env:DOTNET_ROOT:$env:DOTNET_ROOT/tools
   }
 
   # Installs IQ# dotnet tool, IQ# kernel and the qsharp Python package
