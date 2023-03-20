@@ -51,6 +51,8 @@ jobs:
     inputs:
       packageType: sdk
       version:  $(Build.Dotnet.Version)
+  - powershell: Write-Host "##vso[task.prependpath]/home/vsts_azpcontainer/.local/bin"
+    displayName: Add Jupyter to PATH
   - template: steps.yml
     parameters:
       PackageName: $(PackageName)
