@@ -11,7 +11,8 @@
 
 import setuptools
 import os
-import distutils
+import glob
+import re
 
 # VERSION INFORMATION #
 # Our build process sets the PYTHON_VERSION environment variable to a version
@@ -19,9 +20,9 @@ import distutils
 # here and propagate that to qsharp/version.py.
 #
 # To make sure that local builds still work without the same environment
-# variables, we'll default to 0.0.0.1 as a development version.
+# variables, we'll default to 0.0.1 as a development version.
 
-version = os.environ.get("PYTHON_VERSION", "0.0.0.1")
+version = os.environ.get("PYTHON_VERSION", "0.0.1")
 
 with open("./azure/quantum/version.py", "w") as f:
     f.write(
@@ -58,10 +59,36 @@ VERSION = "{version}"
 with open("./README.md", "r") as fh:
     long_description = fh.read()
 
+
 # LIST OF REQUIREMENTS #
-# Get list of requirements from requirements.txt
-with open("./requirements.txt", "r") as fh:
-    requirements = fh.readlines()
+def read_requirements(requirement_file: str) -> list[str]:
+    with open(requirement_file, "r") as fh:
+        requirements = fh.readlines()
+        requirements = [v.strip(' \n\r') for v in requirements]
+        requirements = list(filter(None, requirements))
+        return requirements
+
+
+requirements = read_requirements("requirements.txt")
+
+# LIST OF EXTRA/OPTIONAL REQUIREMENTS #
+#
+# All `requirements-option.txt` are extra/optional requirements
+# Identified by the `option`.
+#
+# To be used with `pip install azurequantum[option1, option2, ...]`
+# Example: `pip install azurequantum[qsharp,qiskit]`
+#
+# Instead of listing the individual options, you can pass `all`
+# Example, `pip install azurequantum[all]`
+extras_require = {}
+all_requirements = []
+for extra_requirement_file in glob.glob("requirements-*.txt"):
+    extra_option = re.match(r"requirements-(\w+)\.txt", extra_requirement_file).group(1)
+    extra_requirements = read_requirements(extra_requirement_file)
+    extras_require[extra_option] = extra_requirements
+    all_requirements.extend(extra_requirements)
+extras_require["all"] = all_requirements
 
 # SETUPTOOLS INVOCATION #
 setuptools.setup(
@@ -79,17 +106,5 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     install_requires=requirements,
-    extras_require={
-        "qiskit": [
-            "qiskit-ionq>=0.3.3",
-            "qiskit-terra>=0.19.1",
-            "qiskit-qir>=0.3.1,<0.4",
-            "Markdown>=3.4.1",
-            "python-markdown-math>=0.8"
-        ],
-        "cirq": [
-            "cirq-core>=1.0.0",
-            "cirq-ionq>=1.0.0",
-        ]
-    }
+    extras_require=extras_require
 )
