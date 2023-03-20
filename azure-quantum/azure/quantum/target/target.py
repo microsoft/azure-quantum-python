@@ -28,6 +28,7 @@ class Target:
         name: str,
         input_data_format: str = "",
         output_data_format: str = "",
+        capability: str = "",
         provider_id: str = "",
         content_type: ContentType = ContentType.json,
         encoding: str = "",
@@ -40,6 +41,7 @@ class Target:
         self.name = name
         self.input_data_format = input_data_format
         self.output_data_format = output_data_format
+        self.capability = capability
         self.provider_id = provider_id
         self.content_type = content_type
         self.encoding = encoding
@@ -141,12 +143,12 @@ target '{self.name}' of provider '{self.provider_id}' not found."
         # If the input_data is `QSharpCallable` (coming from the IQ# `qsharp` Python Package)
         # we need to convert it to QIR bitcode and set the necessary parameters for a QIR job.
         if (input_data and type(input_data).__name__ == "QSharpCallable"):
-            input_data_format = kwargs.get("input_data_format", "qir.v1")
-            output_data_format = kwargs.get("output_data_format", "microsoft.quantum-results.v1")
-            content_type = kwargs.get("content_type", "qir.v1")
+            input_data_format = kwargs.pop("input_data_format", "qir.v1")
+            output_data_format = kwargs.pop("output_data_format", "microsoft.quantum-results.v1")
+            content_type = kwargs.pop("content_type", "qir.v1")
             input_params["entryPoint"] = input_params.get("entryPoint", f'ENTRYPOINT__{input_data._name}')
             input_params["arguments"] = input_params.get("arguments", [])
-            targetCapability = input_params.get("targetCapability", kwargs.get("target_capability", None))
+            targetCapability = input_params.get("targetCapability", kwargs.pop("target_capability", self.capability))
             if targetCapability:
                 input_params["targetCapability"] = targetCapability
             input_data = input_data._repr_qir_(target=self.name, target_capability=targetCapability)

@@ -18,7 +18,7 @@ class TestQSharpQIRJob(QuantumTestBase):
         self._run_job("rigetti.sim.qvm")
 
     @pytest.mark.quantinuum
-    @pytest.mark.skip(reason="Temporarily skipping Quantinuum due to `Fatal error: QIR is not valid within the defined adaptor`")
+    # @pytest.mark.skip(reason="Temporarily skipping Quantinuum due to `Fatal error: QIR is not valid within the defined adaptor`")
     def test_qsharp_qir_quantinuum(self):
         self._run_job("quantinuum.sim.h1-1sc")
 
