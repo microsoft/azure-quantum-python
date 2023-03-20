@@ -7,23 +7,29 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import TYPE_CHECKING
+from typing import Any, TYPE_CHECKING
 
 from azure.core import PipelineClient
-from msrest import Deserializer, Serializer
+from azure.core.rest import HttpRequest, HttpResponse
 
-from . import models
+from . import models as _models
 from ._configuration import QuantumClientConfiguration
-from .operations import JobsOperations, ProvidersOperations, QuotasOperations, StorageOperations
+from ._serialization import Deserializer, Serializer
+from .operations import (
+    JobsOperations,
+    ProvidersOperations,
+    QuotasOperations,
+    SessionsOperations,
+    StorageOperations,
+    TopLevelItemsOperations,
+)
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Optional
-
     from azure.core.credentials import TokenCredential
-    from azure.core.rest import HttpRequest, HttpResponse
 
-class QuantumClient(object):
+
+class QuantumClient:  # pylint: disable=client-accepts-api-version-keyword
     """Azure Quantum REST API client.
 
     :ivar jobs: JobsOperations operations
@@ -34,33 +40,47 @@ class QuantumClient(object):
     :vartype storage: azure.quantum._client.operations.StorageOperations
     :ivar quotas: QuotasOperations operations
     :vartype quotas: azure.quantum._client.operations.QuotasOperations
-    :param credential: Credential needed for the client to connect to Azure.
-    :type credential: ~azure.core.credentials.TokenCredential
+    :ivar sessions: SessionsOperations operations
+    :vartype sessions: azure.quantum._client.operations.SessionsOperations
+    :ivar top_level_items: TopLevelItemsOperations operations
+    :vartype top_level_items: azure.quantum._client.operations.TopLevelItemsOperations
     :param subscription_id: The Azure subscription ID. This is a GUID-formatted string (e.g.
-     00000000-0000-0000-0000-000000000000).
+     00000000-0000-0000-0000-000000000000). Required.
     :type subscription_id: str
-    :param resource_group_name: Name of an Azure resource group.
+    :param resource_group_name: Name of an Azure resource group. Required.
     :type resource_group_name: str
-    :param workspace_name: Name of the workspace.
+    :param workspace_name: Name of the workspace. Required.
     :type workspace_name: str
-    :param base_url: Service URL. Default value is 'https://quantum.azure.com'.
-    :type base_url: str
+    :param credential: Credential needed for the client to connect to Azure. Required.
+    :type credential: ~azure.core.credentials.TokenCredential
+    :keyword endpoint: Service URL. Default value is "https://quantum.azure.com".
+    :paramtype endpoint: str
+    :keyword api_version: Api Version. Default value is "2022-09-12-preview". Note that overriding
+     this default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
     def __init__(
         self,
-        credential,  # type: "TokenCredential"
-        subscription_id,  # type: str
-        resource_group_name,  # type: str
-        workspace_name,  # type: str
-        base_url="https://quantum.azure.com",  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
-        self._config = QuantumClientConfiguration(credential=credential, subscription_id=subscription_id, resource_group_name=resource_group_name, workspace_name=workspace_name, **kwargs)
-        self._client = PipelineClient(base_url=base_url, config=self._config, **kwargs)
+        subscription_id: str,
+        resource_group_name: str,
+        workspace_name: str,
+        credential: "TokenCredential",
+        *,
+        endpoint: str = "https://quantum.azure.com",
+        **kwargs: Any
+    ) -> None:
+        self._config = QuantumClientConfiguration(
+            subscription_id=subscription_id,
+            resource_group_name=resource_group_name,
+            workspace_name=workspace_name,
+            credential=credential,
+            **kwargs
+        )
+        self._client: PipelineClient = PipelineClient(base_url=endpoint, config=self._config, **kwargs)
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        client_models = {k: v for k, v in _models._models.__dict__.items() if isinstance(v, type)}
+        client_models.update({k: v for k, v in _models.__dict__.items() if isinstance(v, type)})
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
@@ -68,23 +88,19 @@ class QuantumClient(object):
         self.providers = ProvidersOperations(self._client, self._config, self._serialize, self._deserialize)
         self.storage = StorageOperations(self._client, self._config, self._serialize, self._deserialize)
         self.quotas = QuotasOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.sessions = SessionsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.top_level_items = TopLevelItemsOperations(self._client, self._config, self._serialize, self._deserialize)
 
-
-    def _send_request(
-        self,
-        request,  # type: HttpRequest
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> HttpResponse
+    def send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
         >>> request = HttpRequest("GET", "https://www.example.org/")
         <HttpRequest [GET], url: 'https://www.example.org/'>
-        >>> response = client._send_request(request)
+        >>> response = client.send_request(request)
         <HttpResponse: 200 OK>
 
-        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
+        For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
 
         :param request: The network request you want to make. Required.
         :type request: ~azure.core.rest.HttpRequest
@@ -97,15 +113,12 @@ class QuantumClient(object):
         request_copy.url = self._client.format_url(request_copy.url)
         return self._client.send_request(request_copy, **kwargs)
 
-    def close(self):
-        # type: () -> None
+    def close(self) -> None:
         self._client.close()
 
-    def __enter__(self):
-        # type: () -> QuantumClient
+    def __enter__(self) -> "QuantumClient":
         self._client.__enter__()
         return self
 
-    def __exit__(self, *exc_details):
-        # type: (Any) -> None
+    def __exit__(self, *exc_details: Any) -> None:
         self._client.__exit__(*exc_details)

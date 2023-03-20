@@ -28,7 +28,7 @@ class _IonQClient:
     
     @staticmethod
     def _to_ionq_status(status: str):
-        from azure.quantum._client.models._quantum_client_enums import JobStatus
+        from azure.quantum._client.models._enums import JobStatus
         _STATUS_DICT = {
             JobStatus.SUCCEEDED: 'completed',
             JobStatus.CANCELLED: 'canceled',

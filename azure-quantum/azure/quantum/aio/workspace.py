@@ -139,10 +139,10 @@ class Workspace:
         self.location = "".join(location.split()).lower()
 
     def _create_client(self) -> QuantumClient:
-        base_url = BASE_URL(self.location)
+        endpoint = BASE_URL(self.location)
         logger.debug(
             f"Creating client for: subs:{self.subscription_id},"
-            + f"rg={self.resource_group}, ws={self.name}, frontdoor={base_url}"
+            + f"rg={self.resource_group}, ws={self.name}, frontdoor={endpoint}"
         )
 
         client = QuantumClient(
@@ -150,7 +150,7 @@ class Workspace:
             subscription_id=self.subscription_id,
             resource_group_name=self.resource_group,
             workspace_name=self.name,
-            base_url=base_url,
+            endpoint=endpoint,
             user_agent=self.user_agent
         )
         return client
