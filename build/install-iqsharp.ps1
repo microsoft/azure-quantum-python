@@ -43,9 +43,13 @@ if (Test-Path $iqsharpNugetPackagePath -PathType Leaf) {
     Write-Host "  Source: $Env:NUGET_OUTDIR"
     
     dotnet tool install Microsoft.Quantum.IQSharp --version $nugetVersion --tool-path $Env:TOOLS_DIR --add-source $Env:NUGET_OUTDIR | Write-Host
-} else {
-    Write-Host "Installing the latest published IQ# dotnet tool"
-    dotnet tool install Microsoft.Quantum.IQSharp --tool-path $Env:TOOLS_DIR | Write-Host
+} else {    
+    Write-Host "Installing the $nugetVersion published IQ# dotnet tool"
+    dotnet tool install Microsoft.Quantum.IQSharp --version $nugetVersion --tool-path $Env:TOOLS_DIR | Write-Host
+    if ($LastExitCode -ne 0) {
+        Write-Host "Installing the latest published IQ# dotnet tool"
+        dotnet tool install Microsoft.Quantum.IQSharp --tool-path $Env:TOOLS_DIR | Write-Host
+    }
 }
 
 Write-Host "Installing the IQ# Kernel from the installed dotnet tool"
@@ -73,8 +77,12 @@ if (Test-Path $qsharpPythonWheelPath -PathType Leaf) {
     Write-Host "  Source: $Env:PYTHON_OUTDIR"
     pip install --user --verbose --no-index --find-links=$Env:PYTHON_OUTDIR "qsharp==$pythonVersion" | Write-Host
 } else {
-    Write-Host "Installing the latest published qsharp Python package"
-    pip install --user --verbose qsharp | Write-Host
+    Write-Host "Installing the $pythonVersion published qsharp Python package"
+    pip install --user --verbose "qsharp==$pythonVersion" | Write-Host
+    if ($LastExitCode -ne 0) {
+        Write-Host "Installing the latest published qsharp Python package"
+        pip install --user --verbose qsharp | Write-Host
+    }
 }
 
 exit 0
