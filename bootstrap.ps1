@@ -31,6 +31,23 @@ if ($False -eq $FromWheel) {
 }
 Write-Host $FromSource;
 
+if ($PackageName -eq "azure-quantum") {
+  # Since we may be using the Q# container image instead 
+  # of a regular build agent image, we may need to install the .NET SDK
+  $installDotnet = !(Get-Command dotnet -ErrorAction SilentlyContinue)
+  if ($installDotnet) {
+    "Installing .NET SDK" | Write-Host
+    apt-get update | Write-Host
+    apt-get install -y dotnet-sdk-6.0 | Write-Host
+    $env:DOTNET_ROOT = "$env:HOME/.dotnet"
+    Write-Host "DOTNET_ROOT = $env:DOTNET_ROOT"
+    $env:PATH += ";$env:DOTNET_ROOT;$env:DOTNET_ROOT/tools"
+    Write-Host "PATH = $env:PATH"
+  }
+}
+
+exit 0
+
 # Set env vars
 & (Join-Path $PSScriptRoot "build" "set-env.ps1");
 
@@ -51,8 +68,9 @@ if ($PackageName -eq "azure-quantum") {
   # of a regular build agent image, we may need to install the .NET SDK
   $installDotnet = !(Get-Command dotnet -ErrorAction SilentlyContinue)
   if ($installDotnet) {
-    apt-get update
-    apt-get install -y dotnet-sdk-6.0
+    "Installing .NET SDK" | Write-Host
+    apt-get update | Write-Host
+    apt-get install -y dotnet-sdk-6.0 | Write-Host
     $env:DOTNET_ROOT = "$env:HOME/.dotnet"
     $env:PATH += ";$env:DOTNET_ROOT;$env:DOTNET_ROOT/tools"
   }
