@@ -24,7 +24,7 @@ class TestQSharpQIRJob(QuantumTestBase):
     @pytest.fixture(autouse=True, scope='class')
     def _qsharp_callable(self):
         import qsharp
-        self.qsharp_callable = qsharp.compile("""
+        TestQSharpQIRJob.qsharp_callable = qsharp.compile("""
             open Microsoft.Quantum.Intrinsic;
             operation GenerateRandomBit_Inline() : Result {
                 use q0 = Qubit();
@@ -41,7 +41,7 @@ class TestQSharpQIRJob(QuantumTestBase):
         ):
             workspace = self.create_workspace()
             target = workspace.get_targets(target_name)
-            job = target.submit(input_data=self.qsharp_callable)
+            job = target.submit(input_data=TestQSharpQIRJob.qsharp_callable)
 
             self.pause_recording()
             try:
