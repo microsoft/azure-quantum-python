@@ -42,15 +42,6 @@ jobs:
         PackageName: 'azure-quantum'
         CondaEnvironmentSuffix: '-cirq-beta'
   steps:
-  # Since we may be using the Q# container image instead 
-  # of a regular build agent image, we may need to install the .NET SDK
-  - script: |
-      sudo apt-get update
-      sudo apt-get install -y dotnet-sdk-6.0
-      export DOTNET_ROOT=$HOME/.dotnet
-      echo "##vso[task.prependpath]$DOTNET_ROOT"
-      echo "##vso[task.prependpath]$DOTNET_ROOT/tools"
-    displayName: Install .NET SDK, and update PATH
   # Since we are using the Q# container image instead 
   # of a regular build agent image, we need to install the .NET SDK
   # Note: The UseDotNet@2 does not work and the DotNetCoreInstaller@1 must be used.
