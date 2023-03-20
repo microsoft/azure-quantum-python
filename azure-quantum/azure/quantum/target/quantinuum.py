@@ -68,7 +68,7 @@ class Quantinuum(Target):
         input_data = kwargs.pop("input_data", circuit)
         if input_data is None:
             raise ValueError(
-                "Either the `circuit` parameter or the `input_data` parameter must be have a value."
+                "Either the `circuit` parameter or the `input_data` parameter must have a value."
             )
         if input_params is None:
             input_params = {}
