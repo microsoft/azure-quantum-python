@@ -237,7 +237,7 @@ class SessionHost(Protocol):
     ) -> Session:
         """Opens a session and associates all future job submissions to that
            session until the session is closed (which happens automatically
-           after existing a `with` block).
+           after exiting a `with` block).
 
         Example (job 1 to 3 will be associated the session "MySession"):
             with target.open_session(name="MySession") as session:
