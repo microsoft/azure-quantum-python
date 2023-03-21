@@ -26,7 +26,7 @@ class Session(WorkspaceItem):
     :param details: Session details model, containing the session id,
                     name, job_failure_policy, provider_id and target.
                     Either this parameter should be passed containing all
-                    the session detail values, the same values should be
+                    the session detail values, or the same values should be
                     passed as individual parameters.
     :type details: Optional[SessionDetails]
 
@@ -73,7 +73,7 @@ class Session(WorkspaceItem):
                  (name is not None) or
                  (job_failure_policy is not None))):
             raise ValueError("""If `session_details` is passed, you should not pass `target`,
-                                `provider_id`, `session_id`, `session_name` or `job_failure_policy`.""")
+                                `provider_id`, `id`, `session_name` or `job_failure_policy`.""")
 
         if (details is None) and (target is None):
             raise ValueError("If `session_details` is not passed, you should at least pass the `target`.")
@@ -248,7 +248,7 @@ class SessionHost(Protocol):
     ) -> Session:
         """Opens a session and associates all future job submissions to that
            session until the session is closed (which happens automatically
-           after existing a `with` block).
+           after exiting a `with` block).
 
         Example (job 1 to 3 will be associated the session "MySession"):
             with target.open_session(name="MySession") as session:
