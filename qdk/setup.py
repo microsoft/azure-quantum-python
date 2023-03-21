@@ -40,6 +40,7 @@ setuptools.setup(
         'basis_set_exchange',
         'jupyter_nbextensions_configurator',
         'pygments>=2.7.4',
-        'ipython>=5.11.0'
+        'ipython>=5.11.0',
+        'ipywidgets==8.0.4'
     ]
 )
