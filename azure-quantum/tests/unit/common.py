@@ -117,7 +117,10 @@ class QuantumTestBase(ReplayableTest):
             r"jobs/([a-f0-9]+[-]){4}[a-f0-9]+", "jobs/" + ZERO_UID
         )
         regex_replacer.register_regex(
-            r"job-([a-f0-9]+[-]){4}[a-f0-9]+", "job-" + ZERO_UID
+            r"session-([a-f0-9]+[-]){4}[a-f0-9]+", "session-" + ZERO_UID
+        )
+        regex_replacer.register_regex(
+            r"sessions/([a-f0-9]+[-]){4}[a-f0-9]+", "sessions/" + ZERO_UID
         )
         regex_replacer.register_regex(
             r"\d{8}-\d{6}", "20210101-000000"
@@ -360,7 +363,7 @@ class CustomRecordingProcessor(RecordingProcessor):
         self._regexes = []
 
     def register_regex(self, old_regex, new):
-        self._regexes.append((re.compile(pattern=old_regex, 
+        self._regexes.append((re.compile(pattern=old_regex,
                                          flags=re.IGNORECASE | re.MULTILINE),
                              new))
 
@@ -460,6 +463,7 @@ class AuthenticationMetadataFilter(RecordingProcessor):
             return None
         return request
 
+
 class AccessTokenReplacerWithListException(AccessTokenReplacer):
     """
     Replace the access token for service principal authentication in a response body.
@@ -480,6 +484,7 @@ class AccessTokenReplacerWithListException(AccessTokenReplacer):
             return response
         response['body']['string'] = json.dumps(body)
         return response
+
 
 class InteractiveAccessTokenReplacer(RecordingProcessor):
     """Replace the access token for interactive authentication in a response body."""
