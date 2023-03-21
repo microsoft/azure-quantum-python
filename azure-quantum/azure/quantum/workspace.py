@@ -372,7 +372,7 @@ class Workspace:
     def list_sessions(
         self
     ) -> List[Session]:
-        """Get a list sessions for the given workspace.
+        """Get the list of sessions in the given workspace.
 
         :return: Session items
         :rtype: List[Session]
