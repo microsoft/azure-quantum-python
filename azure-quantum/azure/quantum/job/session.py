@@ -158,6 +158,17 @@ class Session(WorkspaceItem):
         """
         return self.workspace.list_session_jobs(session_id=self.id)
 
+    def is_in_terminal_state(self) -> bool:
+        """Returns True if the session is in one of the possible
+           terminal states(Succeeded, Failed and Timed_Out).
+
+        :return: True if the session is in one of the terminal states.
+        :rtype: bool
+        """
+        return (self.details.status == SessionStatus.SUCCEEDED
+                or self.details.status == SessionStatus.FAILED
+                or self.details.status == SessionStatus.TIMED_OUT)
+
     def __enter__(self):
         """PEP 343 context manager implementation to use a session in
            a `with` block.

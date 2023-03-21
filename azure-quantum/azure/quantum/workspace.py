@@ -402,13 +402,19 @@ class Workspace:
         self,
         session: Session
     ):
-        """Closes a session in the given workspace.
+        """Closes a session in the given workspace if the
+           session is not in a terminal state.
+           Otherwise, just refreshes the session details.
 
         :param session: The session to be closed.
         :type session: Session
         """
         client = self._get_sessions_client()
-        session.details = client.close(session_id=session.id)
+        if not session.is_in_terminal_state():
+            session.details = client.close(session_id=session.id)
+        else:
+            session.details = client.get(session_id=session.id)
+
         if session.target:
             if (session.target.latest_session
                 and session.target.latest_session.id == session.id):
