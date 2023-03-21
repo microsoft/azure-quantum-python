@@ -46,7 +46,7 @@ New-CondaEnvironment -PackageName $PackageName -CondaEnvironmentSuffix $CondaEnv
 # Install package in environment
 Install-PackageInEnv -PackageName $PackageName -CondaEnvironmentSuffix $CondaEnvironmentSuffix -FromSource $FromSource
 
-if ($PackageName -eq "azure-quantum") {
+if ($PackageName -eq "azure-quantum" || $PackageName -eq "") {
   # Installs IQ# dotnet tool, IQ# kernel and the qsharp Python package
   # Used for running tests between the Azure Quantum Python SDK and IQ# (Q#+QIR job submission)
   & (Join-Path $PSScriptRoot "build" "install-iqsharp.ps1");
