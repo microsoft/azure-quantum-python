@@ -222,7 +222,7 @@ class Workspace:
         """
         Append a new value to the Workspace's UserAgent and re-initialize the
         QuantumClient. The values are appended using a dash.
-        
+
         :param value: UserAgent value to add, e.g. "azure-quantum-<plugin>"
         """
         if value not in (self._user_agent or ""):
@@ -325,11 +325,10 @@ class Workspace:
         **kwargs
     ) -> Union["Target", Iterable["Target"]]:
         """Returns all available targets for this workspace filtered by name and provider ID.
-        
-        :param name: Optional target name to filter by, defaults to None
-        :type name: str, optional
+
         :param provider_id: Optional provider Id to filter by, defaults to None
         :type provider_id: str, optional
+
         :return: Targets
         :rtype: Iterable[Target]
         """
@@ -373,10 +372,10 @@ class Workspace:
     def list_sessions(
         self
     ) -> List[Session]:
-        """Get a list sessions for the given workspace.
+        """Get the list of sessions in the given workspace.
 
-        :return: Workspace items
-        :rtype: List[WorkspaceItem]
+        :return: Session items
+        :rtype: List[Session]
         """
         client = self._get_sessions_client()
         session_details_list = client.list()
@@ -389,6 +388,11 @@ class Workspace:
         session: Session,
         **kwargs
     ):
+        """Opens/creates a session in the given workspace.
+
+        :param session: The session to be opened/created.
+        :type session: Session
+        """
         client = self._get_sessions_client()
         session.details = client.open(
             session_id=session.id,
@@ -398,8 +402,19 @@ class Workspace:
         self,
         session: Session
     ):
+        """Closes a session in the given workspace if the
+           session is not in a terminal state.
+           Otherwise, just refreshes the session details.
+
+        :param session: The session to be closed.
+        :type session: Session
+        """
         client = self._get_sessions_client()
-        session.details = client.close(session_id=session.id)
+        if not session.is_in_terminal_state():
+            session.details = client.close(session_id=session.id)
+        else:
+            session.details = client.get(session_id=session.id)
+
         if session.target:
             if (session.target.latest_session
                 and session.target.latest_session.id == session.id):
@@ -409,23 +424,45 @@ class Workspace:
         self,
         session: Session
     ):
+        """Updates the session details with the latest information
+           from the workspace.
+
+        :param session: The session to be refreshed.
+        :type session: Session
+        """
         session.details = self.get_session(session_id=session.id).details
 
     def get_session(
         self,
-        session_id:str
+        session_id: str
     ) -> Session:
+        """Gets a session from the workspace.
+
+        :param session_id: The id of session to be retrieved.
+        :type session_id: str
+
+        :return: Session
+        :rtype: Session
+        """
         client = self._get_sessions_client()
         session_details = client.get(session_id=session_id)
-        result = Session(workspace=self,details=session_details)
+        result = Session(workspace=self, details=session_details)
         return result
 
     def list_session_jobs(
         self,
         session_id: str
     ) -> List[Job]:
+        """Gets all jobs associated with a session.
+
+        :param session_id: The id of session.
+        :type session_id: str
+
+        :return: List of all jobs associated with a session.
+        :rtype: List[Job]
+        """
         client = self._get_sessions_client()
-        job_details_list = client.jobs_list(session_id = session_id)
+        job_details_list = client.jobs_list(session_id=session_id)
         result = [Job(workspace=self, job_details=job_details)
                   for job_details in job_details_list]
         return result
