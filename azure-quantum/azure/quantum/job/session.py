@@ -73,7 +73,7 @@ class Session(WorkspaceItem):
                  (name is not None) or
                  (job_failure_policy is not None))):
             raise ValueError("""If `session_details` is passed, you should not pass `target`,
-                                `provider_id`, `session_id`, `session_name` or `job_failure_policy`.""")
+                                `provider_id`, `id`, `session_name` or `job_failure_policy`.""")
 
         if (details is None) and (target is None):
             raise ValueError("If `session_details` is not passed, you should at least pass the `target`.")
