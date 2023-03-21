@@ -41,7 +41,7 @@ class MicrosoftEstimatorResult(dict):
             if num_items > self.MAX_DEFAULT_ITEMS_IN_TABLE:
                 self._repr += f"<p><b>Info:</b> <i>The overview table is " \
                               "cut off after " \
-                              "{self.MAX_DEFAULT_ITEMS_IN_TABLE} items.  If " \
+                              f"{self.MAX_DEFAULT_ITEMS_IN_TABLE} items. If " \
                               "you want to see all items, suffix the result " \
                               "variable with <code>[:]</code></i></p>"
                 num_items = self.MAX_DEFAULT_ITEMS_IN_TABLE
