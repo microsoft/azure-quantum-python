@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 ##
+import os
 import json
 
 import logging
@@ -126,6 +127,18 @@ class AzureBackendBase(Backend):
             "input_data_format", config.azure["input_data_format"]
         )
         output_data_format = self._get_output_data_format(options)
+
+        # QIR backends will have popped "targetCapability" to configure QIR generation.
+        # Anything left here is an invalid parameter with the user attempting to use
+        # deprecated parameters.
+        targetCapability = input_params.get("targetCapability", None)
+        if targetCapability is not "qasm" and input_data_format != "qir.v1":
+            message = "The targetCapability parameter deprecated and is only supported for QIR backends."
+            message += os.linesep
+            message += "To find a QIR capable backend, use the following code:"
+            message += os.linesep
+            message += f"\tprovider.get_backend(\"{self.name()}\", input_data_format: \"qir.v1\")."
+            raise ValueError(message)
 
         job = AzureQuantumJob(
             backend=self,
