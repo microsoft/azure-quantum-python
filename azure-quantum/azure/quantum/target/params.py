@@ -58,7 +58,7 @@ class EntryPointArguments:
                      "type": "Array",
                      "elementType": first_type})
         elif type(value) == EmptyArray:
-            element_type = self._extract_type(value.type)
+            element_type = self._extract_type(value.element_type)
             self.entries.append(
                 {"name": name,
                  "value": [],

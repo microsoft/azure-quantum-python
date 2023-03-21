@@ -33,4 +33,4 @@ class Range:
 
 @dataclass
 class EmptyArray:
-    type: Type
+    element_type: Type

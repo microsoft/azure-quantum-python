@@ -126,19 +126,28 @@ class TestWorkspace(QuantumTestBase):
 
         assert params.as_dict() == expected
 
-    def test_input_params_wrong_input(self):
+    def test_input_params_unsupported_type(self):
         params = InputParams()
 
         with raises(TypeError, match="Unsupported type complex for 1j"):
             params.arguments["complex"] = 1j
 
+    def test_input_params_empty_list(self):
+        params = InputParams()
+
         message = "Use EmptyArray(type) to assign an empty error"
         with raises(ValueError, match=escape(message)):
             params.arguments["numbers"] = []
 
+    def test_input_params_different_element_types(self):
+        params = InputParams()
+
         with raises(TypeError, match="All elements in a list must have the "
                                      "same type"):
             params.arguments["mixed"] = [1, True]
+
+    def test_input_params_nested_list(self):
+        params = InputParams()
 
         with raises(TypeError, match="Nested lists are not supported"):
             params.arguments["nested"] = [[1, 2, 3], [4, 5, 6]]

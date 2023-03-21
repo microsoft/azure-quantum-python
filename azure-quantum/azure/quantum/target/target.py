@@ -38,8 +38,7 @@ class Target:
         content_type: ContentType = ContentType.json,
         encoding: str = "",
         average_queue_time: Union[float, None] = None,
-        current_availability: str = "",
-        supports_batching: bool = False
+        current_availability: str = ""
     ):
         """
         Initializes a new target.
@@ -55,7 +54,6 @@ class Target:
         self.encoding = encoding
         self._average_queue_time = average_queue_time
         self._current_availability = current_availability
-        self._supports_batching = supports_batching
 
     def __repr__(self):
         return f"<Target name=\"{self.name}\", \
@@ -176,18 +174,12 @@ target '{self.name}' of provider '{self.provider_id}' not found."
             **kwargs
         )
 
-    def make_params(self, num_items: Optional[int] = None):
+    def make_params(self):
         """
         Returns an input parameter object for convenient creation of input
         parameters.
-
-        For batching jobs, you can specify a value for num_items, if supported
-        by the target.
         """
-        if not self._supports_batching and num_items is not None:
-            raise NotImplementedError("Batching is not implemented for this "
-                                      "target.")
-        return InputParams(num_items=num_items)
+        return InputParams()
 
     def supports_protobuf(self):
         """
