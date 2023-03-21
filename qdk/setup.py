@@ -41,6 +41,6 @@ setuptools.setup(
         'jupyter_nbextensions_configurator',
         'pygments>=2.7.4',
         'ipython>=5.11.0',
-        'ipywidgets==8.0.4'
+        'ipywidgets==8.0.4' # version 8.0.5 causes JsmolView to break. See: https://github.com/fekad/jupyter-jsmol/issues/58
     ]
 )
