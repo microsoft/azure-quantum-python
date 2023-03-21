@@ -256,6 +256,11 @@ class SessionHost(Protocol):
                 job2 = target.submit(input_data=input_data, job_name="Job 2")
                 job3 = target.submit(input_data=input_data, job_name="Job 3")
 
+        Note: If the session host (usually a `target` or qiskit `backend`)
+        already has a session associated with it (in the `latest_session` property),
+        then this method will first attempt to close that session before opening
+        a new one.
+
         :param details: Session details model, containing the session id,
                         name, job_failure_policy, provider_id and target.
                         Either this parameter should be passed containing all
