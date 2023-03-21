@@ -48,7 +48,7 @@ class Session(WorkspaceItem):
                                close and not accept further jobs.
     :type job_failure_policy: Union[str, SessionJobFailurePolicy, None]
 
-    :raises ValueError: if session_details is passed along individual parameters,
+    :raises ValueError: if details is passed along individual parameters,
                         or if required parameters are missing.
     """
 
@@ -72,8 +72,8 @@ class Session(WorkspaceItem):
                  (id is not None) or
                  (name is not None) or
                  (job_failure_policy is not None))):
-            raise ValueError("""If `session_details` is passed, you should not pass `target`,
-                                `provider_id`, `id`, `session_name` or `job_failure_policy`.""")
+            raise ValueError("""If `details` is passed, you should not pass `target`,
+                                `provider_id`, `id`, `name` or `job_failure_policy`.""")
 
         if (details is None) and (target is None):
             raise ValueError("If `session_details` is not passed, you should at least pass the `target`.")
