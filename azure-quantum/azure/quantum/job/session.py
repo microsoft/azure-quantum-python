@@ -26,7 +26,7 @@ class Session(WorkspaceItem):
     :param details: Session details model, containing the session id,
                     name, job_failure_policy, provider_id and target.
                     Either this parameter should be passed containing all
-                    the session detail values, the same values should be
+                    the session detail values, or the same values should be
                     passed as individual parameters.
     :type details: Optional[SessionDetails]
 
