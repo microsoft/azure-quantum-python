@@ -10,12 +10,6 @@ from azure.quantum import Job, Session, JobDetails, SessionStatus
 
 
 class TestSession(QuantumTestBase):
-    def _get_session_id(self):
-        return ZERO_UID if self.is_playback else None
-
-    def _get_job_id(self):
-        return ZERO_UID if self.is_playback else Job.create_job_id()
-
     @pytest.mark.live_test
     @pytest.mark.session
     def test_session_list_top_level_items(self):
@@ -37,18 +31,13 @@ class TestSession(QuantumTestBase):
     @pytest.mark.session
     def test_session_get_session(self):
         workspace = self.create_workspace()
-        session_id = self._get_session_id()
         session = Session(workspace=workspace,
-                          id=session_id,
                           name="My Session",
                           target="ionq.simulator")
         self.assertIsNone(session.details.status)
-
         session.open()
-        session_id = session_id if self.is_playback else session.id
         self.assertEqual(session.details.status, SessionStatus.WAITING)
-
-        obtained_session = workspace.get_session(session_id=session_id)
+        obtained_session = workspace.get_session(session_id=session.id)
         self.assertIsInstance(obtained_session, Session)
         self.assertEqual(obtained_session.id, session.id)
         self.assertEqual(obtained_session.details.id, session.details.id)
@@ -61,18 +50,13 @@ class TestSession(QuantumTestBase):
     @pytest.mark.session
     def test_session_open_close(self):
         workspace = self.create_workspace()
-        session_id = self._get_session_id()
         session = Session(workspace=workspace,
-                          id=session_id,
                           target="ionq.simulator")
         self.assertIsNone(session.details.status)
-
         session.open()
         self.assertEqual(session.details.status, SessionStatus.WAITING)
-
         session.close()
         self.assertEqual(session.details.status, SessionStatus.SUCCEEDED)
-
 
     @pytest.mark.live_test
     @pytest.mark.session
@@ -80,16 +64,13 @@ class TestSession(QuantumTestBase):
         workspace = self.create_workspace()
         target = workspace.get_targets("ionq.simulator")
         self.assertIsNone(target.latest_session)
-        session_id = self._get_session_id()
-        session = target.open_session(id=session_id)
-        session_id = session_id if self.is_playback else session.id
+        session = target.open_session()
         self.assertIsNotNone(target.latest_session)
-        self.assertEqual(target.latest_session.id, session_id)
-        self.assertEqual(target.get_latest_session_id(), session_id)
+        self.assertEqual(target.latest_session.id, session.id)
+        self.assertEqual(target.get_latest_session_id(), session.id)
         self.assertEqual(session.details.status, SessionStatus.WAITING)
         session.close()
         self.assertEqual(session.details.status, SessionStatus.SUCCEEDED)
-
 
     @pytest.mark.live_test
     @pytest.mark.session
@@ -97,11 +78,9 @@ class TestSession(QuantumTestBase):
         workspace = self.create_workspace()
         target = workspace.get_targets("ionq.simulator")
         self.assertIsNone(target.latest_session)
-        session_id = self._get_session_id()
-        with target.open_session(id=session_id) as session:
-            session_id = session_id if self.is_playback else session.id
+        with target.open_session() as session:
             self.assertIsNotNone(target.latest_session)
-            self.assertEqual(target.latest_session.id, session_id)
-            self.assertEqual(target.get_latest_session_id(), session_id)
+            self.assertEqual(target.latest_session.id, session.id)
+            self.assertEqual(target.get_latest_session_id(), session.id)
             self.assertEqual(session.details.status, SessionStatus.WAITING)
         self.assertEqual(session.details.status, SessionStatus.SUCCEEDED)
