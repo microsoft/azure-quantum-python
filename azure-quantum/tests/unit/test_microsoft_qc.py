@@ -7,6 +7,7 @@
 # Licensed under the MIT License.
 ##
 import pytest
+from pytest import raises
 from unittest.mock import patch
 
 from os import path
@@ -15,8 +16,8 @@ import re
 from common import QuantumTestBase, ZERO_UID
 
 from azure.quantum.job.job import Job
-from azure.quantum.target.microsoft import MicrosoftEstimatorJob
-from azure.quantum.target.microsoft.result import MicrosoftEstimatorResult
+from azure.quantum.target.microsoft import MicrosoftEstimator, \
+    MicrosoftEstimatorJob, MicrosoftEstimatorResult, MicrosoftEstimatorParams
 
 
 class TestMicrosoftQC(QuantumTestBase):
@@ -76,7 +77,7 @@ class TestMicrosoftQC(QuantumTestBase):
         Checks whether job and results have expected type.
         """
         ws = self.create_workspace()
-        estimator = ws.get_targets("microsoft.estimator")
+        estimator = MicrosoftEstimator(ws)
 
         ccnot = self._ccnot_bitcode()
         job = estimator.submit(ccnot)
@@ -104,7 +105,7 @@ class TestMicrosoftQC(QuantumTestBase):
         Checks whether error handling is correct.
         """
         ws = self.create_workspace()
-        estimator = ws.get_targets("microsoft.estimator")
+        estimator = MicrosoftEstimator(ws)
 
         ccnot = self._ccnot_bitcode()
         job = estimator.submit(ccnot, input_params={"errorBudget": 2})
@@ -115,5 +116,98 @@ class TestMicrosoftQC(QuantumTestBase):
         expected = "Cannot retrieve results as job execution failed " \
                    "(InvalidInputError: The error budget must be " \
                    "between 0.0 and 1.0, provided input was `2`)"
-        with pytest.raises(RuntimeError, match=re.escape(expected)):
+        with raises(RuntimeError, match=re.escape(expected)):
             _ = job.get_results()
+
+    @pytest.mark.microsoft_qc
+    def test_estimator_failing_job_client_validation(self):
+        """
+        Submits a job with wrong parameters.
+
+        Checks whether error handling is correct.
+        """
+
+        # This test will not send any request (not even authentication),
+        # because the error is caught before submit can send a request.
+        ws = self.create_workspace()
+        estimator = MicrosoftEstimator(ws)
+
+        ccnot = self._ccnot_bitcode()
+        params = estimator.make_params()
+        params.error_budget = 2
+        expected = "error_budget must be value between 0 and 1"
+        with raises(ValueError, match=expected):
+            estimator.submit(ccnot, input_params=params)
+
+    def test_estimator_params_validation_valid_cases(self):
+        """
+        Checks validation cases for resource estimation parameters for valid
+        cases.
+        """
+        params = MicrosoftEstimatorParams()
+
+        params.error_budget = 0.1
+        params.qubit_params.name = "qubit_gate_ns_e3"
+        params.qubit_params.instruction_set = "gate_based"
+        params.qubit_params.t_gate_error_rate = 0.03
+        params.qubit_params.t_gate_time = "10 ns"
+
+        # If validation would be wrong, the call to as_dict will raise an
+        # exception.
+        params.as_dict()
+
+    def test_estimator_params_validation_large_error_budget(self):
+        params = MicrosoftEstimatorParams()
+        params.error_budget = 2
+        expected = "error_budget must be value between 0 and 1"
+        with raises(ValueError, match=expected):
+            params.as_dict()
+
+    def test_estimator_params_validation_small_error_budget(self):
+        params = MicrosoftEstimatorParams()
+        params.error_budget = 0
+        expected = "error_budget must be value between 0 and 1"
+        with raises(ValueError, match=expected):
+            params.as_dict()
+
+    def test_estimator_params_validation_invalid_instruction_set(self):
+        params = MicrosoftEstimatorParams()
+        params.qubit_params.instruction_set = "invalid"
+        with raises(ValueError, match="instruction_set must be GateBased or "
+                                      "Majorana"):
+            params.as_dict()
+
+    def test_estimator_params_validation_invalid_error_rate(self):
+        params = MicrosoftEstimatorParams()
+        params.qubit_params.t_gate_error_rate = 0
+        with raises(ValueError, match="t_gate_error_rate must be between 0 "
+                                      "and 1"):
+            params.as_dict()
+
+    def test_estimator_params_validation_invalid_gate_time_type(self):
+        params = MicrosoftEstimatorParams()
+        params.qubit_params.t_gate_time = 20
+        with raises(TypeError, match="expected string or bytes-like object"):
+            params.as_dict()
+
+    def test_estimator_params_validation_invalid_gate_time_value(self):
+        params = MicrosoftEstimatorParams()
+        params.qubit_params.t_gate_time = "20"
+        with raises(ValueError, match="t_gate_time is not a valid time "
+                                      "string; use a suffix s, ms, us, or ns"):
+            params.as_dict()
+
+    def test_estimator_params_validation_missing_instruction_set(self):
+        params = MicrosoftEstimatorParams()
+        params.qubit_params.t_gate_time = "1 ns"
+        with raises(LookupError, match="instruction_set must be set for "
+                                       "custom qubit parameters"):
+            params.as_dict()
+
+    def test_estimator_params_validation_missing_fields(self):
+        params = MicrosoftEstimatorParams()
+        params.qubit_params.instruction_set = "gateBased"
+        params.qubit_params.t_gate_time = "1 ns"
+        with raises(LookupError, match="one_qubit_measurement_time must be "
+                                       "set"):
+            params.as_dict()

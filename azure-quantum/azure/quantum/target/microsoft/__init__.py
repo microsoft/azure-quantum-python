@@ -11,7 +11,9 @@ from .qio import (
     Tabu,
 )
 
-__all__ = ["MicrosoftEstimator", "MicrosoftEstimatorJob"]
+__all__ = ["MicrosoftEstimator", "MicrosoftEstimatorJob",
+           "MicrosoftEstimatorResult", "MicrosoftEstimatorParams"]
 
 from .job import MicrosoftEstimatorJob
-from .target import MicrosoftEstimator
+from .result import MicrosoftEstimatorResult
+from .target import MicrosoftEstimator, MicrosoftEstimatorParams

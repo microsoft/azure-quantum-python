@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 ##
-from typing import TYPE_CHECKING, Any, Dict, Union, Type
+from typing import TYPE_CHECKING, Any, Dict, Optional, Union, Type
 import io
 import json
 import abc
@@ -13,6 +13,7 @@ from azure.quantum._client.models._enums import SessionJobFailurePolicy
 from azure.quantum.job.job import Job, BaseJob
 from azure.quantum.job.session import Session, SessionHost
 from azure.quantum.job.base_job import ContentType
+from azure.quantum.target.params import InputParams
 if TYPE_CHECKING:
     from azure.quantum import Workspace
 
@@ -137,9 +138,9 @@ target '{self.name}' of provider '{self.provider_id}' not found."
         self,
         input_data: Any,
         name: str = "azure-quantum-job",
-        input_params: Union[Dict[str, Any], None] = None,
+        input_params: Union[Dict[str, Any], InputParams, None] = None,
         **kwargs
-    ) -> BaseJob:
+    ) -> Job:
         """Submit input data and return Job.
 
         Provide input_data_format, output_data_format and content_type
@@ -155,7 +156,10 @@ target '{self.name}' of provider '{self.provider_id}' not found."
         :rtype: Job
         """
 
-        input_params = input_params or {}
+        if isinstance(input_params, InputParams):
+            input_params = input_params.as_dict()
+        else:
+            input_params = input_params or {}
         input_data_format = None
         output_data_format = None
         content_type = None
@@ -194,6 +198,13 @@ target '{self.name}' of provider '{self.provider_id}' not found."
             session_id=self.get_latest_session_id(),
             **kwargs
         )
+
+    def make_params(self):
+        """
+        Returns an input parameter object for convenient creation of input
+        parameters.
+        """
+        return InputParams()
 
     def supports_protobuf(self):
         """

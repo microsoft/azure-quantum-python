@@ -153,7 +153,7 @@ class TestWorkspace(QuantumTestBase):
     @pytest.mark.microsoft_qc
     @pytest.mark.live_test
     def test_workspace_get_target_microsoft_qc(self):
-        from azure.quantum.target.microsoft.target import MicrosoftEstimator
+        from azure.quantum.target.microsoft import MicrosoftEstimator
 
         ws = self.create_workspace()
         target = ws.get_targets("microsoft.estimator")

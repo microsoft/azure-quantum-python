@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 ##
 from ... import Job
+from ...job.base_job import DEFAULT_TIMEOUT
 from ..._client.models import JobDetails
 from .result import MicrosoftEstimatorResult
 
@@ -14,7 +15,7 @@ class MicrosoftEstimatorJob(Job):
     def __init__(self, workspace, job_details: JobDetails, **kwargs):
         super().__init__(workspace, job_details, **kwargs)
 
-    def get_results(self, timeout_secs: float = ...) -> MicrosoftEstimatorResult:
+    def get_results(self, timeout_secs: float = DEFAULT_TIMEOUT) -> MicrosoftEstimatorResult:
         try:
             results = super().get_results(timeout_secs)
             return MicrosoftEstimatorResult(results)
