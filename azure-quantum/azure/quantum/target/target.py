@@ -160,9 +160,9 @@ target '{self.name}' of provider '{self.provider_id}' not found."
 
             def _get_entrypoint(input_data):
                 # TODO: this method should be part of QirRepresentable protocol
-                # and will later move to the QSharpCallable class in the qsharp package 
+                # and will later move to the QSharpCallable class in the qsharp package
                 import re
-                method_name = re.search("(?:^|\\.)([^.]*)$", input_data._name).group(1)
+                method_name = re.search(r"(?:^|\.)([^.]*)$", input_data._name).group(1)
                 return f'ENTRYPOINT__{method_name}'
 
             input_params["entryPoint"] = input_params.get("entryPoint", _get_entrypoint(input_data))
