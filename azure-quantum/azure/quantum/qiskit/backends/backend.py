@@ -56,7 +56,7 @@ class AzureBackendBase(Backend):
         """Returns the Job instance associated with the given id."""
         return self._provider.get_job(job_id)
 
-    def _get_output_data_format(self, options : Dict[str, Any] = {}) -> str:
+    def _get_output_data_format(self, options: Dict[str, Any] = {}) -> str:
         config: BackendConfiguration = self.configuration()
         # output data format default depends on the number of experiments. QIR backends
         # that don't define a default in their azure config will use this value
@@ -132,12 +132,17 @@ class AzureBackendBase(Backend):
         # Anything left here is an invalid parameter with the user attempting to use
         # deprecated parameters.
         targetCapability = input_params.get("targetCapability", None)
-        if targetCapability is not "qasm" and input_data_format != "qir.v1":
-            message = "The targetCapability parameter deprecated and is only supported for QIR backends."
+        if (
+            targetCapability not in [None, "qasm"]
+            and input_data_format != "qir.v1"
+        ):
+            message = "The targetCapability parameter has been deprecated and is only supported for QIR backends."
             message += os.linesep
             message += "To find a QIR capable backend, use the following code:"
             message += os.linesep
-            message += f"\tprovider.get_backend(\"{self.name()}\", input_data_format: \"qir.v1\")."
+            message += (
+                f'\tprovider.get_backend("{self.name()}", input_data_format: "qir.v1").'
+            )
             raise ValueError(message)
 
         job = AzureQuantumJob(
@@ -167,15 +172,23 @@ class AzureBackendBase(Backend):
 
         if run_input:
             # even though circuit is provided, we still have run_input
-            warnings.warn(DeprecationWarning("The circuit parameter has been deprecated and will be ignored."))
+            warnings.warn(
+                DeprecationWarning(
+                    "The circuit parameter has been deprecated and will be ignored."
+                )
+            )
             return run_input
         else:
-            warnings.warn(DeprecationWarning("The circuit parameter has been deprecated. Please use the run_input parameter."))
+            warnings.warn(
+                DeprecationWarning(
+                    "The circuit parameter has been deprecated. Please use the run_input parameter."
+                )
+            )
 
         # we don't have run_input
         # we know we have circuit parameter, but it may be empty
         circuit = options.get("circuit")
-        
+
         if circuit:
             return circuit
         else:
@@ -201,14 +214,14 @@ class AzureQirBackend(AzureBackendBase):
     ) -> AzureQuantumJob:
         """Run on the backend.
 
-        This method returns a 
+        This method returns a
         :class:`~azure.quantum.qiskit.job.AzureQuantumJob` object
         that runs circuits. This is an async call.
 
         Args:
             run_input (QuantumCircuit or List[QuantumCircuit]): An individual or a
             list of :class:`~qiskit.circuits.QuantumCircuit` to run on the backend.
-              
+
             options: Any kwarg options to pass to the backend for running the
             config. If a key is also present in the options
             attribute/object then the expectation is that the value
@@ -344,13 +357,13 @@ class AzureBackend(AzureBackendBase):
     def _translate_input(self, circuit):
         pass
 
-    def run(self, run_input = None, **kwargs):
+    def run(self, run_input=None, **kwargs):
         """Submits the given circuit to run on an Azure Quantum backend."""
         options = kwargs
         circuit = self._normalize_run_input_params(run_input, **options)
         options.pop("run_input", None)
         options.pop("circuit", None)
-        
+
         # Some Qiskit features require passing lists of circuits, so unpack those here.
         # We currently only support single-experiment jobs.
         if isinstance(circuit, (list, tuple)):
