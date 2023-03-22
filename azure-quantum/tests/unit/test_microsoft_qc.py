@@ -141,7 +141,7 @@ class TestMicrosoftQC(QuantumTestBase):
 
     def test_estimator_params_validation_valid_cases(self):
         """
-        Checks validation cases for reource estimation parameters for valid
+        Checks validation cases for resource estimation parameters for valid
         cases.
         """
         params = MicrosoftEstimatorParams()
@@ -151,6 +151,9 @@ class TestMicrosoftQC(QuantumTestBase):
         params.qubit_params.instruction_set = "gate_based"
         params.qubit_params.t_gate_error_rate = 0.03
         params.qubit_params.t_gate_time = "10 ns"
+
+        # If validation would be wrong, the call to as_dict will raise an
+        # exception.
         params.as_dict()
 
     def test_estimator_params_validation_large_error_budget(self):
