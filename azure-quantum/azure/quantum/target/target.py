@@ -2,11 +2,10 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 ##
-from typing import TYPE_CHECKING, Any, Dict
+from typing import TYPE_CHECKING, Any, Dict, Protocol, runtime_checkable
 import io
 import json
 import abc
-from typing import Any, Dict
 
 from azure.quantum._client.models import TargetStatus, SessionDetails
 from azure.quantum._client.models._enums import SessionJobFailurePolicy
@@ -15,6 +14,15 @@ from azure.quantum.job.session import Session, SessionHost
 from azure.quantum.job.base_job import ContentType
 if TYPE_CHECKING:
     from azure.quantum import Workspace
+
+
+@runtime_checkable
+class QirRepresentable(Protocol):
+    _name: str
+
+    @abc.abstractmethod
+    def _repr_qir_(self, **kwargs: Any) -> bytes:
+        raise NotImplementedError
 
 
 class Target(abc.ABC, SessionHost):
@@ -143,13 +151,21 @@ target '{self.name}' of provider '{self.provider_id}' not found."
         output_data_format = None
         content_type = None
 
-        # If the input_data is `QSharpCallable` (coming from the IQ# `qsharp` Python Package)
+        # If the input_data is `QirRepresentable`
         # we need to convert it to QIR bitcode and set the necessary parameters for a QIR job.
-        if (input_data and type(input_data).__name__ == "QSharpCallable"):
+        if input_data and isinstance(input_data, QirRepresentable):
             input_data_format = kwargs.pop("input_data_format", "qir.v1")
             output_data_format = kwargs.pop("output_data_format", "microsoft.quantum-results.v1")
             content_type = kwargs.pop("content_type", "qir.v1")
-            input_params["entryPoint"] = input_params.get("entryPoint", f'ENTRYPOINT__{input_data._name}')
+
+            def _get_entrypoint(input_data):
+                # TODO: this method should be part of QirRepresentable protocol
+                # and will later move to the QSharpCallable class in the qsharp package 
+                import re
+                method_name = re.search("(?:^|\\.)([^.]*)$", input_data._name).group(1)
+                return f'ENTRYPOINT__{method_name}'
+
+            input_params["entryPoint"] = input_params.get("entryPoint", _get_entrypoint(input_data))
             input_params["arguments"] = input_params.get("arguments", [])
             targetCapability = input_params.get("targetCapability", kwargs.pop("target_capability", self.capability))
             if targetCapability:
