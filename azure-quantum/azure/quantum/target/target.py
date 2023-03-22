@@ -5,17 +5,20 @@
 from typing import TYPE_CHECKING, Any, Dict, Optional, Union, Type
 import io
 import json
+import abc
 from typing import Any, Dict
 
-from azure.quantum._client.models import TargetStatus
+from azure.quantum._client.models import TargetStatus, SessionDetails
+from azure.quantum._client.models._enums import SessionJobFailurePolicy
 from azure.quantum.job.job import Job, BaseJob
+from azure.quantum.job.session import Session, SessionHost
 from azure.quantum.job.base_job import ContentType
 from azure.quantum.target.params import InputParams
 if TYPE_CHECKING:
     from azure.quantum import Workspace
 
 
-class Target:
+class Target(abc.ABC, SessionHost):
     """Azure Quantum Target."""
     # Target IDs that are compatible with this Target class.
     # This variable is used by TargetFactory. To set the default
@@ -34,6 +37,7 @@ class Target:
         name: str,
         input_data_format: str = "",
         output_data_format: str = "",
+        capability: str = "",
         provider_id: str = "",
         content_type: ContentType = ContentType.json,
         encoding: str = "",
@@ -49,6 +53,7 @@ class Target:
         self.name = name
         self.input_data_format = input_data_format
         self.output_data_format = output_data_format
+        self.capability = capability
         self.provider_id = provider_id
         self.content_type = content_type
         self.encoding = encoding
@@ -150,13 +155,32 @@ target '{self.name}' of provider '{self.provider_id}' not found."
         :return: Azure Quantum job
         :rtype: Job
         """
+
         if isinstance(input_params, InputParams):
             input_params = input_params.as_dict()
         else:
             input_params = input_params or {}
-        input_data_format = kwargs.pop("input_data_format", self.input_data_format)
-        output_data_format = kwargs.pop("output_data_format", self.output_data_format)
-        content_type = kwargs.pop("content_type", self.content_type)
+        input_data_format = None
+        output_data_format = None
+        content_type = None
+
+        # If the input_data is `QSharpCallable` (coming from the IQ# `qsharp` Python Package)
+        # we need to convert it to QIR bitcode and set the necessary parameters for a QIR job.
+        if (input_data and type(input_data).__name__ == "QSharpCallable"):
+            input_data_format = kwargs.pop("input_data_format", "qir.v1")
+            output_data_format = kwargs.pop("output_data_format", "microsoft.quantum-results.v1")
+            content_type = kwargs.pop("content_type", "qir.v1")
+            input_params["entryPoint"] = input_params.get("entryPoint", f'ENTRYPOINT__{input_data._name}')
+            input_params["arguments"] = input_params.get("arguments", [])
+            targetCapability = input_params.get("targetCapability", kwargs.pop("target_capability", self.capability))
+            if targetCapability:
+                input_params["targetCapability"] = targetCapability
+            input_data = input_data._repr_qir_(target=self.name, target_capability=targetCapability)
+        else:
+            input_data_format = kwargs.pop("input_data_format", self.input_data_format)
+            output_data_format = kwargs.pop("output_data_format", self.output_data_format)
+            content_type = kwargs.pop("content_type", self.content_type)
+
         encoding = kwargs.pop("encoding", self.encoding)
         blob = self._encode_input_data(data=input_data)
         job_cls = type(self)._get_job_class()
@@ -171,6 +195,7 @@ target '{self.name}' of provider '{self.provider_id}' not found."
             input_data_format=input_data_format,
             output_data_format=output_data_format,
             input_params=input_params,
+            session_id=self.get_latest_session_id(),
             **kwargs
         )
 
@@ -194,3 +219,9 @@ target '{self.name}' of provider '{self.provider_id}' not found."
         input_params: Union[Dict[str, Any], None] = None
     ):
         return NotImplementedError("Price estimation is not implemented yet for this target.")
+
+    def _get_azure_workspace(self) -> "Workspace":
+        return self.workspace
+
+    def _get_azure_target_id(self) -> str:
+        return self.name

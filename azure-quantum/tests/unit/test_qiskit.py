@@ -878,7 +878,6 @@ class TestQiskit(QuantumTestBase):
             shots = 100
 
             circuit = self._3_qubit_ghz()
-            circuit.metadata = {"some": "data"}
 
             qiskit_job = backend.run(circuit, count=shots)
 
@@ -890,14 +889,9 @@ class TestQiskit(QuantumTestBase):
                 qiskit_job._azure_job.details.output_data_format
                 == "microsoft.quantum-results.v1"
             )
-            assert "qiskit" in qiskit_job._azure_job.details.metadata
-            assert "name" in qiskit_job._azure_job.details.metadata
-            assert "num_qubits" in qiskit_job._azure_job.details.metadata
-            assert "metadata" in qiskit_job._azure_job.details.metadata
-            assert qiskit_job._azure_job.details.metadata["num_qubits"] == "4"
             assert qiskit_job._azure_job.details.input_params["count"] == shots
-            assert qiskit_job._azure_job.details.input_params["entryPoint"] == "main"
-            assert qiskit_job._azure_job.details.input_params["arguments"] == []
+            assert qiskit_job._azure_job.details.input_params["items"][0]["entryPoint"] == circuit.name
+            assert qiskit_job._azure_job.details.input_params["items"][0]["arguments"] == []
 
             # Make sure the job is completed before fetching the results
             self._qiskit_wait_to_complete(qiskit_job, provider)
@@ -910,10 +904,6 @@ class TestQiskit(QuantumTestBase):
                 assert np.isclose(result.data()["counts"]["111"], shots // 2, 20)
                 counts = result.get_counts()
                 assert counts == result.data()["counts"]
-                assert hasattr(result.results[0].header, "num_qubits")
-                assert hasattr(result.results[0].header, "metadata")
-                assert result.results[0].header.num_qubits == "4"
-                assert result.results[0].header.metadata["some"] == "data"
 
     @pytest.mark.rigetti
     @pytest.mark.live_test
@@ -958,7 +948,6 @@ class TestQiskit(QuantumTestBase):
             shots = 100
 
             circuit = self._3_qubit_ghz()
-            circuit.metadata = {"some": "data"}
 
             qiskit_job = backend.run(circuit, shots=shots)
 
@@ -970,14 +959,9 @@ class TestQiskit(QuantumTestBase):
                 qiskit_job._azure_job.details.output_data_format
                 == "microsoft.quantum-results.v1"
             )
-            assert "qiskit" in qiskit_job._azure_job.details.metadata
-            assert "name" in qiskit_job._azure_job.details.metadata
-            assert "num_qubits" in qiskit_job._azure_job.details.metadata
-            assert "metadata" in qiskit_job._azure_job.details.metadata
-            assert qiskit_job._azure_job.details.metadata["num_qubits"] == "4"
             assert qiskit_job._azure_job.details.input_params["count"] == shots
-            assert qiskit_job._azure_job.details.input_params["entryPoint"] == "main"
-            assert qiskit_job._azure_job.details.input_params["arguments"] == []
+            assert qiskit_job._azure_job.details.input_params["items"][0]["entryPoint"] == circuit.name
+            assert qiskit_job._azure_job.details.input_params["items"][0]["arguments"] == []
 
             # Make sure the job is completed before fetching the results
             self._qiskit_wait_to_complete(qiskit_job, provider)
@@ -990,10 +974,6 @@ class TestQiskit(QuantumTestBase):
                 assert np.isclose(result.data()["counts"]["111"], shots // 2, 20)
                 counts = result.get_counts()
                 assert counts == result.data()["counts"]
-                assert hasattr(result.results[0].header, "num_qubits")
-                assert hasattr(result.results[0].header, "metadata")
-                assert result.results[0].header.num_qubits == "4"
-                assert result.results[0].header.metadata["some"] == "data"
 
     @pytest.mark.qci
     @pytest.mark.live_test
@@ -1034,7 +1014,6 @@ class TestQiskit(QuantumTestBase):
             circuit.metadata = {"some": "data"}
 
             qiskit_job = backend.run(circuit, shots=shots)
-            assert qiskit_job._azure_job.details.metadata["num_qubits"] == "3"
 
             # Make sure the job is completed before fetching the results
             self._qiskit_wait_to_complete(qiskit_job, provider)
@@ -1169,42 +1148,6 @@ class TestQiskit(QuantumTestBase):
                     result.data(1)["jobParams"]["qecScheme"]["name"] == "surface_code"
                 )
                 assert result.data(1)["jobParams"]["errorBudget"] == 0.0001
-
-    @pytest.mark.microsoft_qc
-    @pytest.mark.live_test
-    def test_qiskit_controlled_s_to_resource_estimator_failed(self):
-        with unittest.mock.patch.object(
-            Job,
-            self.mock_create_job_id_name,
-            return_value=self.get_test_job_id()
-        ):
-            from pyqir import rt
-            patcher = unittest.mock.patch.object(rt, "initialize")
-            patcher.start()
-
-            workspace = self.create_workspace()
-            provider = AzureQuantumProvider(workspace=workspace)
-            backend = provider.get_backend("microsoft.estimator")
-
-            circuit = self._controlled_s()
-
-            qiskit_job = backend.run(circuit=circuit, errorBudget=2)
-
-            # Make sure the job is completed before fetching results
-            self._qiskit_wait_to_complete(
-                qiskit_job,
-                provider,
-                expected_status=JobStatus.ERROR)
-
-            patcher.stop()
-
-            assert JobStatus.ERROR == qiskit_job.status()
-            
-            expected = "Cannot retrieve results as job execution failed " \
-                       "(InvalidInputError: The error budget must be " \
-                       "between 0.0 and 1.0, provided input was `2`)"
-            with pytest.raises(RuntimeError, match=re.escape(expected)):
-                _ = qiskit_job.result()
 
     def test_backend_without_azure_config_format_defaults_to_ms_format(self):
         backend = NoopQirBackend(None, "AzureQuantumProvider")
