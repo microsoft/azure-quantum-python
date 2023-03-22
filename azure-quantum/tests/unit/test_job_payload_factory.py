@@ -9,9 +9,7 @@ from typing import Union, Tuple
 
 import cirq
 import qiskit
-import qsharp
 import azure.quantum.optimization as optimization
-from qsharp.loader import QSharpCallable
 
 
 class JobPayloadFactory():
@@ -42,17 +40,6 @@ class JobPayloadFactory():
         """, "ENTRYPOINT__BellState")
 
     @staticmethod
-    def get_qsharp_callable_bell_state() -> Tuple[QSharpCallable, str]:
-        (qsharp_code, entrypoint) = JobPayloadFactory.get_qsharp_code_bell_state()
-        return (qsharp.compile(qsharp_code), entrypoint)
-
-    @staticmethod
-    def get_qsharp_qir_bitcode_bell_state(target: Union[None, str] = None) -> Tuple[bytes, str]:
-        (qsharpCallable, entrypoint) = JobPayloadFactory.get_qsharp_callable_bell_state()
-        qir_bitcode = qsharpCallable._repr_qir_(target=target)
-        return (qir_bitcode, entrypoint)
-
-    @staticmethod
     def get_qiskit_circuit_bell_state() -> qiskit.QuantumCircuit:
         circuit = qiskit.QuantumCircuit(2, 2)
         circuit.name = "BellState"
@@ -77,21 +64,6 @@ class TestJobPayloadFactory(unittest.TestCase):
     @pytest.mark.cirq
     def test_get_cirq_circuit_bell_state(self):
         self.assertIsInstance(JobPayloadFactory.get_cirq_circuit_bell_state(), cirq.Circuit)
-
-    @pytest.mark.qsharp
-    def test_get_qsharp_callable_bell_state(self):
-        result = JobPayloadFactory.get_qsharp_callable_bell_state()
-        self.assertIsInstance(result, Tuple)
-        self.assertIsInstance(result[0], QSharpCallable)
-        self.assertIsInstance(result[1], str)
-
-    @pytest.mark.qsharp
-    @pytest.mark.qir
-    def test_get_qsharp_qir_bell_state(self):
-        result = JobPayloadFactory.get_qsharp_qir_bitcode_bell_state("rigetti.sim.qvm")
-        self.assertIsInstance(result, Tuple)
-        self.assertIsInstance(result[0], bytes)
-        self.assertIsInstance(result[1], str)
 
     @pytest.mark.qiskit
     def test_get_qiskit_circuit_bell_state(self):
