@@ -1028,6 +1028,7 @@ class TestQiskit(QuantumTestBase):
             return_value=self.get_test_job_id(),
         ):
             from pyqir import rt
+
             patcher = unittest.mock.patch.object(rt, "initialize")
             patcher.start()
 
@@ -1064,6 +1065,7 @@ class TestQiskit(QuantumTestBase):
             return_value=self.get_test_job_id(),
         ):
             from pyqir import rt
+
             patcher = unittest.mock.patch.object(rt, "initialize")
             patcher.start()
 
@@ -1102,6 +1104,7 @@ class TestQiskit(QuantumTestBase):
             return_value=self.get_test_job_id(),
         ):
             from pyqir import rt
+
             patcher = unittest.mock.patch.object(rt, "initialize")
             patcher.start()
 
@@ -1174,3 +1177,18 @@ class TestQiskit(QuantumTestBase):
         actual = backend._get_output_data_format(options)
         assert "output_data_format" not in options
         assert expected == actual
+
+    def test_specifying_targetCapabilities_with_pass_thru_fails(
+        self,
+    ):
+        from azure.quantum.qiskit.backends.quantinuum import QuantinuumEmulatorBackend
+
+        backend = QuantinuumEmulatorBackend(
+            "quantinuum.hqs-lt-s1-sim", "AzureQuantumProvider"
+        )
+        with pytest.raises(ValueError) as exc:
+            # mimic the user passing in targetCapabilities as part of the run options
+            _ = backend._run("", None, {"targetCapability": "BasicExecution"}, {})
+        actual = str(exc.value)
+        expected = "The targetCapability parameter has been deprecated"
+        assert actual.startswith(expected)
