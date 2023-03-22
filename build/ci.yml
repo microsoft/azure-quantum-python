@@ -13,6 +13,8 @@ variables:
   Build.Major: 0
   Build.Minor: 1
   Drops.Dir: $(Build.ArtifactStagingDirectory)/drops
+  Tools.Dir: $(Build.ArtifactStagingDirectory)/drops/.tools
+  Build.Dotnet.Version: '6.0.302'
 
 schedules:
 - cron: "0 9 * * Sat"
@@ -37,10 +39,17 @@ jobs:
       azure-quantum:
         PackageName: 'azure-quantum'
         CondaEnvironmentSuffix: ''
-      azure-quantum-cirq-beta:
-        PackageName: 'azure-quantum'
-        CondaEnvironmentSuffix: '-cirq-beta'
   steps:
+  # Since we are using the Q# container image instead 
+  # of a regular build agent image, we need to install the .NET SDK
+  # Note: The UseDotNet@2 does not work and the DotNetCoreInstaller@1 must be used.
+  - task: DotNetCoreInstaller@1
+    displayName: 'Install .NET SDK $(Build.Dotnet.Version)'
+    inputs:
+      packageType: sdk
+      version:  $(Build.Dotnet.Version)
+  - powershell: Write-Host "##vso[task.prependpath]/home/vsts_azpcontainer/.local/bin"
+    displayName: Add Jupyter to PATH
   - template: steps.yml
     parameters:
       PackageName: $(PackageName)

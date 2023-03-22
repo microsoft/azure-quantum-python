@@ -8,7 +8,6 @@ import os
 import re
 
 from typing import Any, Dict, Iterable, List, Optional, TYPE_CHECKING, Tuple, Union
-from deprecated import deprecated
 
 # Temporarily replacing the DefaultAzureCredential with
 # a custom _DefaultAzureCredential
@@ -19,10 +18,12 @@ from azure.quantum._client import QuantumClient
 from azure.quantum._client.operations import (
     JobsOperations,
     StorageOperations,
-    QuotasOperations
+    QuotasOperations,
+    SessionsOperations,
+    TopLevelItemsOperations
 )
 from azure.quantum._client.models import BlobDetails, JobStatus
-from azure.quantum import Job
+from azure.quantum import Job, Session
 from azure.quantum.storage import create_container_using_client, get_container_uri, ContainerClient
 
 from .version import __version__
@@ -188,10 +189,10 @@ class Workspace:
         self._client = self._create_client()
 
     def _create_client(self) -> QuantumClient:
-        base_url = BASE_URL(self.location)
+        endpoint = BASE_URL(self.location)
         logger.debug(
             f"Creating client for: subs:{self.subscription_id},"
-            + f"rg={self.resource_group}, ws={self.name}, frontdoor={base_url}"
+            + f"rg={self.resource_group}, ws={self.name}, frontdoor={endpoint}"
         )
 
         client = QuantumClient(
@@ -199,7 +200,7 @@ class Workspace:
             subscription_id=self.subscription_id,
             resource_group_name=self.resource_group,
             workspace_name=self.name,
-            base_url=base_url,
+            endpoint=endpoint,
             user_agent=self.user_agent
         )
         return client
@@ -221,7 +222,7 @@ class Workspace:
         """
         Append a new value to the Workspace's UserAgent and re-initialize the
         QuantumClient. The values are appended using a dash.
-        
+
         :param value: UserAgent value to add, e.g. "azure-quantum-<plugin>"
         """
         if value not in (self._user_agent or ""):
@@ -232,6 +233,12 @@ class Workspace:
                 # pick the new UserAgent
                 if self._client is not None:
                     self._client = self._create_client()
+
+    def _get_top_level_items_client(self) -> TopLevelItemsOperations:
+        return self._client.top_level_items
+
+    def _get_sessions_client(self) -> SessionsOperations:
+        return self._client.sessions
 
     def _get_jobs_client(self) -> JobsOperations:
         return self._client.jobs
@@ -326,11 +333,10 @@ class Workspace:
         **kwargs
     ) -> Union["Target", Iterable["Target"]]:
         """Returns all available targets for this workspace filtered by name and provider ID.
-        
-        :param name: Optional target name to filter by, defaults to None
-        :type name: str, optional
+
         :param provider_id: Optional provider Id to filter by, defaults to None
         :type provider_id: str, optional
+
         :return: Targets
         :rtype: Iterable[Target]
         """
@@ -356,20 +362,119 @@ class Workspace:
         client = self._get_quotas_client()
         return [q.as_dict() for q in client.list()]
 
-    @deprecated(version='0.17.2105', reason="This method is deprecated and no longer necessary to be called")
-    def login(self, refresh: bool = False) -> object:
-        """DEPRECATED. 
-        This method is deprecated and no longer necessary to be called.
-        It will simply return self.credentials.
+    def list_top_level_items(
+        self
+    ) -> List[Union[Job, Session]]:
+        """Get a list of top level items for the given workspace.
 
-        :param refresh:
-            the refresh parameter has no effect and is ignored
-
-        :returns:
-            the self.credentials
+        :return: Workspace items
+        :rtype: List[WorkspaceItem]
         """
-        return self.credentials
-    
+        from azure.quantum.job.workspace_item_factory import WorkspaceItemFactory
+        client = self._get_top_level_items_client()
+        item_details_list = client.list()
+        result = [WorkspaceItemFactory.__new__(workspace=self, item_details=item_details) 
+                  for item_details in item_details_list]
+        return result
+
+    def list_sessions(
+        self
+    ) -> List[Session]:
+        """Get the list of sessions in the given workspace.
+
+        :return: Session items
+        :rtype: List[Session]
+        """
+        client = self._get_sessions_client()
+        session_details_list = client.list()
+        result = [Session(workspace=self,details=session_details) 
+                  for session_details in session_details_list]
+        return result
+
+    def open_session(
+        self,
+        session: Session,
+        **kwargs
+    ):
+        """Opens/creates a session in the given workspace.
+
+        :param session: The session to be opened/created.
+        :type session: Session
+        """
+        client = self._get_sessions_client()
+        session.details = client.open(
+            session_id=session.id,
+            session=session.details)
+
+    def close_session(
+        self,
+        session: Session
+    ):
+        """Closes a session in the given workspace if the
+           session is not in a terminal state.
+           Otherwise, just refreshes the session details.
+
+        :param session: The session to be closed.
+        :type session: Session
+        """
+        client = self._get_sessions_client()
+        if not session.is_in_terminal_state():
+            session.details = client.close(session_id=session.id)
+        else:
+            session.details = client.get(session_id=session.id)
+
+        if session.target:
+            if (session.target.latest_session
+                and session.target.latest_session.id == session.id):
+                session.target.latest_session.details = session.details
+
+    def refresh_session(
+        self,
+        session: Session
+    ):
+        """Updates the session details with the latest information
+           from the workspace.
+
+        :param session: The session to be refreshed.
+        :type session: Session
+        """
+        session.details = self.get_session(session_id=session.id).details
+
+    def get_session(
+        self,
+        session_id: str
+    ) -> Session:
+        """Gets a session from the workspace.
+
+        :param session_id: The id of session to be retrieved.
+        :type session_id: str
+
+        :return: Session
+        :rtype: Session
+        """
+        client = self._get_sessions_client()
+        session_details = client.get(session_id=session_id)
+        result = Session(workspace=self, details=session_details)
+        return result
+
+    def list_session_jobs(
+        self,
+        session_id: str
+    ) -> List[Job]:
+        """Gets all jobs associated with a session.
+
+        :param session_id: The id of session.
+        :type session_id: str
+
+        :return: List of all jobs associated with a session.
+        :rtype: List[Job]
+        """
+        client = self._get_sessions_client()
+        job_details_list = client.jobs_list(session_id=session_id)
+        result = [Job(workspace=self, job_details=job_details)
+                  for job_details in job_details_list]
+        return result
+
     def get_container_uri(
         self,
         job_id: str = None,
