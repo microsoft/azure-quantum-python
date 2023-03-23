@@ -36,6 +36,7 @@ Write-Host $FromSource;
 
 # Import Conda utils
 Import-Module (Join-Path $PSScriptRoot "build" "package-utils.psm1");
+Import-Module (Join-Path $PSScriptRoot "build" "conda-utils.psm1");
 
 # Enable conda hook
 Enable-Conda
