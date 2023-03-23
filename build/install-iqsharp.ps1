@@ -42,10 +42,10 @@ if (Test-Path $iqsharpNugetPackagePath -PathType Leaf) {
     Write-Host "  Version: $nugetVersion"
     Write-Host "  Source: $Env:NUGET_OUTDIR"
     
-    dotnet tool install Microsoft.Quantum.IQSharp --version $nugetVersion --tool-path $Env:TOOLS_DIR --add-source $Env:NUGET_OUTDIR | Write-Host
+    dotnet tool install Microsoft.Quantum.IQSharp --version 0.28.262328-beta --tool-path $Env:TOOLS_DIR --add-source $Env:NUGET_OUTDIR | Write-Host
 } else {    
     Write-Host "Installing the $nugetVersion published IQ# dotnet tool"
-    dotnet tool install Microsoft.Quantum.IQSharp --version $nugetVersion --tool-path $Env:TOOLS_DIR | Write-Host
+    dotnet tool install Microsoft.Quantum.IQSharp --version 0.28.262328-beta --tool-path $Env:TOOLS_DIR | Write-Host
     if ($LastExitCode -ne 0) {
         Write-Host "Installing the latest published IQ# dotnet tool"
         dotnet tool install Microsoft.Quantum.IQSharp --tool-path $Env:TOOLS_DIR | Write-Host
