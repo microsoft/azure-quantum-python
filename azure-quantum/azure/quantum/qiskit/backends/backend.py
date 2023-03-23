@@ -201,6 +201,7 @@ class AzureBackendBase(Backend, SessionHost):
     def _get_azure_target_id(self) -> str:
         return self.name()
 
+
 class AzureQirBackend(AzureBackendBase):
     @abstractmethod
     def __init__(

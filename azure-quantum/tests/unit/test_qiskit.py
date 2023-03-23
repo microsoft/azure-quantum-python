@@ -12,6 +12,7 @@ import warnings
 import pytest
 import json
 import random
+import re
 
 import numpy as np
 
@@ -403,7 +404,11 @@ class TestQiskit(QuantumTestBase):
         qobj = assemble(circuit)
         self._test_qiskit_submit_ionq(circuit=qobj, shots=1024)
 
-    def _qiskit_wait_to_complete(self, qiskit_job, provider):
+    def _qiskit_wait_to_complete(
+            self,
+            qiskit_job,
+            provider,
+            expected_status=JobStatus.DONE):
         job = qiskit_job._azure_job
         self.pause_recording()
         try:
@@ -421,9 +426,9 @@ class TestQiskit(QuantumTestBase):
             # See: https://github.com/microsoft/qdk-python/issues/118
             job.refresh()
 
-            self.assertEqual(JobStatus.DONE, qiskit_job.status())
+            self.assertEqual(expected_status, qiskit_job.status())
             qiskit_job = provider.get_job(job.id)
-            self.assertEqual(JobStatus.DONE, qiskit_job.status())
+            self.assertEqual(expected_status, qiskit_job.status())
 
     def _test_qiskit_submit_ionq(self, circuit, **kwargs):
 

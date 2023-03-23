@@ -2,16 +2,17 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 ##
-from typing import TYPE_CHECKING, Any, Dict, Protocol, runtime_checkable
+from typing import TYPE_CHECKING, Any, Dict, Optional, Union, Type,  Protocol, runtime_checkable
 import io
 import json
 import abc
 
 from azure.quantum._client.models import TargetStatus, SessionDetails
 from azure.quantum._client.models._enums import SessionJobFailurePolicy
-from azure.quantum.job.job import Job
+from azure.quantum.job.job import Job, BaseJob
 from azure.quantum.job.session import Session, SessionHost
 from azure.quantum.job.base_job import ContentType
+from azure.quantum.target.params import InputParams
 if TYPE_CHECKING:
     from azure.quantum import Workspace
 
@@ -31,6 +32,11 @@ class Target(abc.ABC, SessionHost):
     # This variable is used by TargetFactory. To set the default
     # target class for a given provider, specify the
     # default_targets constructor argument.
+    #
+    # If you provide a custom job class (derived from
+    # azurem.quantum.job.job.Job) for this target, you must pass this type to
+    # __init__ via the job_cls parameter.  This is then used by the target's
+    # submit and get_job method.
     target_names = ()
 
     def __init__(
@@ -43,9 +49,12 @@ class Target(abc.ABC, SessionHost):
         provider_id: str = "",
         content_type: ContentType = ContentType.json,
         encoding: str = "",
-        average_queue_time: float = None,
+        average_queue_time: Union[float, None] = None,
         current_availability: str = ""
     ):
+        """
+        Initializes a new target.
+        """
         if not provider_id and "." in name:
             provider_id = name.split(".")[0]
         self.workspace = workspace
@@ -83,7 +92,16 @@ avg. queue time={self._average_queue_time} s, {self._current_availability}>"
             current_availability=status.current_availability,
             **kwargs
         )
-    
+
+    @classmethod
+    def _get_job_class(cls) -> Type[Job]:
+        """
+        Returns the job class associated to this target.
+
+        The job class used by submit and get_job.  The default is Job.
+        """
+        return Job
+
     def refresh(self):
         """Update the target availability and queue time"""
         targets = self.workspace._get_target_status(self.name, self.provider_id)
@@ -128,7 +146,7 @@ target '{self.name}' of provider '{self.provider_id}' not found."
         self,
         input_data: Any,
         name: str = "azure-quantum-job",
-        input_params: Dict[str, Any] = None,
+        input_params: Union[Dict[str, Any], InputParams, None] = None,
         **kwargs
     ) -> Job:
         """Submit input data and return Job.
@@ -146,7 +164,10 @@ target '{self.name}' of provider '{self.provider_id}' not found."
         :rtype: Job
         """
 
-        input_params = input_params or {}
+        if isinstance(input_params, InputParams):
+            input_params = input_params.as_dict()
+        else:
+            input_params = input_params or {}
         input_data_format = None
         output_data_format = None
         content_type = None
@@ -178,7 +199,8 @@ target '{self.name}' of provider '{self.provider_id}' not found."
 
         encoding = kwargs.pop("encoding", self.encoding)
         blob = self._encode_input_data(data=input_data)
-        return Job.from_input_data(
+        job_cls = type(self)._get_job_class()
+        return job_cls.from_input_data(
             workspace=self.workspace,
             name=name,
             target=self.name,
@@ -193,6 +215,13 @@ target '{self.name}' of provider '{self.provider_id}' not found."
             **kwargs
         )
 
+    def make_params(self):
+        """
+        Returns an input parameter object for convenient creation of input
+        parameters.
+        """
+        return InputParams()
+
     def supports_protobuf(self):
         """
         Return whether or not the Solver class supports protobuf serialization.
@@ -203,7 +232,7 @@ target '{self.name}' of provider '{self.provider_id}' not found."
     def estimate_cost(
         self,
         input_data: Any,
-        input_params: Dict[str, Any] = None
+        input_params: Union[Dict[str, Any], None] = None
     ):
         return NotImplementedError("Price estimation is not implemented yet for this target.")
 

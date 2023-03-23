@@ -10,3 +10,10 @@ from .qio import (
     SubstochasticMonteCarlo,
     Tabu,
 )
+
+__all__ = ["MicrosoftEstimator", "MicrosoftEstimatorJob",
+           "MicrosoftEstimatorResult", "MicrosoftEstimatorParams"]
+
+from .job import MicrosoftEstimatorJob
+from .result import MicrosoftEstimatorResult
+from .target import MicrosoftEstimator, MicrosoftEstimatorParams

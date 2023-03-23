@@ -4,7 +4,7 @@
 ##
 import warnings
 import asyncio
-from typing import Any, Dict, List, TYPE_CHECKING, Union
+from typing import Any, Dict, List, TYPE_CHECKING, Union, Type
 from azure.quantum.target import *
 
 if TYPE_CHECKING:
@@ -29,7 +29,7 @@ class TargetFactory:
 
     def __init__(
         self,
-        base_cls: Target,
+        base_cls: Type[Target],
         workspace: "Workspace",
         default_targets: Dict[str, Any] = DEFAULT_TARGETS,
         all_targets: Dict[str, Any] = None
