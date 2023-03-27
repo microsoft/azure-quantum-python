@@ -898,7 +898,11 @@ class TestQiskit(QuantumTestBase):
 
             if JobStatus.DONE == qiskit_job.status():
                 result = qiskit_job.result()
-                print(result)
+                # verify we can get the counts with the circuit and without
+                # These will throw if job metadata is incorrect
+                _ = result.get_counts(circuit)
+                _ = result.get_counts()
+                _ = result.get_counts(0)
                 assert sum(result.data()["counts"].values()) == shots
                 assert np.isclose(result.data()["counts"]["000"], shots // 2, 20)
                 assert np.isclose(result.data()["counts"]["111"], shots // 2, 20)
