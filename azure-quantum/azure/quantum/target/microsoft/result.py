@@ -47,6 +47,9 @@ class MicrosoftEstimatorResult(dict):
                 num_items = self.MAX_DEFAULT_ITEMS_IN_TABLE
             self._repr += self._batch_result_table(range(num_items))
 
+            # Add plot function for batching jobs
+            self.plot = self._plot
+
     def data(self, idx: Optional[int] = None) -> Any:
         """
         Returns raw data of the result object.
@@ -83,6 +86,69 @@ class MicrosoftEstimatorResult(dict):
             return HTMLWrapper(self._batch_result_table(range(len(self))[key]))
         else:
             return super().__getitem__(key)
+
+    def _plot(self, **kwargs):
+        """
+        Plots all result items in a space time plot, where the x-axis shows
+        total runtime, and the y-axis shows total number of physical qubits.
+        Both axes are in log-scale.
+        Attributes:
+            labels (list): List of labels for the legend.
+        """
+        try:
+            import matplotlib.pyplot as plt
+        except ImportError:
+            raise ImportError(
+                "Missing optional 'matplotlib' dependency. To install run: "
+                "pip install matplotlib"
+            )
+
+        labels = kwargs.pop("labels", [])
+
+        [xs, ys] = zip(*[
+            (self.data(i)['physicalCounts']['runtime'],
+             self.data(i)['physicalCounts']['physicalQubits'])
+             for i in range(len(self))])
+
+        _ = plt.figure(figsize=(15, 8))
+
+        plt.ylabel('Physical qubits')
+        plt.xlabel('Runtime')
+        plt.loglog()
+        for i, (x, y) in enumerate(zip(xs, ys)):
+            if isinstance(labels, list) and i < len(labels):
+                label = labels[i]
+            else:
+                label = str(i)
+            plt.scatter(x=[x], y=[y], label=label, marker="os+x"[i % 4])
+
+        nsec = 1
+        usec = 1e3 * nsec
+        msec = 1e3 * usec
+        sec = 1e3 * msec
+        min = 60 * sec
+        hour = 60 * min
+        day = 24 * hour
+        week = 7 * day
+        month = 31 * day
+        year = 365 * month
+        decade = 10 * year
+        century = 10 * decade
+
+        time_units = [
+            nsec, usec, msec, sec, min, hour, day, week,
+            month, year, decade, century]
+        time_labels = [
+            "1 ns", "1 µs", "1 ms", "1 s", "1 min", "1 hour", "1 day",
+            "1 week", "1 month", "1 year", "1 decade", "1 century"]
+
+        cutoff = next(
+            (i for i, x in enumerate(time_units) if x > max(xs)),
+            len(time_units) - 1) + 1
+
+        plt.xticks(time_units[0:cutoff], time_labels[0:cutoff], rotation=90)
+        plt.legend(loc="upper left")
+        plt.show()
 
     def _item_result_table(self):
         html = ""
