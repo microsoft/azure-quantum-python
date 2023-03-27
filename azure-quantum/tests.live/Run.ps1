@@ -75,7 +75,14 @@ $logs = Join-Path $env:BUILD_ARTIFACTSTAGINGDIRECTORY "logs" "qdk-python.txt"
 " ==> Generating logs to $logs" | Write-Host
 
 # Copy unit tests without recordings and run Pytest
+Write-Host "##[info]Copy unit test files from $PackageDir to $PSScriptRoot"
 Copy-Item -Path (Join-Path $PackageDir "tests" "unit" "*.py") -Destination $PSScriptRoot
+if ($PackageDir -Match "azure-quantum") {
+    Write-Host "##[info]Copy auxiliary bitcode files from $PackageDir to $PSScriptRoot/qir"
+    New-Item -ItemType Directory -Path $PSScriptRoot -Name qir
+    # Copies auxiliary bitcode files that are used by unit tests in azure_quantum
+    Copy-Item -Path (Join-Path $PackageDir "tests" "unit" "qir" "*.bc") -Destination (Join-Path $PSScriptRoot "qir")
+}
 
 python -m pytest -v `
     --junitxml=junit/test-results.xml `
