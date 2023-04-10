@@ -68,7 +68,7 @@ pip install -e .
 
 ## Contributing
 
-For details on contributing to this repository, see the [contributing guide](./CONTRIBUTING.md).
+For details on contributing to this repository, see the [contributing guide](https://github.com/microsoft/qdk-python/blob/main/CONTRIBUTING.md).
 
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a
 Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us
@@ -92,6 +92,6 @@ While we encourage contributions in any part of the code, there are some excepti
 
 This project may contain trademarks or logos for projects, products, or services. Authorized use of Microsoft 
 trademarks or logos is subject to and must follow 
-[Microsoft's Trademark & Brand Guidelines](https://www.microsoft.com/en-us/legal/intellectualproperty/trademarks/usage/general).
+[Microsoft's Trademark & Brand Guidelines](https://www.microsoft.com/legal/intellectualproperty/trademarks/usage/general).
 Use of Microsoft trademarks or logos in modified versions of this project must not cause confusion or imply Microsoft sponsorship.
 Any use of third-party trademarks or logos are subject to those third-party's policies.
