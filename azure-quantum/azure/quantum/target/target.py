@@ -141,6 +141,10 @@ target '{self.name}' of provider '{self.provider_id}' not found."
                 data = json.dumps(data)
             stream.write(data.encode())
             return stream.getvalue()
+        
+    def _qir_output_data_format(self) -> str:
+        """"Fallback output data format in case of QIR job submission."""
+        return "microsoft.quantum-results.v1"
 
     def submit(
         self,
@@ -176,7 +180,7 @@ target '{self.name}' of provider '{self.provider_id}' not found."
         # we need to convert it to QIR bitcode and set the necessary parameters for a QIR job.
         if input_data and isinstance(input_data, QirRepresentable):
             input_data_format = kwargs.pop("input_data_format", "qir.v1")
-            output_data_format = kwargs.pop("output_data_format", "microsoft.quantum-results.v1")
+            output_data_format = kwargs.pop("output_data_format", self._qir_output_data_format())
             content_type = kwargs.pop("content_type", "qir.v1")
 
             def _get_entrypoint(input_data):
