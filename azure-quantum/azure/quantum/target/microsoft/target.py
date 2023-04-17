@@ -14,6 +14,20 @@ from ..target import Target
 from . import MicrosoftEstimatorJob
 
 
+class QubitParams:
+    GATE_US_E3 = "qubit_gate_us_e3"
+    GATE_US_E4 = "qubit_gate_us_e4"
+    GATE_NS_E3 = "qubit_gate_ns_e3"
+    GATE_NS_E4 = "qubit_gate_ns_e4"
+    MAJ_NS_E4 = "qubit_maj_ns_e4"
+    MAJ_NS_E6 = "qubit_maj_ns_e6"
+
+
+class QECScheme:
+    SURFACE_CODE = "surface_code"
+    FLOQUET_CODE = "floquet_code"
+
+
 @dataclass
 class MicrosoftEstimatorQubitParams(AutoValidatingParams):
     @staticmethod
@@ -52,9 +66,9 @@ class MicrosoftEstimatorQubitParams(AutoValidatingParams):
         validating_field(check_error_rate)
     t_gate_error_rate: Optional[float] = validating_field(check_error_rate)
 
-    _default_models = ["qubit_gate_us_e3", "qubit_gate_us_e4",
-                       "qubit_gate_ns_e3", "qubit_gate_ns_e4",
-                       "qubit_maj_ns_e4", "qubit_maj_ns_e6"]
+    _default_models = [QubitParams.GATE_US_E3, QubitParams.GATE_US_E4,
+                       QubitParams.GATE_NS_E3, QubitParams.GATE_NS_E4,
+                       QubitParams.MAJ_NS_E4, QubitParams.MAJ_NS_E6]
     _gate_based = ["gate-based", "gate_based", "GateBased", "gateBased"]
     _maj_based = ["Majorana", "majorana"]
 
