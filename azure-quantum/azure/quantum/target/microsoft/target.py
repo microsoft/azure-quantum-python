@@ -178,7 +178,7 @@ class MicrosoftEstimator(Target):
             from qiskit import QuantumCircuit
             from qiskit_qir import to_qir_module
             if isinstance(input_data, QuantumCircuit):
-                (module, _) = to_qir_module(input_data)
+                (module, _) = to_qir_module(input_data, record_output=False)
                 input_data = module.bitcode
         finally:
             return super().submit(input_data, name, input_params, **kwargs)
