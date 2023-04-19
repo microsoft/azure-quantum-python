@@ -66,7 +66,7 @@ class QuantumTestBase(ReplayableTest):
         recording_processors = [
             self._pause_recording_processor,
             regex_replacer,
-            AccessTokenReplacer(),
+            AccessTokenReplacerWithListException(),
             InteractiveAccessTokenReplacer(),
             SubscriptionRecordingProcessor(ZERO_UID),
             AuthenticationMetadataFilter(),
@@ -117,7 +117,10 @@ class QuantumTestBase(ReplayableTest):
             r"jobs/([a-f0-9]+[-]){4}[a-f0-9]+", "jobs/" + ZERO_UID
         )
         regex_replacer.register_regex(
-            r"job-([a-f0-9]+[-]){4}[a-f0-9]+", "job-" + ZERO_UID
+            r"session-([a-f0-9]+[-]){4}[a-f0-9]+", "session-" + ZERO_UID
+        )
+        regex_replacer.register_regex(
+            r"sessions/([a-f0-9]+[-]){4}[a-f0-9]+", "sessions/" + ZERO_UID
         )
         regex_replacer.register_regex(
             r"\d{8}-\d{6}", "20210101-000000"
@@ -127,16 +130,24 @@ class QuantumTestBase(ReplayableTest):
             '"id": "{}"'.format(ZERO_UID),
         )
         regex_replacer.register_regex(
+            r'"containerName":\s*"([a-f0-9]+[-]){4}[a-f0-9]+"',
+            '"containerName": "{}"'.format(ZERO_UID),
+        )
+        regex_replacer.register_regex(
+            r'blob.core.windows.net/([a-f0-9]+[-]){4}[a-f0-9]+',
+            'blob.core.windows.net/{}'.format(ZERO_UID),
+        )
+        regex_replacer.register_regex(
             r"/resourceGroups/[a-z0-9-]+/", f'/resourceGroups/{RESOURCE_GROUP}/'
         )
         regex_replacer.register_regex(
             r"/workspaces/[a-z0-9-]+/", f'/workspaces/{WORKSPACE}/'
         )
         regex_replacer.register_regex(
-            r"https://[^\.]+.blob.core.windows.net/", f'https://{STORAGE}.blob.core.windows.net/'
+            r"https://[^\.]+.blob.core.windows.net", f'https://{STORAGE}.blob.core.windows.net'
         )
         regex_replacer.register_regex(
-            r"https://[^\.]+.quantum.azure.com/", f'https://{LOCATION}.quantum.azure.com/'
+            r"https://[^\.]+.quantum.azure.com", f'https://{LOCATION}.quantum.azure.com'
         )
         regex_replacer.register_regex(
             r"/workspaces/[a-z0-9-]+/", f'/workspaces/{WORKSPACE}/'
@@ -146,6 +157,7 @@ class QuantumTestBase(ReplayableTest):
         regex_replacer.register_regex(r"sv=[^&]+\&", "sv=PLACEHOLDER&")
         regex_replacer.register_regex(r"se=[^&]+\&", "se=PLACEHOLDER&")
         regex_replacer.register_regex(r"client_id=[^&]+\&", "client_id=PLACEHOLDER&")
+        regex_replacer.register_regex(r"client_secret=[^&]+\&", "client_secret=PLACEHOLDER&")
         regex_replacer.register_regex(r"claims=[^&]+\&", "claims=PLACEHOLDER&")
         regex_replacer.register_regex(r"code_verifier=[^&]+\&", "code_verifier=PLACEHOLDER&")
         regex_replacer.register_regex(r"code=[^&]+\&", "code_verifier=PLACEHOLDER&")
@@ -253,15 +265,6 @@ class QuantumTestBase(ReplayableTest):
 
         return workspace
 
-    @deprecate(message="Remove this method when Quantinuum provider is deployed to production")
-    def get_test_quantinuum_enabled(self):
-        if (self.is_playback):
-            return True
-        self.pause_recording()
-        workspace = self.create_workspace()
-        targets = workspace.get_targets(provider_id="quantinuum")
-        self.resume_recording()
-        return len(targets) > 0
 
     def mock_wait(self, job_wait_until_completed):
         # Workaround for issue #118
@@ -360,7 +363,7 @@ class CustomRecordingProcessor(RecordingProcessor):
         self._regexes = []
 
     def register_regex(self, old_regex, new):
-        self._regexes.append((re.compile(pattern=old_regex, 
+        self._regexes.append((re.compile(pattern=old_regex,
                                          flags=re.IGNORECASE | re.MULTILINE),
                              new))
 
@@ -386,10 +389,12 @@ class CustomRecordingProcessor(RecordingProcessor):
                 body = body.decode("utf-8")
                 body = self.regex_replace_all(body)
                 request.body = body.encode("utf-8")
+                request.headers["content-length"] = ["%s" % len(request.body)]
             else:
                 body = str(body)
                 body = self.regex_replace_all(body)
                 request.body = body
+                request.headers["content-length"] = ["%s" % len(body)]
 
         return request
 
@@ -433,6 +438,7 @@ class CustomRecordingProcessor(RecordingProcessor):
                 if body:
                     body = self.regex_replace_all(body)
                     response["body"]["string"] = body
+                    response["headers"]["content-length"] = ["%s" % len(body)]
 
         return response
 
@@ -458,6 +464,28 @@ class AuthenticationMetadataFilter(RecordingProcessor):
         return request
 
 
+class AccessTokenReplacerWithListException(AccessTokenReplacer):
+    """
+    Replace the access token for service principal authentication in a response body.
+
+    This is customized for responses that return lists.
+    """
+
+    def __init__(self, replacement='fake_token'):
+        self._replacement = replacement
+
+    def process_response(self, response):
+        import json
+        try:
+            body = json.loads(response['body']['string'])
+            if not isinstance(body, list):
+                body['access_token'] = self._replacement
+        except (KeyError, ValueError):
+            return response
+        response['body']['string'] = json.dumps(body)
+        return response
+
+
 class InteractiveAccessTokenReplacer(RecordingProcessor):
     """Replace the access token for interactive authentication in a response body."""
 
@@ -477,7 +505,9 @@ class InteractiveAccessTokenReplacer(RecordingProcessor):
                         del body[property]
         except (KeyError, ValueError):
             return response
-        response['body']['string'] = json.dumps(body)
+        body = json.dumps(body)
+        response['body']['string'] = body
+        response['headers']['content-length'] = ["%s" % len(body)]
         return response
 
 

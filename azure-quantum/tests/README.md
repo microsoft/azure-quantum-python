@@ -13,6 +13,7 @@ To **force the tests to run live**, even with existing recordings, set the envir
 ```plaintext
 AZURE_TEST_RUN_LIVE="yes"
 ```
+This will force the recording files to be deleted before running the tests.
 
 To be able to run the tests in recording or live mode, make sure to set the following environment variables:
 
@@ -42,6 +43,29 @@ request (identified by URI, HTTP Headers and Body) to have multiple responses as
 For example, when a job is submitted and we want to fetch the job status, the HTTP request to get the job status
 is the same, but the response can be different, initially returning Status="In-Progress" and later returning
 Status="Completed".
+
+### Cannot Overwrite Existing Cassette Exception ###
+
+When the intention is to simply playback the recordings without recording it again, sometimes the Python VCR framework may give an error "Cannot Overwrite Existing Cassette".
+
+#### Cause ####
+The VCR works like a HTTP proxy. It attempts to find the request by matching the full URI and HTTP headers in the recorded file. If found, it will playback the corresponding response. Otherwise, it will attempt to do a live call to the web API and will try to record the results at the end. When it tries to do a recording, if there is already a recording file, it will give the error `CannotOverwriteExistingCassetteException`.
+
+This error could also be caused if the recorded files are manually updated and do not really match the requests that the SDK will actually request.
+
+#### Potential solutions ####
+1) One way to remove the error is to delete the existing recording file and let it do all the live calls and create a new recording file that contains all the requests/responses that the tests need. After that, you should be able to simple playback the recordings with no errors.
+
+2) If the error still persist after trying (1), then probably there is something unique in the URL or HTTP headers of the HTTP request that changes every time you run the tests. In this case, we need to either make that thing constant in the tests, or if they are genuinely unique, we need to replace that unique value in the request recording pipeline such that, at least in the recording file, it will be unique.
+
+For example, see the [process_request](https://github.com/microsoft/qdk-python/blob/main/azure-quantum/tests/unit/common.py#L372) method in the [tests/unit/common.py](https://github.com/microsoft/qdk-python/blob/main/azure-quantum/tests/unit/common.py) file.
+In there, we replace several Guids and resource identifiers in the URL and in the HTTP Headers to make sure that the request that will be searched for (during a playback) or recorded (during recording) will have no unique values that could cause VCR to not find the request recording and attempt to do a new live call and rewrite the recording. Another reason we replace the identifiers is to remove potentially sensitive information from the recordings (like authentication tokens, access keys, etc).
+
+### Recording sanitization ###
+To prevent potentially sensitive information to be checked-in in the repository (like authentication tokens, access keys, etc) inside the recordings, we do several text replacements in the HTTP requests and responses in the VCR pipeline before they end-up persisted in the recorded files.
+
+The [QuantumTestBase __init__ method](https://github.com/microsoft/qdk-python/blob/main/azure-quantum/tests/unit/common.py#L51) contains several rules (mostly regular expressions) that are applied in the HTTP requests and reponses via several recording and playback processors that are injected in the VCR HTTP pipeline.
+We use some common processors provided by the Azure SDK framework (including AccessTokenReplacer, InteractiveAccessTokenReplacer, RequestUrlNormalizer) but we also apply custom text replacement logic in URLs and HTTP Headers via the `process_request` and `process_response` methods and some other processors/filters found at the end of the file.
 
 ### Ability to Pause Recordings ###
 

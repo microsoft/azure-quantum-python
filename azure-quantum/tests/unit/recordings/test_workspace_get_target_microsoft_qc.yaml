@@ -1,0 +1,69 @@
+interactions:
+- request:
+    body: client_id=PLACEHOLDER&grant_type=client_credentials&client_info=1&client_secret=PLACEHOLDER&claims=PLACEHOLDER&scope=https%3A%2F%2Fquantum.microsoft.com%2F.default
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '163'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      User-Agent:
+      - azsdk-python-identity/1.12.0 Python/3.9.12 (macOS-10.16-x86_64-i386-64bit)
+      x-client-cpu:
+      - x64
+      x-client-current-telemetry:
+      - 4|730,0|
+      x-client-os:
+      - darwin
+      x-client-sku:
+      - MSAL.Python
+      x-client-ver:
+      - 1.21.0
+    method: POST
+    uri: https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token
+  response:
+    body:
+      string: '{"token_type": "Bearer", "expires_in": 86399, "ext_expires_in": 86399,
+        "refresh_in": 43199, "access_token": "fake_token"}'
+    headers:
+      content-length:
+      - '121'
+      content-type:
+      - application/json; charset=utf-8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - testapp azsdk-python-quantum/0.0.1 Python/3.9.12 (macOS-10.16-x86_64-i386-64bit)
+    method: GET
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/providerStatus?api-version=2022-09-12-preview
+  response:
+    body:
+      string: '{"value":[{"id":"microsoft-qc","currentAvailability":"Available","targets":[{"id":"microsoft.estimator","currentAvailability":"Available","averageQueueTime":0,"statusPage":null}]}],"nextLink":null,"access_token":"fake_token"}'
+    headers:
+      connection:
+      - keep-alive
+      content-length:
+      - '225'
+      content-type:
+      - application/json; charset=utf-8
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
+version: 1

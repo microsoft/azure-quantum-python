@@ -92,55 +92,32 @@ class TestWorkspace(QuantumTestBase):
         targets = ws.get_targets()
         assert None not in targets
         test_targets = set([
-            'honeywell.hqs-lt-s1-apival',
             'ionq.simulator'
         ])
         assert test_targets.issubset(set([t.name for t in targets]))
     
-    @pytest.mark.honeywell
-    @pytest.mark.live_test
-    def test_workspace_get_targets_honeywell(self):
-        ws = self.create_workspace()
-        targets = ws.get_targets()
-        assert None not in targets
-        test_targets = set([
-            'honeywell.hqs-lt-s1-apival'
-        ])
-        assert test_targets.issubset(set([t.name for t in targets]))
-
-    @pytest.mark.honeywell
+    @pytest.mark.quantinuum
     @pytest.mark.live_test
     def test_workspace_get_targets_quantinuum(self):
-        if self.get_test_quantinuum_enabled():
-            ws = self.create_workspace()
-            targets = ws.get_targets()
-            assert None not in targets
-            test_targets = set([
-                'quantinuum.hqs-lt-s1-apival'
-            ])
-            assert test_targets.issubset(set([t.name for t in targets]))
-
-    @pytest.mark.qio
-    @pytest.mark.live_test
-    @pytest.mark.fpga
-    def test_workspace_get_targets_qio(self):
         ws = self.create_workspace()
         targets = ws.get_targets()
         assert None not in targets
         test_targets = set([
-            'microsoft.paralleltempering-parameterfree.cpu',
-            'microsoft.populationannealing.cpu',
-            'microsoft.qmc.cpu',
-            'microsoft.simulatedannealing-parameterfree.cpu',
-            'microsoft.simulatedannealing-parameterfree.fpga',
-            'microsoft.substochasticmontecarlo.cpu',
-            'microsoft.tabu-parameterfree.cpu',
+            'quantinuum.hqs-lt-s1-apival'
         ])
         assert test_targets.issubset(set([t.name for t in targets]))
-    
+        test_targets = set([
+            'quantinuum.sim.h1-1sc'
+        ])
+        assert test_targets.issubset(set([t.name for t in targets]))
+        test_targets = set([
+            'quantinuum.sim.h1-2sc'
+        ])
+        assert test_targets.issubset(set([t.name for t in targets]))
+
     @pytest.mark.qio
     @pytest.mark.live_test
-    def test_workspace_get_targets_qio_no_fpga(self):
+    def test_workspace_get_targets_qio(self):
         ws = self.create_workspace()
         targets = ws.get_targets()
         assert None not in targets
@@ -172,6 +149,16 @@ class TestWorkspace(QuantumTestBase):
         with pytest.raises(ValueError):
             target.name = "foo"
             target.refresh()
+
+    @pytest.mark.microsoft_qc
+    @pytest.mark.live_test
+    def test_workspace_get_target_microsoft_qc(self):
+        from azure.quantum.target.microsoft import MicrosoftEstimator
+
+        ws = self.create_workspace()
+        target = ws.get_targets("microsoft.estimator")
+
+        assert type(target) == MicrosoftEstimator
 
     @pytest.mark.live_test
     def test_workspace_job_quotas(self):
