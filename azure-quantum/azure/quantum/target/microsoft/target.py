@@ -171,6 +171,10 @@ class MicrosoftEstimator(Target):
     @classmethod
     def _get_job_class(cls) -> Type[Job]:
         return MicrosoftEstimatorJob
+    
+    def _qir_output_data_format(self) -> str:
+        """"Fallback output data format in case of QIR job submission."""
+        return "microsoft.resource-estimates.v1"
 
     def make_params(self, num_items: Optional[int] = None):
         return MicrosoftEstimatorParams(num_items=num_items)
