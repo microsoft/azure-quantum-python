@@ -10,7 +10,7 @@ from azure.quantum.target import Quantinuum as SyncQuantinuum
 
 
 class Quantinuum(Target, SyncQuantinuum):
-    """Quantinuum (formerly Honeywell) target."""
+    """Quantinuum target."""
 
     async def submit(
         self,
@@ -20,9 +20,9 @@ class Quantinuum(Target, SyncQuantinuum):
         input_params: Dict[str, Any] = None,
         **kwargs
     ) -> Job:
-        """Submit a Quantinuum (formerly Honeywell) program (OpenQASM 2.0 format)
+        """Submit a Quantinuum program (OpenQASM 2.0 format)
 
-        :param circuit: Quantum circuit in Quantinuum (formerly Honeywell) OpenQASM 2.0 format
+        :param circuit: Quantum circuit in Quantinuum OpenQASM 2.0 format
         :type circuit: str
         :param name: Job name
         :type name: str

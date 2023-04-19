@@ -44,7 +44,7 @@ pip install -e azure-quantum
 
 Q# chemistry library's Python application layer, contains tools for creating 2D molecular diagrams and calculating their 3D geometry using RDKit.
 
-<img src="caffeine.png" width=300 alt="Caffeine molecule">
+<img src="https://raw.githubusercontent.com/microsoft/qdk-python/main/qdk/caffeine.png" width=300 alt="Caffeine molecule">
 
 ### Installation and getting started
 
@@ -62,7 +62,7 @@ To install the `qdk` package, run
 pip install qdk
 ```
 
-To get started, try out the [example notebook](../examples/chemistry/Molecule.ipynb) in the examples/chemistry folder.
+To get started, try out the [example notebook](https://github.com/microsoft/qdk-python/blob/main/examples/chemistry/Molecule.ipynb) in the examples/chemistry folder.
 
 #### Development
 
@@ -83,11 +83,3 @@ conda activate qdk
 pip install -e qdk
 ```
 
-### How to install Jupyter-JSME in development mode
-
-Jupyter-JSME is an optional dependency that will enable a simple Molecule editor. For more information about JSME, see: [JSME](https://jsme-editor.github.io/).
-
-```bash
-jupyter nbextension install jupyter_jsme
-jupyter nbextension enable jupyter_jsme/extension
-```

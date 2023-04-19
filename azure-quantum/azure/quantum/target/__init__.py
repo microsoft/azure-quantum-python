@@ -21,7 +21,6 @@ from .toshiba import (
     SimulatedBifurcationMachine
 )
 from .ionq import IonQ
-from .honeywell import Honeywell
 from .quantinuum import Quantinuum
 from .rigetti import Rigetti
 
@@ -29,7 +28,6 @@ from .rigetti import Rigetti
 # associated with a given target ID
 DEFAULT_TARGETS = {
     "ionq": IonQ,
-    "honeywell": Honeywell,
     "quantinuum": Quantinuum,
     "rigetti": Rigetti,
     "Microsoft": Solver,

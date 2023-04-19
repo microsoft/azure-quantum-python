@@ -6,7 +6,7 @@ import asyncio
 import logging
 import json
 
-from azure.quantum.aio.job.base_job import BaseJob, DEFAULT_TIMEOUT
+from azure.quantum.aio.job.base_job import BaseJob, ContentType, DEFAULT_TIMEOUT
 from azure.quantum.job.job import Job as SyncJob
 from azure.quantum.job.filtered_job import FilteredJob
 
