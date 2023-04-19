@@ -140,6 +140,30 @@ class TestMicrosoftQC(QuantumTestBase):
         with raises(ValueError, match=expected):
             estimator.submit(ccnot, input_params=params)
 
+    @pytest.mark.microsoft_qc
+    @pytest.mark.live_test
+    def test_estimator_qiskit_job(self):
+        """
+        Submits a job from a Qiskit QuantumCircuit.
+
+        Checks whether error handling is correct.
+        """
+        ws = self.create_workspace()
+        estimator = MicrosoftEstimator(ws)
+
+        from qiskit import QuantumCircuit
+        circ = QuantumCircuit(3)
+        circ.ccx(0, 1, 2)
+
+        job = estimator.submit(circ)
+        assert type(job) == MicrosoftEstimatorJob
+        job.wait_until_completed()
+        if job.details.status != "Succeeded":
+            raise Exception(f"Job {job.id} not succeeded in "
+                            "test_estimator_qiskit_job")
+        result = job.get_results()
+        assert type(result) == MicrosoftEstimatorResult
+
     def test_estimator_params_validation_valid_cases(self):
         """
         Checks validation cases for resource estimation parameters for valid
