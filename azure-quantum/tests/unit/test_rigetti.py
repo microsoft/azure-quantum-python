@@ -44,47 +44,41 @@ class TestRigettiTarget(QuantumTestBase):
         quil: str,
         input_params: Union[InputParams, Dict[str, Any], None],
     ) -> Optional[Result]:
-        with unittest.mock.patch.object(
-            Job,
-            "create_job_id",
-            return_value=ZERO_UID if self.is_playback else Job.create_job_id(),
-        ):
+        workspace = self.create_workspace()
 
-            workspace = self.create_workspace()
+        target = Rigetti(workspace=workspace)
+        job = target.submit(
+            input_data=quil,
+            name="qdk-python-test",
+            input_params=input_params,
+        )
 
-            target = Rigetti(workspace=workspace)
-            job = target.submit(
-                input_data=quil,
-                name="qdk-python-test",
-                input_params=input_params,
+        # If in recording mode, we don't want to record the pooling of job
+        # status as the current testing infrastructure does not support
+        # multiple identical requests.
+        # So we pause the recording until the job has actually completed.
+        # See: https://github.com/microsoft/qdk-python/issues/118
+        self.pause_recording()
+        try:
+            # Set a timeout for IonQ recording
+            job.wait_until_completed(timeout_secs=60)
+        except TimeoutError:
+            warnings.warn(
+                "Rigetti execution exceeded timeout. Skipping fetching results."
             )
+            return None
 
-            # If in recording mode, we don't want to record the pooling of job
-            # status as the current testing infrastructure does not support
-            # multiple identical requests.
-            # So we pause the recording until the job has actually completed.
-            # See: https://github.com/microsoft/qdk-python/issues/118
-            self.pause_recording()
-            try:
-                # Set a timeout for IonQ recording
-                job.wait_until_completed(timeout_secs=60)
-            except TimeoutError:
-                warnings.warn(
-                    "Rigetti execution exceeded timeout. Skipping fetching results."
-                )
-                return None
+        self.resume_recording()
 
-            self.resume_recording()
+        # Record a single GET request such that job.wait_until_completed
+        # doesn't fail when running recorded tests
+        # See: https://github.com/microsoft/qdk-python/issues/118
+        job.refresh()
 
-            # Record a single GET request such that job.wait_until_completed
-            # doesn't fail when running recorded tests
-            # See: https://github.com/microsoft/qdk-python/issues/118
-            job.refresh()
+        job = workspace.get_job(job.id)
+        assert job.has_completed()
 
-            job = workspace.get_job(job.id)
-            assert job.has_completed()
-
-            return Result(job)
+        return Result(job)
 
     def test_job_submit_rigetti_typed_input_params(self) -> None:
         num_shots = 5

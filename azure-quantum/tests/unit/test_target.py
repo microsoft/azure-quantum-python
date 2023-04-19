@@ -90,66 +90,60 @@ class TestIonQ(QuantumTestBase):
         self.assertGreaterEqual(cost_estimate.estimated_total, 0)
 
     def _test_job_submit_ionq(self, num_shots, circuit=None):
+        workspace = self.create_workspace()
+        if circuit is None:
+            circuit = self._3_qubit_ghz()
+        target = IonQ(workspace=workspace)
+        assert "ionq.simulator" == target.name
+        assert "ionq.circuit.v1" == target.input_data_format
+        assert "ionq.quantum-results.v1" == target.output_data_format
+        assert "IonQ" == target.provider_id
+        assert "application/json" == target.content_type
+        assert "" == target.encoding
 
-        with unittest.mock.patch.object(
-            Job,
-            self.mock_create_job_id_name,
-            return_value=self.get_test_job_id(),
-        ):
-            workspace = self.create_workspace()
-            if circuit is None:
-                circuit = self._3_qubit_ghz()
-            target = IonQ(workspace=workspace)
-            assert "ionq.simulator" == target.name
-            assert "ionq.circuit.v1" == target.input_data_format
-            assert "ionq.quantum-results.v1" == target.output_data_format
-            assert "IonQ" == target.provider_id
-            assert "application/json" == target.content_type
-            assert "" == target.encoding
+        job = target.submit(
+            circuit=circuit,
+            name="ionq-3ghz-job",
+            num_shots=num_shots
+        )
 
-            job = target.submit(
-                circuit=circuit,
-                name="ionq-3ghz-job",
-                num_shots=num_shots
-            )
+        # If in recording mode, we don't want to record the pooling of job
+        # status as the current testing infrastructure does not support
+        # multiple identical requests.
+        # So we pause the recording until the job has actually completed.
+        # See: https://github.com/microsoft/qdk-python/issues/118
+        self.pause_recording()
+        try:
+            # Set a timeout for IonQ recording
+            job.wait_until_completed(timeout_secs=60)
+        except TimeoutError:
+            warnings.warn("IonQ execution exceeded timeout. Skipping fetching results.")
 
-            # If in recording mode, we don't want to record the pooling of job
-            # status as the current testing infrastructure does not support
-            # multiple identical requests.
-            # So we pause the recording until the job has actually completed.
-            # See: https://github.com/microsoft/qdk-python/issues/118
-            self.pause_recording()
-            try:
-                # Set a timeout for IonQ recording
-                job.wait_until_completed(timeout_secs=60)
-            except TimeoutError:
-                warnings.warn("IonQ execution exceeded timeout. Skipping fetching results.")
+        # Check if job succeeded
+        self.assertEqual(True, job.has_completed())
+        assert job.details.status == "Succeeded"
+        self.resume_recording()
 
-            # Check if job succeeded
-            self.assertEqual(True, job.has_completed())
-            assert job.details.status == "Succeeded"
-            self.resume_recording()
+        # Record a single GET request such that job.wait_until_completed
+        # doesn't fail when running recorded tests
+        # See: https://github.com/microsoft/qdk-python/issues/118
+        job.refresh()
 
-            # Record a single GET request such that job.wait_until_completed
-            # doesn't fail when running recorded tests
-            # See: https://github.com/microsoft/qdk-python/issues/118
-            job.refresh()
+        job = workspace.get_job(job.id)
+        self.assertEqual(True, job.has_completed())
 
-            job = workspace.get_job(job.id)
-            self.assertEqual(True, job.has_completed())
+        if job.has_completed():
+            results = job.get_results()
+            assert "histogram" in results
+            assert results["histogram"]["0"] == 0.5
+            assert results["histogram"]["7"] == 0.5
 
-            if job.has_completed():
-                results = job.get_results()
-                assert "histogram" in results
-                assert results["histogram"]["0"] == 0.5
-                assert results["histogram"]["7"] == 0.5
+        if num_shots:
+            assert job.details.input_params.get("shots") == num_shots
+        else:
+            assert job.details.input_params.get("shots") is None
 
-            if num_shots:
-                assert job.details.input_params.get("shots") == num_shots
-            else:
-                assert job.details.input_params.get("shots") is None
-
-            return job
+        return job
 
     @pytest.mark.ionq
     @pytest.mark.live_test

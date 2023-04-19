@@ -21,13 +21,14 @@ from azure.quantum.cirq.targets.target import Target
 
 from cirq_ionq import Job as CirqIonqJob
 
-from common import QuantumTestBase, ZERO_UID
+from common import QuantumTestBase, ONE_UID
 
 
 class TestCirq(QuantumTestBase):
     mock_create_job_id_name = "create_job_id"
+
     def get_test_job_id(self):
-        return ZERO_UID if self.is_playback \
+        return ONE_UID if self.is_playback \
                else Job.create_job_id()
 
     def _3_qubit_ghz_cirq(self):
