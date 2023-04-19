@@ -33,7 +33,8 @@ class TestSession(QuantumTestBase):
         workspace = self.create_workspace()
         session = Session(workspace=workspace,
                           name="My Session",
-                          target="ionq.simulator")
+                          target="echo-quantinuum",
+                          provider_id="microsoft.test")
         self.assertIsNone(session.details.status)
         session.open()
         self.assertEqual(session.details.status, SessionStatus.WAITING)
@@ -51,7 +52,8 @@ class TestSession(QuantumTestBase):
     def test_session_open_close(self):
         workspace = self.create_workspace()
         session = Session(workspace=workspace,
-                          target="ionq.simulator")
+                          target="echo-quantinuum",
+                          provider_id="microsoft.test")
         self.assertIsNone(session.details.status)
         session.open()
         self.assertEqual(session.details.status, SessionStatus.WAITING)
@@ -62,7 +64,7 @@ class TestSession(QuantumTestBase):
     @pytest.mark.session
     def test_session_target_open_session(self):
         workspace = self.create_workspace()
-        target = workspace.get_targets("ionq.simulator")
+        target = workspace.get_targets("echo-quantinuum")
         self.assertIsNone(target.latest_session)
         session = target.open_session()
         self.assertIsNotNone(target.latest_session)
@@ -76,7 +78,7 @@ class TestSession(QuantumTestBase):
     @pytest.mark.session
     def test_session_with_target_open_session(self):
         workspace = self.create_workspace()
-        target = workspace.get_targets("ionq.simulator")
+        target = workspace.get_targets("echo-quantinuum")
         self.assertIsNone(target.latest_session)
         with target.open_session() as session:
             self.assertIsNotNone(target.latest_session)
@@ -84,3 +86,28 @@ class TestSession(QuantumTestBase):
             self.assertEqual(target.get_latest_session_id(), session.id)
             self.assertEqual(session.details.status, SessionStatus.WAITING)
         self.assertEqual(session.details.status, SessionStatus.SUCCEEDED)
+
+    @pytest.mark.live_test
+    @pytest.mark.session
+    @pytest.mark.qio
+    def test_session_job_qio_ising(self):
+        workspace = self.create_workspace()
+        problem = JobPayloadFactory.get_qio_ising_problem()
+
+        from azure.quantum.optimization import ParallelTempering
+        solver = ParallelTempering(workspace, timeout=100)
+
+        with solver.open_session() as session:
+            session_id = session.id
+            problem.name = "Problem 1"
+            solver.submit(problem)
+            problem.name = "Problem 2"
+            solver.submit(problem)
+            problem.name = "Problem 3"
+            solver.submit(problem)
+
+        session_jobs = workspace.list_session_jobs(session_id=session_id)
+        self.assertEqual(len(session_jobs), 3)
+        self.assertEqual(session_jobs[0].details.name, "Problem 1")
+        self.assertEqual(session_jobs[1].details.name, "Problem 2")
+        self.assertEqual(session_jobs[2].details.name, "Problem 3")
