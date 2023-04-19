@@ -4,7 +4,7 @@
 ##
 import re
 from dataclasses import dataclass
-from typing import Any, Dict, Optional, Type
+from typing import Any, Dict, Optional, Type, Union
 from ...job import Job
 from ...job.base_job import ContentType
 from ...workspace import Workspace
@@ -21,7 +21,7 @@ class MicrosoftEstimatorQubitParams(AutoValidatingParams):
         if value not in ["gate-based", "gate_based", "GateBased", "gateBased",
                          "Majorana", "majorana"]:
             raise ValueError(f"{name} must be GateBased or Majorana")
-        
+
     @staticmethod
     def check_time(name, value):
         pat = r"^(\+?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)\s*(s|ms|μs|µs|us|ns)$"
@@ -84,6 +84,7 @@ class MicrosoftEstimatorQubitParams(AutoValidatingParams):
         if self.instruction_set in self._gate_based:
             if self.one_qubit_gate_time is None:
                 raise LookupError("one_qubit_gate_time must be set")
+
 
 @dataclass
 class MicrosoftEstimatorQecScheme(AutoValidatingParams):
@@ -168,10 +169,24 @@ class MicrosoftEstimator(Target):
             **kwargs
         )
 
+    def submit(self,
+               input_data: Any,
+               name: str = "azure-quantum-job",
+               input_params: Union[Dict[str, Any], InputParams, None] = None,
+               **kwargs) -> Job:
+        try:
+            from qiskit import QuantumCircuit
+            from qiskit_qir import to_qir_module
+            if isinstance(input_data, QuantumCircuit):
+                (module, _) = to_qir_module(input_data, record_output=False)
+                input_data = module.bitcode
+        finally:
+            return super().submit(input_data, name, input_params, **kwargs)
+
     @classmethod
     def _get_job_class(cls) -> Type[Job]:
         return MicrosoftEstimatorJob
-    
+
     def _qir_output_data_format(self) -> str:
         """"Fallback output data format in case of QIR job submission."""
         return "microsoft.resource-estimates.v1"
