@@ -109,6 +109,7 @@ https://github.com/microsoft/qdk-python/issues.")
         **kwargs
     ):
         cls = self._target_cls(provider_id, status.id)
+        kwargs["provider_id"] = provider_id
         if hasattr(cls, "from_target_status"):
             return cls.from_target_status(self._workspace, status, **kwargs)
         elif cls is not None:

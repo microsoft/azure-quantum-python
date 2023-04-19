@@ -39,7 +39,10 @@ To install run: pip install azure-quantum[qiskit]"
 class AzureBackendBase(Backend, SessionHost):
     @abstractmethod
     def __init__(
-        self, configuration: BackendConfiguration, provider: Provider = None, **fields
+        self,
+        configuration: BackendConfiguration,
+        provider: Provider = None,
+        **fields
     ):
         super().__init__(configuration, provider, **fields)
 
@@ -56,7 +59,7 @@ class AzureBackendBase(Backend, SessionHost):
         """Returns the Job instance associated with the given id."""
         return self._provider.get_job(job_id)
 
-    def _get_output_data_format(self, options : Dict[str, Any] = {}) -> str:
+    def _get_output_data_format(self, options: Dict[str, Any] = {}) -> str:
         config: BackendConfiguration = self.configuration()
         # output data format default depends on the number of experiments. QIR backends
         # that don't define a default in their azure config will use this value
@@ -163,7 +166,7 @@ class AzureBackendBase(Backend, SessionHost):
         # we don't have run_input
         # we know we have circuit parameter, but it may be empty
         circuit = options.get("circuit")
-        
+
         if circuit:
             return circuit
         else:
@@ -174,6 +177,10 @@ class AzureBackendBase(Backend, SessionHost):
 
     def _get_azure_target_id(self) -> str:
         return self.name()
+
+    def _get_azure_provider_id(self) -> str:
+        return self._azure_config["provider_id"]
+
 
 class AzureQirBackend(AzureBackendBase):
     @abstractmethod
