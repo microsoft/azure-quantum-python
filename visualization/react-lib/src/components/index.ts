@@ -1,1 +1,1 @@
-export { default as SampleComponent } from "./sample-component";
+export { SpaceDiagram } from "./space-diagram";
