@@ -23,7 +23,7 @@ module.exports = {
                 test: /\.css$/,
                 use: ['css-loader'],
                 exclude: /node_modules/,
-            },
+            }
         ]
     }
 };
