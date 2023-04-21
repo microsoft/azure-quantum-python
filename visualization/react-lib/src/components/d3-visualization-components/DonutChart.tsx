@@ -13,10 +13,9 @@ interface DonutChartProps {
   height: number;
   innerRadius: number;
   outerRadius: number;
-  color: string;
 }
 
-function DonutChart({data, width, height, innerRadius, outerRadius, color} : DonutChartProps) {
+function DonutChart({data, width, height, innerRadius, outerRadius} : DonutChartProps) {
 
   // create a ref to store the chart
   const donutRef = React.useRef(null)
@@ -31,8 +30,16 @@ function DonutChart({data, width, height, innerRadius, outerRadius, color} : Don
     const pie = d3.pie<Data>()
       .value((d: any) => d.value)
       .sort(null);
-    
-  // const arcGenerator = d3.svg.arc<d3.layout.pie.Arc<Data>>().o
+
+      const color = d3
+      .scaleOrdinal()
+      .domain(
+        (d3.extent(data, (d) => {
+          return d.title
+        }) as unknown) as string
+      )
+      .range(d3.schemePastel1)
+
     const path = d3.arc<PieArcDatum<Data>>().innerRadius(innerRadius).outerRadius(outerRadius);
    
     const svg = d3.select(donutRef.current)
@@ -49,7 +56,9 @@ function DonutChart({data, width, height, innerRadius, outerRadius, color} : Don
     
       arcs.append('path')
       .attr("d", path)
-      .attr("fill", (d, i) => color);
+      .attr("fill",  (d) => {
+        return color(d.data.title) as string
+      })
 
     arcs.on("mouseover", function(d) {
       d3.select(this)
@@ -63,14 +72,18 @@ function DonutChart({data, width, height, innerRadius, outerRadius, color} : Don
 
     arcs.on("mouseout", function(d) {
       d3.select(this)
-        .style("fill", color);
+        .style("fill",  "green")
       d3.select(".tooltip").remove();
     });
-  }
+  
+}
+
+
+
   // useEffect to draw the chart
   React.useEffect(() => {
     drawChart();
-  }, [data, width, height, innerRadius, outerRadius, color]);
+  }, [data, width, height, innerRadius, outerRadius]);
 
   // render the chart
   return <g ref={donutRef} />;
