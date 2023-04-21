@@ -3,9 +3,9 @@ import * as d3 from 'd3';
 import { PieArcDatum } from 'd3-shape';
 
 type  Data = {
-  title: string,
+  title: string;
   value: number;
-};
+}
 
 interface DonutChartProps {
   data: Data[];
@@ -19,7 +19,7 @@ interface DonutChartProps {
 function DonutChart({data, width, height, innerRadius, outerRadius, color} : DonutChartProps) {
 
   // create a ref to store the chart
-  const donutRef = React.useRef<SVGSVGElement>(null);
+  const donutRef = React.useRef(null)
 
   // create a function to draw the chart
   const drawChart = () => {
