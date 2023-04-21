@@ -1,6 +1,5 @@
-import './App.css';
-import React from 'react';
-import {SpaceDiagram} from 'quantum-visualization/src'
+import  { SpaceDiagram } from 'quantum-visualization/src'
+import * as React from 'react';
 
 function App() {
   return (
