@@ -108,9 +108,12 @@ class SimulatedBifurcationMachine(Solver):
             `timeout` can be specified as the total computation time (sec).
             Other parameters are treated as defined
         """
+
+        provider_id = kwargs.pop("provider_id", "toshiba")
+
         super().__init__(
             workspace=workspace,
-            provider_id="toshiba",
+            provider_id=provider_id,
             name=name,
             input_data_format="microsoft.qio.v2",
             output_data_format="microsoft.qio-results.v2",

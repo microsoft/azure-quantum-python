@@ -66,9 +66,11 @@ class Solver(Target):
         nested_params: bool = True,
         force_str_params: bool = False,
         params: dict = None,
-        content_type : Optional[ContentType] = ContentType.json,
+        content_type: Optional[ContentType] = ContentType.json,
         **kwargs
     ):
+        provider_id = kwargs.pop("provider_id", provider_id)
+
         self.provider_id = provider_id
         self.nested_params = nested_params
         self.force_str_params = force_str_params
@@ -82,11 +84,11 @@ class Solver(Target):
             input_data_format=input_data_format,
             output_data_format=output_data_format,
             provider_id=provider_id,
-            content_type = content_type,
+            content_type=content_type,
             encoding="gzip",
             **kwargs
         )
- 
+
         self._set_params(**params)
         self._check_params(**params)
 

@@ -54,6 +54,8 @@ class IonQ(Target):
         encoding: str = "",
         **kwargs
     ):
+        provider_id = kwargs.pop("provider_id", provider_id)
+
         super().__init__(
             workspace=workspace,
             name=name,

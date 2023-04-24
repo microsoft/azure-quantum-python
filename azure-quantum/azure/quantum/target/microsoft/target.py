@@ -156,15 +156,14 @@ class MicrosoftEstimator(Target):
         # There is only a single target name for this target
         assert name == self.target_names[0]
 
-        # make sure to not pass argument twice
-        kwargs.pop("provider_id", None)
+        provider_id = kwargs.pop("provider_id", "microsoft-qc")
 
         super().__init__(
             workspace=workspace,
             name=name,
             input_data_format="qir.v1",
             output_data_format="microsoft.resource-estimates.v1",
-            provider_id="microsoft-qc",
+            provider_id=provider_id,
             content_type=ContentType.json,
             **kwargs
         )

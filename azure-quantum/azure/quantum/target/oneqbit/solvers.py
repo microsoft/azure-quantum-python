@@ -64,9 +64,12 @@ class TabuSearch(Solver):
             runs before exiting. If the value is set
             to 0, it does not time out. Default: 0
         """
+
+        provider_id = kwargs.pop("provider_id", "1qbit")
+
         super().__init__(
             workspace=workspace,
-            provider_id="1qbit",
+            provider_id=provider_id,
             name=name,
             input_data_format="microsoft.qio.v2",
             output_data_format="microsoft.qio-results.v1",
@@ -203,9 +206,11 @@ class PticmSolver(Solver):
         if perform_icm is not None:
             warnings.warn(DeprecationWarning("The perform_icm parameter has been deprecated and will be ignored."))
 
+        provider_id = kwargs.pop("provider_id", "1qbit")
+
         super().__init__(
             workspace=workspace,
-            provider_id="1qbit",
+            provider_id=provider_id,
             name=name,
             input_data_format="microsoft.qio.v2",
             output_data_format="microsoft.qio-results.v1",
@@ -287,9 +292,12 @@ class PathRelinkingSolver(Solver):
             before exiting. If the value is set
             to 0, it does not time out. Default: 0
         """
+
+        provider_id = kwargs.pop("provider_id", "1qbit")
+
         super().__init__(
             workspace=workspace,
-            provider_id="1qbit",
+            provider_id=provider_id,
             name=name,
             input_data_format="microsoft.qio.v2",
             output_data_format="microsoft.qio-results.v1",

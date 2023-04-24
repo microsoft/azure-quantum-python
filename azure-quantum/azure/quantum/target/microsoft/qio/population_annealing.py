@@ -60,9 +60,11 @@ class PopulationAnnealing(Solver):
         if timeout is not None:
             name = "microsoft.populationannealing-parameterfree.cpu"
 
+        provider_id = kwargs.pop("provider_id", "Microsoft")
+
         super().__init__(
             workspace=workspace,
-            provider_id="Microsoft",
+            provider_id=provider_id,
             name=name,
             input_data_format="microsoft.qio.v2",
             output_data_format="microsoft.qio-results.v2",
