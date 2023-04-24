@@ -408,36 +408,6 @@ class CustomRecordingProcessor(RecordingProcessor):
             value = regex.sub(replacement_text, value)
         return value
 
-    def _append_sequence_id(self, uri: str):
-        """
-        Appends a sequential test-sequence-id in the querystring
-        so that multiple requests with identical URI+Header+Querystring
-        combinations are seem as different requests for the VCR test
-        recordings and playbacks.
-        This is useful, for example, when we want to test job or session
-        states changing while calling job/session.refresh()
-        """
-        # Note: for some yet unknown reason, the `process_request`
-        # method is being called twice for each HTTP request while in recording
-        # mode.
-        # This seems to be a bug in either the Python VCR framework or in
-        # the `ReplayableTest` base class from the Azure SDK.
-        # As a mitigation to this problem and to correctly assign an 
-        # auto-incremented sequence id, we store the sequence as a float and:
-        #   - in recording mode, we increment it by 0.5
-        #   - in playback mode, we increment it by 1
-        #   - we use the ceil of that float value
-        if "&test-sequence-id=" not in uri:
-            sequence_id = self._sequence_ids.pop(uri, 0)
-            sequence_id += 0.5 if self._replayable_test.in_recording else 1
-            self._sequence_ids[uri] = sequence_id
-
-            from math import ceil
-            if "?" not in uri:
-                uri += "?"
-            uri += f'&test-sequence-id={ceil(sequence_id):.0f}'
-        return uri
-
     def process_request(self, request):
         content_type = self._get_content_type(request)
         body = request.body
@@ -462,7 +432,6 @@ class CustomRecordingProcessor(RecordingProcessor):
         request.headers = headers
 
         request.uri = self._regex_replace_all(request.uri)
-        #request.uri = self._append_sequence_id(request.uri)
 
         if body is not None:
             body = self._regex_replace_all(body)
