@@ -12,6 +12,7 @@ import warnings
 import pytest
 import json
 import random
+import re
 
 import numpy as np
 
@@ -403,7 +404,11 @@ class TestQiskit(QuantumTestBase):
         qobj = assemble(circuit)
         self._test_qiskit_submit_ionq(circuit=qobj, shots=1024)
 
-    def _qiskit_wait_to_complete(self, qiskit_job, provider):
+    def _qiskit_wait_to_complete(
+            self,
+            qiskit_job,
+            provider,
+            expected_status=JobStatus.DONE):
         job = qiskit_job._azure_job
         self.pause_recording()
         try:
@@ -421,9 +426,9 @@ class TestQiskit(QuantumTestBase):
             # See: https://github.com/microsoft/qdk-python/issues/118
             job.refresh()
 
-            self.assertEqual(JobStatus.DONE, qiskit_job.status())
+            self.assertEqual(expected_status, qiskit_job.status())
             qiskit_job = provider.get_job(job.id)
-            self.assertEqual(JobStatus.DONE, qiskit_job.status())
+            self.assertEqual(expected_status, qiskit_job.status())
 
     def _test_qiskit_submit_ionq(self, circuit, **kwargs):
 
@@ -893,7 +898,11 @@ class TestQiskit(QuantumTestBase):
 
             if JobStatus.DONE == qiskit_job.status():
                 result = qiskit_job.result()
-                print(result)
+                # verify we can get the counts with the circuit and without
+                # These will throw if job metadata is incorrect
+                assert result.get_counts(circuit) is not None
+                assert result.get_counts() is not None
+                assert result.get_counts(0) is not None
                 assert sum(result.data()["counts"].values()) == shots
                 assert np.isclose(result.data()["counts"]["000"], shots // 2, 20)
                 assert np.isclose(result.data()["counts"]["111"], shots // 2, 20)
@@ -1028,6 +1037,7 @@ class TestQiskit(QuantumTestBase):
             return_value=self.get_test_job_id(),
         ):
             from pyqir import rt
+
             patcher = unittest.mock.patch.object(rt, "initialize")
             patcher.start()
 
@@ -1064,6 +1074,7 @@ class TestQiskit(QuantumTestBase):
             return_value=self.get_test_job_id(),
         ):
             from pyqir import rt
+
             patcher = unittest.mock.patch.object(rt, "initialize")
             patcher.start()
 
@@ -1102,6 +1113,7 @@ class TestQiskit(QuantumTestBase):
             return_value=self.get_test_job_id(),
         ):
             from pyqir import rt
+
             patcher = unittest.mock.patch.object(rt, "initialize")
             patcher.start()
 
@@ -1174,3 +1186,18 @@ class TestQiskit(QuantumTestBase):
         actual = backend._get_output_data_format(options)
         assert "output_data_format" not in options
         assert expected == actual
+
+    def test_specifying_targetCapabilities_with_pass_thru_fails(
+        self,
+    ):
+        from azure.quantum.qiskit.backends.quantinuum import QuantinuumEmulatorBackend
+
+        backend = QuantinuumEmulatorBackend(
+            "quantinuum.hqs-lt-s1-sim", "AzureQuantumProvider"
+        )
+        with pytest.raises(ValueError) as exc:
+            # mimic the user passing in targetCapabilities as part of the run options
+            _ = backend._run("", None, {"targetCapability": "BasicExecution"}, {})
+        actual = str(exc.value)
+        expected = "The targetCapability parameter has been deprecated"
+        assert actual.startswith(expected)

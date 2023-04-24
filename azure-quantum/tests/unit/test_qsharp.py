@@ -8,25 +8,39 @@ import warnings
 import pytest
 from azure.quantum.job import Job
 from common import QuantumTestBase, ZERO_UID
+from import_qsharp import skip_if_no_qsharp
+from test_job_payload_factory import JobPayloadFactory
 
 @pytest.mark.qsharp
 @pytest.mark.live_test
+@skip_if_no_qsharp
 class TestQSharpQIRJob(QuantumTestBase):
 
     @pytest.mark.rigetti
-    def test_qsharp_qir_rigetti(self):
-        self._run_job("rigetti.sim.qvm")
+    def test_qsharp_qir_inline_rigetti(self):
+        self._run_job("rigetti.sim.qvm", inline=True)
+
+    @pytest.mark.rigetti
+    def test_qsharp_qir_file_rigetti(self):
+        self._run_job("rigetti.sim.qvm", inline=False)
 
     @pytest.mark.quantinuum
-    def test_qsharp_qir_quantinuum(self):
-        self._run_job("quantinuum.sim.h1-1sc")
+    def test_qsharp_qir_inline_quantinuum(self):
+        self._run_job("quantinuum.sim.h1-1sc", inline=True)
 
-    @pytest.fixture(autouse=True, scope='class')
-    def _qsharp_callable(self):
-        from test_job_payload_factory import JobPayloadFactory
-        TestQSharpQIRJob.qsharp_callable = JobPayloadFactory.get_qsharp_callable_bell_state()
+    @pytest.mark.quantinuum
+    def test_qsharp_qir_file_quantinuum(self):
+        self._run_job("quantinuum.sim.h1-1sc", inline=False)
 
-    def _run_job(self, target_name):
+    @pytest.mark.microsoft_qc
+    def test_qsharp_qir_inline_microsoft_qc(self):
+        self._run_job("microsoft.estimator", inline=True)
+
+    @pytest.mark.microsoft_qc
+    def test_qsharp_qir_file_microsoft_qc(self):
+        self._run_job("microsoft.estimator", inline=False)
+
+    def _run_job(self, target_name, inline):
         with unittest.mock.patch.object(
             Job,
             "create_job_id",
@@ -34,7 +48,9 @@ class TestQSharpQIRJob(QuantumTestBase):
         ):
             workspace = self.create_workspace()
             target = workspace.get_targets(target_name)
-            job = target.submit(input_data=TestQSharpQIRJob.qsharp_callable)
+            input_data = (JobPayloadFactory.get_qsharp_inline_callable_bell_state()[0] if inline
+                          else JobPayloadFactory.get_qsharp_file_callable_bell_state()[0])
+            job = target.submit(input_data=input_data)
 
             self.pause_recording()
             try:

@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 ##
+import os
 import json
 
 import logging
@@ -131,6 +132,23 @@ class AzureBackendBase(Backend, SessionHost):
         )
         output_data_format = self._get_output_data_format(options)
 
+        # QIR backends will have popped "targetCapability" to configure QIR generation.
+        # Anything left here is an invalid parameter with the user attempting to use
+        # deprecated parameters.
+        targetCapability = input_params.get("targetCapability", None)
+        if (
+            targetCapability not in [None, "qasm"]
+            and input_data_format != "qir.v1"
+        ):
+            message = "The targetCapability parameter has been deprecated and is only supported for QIR backends."
+            message += os.linesep
+            message += "To find a QIR capable backend, use the following code:"
+            message += os.linesep
+            message += (
+                f'\tprovider.get_backend("{self.name()}", input_data_format: "qir.v1").'
+            )
+            raise ValueError(message)
+
         job = AzureQuantumJob(
             backend=self,
             target=self.name(),
@@ -158,10 +176,18 @@ class AzureBackendBase(Backend, SessionHost):
 
         if run_input:
             # even though circuit is provided, we still have run_input
-            warnings.warn(DeprecationWarning("The circuit parameter has been deprecated and will be ignored."))
+            warnings.warn(
+                DeprecationWarning(
+                    "The circuit parameter has been deprecated and will be ignored."
+                )
+            )
             return run_input
         else:
-            warnings.warn(DeprecationWarning("The circuit parameter has been deprecated. Please use the run_input parameter."))
+            warnings.warn(
+                DeprecationWarning(
+                    "The circuit parameter has been deprecated. Please use the run_input parameter."
+                )
+            )
 
         # we don't have run_input
         # we know we have circuit parameter, but it may be empty
@@ -201,14 +227,14 @@ class AzureQirBackend(AzureBackendBase):
     ) -> AzureQuantumJob:
         """Run on the backend.
 
-        This method returns a 
+        This method returns a
         :class:`~azure.quantum.qiskit.job.AzureQuantumJob` object
         that runs circuits. This is an async call.
 
         Args:
             run_input (QuantumCircuit or List[QuantumCircuit]): An individual or a
             list of :class:`~qiskit.circuits.QuantumCircuit` to run on the backend.
-              
+
             options: Any kwarg options to pass to the backend for running the
             config. If a key is also present in the options
             attribute/object then the expectation is that the value
@@ -246,7 +272,7 @@ class AzureQirBackend(AzureBackendBase):
             job_name = circuits[0].name
         job_name = options.pop("job_name", job_name)
 
-        metadata = options.pop("metadata", {})
+        metadata = options.pop("metadata", self._prepare_job_metadata(circuits))
 
         input_data = self._translate_input(circuits, input_params)
 
@@ -256,6 +282,22 @@ class AzureQirBackend(AzureBackendBase):
         )
 
         return job
+
+    def _prepare_job_metadata(self, circuits: List[QuantumCircuit]) -> Dict[str, str]:
+        """Returns the metadata relative to the given circuits that will be attached to the Job"""
+        if len(circuits) == 1:
+            circuit: QuantumCircuit = circuits[0]
+            return {
+                "qiskit": str(True),
+                "name": circuit.name,
+                "num_qubits": circuit.num_qubits,
+                "metadata": json.dumps(circuit.metadata),
+            }
+        # for batch jobs, we don't want to store the metadata of each circuit
+        # we fill out the result header in output processing.
+        # These headers don't matter for execution are are only used for
+        # result processing.
+        return {}
 
     def _generate_qir(
         self, circuits, targetCapability, **to_qir_kwargs
@@ -344,13 +386,13 @@ class AzureBackend(AzureBackendBase):
     def _translate_input(self, circuit):
         pass
 
-    def run(self, run_input = None, **kwargs):
+    def run(self, run_input=None, **kwargs):
         """Submits the given circuit to run on an Azure Quantum backend."""
         options = kwargs
         circuit = self._normalize_run_input_params(run_input, **options)
         options.pop("run_input", None)
         options.pop("circuit", None)
-        
+
         # Some Qiskit features require passing lists of circuits, so unpack those here.
         # We currently only support single-experiment jobs.
         if isinstance(circuit, (list, tuple)):
