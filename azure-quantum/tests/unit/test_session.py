@@ -4,9 +4,9 @@
 ##
 import pytest
 
-from common import QuantumTestBase, ZERO_UID
+from common import QuantumTestBase
 from test_job_payload_factory import JobPayloadFactory
-from azure.quantum import Job, Session, JobDetails, SessionStatus
+from azure.quantum import Job, Session, SessionStatus
 
 
 class TestSession(QuantumTestBase):
@@ -29,6 +29,7 @@ class TestSession(QuantumTestBase):
 
     @pytest.mark.live_test
     @pytest.mark.session
+    @pytest.mark.echo_targets
     def test_session_get_session(self):
         workspace = self.create_workspace()
         session = Session(workspace=workspace,
@@ -49,6 +50,7 @@ class TestSession(QuantumTestBase):
 
     @pytest.mark.live_test
     @pytest.mark.session
+    @pytest.mark.echo_targets
     def test_session_open_close(self):
         workspace = self.create_workspace()
         session = Session(workspace=workspace,
@@ -62,6 +64,7 @@ class TestSession(QuantumTestBase):
 
     @pytest.mark.live_test
     @pytest.mark.session
+    @pytest.mark.echo_targets
     def test_session_target_open_session(self):
         workspace = self.create_workspace()
         target = workspace.get_targets("echo-quantinuum")
@@ -76,6 +79,7 @@ class TestSession(QuantumTestBase):
 
     @pytest.mark.live_test
     @pytest.mark.session
+    @pytest.mark.echo_targets
     def test_session_with_target_open_session(self):
         workspace = self.create_workspace()
         target = workspace.get_targets("echo-quantinuum")
@@ -111,3 +115,133 @@ class TestSession(QuantumTestBase):
         self.assertEqual(session_jobs[0].details.name, "Problem 1")
         self.assertEqual(session_jobs[1].details.name, "Problem 2")
         self.assertEqual(session_jobs[2].details.name, "Problem 3")
+
+    def _test_session_job_cirq_circuit(self, target):
+        from azure.quantum.cirq import AzureQuantumService
+
+        workspace = self.create_workspace()
+        service = AzureQuantumService(workspace=workspace)
+        target = service.get_target(target)
+        self.assertIsNotNone(target)
+
+        circuit = JobPayloadFactory.get_cirq_circuit_bell_state()
+
+        with target.open_session() as session:
+            self.assertEqual(session.details.status, SessionStatus.WAITING)
+            session_id = session.id
+            job1 = target.submit(circuit, name="Job 1")
+            azure_job = job1._azure_job if hasattr(job1, '_azure_job') \
+                        else workspace.get_job(job_id=job1._job["id"])
+
+            target.submit(circuit, name="Job 2")
+
+            azure_job.wait_until_completed()
+
+            session.refresh()
+            self.assertEqual(session.details.status, SessionStatus.EXECUTING)
+
+        session = workspace.get_session(session_id=session_id)
+        session_jobs = session.list_jobs()
+        self.assertEqual(len(session_jobs), 2)
+        self.assertEqual(session_jobs[0].details.name, "Job 1")
+        self.assertEqual(session_jobs[1].details.name, "Job 2")
+
+        [job.wait_until_completed() for job in session_jobs]
+        session.refresh()
+        self.assertEqual(session.details.status, SessionStatus.SUCCEEDED)
+
+    def _test_session_job_qiskit_circuit(self, target):
+        from azure.quantum.qiskit import AzureQuantumProvider
+        from qiskit.tools.monitor import job_monitor
+
+        workspace = self.create_workspace()
+        provider = AzureQuantumProvider(workspace=workspace)
+        backend = provider.get_backend(target)
+        self.assertIsNotNone(backend)
+
+        circuit = JobPayloadFactory.get_qiskit_circuit_bell_state()
+
+        with backend.open_session() as session:
+            self.assertEqual(session.details.status, SessionStatus.WAITING)
+            session_id = session.id
+            job1 = backend.run(circuit, shots=100, job_name="Job 1")
+
+            backend.run(circuit, shots=100, job_name="Job 2")
+
+            job_monitor(job1)
+
+            session.refresh()
+            self.assertEqual(session.details.status, SessionStatus.EXECUTING)
+
+        session = workspace.get_session(session_id=session_id)
+        session_jobs = session.list_jobs()
+        self.assertEqual(len(session_jobs), 2)
+        self.assertEqual(session_jobs[0].details.name, "Job 1")
+        self.assertEqual(session_jobs[1].details.name, "Job 2")
+
+        [job.wait_until_completed() for job in session_jobs]
+        session.refresh()
+        self.assertEqual(session.details.status, SessionStatus.SUCCEEDED)
+
+    def _test_session_job_qsharp_callable(self, target):
+        workspace = self.create_workspace()
+        target = workspace.get_targets(target)
+
+        qsharp_callable = JobPayloadFactory.get_qsharp_callable_bell_state()
+
+        with target.open_session() as session:
+            self.assertEqual(session.details.status, SessionStatus.WAITING)
+            session_id = session.id
+            job1 = target.submit(qsharp_callable, name="Job 1")
+
+            target.submit(qsharp_callable, name="Job 2")
+
+            job1.wait_until_completed()
+
+            session.refresh()
+            self.assertEqual(session.details.status, SessionStatus.EXECUTING)
+
+        session = workspace.get_session(session_id=session_id)
+        session_jobs = session.list_jobs()
+        self.assertEqual(len(session_jobs), 2)
+        self.assertEqual(session_jobs[0].details.name, "Job 1")
+        self.assertEqual(session_jobs[1].details.name, "Job 2")
+
+        [job.wait_until_completed() for job in session_jobs]
+        session.refresh()
+        self.assertEqual(session.details.status, SessionStatus.SUCCEEDED)
+
+    @pytest.mark.live_test
+    @pytest.mark.session
+    @pytest.mark.cirq
+    @pytest.mark.ionq
+    def test_session_job_cirq_circuit_ionq(self):
+        self._test_session_job_cirq_circuit(target="ionq.simulator")
+
+    @pytest.mark.live_test
+    @pytest.mark.session
+    @pytest.mark.cirq
+    @pytest.mark.quantinuum
+    def test_session_job_cirq_circuit_quantinuum(self):
+        self._test_session_job_cirq_circuit(target="quantinuum.sim.h1-1sc")
+
+    @pytest.mark.live_test
+    @pytest.mark.session
+    @pytest.mark.qiskit
+    @pytest.mark.ionq
+    def test_session_job_qiskit_circuit_ionq(self):
+        self._test_session_job_qiskit_circuit(target="ionq.simulator")
+
+    @pytest.mark.live_test
+    @pytest.mark.session
+    @pytest.mark.qiskit
+    @pytest.mark.quantinuum
+    def test_session_job_qiskit_circuit_quantinuum(self):
+        self._test_session_job_qiskit_circuit(target="quantinuum.sim.h1-1sc")
+
+    @pytest.mark.live_test
+    @pytest.mark.session
+    @pytest.mark.qsharp
+    @pytest.mark.quantinuum
+    def test_session_job_qsharp_callable_quantinuum(self):
+        self._test_session_job_qsharp_callable(target="quantinuum.sim.h1-1sc")
