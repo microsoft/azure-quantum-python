@@ -7,6 +7,7 @@ import pytest
 from common import QuantumTestBase
 from test_job_payload_factory import JobPayloadFactory
 from azure.quantum import Job, Session, SessionStatus
+from import_qsharp import skip_if_no_qsharp
 
 
 class TestSession(QuantumTestBase):
@@ -187,7 +188,7 @@ class TestSession(QuantumTestBase):
         workspace = self.create_workspace()
         target = workspace.get_targets(target)
 
-        qsharp_callable = JobPayloadFactory.get_qsharp_callable_bell_state()
+        qsharp_callable = JobPayloadFactory.get_qsharp_inline_callable_bell_state()[0]
 
         with target.open_session() as session:
             self.assertEqual(session.details.status, SessionStatus.WAITING)
@@ -225,6 +226,16 @@ class TestSession(QuantumTestBase):
     def test_session_job_cirq_circuit_quantinuum(self):
         self._test_session_job_cirq_circuit(target="quantinuum.sim.h1-1sc")
 
+    @pytest.mark.skip(reason="There are no Cirq provider/targets implemented for echo targets.")
+    @pytest.mark.live_test
+    @pytest.mark.session
+    @pytest.mark.cirq
+    @pytest.mark.echo_targets
+    def test_session_job_cirq_circuit_echo_quantinuum(self):
+        self._test_session_job_qiskit_circuit(target="echo-quantinuum")
+
+    # Session support for Qiskit jobs
+
     @pytest.mark.live_test
     @pytest.mark.session
     @pytest.mark.qiskit
@@ -239,9 +250,38 @@ class TestSession(QuantumTestBase):
     def test_session_job_qiskit_circuit_quantinuum(self):
         self._test_session_job_qiskit_circuit(target="quantinuum.sim.h1-1sc")
 
+    @pytest.mark.skip(reason="There are no Qiskit provider/backend implemented for echo targets.")
+    @pytest.mark.live_test
+    @pytest.mark.session
+    @pytest.mark.qiskit
+    @pytest.mark.echo_targets
+    def test_session_job_qiskit_circuit_echo_quantinuum(self):
+        self._test_session_job_qiskit_circuit(target="echo-quantinuum")
+
+    # Session support for Q# jobs
+
     @pytest.mark.live_test
     @pytest.mark.session
     @pytest.mark.qsharp
     @pytest.mark.quantinuum
+    @skip_if_no_qsharp
     def test_session_job_qsharp_callable_quantinuum(self):
         self._test_session_job_qsharp_callable(target="quantinuum.sim.h1-1sc")
+
+    @pytest.mark.skip(reason="echo-quantinuum target is setting job state to failure and now passing the test asserts.")
+    @pytest.mark.live_test
+    @pytest.mark.session
+    @pytest.mark.qsharp
+    @pytest.mark.echo_targets
+    @skip_if_no_qsharp
+    def test_session_job_qsharp_callable_echo_quantinuum(self):
+        self._test_session_job_qsharp_callable(target="echo-quantinuum")
+
+    @pytest.mark.skip(reason="IonQ does not support Q#->QIR programs yet.")
+    @pytest.mark.live_test
+    @pytest.mark.session
+    @pytest.mark.qsharp
+    @pytest.mark.ionq
+    @skip_if_no_qsharp
+    def test_session_job_qsharp_callable_ionq(self):
+        self._test_session_job_qsharp_callable(target="ionq.simulator")
