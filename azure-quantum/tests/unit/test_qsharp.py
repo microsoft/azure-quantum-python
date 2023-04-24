@@ -11,7 +11,6 @@ from common import QuantumTestBase, ZERO_UID
 
 @pytest.mark.qsharp
 @pytest.mark.live_test
-@pytest.mark.skip(reason="Temporarily disabling these tests as they are failing the QDK build")
 class TestQSharpQIRJob(QuantumTestBase):
 
     @pytest.mark.rigetti
@@ -24,15 +23,8 @@ class TestQSharpQIRJob(QuantumTestBase):
 
     @pytest.fixture(autouse=True, scope='class')
     def _qsharp_callable(self):
-        import qsharp
-        TestQSharpQIRJob.qsharp_callable = qsharp.compile("""
-            open Microsoft.Quantum.Intrinsic;
-            operation GenerateRandomBit_Inline() : Result {
-                use q0 = Qubit();
-                H(q0);
-                return M(q0);
-            }
-        """)
+        from test_job_payload_factory import JobPayloadFactory
+        TestQSharpQIRJob.qsharp_callable = JobPayloadFactory.get_qsharp_callable_bell_state()
 
     def _run_job(self, target_name):
         with unittest.mock.patch.object(

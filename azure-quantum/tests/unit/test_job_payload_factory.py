@@ -40,6 +40,11 @@ class JobPayloadFactory():
         """, "ENTRYPOINT__BellState")
 
     @staticmethod
+    def get_qsharp_callable_bell_state():
+        import qsharp
+        return qsharp.compile(JobPayloadFactory.get_qsharp_code_bell_state()[0])
+
+    @staticmethod
     def get_qiskit_circuit_bell_state() -> qiskit.QuantumCircuit:
         circuit = qiskit.QuantumCircuit(2, 2)
         circuit.name = "BellState"
@@ -72,3 +77,8 @@ class TestJobPayloadFactory(unittest.TestCase):
     @pytest.mark.qio
     def test_get_qio_ising_problem(self):
         self.assertIsInstance(JobPayloadFactory.get_qio_ising_problem(), optimization.Problem)
+
+    @pytest.mark.qsharp
+    def test_get_qsharp_callable_bell_state(self):
+        import qsharp
+        self.assertIsInstance(JobPayloadFactory.get_qsharp_callable_bell_state(), qsharp.QSharpCallable)
