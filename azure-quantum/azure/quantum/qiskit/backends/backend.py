@@ -179,7 +179,7 @@ class AzureBackendBase(Backend, SessionHost):
         return self.name()
 
     def _get_azure_provider_id(self) -> str:
-        return self._azure_config["provider_id"]
+        return self._azure_config()["provider_id"]
 
 
 class AzureQirBackend(AzureBackendBase):
