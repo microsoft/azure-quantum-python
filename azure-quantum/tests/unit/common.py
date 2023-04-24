@@ -30,7 +30,6 @@ from azure_devtools.scenario_tests.recording_processors import (
     OAuthRequestResponsesFilter,
     RequestUrlNormalizer,
 )
-from azure_devtools.scenario_tests.utilities import _get_content_type
 import json
 
 from azure.quantum.job.job import Job
@@ -83,7 +82,7 @@ class QuantumTestBase(ReplayableTest):
         os.environ["LOCATION"] = self._location
 
         self._pause_recording_processor = PauseRecordingProcessor()
-        regex_replacer = CustomRecordingProcessor()
+        regex_replacer = CustomRecordingProcessor(self)
         recording_processors = [
             self._pause_recording_processor,
             regex_replacer,
@@ -177,7 +176,7 @@ class QuantumTestBase(ReplayableTest):
     def setUp(self):
         super(QuantumTestBase, self).setUp()
         # mitigation for issue https://github.com/kevin1024/vcrpy/issues/533
-        self.cassette.allow_playback_repeats = True
+        self.cassette.allow_playback_repeats = False
 
     @property
     def is_playback(self):
@@ -295,7 +294,6 @@ class QuantumTestBase(ReplayableTest):
         return _mock_wait
 
 
-
 class PauseRecordingProcessor(RecordingProcessor):
     def __init__(self):
         self.is_paused = False
@@ -324,6 +322,7 @@ class CustomUrlPlaybackProcessor(RecordingProcessor):
                         request.uri,
                         flags=re.IGNORECASE)
         return request
+
 
 class CustomRecordingProcessor(RecordingProcessor):
 
@@ -360,10 +359,12 @@ class CustomRecordingProcessor(RecordingProcessor):
         "user-agent",
     ]
 
-    def __init__(self):
+    def __init__(self, replayable_test: ReplayableTest):
         self._regexes = []
         self._auto_guid_regexes = []
         self._guids = dict[str, int]()
+        self._sequence_ids = dict[str, float]()
+        self._replayable_test = replayable_test
 
     def register_regex(self, regex, replacement_text):
         """
@@ -384,12 +385,12 @@ class CustomRecordingProcessor(RecordingProcessor):
         self._auto_guid_regexes.append(re.compile(pattern=guid_regex,
                                                   flags=re.IGNORECASE | re.MULTILINE))
 
-    def _regex_replace_all(self, value: str):
-        for regex, replacement_text in self._regexes:
-            value = regex.sub(replacement_text, value)
-        return value
-
     def _search_for_guids(self, value: str):
+        """
+        Looks for a registered guid pattern and, if found,
+        automatically adds it to be replaced in future
+        requests/responses.
+        """
         if value:
             for regex in self._auto_guid_regexes:
                 match = regex.search(value)
@@ -401,6 +402,41 @@ class CustomRecordingProcessor(RecordingProcessor):
                         new_guid = "00000000-0000-0000-0000-%0.12X" % i
                         self._guids[guid] = new_guid
                         self.register_regex(guid, new_guid)
+
+    def _regex_replace_all(self, value: str):
+        for regex, replacement_text in self._regexes:
+            value = regex.sub(replacement_text, value)
+        return value
+
+    def _append_sequence_id(self, uri: str):
+        """
+        Appends a sequential test-sequence-id in the querystring
+        so that multiple requests with identical URI+Header+Querystring
+        combinations are seem as different requests for the VCR test
+        recordings and playbacks.
+        This is useful, for example, when we want to test job or session
+        states changing while calling job/session.refresh()
+        """
+        # Note: for some yet unknown reason, the `process_request`
+        # method is being called twice for each HTTP request while in recording
+        # mode.
+        # This seems to be a bug in either the Python VCR framework or in
+        # the `ReplayableTest` base class from the Azure SDK.
+        # As a mitigation to this problem and to correctly assign an 
+        # auto-incremented sequence id, we store the sequence as a float and:
+        #   - in recording mode, we increment it by 0.5
+        #   - in playback mode, we increment it by 1
+        #   - we use the ceil of that float value
+        if "&test-sequence-id=" not in uri:
+            sequence_id = self._sequence_ids.pop(uri, 0)
+            sequence_id += 0.5 if self._replayable_test.in_recording else 1
+            self._sequence_ids[uri] = sequence_id
+
+            from math import ceil
+            if "?" not in uri:
+                uri += "?"
+            uri += f'&test-sequence-id={ceil(sequence_id):.0f}'
+        return uri
 
     def process_request(self, request):
         content_type = self._get_content_type(request)
@@ -426,6 +462,7 @@ class CustomRecordingProcessor(RecordingProcessor):
         request.headers = headers
 
         request.uri = self._regex_replace_all(request.uri)
+        #request.uri = self._append_sequence_id(request.uri)
 
         if body is not None:
             body = self._regex_replace_all(body)
