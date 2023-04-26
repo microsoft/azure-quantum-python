@@ -17,7 +17,8 @@ from common import QuantumTestBase, ZERO_UID
 
 from azure.quantum.job.job import Job
 from azure.quantum.target.microsoft import MicrosoftEstimator, \
-    MicrosoftEstimatorJob, MicrosoftEstimatorResult, MicrosoftEstimatorParams
+    MicrosoftEstimatorJob, MicrosoftEstimatorResult, \
+    MicrosoftEstimatorParams, QubitParams
 
 
 class TestMicrosoftQC(QuantumTestBase):
@@ -171,7 +172,7 @@ class TestMicrosoftQC(QuantumTestBase):
         params = MicrosoftEstimatorParams()
 
         params.error_budget = 0.1
-        params.qubit_params.name = "qubit_gate_ns_e3"
+        params.qubit_params.name = QubitParams.GATE_NS_E3
         params.qubit_params.instruction_set = "gate_based"
         params.qubit_params.t_gate_error_rate = 0.03
         params.qubit_params.t_gate_time = "10 ns"
