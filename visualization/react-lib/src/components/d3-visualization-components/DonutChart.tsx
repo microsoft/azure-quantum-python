@@ -1,11 +1,12 @@
-import * as React from 'react';
-import * as d3 from 'd3';
-import { PieArcDatum } from 'd3-shape';
+import * as React from "react";
+import * as d3 from "d3";
+import { PieArcDatum } from "d3-shape";
+import "./DonutChart.css";
 
-type  Data = {
+type Data = {
   title: string;
   value: number;
-}
+};
 
 interface DonutChartProps {
   data: Data[];
@@ -15,78 +16,111 @@ interface DonutChartProps {
   outerRadius: number;
 }
 
-function DonutChart({data, width, height, innerRadius, outerRadius} : DonutChartProps) {
+function DonutChart({
+  data,
+  width,
+  height,
+  innerRadius,
+  outerRadius,
+}: DonutChartProps) {
+  const [selectedSlice, setSelectedSlice] = React.useState(null);
 
-  // create a ref to store the chart
-  const donutRef = React.useRef(null)
+  React.useEffect(() => {
+    const svg = d3.select("svg");
+    svg.selectAll("*").remove();
 
-  // create a function to draw the chart
-  const drawChart = () => {
-    // access the chart ref
-    const chart = donutRef.current;
-    if (!chart) return;
-
-    // define the pie generator
-    const pie = d3.pie<Data>()
-      .value((d: any) => d.value)
-      .sort(null);
-
-      const color = d3
+    const color = d3
       .scaleOrdinal()
       .domain(
-        (d3.extent(data, (d) => {
-          return d.title
-        }) as unknown) as string
+        d3.extent(data, (d) => {
+          return d.title;
+        }) as unknown as string
       )
-      .range(d3.schemePastel1)
+      .range(["#0078D4", "#EF6950", "#B7B8B9"]);
 
-    const path = d3.arc<PieArcDatum<Data>>().innerRadius(innerRadius).outerRadius(outerRadius);
-   
-    const svg = d3.select(donutRef.current)
-      .append("svg")
-      .attr("width", width)
-    .attr("height", height);
+    svg
+      .append("text")
+      .attr("x", "250")
+      .attr("y", "0")
+      .attr("text-anchor", "middle")
+      .style("font-size", "18px")
+      .text("Space diagram");
 
-    const arcs = svg.selectAll('.arc')
-      .data(pie(data))
+    const pieGenerator = d3
+      .pie<Data>()
+      .padAngle(0.01)
+      .value((d) => d.value)
+      .sort(null);
+
+    const arcGenerator = d3
+      .arc<PieArcDatum<Data>>()
+      .innerRadius(innerRadius)
+      .outerRadius(outerRadius);
+
+    const pieData = pieGenerator(data);
+
+    const arcs = svg
+      .selectAll("g")
+      .data(pieData)
       .enter()
       .append("g")
       .attr("class", "arc")
       .attr("transform", `translate(${outerRadius},${outerRadius})`);
-    
-      arcs.append('path')
-      .attr("d", path)
-      .attr("fill",  (d) => {
-        return color(d.data.title) as string
+
+    arcs
+      .append("path")
+      .attr("d", arcGenerator)
+      .attr("fill", (d) => {
+        return color(d.data.title) as string;
       })
+      .style("opacity", 0.5)
+      .on("mouseover", (d) => {
+        const arcHover = d3
+          .arc<PieArcDatum<Data>>()
+          .innerRadius(150)
+          .outerRadius(250);
+        d3.select(d.target).attr("d", arcHover);
+        d3.select(d.target).style("opacity", 0.65);
+      })
+      .on("mouseout", (d) => {
+        d3.select(d.target).attr("d", arcGenerator);
+        d3.select(d.target).style("opacity", 0.5);
+      });
 
-    arcs.on("mouseover", function(d) {
-      d3.select(this)
-        .style("fill", "orange");
-      svg.append("text")
-        .attr("dy", ".35em")
-        .style("text-anchor", "middle")
-        .attr("class", "tooltip")
-        .text(d.data);
-    });
+    arcs.append("title").text((d) => `${d.data.title} : ${d.value}`);
 
-    arcs.on("mouseout", function(d) {
-      d3.select(this)
-        .style("fill",  "green")
-      d3.select(".tooltip").remove();
-    });
-  
+    const legend = svg
+      .selectAll(".legend")
+      .data(data)
+      .enter()
+      .append("g")
+      .attr("class", "legend")
+      .attr("transform", (d, i) => `translate(0, ${i * 20})`);
+
+    // add color squares to the legend
+    legend
+      .append("rect")
+      .attr("x", 200)
+      .attr("y", 500)
+      .attr("width", 18)
+      .attr("height", 18)
+      .style("fill", (d, i) => color(d.title) as string);
+
+    // add text to the legend
+    legend
+      .append("text")
+      .attr("x", 225)
+      .attr("y", 509)
+      .attr("dy", ".35em")
+      .style("text-anchor", "start")
+      .text((d) => `${d.title} : ${d.value}`);
+  }, [data, innerRadius, outerRadius]);
+
+  return (
+    <div className="svg--center">
+      <svg width={width} height={height} viewBox="-35 -35 1000 1000"></svg>
+    </div>
+  );
 }
-
-
-
-  // useEffect to draw the chart
-  React.useEffect(() => {
-    drawChart();
-  }, [data, width, height, innerRadius, outerRadius]);
-
-  // render the chart
-  return <g ref={donutRef} />;
-};
 
 export default DonutChart;
