@@ -1,6 +1,6 @@
 import React from "react";
 import DonutChart from "../d3-visualization-components/DonutChart";
-import "./SpaceDiagram.css";
+
 /*
 export type SpaceDiagramProps = {
   physicalQubitsAlgorithm: number;
@@ -10,13 +10,12 @@ export type SpaceDiagramProps = {
 //function SpaceDiagram({physicalQubitsAlgorithm, physicalQubitsTFactory}: SpaceDiagramProps): JSX.Element{
 function SpaceDiagram() {
   const data = [
-    { title: "Physical algorithmic qubits", value: 100 },
-    { title: "Physical T-Factory qubits", value: 25 },
+    { title: "Physical algorithmic qubits", value: 108575, legendTitle: "Algorithm qubits" },
+    { title: "Physical T-factory qubits", value: 36890, legendTitle: "T-factory qubits"},
   ];
 
   return (
     <div>
-      <div className="space-diagram"> Space diagram </div>
       <DonutChart
         data={data}
         width={1000}
