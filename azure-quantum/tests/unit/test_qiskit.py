@@ -917,8 +917,8 @@ class TestQiskit(QuantumTestBase):
         workspace = self.create_workspace()
         provider = AzureQuantumProvider(workspace=workspace)
 
-        backend = provider.get_backend(RigettiTarget.ASPEN_M_2.value)
-        assert backend.name() == RigettiTarget.ASPEN_M_2.value
+        backend = provider.get_backend(RigettiTarget.ASPEN_M_3.value)
+        assert backend.name() == RigettiTarget.ASPEN_M_3.value
         config = backend.configuration()
         assert False == config.simulator
         assert 1 == config.max_experiments

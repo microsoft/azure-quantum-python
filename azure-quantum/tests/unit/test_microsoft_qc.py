@@ -17,7 +17,8 @@ from common import QuantumTestBase, ZERO_UID
 
 from azure.quantum.job.job import Job
 from azure.quantum.target.microsoft import MicrosoftEstimator, \
-    MicrosoftEstimatorJob, MicrosoftEstimatorResult, MicrosoftEstimatorParams
+    MicrosoftEstimatorJob, MicrosoftEstimatorResult, \
+    MicrosoftEstimatorParams, QubitParams
 
 
 class TestMicrosoftQC(QuantumTestBase):
@@ -139,6 +140,30 @@ class TestMicrosoftQC(QuantumTestBase):
         with raises(ValueError, match=expected):
             estimator.submit(ccnot, input_params=params)
 
+    @pytest.mark.microsoft_qc
+    @pytest.mark.live_test
+    def test_estimator_qiskit_job(self):
+        """
+        Submits a job from a Qiskit QuantumCircuit.
+
+        Checks whether error handling is correct.
+        """
+        ws = self.create_workspace()
+        estimator = MicrosoftEstimator(ws)
+
+        from qiskit import QuantumCircuit
+        circ = QuantumCircuit(3)
+        circ.ccx(0, 1, 2)
+
+        job = estimator.submit(circ)
+        assert type(job) == MicrosoftEstimatorJob
+        job.wait_until_completed()
+        if job.details.status != "Succeeded":
+            raise Exception(f"Job {job.id} not succeeded in "
+                            "test_estimator_qiskit_job")
+        result = job.get_results()
+        assert type(result) == MicrosoftEstimatorResult
+
     def test_estimator_params_validation_valid_cases(self):
         """
         Checks validation cases for resource estimation parameters for valid
@@ -147,7 +172,7 @@ class TestMicrosoftQC(QuantumTestBase):
         params = MicrosoftEstimatorParams()
 
         params.error_budget = 0.1
-        params.qubit_params.name = "qubit_gate_ns_e3"
+        params.qubit_params.name = QubitParams.GATE_NS_E3
         params.qubit_params.instruction_set = "gate_based"
         params.qubit_params.t_gate_error_rate = 0.03
         params.qubit_params.t_gate_time = "10 ns"

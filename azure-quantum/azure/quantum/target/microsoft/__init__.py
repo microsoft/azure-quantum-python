@@ -12,8 +12,10 @@ from .qio import (
 )
 
 __all__ = ["MicrosoftEstimator", "MicrosoftEstimatorJob",
-           "MicrosoftEstimatorResult", "MicrosoftEstimatorParams"]
+           "MicrosoftEstimatorResult", "MicrosoftEstimatorParams",
+           "QECScheme", "QubitParams"]
 
 from .job import MicrosoftEstimatorJob
 from .result import MicrosoftEstimatorResult
-from .target import MicrosoftEstimator, MicrosoftEstimatorParams
+from .target import MicrosoftEstimator, MicrosoftEstimatorParams, QECScheme, \
+    QubitParams
