@@ -109,6 +109,19 @@ class MicrosoftEstimatorQecScheme(AutoValidatingParams):
     physical_qubits_per_logical_qubit: Optional[str] = None
 
 
+@dataclass
+class ErrorBudgetPartition(AutoValidatingParams):
+    logical: float = 0.001 / 3
+    tstates: float = 0.001 / 3
+    rotations: float = 0.001 / 3
+
+
+@dataclass
+class MicrosoftEstimatorConstraints(AutoValidatingParams):
+    logical_depth_scaling: Optional[float] = None
+    max_tfactories: Optional[int] = None
+
+
 class MicrosoftEstimatorInputParamsItem(InputParamsItem):
     """
     Input params for microsoft.estimator target
@@ -123,7 +136,9 @@ class MicrosoftEstimatorInputParamsItem(InputParamsItem):
             MicrosoftEstimatorQubitParams()
         self.qec_scheme: MicrosoftEstimatorQecScheme = \
             MicrosoftEstimatorQecScheme()
-        self.error_budget: Optional[float] = None
+        self.constraints: MicrosoftEstimatorConstraints = \
+            MicrosoftEstimatorConstraints()
+        self.error_budget: Optional[Union[float, ErrorBudgetPartition]] = None
 
     def as_dict(self, validate=True) -> Dict[str, Any]:
         result = super().as_dict(validate)
@@ -136,10 +151,17 @@ class MicrosoftEstimatorInputParamsItem(InputParamsItem):
         if len(qec_scheme) != 0:
             result["qecScheme"] = qec_scheme
 
+        constraints = self.constraints.as_dict(validate)
+        if len(constraints) != 0:
+            result["constraints"] = constraints
+
         if self.error_budget is not None:
-            if validate and (self.error_budget <= 0 or self.error_budget >= 1):
-                raise ValueError("error_budget must be value between 0 and 1")
-            result["errorBudget"] = self.error_budget
+            if isinstance(self.error_budget, float):
+                if validate and (self.error_budget <= 0 or self.error_budget >= 1):
+                    raise ValueError("error_budget must be value between 0 and 1")
+                result["errorBudget"] = self.error_budget
+            elif isinstance(self.error_budget, ErrorBudgetPartition):
+                result["errorBudget"] = self.error_budget.as_dict(validate)
 
         return result
 
