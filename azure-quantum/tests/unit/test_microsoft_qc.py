@@ -96,6 +96,41 @@ class TestMicrosoftQC(QuantumTestBase):
         result2 = job2.get_results()
         assert type(result2) == type(result)
 
+    @pytest.mark.microsoft_qc
+    @pytest.mark.live_test
+    def test_estimator_batching_job(self):
+        """
+        Submits a job with default job parameters.
+
+        Checks whether job and results have expected type.
+        """
+        ws = self.create_workspace()
+        estimator = MicrosoftEstimator(ws)
+
+        ccnot = self._ccnot_bitcode()
+        params = estimator.make_params(num_items=2)
+        params.items[0].error_budget = 0.001
+        params.items[1].error_budget = 0.002
+        job = estimator.submit(ccnot, input_params=params)
+        assert type(job) == MicrosoftEstimatorJob
+        job.wait_until_completed()
+        if job.details.status != "Succeeded":
+            raise Exception(f"Job {job.id} not succeeded in "
+                            "test_estimator_batching_job")
+        result = job.get_results()
+        errors = []
+        if type(result) != MicrosoftEstimatorResult:
+            errors.append("Unexpected type for result")
+
+        if 'summary_data_frame' not in dir(result):
+            errors.append("summary_data_frame not method of result")
+
+        from pandas import DataFrame
+        df = result.summary_data_frame()
+        if type(df) != DataFrame:
+            errors.append("Unexpected type for summary data frame")
+
+        assert errors == []
 
     @pytest.mark.microsoft_qc
     @pytest.mark.live_test
