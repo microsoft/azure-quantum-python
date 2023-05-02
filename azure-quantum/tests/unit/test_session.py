@@ -221,12 +221,18 @@ class TestSession(QuantumTestBase):
 
         qsharp_callable = JobPayloadFactory.get_qsharp_inline_callable_bell_state()[0]
 
+        output_data_format = "honeywell.qir.v1" if "echo-quantinuum" in target_name else None
+
         with target.open_session() as session:
             self.assertEqual(session.details.status, SessionStatus.WAITING)
             session_id = session.id
-            job1 = target.submit(qsharp_callable, name="Job 1")
+            job1 = target.submit(qsharp_callable,
+                                 name="Job 1",
+                                 output_data_format=output_data_format)
 
-            target.submit(qsharp_callable, name="Job 2")
+            target.submit(qsharp_callable,
+                          name="Job 2",
+                          output_data_format=output_data_format)
 
             job1.wait_until_completed()
 
@@ -281,7 +287,6 @@ class TestSession(QuantumTestBase):
     def test_session_job_qiskit_circuit_quantinuum(self):
         self._test_session_job_qiskit_circuit(target_name="quantinuum.sim.h1-1sc")
 
-    @pytest.mark.skip(reason="Currently the echo-quantinuum is not accepting the sessionId attribute.")
     @pytest.mark.live_test
     @pytest.mark.session
     @pytest.mark.qiskit
@@ -299,7 +304,6 @@ class TestSession(QuantumTestBase):
     def test_session_job_qsharp_callable_quantinuum(self):
         self._test_session_job_qsharp_callable(target_name="quantinuum.sim.h1-1sc")
 
-    @pytest.mark.skip(reason="Currently the echo-quantinuum is not accepting the sessionId attribute.")
     @pytest.mark.live_test
     @pytest.mark.session
     @pytest.mark.qsharp
@@ -324,6 +328,7 @@ class EchoQuantinuumQPUQirBackend(QuantinuumQPUQirBackend):
         config.update(
             {
                 "provider_id": ECHO_PROVIDER_NAME,
+                "output_data_format": "honeywell.qir.v1"
             }
         )
         return config
