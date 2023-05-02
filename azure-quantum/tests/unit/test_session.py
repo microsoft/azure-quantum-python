@@ -7,7 +7,7 @@ import pytest
 
 from common import QuantumTestBase
 from test_job_payload_factory import JobPayloadFactory
-from azure.quantum import Job, Session, SessionStatus
+from azure.quantum import Job, JobStatus, Session, SessionStatus, SessionJobFailurePolicy
 from azure.quantum.qiskit.backends.quantinuum import QuantinuumQPUQirBackend
 from azure.quantum.qiskit.provider import AzureQuantumProvider
 from import_qsharp import skip_if_no_qsharp
@@ -248,6 +248,99 @@ class TestSession(QuantumTestBase):
         [job.wait_until_completed() for job in session_jobs]
         session.refresh()
         self.assertEqual(session.details.status, SessionStatus.SUCCEEDED)
+
+    def _test_session_job_failure_policies(self, target_name):
+        """
+        This test case checks the session job failure policies
+        behavior in more detail.
+
+        First it checks the behavior of the SessionJobFailurePolicy.ABORT
+        policy by submitting a failing job right away.
+
+        Then it checks the behavior of the SessionJobFailurePolicy.CONTINUE
+        policy by submitting a failing job in the middle of two
+        successful jobs.
+
+        Note: all other tests that submit jobs for a session
+        defaults to using the SessionJobFailurePolicy.ABORT policy
+        and they have check the expected behavior by asserting
+        the session status WAITING->EXECUTING->SUCCEEDED
+        """
+
+        workspace = self.create_workspace()
+        target = self._get_target(target_name)
+
+        qsharp_callable = JobPayloadFactory.get_qsharp_inline_callable_bell_state()[0]
+
+        output_data_format = "honeywell.qir.v1" if "echo-quantinuum" in target_name else None
+
+        with target.open_session(job_failure_policy=SessionJobFailurePolicy.ABORT) as session:
+            self.assertEqual(session.details.status, SessionStatus.WAITING)
+
+            # pass an invalid output_data_format to make the job fail
+            job1 = target.submit(qsharp_callable,
+                                 name="Bad Job 1",
+                                 output_data_format="invalid_output_format")
+            job1.wait_until_completed()
+            self.assertEqual(job1.details.status, JobStatus.FAILED)
+            session.refresh()
+            self.assertEqual(session.details.status, SessionStatus.FAILED)
+
+            from azure.core.exceptions import HttpResponseError
+            with self.assertRaises(HttpResponseError) as context:
+                target.submit(qsharp_callable,
+                              name="Good Job 2",
+                              output_data_format=output_data_format)
+            self.assertIn("Session is already in a terminal state.",
+                          context.exception.message)
+
+            session_jobs = session.list_jobs()
+            self.assertEqual(len(session_jobs), 1)
+            self.assertEqual(session_jobs[0].details.name, "Bad Job 1")
+
+        with target.open_session(job_failure_policy=SessionJobFailurePolicy.CONTINUE) as session:
+            self.assertEqual(session.details.status, SessionStatus.WAITING)
+            job1 = target.submit(qsharp_callable,
+                                 name="Good Job 1",
+                                 output_data_format=output_data_format)
+            job1.wait_until_completed()
+            self.assertEqual(job1.details.status, JobStatus.SUCCEEDED)
+            session.refresh()
+            self.assertEqual(session.details.status, SessionStatus.EXECUTING)
+
+            # pass an invalid output_data_format to make the job fail
+            job2 = target.submit(qsharp_callable,
+                                 name="Bad Job 2",
+                                 output_data_format="invalid_output_format")
+            job2.wait_until_completed()
+            self.assertEqual(job2.details.status, JobStatus.FAILED)
+            session.refresh()
+            self.assertEqual(session.details.status, SessionStatus.FAILURE_S_)
+
+            job3 = target.submit(qsharp_callable,
+                                 name="Good Job 3",
+                                 output_data_format=output_data_format)
+            job3.wait_until_completed()
+            self.assertEqual(job3.details.status, JobStatus.SUCCEEDED)
+            session.refresh()
+            self.assertEqual(session.details.status, SessionStatus.FAILURE_S_)
+
+            session_jobs = session.list_jobs()
+            self.assertEqual(len(session_jobs), 3)
+            self.assertEqual(session_jobs[0].details.name, "Good Job 1")
+            self.assertEqual(session_jobs[1].details.name, "Bad Job 2")
+            self.assertEqual(session_jobs[2].details.name, "Good Job 3")
+
+    # Session job failure policy tests
+
+    @pytest.mark.live_test
+    @pytest.mark.session
+    @pytest.mark.qsharp
+    @pytest.mark.echo_targets
+    def test_session_job_failure_policies_echo_quantinuum(self):
+        self._test_session_job_failure_policies(target_name="echo-quantinuum")
+
+    # Session support for Cirq jobs
 
     @pytest.mark.live_test
     @pytest.mark.session
