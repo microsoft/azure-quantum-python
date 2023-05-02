@@ -40,7 +40,10 @@ To install run: pip install azure-quantum[qiskit]"
 class AzureBackendBase(Backend, SessionHost):
     @abstractmethod
     def __init__(
-        self, configuration: BackendConfiguration, provider: Provider = None, **fields
+        self,
+        configuration: BackendConfiguration,
+        provider: Provider = None,
+        **fields
     ):
         super().__init__(configuration, provider, **fields)
 
@@ -200,6 +203,9 @@ class AzureBackendBase(Backend, SessionHost):
 
     def _get_azure_target_id(self) -> str:
         return self.name()
+
+    def _get_azure_provider_id(self) -> str:
+        return self._azure_config()["provider_id"]
 
 
 class AzureQirBackend(AzureBackendBase):
