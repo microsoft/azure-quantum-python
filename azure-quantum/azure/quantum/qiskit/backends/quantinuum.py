@@ -35,7 +35,6 @@ QUANTINUUM_BASIS_GATES = [
     "rz",
     "h",
     "cx",
-    "ccx",
     "cz",
     "s",
     "sdg",
