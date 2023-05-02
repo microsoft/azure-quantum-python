@@ -10,7 +10,7 @@
 import os
 import re
 from unittest import mock
-from numpy import deprecate
+from unittest.mock import patch
 
 import six
 import pytest
@@ -175,8 +175,22 @@ class QuantumTestBase(ReplayableTest):
 
     def setUp(self):
         super(QuantumTestBase, self).setUp()
-        # mitigation for issue https://github.com/kevin1024/vcrpy/issues/533
-        self.cassette.allow_playback_repeats = False
+        if not self.is_playback:
+            self.vcr.record_mode = 'all'
+        self.cassette.allow_playback_repeats = True
+
+        # Modify the Job.wait_until_completed method such that it only records
+        # once, see: https://github.com/microsoft/qdk-python/issues/118
+        self.patch_wait = patch.object(
+            Job,
+            "wait_until_completed",
+            self.mock_wait(Job.wait_until_completed)
+        )
+        self.patch_wait.start()
+
+    def tearDown(self):
+        self.patch_wait.stop()
+        super().tearDown()
 
     @property
     def is_playback(self):
