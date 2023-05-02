@@ -13,6 +13,7 @@ if TYPE_CHECKING:
 
 __all__ = ["WorkspaceItem"]
 
+
 class WorkspaceItem(abc.ABC):
     """
 
@@ -26,7 +27,6 @@ class WorkspaceItem(abc.ABC):
     def __init__(self, workspace: "Workspace", details: ItemDetails, **kwargs):
         self._workspace = workspace
         self._details = details
-        self._id = details.id
         self._item_type = details.item_type
 
     @property
@@ -39,7 +39,7 @@ class WorkspaceItem(abc.ABC):
 
     @property
     def id(self) -> str:
-        return self._id
+        return self._details.id
 
     @property
     def item_type(self) -> ItemType:
