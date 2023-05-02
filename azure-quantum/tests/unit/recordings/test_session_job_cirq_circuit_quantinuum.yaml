@@ -48,7 +48,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - testapp-azure-quantum-qiskit azsdk-python-quantum/0.0.1 Python/3.9.16 (Windows-10-10.0.22621-SP0)
+      - testapp-azure-quantum-cirq azsdk-python-quantum/0.0.1 Python/3.9.16 (Windows-10-10.0.22621-SP0)
     method: GET
     uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/providerStatus?api-version=2022-09-12-preview
   response:
@@ -73,9 +73,9 @@ interactions:
         {"id": "microsoft.populationannealing-parameterfree.cpu", "currentAvailability":
         "Available", "averageQueueTime": 0, "statusPage": null}]}, {"id": "ionq",
         "currentAvailability": "Available", "targets": [{"id": "ionq.qpu", "currentAvailability":
-        "Available", "averageQueueTime": 1331918, "statusPage": "https://status.ionq.co"},
+        "Available", "averageQueueTime": 1349221, "statusPage": "https://status.ionq.co"},
         {"id": "ionq.qpu.aria-1", "currentAvailability": "Available", "averageQueueTime":
-        891197, "statusPage": "https://status.ionq.co"}, {"id": "ionq.simulator",
+        988998, "statusPage": "https://status.ionq.co"}, {"id": "ionq.simulator",
         "currentAvailability": "Available", "averageQueueTime": 2, "statusPage": "https://status.ionq.co"}]},
         {"id": "quantinuum", "currentAvailability": "Degraded", "targets": [{"id":
         "quantinuum.hqs-lt-s1", "currentAvailability": "Unavailable", "averageQueueTime":
@@ -113,18 +113,18 @@ interactions:
         "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.qpu.h1-2-preview",
         "currentAvailability": "Unavailable", "averageQueueTime": 0, "statusPage":
         "https://www.quantinuum.com/products/h1"}]}, {"id": "rigetti", "currentAvailability":
-        "Available", "targets": [{"id": "rigetti.sim.qvm", "currentAvailability":
-        "Available", "averageQueueTime": 5, "statusPage": "https://rigetti.statuspage.io/"},
-        {"id": "rigetti.qpu.aspen-m-2", "currentAvailability": "Available", "averageQueueTime":
+        "Degraded", "targets": [{"id": "rigetti.sim.qvm", "currentAvailability": "Available",
+        "averageQueueTime": 5, "statusPage": "https://rigetti.statuspage.io/"}, {"id":
+        "rigetti.qpu.aspen-m-2", "currentAvailability": "Available", "averageQueueTime":
         5, "statusPage": "https://rigetti.statuspage.io/"}, {"id": "rigetti.qpu.aspen-m-3",
-        "currentAvailability": "Available", "averageQueueTime": 5, "statusPage": "https://rigetti.statuspage.io/"}]},
+        "currentAvailability": "Degraded", "averageQueueTime": 5, "statusPage": "https://rigetti.statuspage.io/"}]},
         {"id": "1qbit", "currentAvailability": "Unavailable", "targets": [{"id": "1qbit.tabu",
         "currentAvailability": "Unavailable", "averageQueueTime": 0, "statusPage":
         null}, {"id": "1qbit.pathrelinking", "currentAvailability": "Unavailable",
         "averageQueueTime": 0, "statusPage": null}, {"id": "1qbit.pticm", "currentAvailability":
         "Unavailable", "averageQueueTime": 0, "statusPage": null}]}, {"id": "toshiba",
         "currentAvailability": "Available", "targets": [{"id": "toshiba.sbm.ising",
-        "currentAvailability": "Available", "averageQueueTime": 4, "statusPage": "https://aq-sbm.net/v1/service_monitor/index.html"}]},
+        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": "https://aq-sbm.net/v1/service_monitor/index.html"}]},
         {"id": "microsoft-qc", "currentAvailability": "Available", "targets": [{"id":
         "microsoft.estimator", "currentAvailability": "Available", "averageQueueTime":
         0, "statusPage": null}]}, {"id": "qci", "currentAvailability": "Degraded",
@@ -150,7 +150,7 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '7664'
+      - '7662'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -158,4 +158,36 @@ interactions:
     status:
       code: 200
       message: OK
+- request:
+    body: 'b''{"id": "00000000-0000-0000-0000-000000000001", "name": "session-00000000-0000-0000-0000-000000000001",
+      "providerId": "quantinuum", "target": "quantinuum.sim.h1-1sc", "itemType": "Session"}'''
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '191'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - testapp-azure-quantum-cirq azsdk-python-quantum/0.0.1 Python/3.9.16 (Windows-10-10.0.22621-SP0)
+    method: PUT
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/sessions/00000000-0000-0000-0000-000000000001?api-version=2022-09-12-preview
+  response:
+    body:
+      string: '{"error": {"code": "TargetUnavailable", "message": "The target specified
+        is currently unavailable. Please try again later."}, "access_token": "fake_token"}'
+    headers:
+      connection:
+      - keep-alive
+      content-length:
+      - '155'
+      content-type:
+      - application/json; charset=utf-8
+    status:
+      code: 409
+      message: Conflict
 version: 1
