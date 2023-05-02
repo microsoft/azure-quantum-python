@@ -9,6 +9,7 @@
 
 import os
 import re
+from unittest import mock
 from numpy import deprecate
 
 import six
@@ -29,16 +30,36 @@ from azure_devtools.scenario_tests.recording_processors import (
     OAuthRequestResponsesFilter,
     RequestUrlNormalizer,
 )
-from azure_devtools.scenario_tests.utilities import _get_content_type
 import json
 
+from azure.quantum.job.job import Job
+
 ZERO_UID = "00000000-0000-0000-0000-000000000000"
+ONE_UID = "00000000-0000-0000-0000-000000000001"
 TENANT_ID = "72f988bf-86f1-41af-91ab-2d7cd011db47"
 PLACEHOLDER = "PLACEHOLDER"
 RESOURCE_GROUP = "myresourcegroup"
 WORKSPACE = "myworkspace"
 LOCATION = "eastus"
 STORAGE = "mystorage"
+
+
+@pytest.fixture(scope="class")
+def mock_wait_until_completed(self):
+    """
+    Workaround for issue #118
+    See: https://github.com/microsoft/qdk-python/issues/118
+
+    This will patch the Job.wait_until_completed() method by
+    suspending the test recording until wait_until_completed() returns.
+    """
+    with mock.patch.object(
+        Job,
+        "wait_until_completed",
+        self._mock_wait(Job.wait_until_completed)
+    ):
+        yield
+
 
 @pytest.mark.usefixtures("event_loop_instance")
 class QuantumTestBase(ReplayableTest):
@@ -47,7 +68,6 @@ class QuantumTestBase(ReplayableTest):
     During init, gets Azure Credentials and
     Azure Quantum Workspace parameters from OS environment variables.
     """
-
     def __init__(self, method_name):
         self._client_id = os.environ.get("AZURE_CLIENT_ID", ZERO_UID)
         self._client_secret = os.environ.get("AZURE_CLIENT_SECRET", PLACEHOLDER)
@@ -62,7 +82,7 @@ class QuantumTestBase(ReplayableTest):
         os.environ["LOCATION"] = self._location
 
         self._pause_recording_processor = PauseRecordingProcessor()
-        regex_replacer = CustomRecordingProcessor()
+        regex_replacer = CustomRecordingProcessor(self)
         recording_processors = [
             self._pause_recording_processor,
             regex_replacer,
@@ -75,6 +95,7 @@ class QuantumTestBase(ReplayableTest):
         ]
 
         replay_processors = [
+            regex_replacer,
             AuthenticationMetadataFilter(),
             OAuthRequestResponsesFilter(),
             RequestUrlNormalizer(),
@@ -97,6 +118,8 @@ class QuantumTestBase(ReplayableTest):
             self._workspace_name = WORKSPACE
             self._location = LOCATION
 
+        regex_replacer.register_guid_regex(
+            r"(?:job-|jobs/|session-|sessions/)((?:[a-f0-9]+[-]){4}[a-f0-9]+)")
         regex_replacer.register_regex(self.client_id, ZERO_UID)
         regex_replacer.register_regex(
             self.client_secret, PLACEHOLDER
@@ -111,27 +134,7 @@ class QuantumTestBase(ReplayableTest):
             "/subscriptions/" + ZERO_UID,
         )
         regex_replacer.register_regex(
-            r"job-([a-f0-9]+[-]){4}[a-f0-9]+", "job-" + ZERO_UID
-        )
-        regex_replacer.register_regex(
-            r"jobs/([a-f0-9]+[-]){4}[a-f0-9]+", "jobs/" + ZERO_UID
-        )
-        regex_replacer.register_regex(
-            r"session-([a-f0-9]+[-]){4}[a-f0-9]+", "session-" + ZERO_UID
-        )
-        regex_replacer.register_regex(
-            r"sessions/([a-f0-9]+[-]){4}[a-f0-9]+", "sessions/" + ZERO_UID
-        )
-        regex_replacer.register_regex(
             r"\d{8}-\d{6}", "20210101-000000"
-        )        
-        regex_replacer.register_regex(
-            r'"id":\s*"([a-f0-9]+[-]){4}[a-f0-9]+"',
-            '"id": "{}"'.format(ZERO_UID),
-        )
-        regex_replacer.register_regex(
-            r'"containerName":\s*"([a-f0-9]+[-]){4}[a-f0-9]+"',
-            '"containerName": "{}"'.format(ZERO_UID),
         )
         regex_replacer.register_regex(
             r'blob.core.windows.net/([a-f0-9]+[-]){4}[a-f0-9]+',
@@ -173,7 +176,7 @@ class QuantumTestBase(ReplayableTest):
     def setUp(self):
         super(QuantumTestBase, self).setUp()
         # mitigation for issue https://github.com/kevin1024/vcrpy/issues/533
-        self.cassette.allow_playback_repeats = True
+        self.cassette.allow_playback_repeats = False
 
     @property
     def is_playback(self):
@@ -246,13 +249,11 @@ class QuantumTestBase(ReplayableTest):
         :return: AsyncWorkspace
         :rtype: AsyncWorkspace
         """
-
         playback_credential = AsyncClientSecretCredential(self.tenant_id,
                                                      self.client_id,
                                                      self.client_secret)
         default_credential = playback_credential if self.is_playback \
                              else None
-
         workspace = AsyncWorkspace(
             credential=default_credential,
             subscription_id=self.subscription_id,
@@ -262,9 +263,7 @@ class QuantumTestBase(ReplayableTest):
             **kwargs
         )
         workspace.append_user_agent("testapp")
-
         return workspace
-
 
     def mock_wait(self, job_wait_until_completed):
         # Workaround for issue #118
@@ -324,6 +323,7 @@ class CustomUrlPlaybackProcessor(RecordingProcessor):
                         flags=re.IGNORECASE)
         return request
 
+
 class CustomRecordingProcessor(RecordingProcessor):
 
     ALLOW_HEADERS = [
@@ -359,42 +359,86 @@ class CustomRecordingProcessor(RecordingProcessor):
         "user-agent",
     ]
 
-    def __init__(self):
+    def __init__(self, replayable_test: ReplayableTest):
         self._regexes = []
+        self._auto_guid_regexes = []
+        self._guids = dict[str, int]()
+        self._sequence_ids = dict[str, float]()
+        self._replayable_test = replayable_test
 
-    def register_regex(self, old_regex, new):
-        self._regexes.append((re.compile(pattern=old_regex,
+    def register_regex(self, regex, replacement_text):
+        """
+        Registers a regular expression that should be used to replace the
+        HTTP requests' uri, headers and body with a replacement_text
+        """
+        self._regexes.append((re.compile(pattern=regex,
                                          flags=re.IGNORECASE | re.MULTILINE),
-                             new))
+                             replacement_text))
 
-    def regex_replace_all(self, value: str):
-        for oldRegex, new in self._regexes:
-            value = oldRegex.sub(new, value)
+    def register_guid_regex(self, guid_regex):
+        """
+        Registers a regular expression that should detect guids from
+        HTTP requests' uri, headers and body and automatically
+        register replacements with an auto-incremented deterministic guid
+        to be included in the recordings
+        """
+        self._auto_guid_regexes.append(re.compile(pattern=guid_regex,
+                                                  flags=re.IGNORECASE | re.MULTILINE))
+
+    def _search_for_guids(self, value: str):
+        """
+        Looks for a registered guid pattern and, if found,
+        automatically adds it to be replaced in future
+        requests/responses.
+        """
+        if value:
+            for regex in self._auto_guid_regexes:
+                match = regex.search(value)
+                if match:
+                    guid = match.groups(1)[0]
+                    if (guid not in self._guids
+                        and not guid.startswith("00000000-")):
+                        i = len(self._guids) + 1
+                        new_guid = "00000000-0000-0000-0000-%0.12X" % i
+                        self._guids[guid] = new_guid
+                        self.register_regex(guid, new_guid)
+
+    def _regex_replace_all(self, value: str):
+        for regex, replacement_text in self._regexes:
+            value = regex.sub(replacement_text, value)
         return value
 
     def process_request(self, request):
-        headers = {}
-        for key in request.headers:
-            if key.lower() in self.ALLOW_HEADERS:
-                headers[key] = self.regex_replace_all(request.headers[key])
-        request.headers = headers
-
-        request.uri = self.regex_replace_all(request.uri)
         content_type = self._get_content_type(request)
-
         body = request.body
-        if body is not None:
+        encode_body = False
+        if body:
             if ((content_type == "application/x-www-form-urlencoded") and
                 (isinstance(body, bytes) or isinstance(body, bytearray))):
                 body = body.decode("utf-8")
-                body = self.regex_replace_all(body)
-                request.body = body.encode("utf-8")
-                request.headers["content-length"] = ["%s" % len(request.body)]
+                encode_body = True
             else:
                 body = str(body)
-                body = self.regex_replace_all(body)
-                request.body = body
-                request.headers["content-length"] = ["%s" % len(body)]
+
+        for key in request.headers:
+            self._search_for_guids(request.headers[key])
+        self._search_for_guids(request.uri)
+        self._search_for_guids(body)
+
+        headers = {}
+        for key in request.headers:
+            if key.lower() in self.ALLOW_HEADERS:
+                headers[key] = self._regex_replace_all(request.headers[key])
+        request.headers = headers
+
+        request.uri = self._regex_replace_all(request.uri)
+
+        if body is not None:
+            body = self._regex_replace_all(body)
+            if encode_body:
+                body = body.encode("utf-8")
+            request.body = body
+            request.headers["content-length"] = ["%s" % len(body)]
 
         return request
 
@@ -421,22 +465,26 @@ class CustomRecordingProcessor(RecordingProcessor):
             if key.lower() in self.ALLOW_HEADERS:
                 new_header_values = []
                 for old_header_value in response["headers"][key]:
-                    new_header_value = self.regex_replace_all(old_header_value)
+                    new_header_value = self._regex_replace_all(old_header_value)
                     new_header_values.append(new_header_value)
                 headers[key] = new_header_values
         response["headers"] = headers
 
         if "url" in response:
-            response["url"] = self.regex_replace_all(response["url"])
+            response["url"] = self._regex_replace_all(response["url"])
 
         content_type = self._get_content_type(response)
         if is_text_payload(response) or "application/octet-stream" == content_type:
             body = response["body"]["string"]
             if body is not None:
+                encode_body = False
                 if not isinstance(body, six.string_types):
                     body = body.decode("utf-8")
+                    encode_body = True
                 if body:
-                    body = self.regex_replace_all(body)
+                    body = self._regex_replace_all(body)
+                    if encode_body:
+                        body = body.encode("utf-8")
                     response["body"]["string"] = body
                     response["headers"]["content-length"] = ["%s" % len(body)]
 

@@ -86,13 +86,6 @@ class TestJob(QuantumTestBase):
     Tests the azure.quantum.job module.
     """
 
-    mock_create_job_id_name = "create_job_id"
-    create_job_id = Job.create_job_id
-
-    def get_test_job_id(self):
-        return ZERO_UID if self.is_playback \
-               else Job.create_job_id()
-
     @pytest.mark.live_test
     @pytest.mark.qio
     def test_job_submit_microsoft_simulated_annealing(self):
@@ -162,40 +155,30 @@ class TestJob(QuantumTestBase):
         problem = self.create_problem(name=problem_name)
         workspace = self.create_workspace()
 
-        with unittest.mock.patch.object(
-            Job,
-            self.mock_create_job_id_name,
-            return_value=self.get_test_job_id(),
-        ):
-            workspace = self.create_workspace()
-            # Upload the blob data
-            input_data_uri = problem.upload(
-                workspace=workspace,
-                blob_name="inputData",
-                container_name=f"qc-test-{self.get_test_job_id()}"
-            )
+        workspace = self.create_workspace()
+        # Upload the blob data
+        input_data_uri = problem.upload(
+            workspace=workspace,
+            blob_name="inputData",
+            container_name=f"job-{Job.create_job_id()}"
+        )
 
         for solver_type in get_solver_types():
             solver = solver_type(workspace)
 
-            with unittest.mock.patch.object(
-                Job,
-                self.mock_create_job_id_name,
-                return_value=self.get_test_job_id(),
-            ):
-                # Submit the blob data URI and run job
-                job = solver.submit(input_data_uri)
+            # Submit the blob data URI and run job
+            job = solver.submit(input_data_uri)
 
-                # For recording purposes, we only want to record and
-                # and resume recording when the job has completed
-                self.pause_recording()
-                job.wait_until_completed()
-                self.resume_recording()
+            # For recording purposes, we only want to record and
+            # and resume recording when the job has completed
+            self.pause_recording()
+            job.wait_until_completed()
+            self.resume_recording()
 
-                job.refresh()
-                job.get_results()
-                assert job.has_completed()
-                assert job.details.status == "Succeeded"
+            job.refresh()
+            job.get_results()
+            assert job.has_completed()
+            assert job.details.status == "Succeeded"
 
     @pytest.mark.skipif(not(os.environ.get("AZURE_QUANTUM_1QBIT", "") == "1"), reason="1Qbit tests not enabled")
     @pytest.mark.oneqbit
@@ -275,30 +258,25 @@ class TestJob(QuantumTestBase):
         solver = solver_type(workspace)
         problem = self.create_problem(name="Test-Job-Filtering")
 
-        with unittest.mock.patch.object(
-            Job,
-            self.mock_create_job_id_name,
-            return_value=self.get_test_job_id()
-        ):
-            job = solver.submit(problem)
+        job = solver.submit(problem)
 
-            self.assertEqual(True, job.matches_filter()) # test no filters
-            self.assertEqual(False, job.matches_filter(name_match="Test1"))
-            self.assertEqual(True, job.matches_filter(name_match="Test-"))
-            self.assertEqual(True, job.matches_filter(name_match="Test.+"))
-            
-            # don't run these on playback mode, as the recordings might expire
-            # since we're checking against datetime.now()
-            if not self.is_playback:
-                # Make sure the job creation time is before tomorrow:
-                after_time = datetime.now() + timedelta(days=1)
-                self.assertEqual(False, job.matches_filter(created_after=after_time))
+        self.assertEqual(True, job.matches_filter()) # test no filters
+        self.assertEqual(False, job.matches_filter(name_match="Test1"))
+        self.assertEqual(True, job.matches_filter(name_match="Test-"))
+        self.assertEqual(True, job.matches_filter(name_match="Test.+"))
+        
+        # don't run these on playback mode, as the recordings might expire
+        # since we're checking against datetime.now()
+        if not self.is_playback:
+            # Make sure the job creation time is before tomorrow:
+            after_time = datetime.now() + timedelta(days=1)
+            self.assertEqual(False, job.matches_filter(created_after=after_time))
 
-                # Make sure the job creation time is after yesterday:
-                before_time = datetime.now() - timedelta(days=1)
-                self.assertEqual(True, job.matches_filter(created_after=before_time))
-                before_date = date.today() - timedelta(days=1)
-                self.assertEqual(True, job.matches_filter(created_after=before_date))
+            # Make sure the job creation time is after yesterday:
+            before_time = datetime.now() - timedelta(days=1)
+            self.assertEqual(True, job.matches_filter(created_after=before_time))
+            before_date = date.today() - timedelta(days=1)
+            self.assertEqual(True, job.matches_filter(created_after=before_date))
 
     def _test_job_submit(
         self,
@@ -334,59 +312,45 @@ class TestJob(QuantumTestBase):
         solver_kwargs = solver_kwargs or {}
         solver = solver_type(workspace, **solver_kwargs)
 
-        with unittest.mock.patch.object(
-            Job,
-            self.mock_create_job_id_name,
-            return_value=self.get_test_job_id(),
-        ):
+        job = solver.submit(problem)
+        # TODO: also test solver.optimize(problem)
 
-            job = solver.submit(problem)
-            # TODO: also test solver.optimize(problem)
+        self.assertEqual(False, job.has_completed())
 
-            self.assertEqual(False, job.has_completed())
+        # For recording purposes, we only want to record and
+        # and resume recording when the job has completed
+        self.pause_recording()
+        job.wait_until_completed()
+        self.resume_recording()
 
-            # For recording purposes, we only want to record and
-            # and resume recording when the job has completed
-            self.pause_recording()
-            job.wait_until_completed()
-            self.resume_recording()
+        job.refresh()
+        self.assertEqual(True, job.has_completed())
 
-            job.refresh()
-            self.assertEqual(True, job.has_completed())
+        job.get_results()
+        self.assertEqual(True, job.has_completed())
 
-            job.get_results()
-            self.assertEqual(True, job.has_completed())
+        job = workspace.get_job(job.id)
+        self.assertEqual(True, job.has_completed())
 
-            job = workspace.get_job(job.id)
-            self.assertEqual(True, job.has_completed())
-
-            assert job.details.status == "Succeeded"
+        assert job.details.status == "Succeeded"
 
 
     @pytest.mark.live_test
     @pytest.mark.qio
     def test_problem_upload_download(self):
         solver_type = functools.partial(microsoft.SimulatedAnnealing, beta_start=0)
-        solver_name = "SimulatedAnnealing"
         workspace = self.create_workspace()
         solver = solver_type(workspace)
-        with unittest.mock.patch.object(
-            Job,
-            self.mock_create_job_id_name,
-            return_value=self.get_test_job_id(),
-        ):
-            problem_name = f'Test-{solver_name}-{datetime.now():"%Y%m%d-%H%M%S"}'
-            if self.is_playback:
-                problem_name = f'Test-{solver_name}-"20210101-000000"'
-            problem = self.create_problem(name=problem_name)
-            job = solver.submit(problem)
-            # Check if problem can be successfully downloaded and deserialized
-            problem_as_json = job.download_data(job.details.input_data_uri)
-            downloaded_problem = Problem.deserialize(input_problem=problem_as_json)
+        problem_name = f'job-{Job.create_job_id()}' if not self.is_playback else "job-00000000-0000-0000-0000-000000000002"
+        problem = self.create_problem(name=problem_name)
+        job = solver.submit(problem)
+        # Check if problem can be successfully downloaded and deserialized
+        problem_as_json = job.download_data(job.details.input_data_uri)
+        downloaded_problem = Problem.deserialize(input_problem=problem_as_json)
 
-            actual = downloaded_problem.serialize()
-            expected = problem.serialize()
-            self.assertEqual(expected, actual)
+        actual = downloaded_problem.serialize()
+        expected = problem.serialize()
+        self.assertEqual(expected, actual)
 
     @pytest.mark.live_test
     @pytest.mark.qio
@@ -394,38 +358,33 @@ class TestJob(QuantumTestBase):
         workspace = self.create_workspace()
         solver = microsoft.SimulatedAnnealing(workspace)
 
-        with unittest.mock.patch.object(
-            Job,
-            self.mock_create_job_id_name,
-            return_value=self.get_test_job_id(),
-        ):
-            expected_1 = "Some data 1".encode('utf-8')
-            expected_2 = "Some other random data 2".encode('utf-8')
-            problem = self.create_problem(name="test_job_attachments")
+        expected_1 = "Some data 1".encode('utf-8')
+        expected_2 = "Some other random data 2".encode('utf-8')
+        problem = self.create_problem(name="test_job_attachments")
 
-            job = solver.submit(problem)
+        job = solver.submit(problem)
 
-            url1 = job.upload_attachment("test-1", expected_1)
-            self.assertTrue(job.id in url1)
-            self.assertTrue("test-1" in url1)
+        url1 = job.upload_attachment("test-1", expected_1)
+        self.assertTrue(job.id in url1)
+        self.assertTrue("test-1" in url1)
 
-            url2 = job.upload_attachment("test-2", expected_2)
-            self.assertTrue(job.id in url2)
-            self.assertTrue("test-2" in url2)
+        url2 = job.upload_attachment("test-2", expected_2)
+        self.assertTrue(job.id in url2)
+        self.assertTrue("test-2" in url2)
 
-            actual_1 = job.download_attachment("test-1")
-            self.assertEqual(expected_1, actual_1)
+        actual_1 = job.download_attachment("test-1")
+        self.assertEqual(expected_1, actual_1)
 
-            actual_2 = job.download_attachment("test-2")
-            self.assertEqual(expected_2, actual_2)
+        actual_2 = job.download_attachment("test-2")
+        self.assertEqual(expected_2, actual_2)
 
-            # Check if download_attachment can successfully download other blobs 
-            # automatically created
-            problem_as_json = job.download_attachment("inputData")
-            downloaded_problem = Problem.deserialize(input_problem=problem_as_json)
-            actual = downloaded_problem.serialize()
-            expected = problem.serialize()
-            self.assertEqual(expected, actual)
+        # Check if download_attachment can successfully download other blobs 
+        # automatically created
+        problem_as_json = job.download_attachment("inputData")
+        downloaded_problem = Problem.deserialize(input_problem=problem_as_json)
+        actual = downloaded_problem.serialize()
+        expected = problem.serialize()
+        self.assertEqual(expected, actual)
 
 
     def create_problem(

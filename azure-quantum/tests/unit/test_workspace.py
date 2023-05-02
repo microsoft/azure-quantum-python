@@ -95,7 +95,7 @@ class TestWorkspace(QuantumTestBase):
             'ionq.simulator'
         ])
         assert test_targets.issubset(set([t.name for t in targets]))
-    
+
     @pytest.mark.quantinuum
     @pytest.mark.live_test
     def test_workspace_get_targets_quantinuum(self):
