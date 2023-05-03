@@ -50,7 +50,7 @@ interactions:
       User-Agent:
       - testapp azsdk-python-quantum/0.0.1 Python/3.9.16 (Windows-10-10.0.22621-SP0)
     method: GET
-    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/topLevelItems?api-version=2022-09-12-preview
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/topLevelItems?api-version=2022-09-12-preview&test-sequence-id=1
   response:
     body:
       string: '{"value": [{"containerUri": "https://mystorage.blob.core.windows.net/job-8ad9746e-7550-11ec-a6dc-acde48001122?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
@@ -12914,11 +12914,11 @@ interactions:
         "name": "session-6c2bc2bd-e914-11ed-b5dc-6045bdaa2ba8", "id": "6c2bc2bd-e914-11ed-b5dc-6045bdaa2ba8",
         "providerId": "microsoft.test", "target": "echo-quantinuum", "creationTime":
         "2023-05-02T18:09:05.6709402Z", "endExecutionTime": "2023-05-02T18:09:46.2700598Z",
-        "costEstimate": null, "itemType": "Session"}, {"status": "Waiting", "jobFailurePolicy":
+        "costEstimate": null, "itemType": "Session"}, {"status": "TimedOut", "jobFailurePolicy":
         "Abort", "name": "My Session", "id": "d16b12fb-e914-11ed-9bf7-6045bdaa2ba8",
         "providerId": "microsoft.test", "target": "echo-quantinuum", "creationTime":
-        "2023-05-02T18:11:56.6328795Z", "endExecutionTime": null, "costEstimate":
-        null, "itemType": "Session"}, {"status": "Succeeded", "jobFailurePolicy":
+        "2023-05-02T18:11:56.6328795Z", "endExecutionTime": "2023-05-02T18:22:18.2799189Z",
+        "costEstimate": null, "itemType": "Session"}, {"status": "Succeeded", "jobFailurePolicy":
         "Abort", "name": "session-d4f3e8d6-e914-11ed-922e-6045bdaa2ba8", "id": "d4f3e8d6-e914-11ed-922e-6045bdaa2ba8",
         "providerId": "ionq", "target": "ionq.simulator", "creationTime": "2023-05-02T18:12:00.0689398Z",
         "endExecutionTime": "2023-05-02T18:12:10.5958416Z", "costEstimate": {"currencyCode":
@@ -12931,13 +12931,994 @@ interactions:
         "name": "session-e1f0083b-e914-11ed-8ac1-6045bdaa2ba8", "id": "e1f0083b-e914-11ed-8ac1-6045bdaa2ba8",
         "providerId": "ionq", "target": "ionq.simulator", "creationTime": "2023-05-02T18:12:21.8175551Z",
         "endExecutionTime": "2023-05-02T18:12:31.8129445Z", "costEstimate": {"currencyCode":
-        "USD", "events": [], "estimatedTotal": 0.0}, "itemType": "Session"}], "nextLink":
-        null, "access_token": "fake_token"}'
+        "USD", "events": [], "estimatedTotal": 0.0}, "itemType": "Session"}, {"status":
+        "Succeeded", "jobFailurePolicy": "Abort", "name": "session-ef844b83-e914-11ed-9a75-6045bdaa2ba8",
+        "id": "ef844b83-e914-11ed-9a75-6045bdaa2ba8", "providerId": "microsoft.test",
+        "target": "echo-quantinuum", "creationTime": "2023-05-02T18:12:46.4334401Z",
+        "endExecutionTime": "2023-05-02T18:12:46.5011997Z", "costEstimate": null,
+        "itemType": "Session"}, {"status": "Succeeded", "jobFailurePolicy": "Abort",
+        "name": "session-f0b70d7c-e914-11ed-8880-6045bdaa2ba8", "id": "f0b70d7c-e914-11ed-8880-6045bdaa2ba8",
+        "providerId": "microsoft.test", "target": "echo-quantinuum", "creationTime":
+        "2023-05-02T18:12:48.115814Z", "endExecutionTime": "2023-05-02T18:12:48.183453Z",
+        "costEstimate": null, "itemType": "Session"}, {"status": "Succeeded", "jobFailurePolicy":
+        "Abort", "name": "session-f1b78700-e914-11ed-aff8-6045bdaa2ba8", "id": "f1b78700-e914-11ed-aff8-6045bdaa2ba8",
+        "providerId": "microsoft.test", "target": "echo-quantinuum", "creationTime":
+        "2023-05-02T18:12:49.6811017Z", "endExecutionTime": "2023-05-02T18:12:49.749198Z",
+        "costEstimate": null, "itemType": "Session"}, {"status": "TimedOut", "jobFailurePolicy":
+        "Abort", "name": "session-c63cd5f5-e917-11ed-89c1-6045bdaa2ba8", "id": "c63cd5f5-e917-11ed-89c1-6045bdaa2ba8",
+        "providerId": "microsoft.test", "target": "echo-quantinuum", "creationTime":
+        "2023-05-02T18:33:06.5767377Z", "endExecutionTime": "2023-05-02T18:44:18.2773606Z",
+        "costEstimate": null, "itemType": "Session"}, {"status": "Failed", "jobFailurePolicy":
+        "Abort", "name": "session-45ec4421-e91b-11ed-8513-6045bdaa2ba8", "id": "45ec4421-e91b-11ed-8513-6045bdaa2ba8",
+        "providerId": "microsoft.test", "target": "echo-quantinuum", "creationTime":
+        "2023-05-02T18:58:08.9703346Z", "endExecutionTime": "2023-05-02T18:58:49.0425049Z",
+        "costEstimate": null, "itemType": "Session"}, {"status": "Succeeded", "jobFailurePolicy":
+        "Abort", "name": "session-b31459b5-e91b-11ed-a78d-6045bdaa2ba8", "id": "b31459b5-e91b-11ed-a78d-6045bdaa2ba8",
+        "providerId": "microsoft.test", "target": "echo-quantinuum", "creationTime":
+        "2023-05-02T19:01:11.395504Z", "endExecutionTime": "2023-05-02T19:01:49.5486691Z",
+        "costEstimate": null, "itemType": "Session"}, {"status": "TimedOut", "jobFailurePolicy":
+        "Abort", "name": "session-ea3c26c4-e91b-11ed-b2db-6045bdaa2ba8", "id": "ea3c26c4-e91b-11ed-b2db-6045bdaa2ba8",
+        "providerId": "microsoft.test", "target": "echo-quantinuum", "creationTime":
+        "2023-05-02T19:02:43.9429244Z", "endExecutionTime": "2023-05-02T19:14:18.3101611Z",
+        "costEstimate": null, "itemType": "Session"}, {"status": "Succeeded", "jobFailurePolicy":
+        "Abort", "name": "session-3281ae89-e91c-11ed-bd14-6045bdaa2ba8", "id": "3281ae89-e91c-11ed-bd14-6045bdaa2ba8",
+        "providerId": "microsoft.test", "target": "echo-quantinuum", "creationTime":
+        "2023-05-02T19:04:45.6831694Z", "endExecutionTime": "2023-05-02T19:05:19.4356473Z",
+        "costEstimate": null, "itemType": "Session"}, {"status": "Succeeded", "jobFailurePolicy":
+        "Abort", "name": "session-6d1f0d29-e91c-11ed-a1a3-6045bdaa2ba8", "id": "6d1f0d29-e91c-11ed-a1a3-6045bdaa2ba8",
+        "providerId": "microsoft.test", "target": "echo-quantinuum", "creationTime":
+        "2023-05-02T19:06:23.7982806Z", "endExecutionTime": "2023-05-02T19:06:44.0699892Z",
+        "costEstimate": null, "itemType": "Session"}, {"status": "TimedOut", "jobFailurePolicy":
+        "Continue", "name": "session-e7b2ffe9-e91e-11ed-bde3-6045bdaa2ba8", "id":
+        "e7b2ffe9-e91e-11ed-bde3-6045bdaa2ba8", "providerId": "microsoft.test", "target":
+        "echo-quantinuum", "creationTime": "2023-05-02T19:24:08.9555244Z", "endExecutionTime":
+        "2023-05-02T19:36:18.2656584Z", "costEstimate": null, "itemType": "Session"},
+        {"status": "TimedOut", "jobFailurePolicy": "Continue", "name": "session-c3156e9f-e91f-11ed-a6bf-6045bdaa2ba8",
+        "id": "c3156e9f-e91f-11ed-a6bf-6045bdaa2ba8", "providerId": "microsoft.test",
+        "target": "echo-quantinuum", "creationTime": "2023-05-02T19:30:16.4757141Z",
+        "endExecutionTime": "2023-05-02T19:42:21.0213066Z", "costEstimate": null,
+        "itemType": "Session"}, {"status": "Failed", "jobFailurePolicy": "Abort",
+        "name": "session-6850f93e-e921-11ed-bb32-6045bdaa2ba8", "id": "6850f93e-e921-11ed-bb32-6045bdaa2ba8",
+        "providerId": "microsoft.test", "target": "echo-quantinuum", "creationTime":
+        "2023-05-02T19:42:03.3078905Z", "endExecutionTime": "2023-05-02T19:42:25.5810195Z",
+        "costEstimate": null, "itemType": "Session"}, {"status": "Failed", "jobFailurePolicy":
+        "Abort", "name": "session-e61cf957-e921-11ed-a50a-6045bdaa2ba8", "id": "e61cf957-e921-11ed-a50a-6045bdaa2ba8",
+        "providerId": "microsoft.test", "target": "echo-quantinuum", "creationTime":
+        "2023-05-02T19:45:33.7445338Z", "endExecutionTime": "2023-05-02T19:46:05.310638Z",
+        "costEstimate": null, "itemType": "Session"}, {"status": "Failed", "jobFailurePolicy":
+        "Abort", "name": "session-220eafbd-e922-11ed-af53-6045bdaa2ba8", "id": "220eafbd-e922-11ed-af53-6045bdaa2ba8",
+        "providerId": "microsoft.test", "target": "echo-quantinuum", "creationTime":
+        "2023-05-02T19:47:14.8354283Z", "endExecutionTime": "2023-05-02T19:47:30.645039Z",
+        "costEstimate": null, "itemType": "Session"}, {"status": "Failed", "jobFailurePolicy":
+        "Abort", "name": "session-a0dd0173-e922-11ed-8bdc-6045bdaa2ba8", "id": "a0dd0173-e922-11ed-8bdc-6045bdaa2ba8",
+        "providerId": "microsoft.test", "target": "echo-quantinuum", "creationTime":
+        "2023-05-02T19:50:47.0248195Z", "endExecutionTime": "2023-05-02T19:51:24.2905601Z",
+        "costEstimate": null, "itemType": "Session"}, {"status": "Failed", "jobFailurePolicy":
+        "Abort", "name": "session-adf471f9-e923-11ed-9399-6045bdaa2ba8", "id": "adf471f9-e923-11ed-9399-6045bdaa2ba8",
+        "providerId": "microsoft.test", "target": "echo-quantinuum", "creationTime":
+        "2023-05-02T19:58:19.6815774Z", "endExecutionTime": "2023-05-02T19:58:51.6238915Z",
+        "costEstimate": null, "itemType": "Session"}, {"status": "Failed", "jobFailurePolicy":
+        "Continue", "name": "session-d70e0f30-e923-11ed-a7dd-6045bdaa2ba8", "id":
+        "d70e0f30-e923-11ed-a7dd-6045bdaa2ba8", "providerId": "microsoft.test", "target":
+        "echo-quantinuum", "creationTime": "2023-05-02T19:59:26.0241666Z", "endExecutionTime":
+        "2023-05-02T20:01:07.8797711Z", "costEstimate": null, "itemType": "Session"},
+        {"status": "Failed", "jobFailurePolicy": "Abort", "name": "session-26e54b9b-e924-11ed-999d-6045bdaa2ba8",
+        "id": "26e54b9b-e924-11ed-999d-6045bdaa2ba8", "providerId": "microsoft.test",
+        "target": "echo-quantinuum", "creationTime": "2023-05-02T20:01:41.622467Z",
+        "endExecutionTime": "2023-05-02T20:02:11.8516134Z", "costEstimate": null,
+        "itemType": "Session"}, {"status": "Failed", "jobFailurePolicy": "Continue",
+        "name": "session-3f993146-e924-11ed-81e9-6045bdaa2ba8", "id": "3f993146-e924-11ed-81e9-6045bdaa2ba8",
+        "providerId": "microsoft.test", "target": "echo-quantinuum", "creationTime":
+        "2023-05-02T20:02:21.4122697Z", "endExecutionTime": "2023-05-02T20:03:24.6656751Z",
+        "costEstimate": null, "itemType": "Session"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-e96ab293-e92b-11ed-b3d8-6045bdaa2ba8?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-e96ab293-e92b-11ed-b3d8-6045bdaa2ba8/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "inputDataFormat": "qir.v1", "inputParams": {"items": [{"errorBudget": 0.001},
+        {"errorBudget": 0.002}]}, "metadata": null, "sessionId": null, "status": "Succeeded",
+        "jobType": "QuantumComputing", "outputDataFormat": "microsoft.resource-estimates.v1",
+        "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-e96ab293-e92b-11ed-b3d8-6045bdaa2ba8/rawOutputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "beginExecutionTime": "2023-05-02T20:57:18.3126364Z", "cancellationTime":
+        null, "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling":
+        false, "tags": [], "name": "azure-quantum-job", "id": "e96ab293-e92b-11ed-b3d8-6045bdaa2ba8",
+        "providerId": "microsoft-qc", "target": "microsoft.estimator", "creationTime":
+        "2023-05-02T20:57:18.584857Z", "endExecutionTime": "2023-05-02T20:57:23.7246967Z",
+        "costEstimate": null, "itemType": "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-eb796857-e92c-11ed-a970-6045bdaa2ba8?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-eb796857-e92c-11ed-a970-6045bdaa2ba8/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "inputDataFormat": "qir.v1", "inputParams": {"errorBudget": 2}, "metadata":
+        null, "sessionId": null, "status": "Failed", "jobType": "QuantumComputing",
+        "outputDataFormat": "microsoft.resource-estimates.v1", "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-eb796857-e92c-11ed-a970-6045bdaa2ba8/outputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "beginExecutionTime": "2023-05-02T21:04:16.6702158Z", "cancellationTime":
+        null, "quantumComputingData": {"count": 1}, "errorData": {"code": "InvalidInputError",
+        "message": "The error budget must be between 0.0 and 1.0, provided input was
+        `2`"}, "isCancelling": false, "tags": [], "name": "azure-quantum-job", "id":
+        "eb796857-e92c-11ed-a970-6045bdaa2ba8", "providerId": "microsoft-qc", "target":
+        "microsoft.estimator", "creationTime": "2023-05-02T21:04:30.0679772Z", "endExecutionTime":
+        "2023-05-02T21:04:21.957322Z", "costEstimate": null, "itemType": "Job"}, {"containerUri":
+        "https://mystorage.blob.core.windows.net/job-f3de9d6e-e92e-11ed-b9ef-6045bdaa2ba8?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-f3de9d6e-e92e-11ed-b9ef-6045bdaa2ba8/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "inputDataFormat": "qir.v1", "inputParams": {}, "metadata": null, "sessionId":
+        null, "status": "Succeeded", "jobType": "QuantumComputing", "outputDataFormat":
+        "microsoft.resource-estimates.v1", "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-f3de9d6e-e92e-11ed-b9ef-6045bdaa2ba8/rawOutputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "beginExecutionTime": "2023-05-02T21:18:52.1852477Z", "cancellationTime":
+        null, "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling":
+        false, "tags": [], "name": "azure-quantum-job", "id": "f3de9d6e-e92e-11ed-b9ef-6045bdaa2ba8",
+        "providerId": "microsoft-qc", "target": "microsoft.estimator", "creationTime":
+        "2023-05-02T21:19:03.3940368Z", "endExecutionTime": "2023-05-02T21:18:57.2152274Z",
+        "costEstimate": null, "itemType": "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-fda6f63e-e92e-11ed-8296-6045bdaa2ba8?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-fda6f63e-e92e-11ed-8296-6045bdaa2ba8/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "inputDataFormat": "qir.v1", "inputParams": {}, "metadata": null, "sessionId":
+        null, "status": "Succeeded", "jobType": "QuantumComputing", "outputDataFormat":
+        "microsoft.resource-estimates.v1", "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-fda6f63e-e92e-11ed-8296-6045bdaa2ba8/rawOutputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "beginExecutionTime": "2023-05-02T21:19:04.2124068Z", "cancellationTime":
+        null, "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling":
+        false, "tags": [], "name": "azure-quantum-job", "id": "fda6f63e-e92e-11ed-8296-6045bdaa2ba8",
+        "providerId": "microsoft-qc", "target": "microsoft.estimator", "creationTime":
+        "2023-05-02T21:19:18.1942914Z", "endExecutionTime": "2023-05-02T21:19:09.2238607Z",
+        "costEstimate": null, "itemType": "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-0f194813-e930-11ed-bdf6-6045bdaa2ba8?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-0f194813-e930-11ed-bdf6-6045bdaa2ba8/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "inputDataFormat": "qir.v1", "inputParams": {"entryPoint": "ENTRYPOINT__BellState_File",
+        "arguments": []}, "metadata": null, "sessionId": null, "status": "Succeeded",
+        "jobType": "QuantumComputing", "outputDataFormat": "microsoft.resource-estimates.v1",
+        "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-0f194813-e930-11ed-bdf6-6045bdaa2ba8/rawOutputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "beginExecutionTime": "2023-05-02T21:26:43.489823Z", "cancellationTime": null,
+        "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling": false,
+        "tags": [], "name": "azure-quantum-job", "id": "0f194813-e930-11ed-bdf6-6045bdaa2ba8",
+        "providerId": "microsoft-qc", "target": "microsoft.estimator", "creationTime":
+        "2023-05-02T21:26:56.9909052Z", "endExecutionTime": "2023-05-02T21:26:48.657747Z",
+        "costEstimate": null, "itemType": "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-1f87acff-e930-11ed-8fbd-6045bdaa2ba8?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-1f87acff-e930-11ed-8fbd-6045bdaa2ba8/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "inputDataFormat": "qir.v1", "inputParams": {"entryPoint": "ENTRYPOINT__BellState_File",
+        "arguments": [], "targetCapability": "BasicExecution"}, "metadata": null,
+        "sessionId": null, "status": "Succeeded", "jobType": "QuantumComputing", "outputDataFormat":
+        "microsoft.quantum-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-1f87acff-e930-11ed-8fbd-6045bdaa2ba8/outputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "beginExecutionTime": "2023-05-02T21:27:34.6668713Z", "cancellationTime":
+        null, "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling":
+        false, "tags": [], "name": "azure-quantum-job", "id": "1f87acff-e930-11ed-8fbd-6045bdaa2ba8",
+        "providerId": "rigetti", "target": "rigetti.sim.qvm", "creationTime": "2023-05-02T21:27:23.0764284Z",
+        "endExecutionTime": "2023-05-02T21:27:37.069251Z", "costEstimate": {"currencyCode":
+        "USD", "events": [{"dimensionId": "qpu_time_centiseconds", "dimensionName":
+        "QPU Execution Time", "measureUnit": "10ms (rounded up)", "amountBilled":
+        0.0, "amountConsumed": 0.0, "unitPrice": 0.0}], "estimatedTotal": 0.0}, "itemType":
+        "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-342aabe4-e930-11ed-a0b8-6045bdaa2ba8?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-342aabe4-e930-11ed-a0b8-6045bdaa2ba8/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "inputDataFormat": "qir.v1", "inputParams": {"entryPoint": "ENTRYPOINT__BellState_Inline",
+        "arguments": []}, "metadata": null, "sessionId": null, "status": "Succeeded",
+        "jobType": "QuantumComputing", "outputDataFormat": "microsoft.resource-estimates.v1",
+        "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-342aabe4-e930-11ed-a0b8-6045bdaa2ba8/rawOutputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "beginExecutionTime": "2023-05-02T21:27:43.9334016Z", "cancellationTime":
+        null, "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling":
+        false, "tags": [], "name": "azure-quantum-job", "id": "342aabe4-e930-11ed-a0b8-6045bdaa2ba8",
+        "providerId": "microsoft-qc", "target": "microsoft.estimator", "creationTime":
+        "2023-05-02T21:27:57.8436945Z", "endExecutionTime": "2023-05-02T21:27:49.0309571Z",
+        "costEstimate": null, "itemType": "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-44d0f330-e930-11ed-a420-6045bdaa2ba8?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-44d0f330-e930-11ed-a420-6045bdaa2ba8/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "inputDataFormat": "qir.v1", "inputParams": {"entryPoint": "ENTRYPOINT__BellState_Inline",
+        "arguments": [], "targetCapability": "BasicExecution"}, "metadata": null,
+        "sessionId": null, "status": "Succeeded", "jobType": "QuantumComputing", "outputDataFormat":
+        "microsoft.quantum-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-44d0f330-e930-11ed-a420-6045bdaa2ba8/outputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "beginExecutionTime": "2023-05-02T21:28:31.1808844Z", "cancellationTime":
+        null, "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling":
+        false, "tags": [], "name": "azure-quantum-job", "id": "44d0f330-e930-11ed-a420-6045bdaa2ba8",
+        "providerId": "rigetti", "target": "rigetti.sim.qvm", "creationTime": "2023-05-02T21:28:25.4927816Z",
+        "endExecutionTime": "2023-05-02T21:28:33.3954515Z", "costEstimate": {"currencyCode":
+        "USD", "events": [{"dimensionId": "qpu_time_centiseconds", "dimensionName":
+        "QPU Execution Time", "measureUnit": "10ms (rounded up)", "amountBilled":
+        0.0, "amountConsumed": 0.0, "unitPrice": 0.0}], "estimatedTotal": 0.0}, "itemType":
+        "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-bd0f8410-e937-11ed-9d28-6045bdaa2ba8?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-bd0f8410-e937-11ed-9d28-6045bdaa2ba8/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "inputDataFormat": "microsoft.qio.v2", "inputParams": {"params": {"sweeps":
+        100}}, "metadata": null, "sessionId": null, "status": "Succeeded", "jobType":
+        "Optimization", "outputDataFormat": "microsoft.qio-results.v2", "outputDataUri":
+        "https://mystorage.blob.core.windows.net/job-bd0f8410-e937-11ed-9d28-6045bdaa2ba8/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "beginExecutionTime": "2023-05-02T22:21:47.4896951Z", "cancellationTime":
+        null, "quantumComputingData": null, "errorData": null, "isCancelling": false,
+        "tags": [], "name": "Test-ParallelTempering-\"20210101-000000\"", "id": "bd0f8410-e937-11ed-9d28-6045bdaa2ba8",
+        "providerId": "microsoft", "target": "microsoft.paralleltempering.cpu", "creationTime":
+        "2023-05-02T22:21:55.1613047Z", "endExecutionTime": "2023-05-02T22:21:47.5406595Z",
+        "costEstimate": null, "itemType": "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-c0db50ac-e937-11ed-9039-6045bdaa2ba8?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-c0db50ac-e937-11ed-9039-6045bdaa2ba8/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "inputDataFormat": "microsoft.qio.v2", "inputParams": {"params": {"sweeps":
+        200}}, "metadata": null, "sessionId": null, "status": "Succeeded", "jobType":
+        "Optimization", "outputDataFormat": "microsoft.qio-results.v2", "outputDataUri":
+        "https://mystorage.blob.core.windows.net/job-c0db50ac-e937-11ed-9039-6045bdaa2ba8/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "beginExecutionTime": "2023-05-02T22:21:15.7748249Z", "cancellationTime":
+        null, "quantumComputingData": null, "errorData": null, "isCancelling": false,
+        "tags": [], "name": "Test-PopulationAnnealing-\"20210101-000000\"", "id":
+        "c0db50ac-e937-11ed-9039-6045bdaa2ba8", "providerId": "microsoft", "target":
+        "microsoft.populationannealing.cpu", "creationTime": "2023-05-02T22:21:59.6346207Z",
+        "endExecutionTime": "2023-05-02T22:21:15.8800081Z", "costEstimate": null,
+        "itemType": "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-c381a2d8-e937-11ed-a0ef-6045bdaa2ba8?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-c381a2d8-e937-11ed-a0ef-6045bdaa2ba8/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "inputDataFormat": "microsoft.qio.v2", "inputParams": {"params": {"trotter_number":
+        4}}, "metadata": null, "sessionId": null, "status": "Succeeded", "jobType":
+        "Optimization", "outputDataFormat": "microsoft.qio-results.v2", "outputDataUri":
+        "https://mystorage.blob.core.windows.net/job-c381a2d8-e937-11ed-a0ef-6045bdaa2ba8/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "beginExecutionTime": "2023-05-02T22:21:48.6746899Z", "cancellationTime":
+        null, "quantumComputingData": null, "errorData": null, "isCancelling": false,
+        "tags": [], "name": "Test-QuantumMonteCarlo-\"20210101-000000\"", "id": "c381a2d8-e937-11ed-a0ef-6045bdaa2ba8",
+        "providerId": "microsoft", "target": "microsoft.qmc.cpu", "creationTime":
+        "2023-05-02T22:22:04.5909282Z", "endExecutionTime": "2023-05-02T22:21:49.4571996Z",
+        "costEstimate": null, "itemType": "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-c67839d1-e937-11ed-8ad2-6045bdaa2ba8?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-c67839d1-e937-11ed-8ad2-6045bdaa2ba8/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "inputDataFormat": "microsoft.qio.v2", "inputParams": {"params": {"beta_start":
+        0}}, "metadata": null, "sessionId": null, "status": "Succeeded", "jobType":
+        "Optimization", "outputDataFormat": "microsoft.qio-results.v2", "outputDataUri":
+        "https://mystorage.blob.core.windows.net/job-c67839d1-e937-11ed-8ad2-6045bdaa2ba8/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "beginExecutionTime": "2023-05-02T22:21:45.9171236Z", "cancellationTime":
+        null, "quantumComputingData": null, "errorData": null, "isCancelling": false,
+        "tags": [], "name": "Test-SimulatedAnnealing-\"20210101-000000\"", "id": "c67839d1-e937-11ed-8ad2-6045bdaa2ba8",
+        "providerId": "microsoft", "target": "microsoft.simulatedannealing.cpu", "creationTime":
+        "2023-05-02T22:22:09.2723968Z", "endExecutionTime": "2023-05-02T22:21:46.1800115Z",
+        "costEstimate": null, "itemType": "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-c940b03d-e937-11ed-af53-6045bdaa2ba8?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-c940b03d-e937-11ed-af53-6045bdaa2ba8/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "inputDataFormat": "microsoft.qio.v2", "inputParams": {"params": {"beta_start":
+        0}}, "metadata": null, "sessionId": null, "status": "Succeeded", "jobType":
+        "Optimization", "outputDataFormat": "microsoft.qio-results.v2", "outputDataUri":
+        "https://mystorage.blob.core.windows.net/job-c940b03d-e937-11ed-af53-6045bdaa2ba8/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "beginExecutionTime": "2023-05-02T22:22:05.1386913Z", "cancellationTime":
+        null, "quantumComputingData": null, "errorData": null, "isCancelling": false,
+        "tags": [], "name": "Test-Job-Filtering", "id": "c940b03d-e937-11ed-af53-6045bdaa2ba8",
+        "providerId": "microsoft", "target": "microsoft.simulatedannealing.cpu", "creationTime":
+        "2023-05-02T22:22:13.7631552Z", "endExecutionTime": "2023-05-02T22:22:05.4499596Z",
+        "costEstimate": null, "itemType": "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-c9ebc5ae-e937-11ed-b9b5-6045bdaa2ba8?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-c9ebc5ae-e937-11ed-b9b5-6045bdaa2ba8/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "inputDataFormat": "microsoft.qio.v2", "inputParams": {"params": {"step_limit":
+        280}}, "metadata": null, "sessionId": null, "status": "Succeeded", "jobType":
+        "Optimization", "outputDataFormat": "microsoft.qio-results.v2", "outputDataUri":
+        "https://mystorage.blob.core.windows.net/job-c9ebc5ae-e937-11ed-b9b5-6045bdaa2ba8/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "beginExecutionTime": "2023-05-02T22:21:52.0100961Z", "cancellationTime":
+        null, "quantumComputingData": null, "errorData": null, "isCancelling": false,
+        "tags": [], "name": "Test-SubstochasticMonteCarlo-\"20210101-000000\"", "id":
+        "c9ebc5ae-e937-11ed-b9b5-6045bdaa2ba8", "providerId": "microsoft", "target":
+        "microsoft.substochasticmontecarlo.cpu", "creationTime": "2023-05-02T22:22:15.0133914Z",
+        "endExecutionTime": "2023-05-02T22:21:52.1145399Z", "costEstimate": null,
+        "itemType": "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-ccad895f-e937-11ed-af78-6045bdaa2ba8?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-ccad895f-e937-11ed-af78-6045bdaa2ba8/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "inputDataFormat": "microsoft.qio.v2", "inputParams": {"params": {"sweeps":
+        100}}, "metadata": null, "sessionId": null, "status": "Succeeded", "jobType":
+        "Optimization", "outputDataFormat": "microsoft.qio-results.v2", "outputDataUri":
+        "https://mystorage.blob.core.windows.net/job-ccad895f-e937-11ed-af78-6045bdaa2ba8/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "beginExecutionTime": "2023-05-02T22:21:35.1629345Z", "cancellationTime":
+        null, "quantumComputingData": null, "errorData": null, "isCancelling": false,
+        "tags": [], "name": "Test-Tabu-\"20210101-000000\"", "id": "ccad895f-e937-11ed-af78-6045bdaa2ba8",
+        "providerId": "microsoft", "target": "microsoft.tabu.cpu", "creationTime":
+        "2023-05-02T22:22:19.5098798Z", "endExecutionTime": "2023-05-02T22:21:35.2164909Z",
+        "costEstimate": null, "itemType": "Job"}, {"status": "Succeeded", "jobFailurePolicy":
+        "Abort", "name": "session-6887e0f9-e945-11ed-84fd-6045bdaa2ba8", "id": "6887e0f9-e945-11ed-84fd-6045bdaa2ba8",
+        "providerId": "ionq", "target": "ionq.simulator", "creationTime": "2023-05-02T23:59:43.764266Z",
+        "endExecutionTime": "2023-05-02T23:59:54.6929983Z", "costEstimate": {"currencyCode":
+        "USD", "events": [], "estimatedTotal": 0.0}, "itemType": "Session"}, {"status":
+        "Succeeded", "jobFailurePolicy": "Abort", "name": "session-aa770d6b-e9b8-11ed-bf18-6045bdaa2ba8",
+        "id": "aa770d6b-e9b8-11ed-bf18-6045bdaa2ba8", "providerId": "ionq", "target":
+        "ionq.simulator", "creationTime": "2023-05-03T13:44:46.4502663Z", "endExecutionTime":
+        "2023-05-03T13:45:02.281997Z", "costEstimate": {"currencyCode": "USD", "events":
+        [], "estimatedTotal": 0.0}, "itemType": "Session"}, {"status": "Succeeded",
+        "jobFailurePolicy": "Abort", "name": "session-97b777f0-e9ba-11ed-b9ac-6045bdaa2ba8",
+        "id": "97b777f0-e9ba-11ed-b9ac-6045bdaa2ba8", "providerId": "ionq", "target":
+        "ionq.simulator", "creationTime": "2023-05-03T13:58:33.9907997Z", "endExecutionTime":
+        "2023-05-03T13:58:47.7432946Z", "costEstimate": {"currencyCode": "USD", "events":
+        [], "estimatedTotal": 0.0}, "itemType": "Session"}, {"status": "Succeeded",
+        "jobFailurePolicy": "Abort", "name": "session-f64bdef3-e9ba-11ed-b206-6045bdaa2ba8",
+        "id": "f64bdef3-e9ba-11ed-b206-6045bdaa2ba8", "providerId": "ionq", "target":
+        "ionq.simulator", "creationTime": "2023-05-03T14:01:12.4568741Z", "endExecutionTime":
+        "2023-05-03T14:01:23.2042229Z", "costEstimate": {"currencyCode": "USD", "events":
+        [], "estimatedTotal": 0.0}, "itemType": "Session"}, {"status": "Succeeded",
+        "jobFailurePolicy": "Abort", "name": "session-7ecaf1da-e9bb-11ed-996c-6045bdaa2ba8",
+        "id": "7ecaf1da-e9bb-11ed-996c-6045bdaa2ba8", "providerId": "ionq", "target":
+        "ionq.simulator", "creationTime": "2023-05-03T14:05:01.6689132Z", "endExecutionTime":
+        "2023-05-03T14:05:13.2175748Z", "costEstimate": {"currencyCode": "USD", "events":
+        [], "estimatedTotal": 0.0}, "itemType": "Session"}, {"status": "Succeeded",
+        "jobFailurePolicy": "Abort", "name": "session-fae376a7-e9bc-11ed-8892-6045bdaa2ba8",
+        "id": "fae376a7-e9bc-11ed-8892-6045bdaa2ba8", "providerId": "ionq", "target":
+        "ionq.simulator", "creationTime": "2023-05-03T14:15:39.3573442Z", "endExecutionTime":
+        "2023-05-03T14:15:50.4484815Z", "costEstimate": {"currencyCode": "USD", "events":
+        [], "estimatedTotal": 0.0}, "itemType": "Session"}, {"status": "Succeeded",
+        "jobFailurePolicy": "Abort", "name": "session-986a22ca-e9c7-11ed-a3be-6045bdaa2ba8",
+        "id": "986a22ca-e9c7-11ed-a3be-6045bdaa2ba8", "providerId": "ionq", "target":
+        "ionq.simulator", "creationTime": "2023-05-03T15:31:38.6070292Z", "endExecutionTime":
+        "2023-05-03T15:31:50.4426842Z", "costEstimate": {"currencyCode": "USD", "events":
+        [], "estimatedTotal": 0.0}, "itemType": "Session"}, {"status": "Succeeded",
+        "jobFailurePolicy": "Abort", "name": "session-e97d9ca1-e9c8-11ed-ba20-6045bdaa2ba8",
+        "id": "e97d9ca1-e9c8-11ed-ba20-6045bdaa2ba8", "providerId": "ionq", "target":
+        "ionq.simulator", "creationTime": "2023-05-03T15:41:04.1339253Z", "endExecutionTime":
+        "2023-05-03T15:41:15.785805Z", "costEstimate": {"currencyCode": "USD", "events":
+        [], "estimatedTotal": 0.0}, "itemType": "Session"}, {"status": "Succeeded",
+        "jobFailurePolicy": "Abort", "name": "session-e46b26bc-e9ca-11ed-806c-6045bdaa2ba8",
+        "id": "e46b26bc-e9ca-11ed-806c-6045bdaa2ba8", "providerId": "ionq", "target":
+        "ionq.simulator", "creationTime": "2023-05-03T15:55:14.624783Z", "endExecutionTime":
+        "2023-05-03T15:55:26.3879307Z", "costEstimate": {"currencyCode": "USD", "events":
+        [], "estimatedTotal": 0.0}, "itemType": "Session"}, {"status": "Succeeded",
+        "jobFailurePolicy": "Abort", "name": "session-b78ba3af-e9cd-11ed-8036-6045bdaa2ba8",
+        "id": "b78ba3af-e9cd-11ed-8036-6045bdaa2ba8", "providerId": "ionq", "target":
+        "ionq.simulator", "creationTime": "2023-05-03T16:15:27.8355118Z", "endExecutionTime":
+        "2023-05-03T16:15:40.0372541Z", "costEstimate": {"currencyCode": "USD", "events":
+        [], "estimatedTotal": 0.0}, "itemType": "Session"}, {"status": "Succeeded",
+        "jobFailurePolicy": "Abort", "name": "session-cbf33437-e9d2-11ed-ba05-6045bdaa2ba8",
+        "id": "cbf33437-e9d2-11ed-ba05-6045bdaa2ba8", "providerId": "ionq", "target":
+        "ionq.simulator", "creationTime": "2023-05-03T16:51:49.6516826Z", "endExecutionTime":
+        "2023-05-03T17:01:28.3927611Z", "costEstimate": {"currencyCode": "USD", "events":
+        [], "estimatedTotal": 0.0}, "itemType": "Session"}, {"status": "Succeeded",
+        "jobFailurePolicy": "Abort", "name": "session-f3a51666-e9d2-11ed-a7d7-6045bdaa2ba8",
+        "id": "f3a51666-e9d2-11ed-a7d7-6045bdaa2ba8", "providerId": "ionq", "target":
+        "ionq.simulator", "creationTime": "2023-05-03T16:52:55.9106901Z", "endExecutionTime":
+        "2023-05-03T17:01:30.4890687Z", "costEstimate": {"currencyCode": "USD", "events":
+        [], "estimatedTotal": 0.0}, "itemType": "Session"}, {"status": "Succeeded",
+        "jobFailurePolicy": "Abort", "name": "session-c8d59a0b-e9dc-11ed-90f7-6045bdaa2ba8",
+        "id": "c8d59a0b-e9dc-11ed-90f7-6045bdaa2ba8", "providerId": "ionq", "target":
+        "ionq.simulator", "creationTime": "2023-05-03T18:03:19.3040111Z", "endExecutionTime":
+        "2023-05-03T18:03:54.209398Z", "costEstimate": {"currencyCode": "USD", "events":
+        [], "estimatedTotal": 0.0}, "itemType": "Session"}, {"status": "Succeeded",
+        "jobFailurePolicy": "Abort", "name": "session-2e21e891-e9dd-11ed-a82b-6045bdaa2ba8",
+        "id": "2e21e891-e9dd-11ed-a82b-6045bdaa2ba8", "providerId": "ionq", "target":
+        "ionq.simulator", "creationTime": "2023-05-03T18:06:09.0804455Z", "endExecutionTime":
+        "2023-05-03T18:06:19.6926452Z", "costEstimate": {"currencyCode": "USD", "events":
+        [], "estimatedTotal": 0.0}, "itemType": "Session"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-650d7714-e9dd-11ed-968e-6045bdaa2ba8?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-650d7714-e9dd-11ed-968e-6045bdaa2ba8/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "inputDataFormat": "ionq.circuit.v1", "inputParams": {"shots": 500}, "metadata":
+        {"measurement0": "q0\u001f0\u001eq1\u001f1\u001eq2\u001f2", "qubits": "3"},
+        "sessionId": null, "status": "Succeeded", "jobType": "QuantumComputing", "outputDataFormat":
+        "ionq.quantum-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-650d7714-e9dd-11ed-968e-6045bdaa2ba8/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "beginExecutionTime": "2023-05-03T18:07:48.908Z", "cancellationTime": null,
+        "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling": false,
+        "tags": [], "name": "cirq-job", "id": "650d7714-e9dd-11ed-968e-6045bdaa2ba8",
+        "providerId": "ionq", "target": "ionq.simulator", "creationTime": "2023-05-03T18:07:44.6020996Z",
+        "endExecutionTime": "2023-05-03T18:07:48.932Z", "costEstimate": {"currencyCode":
+        "USD", "events": [{"dimensionId": "gs1q", "dimensionName": "1Q Gate Shot",
+        "measureUnit": "1q gate shot", "amountBilled": 0.0, "amountConsumed": 0.0,
+        "unitPrice": 0.0}, {"dimensionId": "gs2q", "dimensionName": "2Q Gate Shot",
+        "measureUnit": "2q gate shot", "amountBilled": 0.0, "amountConsumed": 0.0,
+        "unitPrice": 0.0}], "estimatedTotal": 0.0}, "itemType": "Job"}, {"containerUri":
+        "https://mystorage.blob.core.windows.net/job-6b5af317-e9dd-11ed-ba85-6045bdaa2ba8?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-6b5af317-e9dd-11ed-ba85-6045bdaa2ba8/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "inputDataFormat": "honeywell.openqasm.v1", "inputParams": {"count": 500},
+        "metadata": {"qubits": "3", "repetitions": "500", "measurement_dict": "{''q0'':
+        [0], ''q1'': [1], ''q2'': [2]}"}, "sessionId": null, "status": "Failed", "jobType":
+        "QuantumComputing", "outputDataFormat": "honeywell.quantum-results.v1", "outputDataUri":
+        "https://mystorage.blob.core.windows.net:443/job-6b5af317-e9dd-11ed-ba85-6045bdaa2ba8/outputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
+        {"count": 1}, "errorData": {"code": "InternalError", "message": "An internal
+        error occurred. Please retry the request."}, "isCancelling": false, "tags":
+        [], "name": "cirq-job", "id": "6b5af317-e9dd-11ed-ba85-6045bdaa2ba8", "providerId":
+        "quantinuum", "target": "quantinuum.hqs-lt-s1-apival", "creationTime": "2023-05-03T18:07:55.4072165Z",
+        "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}, {"containerUri":
+        "https://mystorage.blob.core.windows.net/job-9d301c6f-e9dd-11ed-815c-6045bdaa2ba8?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-9d301c6f-e9dd-11ed-815c-6045bdaa2ba8/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "inputDataFormat": "microsoft.qio.v2", "inputParams": {"params": {}}, "metadata":
+        null, "sessionId": null, "status": "Succeeded", "jobType": "Optimization",
+        "outputDataFormat": "microsoft.qio-results.v2", "outputDataUri": "https://mystorage.blob.core.windows.net/job-9d301c6f-e9dd-11ed-815c-6045bdaa2ba8/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "beginExecutionTime": "2023-05-03T18:08:52.979183Z", "cancellationTime": null,
+        "quantumComputingData": null, "errorData": null, "isCancelling": false, "tags":
+        [], "name": "test_job_attachments", "id": "9d301c6f-e9dd-11ed-815c-6045bdaa2ba8",
+        "providerId": "microsoft", "target": "microsoft.simulatedannealing-parameterfree.cpu",
+        "creationTime": "2023-05-03T18:09:19.2832001Z", "endExecutionTime": "2023-05-03T18:08:53.0308616Z",
+        "costEstimate": null, "itemType": "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-a4045787-e9dd-11ed-9328-6045bdaa2ba8?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-a4045787-e9dd-11ed-9328-6045bdaa2ba8/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "inputDataFormat": "microsoft.qio.v2", "inputParams": {"params": {"sweeps":
+        100}}, "metadata": null, "sessionId": null, "status": "Succeeded", "jobType":
+        "Optimization", "outputDataFormat": "microsoft.qio-results.v2", "outputDataUri":
+        "https://mystorage.blob.core.windows.net/job-a4045787-e9dd-11ed-9328-6045bdaa2ba8/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "beginExecutionTime": "2023-05-03T18:08:41.6383074Z", "cancellationTime":
+        null, "quantumComputingData": null, "errorData": null, "isCancelling": false,
+        "tags": [], "name": "Test-ParallelTempering-\"20210101-000000\"", "id": "a4045787-e9dd-11ed-9328-6045bdaa2ba8",
+        "providerId": "microsoft", "target": "microsoft.paralleltempering.cpu", "creationTime":
+        "2023-05-03T18:09:30.146617Z", "endExecutionTime": "2023-05-03T18:08:41.7442684Z",
+        "costEstimate": null, "itemType": "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-a7cb9508-e9dd-11ed-b543-6045bdaa2ba8?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-a7cb9508-e9dd-11ed-b543-6045bdaa2ba8/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "inputDataFormat": "microsoft.qio.v2", "inputParams": {"params": {"sweeps":
+        100}}, "metadata": null, "sessionId": null, "status": "Succeeded", "jobType":
+        "Optimization", "outputDataFormat": "microsoft.qio-results.v2", "outputDataUri":
+        "https://mystorage.blob.core.windows.net/job-a7cb9508-e9dd-11ed-b543-6045bdaa2ba8/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "beginExecutionTime": "2023-05-03T18:08:47.7875302Z", "cancellationTime":
+        null, "quantumComputingData": null, "errorData": null, "isCancelling": false,
+        "tags": [], "name": "Test-ParallelTempering-\"20210101-000000\"", "id": "a7cb9508-e9dd-11ed-b543-6045bdaa2ba8",
+        "providerId": "microsoft", "target": "microsoft.paralleltempering.cpu", "creationTime":
+        "2023-05-03T18:09:36.3927832Z", "endExecutionTime": "2023-05-03T18:08:47.8387174Z",
+        "costEstimate": null, "itemType": "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-ab13903f-e9dd-11ed-a30d-6045bdaa2ba8?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-ab13903f-e9dd-11ed-a30d-6045bdaa2ba8/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "inputDataFormat": "microsoft.qio.v2", "inputParams": {"params": {"sweeps":
+        200}}, "metadata": null, "sessionId": null, "status": "Succeeded", "jobType":
+        "Optimization", "outputDataFormat": "microsoft.qio-results.v2", "outputDataUri":
+        "https://mystorage.blob.core.windows.net/job-ab13903f-e9dd-11ed-a30d-6045bdaa2ba8/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "beginExecutionTime": "2023-05-03T18:09:15.3769623Z", "cancellationTime":
+        null, "quantumComputingData": null, "errorData": null, "isCancelling": false,
+        "tags": [], "name": "Test-PopulationAnnealing-\"20210101-000000\"", "id":
+        "ab13903f-e9dd-11ed-a30d-6045bdaa2ba8", "providerId": "microsoft", "target":
+        "microsoft.populationannealing.cpu", "creationTime": "2023-05-03T18:09:41.9798898Z",
+        "endExecutionTime": "2023-05-03T18:09:15.5318867Z", "costEstimate": null,
+        "itemType": "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-aed8c026-e9dd-11ed-b253-6045bdaa2ba8?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-aed8c026-e9dd-11ed-b253-6045bdaa2ba8/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "inputDataFormat": "microsoft.qio.v2", "inputParams": {"params": {"sweeps":
+        200}}, "metadata": null, "sessionId": null, "status": "Succeeded", "jobType":
+        "Optimization", "outputDataFormat": "microsoft.qio-results.v2", "outputDataUri":
+        "https://mystorage.blob.core.windows.net/job-aed8c026-e9dd-11ed-b253-6045bdaa2ba8/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "beginExecutionTime": "2023-05-03T18:08:59.4347003Z", "cancellationTime":
+        null, "quantumComputingData": null, "errorData": null, "isCancelling": false,
+        "tags": [], "name": "Test-PopulationAnnealing-\"20210101-000000\"", "id":
+        "aed8c026-e9dd-11ed-b253-6045bdaa2ba8", "providerId": "microsoft", "target":
+        "microsoft.populationannealing.cpu", "creationTime": "2023-05-03T18:09:48.1425048Z",
+        "endExecutionTime": "2023-05-03T18:08:59.5909146Z", "costEstimate": null,
+        "itemType": "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-b211b3c4-e9dd-11ed-9fe9-6045bdaa2ba8?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-b211b3c4-e9dd-11ed-9fe9-6045bdaa2ba8/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "inputDataFormat": "microsoft.qio.v2", "inputParams": {"params": {"sweeps":
+        200}}, "metadata": null, "sessionId": null, "status": "Succeeded", "jobType":
+        "Optimization", "outputDataFormat": "microsoft.qio-results.v2", "outputDataUri":
+        "https://mystorage.blob.core.windows.net/job-b211b3c4-e9dd-11ed-9fe9-6045bdaa2ba8/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "beginExecutionTime": "2023-05-03T18:09:36.7398966Z", "cancellationTime":
+        null, "quantumComputingData": null, "errorData": null, "isCancelling": false,
+        "tags": [], "name": "Test-PopulationAnnealing-\"20210101-000000\"", "id":
+        "b211b3c4-e9dd-11ed-9fe9-6045bdaa2ba8", "providerId": "microsoft", "target":
+        "microsoft.populationannealing.cpu", "creationTime": "2023-05-03T18:09:53.7121805Z",
+        "endExecutionTime": "2023-05-03T18:09:36.8979695Z", "costEstimate": null,
+        "itemType": "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-b5ccf018-e9dd-11ed-aaa4-6045bdaa2ba8?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-b5ccf018-e9dd-11ed-aaa4-6045bdaa2ba8/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "inputDataFormat": "microsoft.qio.v2", "inputParams": {"params": {"trotter_number":
+        4}}, "metadata": null, "sessionId": null, "status": "Succeeded", "jobType":
+        "Optimization", "outputDataFormat": "microsoft.qio-results.v2", "outputDataUri":
+        "https://mystorage.blob.core.windows.net/job-b5ccf018-e9dd-11ed-aaa4-6045bdaa2ba8/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "beginExecutionTime": "2023-05-03T18:09:33.082655Z", "cancellationTime": null,
+        "quantumComputingData": null, "errorData": null, "isCancelling": false, "tags":
+        [], "name": "Test-QuantumMonteCarlo-\"20210101-000000\"", "id": "b5ccf018-e9dd-11ed-aaa4-6045bdaa2ba8",
+        "providerId": "microsoft", "target": "microsoft.qmc.cpu", "creationTime":
+        "2023-05-03T18:09:59.9384208Z", "endExecutionTime": "2023-05-03T18:09:33.9159319Z",
+        "costEstimate": null, "itemType": "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-ba5542ab-e9dd-11ed-a73d-6045bdaa2ba8?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-ba5542ab-e9dd-11ed-a73d-6045bdaa2ba8/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "inputDataFormat": "microsoft.qio.v2", "inputParams": {"params": {"trotter_number":
+        4}}, "metadata": null, "sessionId": null, "status": "Succeeded", "jobType":
+        "Optimization", "outputDataFormat": "microsoft.qio-results.v2", "outputDataUri":
+        "https://mystorage.blob.core.windows.net/job-ba5542ab-e9dd-11ed-a73d-6045bdaa2ba8/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "beginExecutionTime": "2023-05-03T18:09:50.470718Z", "cancellationTime": null,
+        "quantumComputingData": null, "errorData": null, "isCancelling": false, "tags":
+        [], "name": "Test-QuantumMonteCarlo-\"20210101-000000\"", "id": "ba5542ab-e9dd-11ed-a73d-6045bdaa2ba8",
+        "providerId": "microsoft", "target": "microsoft.qmc.cpu", "creationTime":
+        "2023-05-03T18:10:07.8759264Z", "endExecutionTime": "2023-05-03T18:09:51.3049921Z",
+        "costEstimate": null, "itemType": "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-be4f080f-e9dd-11ed-8693-6045bdaa2ba8?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-be4f080f-e9dd-11ed-8693-6045bdaa2ba8/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "inputDataFormat": "microsoft.qio.v2", "inputParams": {"params": {"beta_start":
+        0}}, "metadata": null, "sessionId": null, "status": "Succeeded", "jobType":
+        "Optimization", "outputDataFormat": "microsoft.qio-results.v2", "outputDataUri":
+        "https://mystorage.blob.core.windows.net/job-be4f080f-e9dd-11ed-8693-6045bdaa2ba8/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "beginExecutionTime": "2023-05-03T18:09:25.4596308Z", "cancellationTime":
+        null, "quantumComputingData": null, "errorData": null, "isCancelling": false,
+        "tags": [], "name": "Test-SimulatedAnnealing-\"20210101-000000\"", "id": "be4f080f-e9dd-11ed-8693-6045bdaa2ba8",
+        "providerId": "microsoft", "target": "microsoft.simulatedannealing.cpu", "creationTime":
+        "2023-05-03T18:10:14.2730483Z", "endExecutionTime": "2023-05-03T18:09:25.7707882Z",
+        "costEstimate": null, "itemType": "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-c19a850e-e9dd-11ed-b437-6045bdaa2ba8?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-c19a850e-e9dd-11ed-b437-6045bdaa2ba8/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "inputDataFormat": "microsoft.qio.v2", "inputParams": {"params": {"beta_start":
+        0}}, "metadata": null, "sessionId": null, "status": "Succeeded", "jobType":
+        "Optimization", "outputDataFormat": "microsoft.qio-results.v2", "outputDataUri":
+        "https://mystorage.blob.core.windows.net/job-c19a850e-e9dd-11ed-b437-6045bdaa2ba8/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "beginExecutionTime": "2023-05-03T18:10:02.3665212Z", "cancellationTime":
+        null, "quantumComputingData": null, "errorData": null, "isCancelling": false,
+        "tags": [], "name": "Test-Job-Filtering", "id": "c19a850e-e9dd-11ed-b437-6045bdaa2ba8",
+        "providerId": "microsoft", "target": "microsoft.simulatedannealing.cpu", "creationTime":
+        "2023-05-03T18:10:19.7448366Z", "endExecutionTime": "2023-05-03T18:10:02.7299708Z",
+        "costEstimate": null, "itemType": "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-c3a77298-e9dd-11ed-8dd8-6045bdaa2ba8?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-c3a77298-e9dd-11ed-8dd8-6045bdaa2ba8/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "inputDataFormat": "microsoft.qio.v2", "inputParams": {"params": {"beta_start":
+        0}}, "metadata": null, "sessionId": null, "status": "Succeeded", "jobType":
+        "Optimization", "outputDataFormat": "microsoft.qio-results.v2", "outputDataUri":
+        "https://mystorage.blob.core.windows.net/job-c3a77298-e9dd-11ed-8dd8-6045bdaa2ba8/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "beginExecutionTime": "2023-05-03T18:10:09.2009508Z", "cancellationTime":
+        null, "quantumComputingData": null, "errorData": null, "isCancelling": false,
+        "tags": [], "name": "Test-SimulatedAnnealing-\"20210101-000000\"", "id": "c3a77298-e9dd-11ed-8dd8-6045bdaa2ba8",
+        "providerId": "microsoft", "target": "microsoft.simulatedannealing.cpu", "creationTime":
+        "2023-05-03T18:10:23.2329924Z", "endExecutionTime": "2023-05-03T18:10:09.5112492Z",
+        "costEstimate": null, "itemType": "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-cfab2998-e9dd-11ed-a401-6045bdaa2ba8?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-cfab2998-e9dd-11ed-a401-6045bdaa2ba8/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "inputDataFormat": "microsoft.qio.v2", "inputParams": {"params": {"step_limit":
+        280}}, "metadata": null, "sessionId": null, "status": "Succeeded", "jobType":
+        "Optimization", "outputDataFormat": "microsoft.qio-results.v2", "outputDataUri":
+        "https://mystorage.blob.core.windows.net/job-cfab2998-e9dd-11ed-a401-6045bdaa2ba8/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "beginExecutionTime": "2023-05-03T18:10:15.965758Z", "cancellationTime": null,
+        "quantumComputingData": null, "errorData": null, "isCancelling": false, "tags":
+        [], "name": "Test-SubstochasticMonteCarlo-\"20210101-000000\"", "id": "cfab2998-e9dd-11ed-a401-6045bdaa2ba8",
+        "providerId": "microsoft", "target": "microsoft.substochasticmontecarlo.cpu",
+        "creationTime": "2023-05-03T18:10:43.2486982Z", "endExecutionTime": "2023-05-03T18:10:16.0189556Z",
+        "costEstimate": null, "itemType": "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-d2df3015-e9dd-11ed-a4d4-6045bdaa2ba8?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-d2df3015-e9dd-11ed-a4d4-6045bdaa2ba8/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "inputDataFormat": "microsoft.qio.v2", "inputParams": {"params": {"step_limit":
+        280}}, "metadata": null, "sessionId": null, "status": "Succeeded", "jobType":
+        "Optimization", "outputDataFormat": "microsoft.qio-results.v2", "outputDataUri":
+        "https://mystorage.blob.core.windows.net/job-d2df3015-e9dd-11ed-a4d4-6045bdaa2ba8/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "beginExecutionTime": "2023-05-03T18:10:21.2833487Z", "cancellationTime":
+        null, "quantumComputingData": null, "errorData": null, "isCancelling": false,
+        "tags": [], "name": "Test-SubstochasticMonteCarlo-\"20210101-000000\"", "id":
+        "d2df3015-e9dd-11ed-a4d4-6045bdaa2ba8", "providerId": "microsoft", "target":
+        "microsoft.substochasticmontecarlo.cpu", "creationTime": "2023-05-03T18:10:48.5650119Z",
+        "endExecutionTime": "2023-05-03T18:10:21.3345371Z", "costEstimate": null,
+        "itemType": "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-d6186010-e9dd-11ed-b8d4-6045bdaa2ba8?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-d6186010-e9dd-11ed-b8d4-6045bdaa2ba8/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "inputDataFormat": "microsoft.qio.v2", "inputParams": {"params": {"step_limit":
+        280}}, "metadata": null, "sessionId": null, "status": "Succeeded", "jobType":
+        "Optimization", "outputDataFormat": "microsoft.qio-results.v2", "outputDataUri":
+        "https://mystorage.blob.core.windows.net/job-d6186010-e9dd-11ed-b8d4-6045bdaa2ba8/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "beginExecutionTime": "2023-05-03T18:10:26.9491878Z", "cancellationTime":
+        null, "quantumComputingData": null, "errorData": null, "isCancelling": false,
+        "tags": [], "name": "Test-SubstochasticMonteCarlo-\"20210101-000000\"", "id":
+        "d6186010-e9dd-11ed-b8d4-6045bdaa2ba8", "providerId": "microsoft", "target":
+        "microsoft.substochasticmontecarlo.cpu", "creationTime": "2023-05-03T18:10:54.2369498Z",
+        "endExecutionTime": "2023-05-03T18:10:27.0025131Z", "costEstimate": null,
+        "itemType": "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-d975ba5a-e9dd-11ed-b4b6-6045bdaa2ba8?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-d975ba5a-e9dd-11ed-b4b6-6045bdaa2ba8/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "inputDataFormat": "microsoft.qio.v2", "inputParams": {"params": {"sweeps":
+        100}}, "metadata": null, "sessionId": null, "status": "Succeeded", "jobType":
+        "Optimization", "outputDataFormat": "microsoft.qio-results.v2", "outputDataUri":
+        "https://mystorage.blob.core.windows.net/job-d975ba5a-e9dd-11ed-b4b6-6045bdaa2ba8/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "beginExecutionTime": "2023-05-03T18:10:32.5865426Z", "cancellationTime":
+        null, "quantumComputingData": null, "errorData": null, "isCancelling": false,
+        "tags": [], "name": "Test-Tabu-\"20210101-000000\"", "id": "d975ba5a-e9dd-11ed-b4b6-6045bdaa2ba8",
+        "providerId": "microsoft", "target": "microsoft.tabu.cpu", "creationTime":
+        "2023-05-03T18:10:59.8216076Z", "endExecutionTime": "2023-05-03T18:10:32.6395335Z",
+        "costEstimate": null, "itemType": "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-dccfe3ad-e9dd-11ed-9951-6045bdaa2ba8?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-dccfe3ad-e9dd-11ed-9951-6045bdaa2ba8/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "inputDataFormat": "microsoft.qio.v2", "inputParams": {"params": {"sweeps":
+        100}}, "metadata": null, "sessionId": null, "status": "Succeeded", "jobType":
+        "Optimization", "outputDataFormat": "microsoft.qio-results.v2", "outputDataUri":
+        "https://mystorage.blob.core.windows.net/job-dccfe3ad-e9dd-11ed-9951-6045bdaa2ba8/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "beginExecutionTime": "2023-05-03T18:10:56.3919915Z", "cancellationTime":
+        null, "quantumComputingData": null, "errorData": null, "isCancelling": false,
+        "tags": [], "name": "Test-Tabu-\"20210101-000000\"", "id": "dccfe3ad-e9dd-11ed-9951-6045bdaa2ba8",
+        "providerId": "microsoft", "target": "microsoft.tabu.cpu", "creationTime":
+        "2023-05-03T18:11:05.436748Z", "endExecutionTime": "2023-05-03T18:10:56.4448938Z",
+        "costEstimate": null, "itemType": "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-e29e837e-e9dd-11ed-818a-6045bdaa2ba8?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-e29e837e-e9dd-11ed-818a-6045bdaa2ba8/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "inputDataFormat": "microsoft.qio.v2", "inputParams": {"params": {"beta_start":
+        0}}, "metadata": null, "sessionId": null, "status": "Succeeded", "jobType":
+        "Optimization", "outputDataFormat": "microsoft.qio-results.v2", "outputDataUri":
+        "https://mystorage.blob.core.windows.net/job-e29e837e-e9dd-11ed-818a-6045bdaa2ba8/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "beginExecutionTime": "2023-05-03T18:11:05.8090635Z", "cancellationTime":
+        null, "quantumComputingData": null, "errorData": null, "isCancelling": false,
+        "tags": [], "name": "job-e29e837d-e9dd-11ed-91c5-6045bdaa2ba8", "id": "e29e837e-e9dd-11ed-818a-6045bdaa2ba8",
+        "providerId": "microsoft", "target": "microsoft.simulatedannealing.cpu", "creationTime":
+        "2023-05-03T18:11:15.234156Z", "endExecutionTime": "2023-05-03T18:11:06.1215038Z",
+        "costEstimate": null, "itemType": "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-eff3e743-e9dd-11ed-bfc9-6045bdaa2ba8?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-eff3e743-e9dd-11ed-bfc9-6045bdaa2ba8/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "inputDataFormat": "qir.v1", "inputParams": {"items": [{"errorBudget": 0.001},
+        {"errorBudget": 0.002}]}, "metadata": null, "sessionId": null, "status": "Succeeded",
+        "jobType": "QuantumComputing", "outputDataFormat": "microsoft.resource-estimates.v1",
+        "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-eff3e743-e9dd-11ed-bfc9-6045bdaa2ba8/rawOutputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "beginExecutionTime": "2023-05-03T18:11:18.9995149Z", "cancellationTime":
+        null, "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling":
+        false, "tags": [], "name": "azure-quantum-job", "id": "eff3e743-e9dd-11ed-bfc9-6045bdaa2ba8",
+        "providerId": "microsoft-qc", "target": "microsoft.estimator", "creationTime":
+        "2023-05-03T18:11:37.8284456Z", "endExecutionTime": "2023-05-03T18:11:24.2367061Z",
+        "costEstimate": null, "itemType": "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-f9196617-e9dd-11ed-850a-6045bdaa2ba8?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-f9196617-e9dd-11ed-850a-6045bdaa2ba8/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "inputDataFormat": "qir.v1", "inputParams": {"errorBudget": 2}, "metadata":
+        null, "sessionId": null, "status": "Failed", "jobType": "QuantumComputing",
+        "outputDataFormat": "microsoft.resource-estimates.v1", "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-f9196617-e9dd-11ed-850a-6045bdaa2ba8/outputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "beginExecutionTime": "2023-05-03T18:11:32.9787427Z", "cancellationTime":
+        null, "quantumComputingData": {"count": 1}, "errorData": {"code": "InvalidInputError",
+        "message": "The error budget must be between 0.0 and 1.0, provided input was
+        `2`"}, "isCancelling": false, "tags": [], "name": "azure-quantum-job", "id":
+        "f9196617-e9dd-11ed-850a-6045bdaa2ba8", "providerId": "microsoft-qc", "target":
+        "microsoft.estimator", "creationTime": "2023-05-03T18:11:53.1858623Z", "endExecutionTime":
+        "2023-05-03T18:11:37.6466269Z", "costEstimate": null, "itemType": "Job"},
+        {"containerUri": "https://mystorage.blob.core.windows.net/job-04b1c946-e9de-11ed-b86e-6045bdaa2ba8?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-04b1c946-e9de-11ed-b86e-6045bdaa2ba8/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "inputDataFormat": "qir.v1", "inputParams": {}, "metadata": null, "sessionId":
+        null, "status": "Succeeded", "jobType": "QuantumComputing", "outputDataFormat":
+        "microsoft.resource-estimates.v1", "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-04b1c946-e9de-11ed-b86e-6045bdaa2ba8/rawOutputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "beginExecutionTime": "2023-05-03T18:11:52.9408776Z", "cancellationTime":
+        null, "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling":
+        false, "tags": [], "name": "azure-quantum-job", "id": "04b1c946-e9de-11ed-b86e-6045bdaa2ba8",
+        "providerId": "microsoft-qc", "target": "microsoft.estimator", "creationTime":
+        "2023-05-03T18:12:12.9531672Z", "endExecutionTime": "2023-05-03T18:11:57.9216175Z",
+        "costEstimate": null, "itemType": "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-0c8d61c7-e9de-11ed-bcdc-6045bdaa2ba8?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-0c8d61c7-e9de-11ed-bcdc-6045bdaa2ba8/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "inputDataFormat": "qir.v1", "inputParams": {}, "metadata": null, "sessionId":
+        null, "status": "Succeeded", "jobType": "QuantumComputing", "outputDataFormat":
+        "microsoft.resource-estimates.v1", "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-0c8d61c7-e9de-11ed-bcdc-6045bdaa2ba8/rawOutputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "beginExecutionTime": "2023-05-03T18:12:22.1720121Z", "cancellationTime":
+        null, "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling":
+        false, "tags": [], "name": "azure-quantum-job", "id": "0c8d61c7-e9de-11ed-bcdc-6045bdaa2ba8",
+        "providerId": "microsoft-qc", "target": "microsoft.estimator", "creationTime":
+        "2023-05-03T18:12:25.6709865Z", "endExecutionTime": "2023-05-03T18:12:27.3048756Z",
+        "costEstimate": null, "itemType": "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-22ea1868-e9de-11ed-a4ba-6045bdaa2ba8?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-22ea1868-e9de-11ed-a4ba-6045bdaa2ba8/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "inputDataFormat": "ionq.circuit.v1", "inputParams": {"shots": 100, "count":
+        100}, "metadata": {"qiskit": "True", "name": "Qiskit Sample - 3-qubit GHZ
+        circuit", "num_qubits": "4", "metadata": "null", "meas_map": "[0, 1, 2]"},
+        "sessionId": null, "status": "Succeeded", "jobType": "QuantumComputing", "outputDataFormat":
+        "ionq.quantum-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-22ea1868-e9de-11ed-a4ba-6045bdaa2ba8/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "beginExecutionTime": "2023-05-03T18:13:06.003Z", "cancellationTime": null,
+        "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling": false,
+        "tags": [], "name": "Qiskit Sample - 3-qubit GHZ circuit", "id": "22ea1868-e9de-11ed-a4ba-6045bdaa2ba8",
+        "providerId": "ionq", "target": "ionq.simulator", "creationTime": "2023-05-03T18:13:01.4078715Z",
+        "endExecutionTime": "2023-05-03T18:13:06.045Z", "costEstimate": {"currencyCode":
+        "USD", "events": [{"dimensionId": "gs1q", "dimensionName": "1Q Gate Shot",
+        "measureUnit": "1q gate shot", "amountBilled": 0.0, "amountConsumed": 0.0,
+        "unitPrice": 0.0}, {"dimensionId": "gs2q", "dimensionName": "2Q Gate Shot",
+        "measureUnit": "2q gate shot", "amountBilled": 0.0, "amountConsumed": 0.0,
+        "unitPrice": 0.0}], "estimatedTotal": 0.0}, "itemType": "Job"}, {"containerUri":
+        "https://mystorage.blob.core.windows.net/job-2a2057cb-e9de-11ed-b82a-6045bdaa2ba8?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-2a2057cb-e9de-11ed-b82a-6045bdaa2ba8/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "inputDataFormat": "ionq.circuit.v1", "inputParams": {"shots": 500, "count":
+        500}, "metadata": {"qiskit": "True", "name": "Qiskit Sample - 3-qubit GHZ
+        circuit", "num_qubits": "4", "metadata": "null", "meas_map": "[0, 1, 2]"},
+        "sessionId": null, "status": "Succeeded", "jobType": "QuantumComputing", "outputDataFormat":
+        "ionq.quantum-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-2a2057cb-e9de-11ed-b82a-6045bdaa2ba8/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "beginExecutionTime": "2023-05-03T18:13:17.749Z", "cancellationTime": null,
+        "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling": false,
+        "tags": [], "name": "Qiskit Sample - 3-qubit GHZ circuit", "id": "2a2057cb-e9de-11ed-b82a-6045bdaa2ba8",
+        "providerId": "ionq", "target": "ionq.simulator", "creationTime": "2023-05-03T18:13:13.6883944Z",
+        "endExecutionTime": "2023-05-03T18:13:17.799Z", "costEstimate": {"currencyCode":
+        "USD", "events": [{"dimensionId": "gs1q", "dimensionName": "1Q Gate Shot",
+        "measureUnit": "1q gate shot", "amountBilled": 0.0, "amountConsumed": 0.0,
+        "unitPrice": 0.0}, {"dimensionId": "gs2q", "dimensionName": "2Q Gate Shot",
+        "measureUnit": "2q gate shot", "amountBilled": 0.0, "amountConsumed": 0.0,
+        "unitPrice": 0.0}], "estimatedTotal": 0.0}, "itemType": "Job"}, {"containerUri":
+        "https://mystorage.blob.core.windows.net/job-305009c1-e9de-11ed-b489-6045bdaa2ba8?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-305009c1-e9de-11ed-b489-6045bdaa2ba8/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "inputDataFormat": "honeywell.openqasm.v1", "inputParams": {"count": 500,
+        "shots": 500}, "metadata": {"qiskit": "True", "name": "Qiskit Sample - 3-qubit
+        GHZ circuit", "num_qubits": "4", "metadata": "{\"some\": \"data\"}"}, "sessionId":
+        null, "status": "Failed", "jobType": "QuantumComputing", "outputDataFormat":
+        "honeywell.quantum-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-305009c1-e9de-11ed-b489-6045bdaa2ba8/outputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
+        {"count": 1}, "errorData": {"code": "InternalError", "message": "An internal
+        error occurred. Please retry the request."}, "isCancelling": false, "tags":
+        [], "name": "Qiskit Sample - 3-qubit GHZ circuit", "id": "305009c1-e9de-11ed-b489-6045bdaa2ba8",
+        "providerId": "quantinuum", "target": "quantinuum.hqs-lt-s1-apival", "creationTime":
+        "2023-05-03T18:13:25.8766538Z", "endExecutionTime": null, "costEstimate":
+        null, "itemType": "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-6593e234-e9de-11ed-a49d-6045bdaa2ba8?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-6593e234-e9de-11ed-a49d-6045bdaa2ba8/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "inputDataFormat": "ionq.circuit.v1", "inputParams": {"shots": 1024, "count":
+        1024}, "metadata": {"qiskit": "True", "name": "Qiskit Sample - 3-qubit GHZ
+        circuit", "num_qubits": "4", "metadata": "null", "meas_map": "[0, 1, 2]"},
+        "sessionId": null, "status": "Succeeded", "jobType": "QuantumComputing", "outputDataFormat":
+        "ionq.quantum-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-6593e234-e9de-11ed-a49d-6045bdaa2ba8/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "beginExecutionTime": "2023-05-03T18:14:57.708Z", "cancellationTime": null,
+        "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling": false,
+        "tags": [], "name": "Qiskit Sample - 3-qubit GHZ circuit", "id": "6593e234-e9de-11ed-a49d-6045bdaa2ba8",
+        "providerId": "ionq", "target": "ionq.simulator", "creationTime": "2023-05-03T18:14:53.6040613Z",
+        "endExecutionTime": "2023-05-03T18:14:57.736Z", "costEstimate": {"currencyCode":
+        "USD", "events": [{"dimensionId": "gs1q", "dimensionName": "1Q Gate Shot",
+        "measureUnit": "1q gate shot", "amountBilled": 0.0, "amountConsumed": 0.0,
+        "unitPrice": 0.0}, {"dimensionId": "gs2q", "dimensionName": "2Q Gate Shot",
+        "measureUnit": "2q gate shot", "amountBilled": 0.0, "amountConsumed": 0.0,
+        "unitPrice": 0.0}], "estimatedTotal": 0.0}, "itemType": "Job"}, {"containerUri":
+        "https://mystorage.blob.core.windows.net/job-6cd8c062-e9de-11ed-8fbf-6045bdaa2ba8?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-6cd8c062-e9de-11ed-8fbf-6045bdaa2ba8/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "inputDataFormat": "ionq.circuit.v1", "inputParams": {"shots": 500, "count":
+        500}, "metadata": {"qiskit": "True", "name": "Qiskit Sample - 3-qubit GHZ
+        circuit", "num_qubits": "4", "metadata": "null", "meas_map": "[0, 1, 2]"},
+        "sessionId": null, "status": "Succeeded", "jobType": "QuantumComputing", "outputDataFormat":
+        "ionq.quantum-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-6cd8c062-e9de-11ed-8fbf-6045bdaa2ba8/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "beginExecutionTime": "2023-05-03T18:15:09.702Z", "cancellationTime": null,
+        "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling": false,
+        "tags": [], "name": "Qiskit Sample - 3-qubit GHZ circuit", "id": "6cd8c062-e9de-11ed-8fbf-6045bdaa2ba8",
+        "providerId": "ionq", "target": "ionq.simulator", "creationTime": "2023-05-03T18:15:05.5752248Z",
+        "endExecutionTime": "2023-05-03T18:15:09.748Z", "costEstimate": {"currencyCode":
+        "USD", "events": [{"dimensionId": "gs1q", "dimensionName": "1Q Gate Shot",
+        "measureUnit": "1q gate shot", "amountBilled": 0.0, "amountConsumed": 0.0,
+        "unitPrice": 0.0}, {"dimensionId": "gs2q", "dimensionName": "2Q Gate Shot",
+        "measureUnit": "2q gate shot", "amountBilled": 0.0, "amountConsumed": 0.0,
+        "unitPrice": 0.0}], "estimatedTotal": 0.0}, "itemType": "Job"}, {"containerUri":
+        "https://mystorage.blob.core.windows.net/job-72ed3f9e-e9de-11ed-b2b8-6045bdaa2ba8?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-72ed3f9e-e9de-11ed-b2b8-6045bdaa2ba8/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "inputDataFormat": "honeywell.openqasm.v1", "inputParams": {"count": 500,
+        "shots": 500}, "metadata": {"qiskit": "True", "name": "Qiskit Sample - 3-qubit
+        GHZ circuit", "num_qubits": "4", "metadata": "{\"some\": \"data\"}"}, "sessionId":
+        null, "status": "Failed", "jobType": "QuantumComputing", "outputDataFormat":
+        "honeywell.quantum-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-72ed3f9e-e9de-11ed-b2b8-6045bdaa2ba8/outputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
+        {"count": 1}, "errorData": {"code": "InternalError", "message": "An internal
+        error occurred. Please retry the request."}, "isCancelling": false, "tags":
+        [], "name": "Qiskit Sample - 3-qubit GHZ circuit", "id": "72ed3f9e-e9de-11ed-b2b8-6045bdaa2ba8",
+        "providerId": "quantinuum", "target": "quantinuum.hqs-lt-s1-apival", "creationTime":
+        "2023-05-03T18:15:17.694578Z", "endExecutionTime": null, "costEstimate": null,
+        "itemType": "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-a54c365f-e9de-11ed-801c-6045bdaa2ba8?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-a54c365f-e9de-11ed-801c-6045bdaa2ba8/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "inputDataFormat": "qir.v1", "inputParams": {"errorBudget": 0.001, "qubitParams":
+        {"name": "qubit_gate_ns_e3"}, "qecScheme": {"name": "surface_code"}, "count":
+        null, "shots": null, "items": [{"entryPoint": "circuit-101", "arguments":
+        []}]}, "metadata": {"qiskit": "True", "name": "circuit-101", "num_qubits":
+        "3", "metadata": "null"}, "sessionId": null, "status": "Succeeded", "jobType":
+        "QuantumComputing", "outputDataFormat": "microsoft.resource-estimates.v1",
+        "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-a54c365f-e9de-11ed-801c-6045bdaa2ba8/rawOutputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "beginExecutionTime": "2023-05-03T18:16:36.6973661Z", "cancellationTime":
+        null, "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling":
+        false, "tags": [], "name": "circuit-101", "id": "a54c365f-e9de-11ed-801c-6045bdaa2ba8",
+        "providerId": "microsoft-qc", "target": "microsoft.estimator", "creationTime":
+        "2023-05-03T18:16:40.1351771Z", "endExecutionTime": "2023-05-03T18:16:41.7338834Z",
+        "costEstimate": null, "itemType": "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-ae9a2621-e9de-11ed-8b01-6045bdaa2ba8?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-ae9a2621-e9de-11ed-8b01-6045bdaa2ba8/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "inputDataFormat": "qir.v1", "inputParams": {"errorBudget": 0.0001, "qubitParams":
+        {"name": "qubit_gate_ns_e4"}, "qecScheme": {"name": "surface_code"}, "count":
+        null, "shots": null, "items": [{"entryPoint": "circuit-103", "arguments":
+        []}]}, "metadata": {"qiskit": "True", "name": "circuit-103", "num_qubits":
+        "3", "metadata": "null"}, "sessionId": null, "status": "Succeeded", "jobType":
+        "QuantumComputing", "outputDataFormat": "microsoft.resource-estimates.v1",
+        "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-ae9a2621-e9de-11ed-8b01-6045bdaa2ba8/rawOutputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "beginExecutionTime": "2023-05-03T18:16:51.8517434Z", "cancellationTime":
+        null, "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling":
+        false, "tags": [], "name": "circuit-103", "id": "ae9a2621-e9de-11ed-8b01-6045bdaa2ba8",
+        "providerId": "microsoft-qc", "target": "microsoft.estimator", "creationTime":
+        "2023-05-03T18:16:55.8880086Z", "endExecutionTime": "2023-05-03T18:16:56.8831276Z",
+        "costEstimate": null, "itemType": "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-b5f06407-e9de-11ed-b293-6045bdaa2ba8?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-b5f06407-e9de-11ed-b293-6045bdaa2ba8/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "inputDataFormat": "qir.v1", "inputParams": {"errorBudget": 0.001, "qubitParams":
+        {"name": "qubit_gate_ns_e3"}, "qecScheme": {"name": "surface_code"}, "items":
+        [{"qubitParams": {"name": "qubit_gate_ns_e3"}, "errorBudget": 0.0001}, {"qubitParams":
+        {"name": "qubit_gate_ns_e4"}, "errorBudget": 0.0001}], "count": null, "shots":
+        null}, "metadata": {"qiskit": "True", "name": "circuit-105", "num_qubits":
+        "3", "metadata": "null"}, "sessionId": null, "status": "Succeeded", "jobType":
+        "QuantumComputing", "outputDataFormat": "microsoft.resource-estimates.v1",
+        "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-b5f06407-e9de-11ed-b293-6045bdaa2ba8/rawOutputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "beginExecutionTime": "2023-05-03T18:16:48.0534362Z", "cancellationTime":
+        null, "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling":
+        false, "tags": [], "name": "circuit-105", "id": "b5f06407-e9de-11ed-b293-6045bdaa2ba8",
+        "providerId": "microsoft-qc", "target": "microsoft.estimator", "creationTime":
+        "2023-05-03T18:17:08.2452834Z", "endExecutionTime": "2023-05-03T18:16:53.3657433Z",
+        "costEstimate": null, "itemType": "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-bd2d165b-e9de-11ed-894f-6045bdaa2ba8?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-bd2d165b-e9de-11ed-894f-6045bdaa2ba8/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "inputDataFormat": "qir.v1", "inputParams": {"shots": 100, "count": 100, "items":
+        [{"entryPoint": "endian0cr3", "arguments": []}]}, "metadata": {"qiskit": "True",
+        "name": "endian0cr3", "num_qubits": "3", "metadata": "{\"some\": \"data\"}"},
+        "sessionId": null, "status": "Succeeded", "jobType": "QuantumComputing", "outputDataFormat":
+        "microsoft.quantum-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-bd2d165b-e9de-11ed-894f-6045bdaa2ba8/outputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "beginExecutionTime": "2023-05-03T18:17:45.229484Z", "cancellationTime": null,
+        "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling": false,
+        "tags": [], "name": "endian0cr3", "id": "bd2d165b-e9de-11ed-894f-6045bdaa2ba8",
+        "providerId": "qci", "target": "qci.simulator", "creationTime": "2023-05-03T18:17:20.4204155Z",
+        "endExecutionTime": "2023-05-03T18:17:46.976378Z", "costEstimate": {"currencyCode":
+        "USD", "events": [{"dimensionId": "jobseconds", "dimensionName": "Job Seconds",
+        "measureUnit": "second", "amountBilled": 1.0, "amountConsumed": 1.0, "unitPrice":
+        0.0}], "estimatedTotal": 0.0}, "itemType": "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-d9bd67f3-e9de-11ed-a6bd-6045bdaa2ba8?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-d9bd67f3-e9de-11ed-a6bd-6045bdaa2ba8/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "inputDataFormat": "ionq.circuit.v1", "inputParams": {"shots": 1000, "count":
+        1000}, "metadata": {"qiskit": "True", "name": "circuit-111", "num_qubits":
+        "5", "metadata": "{\"some\": \"data\"}", "meas_map": "[0]"}, "sessionId":
+        null, "status": "Succeeded", "jobType": "QuantumComputing", "outputDataFormat":
+        "ionq.quantum-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-d9bd67f3-e9de-11ed-a6bd-6045bdaa2ba8/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "beginExecutionTime": "2023-05-03T18:18:12.703Z", "cancellationTime": null,
+        "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling": false,
+        "tags": [], "name": "circuit-111", "id": "d9bd67f3-e9de-11ed-a6bd-6045bdaa2ba8",
+        "providerId": "ionq", "target": "ionq.simulator", "creationTime": "2023-05-03T18:18:08.3207263Z",
+        "endExecutionTime": "2023-05-03T18:18:12.739Z", "costEstimate": {"currencyCode":
+        "USD", "events": [{"dimensionId": "gs1q", "dimensionName": "1Q Gate Shot",
+        "measureUnit": "1q gate shot", "amountBilled": 0.0, "amountConsumed": 0.0,
+        "unitPrice": 0.0}, {"dimensionId": "gs2q", "dimensionName": "2Q Gate Shot",
+        "measureUnit": "2q gate shot", "amountBilled": 0.0, "amountConsumed": 0.0,
+        "unitPrice": 0.0}], "estimatedTotal": 0.0}, "itemType": "Job"}, {"containerUri":
+        "https://mystorage.blob.core.windows.net/job-e12160bb-e9de-11ed-a1dd-6045bdaa2ba8?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-e12160bb-e9de-11ed-a1dd-6045bdaa2ba8/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "inputDataFormat": "qir.v1", "inputParams": {"shots": 100, "count": 100, "items":
+        [{"entryPoint": "Qiskit Sample - 3-qubit GHZ circuit", "arguments": []}]},
+        "metadata": {"qiskit": "True", "name": "Qiskit Sample - 3-qubit GHZ circuit",
+        "num_qubits": "4", "metadata": "null"}, "sessionId": null, "status": "Succeeded",
+        "jobType": "QuantumComputing", "outputDataFormat": "microsoft.quantum-results.v1",
+        "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-e12160bb-e9de-11ed-a1dd-6045bdaa2ba8/outputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "beginExecutionTime": "2023-05-03T18:18:43.904712Z", "cancellationTime": null,
+        "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling": false,
+        "tags": [], "name": "Qiskit Sample - 3-qubit GHZ circuit", "id": "e12160bb-e9de-11ed-a1dd-6045bdaa2ba8",
+        "providerId": "qci", "target": "qci.simulator", "creationTime": "2023-05-03T18:18:20.6387649Z",
+        "endExecutionTime": "2023-05-03T18:18:45.612017Z", "costEstimate": {"currencyCode":
+        "USD", "events": [{"dimensionId": "jobseconds", "dimensionName": "Job Seconds",
+        "measureUnit": "second", "amountBilled": 2.0, "amountConsumed": 2.0, "unitPrice":
+        0.0}], "estimatedTotal": 0.0}, "itemType": "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-fa1b77e2-e9de-11ed-b4e1-6045bdaa2ba8?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-fa1b77e2-e9de-11ed-b4e1-6045bdaa2ba8/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "inputDataFormat": "qir.v1", "inputParams": {"count": 100, "shots": 100, "items":
+        [{"entryPoint": "Qiskit Sample - 3-qubit GHZ circuit", "arguments": []}]},
+        "metadata": {"qiskit": "True", "name": "Qiskit Sample - 3-qubit GHZ circuit",
+        "num_qubits": "4", "metadata": "null"}, "sessionId": null, "status": "Succeeded",
+        "jobType": "QuantumComputing", "outputDataFormat": "microsoft.quantum-results.v1",
+        "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-fa1b77e2-e9de-11ed-b4e1-6045bdaa2ba8/outputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "beginExecutionTime": "2023-05-03T18:19:08.4901516Z", "cancellationTime":
+        null, "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling":
+        false, "tags": [], "name": "Qiskit Sample - 3-qubit GHZ circuit", "id": "fa1b77e2-e9de-11ed-b4e1-6045bdaa2ba8",
+        "providerId": "rigetti", "target": "rigetti.sim.qvm", "creationTime": "2023-05-03T18:19:02.3223262Z",
+        "endExecutionTime": "2023-05-03T18:19:11.0645163Z", "costEstimate": {"currencyCode":
+        "USD", "events": [{"dimensionId": "qpu_time_centiseconds", "dimensionName":
+        "QPU Execution Time", "measureUnit": "10ms (rounded up)", "amountBilled":
+        0.0, "amountConsumed": 0.0, "unitPrice": 0.0}], "estimatedTotal": 0.0}, "itemType":
+        "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-08266089-e9df-11ed-b123-6045bdaa2ba8?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-08266089-e9df-11ed-b123-6045bdaa2ba8/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "inputDataFormat": "qir.v1", "inputParams": {"entryPoint": "ENTRYPOINT__BellState_File",
+        "arguments": []}, "metadata": null, "sessionId": null, "status": "Succeeded",
+        "jobType": "QuantumComputing", "outputDataFormat": "microsoft.resource-estimates.v1",
+        "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-08266089-e9df-11ed-b123-6045bdaa2ba8/rawOutputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "beginExecutionTime": "2023-05-03T18:19:06.2925784Z", "cancellationTime":
+        null, "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling":
+        false, "tags": [], "name": "azure-quantum-job", "id": "08266089-e9df-11ed-b123-6045bdaa2ba8",
+        "providerId": "microsoft-qc", "target": "microsoft.estimator", "creationTime":
+        "2023-05-03T18:19:26.4013475Z", "endExecutionTime": "2023-05-03T18:19:11.5471523Z",
+        "costEstimate": null, "itemType": "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-13fa8374-e9df-11ed-b6a1-6045bdaa2ba8?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-13fa8374-e9df-11ed-b6a1-6045bdaa2ba8/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "inputDataFormat": "qir.v1", "inputParams": {"entryPoint": "ENTRYPOINT__BellState_File",
+        "arguments": [], "targetCapability": "AdaptiveExecution"}, "metadata": null,
+        "sessionId": null, "status": "Failed", "jobType": "QuantumComputing", "outputDataFormat":
+        "microsoft.quantum-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-13fa8374-e9df-11ed-b6a1-6045bdaa2ba8/outputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
+        {"count": 1}, "errorData": {"code": "InternalError", "message": "An internal
+        error occurred. Please retry the request."}, "isCancelling": false, "tags":
+        [], "name": "quantinuum-job", "id": "13fa8374-e9df-11ed-b6a1-6045bdaa2ba8",
+        "providerId": "quantinuum", "target": "quantinuum.sim.h1-1sc", "creationTime":
+        "2023-05-03T18:19:46.5251035Z", "endExecutionTime": null, "costEstimate":
+        null, "itemType": "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-4a8b46c4-e9df-11ed-9ece-6045bdaa2ba8?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-4a8b46c4-e9df-11ed-9ece-6045bdaa2ba8/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "inputDataFormat": "qir.v1", "inputParams": {"entryPoint": "ENTRYPOINT__BellState_File",
+        "arguments": [], "targetCapability": "BasicExecution"}, "metadata": null,
+        "sessionId": null, "status": "Succeeded", "jobType": "QuantumComputing", "outputDataFormat":
+        "microsoft.quantum-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-4a8b46c4-e9df-11ed-9ece-6045bdaa2ba8/outputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "beginExecutionTime": "2023-05-03T18:21:23.8514045Z", "cancellationTime":
+        null, "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling":
+        false, "tags": [], "name": "azure-quantum-job", "id": "4a8b46c4-e9df-11ed-9ece-6045bdaa2ba8",
+        "providerId": "rigetti", "target": "rigetti.sim.qvm", "creationTime": "2023-05-03T18:21:17.9745238Z",
+        "endExecutionTime": "2023-05-03T18:21:26.2323503Z", "costEstimate": {"currencyCode":
+        "USD", "events": [{"dimensionId": "qpu_time_centiseconds", "dimensionName":
+        "QPU Execution Time", "measureUnit": "10ms (rounded up)", "amountBilled":
+        0.0, "amountConsumed": 0.0, "unitPrice": 0.0}], "estimatedTotal": 0.0}, "itemType":
+        "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-585fdf54-e9df-11ed-b54c-6045bdaa2ba8?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-585fdf54-e9df-11ed-b54c-6045bdaa2ba8/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "inputDataFormat": "qir.v1", "inputParams": {"entryPoint": "ENTRYPOINT__BellState_Inline",
+        "arguments": []}, "metadata": null, "sessionId": null, "status": "Succeeded",
+        "jobType": "QuantumComputing", "outputDataFormat": "microsoft.resource-estimates.v1",
+        "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-585fdf54-e9df-11ed-b54c-6045bdaa2ba8/rawOutputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "beginExecutionTime": "2023-05-03T18:21:37.129972Z", "cancellationTime": null,
+        "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling": false,
+        "tags": [], "name": "azure-quantum-job", "id": "585fdf54-e9df-11ed-b54c-6045bdaa2ba8",
+        "providerId": "microsoft-qc", "target": "microsoft.estimator", "creationTime":
+        "2023-05-03T18:21:40.9327102Z", "endExecutionTime": "2023-05-03T18:21:42.1702211Z",
+        "costEstimate": null, "itemType": "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-64c7570c-e9df-11ed-ac36-6045bdaa2ba8?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-64c7570c-e9df-11ed-ac36-6045bdaa2ba8/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "inputDataFormat": "qir.v1", "inputParams": {"entryPoint": "ENTRYPOINT__BellState_Inline",
+        "arguments": [], "targetCapability": "AdaptiveExecution"}, "metadata": null,
+        "sessionId": null, "status": "Failed", "jobType": "QuantumComputing", "outputDataFormat":
+        "microsoft.quantum-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-64c7570c-e9df-11ed-ac36-6045bdaa2ba8/outputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
+        {"count": 1}, "errorData": {"code": "InternalError", "message": "An internal
+        error occurred. Please retry the request."}, "isCancelling": false, "tags":
+        [], "name": "quantinuum-job", "id": "64c7570c-e9df-11ed-ac36-6045bdaa2ba8",
+        "providerId": "quantinuum", "target": "quantinuum.sim.h1-1sc", "creationTime":
+        "2023-05-03T18:22:01.7776998Z", "endExecutionTime": null, "costEstimate":
+        null, "itemType": "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-9bc75a35-e9df-11ed-8ca5-6045bdaa2ba8?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-9bc75a35-e9df-11ed-8ca5-6045bdaa2ba8/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "inputDataFormat": "qir.v1", "inputParams": {"entryPoint": "ENTRYPOINT__BellState_Inline",
+        "arguments": [], "targetCapability": "BasicExecution"}, "metadata": null,
+        "sessionId": null, "status": "Succeeded", "jobType": "QuantumComputing", "outputDataFormat":
+        "microsoft.quantum-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-9bc75a35-e9df-11ed-8ca5-6045bdaa2ba8/outputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "beginExecutionTime": "2023-05-03T18:23:40.4119598Z", "cancellationTime":
+        null, "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling":
+        false, "tags": [], "name": "azure-quantum-job", "id": "9bc75a35-e9df-11ed-8ca5-6045bdaa2ba8",
+        "providerId": "rigetti", "target": "rigetti.sim.qvm", "creationTime": "2023-05-03T18:23:33.9678634Z",
+        "endExecutionTime": "2023-05-03T18:23:42.7829837Z", "costEstimate": {"currencyCode":
+        "USD", "events": [{"dimensionId": "qpu_time_centiseconds", "dimensionName":
+        "QPU Execution Time", "measureUnit": "10ms (rounded up)", "amountBilled":
+        0.0, "amountConsumed": 0.0, "unitPrice": 0.0}], "estimatedTotal": 0.0}, "itemType":
+        "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-a4dc01f6-e9df-11ed-a5d9-6045bdaa2ba8?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-a4dc01f6-e9df-11ed-a5d9-6045bdaa2ba8/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "inputDataFormat": "honeywell.openqasm.v1", "inputParams": {}, "metadata":
+        null, "sessionId": null, "status": "Failed", "jobType": "QuantumComputing",
+        "outputDataFormat": "honeywell.quantum-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-a4dc01f6-e9df-11ed-a5d9-6045bdaa2ba8/outputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
+        {"count": 1}, "errorData": {"code": "InternalError", "message": "An internal
+        error occurred. Please retry the request."}, "isCancelling": false, "tags":
+        [], "name": "quantinuum-job", "id": "a4dc01f6-e9df-11ed-a5d9-6045bdaa2ba8",
+        "providerId": "quantinuum", "target": "quantinuum.sim.h1-1sc", "creationTime":
+        "2023-05-03T18:23:51.0386319Z", "endExecutionTime": null, "costEstimate":
+        null, "itemType": "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-c23567d2-e9e1-11ed-b166-6045bdaa2ba8?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-c23567d2-e9e1-11ed-b166-6045bdaa2ba8/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "inputDataFormat": "rigetti.quil.v1", "inputParams": {}, "metadata": null,
+        "sessionId": null, "status": "Succeeded", "jobType": "QuantumComputing", "outputDataFormat":
+        "rigetti.quil-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-c23567d2-e9e1-11ed-b166-6045bdaa2ba8/rawOutputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "beginExecutionTime": "2023-05-03T18:39:02.1879204Z", "cancellationTime":
+        null, "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling":
+        false, "tags": [], "name": "qdk-python-test", "id": "c23567d2-e9e1-11ed-b166-6045bdaa2ba8",
+        "providerId": "rigetti", "target": "rigetti.sim.qvm", "creationTime": "2023-05-03T18:38:58.8226412Z",
+        "endExecutionTime": "2023-05-03T18:39:05.1984789Z", "costEstimate": {"currencyCode":
+        "USD", "events": [{"dimensionId": "qpu_time_centiseconds", "dimensionName":
+        "QPU Execution Time", "measureUnit": "10ms (rounded up)", "amountBilled":
+        0.0, "amountConsumed": 0.0, "unitPrice": 0.0}], "estimatedTotal": 0.0}, "itemType":
+        "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-c911f6f1-e9e1-11ed-8d67-6045bdaa2ba8?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-c911f6f1-e9e1-11ed-8d67-6045bdaa2ba8/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "inputDataFormat": "rigetti.quil.v1", "inputParams": {"count": 5}, "metadata":
+        null, "sessionId": null, "status": "Succeeded", "jobType": "QuantumComputing",
+        "outputDataFormat": "rigetti.quil-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-c911f6f1-e9e1-11ed-8d67-6045bdaa2ba8/rawOutputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "beginExecutionTime": "2023-05-03T18:39:12.7345136Z", "cancellationTime":
+        null, "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling":
+        false, "tags": [], "name": "qdk-python-test", "id": "c911f6f1-e9e1-11ed-8d67-6045bdaa2ba8",
+        "providerId": "rigetti", "target": "rigetti.sim.qvm", "creationTime": "2023-05-03T18:39:10.3266353Z",
+        "endExecutionTime": "2023-05-03T18:39:15.4763195Z", "costEstimate": {"currencyCode":
+        "USD", "events": [{"dimensionId": "qpu_time_centiseconds", "dimensionName":
+        "QPU Execution Time", "measureUnit": "10ms (rounded up)", "amountBilled":
+        0.0, "amountConsumed": 0.0, "unitPrice": 0.0}], "estimatedTotal": 0.0}, "itemType":
+        "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-cfee4444-e9e1-11ed-b334-6045bdaa2ba8?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-cfee4444-e9e1-11ed-b334-6045bdaa2ba8/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "inputDataFormat": "rigetti.quil.v1", "inputParams": {"count": 5, "skipQuilc":
+        false}, "metadata": null, "sessionId": null, "status": "Succeeded", "jobType":
+        "QuantumComputing", "outputDataFormat": "rigetti.quil-results.v1", "outputDataUri":
+        "https://mystorage.blob.core.windows.net:443/job-cfee4444-e9e1-11ed-b334-6045bdaa2ba8/rawOutputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "beginExecutionTime": "2023-05-03T18:39:24.9169466Z", "cancellationTime":
+        null, "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling":
+        false, "tags": [], "name": "qdk-python-test", "id": "cfee4444-e9e1-11ed-b334-6045bdaa2ba8",
+        "providerId": "rigetti", "target": "rigetti.sim.qvm", "creationTime": "2023-05-03T18:39:22.2494918Z",
+        "endExecutionTime": "2023-05-03T18:39:27.0729415Z", "costEstimate": {"currencyCode":
+        "USD", "events": [{"dimensionId": "qpu_time_centiseconds", "dimensionName":
+        "QPU Execution Time", "measureUnit": "10ms (rounded up)", "amountBilled":
+        0.0, "amountConsumed": 0.0, "unitPrice": 0.0}], "estimatedTotal": 0.0}, "itemType":
+        "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-d6ff87ba-e9e1-11ed-b6a7-6045bdaa2ba8?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-d6ff87ba-e9e1-11ed-b6a7-6045bdaa2ba8/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "inputDataFormat": "rigetti.quil.v1", "inputParams": {"count": 5, "skipQuilc":
+        false, "substitutions": {"theta": [[0.0], [3.141592653589793], [6.283185307179586]]}},
+        "metadata": null, "sessionId": null, "status": "Succeeded", "jobType": "QuantumComputing",
+        "outputDataFormat": "rigetti.quil-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-d6ff87ba-e9e1-11ed-b6a7-6045bdaa2ba8/rawOutputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "beginExecutionTime": "2023-05-03T18:39:35.8198552Z", "cancellationTime":
+        null, "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling":
+        false, "tags": [], "name": "qdk-python-test", "id": "d6ff87ba-e9e1-11ed-b6a7-6045bdaa2ba8",
+        "providerId": "rigetti", "target": "rigetti.sim.qvm", "creationTime": "2023-05-03T18:39:33.9126019Z",
+        "endExecutionTime": "2023-05-03T18:39:39.3417328Z", "costEstimate": {"currencyCode":
+        "USD", "events": [{"dimensionId": "qpu_time_centiseconds", "dimensionName":
+        "QPU Execution Time", "measureUnit": "10ms (rounded up)", "amountBilled":
+        0.0, "amountConsumed": 0.0, "unitPrice": 0.0}], "estimatedTotal": 0.0}, "itemType":
+        "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-de1b03c5-e9e1-11ed-a2b4-6045bdaa2ba8?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-de1b03c5-e9e1-11ed-a2b4-6045bdaa2ba8/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "inputDataFormat": "rigetti.quil.v1", "inputParams": {}, "metadata": null,
+        "sessionId": null, "status": "Failed", "jobType": "QuantumComputing", "outputDataFormat":
+        "rigetti.quil-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-de1b03c5-e9e1-11ed-a2b4-6045bdaa2ba8/outputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "beginExecutionTime": "2023-05-03T18:39:48.033631Z", "cancellationTime": null,
+        "quantumComputingData": {"count": 1}, "errorData": {"code": "InvalidInputData",
+        "message": "QVM reported a problem running your program: Encountered the invalid
+        instruction\n\n    a\n\nwhich could not be executed because the operator a
+        is not known"}, "isCancelling": false, "tags": [], "name": "qdk-python-test",
+        "id": "de1b03c5-e9e1-11ed-a2b4-6045bdaa2ba8", "providerId": "rigetti", "target":
+        "rigetti.sim.qvm", "creationTime": "2023-05-03T18:39:45.8565187Z", "endExecutionTime":
+        "2023-05-03T18:39:49.7673536Z", "costEstimate": null, "itemType": "Job"},
+        {"status": "TimedOut", "jobFailurePolicy": "Abort", "name": "My Session",
+        "id": "e4b82e5b-e9e1-11ed-9f5b-6045bdaa2ba8", "providerId": "microsoft.test",
+        "target": "echo-quantinuum", "creationTime": "2023-05-03T18:39:54.9397358Z",
+        "endExecutionTime": "2023-05-03T18:49:55.0481923Z", "costEstimate": null,
+        "itemType": "Session"}, {"status": "Succeeded", "jobFailurePolicy": "Abort",
+        "name": "session-e6d5878d-e9e1-11ed-ab20-6045bdaa2ba8", "id": "e6d5878d-e9e1-11ed-ab20-6045bdaa2ba8",
+        "providerId": "ionq", "target": "ionq.simulator", "creationTime": "2023-05-03T18:39:57.0229861Z",
+        "endExecutionTime": "2023-05-03T18:40:29.5075546Z", "costEstimate": {"currencyCode":
+        "USD", "events": [], "estimatedTotal": 0.0}, "itemType": "Session"}, {"status":
+        "Failed", "jobFailurePolicy": "Abort", "name": "session-02062f6f-e9e2-11ed-8656-6045bdaa2ba8",
+        "id": "02062f6f-e9e2-11ed-8656-6045bdaa2ba8", "providerId": "quantinuum",
+        "target": "quantinuum.sim.h1-1sc", "creationTime": "2023-05-03T18:40:42.5013365Z",
+        "endExecutionTime": "2023-05-03T18:49:57.6433933Z", "costEstimate": null,
+        "itemType": "Session"}, {"status": "Failed", "jobFailurePolicy": "Abort",
+        "name": "session-5a34a569-e9e3-11ed-92f8-6045bdaa2ba8", "id": "5a34a569-e9e3-11ed-92f8-6045bdaa2ba8",
+        "providerId": "microsoft.test", "target": "echo-quantinuum", "creationTime":
+        "2023-05-03T18:50:22.28933Z", "endExecutionTime": "2023-05-03T18:50:56.9863469Z",
+        "costEstimate": null, "itemType": "Session"}, {"status": "Failed", "jobFailurePolicy":
+        "Continue", "name": "session-7ccf7d3a-e9e3-11ed-b7e1-6045bdaa2ba8", "id":
+        "7ccf7d3a-e9e3-11ed-b7e1-6045bdaa2ba8", "providerId": "microsoft.test", "target":
+        "echo-quantinuum", "creationTime": "2023-05-03T18:51:17.988903Z", "endExecutionTime":
+        "2023-05-03T18:52:54.393321Z", "costEstimate": null, "itemType": "Session"},
+        {"status": "Succeeded", "jobFailurePolicy": "Abort", "name": "session-b6605bde-e9e3-11ed-96b4-6045bdaa2ba8",
+        "id": "b6605bde-e9e3-11ed-96b4-6045bdaa2ba8", "providerId": "microsoft", "target":
+        "microsoft.paralleltempering-parameterfree.cpu", "creationTime": "2023-05-03T18:52:56.1593007Z",
+        "endExecutionTime": "2023-05-03T18:53:06.2719897Z", "costEstimate": null,
+        "itemType": "Session"}, {"status": "Succeeded", "jobFailurePolicy": "Abort",
+        "name": "session-bb14761c-e9e3-11ed-a051-6045bdaa2ba8", "id": "bb14761c-e9e3-11ed-a051-6045bdaa2ba8",
+        "providerId": "microsoft.test", "target": "echo-quantinuum", "creationTime":
+        "2023-05-03T18:53:04.189018Z", "endExecutionTime": "2023-05-03T18:53:26.8395262Z",
+        "costEstimate": null, "itemType": "Session"}, {"status": "Succeeded", "jobFailurePolicy":
+        "Abort", "name": "session-cbe46c96-e9e3-11ed-9409-6045bdaa2ba8", "id": "cbe46c96-e9e3-11ed-9409-6045bdaa2ba8",
+        "providerId": "ionq", "target": "ionq.simulator", "creationTime": "2023-05-03T18:53:30.8260007Z",
+        "endExecutionTime": "2023-05-03T18:53:41.2630409Z", "costEstimate": {"currencyCode":
+        "USD", "events": [], "estimatedTotal": 0.0}, "itemType": "Session"}, {"status":
+        "Failed", "jobFailurePolicy": "Abort", "name": "session-d3960b59-e9e3-11ed-acf4-6045bdaa2ba8",
+        "id": "d3960b59-e9e3-11ed-acf4-6045bdaa2ba8", "providerId": "quantinuum",
+        "target": "quantinuum.sim.h1-1sc", "creationTime": "2023-05-03T18:53:43.7272839Z",
+        "endExecutionTime": "2023-05-03T19:02:58.9312736Z", "costEstimate": null,
+        "itemType": "Session"}, {"status": "Succeeded", "jobFailurePolicy": "Abort",
+        "name": "session-205e5735-e9e5-11ed-bf0b-6045bdaa2ba8", "id": "205e5735-e9e5-11ed-bf0b-6045bdaa2ba8",
+        "providerId": "microsoft.test", "target": "echo-quantinuum", "creationTime":
+        "2023-05-03T19:03:04.1835553Z", "endExecutionTime": "2023-05-03T19:03:29.5556092Z",
+        "costEstimate": null, "itemType": "Session"}, {"status": "Succeeded", "jobFailurePolicy":
+        "Abort", "name": "session-32c02554-e9e5-11ed-9d82-6045bdaa2ba8", "id": "32c02554-e9e5-11ed-9d82-6045bdaa2ba8",
+        "providerId": "quantinuum", "target": "quantinuum.sim.h1-1sc", "creationTime":
+        "2023-05-03T19:03:32.7763706Z", "endExecutionTime": "2023-05-03T19:03:42.1899001Z",
+        "costEstimate": null, "itemType": "Session"}], "nextLink": null, "access_token":
+        "fake_token"}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '1322169'
+      - '1421917'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
