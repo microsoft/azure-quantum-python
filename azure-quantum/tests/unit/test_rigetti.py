@@ -53,65 +53,46 @@ class TestRigettiTarget(QuantumTestBase):
             input_params=input_params,
         )
 
-        # If in recording mode, we don't want to record the pooling of job
-        # status as the current testing infrastructure does not support
-        # multiple identical requests.
-        # So we pause the recording until the job has actually completed.
-        # See: https://github.com/microsoft/qdk-python/issues/118
-        self.pause_recording()
-        try:
-            # Set a timeout for IonQ recording
-            job.wait_until_completed(timeout_secs=60)
-        except TimeoutError:
-            warnings.warn(
-                "Rigetti execution exceeded timeout. Skipping fetching results."
-            )
-            return None
-
-        self.resume_recording()
-
-        # Record a single GET request such that job.wait_until_completed
-        # doesn't fail when running recorded tests
-        # See: https://github.com/microsoft/qdk-python/issues/118
+        job.wait_until_completed()
         job.refresh()
 
         job = workspace.get_job(job.id)
-        assert job.has_completed()
+        self.assertTrue(job.has_completed())
 
         return Result(job)
 
     def test_job_submit_rigetti_typed_input_params(self) -> None:
         num_shots = 5
         result = self._run_job(BELL_STATE_QUIL, InputParams(count=num_shots))
-        assert result is not None
+        self.assertIsNotNone(result)
         readout = result[READOUT]
-        assert len(readout) == num_shots
+        self.assertEqual(len(readout), num_shots)
         for shot in readout:
-            assert len(shot) == 2, "Bell state program should only measure 2 qubits"
+            self.assertEqual(len(shot), 2, "Bell state program should only measure 2 qubits")
 
     def test_job_submit_rigetti_dict_input_params(self) -> None:
         num_shots = 5
         result = self._run_job(BELL_STATE_QUIL, {"count": num_shots})
-        assert result is not None
+        self.assertIsNotNone(result)
         readout = result[READOUT]
-        assert len(readout) == num_shots
+        self.assertEqual(len(readout), num_shots)
         for shot in readout:
-            assert len(shot) == 2, "Bell state program should only measure 2 qubits"
+            self.assertEqual(len(shot), 2, "Bell state program should only measure 2 qubits")
 
     def test_job_submit_rigetti_default_input_params(self) -> None:
         result = self._run_job(BELL_STATE_QUIL, None)
-        assert result is not None
+        self.assertIsNotNone(result)
         readout = result[READOUT]
-        assert len(readout) == 1
+        self.assertEqual(len(readout), 1)
         for shot in readout:
-            assert len(shot) == 2, "Bell state program should only measure 2 qubits"
+            self.assertEqual(len(shot), 2, "Bell state program should only measure 2 qubits")
 
     def test_quil_syntax_error(self) -> None:
         with pytest.raises(RuntimeError) as err:
             self._run_job(SYNTAX_ERROR_QUIL, None)
-        assert "could not be executed because the operator a is not known" in str(
+        self.assertIn("could not be executed because the operator a is not known", str(
             err.value
-        )
+        ))
 
     def test_parametrized_quil(self) -> None:
         result = self._run_job(
@@ -120,12 +101,12 @@ class TestRigettiTarget(QuantumTestBase):
                 count=5, substitutions={PARAMETER_NAME: [[0.0], [pi], [2 * pi]]}
             ),
         )
-        assert result is not None
+        self.assertIsNotNone(result)
         readout = result[READOUT]
-        assert len(readout) == 5 * 3
-        assert mean(readout[0:5]) == 0
-        assert mean(readout[5:10]) == 1
-        assert mean(readout[10:15]) == 0
+        self.assertEqual(len(readout), 5 * 3)
+        self.assertEqual(mean(readout[0:5]), 0)
+        self.assertEqual(mean(readout[5:10]), 1)
+        self.assertEqual(mean(readout[10:15]), 0)
 
 
 class FakeJob:
@@ -140,11 +121,11 @@ class FakeJob:
         return self.json
 
 
-class TestResult:
+class TestResult(QuantumTestBase):
     def test_integers(self) -> None:
         result = Result(FakeJob(b'{"ro": [[0, 0], [1, 1]]}'))
 
-        assert result[READOUT] == [[0, 0], [1, 1]]
+        self.assertEqual(result[READOUT], [[0, 0], [1, 1]])
 
     def test_unsuccessful_job(self) -> None:
         details = MagicMock()
@@ -153,5 +134,5 @@ class TestResult:
         with pytest.raises(RuntimeError) as err:
             Result(FakeJob(b'{"ro": [[0, 0], [1, 1]]}', details))
         err_string = str(err.value)
-        assert details.status in err_string
-        assert details.error_data in err_string
+        self.assertIn(details.status, err_string)
+        self.assertIn(details.error_data, err_string)

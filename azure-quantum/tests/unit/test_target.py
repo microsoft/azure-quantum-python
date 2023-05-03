@@ -60,11 +60,11 @@ class TestIonQ(QuantumTestBase):
         circuit = self._3_qubit_ghz()
         target = IonQ(workspace=workspace, name="ionq.simulator")
         cost = target.estimate_cost(circuit, num_shots=100e3)
-        assert cost.estimated_total == 0.0
+        self.assertEqual(cost.estimated_total, 0.0)
 
         target = IonQ(workspace=workspace, name="ionq.qpu")
         cost = target.estimate_cost(circuit, num_shots=100e3)
-        assert np.round(cost.estimated_total) == 63.0
+        self.assertEqual(np.round(cost.estimated_total), 63.0)
 
 
     @pytest.mark.ionq
@@ -94,12 +94,12 @@ class TestIonQ(QuantumTestBase):
         if circuit is None:
             circuit = self._3_qubit_ghz()
         target = IonQ(workspace=workspace)
-        assert "ionq.simulator" == target.name
-        assert "ionq.circuit.v1" == target.input_data_format
-        assert "ionq.quantum-results.v1" == target.output_data_format
-        assert "IonQ" == target.provider_id
-        assert "application/json" == target.content_type
-        assert "" == target.encoding
+        self.assertEqual("ionq.simulator", target.name)
+        self.assertEqual("ionq.circuit.v1", target.input_data_format)
+        self.assertEqual("ionq.quantum-results.v1", target.output_data_format)
+        self.assertEqual("IonQ", target.provider_id)
+        self.assertEqual("application/json", target.content_type)
+        self.assertEqual("", target.encoding)
 
         job = target.submit(
             circuit=circuit,
@@ -107,26 +107,13 @@ class TestIonQ(QuantumTestBase):
             num_shots=num_shots
         )
 
-        # If in recording mode, we don't want to record the pooling of job
-        # status as the current testing infrastructure does not support
-        # multiple identical requests.
-        # So we pause the recording until the job has actually completed.
-        # See: https://github.com/microsoft/qdk-python/issues/118
-        self.pause_recording()
-        try:
-            # Set a timeout for IonQ recording
-            job.wait_until_completed(timeout_secs=60)
-        except TimeoutError:
-            warnings.warn("IonQ execution exceeded timeout. Skipping fetching results.")
+        job.wait_until_completed(timeout_secs=60)
 
         # Check if job succeeded
         self.assertEqual(True, job.has_completed())
-        assert job.details.status == "Succeeded"
+        self.assertEqual(job.details.status, "Succeeded")
         self.resume_recording()
 
-        # Record a single GET request such that job.wait_until_completed
-        # doesn't fail when running recorded tests
-        # See: https://github.com/microsoft/qdk-python/issues/118
         job.refresh()
 
         job = workspace.get_job(job.id)
@@ -134,14 +121,14 @@ class TestIonQ(QuantumTestBase):
 
         if job.has_completed():
             results = job.get_results()
-            assert "histogram" in results
-            assert results["histogram"]["0"] == 0.5
-            assert results["histogram"]["7"] == 0.5
+            self.assertIn("histogram", results)
+            self.assertEqual(results["histogram"]["0"], 0.5)
+            self.assertEqual(results["histogram"]["7"], 0.5)
 
         if num_shots:
-            assert job.details.input_params.get("shots") == num_shots
+            self.assertEqual(job.details.input_params.get("shots"), num_shots)
         else:
-            assert job.details.input_params.get("shots") is None
+            self.assertIsNone(job.details.input_params.get("shots"))
 
         return job
 
@@ -150,12 +137,12 @@ class TestIonQ(QuantumTestBase):
     def test_ionq_qpu_target(self):
         workspace = self.create_workspace()
         target = IonQ(workspace=workspace, name="ionq.qpu")
-        assert "ionq.qpu" == target.name
-        assert "ionq.circuit.v1" == target.input_data_format
-        assert "ionq.quantum-results.v1" == target.output_data_format
-        assert "IonQ" == target.provider_id
-        assert "application/json" == target.content_type
-        assert "" == target.encoding
+        self.assertEqual("ionq.qpu", target.name)
+        self.assertEqual("ionq.circuit.v1", target.input_data_format)
+        self.assertEqual("ionq.quantum-results.v1", target.output_data_format)
+        self.assertEqual("IonQ", target.provider_id)
+        self.assertEqual("application/json", target.content_type)
+        self.assertEqual("", target.encoding)
 
 
 
@@ -203,32 +190,32 @@ class TestQuantinuum(QuantumTestBase):
             target = Quantinuum(workspace=workspace, name="quantinuum.hqs-lt-s1-apival")
 
             cost = target.estimate_cost(circuit, num_shots=100e3)
-            assert cost.estimated_total == 0.0
+            self.assertEqual(cost.estimated_total, 0.0)
 
             target = Quantinuum(workspace=workspace, name="quantinuum.hqs-lt-s1")
 
             cost = target.estimate_cost(circuit, num_shots=100e3)
-            assert cost.estimated_total == 845.0
+            self.assertEqual(cost.estimated_total, 845.0)
 
             target = Quantinuum(workspace=workspace, name="quantinuum.sim.h1-1sc")
 
             cost = target.estimate_cost(circuit, num_shots=100e3)
-            assert cost.estimated_total == 0.0
+            self.assertEqual(cost.estimated_total, 0.0)
 
             target = Quantinuum(workspace=workspace, name="quantinuum.qpu.h1-1")
 
             cost = target.estimate_cost(circuit, num_shots=100e3)
-            assert cost.estimated_total == 845.0
+            self.assertEqual(cost.estimated_total, 845.0)
 
             target = Quantinuum(workspace=workspace, name="quantinuum.sim.h1-2sc")
 
             cost = target.estimate_cost(circuit, num_shots=100e3)
-            assert cost.estimated_total == 0.0
+            self.assertEqual(cost.estimated_total, 0.0)
 
             target = Quantinuum(workspace=workspace, name="quantinuum.qpu.h1-2")
 
             cost = target.estimate_cost(circuit, num_shots=100e3)
-            assert cost.estimated_total == 845.0
+            self.assertEqual(cost.estimated_total, 845.0)
 
     @pytest.mark.quantinuum
     @pytest.mark.live_test
@@ -251,7 +238,7 @@ class TestQuantinuum(QuantumTestBase):
             else:
                 # Check if job succeeded
                 self.assertEqual(True, job.has_completed())
-                assert job.details.status == "Succeeded"
+                self.assertEqual(job.details.status, "Succeeded")
             self.resume_recording()
 
         job = workspace.get_job(job.id)
@@ -259,6 +246,6 @@ class TestQuantinuum(QuantumTestBase):
 
         if job.has_completed():
             results = job.get_results()
-            assert results["c0"] == ["0"]
-            assert results["c1"] == ["0"]
+            self.assertEqual(results["c0"], ["0"])
+            self.assertEqual(results["c1"], ["0"])
 

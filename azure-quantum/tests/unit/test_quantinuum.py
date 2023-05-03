@@ -12,9 +12,7 @@ import pytest
 
 import numpy as np
 
-from azure.core.exceptions import HttpResponseError
-from azure.quantum.job.job import Job
-from azure.quantum._client.models import CostEstimate, UsageEvent
+from azure.quantum import Job, JobStatus
 from azure.quantum.target import Quantinuum
 
 from common import QuantumTestBase, ZERO_UID
@@ -64,32 +62,32 @@ class TestQuantinuum(QuantumTestBase):
             target = Quantinuum(workspace=workspace, name="quantinuum.hqs-lt-s1-apival")
 
             cost = target.estimate_cost(circuit, num_shots=100e3)
-            assert cost.estimated_total == 0.0
+            self.assertEqual(cost.estimated_total, 0.0)
 
             target = Quantinuum(workspace=workspace, name="quantinuum.hqs-lt-s1")
 
             cost = target.estimate_cost(circuit, num_shots=100e3)
-            assert cost.estimated_total == 845.0
+            self.assertEqual(cost.estimated_total, 845.0)
 
             target = Quantinuum(workspace=workspace, name="quantinuum.sim.h1-1sc")
 
             cost = target.estimate_cost(circuit, num_shots=100e3)
-            assert cost.estimated_total == 0.0
+            self.assertEqual(cost.estimated_total, 0.0)
 
             target = Quantinuum(workspace=workspace, name="quantinuum.qpu.h1-1")
 
             cost = target.estimate_cost(circuit, num_shots=100e3)
-            assert cost.estimated_total == 845.0
+            self.assertEqual(cost.estimated_total, 845.0)
 
             target = Quantinuum(workspace=workspace, name="quantinuum.sim.h1-2sc")
 
             cost = target.estimate_cost(circuit, num_shots=100e3)
-            assert cost.estimated_total == 0.0
+            self.assertEqual(cost.estimated_total, 0.0)
 
             target = Quantinuum(workspace=workspace, name="quantinuum.qpu.h1-2")
 
             cost = target.estimate_cost(circuit, num_shots=100e3)
-            assert cost.estimated_total == 845.0
+            self.assertEqual(cost.estimated_total, 845.0)
 
     @pytest.mark.quantinuum
     @pytest.mark.live_test
@@ -98,27 +96,15 @@ class TestQuantinuum(QuantumTestBase):
         circuit = self._teleport()
         target = Quantinuum(workspace=workspace)
         job = target.submit(circuit)
-        # Make sure the job is completed before fetching the results
-        # playback currently does not work for repeated calls
-        if not self.is_playback:
-            self.pause_recording()
-            self.assertEqual(False, job.has_completed())
-            try:
-                # Set a timeout for recording
-                job.wait_until_completed(timeout_secs=60)
-            except TimeoutError:
-                warnings.warn("Quantinuum execution exceeded timeout. Skipping fetching results.")
-            else:
-                # Check if job succeeded
-                self.assertEqual(True, job.has_completed())
-                assert job.details.status == "Succeeded"
-            self.resume_recording()
+        self.assertEqual(False, job.has_completed())
+        job.wait_until_completed()
+
+        self.assertEqual(True, job.has_completed())
+        self.assertEqual(job.details.status, JobStatus.SUCCEEDED)
 
         job = workspace.get_job(job.id)
         self.assertEqual(True, job.has_completed())
 
-        if job.has_completed():
-            results = job.get_results()
-            assert results["c0"] == ["0"]
-            assert results["c1"] == ["0"]
-
+        results = job.get_results()
+        self.assertEqual(results["c0"], ["0"])
+        self.assertEqual(results["c1"], ["0"])

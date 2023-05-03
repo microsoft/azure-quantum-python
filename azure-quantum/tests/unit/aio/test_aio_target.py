@@ -15,13 +15,6 @@ class TestIonQ(QuantumTestBase):
     Tests the azure.quantum.target.ionq module.
     """
 
-    mock_create_job_id_name = "create_job_id"
-    create_job_id = Job.create_job_id
-
-    def get_test_job_id(self):
-        return ZERO_UID if self.is_playback \
-               else Job.create_job_id()
-
     def _3_qubit_ghz(self):
         return {
             "qubits": 3,
@@ -50,54 +43,32 @@ class TestIonQ(QuantumTestBase):
         self.get_async_result(self._test_job_submit_ionq(num_shots=100))
 
     async def _test_job_submit_ionq(self, num_shots):
+        workspace = self.create_async_workspace()
+        circuit = self._3_qubit_ghz()
+        target = IonQ(workspace=workspace)
+        job = await target.submit(
+            circuit=circuit,
+            name="ionq-3ghz-job",
+            num_shots=num_shots
+        )
 
-        with unittest.mock.patch.object(
-            Job,
-            self.mock_create_job_id_name,
-            return_value=self.get_test_job_id(),
-        ):
-            workspace = self.create_async_workspace()
-            circuit = self._3_qubit_ghz()
-            target = IonQ(workspace=workspace)
-            job = await target.submit(
-                circuit=circuit,
-                name="ionq-3ghz-job",
-                num_shots=num_shots
-            )
+        await job.wait_until_completed()
 
-            # Make sure the job is completed before fetching the results
-            # playback currently does not work for repeated calls
-            if not self.is_playback:
-                self.pause_recording()
-                try:
-                    # Set a timeout for IonQ recording
-                    await job.wait_until_completed(max_poll_wait_secs=60)
-                except TimeoutError:
-                    warnings.warn("IonQ execution exceeded timeout. Skipping fetching results.")
-                self.resume_recording()
+        job = await workspace.get_job(job.id)
+        self.assertEqual(True, job.has_completed())
 
-            job = await workspace.get_job(job.id)
-            self.assertEqual(True, job.has_completed())
+        results = await job.get_results()
+        self.assertIn("histogram", results)
+        self.assertEqual(results["histogram"]["0"], 0.5)
+        self.assertEqual(results["histogram"]["7"], 0.5)
 
-            results = await job.get_results()
-            assert "histogram" in results
-            assert results["histogram"]["0"] == 0.5
-            assert results["histogram"]["7"] == 0.5
-
-            if num_shots:
-                assert job.details.input_params.get("shots") == num_shots
-            else:
-                assert job.details.input_params.get("shots") is None
+        if num_shots:
+            self.assertEqual(job.details.input_params.get("shots"), num_shots)
+        else:
+            self.assertIsNone(job.details.input_params.get("shots"))
 
 
 class TestQuantinuum(QuantumTestBase):
-    mock_create_job_id_name = "create_job_id"
-    create_job_id = Job.create_job_id
-
-    def get_test_job_id(self):
-        return ZERO_UID if self.is_playback \
-               else Job.create_job_id()
-
     def _teleport(self):
         return """OPENQASM 2.0;
         include "qelib1.inc";
@@ -128,29 +99,16 @@ class TestQuantinuum(QuantumTestBase):
         self.get_async_result(self._test_job_submit_quantinuum())
 
     async def _test_job_submit_quantinuum(self, **kwargs):
-        with unittest.mock.patch.object(
-            Job,
-            self.mock_create_job_id_name,
-            return_value=self.get_test_job_id(),
-        ):
-            workspace = self.create_async_workspace()
-            circuit = self._teleport()
-            target = Quantinuum(workspace=workspace)
-            job = await target.submit(circuit)
-            # Make sure the job is completed before fetching the results
-            # playback currently does not work for repeated calls
-            if not self.is_playback:
-                self.pause_recording()
-                try:
-                    # Set a timeout for Quantinuum recording
-                    await job.wait_until_completed(max_poll_wait_secs=60)
-                except TimeoutError:
-                    warnings.warn("Quantinuum execution exceeded timeout. Skipping fetching results.")
-                self.resume_recording()
+        workspace = self.create_async_workspace()
+        circuit = self._teleport()
+        target = Quantinuum(workspace=workspace)
+        job = await target.submit(circuit)
 
-            job = await workspace.get_job(job.id)
-            self.assertEqual(True, job.has_completed())
+        await job.wait_until_completed()
 
-            results = await job.get_results()
-            assert results["c0"] == ["0"]
-            assert results["c1"] == ["000"]
+        job = await workspace.get_job(job.id)
+        self.assertEqual(True, job.has_completed())
+
+        results = await job.get_results()
+        self.assertEqual(results["c0"], ["0"])
+        self.assertEqual(results["c1"], ["000"])

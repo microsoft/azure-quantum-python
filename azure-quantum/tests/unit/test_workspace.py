@@ -23,10 +23,10 @@ class TestWorkspace(QuantumTestBase):
             name=self.workspace_name,
             location=self.location
         )
-        assert ws.subscription_id == self.subscription_id
-        assert ws.resource_group == self.resource_group
-        assert ws.name == self.workspace_name
-        assert ws.location.lower().replace(" ", "") == self.location.lower().replace(" ", "")
+        self.assertEqual(ws.subscription_id, self.subscription_id)
+        self.assertEqual(ws.resource_group, self.resource_group)
+        self.assertEqual(ws.name, self.workspace_name)
+        self.assertEqual(ws.location.lower().replace(" ", ""), self.location.lower().replace(" ", ""))
 
         ws = Workspace(
             subscription_id=self.subscription_id,
@@ -35,16 +35,16 @@ class TestWorkspace(QuantumTestBase):
             location=self.location,
             storage=storage
         )
-        assert ws.storage == storage
+        self.assertEqual(ws.storage, storage)
 
         resource_id = f"/subscriptions/{self.subscription_id}/ResourceGroups/{self.resource_group}/providers/Microsoft.Quantum/Workspaces/{self.workspace_name}"
         ws = Workspace(resource_id=resource_id, location=self.location)
-        assert ws.subscription_id == self.subscription_id
-        assert ws.resource_group == self.resource_group
-        assert ws.name == self.workspace_name
+        self.assertEqual(ws.subscription_id, self.subscription_id)
+        self.assertEqual(ws.resource_group, self.resource_group)
+        self.assertEqual(ws.name, self.workspace_name)
 
         ws = Workspace(resource_id=resource_id, storage=storage, location=self.location)
-        assert ws.storage == storage
+        self.assertEqual(ws.storage, storage)
 
     def test_create_workspace_locations(self):
         # location is mandatory
@@ -64,7 +64,7 @@ class TestWorkspace(QuantumTestBase):
             name=self.workspace_name,
             location=location,
         )
-        assert ws.location == "eastus"
+        self.assertEqual(ws.location, "eastus")
 
     def test_create_workspace_instance_invalid(self):
         storage = "invalid_storage"
@@ -90,37 +90,37 @@ class TestWorkspace(QuantumTestBase):
     def test_workspace_get_targets_ionq(self):
         ws = self.create_workspace()
         targets = ws.get_targets()
-        assert None not in targets
+        self.assertNotIn(None, targets)
         test_targets = set([
             'ionq.simulator'
         ])
-        assert test_targets.issubset(set([t.name for t in targets]))
+        self.assertTrue(test_targets.issubset(set([t.name for t in targets])))
 
     @pytest.mark.quantinuum
     @pytest.mark.live_test
     def test_workspace_get_targets_quantinuum(self):
         ws = self.create_workspace()
         targets = ws.get_targets()
-        assert None not in targets
+        self.assertNotIn(None, targets)
         test_targets = set([
             'quantinuum.hqs-lt-s1-apival'
         ])
-        assert test_targets.issubset(set([t.name for t in targets]))
+        self.assertTrue(test_targets.issubset(set([t.name for t in targets])))
         test_targets = set([
             'quantinuum.sim.h1-1sc'
         ])
-        assert test_targets.issubset(set([t.name for t in targets]))
+        self.assertTrue(test_targets.issubset(set([t.name for t in targets])))
         test_targets = set([
             'quantinuum.sim.h1-2sc'
         ])
-        assert test_targets.issubset(set([t.name for t in targets]))
+        self.assertTrue(test_targets.issubset(set([t.name for t in targets])))
 
     @pytest.mark.qio
     @pytest.mark.live_test
     def test_workspace_get_targets_qio(self):
         ws = self.create_workspace()
         targets = ws.get_targets()
-        assert None not in targets
+        self.assertNotIn(None, targets)
         test_targets = set([
             'microsoft.paralleltempering-parameterfree.cpu',
             'microsoft.populationannealing.cpu',
@@ -129,22 +129,22 @@ class TestWorkspace(QuantumTestBase):
             'microsoft.substochasticmontecarlo.cpu',
             'microsoft.tabu-parameterfree.cpu',
         ])
-        assert test_targets.issubset(set([t.name for t in targets]))
+        self.assertTrue(test_targets.issubset(set([t.name for t in targets])))
 
     @pytest.mark.ionq
     @pytest.mark.live_test
     def test_workspace_get_target_ionq(self):
         ws = self.create_workspace()
         target = ws.get_targets("ionq.qpu")
-        assert target.average_queue_time is not None
-        assert target.current_availability is not None
-        assert target.name == "ionq.qpu"
+        self.assertIsNotNone(target.average_queue_time)
+        self.assertIsNotNone(target.current_availability)
+        self.assertEqual(target.name, "ionq.qpu")
         target.refresh()
-        assert target.average_queue_time is not None
-        assert target.current_availability is not None
+        self.assertIsNotNone(target.average_queue_time)
+        self.assertIsNotNone(target.current_availability)
         # target lookup is case insensitive
         target1 = ws.get_targets("IonQ.QPU")
-        assert target.name == target1.name
+        self.assertEqual(target.name, target1.name)
 
         with pytest.raises(ValueError):
             target.name = "foo"
@@ -158,20 +158,20 @@ class TestWorkspace(QuantumTestBase):
         ws = self.create_workspace()
         target = ws.get_targets("microsoft.estimator")
 
-        assert type(target) == MicrosoftEstimator
+        self.assertEqual(type(target), MicrosoftEstimator)
 
     @pytest.mark.live_test
     def test_workspace_job_quotas(self):
         ws = self.create_workspace()
         quotas = ws.get_quotas()
-        assert len(quotas) > 0
-        assert "dimension" in quotas[0]
-        assert "scope" in quotas[0]
-        assert "provider_id" in quotas[0]
-        assert "utilization" in quotas[0]
-        assert "holds" in quotas[0]
-        assert "limit" in quotas[0]
-        assert "period" in quotas[0]
+        self.assertGreater(len(quotas), 0)
+        self.assertIn("dimension", quotas[0])
+        self.assertIn("scope", quotas[0])
+        self.assertIn("provider_id", quotas[0])
+        self.assertIn("utilization", quotas[0])
+        self.assertIn("holds", quotas[0])
+        self.assertIn("limit", quotas[0])
+        self.assertIn("period", quotas[0])
 
     def test_workspace_user_agent_appid(self):
         env_var_app_id = "MyEnvVarAppId"
@@ -187,7 +187,7 @@ class TestWorkspace(QuantumTestBase):
                 name=self.workspace_name,
                 location=self.location
             )
-            assert ws.user_agent is None
+            self.assertIsNone(ws.user_agent)
 
             # no UserAgent parameter and with EnvVar AppId
             os.environ[USER_AGENT_APPID_ENV_VAR_NAME] = env_var_app_id
@@ -197,7 +197,7 @@ class TestWorkspace(QuantumTestBase):
                 name=self.workspace_name,
                 location=self.location
             )
-            assert ws.user_agent == env_var_app_id
+            self.assertEqual(ws.user_agent, env_var_app_id)
 
             # with UserAgent parameter and no EnvVar AppId
             os.environ[USER_AGENT_APPID_ENV_VAR_NAME] = ""
@@ -208,7 +208,7 @@ class TestWorkspace(QuantumTestBase):
                 location=self.location,
                 user_agent=user_agent
             )
-            assert ws.user_agent == user_agent
+            self.assertEqual(ws.user_agent, user_agent)
 
             # with very long UserAgent parameter and no EnvVar AppId
             os.environ[USER_AGENT_APPID_ENV_VAR_NAME] = ""
@@ -219,7 +219,7 @@ class TestWorkspace(QuantumTestBase):
                 location=self.location,
                 user_agent=very_long_user_agent
             )
-            assert ws.user_agent == very_long_user_agent
+            self.assertEqual(ws.user_agent, very_long_user_agent)
 
             # with UserAgent parameter and with EnvVar AppId
             os.environ[USER_AGENT_APPID_ENV_VAR_NAME] = env_var_app_id
@@ -230,7 +230,7 @@ class TestWorkspace(QuantumTestBase):
                 location=self.location,
                 user_agent=user_agent
             )
-            assert ws.user_agent == f"{user_agent}-{env_var_app_id}"
+            self.assertEqual(ws.user_agent, f"{user_agent}-{env_var_app_id}")
 
             # Append with UserAgent parameter and with EnvVar AppId 
             os.environ[USER_AGENT_APPID_ENV_VAR_NAME] = env_var_app_id
@@ -242,7 +242,7 @@ class TestWorkspace(QuantumTestBase):
                 user_agent=user_agent
             )
             ws.append_user_agent("featurex")
-            assert ws.user_agent == f"{user_agent}-featurex-{env_var_app_id}"
+            self.assertEqual(ws.user_agent, f"{user_agent}-featurex-{env_var_app_id}")
 
             # Append with no UserAgent parameter and no EnvVar AppId 
             os.environ[USER_AGENT_APPID_ENV_VAR_NAME] = ""
@@ -253,7 +253,7 @@ class TestWorkspace(QuantumTestBase):
                 location=self.location
             )
             ws.append_user_agent("featurex")
-            assert ws.user_agent == "featurex"
+            self.assertEqual(ws.user_agent, "featurex")
         finally:
             if original_env_app_id:
                 os.environ[USER_AGENT_APPID_ENV_VAR_NAME] = original_env_app_id

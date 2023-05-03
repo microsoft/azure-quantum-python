@@ -168,17 +168,11 @@ class TestJob(QuantumTestBase):
 
             # Submit the blob data URI and run job
             job = solver.submit(input_data_uri)
-
-            # For recording purposes, we only want to record and
-            # and resume recording when the job has completed
-            self.pause_recording()
             job.wait_until_completed()
-            self.resume_recording()
-
             job.refresh()
             job.get_results()
-            assert job.has_completed()
-            assert job.details.status == "Succeeded"
+            self.assertTrue(job.has_completed())
+            self.assertEqual(job.details.status, "Succeeded")
 
     @pytest.mark.skipif(not(os.environ.get("AZURE_QUANTUM_1QBIT", "") == "1"), reason="1Qbit tests not enabled")
     @pytest.mark.oneqbit
@@ -317,11 +311,7 @@ class TestJob(QuantumTestBase):
 
         self.assertEqual(False, job.has_completed())
 
-        # For recording purposes, we only want to record and
-        # and resume recording when the job has completed
-        self.pause_recording()
         job.wait_until_completed()
-        self.resume_recording()
 
         job.refresh()
         self.assertEqual(True, job.has_completed())
@@ -332,7 +322,7 @@ class TestJob(QuantumTestBase):
         job = workspace.get_job(job.id)
         self.assertEqual(True, job.has_completed())
 
-        assert job.details.status == "Succeeded"
+        self.assertEqual(job.details.status, "Succeeded")
 
 
     @pytest.mark.live_test
