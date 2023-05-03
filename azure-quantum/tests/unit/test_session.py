@@ -222,7 +222,8 @@ class TestSession(QuantumTestBase):
 
         qsharp_callable = JobPayloadFactory.get_qsharp_inline_callable_bell_state()[0]
 
-        output_data_format = "honeywell.qir.v1" if "echo-quantinuum" in target_name else None
+        output_data_format = "honeywell.qir.v1" if "echo-quantinuum" in target_name \
+                             else target._qir_output_data_format()
 
         with target.open_session() as session:
             self.assertEqual(session.details.status, SessionStatus.WAITING)
