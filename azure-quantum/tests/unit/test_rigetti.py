@@ -1,16 +1,17 @@
-"""Tests the ``azure.quantum.target.rigetti`` module."""
-import unittest
-import warnings
+##
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+##
+
 from typing import Dict, Any, Union, Optional
 from unittest.mock import MagicMock
 
 import pytest
 from numpy import pi, mean
 
-from azure.quantum.job import Job
 from azure.quantum.target import Rigetti
 from azure.quantum.target.rigetti import Result, InputParams
-from common import QuantumTestBase, ZERO_UID
+from common import QuantumTestBase, DEFAULT_TIMEOUT_SECS
 
 READOUT = "ro"
 BELL_STATE_QUIL = f"""
@@ -53,7 +54,7 @@ class TestRigettiTarget(QuantumTestBase):
             input_params=input_params,
         )
 
-        job.wait_until_completed()
+        job.wait_until_completed(timeout_secs=DEFAULT_TIMEOUT_SECS)
         job.refresh()
 
         job = workspace.get_job(job.id)

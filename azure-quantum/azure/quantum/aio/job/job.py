@@ -2,11 +2,12 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 ##
+
 import asyncio
 import logging
 import json
 
-from azure.quantum.aio.job.base_job import BaseJob, ContentType, DEFAULT_TIMEOUT
+from azure.quantum.aio.job.base_job import BaseJob, DEFAULT_TIMEOUT
 from azure.quantum.job.job import Job as SyncJob
 from azure.quantum.job.filtered_job import FilteredJob
 
@@ -54,7 +55,7 @@ class Job(BaseJob, SyncJob, FilteredJob):
         :raises TimeoutError: If the total poll time exceeds timeout, raise
         """
         await self.refresh()
-        poll_wait = 0.2
+        poll_wait = SyncJob._default_poll_wait
         total_time = 0.
         while not self.has_completed():
             if timeout_secs is not None and total_time >= timeout_secs:

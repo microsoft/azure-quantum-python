@@ -2,10 +2,11 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 ##
+
 from typing import Dict
 import pytest
 
-from common import QuantumTestBase
+from common import QuantumTestBase, DEFAULT_TIMEOUT_SECS
 from test_job_payload_factory import JobPayloadFactory
 from azure.quantum import Job, JobStatus, Session, SessionStatus, SessionJobFailurePolicy
 from azure.quantum.qiskit.backends.quantinuum import QuantinuumQPUQirBackend
@@ -149,7 +150,7 @@ class TestSession(QuantumTestBase):
 
             target.submit(circuit, name="Job 2")
 
-            azure_job.wait_until_completed()
+            azure_job.wait_until_completed(timeout_secs=DEFAULT_TIMEOUT_SECS)
 
             session.refresh()
             self.assertEqual(session.details.status, SessionStatus.EXECUTING)
@@ -160,7 +161,7 @@ class TestSession(QuantumTestBase):
         self.assertEqual(session_jobs[0].details.name, "Job 1")
         self.assertEqual(session_jobs[1].details.name, "Job 2")
 
-        [job.wait_until_completed() for job in session_jobs]
+        [job.wait_until_completed(timeout_secs=DEFAULT_TIMEOUT_SECS) for job in session_jobs]
         session.refresh()
         self.assertEqual(session.details.status, SessionStatus.SUCCEEDED)
 
@@ -199,7 +200,7 @@ class TestSession(QuantumTestBase):
         self.assertEqual(session_jobs[0].details.name, "Job 1")
         self.assertEqual(session_jobs[1].details.name, "Job 2")
 
-        [job.wait_until_completed() for job in session_jobs]
+        [job.wait_until_completed(timeout_secs=DEFAULT_TIMEOUT_SECS) for job in session_jobs]
         session.refresh()
         self.assertEqual(session.details.status, SessionStatus.SUCCEEDED)
 
@@ -234,7 +235,7 @@ class TestSession(QuantumTestBase):
                           name="Job 2",
                           output_data_format=output_data_format)
 
-            job1.wait_until_completed()
+            job1.wait_until_completed(timeout_secs=DEFAULT_TIMEOUT_SECS)
 
             session.refresh()
             self.assertEqual(session.details.status, SessionStatus.EXECUTING)
@@ -245,7 +246,7 @@ class TestSession(QuantumTestBase):
         self.assertEqual(session_jobs[0].details.name, "Job 1")
         self.assertEqual(session_jobs[1].details.name, "Job 2")
 
-        [job.wait_until_completed() for job in session_jobs]
+        [job.wait_until_completed(timeout_secs=DEFAULT_TIMEOUT_SECS) for job in session_jobs]
         session.refresh()
         self.assertEqual(session.details.status, SessionStatus.SUCCEEDED)
 
@@ -281,7 +282,7 @@ class TestSession(QuantumTestBase):
             job1 = target.submit(qsharp_callable,
                                  name="Bad Job 1",
                                  output_data_format="invalid_output_format")
-            job1.wait_until_completed()
+            job1.wait_until_completed(timeout_secs=DEFAULT_TIMEOUT_SECS)
             self.assertEqual(job1.details.status, JobStatus.FAILED)
             session.refresh()
             self.assertEqual(session.details.status, SessionStatus.FAILED)
@@ -303,7 +304,7 @@ class TestSession(QuantumTestBase):
             job1 = target.submit(qsharp_callable,
                                  name="Good Job 1",
                                  output_data_format=output_data_format)
-            job1.wait_until_completed()
+            job1.wait_until_completed(timeout_secs=DEFAULT_TIMEOUT_SECS)
             self.assertEqual(job1.details.status, JobStatus.SUCCEEDED)
             session.refresh()
             self.assertEqual(session.details.status, SessionStatus.EXECUTING)
@@ -312,7 +313,7 @@ class TestSession(QuantumTestBase):
             job2 = target.submit(qsharp_callable,
                                  name="Bad Job 2",
                                  output_data_format="invalid_output_format")
-            job2.wait_until_completed()
+            job2.wait_until_completed(timeout_secs=DEFAULT_TIMEOUT_SECS)
             self.assertEqual(job2.details.status, JobStatus.FAILED)
             session.refresh()
             self.assertEqual(session.details.status, SessionStatus.FAILURE_S_)
@@ -320,7 +321,7 @@ class TestSession(QuantumTestBase):
             job3 = target.submit(qsharp_callable,
                                  name="Good Job 3",
                                  output_data_format=output_data_format)
-            job3.wait_until_completed()
+            job3.wait_until_completed(timeout_secs=DEFAULT_TIMEOUT_SECS)
             self.assertEqual(job3.details.status, JobStatus.SUCCEEDED)
             session.refresh()
             self.assertEqual(session.details.status, SessionStatus.FAILURE_S_)

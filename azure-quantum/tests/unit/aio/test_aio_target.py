@@ -1,12 +1,13 @@
-import unittest
-import warnings
 
-from azure.core.exceptions import HttpResponseError
-from azure.quantum.aio.job.job import Job
+##
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+##
+
 from azure.quantum.aio.target import IonQ
 from azure.quantum.aio.target.quantinuum import Quantinuum
 
-from common import QuantumTestBase, ZERO_UID
+from common import QuantumTestBase, DEFAULT_TIMEOUT_SECS
 
 
 class TestIonQ(QuantumTestBase):
@@ -52,12 +53,12 @@ class TestIonQ(QuantumTestBase):
             num_shots=num_shots
         )
 
-        await job.wait_until_completed()
+        await job.wait_until_completed(timeout_secs=DEFAULT_TIMEOUT_SECS)
 
         job = await workspace.get_job(job.id)
         self.assertEqual(True, job.has_completed())
 
-        results = await job.get_results()
+        results = await job.get_results(timeout_secs=DEFAULT_TIMEOUT_SECS)
         self.assertIn("histogram", results)
         self.assertEqual(results["histogram"]["0"], 0.5)
         self.assertEqual(results["histogram"]["7"], 0.5)
@@ -104,11 +105,11 @@ class TestQuantinuum(QuantumTestBase):
         target = Quantinuum(workspace=workspace)
         job = await target.submit(circuit)
 
-        await job.wait_until_completed()
+        await job.wait_until_completed(timeout_secs=DEFAULT_TIMEOUT_SECS)
 
         job = await workspace.get_job(job.id)
         self.assertEqual(True, job.has_completed())
 
-        results = await job.get_results()
+        results = await job.get_results(timeout_secs=DEFAULT_TIMEOUT_SECS)
         self.assertEqual(results["c0"], ["0"])
         self.assertEqual(results["c1"], ["000"])

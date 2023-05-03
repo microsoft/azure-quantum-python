@@ -1,18 +1,15 @@
-#!/bin/env python
-# -*- coding: utf-8 -*-
-##
-# test_job.py: Checks correctness of azure.quantum.job module.
 ##
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 ##
+
 import unittest
 import os
 import functools
 import pytest
 from datetime import date, datetime, timedelta
 
-from common import QuantumTestBase, ZERO_UID
+from common import QuantumTestBase, DEFAULT_TIMEOUT_SECS
 from azure.quantum.job.base_job import ContentType
 from azure.quantum import Job
 from azure.quantum.optimization import Problem, ProblemType, Term, SlcTerm
@@ -168,9 +165,9 @@ class TestJob(QuantumTestBase):
 
             # Submit the blob data URI and run job
             job = solver.submit(input_data_uri)
-            job.wait_until_completed()
+            job.wait_until_completed(timeout_secs=DEFAULT_TIMEOUT_SECS)
             job.refresh()
-            job.get_results()
+            job.get_results(timeout_secs=DEFAULT_TIMEOUT_SECS)
             self.assertTrue(job.has_completed())
             self.assertEqual(job.details.status, "Succeeded")
 
@@ -311,12 +308,12 @@ class TestJob(QuantumTestBase):
 
         self.assertEqual(False, job.has_completed())
 
-        job.wait_until_completed()
+        job.wait_until_completed(timeout_secs=DEFAULT_TIMEOUT_SECS)
 
         job.refresh()
         self.assertEqual(True, job.has_completed())
 
-        job.get_results()
+        job.get_results(timeout_secs=DEFAULT_TIMEOUT_SECS)
         self.assertEqual(True, job.has_completed())
 
         job = workspace.get_job(job.id)

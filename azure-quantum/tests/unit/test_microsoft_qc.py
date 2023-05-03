@@ -1,18 +1,13 @@
-#!/bin/env python
-# -*- coding: utf-8 -*-
-##
-# test_microsoft_qc.py: Tests for microsoft-qc provider.
 ##
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 ##
 import pytest
 from pytest import raises
-
 from os import path
 import re
 
-from common import QuantumTestBase
+from common import QuantumTestBase, DEFAULT_TIMEOUT_SECS
 
 from azure.quantum import JobStatus
 from azure.quantum.target.microsoft import MicrosoftEstimator, \
@@ -48,14 +43,14 @@ class TestMicrosoftQC(QuantumTestBase):
         ccnot = self._ccnot_bitcode()
         job = estimator.submit(ccnot)
         self.assertIsInstance(job, MicrosoftEstimatorJob)
-        job.wait_until_completed()
-        result = job.get_results()
+        job.wait_until_completed(timeout_secs=DEFAULT_TIMEOUT_SECS)
+        result = job.get_results(timeout_secs=DEFAULT_TIMEOUT_SECS)
         self.assertIsInstance(result, MicrosoftEstimatorResult)
 
         # Retrieve job by ID
         job2 = ws.get_job(job.id)
         self.assertEqual(type(job2), type(job))
-        result2 = job2.get_results()
+        result2 = job2.get_results(timeout_secs=DEFAULT_TIMEOUT_SECS)
         self.assertEqual(type(result2), type(result))
 
     @pytest.mark.microsoft_qc
@@ -75,11 +70,11 @@ class TestMicrosoftQC(QuantumTestBase):
         params.items[1].error_budget = 0.002
         job = estimator.submit(ccnot, input_params=params)
         self.assertIsInstance(job, MicrosoftEstimatorJob)
-        job.wait_until_completed()
+        job.wait_until_completed(timeout_secs=DEFAULT_TIMEOUT_SECS)
         if job.details.status != "Succeeded":
             raise Exception(f"Job {job.id} not succeeded in "
                             "test_estimator_batching_job")
-        result = job.get_results()
+        result = job.get_results(timeout_secs=DEFAULT_TIMEOUT_SECS)
         errors = []
         if type(result) != MicrosoftEstimatorResult:
             errors.append("Unexpected type for result")
@@ -108,14 +103,14 @@ class TestMicrosoftQC(QuantumTestBase):
         ccnot = self._ccnot_bitcode()
         job = estimator.submit(ccnot, input_params={"errorBudget": 2})
         self.assertIsInstance(job, MicrosoftEstimatorJob)
-        job.wait_until_completed()
+        job.wait_until_completed(timeout_secs=DEFAULT_TIMEOUT_SECS)
         self.assertEqual(job.details.status, "Failed")
 
         expected = "Cannot retrieve results as job execution failed " \
                    "(InvalidInputError: The error budget must be " \
                    "between 0.0 and 1.0, provided input was `2`)"
         with raises(RuntimeError, match=re.escape(expected)):
-            _ = job.get_results()
+            _ = job.get_results(timeout_secs=DEFAULT_TIMEOUT_SECS)
 
     @pytest.mark.microsoft_qc
     def test_estimator_failing_job_client_validation(self):
@@ -155,11 +150,11 @@ class TestMicrosoftQC(QuantumTestBase):
         job = estimator.submit(circ)
 
         self.assertIsInstance(job, MicrosoftEstimatorJob)
-        job.wait_until_completed()
+        job.wait_until_completed(timeout_secs=DEFAULT_TIMEOUT_SECS)
 
         self.assertEqual(job.details.status, JobStatus.SUCCEEDED)
 
-        result = job.get_results()
+        result = job.get_results(timeout_secs=DEFAULT_TIMEOUT_SECS)
         self.assertIsInstance(result, MicrosoftEstimatorResult)
 
     def test_estimator_params_validation_valid_cases(self):

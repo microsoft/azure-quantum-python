@@ -1,16 +1,10 @@
-#!/bin/env python
-# -*- coding: utf-8 -*-
-##
-# test_cirq.py: Tests for Cirq plugin
 ##
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 ##
-import mock
-import unittest
-import warnings
-import pytest
 
+import unittest
+import pytest
 import numpy as np
 
 from cirq import ParamResolver
@@ -19,9 +13,7 @@ from azure.quantum.job.job import Job
 from azure.quantum.cirq import AzureQuantumService
 from azure.quantum.cirq.targets.target import Target
 
-from cirq_ionq import Job as CirqIonqJob
-
-from common import QuantumTestBase, ONE_UID
+from common import QuantumTestBase, ONE_UID, DEFAULT_TIMEOUT_SECS
 
 
 class TestCirq(QuantumTestBase):
@@ -131,7 +123,7 @@ class TestCirq(QuantumTestBase):
                 timeout_seconds=60
             )
             job = service.get_job(self.get_test_job_id())
-            job_result = job.results().to_cirq_result()
+            job_result = job.results(timeout_secs=DEFAULT_TIMEOUT_SECS).to_cirq_result()
             for result in [run_result, job_result]:
                 self.assertIn("q0", result.measurements)
                 self.assertIn("q1", result.measurements)
@@ -211,9 +203,9 @@ class TestCirq(QuantumTestBase):
             target = service._target_factory.create_target(
                 provider_id="quantinuum", name="quantinuum.hqs-lt-s1-apival")
             job_result1 = target._to_cirq_result(
-                result=job_no_program.results(), param_resolver=ParamResolver({}))
+                result=job_no_program.results(timeout_secs=DEFAULT_TIMEOUT_SECS), param_resolver=ParamResolver({}))
             job_result2 = target._to_cirq_result(
-                result=job_with_program.results(), param_resolver=ParamResolver({}))
+                result=job_with_program.results(timeout_secs=DEFAULT_TIMEOUT_SECS), param_resolver=ParamResolver({}))
             for result in [run_result, job_result1, job_result2]:
                 self.assertIn("q0", result.measurements)
                 self.assertIn("q1", result.measurements)

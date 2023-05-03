@@ -5,9 +5,10 @@
 
 import pytest
 from azure.quantum import JobStatus
-from common import QuantumTestBase
+from common import QuantumTestBase, DEFAULT_TIMEOUT_SECS
 from import_qsharp import skip_if_no_qsharp
 from test_job_payload_factory import JobPayloadFactory
+
 
 @pytest.mark.qsharp
 @pytest.mark.live_test
@@ -45,10 +46,10 @@ class TestQSharpQIRJob(QuantumTestBase):
                       else JobPayloadFactory.get_qsharp_file_callable_bell_state()[0])
         job = target.submit(input_data=input_data)
 
-        job.wait_until_completed(timeout_secs=60)
+        job.wait_until_completed(timeout_secs=DEFAULT_TIMEOUT_SECS)
 
         job.refresh()
         self.assertEqual(job.details.status, JobStatus.SUCCEEDED)
 
-        results = job.get_results()
+        results = job.get_results(timeout_secs=DEFAULT_TIMEOUT_SECS)
         self.assertIsNotNone(results)

@@ -1,7 +1,3 @@
-#!/bin/env python
-# -*- coding: utf-8 -*-
-##
-# common.py: Contain base class and helper functions for unit tests
 ##
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
@@ -9,7 +5,6 @@
 
 import os
 import re
-from unittest import mock
 from unittest.mock import patch
 
 import six
@@ -43,7 +38,7 @@ RESOURCE_GROUP = "myresourcegroup"
 WORKSPACE = "myworkspace"
 LOCATION = "eastus"
 STORAGE = "mystorage"
-
+DEFAULT_TIMEOUT_SECS = 300
 
 @pytest.mark.usefixtures("event_loop_instance")
 class QuantumTestBase(ReplayableTest):
