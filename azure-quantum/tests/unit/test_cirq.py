@@ -195,7 +195,7 @@ class TestCirq(QuantumTestBase):
                 program=program,
                 repetitions=500,
                 target="quantinuum.hqs-lt-s1-apival",
-                timeout_seconds=60
+                timeout_seconds=DEFAULT_TIMEOUT_SECS
             )
             job_no_program = service.get_job(self.get_test_job_id())
             job_with_program = service.get_job(
