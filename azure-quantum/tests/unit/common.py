@@ -15,6 +15,7 @@ from unittest.mock import patch
 import six
 import pytest
 import asyncio
+from vcr.request import Request as VcrRequest
 
 from azure.quantum import Workspace
 from azure.identity import ClientSecretCredential
@@ -44,23 +45,6 @@ LOCATION = "eastus"
 STORAGE = "mystorage"
 
 
-@pytest.fixture(scope="class")
-def mock_wait_until_completed(self):
-    """
-    Workaround for issue #118
-    See: https://github.com/microsoft/qdk-python/issues/118
-
-    This will patch the Job.wait_until_completed() method by
-    suspending the test recording until wait_until_completed() returns.
-    """
-    with mock.patch.object(
-        Job,
-        "wait_until_completed",
-        self._mock_wait(Job.wait_until_completed)
-    ):
-        yield
-
-
 @pytest.mark.usefixtures("event_loop_instance")
 class QuantumTestBase(ReplayableTest):
     """QuantumTestBase
@@ -81,10 +65,8 @@ class QuantumTestBase(ReplayableTest):
         # needed to make sure the Default Credential will work
         os.environ["LOCATION"] = self._location
 
-        self._pause_recording_processor = PauseRecordingProcessor()
         regex_replacer = CustomRecordingProcessor(self)
         recording_processors = [
-            self._pause_recording_processor,
             regex_replacer,
             AccessTokenReplacerWithListException(),
             InteractiveAccessTokenReplacer(),
@@ -108,6 +90,10 @@ class QuantumTestBase(ReplayableTest):
             recording_processors=recording_processors,
             replay_processors=replay_processors,
         )
+        # as we append a sequence id to every request,
+        # we ensure that that a request can only be recorded once
+        self.vcr.record_mode = 'once'
+        self.vcr.register_matcher('query', self._custom_request_query_matcher)
 
         if self.is_playback:
             self._client_id = ZERO_UID
@@ -165,32 +151,63 @@ class QuantumTestBase(ReplayableTest):
         regex_replacer.register_regex(r"code_verifier=[^&]+\&", "code_verifier=PLACEHOLDER&")
         regex_replacer.register_regex(r"code=[^&]+\&", "code_verifier=PLACEHOLDER&")
         regex_replacer.register_regex(r"code=[^&]+\&", "code_verifier=PLACEHOLDER&")
-        regex_replacer.register_regex(r"http://", "https://")   # Devskim: ignore DS137138 
+        regex_replacer.register_regex(r"http://", "https://")  # Devskim: ignore DS137138
 
-    def pause_recording(self):
-        self._pause_recording_processor.pause_recording()
+    @classmethod
+    def _custom_request_query_matcher(cls, r1: VcrRequest, r2: VcrRequest):
+        """ Ensure method, path, and query parameters match. """
+        from six.moves.urllib_parse import urlparse, parse_qs  # pylint: disable=import-error, relative-import
 
-    def resume_recording(self):
-        self._pause_recording_processor.resume_recording()
+        assert r1.method == r2.method, f"method: {r1.method} != {r2.method}"
+
+        url1 = urlparse(r1.uri)
+        url2 = urlparse(r2.uri)
+
+        assert url1.hostname == url2.hostname, f"hostname: {url1.hostname} != {url2.hostname}"
+        assert url1.path == url2.path, f"path: {url1.path} != {url2.path}"
+
+        q1 = parse_qs(url1.query)
+        q2 = parse_qs(url2.query)
+
+        for key in q1.keys():
+            assert key in q2, f"&{key} not found in {url2.query}"
+            assert q1[key][0].lower() == q2[key][0].lower(), f"&{key}: {q1[key][0].lower()} != {q2[key][0].lower()}"
+
+        for key in q2.keys():
+            assert key in q1, f"&{key} not found in {url1.query}"
+            assert q1[key][0].lower() == q2[key][0].lower(), f"&{key}: {q1[key][0].lower()} != {q2[key][0].lower()}"
+
+        return True
 
     def setUp(self):
+        self.in_test_setUp = True
         super(QuantumTestBase, self).setUp()
-        if not self.is_playback:
-            self.vcr.record_mode = 'all'
-        self.cassette.allow_playback_repeats = True
+        # Since we are appending a sequence id to the requests
+        # we don't allow playback repeats
+        self.cassette.allow_playback_repeats = False
 
-        # Modify the Job.wait_until_completed method such that it only records
-        # once, see: https://github.com/microsoft/qdk-python/issues/118
-        self.patch_wait = patch.object(
+        # modify the _default_poll_wait time to zero
+        # so that we don't artificially wait or delay
+        # the tests when in playback mode
+        self.patch_default_poll_wait = patch.object(
             Job,
-            "wait_until_completed",
-            self.mock_wait(Job.wait_until_completed)
+            "_default_poll_wait",
+            0.0
         )
-        self.patch_wait.start()
+        if self.is_playback:
+            self.patch_default_poll_wait.start()
+
+        self.in_test_setUp = False
 
     def tearDown(self):
-        self.patch_wait.stop()
+        self.patch_default_poll_wait.stop()
         super().tearDown()
+
+    def pause_recording(self):
+        self.disable_recording = True
+
+    def resume_recording(self):
+        self.disable_recording = False
 
     @property
     def is_playback(self):
@@ -279,55 +296,6 @@ class QuantumTestBase(ReplayableTest):
         workspace.append_user_agent("testapp")
         return workspace
 
-    def mock_wait(self, job_wait_until_completed):
-        # Workaround for issue #118
-        # See: https://github.com/microsoft/qdk-python/issues/118
-        # Use this method to mock out job.wait_until_completed.
-        #
-        # Example usage:
-        #
-        # with mock.patch.object(
-        #     Job,
-        #     "wait_until_completed",
-        #     self.mock_wait(Job.wait_until_completed)
-        # ):
-        #     job.wait_until_completed()
-        #
-        # Create closure to expose self and Job.wait_until_completed to
-        # mock function
-        def _mock_wait(job, *args, **kwargs):
-            # Pause recording such that we don't record multiple calls
-            self.pause_recording()
-            job_wait_until_completed(job, *args, **kwargs)
-            self.resume_recording()
-
-            # Record a single GET request such that job.wait_until_completed
-            # doesn't fail when running recorded tests
-            return job_wait_until_completed(job, *args, **kwargs)
-
-        return _mock_wait
-
-
-class PauseRecordingProcessor(RecordingProcessor):
-    def __init__(self):
-        self.is_paused = False
-
-    def pause_recording(self):
-        self.is_paused = True
-
-    def resume_recording(self):
-        self.is_paused = False
-
-    def process_request(self, request):
-        if self.is_paused:
-            return None
-        return request
-
-    def process_response(self, response):
-        if self.is_paused:
-            return None
-        return response
-
 
 class CustomUrlPlaybackProcessor(RecordingProcessor):
     def process_request(self, request):
@@ -373,12 +341,12 @@ class CustomRecordingProcessor(RecordingProcessor):
         "user-agent",
     ]
 
-    def __init__(self, replayable_test: ReplayableTest):
+    def __init__(self, quantumTest: QuantumTestBase):
         self._regexes = []
         self._auto_guid_regexes = []
         self._guids = dict[str, int]()
         self._sequence_ids = dict[str, float]()
-        self._replayable_test = replayable_test
+        self._quantumTest = quantumTest
 
     def register_regex(self, regex, replacement_text):
         """
@@ -417,12 +385,56 @@ class CustomRecordingProcessor(RecordingProcessor):
                         self._guids[guid] = new_guid
                         self.register_regex(guid, new_guid)
 
+    def _append_sequence_id(self, request: VcrRequest):
+        """
+        Appends a sequential `&test-sequence-id=` in the querystring
+        of the recordings, such that multiple calls to the same
+        URL will be recorded multiple times with potentially different
+        responses.
+
+        For example, when a job is submitted and we want to fetch
+        the job status, the HTTP request to get the job status is the same,
+        but the response can be different, initially returning
+        Status="In-Progress" and later returning Status="Completed".
+
+        The sequence is only for `quantum.azure.com` API requests
+        and is on a per Method+Uri basis.
+        """
+        if "quantum.azure.com" not in request.uri:
+            return request
+
+        import math
+        SEQUENCE_ID_KEY = "&test-sequence-id="
+        if SEQUENCE_ID_KEY not in request.uri:
+            key = f"{request.method}:{request.uri}"
+            sequence_id = self._sequence_ids.pop(key, 0.0)
+            # if we are in playback
+            # or we are recording and the recording is not suspended
+            # we increment the sequence id
+            if (self._quantumTest.is_playback or
+                not self._quantumTest.disable_recording):
+                # VCR calls this method twice per request
+                # so we need to increment the sequence by 0.5
+                # and use the ceiling
+                sequence_id += 0.5
+            self._sequence_ids[key] = sequence_id
+            if "?" not in request.uri:
+                request.uri += "?"
+            request.uri += SEQUENCE_ID_KEY + "%0.f" % math.ceil(sequence_id)
+        return request
+
     def _regex_replace_all(self, value: str):
         for regex, replacement_text in self._regexes:
             value = regex.sub(replacement_text, value)
         return value
 
     def process_request(self, request):
+        # when loading the VCR cassete during
+        # the test playback, just return the request
+        # that is recorded in the cassete
+        if self._quantumTest.in_test_setUp:
+            return request
+
         content_type = self._get_content_type(request)
         body = request.body
         encode_body = False
@@ -446,6 +458,7 @@ class CustomRecordingProcessor(RecordingProcessor):
         request.headers = headers
 
         request.uri = self._regex_replace_all(request.uri)
+        self._append_sequence_id(request)
 
         if body is not None:
             body = self._regex_replace_all(body)
@@ -474,6 +487,12 @@ class CustomRecordingProcessor(RecordingProcessor):
         return content_type
 
     def process_response(self, response):
+        # when loading the VCR cassete during
+        # the test playback, just return the response
+        # that is recorded in the cassete
+        if self._quantumTest.in_test_setUp:
+            return response
+
         headers = {}
         for key in response["headers"]:
             if key.lower() in self.ALLOW_HEADERS:
