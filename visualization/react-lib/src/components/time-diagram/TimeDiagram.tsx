@@ -8,19 +8,28 @@ export type SpaceDiagramProps = {
 
 //function SpaceDiagram({physicalQubitsAlgorithm, physicalQubitsTFactory}: SpaceDiagramProps): JSX.Element{
 function TimeDiagram() {
-  const data = [{ title: "Number of t-states", value: 17, legendTitle: "Single T-factory invocation runtime" },
-    { title: "Time", value: 180, legendTitle: "Time"},
-    { title: "Algorithm runtime", value: 180, legendTitle: "Algorithm runtime"}
+  const data = [
+    {
+      title: "Number of t-states",
+      value: 17,
+      legendTitle: "Single T-factory invocation runtime",
+    },
+    { title: "Time", value: 180, legendTitle: "Time" },
+    {
+      title: "Algorithm runtime",
+      value: 180,
+      legendTitle: "Algorithm runtime",
+    },
   ];
-return (
+  return (
     <div>
       <LineChart
         data={data}
-        lengthInner={100}
-        lengthOuter={15}
-        width = {100}
-        height = {100}
-        marginVal = {20}
+        lengthInner={725}
+        lengthOuter={760}
+        width={100}
+        height={100}
+        marginVal={20}
       />
     </div>
   );
