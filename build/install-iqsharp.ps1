@@ -33,6 +33,12 @@ if (Test-Path $iqsharpNugetPackagePath -PathType Leaf) {
         }
     } catch {}
 
+    # Make sure the NUGET_OUTDIR is listed as a nuget source, otherwise
+    # IQ# will fail to load when packages are loaded.
+    $SourceName = "build"
+    Write-Host "Adding nuget source $SourceName=$Env:NUGET_OUTDIR"
+    dotnet nuget add source $Env:NUGET_OUTDIR --name $SourceName
+
     Write-Host "Installing the IQ# dotnet tool specific version from the build drop folder."
     Write-Host "  Version: $nugetVersion"
     Write-Host "  Source: $Env:NUGET_OUTDIR"
