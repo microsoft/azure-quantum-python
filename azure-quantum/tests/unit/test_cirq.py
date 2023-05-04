@@ -122,7 +122,7 @@ class TestCirq(QuantumTestBase):
                 timeout_seconds=60
             )
             job = service.get_job(self.get_test_job_id())
-            job_result = job.results(timeout_secs=DEFAULT_TIMEOUT_SECS).to_cirq_result()
+            job_result = job.results(timeout_seconds=DEFAULT_TIMEOUT_SECS).to_cirq_result()
             for result in [run_result, job_result]:
                 self.assertIn("q0", result.measurements)
                 self.assertIn("q1", result.measurements)
