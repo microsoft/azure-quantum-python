@@ -25,9 +25,7 @@ if ($True -eq $SkipInstall) {
     & (Join-Path $PSScriptRoot Install-Artifacts.ps1)
 }
 
-# Activate env
-$EnvName = GetEnvName -PackageName $PackageName
-Use-CondaEnv $EnvName
+Enable-Conda
 
 # Try installing IQ# dotnet tool, IQ# kernel and the qsharp Python package
 # Used for running tests between the Azure Quantum Python SDK and IQ# (Q#+QIR job submission)
@@ -36,6 +34,8 @@ if ([string]::IsNullOrEmpty($PackageName) -or ($PackageName -eq "azure-quantum")
       $EnvExists = conda env list | Select-String -Pattern "azurequantum " | Measure-Object | Select-Object -Exp Count
       if ($EnvExists) {
         conda activate azurequantum
+        If ($null -eq $Env:TOOLS_DIR) { $Env:TOOLS_DIR =  [IO.Path]::GetFullPath((Join-Path $RootDir ".tools")) }
+        If (-not (Test-Path -Path $Env:TOOLS_DIR)) { [IO.Directory]::CreateDirectory($Env:TOOLS_DIR) }
         & (Join-Path $RootDir "build" "install-iqsharp.ps1");
       }    
     }
@@ -43,6 +43,9 @@ if ([string]::IsNullOrEmpty($PackageName) -or ($PackageName -eq "azure-quantum")
       Write-Host "##[warning]Failed to install IQ#."
     }
 }
+
+$EnvName = GetEnvName -PackageName $PackageName
+Use-CondaEnv $EnvName
 
 function PyTestMarkExpr() {
     param (
