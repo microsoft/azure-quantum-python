@@ -103,15 +103,12 @@ class TestWorkspace(QuantumTestBase):
         targets = ws.get_targets()
         self.assertNotIn(None, targets)
         test_targets = set([
-            'quantinuum.hqs-lt-s1-apival'
-        ])
-        self.assertTrue(test_targets.issubset(set([t.name for t in targets])))
-        test_targets = set([
-            'quantinuum.sim.h1-1sc'
-        ])
-        self.assertTrue(test_targets.issubset(set([t.name for t in targets])))
-        test_targets = set([
-            'quantinuum.sim.h1-2sc'
+            'quantinuum.sim.h1-1sc',
+            'quantinuum.sim.h1-2sc',
+            'quantinuum.sim.h1-1e',
+            'quantinuum.sim.h1-2e',
+            'quantinuum.qpu.h1-1',
+            'quantinuum.qpu.h1-2'
         ])
         self.assertTrue(test_targets.issubset(set([t.name for t in targets])))
 

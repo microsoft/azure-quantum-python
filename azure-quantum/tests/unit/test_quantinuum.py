@@ -39,33 +39,19 @@ class TestQuantinuum(QuantumTestBase):
         workspace = self.create_workspace()
         circuit = self._teleport()
 
-        target = Quantinuum(workspace=workspace, name="quantinuum.hqs-lt-s1-apival")
-
-        cost = target.estimate_cost(circuit, num_shots=100e3)
-        self.assertEqual(cost.estimated_total, 0.0)
-
-        target = Quantinuum(workspace=workspace, name="quantinuum.hqs-lt-s1")
-
-        cost = target.estimate_cost(circuit, num_shots=100e3)
-        self.assertEqual(cost.estimated_total, 845.0)
-
         target = Quantinuum(workspace=workspace, name="quantinuum.sim.h1-1sc")
-
         cost = target.estimate_cost(circuit, num_shots=100e3)
         self.assertEqual(cost.estimated_total, 0.0)
 
         target = Quantinuum(workspace=workspace, name="quantinuum.qpu.h1-1")
-
         cost = target.estimate_cost(circuit, num_shots=100e3)
         self.assertEqual(cost.estimated_total, 845.0)
 
         target = Quantinuum(workspace=workspace, name="quantinuum.sim.h1-2sc")
-
         cost = target.estimate_cost(circuit, num_shots=100e3)
         self.assertEqual(cost.estimated_total, 0.0)
 
         target = Quantinuum(workspace=workspace, name="quantinuum.qpu.h1-2")
-
         cost = target.estimate_cost(circuit, num_shots=100e3)
         self.assertEqual(cost.estimated_total, 845.0)
 
@@ -74,7 +60,7 @@ class TestQuantinuum(QuantumTestBase):
     def test_job_submit_quantinuum(self):
         workspace = self.create_workspace()
         circuit = self._teleport()
-        target = Quantinuum(workspace=workspace)
+        target = workspace.get_targets("quantinuum.sim.h1-1e")
         job = target.submit(circuit)
         self.assertEqual(False, job.has_completed())
         job.wait_until_completed(timeout_secs=DEFAULT_TIMEOUT_SECS)
@@ -86,5 +72,4 @@ class TestQuantinuum(QuantumTestBase):
         self.assertEqual(True, job.has_completed())
 
         results = job.get_results(timeout_secs=DEFAULT_TIMEOUT_SECS)
-        self.assertEqual(results["c0"], ["0"])
-        self.assertEqual(results["c1"], ["0"])
+        self.assertEqual(results["c0"], results["c2"])

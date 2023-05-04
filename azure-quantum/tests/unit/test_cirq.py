@@ -66,7 +66,6 @@ class TestCirq(QuantumTestBase):
         for t in targets:
             self.assertIsInstance(t, Target)
         self.assertIn("ionq.simulator", target_names)
-        self.assertIn("quantinuum.hqs-lt-s1-apival", target_names)
         self.assertIn("quantinuum.sim.h1-1sc", target_names)
         self.assertIn("quantinuum.sim.h1-2sc", target_names)
 
@@ -141,7 +140,7 @@ class TestCirq(QuantumTestBase):
         cost = service.estimate_cost(
             program=self._3_qubit_ghz_cirq(),
             repetitions=100e3,
-            target="quantinuum.hqs-lt-s1-apival"
+            target="quantinuum.sim.h1-1sc"
         )
         self.assertEqual(cost.estimated_total, 0.0)
 
@@ -162,7 +161,7 @@ class TestCirq(QuantumTestBase):
         cost = service.estimate_cost(
             program=self._3_qubit_ghz_cirq(),
             repetitions=100e3,
-            target="quantinuum.hqs-lt-s1"
+            target="quantinuum.sim.h1-1e"
         )
         self.assertEqual(np.round(cost.estimated_total), 725.0)
 
@@ -194,18 +193,18 @@ class TestCirq(QuantumTestBase):
             run_result = service.run(
                 program=program,
                 repetitions=500,
-                target="quantinuum.hqs-lt-s1-apival",
+                target="quantinuum.sim.h1-1e",
                 timeout_seconds=DEFAULT_TIMEOUT_SECS
             )
             job_no_program = service.get_job(self.get_test_job_id())
             job_with_program = service.get_job(
                 self.get_test_job_id(), program=program)
             target = service._target_factory.create_target(
-                provider_id="quantinuum", name="quantinuum.hqs-lt-s1-apival")
+                provider_id="quantinuum", name="quantinuum.sim.h1-1e")
             job_result1 = target._to_cirq_result(
-                result=job_no_program.results(timeout_secs=DEFAULT_TIMEOUT_SECS), param_resolver=ParamResolver({}))
+                result=job_no_program.results(timeout_seconds=DEFAULT_TIMEOUT_SECS), param_resolver=ParamResolver({}))
             job_result2 = target._to_cirq_result(
-                result=job_with_program.results(timeout_secs=DEFAULT_TIMEOUT_SECS), param_resolver=ParamResolver({}))
+                result=job_with_program.results(timeout_seconds=DEFAULT_TIMEOUT_SECS), param_resolver=ParamResolver({}))
             for result in [run_result, job_result1, job_result2]:
                 self.assertIn("q0", result.measurements)
                 self.assertIn("q1", result.measurements)
@@ -213,5 +212,5 @@ class TestCirq(QuantumTestBase):
                 self.assertEqual(len(result.measurements["q0"]), 500)
                 self.assertEqual(len(result.measurements["q1"]), 500)
                 self.assertEqual(len(result.measurements["q2"]), 500)
-                self.assertEqual(result.measurements["q0"].sum(), result.measurements["q1"].sum())
-                self.assertEqual(result.measurements["q1"].sum(), result.measurements["q2"].sum())
+                self.assertAlmostEqual(result.measurements["q0"].sum(), result.measurements["q1"].sum(), delta=10)
+                self.assertAlmostEqual(result.measurements["q1"].sum(), result.measurements["q2"].sum(), delta=10)

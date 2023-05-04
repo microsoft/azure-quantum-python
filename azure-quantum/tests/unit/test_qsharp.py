@@ -25,11 +25,11 @@ class TestQSharpQIRJob(QuantumTestBase):
 
     @pytest.mark.quantinuum
     def test_qsharp_qir_inline_quantinuum(self):
-        self._run_job("quantinuum.sim.h1-1sc", inline=True)
+        self._run_job("quantinuum.sim.h1-1e", inline=True)
 
     @pytest.mark.quantinuum
     def test_qsharp_qir_file_quantinuum(self):
-        self._run_job("quantinuum.sim.h1-1sc", inline=False)
+        self._run_job("quantinuum.sim.h1-1e", inline=False)
 
     @pytest.mark.microsoft_qc
     def test_qsharp_qir_inline_microsoft_qc(self):

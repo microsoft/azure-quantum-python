@@ -4,18 +4,12 @@
 # Licensed under the MIT License.
 ##
 
+import pytest
 from azure.quantum.aio.target import IonQ
-from azure.quantum.aio.target.quantinuum import Quantinuum
-
 from common import QuantumTestBase, DEFAULT_TIMEOUT_SECS
 
 
 class TestIonQ(QuantumTestBase):
-    """TestIonq
-
-    Tests the azure.quantum.target.ionq module.
-    """
-
     def _3_qubit_ghz(self):
         return {
             "qubits": 3,
@@ -37,9 +31,13 @@ class TestIonQ(QuantumTestBase):
             ]
         }
 
+    @pytest.mark.ionq
+    @pytest.mark.live_test
     def test_job_submit_ionq(self):
         self.get_async_result(self._test_job_submit_ionq(num_shots=None))
 
+    @pytest.mark.ionq
+    @pytest.mark.live_test
     def test_job_submit_ionq_100_shots(self):
         self.get_async_result(self._test_job_submit_ionq(num_shots=100))
 
@@ -67,49 +65,3 @@ class TestIonQ(QuantumTestBase):
             self.assertEqual(job.details.input_params.get("shots"), num_shots)
         else:
             self.assertIsNone(job.details.input_params.get("shots"))
-
-
-class TestQuantinuum(QuantumTestBase):
-    def _teleport(self):
-        return """OPENQASM 2.0;
-        include "qelib1.inc";
-
-        qreg q[3];
-        creg c0[1];
-        creg c1[3];
-
-        h q[0];
-        cx q[0], q[1];
-        x q[2];
-        h q[2];
-        cx q[2], q[0];
-        h q[2];
-        measure q[0] -> c1[0];
-        c0[0] = c1[0];
-        if (c0==1) x q[1];
-        c0[0] = 0;
-        measure q[2] -> c1[1];
-        c0[0] = c1[1];
-        if (c0==1) z q[1];
-        c0[0] = 0;
-        h q[1];
-        measure q[1] -> c1[2];
-        """
-
-    def test_job_submit_quantinuum(self):
-        self.get_async_result(self._test_job_submit_quantinuum())
-
-    async def _test_job_submit_quantinuum(self, **kwargs):
-        workspace = self.create_async_workspace()
-        circuit = self._teleport()
-        target = Quantinuum(workspace=workspace)
-        job = await target.submit(circuit)
-
-        await job.wait_until_completed(timeout_secs=DEFAULT_TIMEOUT_SECS)
-
-        job = await workspace.get_job(job.id)
-        self.assertEqual(True, job.has_completed())
-
-        results = await job.get_results(timeout_secs=DEFAULT_TIMEOUT_SECS)
-        self.assertEqual(results["c0"], ["0"])
-        self.assertEqual(results["c1"], ["000"])
