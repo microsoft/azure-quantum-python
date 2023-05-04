@@ -100,6 +100,9 @@ if ($PackageDir -Match "azure-quantum") {
     New-Item -ItemType Directory -Path $PSScriptRoot -Name qir
     # Copies auxiliary bitcode files that are used by unit tests in azure_quantum
     Copy-Item -Path (Join-Path $PackageDir "tests" "unit" "qir" "*.bc") -Destination (Join-Path $PSScriptRoot "qir")
+
+    Write-Host "##[info]Copy auxiliary Q# test files from $PackageDir to $PSScriptRoot"
+    Copy-Item -Path (Join-Path $PackageDir "tests" "unit" "*.qs") -Destination $PSScriptRoot
 }
 
 python -m pytest -v `
