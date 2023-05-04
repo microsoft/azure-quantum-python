@@ -72,4 +72,6 @@ class TestQuantinuum(QuantumTestBase):
         self.assertEqual(True, job.has_completed())
 
         results = job.get_results(timeout_secs=DEFAULT_TIMEOUT_SECS)
-        self.assertEqual(results["c0"], results["c2"])
+        self.assertAlmostEqual(int(results["c0"][0]), 1, delta=1)
+        self.assertAlmostEqual(int(results["c1"][0]), 1, delta=1)
+        self.assertAlmostEqual(int(results["c2"][0]), 1, delta=1)

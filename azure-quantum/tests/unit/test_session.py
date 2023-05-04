@@ -339,6 +339,7 @@ class TestSession(QuantumTestBase):
     @pytest.mark.session
     @pytest.mark.qsharp
     @pytest.mark.echo_targets
+    @skip_if_no_qsharp
     def test_session_job_failure_policies_echo_quantinuum(self):
         self._test_session_job_failure_policies(target_name="echo-quantinuum")
 
