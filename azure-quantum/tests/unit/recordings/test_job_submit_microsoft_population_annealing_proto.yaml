@@ -13,7 +13,7 @@ interactions:
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - azsdk-python-identity/1.12.0 Python/3.9.16 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-identity/1.12.0 Python/3.9.16 (Windows-10-10.0.22621-SP0)
       x-client-cpu:
       - x64
       x-client-current-telemetry:
@@ -39,7 +39,7 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: 'b''{"containerName": "job-00000000-0000-0000-0000-000000000000"}'''
+    body: 'b''{"containerName": "job-00000000-0000-0000-0000-000000000001"}'''
     headers:
       Accept:
       - application/json
@@ -52,12 +52,12 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - testapp azsdk-python-quantum/0.0.0.1 Python/3.9.16 (Windows-10-10.0.22000-SP0)
+      - testapp azsdk-python-quantum/0.0.1 Python/3.9.16 (Windows-10-10.0.22621-SP0)
     method: POST
-    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/storage/sasUri?api-version=2022-09-12-preview
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/storage/sasUri?api-version=2022-09-12-preview&test-sequence-id=1
   response:
     body:
-      string: '{"sasUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+      string: '{"sasUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
         "access_token": "fake_token"}'
     headers:
       connection:
@@ -81,17 +81,17 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-blob/12.15.0 Python/3.9.16 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-storage-blob/12.15.0 Python/3.9.16 (Windows-10-10.0.22621-SP0)
       x-ms-date:
-      - Fri, 17 Mar 2023 21:48:14 GMT
+      - Wed, 03 May 2023 18:09:51 GMT
       x-ms-version:
       - '2021-12-02'
     method: GET
-    uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?restype=container&sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
+    uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?restype=container&sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerNotFound</Code><Message>The
-        specified container does not exist.\nRequestId:7562c825-901e-0052-571a-59ce9f000000\nTime:2023-03-17T21:48:14.7335680Z</Message></Error>"
+        specified container does not exist.\nRequestId:249f359a-701e-005a-20ea-7dd490000000\nTime:2023-05-03T18:09:52.5976448Z</Message></Error>"
     headers:
       content-length:
       - '223'
@@ -114,13 +114,13 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-blob/12.15.0 Python/3.9.16 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-storage-blob/12.15.0 Python/3.9.16 (Windows-10-10.0.22621-SP0)
       x-ms-date:
-      - Fri, 17 Mar 2023 21:48:14 GMT
+      - Wed, 03 May 2023 18:09:52 GMT
       x-ms-version:
       - '2021-12-02'
     method: PUT
-    uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?restype=container&sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
+    uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?restype=container&sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
   response:
     body:
       string: ''
@@ -142,13 +142,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-blob/12.15.0 Python/3.9.16 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-storage-blob/12.15.0 Python/3.9.16 (Windows-10-10.0.22621-SP0)
       x-ms-date:
-      - Fri, 17 Mar 2023 21:48:14 GMT
+      - Wed, 03 May 2023 18:09:52 GMT
       x-ms-version:
       - '2021-12-02'
     method: GET
-    uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?restype=container&sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
+    uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?restype=container&sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
   response:
     body:
       string: ''
@@ -165,7 +165,8 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: b"\x1f\x8b\x08\x00\x1c\xe0\x14d\x02\xff\xed\xd2?\x8b\xc20\x1c\xc6\xf1\xd8\xde\xa0\x85\x03\tNN\xd2\xf1\xb8JR\xeb\x9f\xd1{\x07\x0e\xee\xa5BO\x025\x06m\x97{u\xbe4\xa3B\x0b7\xdc$.\xf7\xfd,\xbf<y\x08\xbf%\xfb\x1f\xe3\x8cuM\xfdm\xaa2w\xbb\\M\xddN<\x97\xf2\x16Yv\x9f\xde\xef\xa9\xd2\x99n\xcf\xf7{\x9d\xaa\xf9\\L\x94x\x81\xe6\\\x17'\xbf^\xfcOQ.C=U\xe3\xf7\xc1#\xf7/2\xe8\x896\x8e\xd62\x08\xba\x18\xdfb\xaf\x8d\xc2\xc7\xb0k\x87\xfem\xd8\xb5\xc3[\x1b\xc8E\x94Eo\xb68\x94\xf2s\xfc\xb1-\xcfu\xb29\xba\xa6*js\xb4_\xd6\x96Ee\xec>\x89S\xff\r\xd4L/\x13\xbd\xccV:\x8d\x05\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xe0/W.\xef!`\x00(\x00\x00"
+    body: b"\x1f\x8b\x08\x00n\xa3Rd\x02\xff\xed\xd2\xb1j\xc30\x14\x85a\xc5\xee\xd0\x1a\x02Ad\xcaT<\x868\\9v\xa0[\xfb\x06\x1d\xba\x1b\x07\x9c
+      p\x14\xd1\xd8K\x9f\xae\x8f\x16%\x05\x1b:t*]\xfa\x7f\xcb\xd5\xd1A\xdcE\x87\x0f\xeb\xad\xf3}\xb7\xb7mS\xf9]%k\xbfS\xbfK\x82mQ\xdcf\xf0}J\xbe1\xc3\xf9vor)K\xf5(\xea\x0f\xf4\xe7\xae~\x0f\xeb\xd5\xff\x94T:6kYL\x1f\xbe\xf2\xfd\xa7\x8e&j\x88\xf3g\x1dEcL\xafq2D\x15b<\xb6\xb3\xf06\x1e\xdb\xd9\xb5\x8d\xf46)\x92;W\x1f\x1b\xbdZ,\xdf\x9as\x97\xbd\x9e|\xdf\xd6\x9d=\xb9\x17\xe7\x9a\xba\xb5\xee\x90\xa5y\xf8\x06R\xca&3F\x9eJI\x15\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\xe0'\x17\x9bv\xbc\xc5\x00(\x00\x00"
     headers:
       Accept:
       - application/xml
@@ -174,19 +175,19 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '633'
+      - '635'
       Content-Type:
       - application/octet-stream
       User-Agent:
-      - azsdk-python-storage-blob/12.15.0 Python/3.9.16 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-storage-blob/12.15.0 Python/3.9.16 (Windows-10-10.0.22621-SP0)
       x-ms-blob-type:
       - BlockBlob
       x-ms-date:
-      - Fri, 17 Mar 2023 21:48:15 GMT
+      - Wed, 03 May 2023 18:09:53 GMT
       x-ms-version:
       - '2021-12-02'
     method: PUT
-    uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
+    uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
   response:
     body:
       string: ''
@@ -199,10 +200,10 @@ interactions:
       code: 201
       message: Created
 - request:
-    body: 'b''{"id": "00000000-0000-0000-0000-000000000000", "name": "Test-PopulationAnnealing-\\"20210101-000000\\"",
+    body: 'b''{"id": "00000000-0000-0000-0000-000000000001", "name": "Test-PopulationAnnealing-\\"20210101-000000\\"",
       "providerId": "Microsoft", "target": "microsoft.populationannealing.cpu", "itemType":
-      "Job", "containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
-      "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData",
+      "Job", "containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+      "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData",
       "inputDataFormat": "microsoft.qio.v2", "inputParams": {"params": {"sweeps":
       200}}, "outputDataFormat": "microsoft.qio-results.v2"}'''
     headers:
@@ -217,28 +218,28 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - testapp azsdk-python-quantum/0.0.0.1 Python/3.9.16 (Windows-10-10.0.22000-SP0)
+      - testapp azsdk-python-quantum/0.0.1 Python/3.9.16 (Windows-10-10.0.22621-SP0)
     method: PUT
-    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000000?api-version=2022-09-12-preview
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000001?api-version=2022-09-12-preview&test-sequence-id=1
   response:
     body:
-      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
-        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
         "inputDataFormat": "microsoft.qio.v2", "inputParams": {"params": {"sweeps":
         200}}, "metadata": null, "sessionId": null, "status": "Waiting", "jobType":
         "Optimization", "outputDataFormat": "microsoft.qio-results.v2", "outputDataUri":
-        "https://mystorage.blob.core.windows.net:443/job-00000000-0000-0000-0000-000000000000/outputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "https://mystorage.blob.core.windows.net:443/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         null, "errorData": null, "isCancelling": false, "tags": [], "name": "Test-PopulationAnnealing-\"20210101-000000\"",
-        "id": "00000000-0000-0000-0000-000000000000", "providerId": "microsoft", "target":
-        "microsoft.populationannealing.cpu", "creationTime": "2023-03-17T21:48:15.873329+00:00",
+        "id": "00000000-0000-0000-0000-000000000001", "providerId": "microsoft", "target":
+        "microsoft.populationannealing.cpu", "creationTime": "2023-05-03T18:09:53.7121805+00:00",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Job", "access_token":
         "fake_token"}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '1195'
+      - '1196'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -256,29 +257,225 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - testapp azsdk-python-quantum/0.0.0.1 Python/3.9.16 (Windows-10-10.0.22000-SP0)
+      - testapp azsdk-python-quantum/0.0.1 Python/3.9.16 (Windows-10-10.0.22621-SP0)
     method: GET
-    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000000?api-version=2022-09-12-preview
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000001?api-version=2022-09-12-preview&test-sequence-id=1
   response:
     body:
-      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
-        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-PopulationAnnealing-%252220210101-000000%2522-6a0af65c-c50d-11ed-ad7d-b5d177e8d905.input.json",
+      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-PopulationAnnealing-%252220210101-000000%2522-00000000-0000-0000-0000-000000000001.input.json",
+        "inputDataFormat": "microsoft.qio.v2", "inputParams": {"params": {"sweeps":
+        200}}, "metadata": null, "sessionId": null, "status": "Waiting", "jobType":
+        "Optimization", "outputDataFormat": "microsoft.qio-results.v2", "outputDataUri":
+        "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-PopulationAnnealing-%252220210101-000000%2522-00000000-0000-0000-0000-000000000001.output.json",
+        "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
+        null, "errorData": null, "isCancelling": false, "tags": [], "name": "Test-PopulationAnnealing-\"20210101-000000\"",
+        "id": "00000000-0000-0000-0000-000000000001", "providerId": "microsoft", "target":
+        "microsoft.populationannealing.cpu", "creationTime": "2023-05-03T18:09:53.7121805+00:00",
+        "endExecutionTime": null, "costEstimate": null, "itemType": "Job", "access_token":
+        "fake_token"}'
+    headers:
+      connection:
+      - keep-alive
+      content-length:
+      - '1443'
+      content-type:
+      - application/json; charset=utf-8
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - testapp azsdk-python-quantum/0.0.1 Python/3.9.16 (Windows-10-10.0.22621-SP0)
+    method: GET
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000001?api-version=2022-09-12-preview&test-sequence-id=2
+  response:
+    body:
+      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-PopulationAnnealing-%252220210101-000000%2522-00000000-0000-0000-0000-000000000001.input.json",
+        "inputDataFormat": "microsoft.qio.v2", "inputParams": {"params": {"sweeps":
+        200}}, "metadata": null, "sessionId": null, "status": "Waiting", "jobType":
+        "Optimization", "outputDataFormat": "microsoft.qio-results.v2", "outputDataUri":
+        "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-PopulationAnnealing-%252220210101-000000%2522-00000000-0000-0000-0000-000000000001.output.json",
+        "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
+        null, "errorData": null, "isCancelling": false, "tags": [], "name": "Test-PopulationAnnealing-\"20210101-000000\"",
+        "id": "00000000-0000-0000-0000-000000000001", "providerId": "microsoft", "target":
+        "microsoft.populationannealing.cpu", "creationTime": "2023-05-03T18:09:53.7121805+00:00",
+        "endExecutionTime": null, "costEstimate": null, "itemType": "Job", "access_token":
+        "fake_token"}'
+    headers:
+      connection:
+      - keep-alive
+      content-length:
+      - '1443'
+      content-type:
+      - application/json; charset=utf-8
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - testapp azsdk-python-quantum/0.0.1 Python/3.9.16 (Windows-10-10.0.22621-SP0)
+    method: GET
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000001?api-version=2022-09-12-preview&test-sequence-id=3
+  response:
+    body:
+      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-PopulationAnnealing-%252220210101-000000%2522-00000000-0000-0000-0000-000000000001.input.json",
+        "inputDataFormat": "microsoft.qio.v2", "inputParams": {"params": {"sweeps":
+        200}}, "metadata": null, "sessionId": null, "status": "Waiting", "jobType":
+        "Optimization", "outputDataFormat": "microsoft.qio-results.v2", "outputDataUri":
+        "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-PopulationAnnealing-%252220210101-000000%2522-00000000-0000-0000-0000-000000000001.output.json",
+        "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
+        null, "errorData": null, "isCancelling": false, "tags": [], "name": "Test-PopulationAnnealing-\"20210101-000000\"",
+        "id": "00000000-0000-0000-0000-000000000001", "providerId": "microsoft", "target":
+        "microsoft.populationannealing.cpu", "creationTime": "2023-05-03T18:09:53.7121805+00:00",
+        "endExecutionTime": null, "costEstimate": null, "itemType": "Job", "access_token":
+        "fake_token"}'
+    headers:
+      connection:
+      - keep-alive
+      content-length:
+      - '1443'
+      content-type:
+      - application/json; charset=utf-8
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - testapp azsdk-python-quantum/0.0.1 Python/3.9.16 (Windows-10-10.0.22621-SP0)
+    method: GET
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000001?api-version=2022-09-12-preview&test-sequence-id=4
+  response:
+    body:
+      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-PopulationAnnealing-%252220210101-000000%2522-00000000-0000-0000-0000-000000000001.input.json",
+        "inputDataFormat": "microsoft.qio.v2", "inputParams": {"params": {"sweeps":
+        200}}, "metadata": null, "sessionId": null, "status": "Waiting", "jobType":
+        "Optimization", "outputDataFormat": "microsoft.qio-results.v2", "outputDataUri":
+        "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-PopulationAnnealing-%252220210101-000000%2522-00000000-0000-0000-0000-000000000001.output.json",
+        "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
+        null, "errorData": null, "isCancelling": false, "tags": [], "name": "Test-PopulationAnnealing-\"20210101-000000\"",
+        "id": "00000000-0000-0000-0000-000000000001", "providerId": "microsoft", "target":
+        "microsoft.populationannealing.cpu", "creationTime": "2023-05-03T18:09:53.7121805+00:00",
+        "endExecutionTime": null, "costEstimate": null, "itemType": "Job", "access_token":
+        "fake_token"}'
+    headers:
+      connection:
+      - keep-alive
+      content-length:
+      - '1443'
+      content-type:
+      - application/json; charset=utf-8
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - testapp azsdk-python-quantum/0.0.1 Python/3.9.16 (Windows-10-10.0.22621-SP0)
+    method: GET
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000001?api-version=2022-09-12-preview&test-sequence-id=5
+  response:
+    body:
+      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-PopulationAnnealing-%252220210101-000000%2522-00000000-0000-0000-0000-000000000001.input.json",
         "inputDataFormat": "microsoft.qio.v2", "inputParams": {"params": {"sweeps":
         200}}, "metadata": null, "sessionId": null, "status": "Succeeded", "jobType":
         "Optimization", "outputDataFormat": "microsoft.qio-results.v2", "outputDataUri":
-        "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-PopulationAnnealing-%252220210101-000000%2522-6a0af65c-c50d-11ed-ad7d-b5d177e8d905.output.json",
-        "beginExecutionTime": "2023-03-17T21:48:12.6482281Z", "cancellationTime":
+        "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-PopulationAnnealing-%252220210101-000000%2522-00000000-0000-0000-0000-000000000001.output.json",
+        "beginExecutionTime": "2023-05-03T18:09:36.7398966Z", "cancellationTime":
         null, "quantumComputingData": null, "errorData": null, "isCancelling": false,
         "tags": [], "name": "Test-PopulationAnnealing-\"20210101-000000\"", "id":
-        "00000000-0000-0000-0000-000000000000", "providerId": "microsoft", "target":
-        "microsoft.populationannealing.cpu", "creationTime": "2023-03-17T21:48:15.873329+00:00",
-        "endExecutionTime": "2023-03-17T21:48:12.7516258Z", "costEstimate": null,
+        "00000000-0000-0000-0000-000000000001", "providerId": "microsoft", "target":
+        "microsoft.populationannealing.cpu", "creationTime": "2023-05-03T18:09:53.7121805+00:00",
+        "endExecutionTime": "2023-05-03T18:09:36.8979695Z", "costEstimate": null,
         "itemType": "Job", "access_token": "fake_token"}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '1499'
+      - '1500'
+      content-type:
+      - application/json; charset=utf-8
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - testapp azsdk-python-quantum/0.0.1 Python/3.9.16 (Windows-10-10.0.22621-SP0)
+    method: GET
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000001?api-version=2022-09-12-preview&test-sequence-id=6
+  response:
+    body:
+      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-PopulationAnnealing-%252220210101-000000%2522-00000000-0000-0000-0000-000000000001.input.json",
+        "inputDataFormat": "microsoft.qio.v2", "inputParams": {"params": {"sweeps":
+        200}}, "metadata": null, "sessionId": null, "status": "Succeeded", "jobType":
+        "Optimization", "outputDataFormat": "microsoft.qio-results.v2", "outputDataUri":
+        "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-PopulationAnnealing-%252220210101-000000%2522-00000000-0000-0000-0000-000000000001.output.json",
+        "beginExecutionTime": "2023-05-03T18:09:36.7398966Z", "cancellationTime":
+        null, "quantumComputingData": null, "errorData": null, "isCancelling": false,
+        "tags": [], "name": "Test-PopulationAnnealing-\"20210101-000000\"", "id":
+        "00000000-0000-0000-0000-000000000001", "providerId": "microsoft", "target":
+        "microsoft.populationannealing.cpu", "creationTime": "2023-05-03T18:09:53.7121805+00:00",
+        "endExecutionTime": "2023-05-03T18:09:36.8979695Z", "costEstimate": null,
+        "itemType": "Job", "access_token": "fake_token"}'
+    headers:
+      connection:
+      - keep-alive
+      content-length:
+      - '1500'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -296,21 +493,21 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-blob/12.15.0 Python/3.9.16 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-storage-blob/12.15.0 Python/3.9.16 (Windows-10-10.0.22621-SP0)
       x-ms-date:
-      - Fri, 17 Mar 2023 21:48:17 GMT
+      - Wed, 03 May 2023 18:09:55 GMT
       x-ms-range:
       - bytes=0-33554431
       x-ms-version:
       - '2021-12-02'
     method: GET
-    uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-PopulationAnnealing-%252220210101-000000%2522-6a0af65c-c50d-11ed-ad7d-b5d177e8d905.output.json
+    uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-PopulationAnnealing-%252220210101-000000%2522-00000000-0000-0000-0000-000000000001.output.json
   response:
     body:
       string: '{"version": "1.0", "configuration": {"0": 1, "1": 1, "2": 0, "3": 1},
         "cost": -5.0, "parameters": {"alpha": 2.0, "beta": {"final": 5.0, "initial":
         0.0, "type": "linear"}, "beta_start": 0.0, "beta_stop": 5.0, "constant_population":
-        false, "population": 72, "seed": 2293069153, "sweeps": 200, "sweeps_per_replica":
+        false, "population": 72, "seed": 4117969598, "sweeps": 200, "sweeps_per_replica":
         1}, "solutions": [{"configuration": {"0": 1, "1": 1, "2": 0, "3": 1}, "cost":
         -5.0}], "access_token": "fake_token"}'
     headers:
@@ -323,11 +520,11 @@ interactions:
       content-type:
       - application/json
       x-ms-blob-content-md5:
-      - /oZHbd+6p5ETrOzRRGhRYw==
+      - 5pbQnazZau2VlqcAL1KQnA==
       x-ms-blob-type:
       - BlockBlob
       x-ms-creation-time:
-      - Fri, 17 Mar 2023 21:48:16 GMT
+      - Wed, 03 May 2023 18:09:54 GMT
       x-ms-lease-state:
       - available
       x-ms-lease-status:
@@ -349,29 +546,29 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - testapp azsdk-python-quantum/0.0.0.1 Python/3.9.16 (Windows-10-10.0.22000-SP0)
+      - testapp azsdk-python-quantum/0.0.1 Python/3.9.16 (Windows-10-10.0.22621-SP0)
     method: GET
-    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000000?api-version=2022-09-12-preview
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000001?api-version=2022-09-12-preview&test-sequence-id=7
   response:
     body:
-      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
-        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-PopulationAnnealing-%252220210101-000000%2522-6a0af65c-c50d-11ed-ad7d-b5d177e8d905.input.json",
+      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-PopulationAnnealing-%252220210101-000000%2522-00000000-0000-0000-0000-000000000001.input.json",
         "inputDataFormat": "microsoft.qio.v2", "inputParams": {"params": {"sweeps":
         200}}, "metadata": null, "sessionId": null, "status": "Succeeded", "jobType":
         "Optimization", "outputDataFormat": "microsoft.qio-results.v2", "outputDataUri":
-        "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-PopulationAnnealing-%252220210101-000000%2522-6a0af65c-c50d-11ed-ad7d-b5d177e8d905.output.json",
-        "beginExecutionTime": "2023-03-17T21:48:12.6482281Z", "cancellationTime":
+        "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-PopulationAnnealing-%252220210101-000000%2522-00000000-0000-0000-0000-000000000001.output.json",
+        "beginExecutionTime": "2023-05-03T18:09:36.7398966Z", "cancellationTime":
         null, "quantumComputingData": null, "errorData": null, "isCancelling": false,
         "tags": [], "name": "Test-PopulationAnnealing-\"20210101-000000\"", "id":
-        "00000000-0000-0000-0000-000000000000", "providerId": "microsoft", "target":
-        "microsoft.populationannealing.cpu", "creationTime": "2023-03-17T21:48:15.873329+00:00",
-        "endExecutionTime": "2023-03-17T21:48:12.7516258Z", "costEstimate": null,
+        "00000000-0000-0000-0000-000000000001", "providerId": "microsoft", "target":
+        "microsoft.populationannealing.cpu", "creationTime": "2023-05-03T18:09:53.7121805+00:00",
+        "endExecutionTime": "2023-05-03T18:09:36.8979695Z", "costEstimate": null,
         "itemType": "Job", "access_token": "fake_token"}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '1499'
+      - '1500'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:

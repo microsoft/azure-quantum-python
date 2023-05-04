@@ -17,52 +17,52 @@ from azure.quantum.target.microsoft import MicrosoftEstimatorParams
 class TestWorkspace(QuantumTestBase):
     def test_params_empty(self):
         params = InputParams()
-        assert params.as_dict() == {}
+        self.assertEqual(params.as_dict(), {})
 
     def test_params_entry_point(self):
         params = InputParams()
         params.entry_point = "run_program"
-        assert params.as_dict() == {"entryPoint": "run_program"}
+        self.assertEqual(params.as_dict(), {"entryPoint": "run_program"})
 
     def test_params_arguments(self):
         params = InputParams()
         params.arguments["number"] = 12
-        assert params.as_dict() == {"arguments": [
-            {"name": "number", "value": 12, "type": "Int"}]}
+        self.assertEqual(params.as_dict(), {"arguments": [
+            {"name": "number", "value": 12, "type": "Int"}]})
 
     def test_params_shared_entry_point(self):
         params = InputParams(num_items=2)
         params.entry_point = "run_program"
         params.items[0].arguments["number"] = 8
         params.items[1].arguments["number"] = 16
-        assert params.as_dict() == {
+        self.assertEqual(params.as_dict(), {
             'entryPoint': 'run_program',
             'items': [
                 {'arguments': [{'name': 'number', 'value': 8, 'type': 'Int'}]},
                 {'arguments': [{'name': 'number', 'value': 16, 'type': 'Int'}]}
-            ]}
+            ]})
 
     def test_params_override_argument(self):
         params = InputParams(num_items=2)
         params.entry_point = "run_program"
         params.arguments["number"] = 8
         params.items[1].arguments["number"] = 16
-        assert params.as_dict() == {
+        self.assertEqual(params.as_dict(), {
             'entryPoint': 'run_program',
             'arguments': [{'name': 'number', 'value': 8, 'type': 'Int'}],
             'items': [{},
                       {'arguments':
-                       [{'name': 'number', 'value': 16, 'type': 'Int'}]}]}
+                       [{'name': 'number', 'value': 16, 'type': 'Int'}]}]})
 
     def test_params_file_uris(self):
         params = InputParams(num_items=2)
         params.entry_point = "run_program"
         params.items[0].entry_point = "other_program"
         params.file_uris["base"] = "https://some_link"
-        assert params.as_dict() == {
+        self.assertEqual(params.as_dict(), {
             'entryPoint': 'run_program',
             'items': [{'entryPoint': 'other_program'}, {}],
-            'fileUris': {'base': 'https://some_link'}}
+            'fileUris': {'base': 'https://some_link'}})
 
     def test_params_for_estimator(self):
         params = MicrosoftEstimatorParams(num_items=2)
@@ -70,11 +70,11 @@ class TestWorkspace(QuantumTestBase):
         params.items[0].entry_point = "other_program"
         params.file_uris["base"] = "https://some_link"
         params.error_budget = 0.23
-        assert params.as_dict() == {
+        self.assertEqual(params.as_dict(), {
             'entryPoint': 'run_program',
             'errorBudget': 0.23,
             'items': [{'entryPoint': 'other_program'}, {}],
-            'fileUris': {'base': 'https://some_link'}}
+            'fileUris': {'base': 'https://some_link'}})
 
     def test_input_argument_simple_types(self):
         params = InputParams()
@@ -96,7 +96,7 @@ class TestWorkspace(QuantumTestBase):
             ]
         }
 
-        assert params.as_dict() == expected
+        self.assertEqual(params.as_dict(), expected)
 
     def test_input_argument_complex_types(self):
         params = InputParams()
@@ -124,7 +124,7 @@ class TestWorkspace(QuantumTestBase):
             ]
         }
 
-        assert params.as_dict() == expected
+        self.assertEqual(params.as_dict(), expected)
 
     def test_input_params_unsupported_type(self):
         params = InputParams()

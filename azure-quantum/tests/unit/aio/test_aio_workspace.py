@@ -1,7 +1,3 @@
-#!/bin/env python
-# -*- coding: utf-8 -*-
-##
-# test_workspace.py: Checks correctness of azure.quantum.optimization module.
 ##
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
@@ -22,10 +18,10 @@ class TestWorkspace(QuantumTestBase):
             name=self.workspace_name,
             location=self.location
         )
-        assert ws.subscription_id == self.subscription_id
-        assert ws.resource_group == self.resource_group
-        assert ws.name == self.workspace_name
-        assert ws.location.lower().replace(" ", "") == self.location.lower().replace(" ", "")
+        self.assertEqual(ws.subscription_id, self.subscription_id)
+        self.assertEqual(ws.resource_group, self.resource_group)
+        self.assertEqual(ws.name, self.workspace_name)
+        self.assertEqual(ws.location.lower().replace(" ", ""), self.location.lower().replace(" ", ""))
 
         ws = Workspace(
             subscription_id=self.subscription_id,
@@ -34,16 +30,16 @@ class TestWorkspace(QuantumTestBase):
             location=self.location,
             storage=storage
         )
-        assert ws.storage == storage
+        self.assertEqual(ws.storage, storage)
 
         resource_id = f"/subscriptions/{self.subscription_id}/ResourceGroups/{self.resource_group}/providers/Microsoft.Quantum/Workspaces/{self.workspace_name}"
         ws = Workspace(resource_id=resource_id, location=self.location)
-        assert ws.subscription_id == self.subscription_id
-        assert ws.resource_group == self.resource_group
-        assert ws.name == self.workspace_name
+        self.assertEqual(ws.subscription_id, self.subscription_id)
+        self.assertEqual(ws.resource_group, self.resource_group)
+        self.assertEqual(ws.name, self.workspace_name)
 
         ws = Workspace(resource_id=resource_id, storage=storage, location=self.location)
-        assert ws.storage == storage
+        self.assertEqual(ws.storage, storage)
 
     def test_create_async_workspace_locations(self):
         # location is mandatory
@@ -63,7 +59,7 @@ class TestWorkspace(QuantumTestBase):
             name=self.workspace_name,
             location=location,
         )
-        assert ws.location == "eastus"
+        self.assertEqual(ws.location, "eastus")
 
     def test_create_async_workspace_instance_invalid(self):
         storage = "invalid_storage"
@@ -95,16 +91,16 @@ class TestWorkspace(QuantumTestBase):
             'microsoft.substochasticmontecarlo.cpu',
             'microsoft.tabu-parameterfree.cpu',
         ])
-        assert test_targets.issubset(set([t.name for t in targets]))
-    
+        self.assertTrue(test_targets.issubset(set([t.name for t in targets])))
+
     def test_workspace_job_quotas(self):
         ws = self.create_async_workspace()
         quotas = self.get_async_result(ws.get_quotas())
-        assert len(quotas) > 0
-        assert "dimension" in quotas[0]
-        assert "scope" in quotas [0]
-        assert "provider_id" in quotas [0]
-        assert "utilization" in quotas [0]
-        assert "holds" in quotas [0]
-        assert "limit" in quotas [0]
-        assert "period" in quotas [0]
+        self.assertGreater(len(quotas), 0)
+        self.assertIn("dimension", quotas[0])
+        self.assertIn("scope", quotas[0])
+        self.assertIn("provider_id", quotas[0])
+        self.assertIn("utilization", quotas[0])
+        self.assertIn("holds", quotas[0])
+        self.assertIn("limit", quotas[0])
+        self.assertIn("period", quotas[0])

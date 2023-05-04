@@ -13,11 +13,6 @@
 $nugetVersion = $Env:NUGET_VERSION
 $pythonVersion = $Env:PYTHON_VERSION
 
-# Temporary using the beta package until the qdk-python
-# build takes a dependency on the iqsharp build
-$nugetVersion = "0.27.261334-beta"
-$pythonVersion = "0.27.261334b1"
-
 # Install prerequisites.
 Write-Host "Installing Python prerequisites"
 pip install --user `
