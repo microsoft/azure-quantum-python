@@ -6,6 +6,7 @@
 import asyncio
 import logging
 import json
+import time
 
 from azure.quantum.aio.job.base_job import BaseJob, DEFAULT_TIMEOUT
 from azure.quantum.job.job import Job as SyncJob
@@ -56,11 +57,11 @@ class Job(BaseJob, SyncJob, FilteredJob):
         """
         await self.refresh()
         poll_wait = SyncJob._default_poll_wait
-        total_time = 0.
+        start_time = time.time()
         while not self.has_completed():
-            if timeout_secs is not None and total_time >= timeout_secs:
+            if timeout_secs is not None and (time.time() - start_time) >= timeout_secs:
                 raise TimeoutError(f"The wait time has exceeded {timeout_secs} seconds.")
- 
+
             logger.debug(
                 f"Waiting for job {self.id},"
                 + f"it is in status '{self.details.status}'"
@@ -68,7 +69,6 @@ class Job(BaseJob, SyncJob, FilteredJob):
             if print_progress:
                 print(".", end="", flush=True)
             await asyncio.sleep(poll_wait)
-            total_time += poll_wait
             await self.refresh()
             poll_wait = (
                 max_poll_wait_secs
