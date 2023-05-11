@@ -24,37 +24,65 @@ function DonutChart({
   innerRadius,
   outerRadius,
 }: DonutChartProps) {
-
   React.useEffect(() => {
     const svg = d3.select("svg");
     svg.selectAll("*").remove();
 
-    const color = d3
+    // Define constants
+    const innerRadiusHover = innerRadius;
+    const outerRadiusHover = outerRadius + 25;
+    const donutMiddleTitle = "Total physical qubits";
+    const legendTitlePreText = "Physical";
+    const padAngle = getComputedStyle(
+      document.documentElement
+    ).getPropertyValue("--pad-angle");
+
+    const chartOpacity = getComputedStyle(
+      document.documentElement
+    ).getPropertyValue("--chart-opacity");
+    const chartHoverOpacity = getComputedStyle(
+      document.documentElement
+    ).getPropertyValue("--chart-hover-opacity");
+
+    // Define chart and legend color ranges.
+    const chartColor = d3
       .scaleOrdinal()
       .domain(
         d3.extent(data, (d) => {
           return d.title;
         }) as unknown as string
       )
-      .range(["#0078D4", "#EF6950", "#B7B8B9"]);
+      .range(
+        getComputedStyle(document.documentElement)
+          .getPropertyValue("--d3-colors")
+          .split(", ")
+      );
 
-    const legendColor = d3.scaleOrdinal().domain(
-      d3.extent(data, (d) => {
-        return d.title;
-      }) as unknown as string
-    ).range(["#7FBBE9", "#EF6950", "#B7B8B9"]);
+    const legendColor = d3
+      .scaleOrdinal()
+      .domain(
+        d3.extent(data, (d) => {
+          return d.title;
+        }) as unknown as string
+      )
+      .range(
+        getComputedStyle(document.documentElement)
+          .getPropertyValue("--d3-colors-legend")
+          .split(", ")
+      );
 
+    // Add chart title
     svg
       .append("text")
-      .attr("x", "225")
+      .attr("x", outerRadius)
       .attr("y", "-60")
-      .attr("text-anchor", "middle")
       .attr("class", "title")
       .text("Space diagram");
 
+    // Create pie and arc generators
     const pieGenerator = d3
       .pie<Data>()
-      .padAngle(0.01)
+      .padAngle(padAngle)
       .value((d) => d.value)
       .sort(null);
 
@@ -71,121 +99,99 @@ function DonutChart({
       .enter()
       .append("g")
       .attr("class", "arc")
-      .attr("transform", `translate(${outerRadius},${outerRadius})`);
+      .attr("transform", `translate(${outerRadius + 60},${outerRadius + 50})`);
 
+    // Fill donut chart, apply hover.
     arcs
       .append("path")
       .attr("d", arcGenerator)
       .attr("fill", (d) => {
-        return color(d.data.title) as string;
+        return chartColor(d.data.title) as string;
       })
-      .style("opacity", 0.5)
+      .style("opacity", chartOpacity)
       .on("mouseover", (d) => {
         const arcHover = d3
           .arc<PieArcDatum<Data>>()
-          .innerRadius(150)
-          .outerRadius(250);
+          .innerRadius(innerRadiusHover)
+          .outerRadius(outerRadiusHover);
         d3.select(d.target).attr("d", arcHover);
-        d3.select(d.target).style("opacity", 0.65);
+        d3.select(d.target).style("opacity", chartHoverOpacity);
       })
       .on("mouseout", (d) => {
         d3.select(d.target).attr("d", arcGenerator);
-        d3.select(d.target).style("opacity", 0.5);
+        d3.select(d.target).style("opacity", chartOpacity);
       });
 
-    arcs.append("title").text((d) => `${d.data.title} : ${d.value.toLocaleString("en-us")}`);
+    // Add tooltips
+    arcs
+      .append("title")
+      .text((d) => `${d.data.title} : ${d.value.toLocaleString("en-us")}`);
 
+    //consider: https://stackoverflow.com/questions/24827589/d3-appending-html-to-nodes
+
+    // Create legend
     const legend = svg
       .selectAll(".legend")
       .data(data)
       .enter()
       .append("g")
       .attr("class", "legend")
-      .attr("transform", (d, i) => `translate(${i * 150}, 0)`);
+      .attr("transform", (d, i) => `translate(${i * innerRadius}, 0)`);
 
     legend
       .append("rect")
-      .attr("x", 110)
+      .attr("x", 100)
       .attr("y", 500)
       .attr("width", 5)
       .attr("height", 45)
       .style("fill", (d, i) => legendColor(d.title) as string);
 
-
-    legend.append("text")
+    // add text to the legend
+    legend
+      .append("text")
       .attr("x", 120)
       .attr("y", 508)
-      .text((d) => "Physical")
-      .style("font-size", "10px")
-      .style("font-family", "Segoe UI")
-      .style("line-height", "14px")
-      .style("fill", "black")
-      .style("font-weight", "600")
-      .style("font-style", "normal")
+      .text((d) => legendTitlePreText)
+      .attr("class", "legend")
       .attr("transform", (d, i) => `translate(${i}, 0)`);
 
-
-    // add text to the legend
-    legend.append("text")
+    legend
+      .append("text")
       .attr("x", 120)
       .attr("y", 520)
       .text((d) => `${d.legendTitle}`)
-      .style("font-size", "10px")
-      .style("fill", "#000000")
-      .style("font-family", "Segoe UI")
-      .style("line-height", "14px")
-      .style("font-weight", "400")
-      .style("font-style", "normal")
+      .attr("class", "legend-maintext")
       .attr("transform", (d, i) => `translate(${i}, 0)`);
 
-
-    legend.append("text")
+    legend
+      .append("text")
       .attr("x", 120)
       .attr("y", 544)
       .text((d) => `${d.value.toLocaleString("en-US")}`)
-      .style("font-size", "24px")
-      .style("font-family", "Segoe UI")
-      .style("line-height", "32px")
-      .style("fill", "#24272B")
-      .style("font-style", "normal")
-      .style("font-weight", "600")
+      .attr("class", "legend-values")
       .attr("transform", (d, i) => `translate(${i}, 0)`);
 
-
+    // Add total qubits and title to the middle of the donut chart
     const total = d3.sum(data, (d) => d.value).toLocaleString("en-US");
 
-
-    svg.append("text")
+    svg
+      .append("text")
       .attr("x", outerRadius)
       .attr("y", outerRadius - 20)
-      .text(`Total physical qubits`)
-      .style("font-size", "16px")
-      .style("fill", "#323130")
-      .style("font-weight", "400")
-      .style("font-style", "normal")
-      .attr("text-anchor", "middle")
-      .style("font-family", "Segoe UI")
-      .style("line-height", "21px");
+      .text(donutMiddleTitle)
+      .attr("class", "donut-middle-title");
 
-
-    svg.append("text")
+    svg
+      .append("text")
       .attr("x", outerRadius)
       .attr("y", outerRadius + 35)
       .text(`${total}`)
-      .style("font-size", "55px")
-      .style("fill", "#323130")
-      .style("font-weight", "400")
-      .style("font-style", "normal")
-      .attr("text-anchor", "middle")
-      .style("font-family", "Segoe UI")
-      .style("line-height", "73px");
-
-
+      .attr("class", "donut-middle-text");
   }, [data, innerRadius, outerRadius]);
 
   return (
     <div className="svg-container">
-      <svg className="svg-element" width={width} height={height} viewBox="-100 -100 1000 1000"></svg>
+      <svg className="svg-element" width={width} height={height}></svg>
     </div>
   );
 }
