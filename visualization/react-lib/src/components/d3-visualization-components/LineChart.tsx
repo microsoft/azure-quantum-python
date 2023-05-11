@@ -1,8 +1,6 @@
 import * as React from "react";
 import * as d3 from "d3";
 import "./CSS/LineChart.css";
-import { RowGroup } from "../Table";
-import Table from "../Table";
 
 type Data = {
   title: string;
@@ -189,67 +187,6 @@ function LineChart({
       .attr("marker-start", "url(#circleMarker)");
   }, [data, width, height]);
 
-  /*
-  var subHeadings: string[] = ["Name", "value"];
-  const headings = ["Name1", "Value1"];
-  var values = [1, 2];
-  const tableData = {
-    headings: ["Name", "Location", "Age"],
-    subheadings: ["First", "Last", "City"],
-    data: [
-      ["John", "Doe", "Chicago"],
-      ["Jane", "Doe", "New York City"],
-      ["Dave", "Smith", "Los Angeles"],
-    ],
-  };*/
-
-  const rowGroups: RowGroup[] = [
-    {
-      header: "Physical resource estimates",
-      rows: [
-        {
-          data: [["Physical qubits", "1235423"]],
-        },
-      ],
-    },
-    {
-      header: "T-factory parameters",
-      rows: [
-        {
-          data: [["Physical qubits", "1214"]],
-        },
-      ],
-    },
-    {
-      header: "Resource estimation breakdown",
-      rows: [
-        {
-          data: [["Number of T-factory copies", "1214"]],
-        },
-        {
-          data: [["Physical qubits for single T-factory copy", "1214"]],
-        },
-        {
-          data: [["Total physical T-factory qubits", "1214"]],
-        },
-        {
-          data: [["Physical algorithmic qubits", "1214"]],
-        },
-        {
-          data: [["Logical algorithmic qubits", "1214"]],
-        },
-      ],
-    },
-    {
-      header: "Logical qubit parameters",
-      rows: [
-        {
-          data: [["Physical qubits", "1214"]],
-        },
-      ],
-    },
-  ];
-
   return (
     <div>
       <div className="svg-container">
@@ -260,7 +197,7 @@ function LineChart({
           viewBox="-100 -100 1000 1000"
         ></svg>
       </div>
-      <Table rowGroups={rowGroups} />
+      <TableComponent />
     </div>
   );
 }

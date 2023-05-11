@@ -1,6 +1,3 @@
-import React from 'react';
-
-
 export interface JobResults {
     errorBudget:             ErrorBudget;
     jobParams:               JobParams;
