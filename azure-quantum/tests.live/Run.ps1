@@ -105,6 +105,9 @@ if ($PackageDir -Match "azure-quantum") {
     Copy-Item -Path (Join-Path $PackageDir "tests" "unit" "*.qs") -Destination $PSScriptRoot
 }
 
+# Pin urllib3 for compatibility with vcrpy
+pip install urllib3==1.26.15
+
 python -m pytest -v `
     --junitxml=junit/test-results.xml `
     --log-level=INFO `
