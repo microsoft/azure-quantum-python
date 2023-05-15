@@ -20,6 +20,11 @@ Import-Module (Join-Path $PSScriptRoot "package-utils.psm1");
 if ($Env:ENABLE_PYTHON -eq "false") {
   Write-Host "##vso[task.logissue type=warning;]Skipping testing Python packages. Env:ENABLE_PYTHON was set to 'false'."
 } else {
+
+  # Pin urllib3 for compatibility
+  $EnvironmentFile = Join-Path $PSScriptRoot "../azure-quantum/environment.yml"
+  Add-Content $EnvironmentFile "`n    - urllib3=1.26.15"
+
   $PackageNames = PackagesList -PackageName $PackageName
   $ExitCode = 0;
   foreach ($PackageName in $PackageNames) {
