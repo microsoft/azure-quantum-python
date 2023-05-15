@@ -23,3 +23,6 @@ $RequirementsTxt = Join-Path $PSScriptRoot "../azure-quantum/requirements.txt"
 (Get-Content $RequirementsTxt) `
     -replace 'azure-core>=1.21.1', 'azure-core>=1.19.1' |
   Out-File $RequirementsTxt
+
+# Pin urllib3 for compatibility with vcrpy
+Add-Content $RequirementsTxt "`nurllib3==1.26.15"

@@ -17,12 +17,6 @@ param (
 
 Import-Module (Join-Path $PSScriptRoot "package-utils.psm1");
 
-
-
-# Pin urllib3 for compatibility with vcrpy
-Write-Host "##[info]Install version of urllib3 that is compatible with vcrpy"
-pip install urllib3==1.26.15
-
 if ($Env:ENABLE_PYTHON -eq "false") {
   Write-Host "##vso[task.logissue type=warning;]Skipping testing Python packages. Env:ENABLE_PYTHON was set to 'false'."
 } else {
