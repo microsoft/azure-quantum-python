@@ -5,7 +5,7 @@ import "./CSS/LineChart.css";
 type Data = {
   title: string;
   legendTitle: string;
-  value: number;
+  value: string;
 };
 
 interface LineChartProps {

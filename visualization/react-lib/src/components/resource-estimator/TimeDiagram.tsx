@@ -128,7 +128,7 @@ function TimeDiagram({ width, height, data }: TimeDiagramProps) {
     <div className="grid-container">
       <div>
         <TimeChart
-          numberTFactories={numTFactoryInvocations}
+          numberTFactories={numTFactoryInvocations.toString()}
           algorithmRuntime={algorithmRuntime}
           tFactoryRunTime={tFactoryRuntime}
           width={width}
