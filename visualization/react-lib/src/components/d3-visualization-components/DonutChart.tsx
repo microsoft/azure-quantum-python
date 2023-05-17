@@ -2,6 +2,7 @@ import * as React from "react";
 import * as d3 from "d3";
 import { PieArcDatum } from "d3-shape";
 import "./CSS/DonutChart.css";
+import { ColorResult, SwatchesPicker } from "react-color";
 
 type Data = {
   title: string;
@@ -15,15 +16,22 @@ interface DonutChartProps {
   height: number;
   innerRadius: number;
   outerRadius: number;
+  translationValX: number;
+  translationValY: number;
 }
 
-function DonutChart({
-  data,
-  width,
-  height,
-  innerRadius,
-  outerRadius,
-}: DonutChartProps) {
+function DonutChart(
+  this: any,
+  {
+    data,
+    width,
+    height,
+    innerRadius,
+    outerRadius,
+    translationValX,
+    translationValY,
+  }: DonutChartProps
+) {
   React.useEffect(() => {
     const svg = d3.select("svg");
     svg.selectAll("*").remove();
@@ -45,7 +53,7 @@ function DonutChart({
     ).getPropertyValue("--chart-hover-opacity");
 
     // Define chart and legend color ranges.
-    const chartColor = d3
+    var chartColor = d3
       .scaleOrdinal()
       .domain(
         d3.extent(data, (d) => {
@@ -74,8 +82,8 @@ function DonutChart({
     // Add chart title
     svg
       .append("text")
-      .attr("x", outerRadius)
-      .attr("y", "-60")
+      .attr("x", outerRadius + translationValX)
+      .attr("y", translationValX)
       .attr("class", "title")
       .text("Space diagram");
 
@@ -99,7 +107,23 @@ function DonutChart({
       .enter()
       .append("g")
       .attr("class", "arc")
-      .attr("transform", `translate(${outerRadius + 60},${outerRadius + 50})`);
+      .attr(
+        "transform",
+        `translate(${outerRadius + translationValX},${
+          outerRadius + translationValY
+        })`
+      );
+
+    /*
+    const rect = svg
+      .append("rect")
+      .attr("x", 100)
+      .attr("y", 100)
+      .attr("z", 10)
+      .attr("width", 20)
+      .attr("height", 20)
+      .attr("fill", "blue")
+      .attr("visibility", "hidden");*/
 
     // Fill donut chart, apply hover.
     arcs
@@ -108,6 +132,7 @@ function DonutChart({
       .attr("fill", (d) => {
         return chartColor(d.data.title) as string;
       })
+      //.attr("fill", chartColorString)
       .style("opacity", chartOpacity)
       .on("mouseover", (d) => {
         const arcHover = d3
@@ -127,8 +152,6 @@ function DonutChart({
       .append("title")
       .text((d) => `${d.data.title} : ${d.value.toLocaleString("en-us")}`);
 
-    //consider: https://stackoverflow.com/questions/24827589/d3-appending-html-to-nodes
-
     // Create legend
     const legend = svg
       .selectAll(".legend")
@@ -136,7 +159,11 @@ function DonutChart({
       .enter()
       .append("g")
       .attr("class", "legend")
-      .attr("transform", (d, i) => `translate(${i * innerRadius}, 0)`);
+      .attr(
+        "transform",
+        (d, i) =>
+          `translate(${i * innerRadius + translationValX}, ${translationValY})`
+      );
 
     legend
       .append("rect")
@@ -176,19 +203,27 @@ function DonutChart({
 
     svg
       .append("text")
-      .attr("x", outerRadius)
-      .attr("y", outerRadius - 20)
+      .attr("x", outerRadius + translationValX)
+      .attr("y", outerRadius + translationValY - 30)
       .text(donutMiddleTitle)
       .attr("class", "donut-middle-title");
 
     svg
       .append("text")
-      .attr("x", outerRadius)
-      .attr("y", outerRadius + 35)
+      .attr("x", outerRadius + translationValX)
+      .attr("y", outerRadius + translationValY + 30)
       .text(`${total}`)
       .attr("class", "donut-middle-text");
   }, [data, innerRadius, outerRadius]);
 
+  /*
+  function handleColorChange(color: ColorResult, event: any) {
+    chartColorString = color;
+  }
+  <SwatchesPicker
+        color={chartColorString}
+        onChange={handleColorChange}
+      ></SwatchesPicker>*/
   return (
     <div className="svg-container">
       <svg className="svg-element" width={width} height={height}></svg>

@@ -31,6 +31,9 @@ function SpaceChart({
     },
   ];
 
+  const translationValX = 50;
+  const translationValY = 100;
+
   return (
     <div>
       <DonutChart
@@ -39,6 +42,8 @@ function SpaceChart({
         height={height}
         innerRadius={innerRadius}
         outerRadius={outerRadius}
+        translationValX={translationValX}
+        translationValY={translationValY}
       />
     </div>
   );
