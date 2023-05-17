@@ -2,7 +2,6 @@ import * as React from "react";
 import * as d3 from "d3";
 import { PieArcDatum } from "d3-shape";
 import "./CSS/DonutChart.css";
-import { ColorResult, SwatchesPicker } from "react-color";
 
 type Data = {
   title: string;
@@ -20,18 +19,15 @@ interface DonutChartProps {
   translationValY: number;
 }
 
-function DonutChart(
-  this: any,
-  {
-    data,
-    width,
-    height,
-    innerRadius,
-    outerRadius,
-    translationValX,
-    translationValY,
-  }: DonutChartProps
-) {
+function DonutChart({
+  data,
+  width,
+  height,
+  innerRadius,
+  outerRadius,
+  translationValX,
+  translationValY,
+}: DonutChartProps) {
   React.useEffect(() => {
     const svg = d3.select("svg");
     svg.selectAll("*").remove();
@@ -114,17 +110,6 @@ function DonutChart(
         })`
       );
 
-    /*
-    const rect = svg
-      .append("rect")
-      .attr("x", 100)
-      .attr("y", 100)
-      .attr("z", 10)
-      .attr("width", 20)
-      .attr("height", 20)
-      .attr("fill", "blue")
-      .attr("visibility", "hidden");*/
-
     // Fill donut chart, apply hover.
     arcs
       .append("path")
@@ -132,7 +117,6 @@ function DonutChart(
       .attr("fill", (d) => {
         return chartColor(d.data.title) as string;
       })
-      //.attr("fill", chartColorString)
       .style("opacity", chartOpacity)
       .on("mouseover", (d) => {
         const arcHover = d3
@@ -216,14 +200,6 @@ function DonutChart(
       .attr("class", "donut-middle-text");
   }, [data, innerRadius, outerRadius]);
 
-  /*
-  function handleColorChange(color: ColorResult, event: any) {
-    chartColorString = color;
-  }
-  <SwatchesPicker
-        color={chartColorString}
-        onChange={handleColorChange}
-      ></SwatchesPicker>*/
   return (
     <div className="svg-container">
       <svg className="svg-element" width={width} height={height}></svg>

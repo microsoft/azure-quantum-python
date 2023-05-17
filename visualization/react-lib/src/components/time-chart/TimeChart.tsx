@@ -2,7 +2,7 @@ import React from "react";
 import LineChart from "../d3-visualization-components/LineChart";
 
 export type TimeChartProps = {
-  numberTFactories: number;
+  numberTFactories: string;
   tFactoryRunTime: string;
   algorithmRuntime: string;
   width: number;
@@ -39,7 +39,7 @@ function TimeChart({
   return (
     <div>
       <LineChart
-        data={chartData}
+        chartData={chartData}
         chartLength={chartLength}
         width={width}
         height={height}
