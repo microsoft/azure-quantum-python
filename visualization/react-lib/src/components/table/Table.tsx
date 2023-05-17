@@ -20,7 +20,8 @@ export interface TableData {
   id: string;
   name: string;
   type: number;
-  value?: number;
+  value?: string;
+  description?: string;
 }
 
 export interface TableComponentProps {
@@ -74,9 +75,13 @@ function TableComponent({ nodes, width, height }: TableComponentProps) {
                   <Row key={item.id} item={item}>
                     <Cell>
                       {item.name}
-                      <Tooltip title={item.name}>
+                      <Tooltip title={item.description ? item.description : ""}>
                         <Button>
-                          <InfoIcon fontSize="small"></InfoIcon>
+                          {item.description ? (
+                            <InfoIcon data-show-if fontSize="small"></InfoIcon>
+                          ) : (
+                            ""
+                          )}
                         </Button>
                       </Tooltip>
                     </Cell>

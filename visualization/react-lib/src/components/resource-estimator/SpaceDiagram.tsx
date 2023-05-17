@@ -1,9 +1,9 @@
 import React from "react";
-import { SpaceChart } from "./space-chart";
-import TableComponent from "./table/Table";
-import { TableData } from "./table/Table";
-import { JobResults } from "../models/JobResults";
-import "./SpaceDiagram.css";
+import { SpaceChart } from "../space-chart";
+import TableComponent from "../table/Table";
+import { TableData } from "../table/Table";
+import { JobResults } from "../../models/JobResults";
+import "./Diagram.css";
 
 interface SpaceDiagramProps {
   width: number;
@@ -31,6 +31,8 @@ function SpaceDiagram({
   const numQubitsPerTFactory = Math.round(
     physicalQubitsTFactory / numTFactories
   );
+
+  // TO DO: make name and description come from job results.
   const nodes: TableData[] = [
     {
       id: "0",
@@ -41,7 +43,9 @@ function SpaceDiagram({
       id: "1",
       name: "Total physical qubits",
       type: 1,
-      value: jobResults.physicalCounts.physicalQubits,
+      value: jobResults.physicalCounts.physicalQubits.toString(),
+      description:
+        "Total physical qubits required for algorithm and t-factories.",
     },
     {
       id: "2",
@@ -52,7 +56,8 @@ function SpaceDiagram({
       id: "3",
       name: "Total T-factory physical qubits",
       type: 1,
-      value: physicalQubitsTFactory,
+      value: physicalQubitsTFactory.toString(),
+      description: "Total physical qubits required for t-factories.",
     },
     {
       id: "4",
@@ -63,25 +68,29 @@ function SpaceDiagram({
       id: "5",
       name: "Number of T-factory copies",
       type: 1,
-      value: numTFactories,
+      value: numTFactories.toString(),
     },
     {
       id: "6",
       name: "Physical qubits for single T-factory copy",
       type: 1,
-      value: numQubitsPerTFactory,
+      value: numQubitsPerTFactory.toString(),
     },
     {
       id: "8",
       name: "Physical algorithmic qubits",
       type: 1,
-      value: physicalQubitsAlgorithm,
+      value: physicalQubitsAlgorithm.toString(),
+      description: "Total physical qubits required for algorithm execution.",
     },
     {
       id: "9",
       name: "Logical algorithmic qubits",
       type: 1,
-      value: jobResults.physicalCounts.breakdown.algorithmicLogicalQubits,
+      value:
+        jobResults.physicalCounts.breakdown.algorithmicLogicalQubits.toString(),
+      description:
+        "Total logical qubits made up of algorithmic physical qubits required for algorithm.",
     },
     {
       id: "10",
@@ -92,11 +101,12 @@ function SpaceDiagram({
       id: "11",
       name: "Physical qubits",
       type: 1,
-      value: jobResults.logicalQubit.physicalQubits,
+      value: jobResults.logicalQubit.physicalQubits.toString(),
+      description:
+        "Number of physical qubits which make up one logical algorithmic qubit.",
     },
   ];
-  const width2 = width * 2;
-  const height2 = height * 2;
+
   return (
     <div className="grid-container">
       <div>

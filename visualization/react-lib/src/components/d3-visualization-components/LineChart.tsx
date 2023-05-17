@@ -9,33 +9,29 @@ type Data = {
 };
 
 interface LineChartProps {
-  data: Data[];
-  lengthOuter: number;
-  lengthInner: number;
+  chartData: Data[];
+  chartLength: number;
   width: number;
   height: number;
-  marginVal: number;
 }
 
-function LineChart({
-  data,
-  lengthInner,
-  lengthOuter,
-  width,
-  height,
-  marginVal,
-}: LineChartProps) {
+// THIS FILE IS UNDER CONSTRUCTION.
+
+function LineChart({ chartData, chartLength, width, height }: LineChartProps) {
   React.useEffect(() => {
     const svg = d3.select("svg");
     svg.selectAll("*").remove();
+
+    const lengthInner = chartLength - 20;
 
     var algorithmRunTimeLine = [
       [0, 0],
       [lengthInner, 0],
     ];
+
     const timeLine = [
       [0, 0],
-      [lengthOuter, 0],
+      [chartLength, 0],
     ];
     const startDashedLine = [
       [40, -70],
@@ -185,19 +181,83 @@ function LineChart({
       .style("stroke-dasharray", "3,3")
       .attr("marker-end", "url(#circleMarker)")
       .attr("marker-start", "url(#circleMarker)");
-  }, [data, width, height]);
+
+    // dashed lines:
+
+    // create svg
+
+    // set the number of lines
+    const numberOfLines = 15;
+
+    // set the maximum length of the chart
+    const maxLength = 300;
+
+    // determine the gap to place between each line
+    let gap;
+    if (numberOfLines > 100) {
+      gap = maxLength / numberOfLines;
+    } else {
+      gap = maxLength / (numberOfLines - 1);
+    }
+
+    // define the x scale
+    const xScale = d3
+      .scaleLinear()
+      .domain([0, numberOfLines])
+      .range([0, maxLength]);
+
+    // define the data
+    let data = [];
+    for (let i = 0; i <= numberOfLines; i++) {
+      data.push({ x: xScale(i) });
+    }
+
+    // draw the lines
+    svg
+      .selectAll(".line")
+      .data(data)
+      .enter()
+      .append("line")
+      .attr("class", "line")
+      .attr("x1", (d) => d.x)
+      .attr("x2", (d) => d.x + 25)
+      .attr("y1", 20)
+      .attr("y2", 20)
+      .attr("stroke", "black")
+      .attr("stroke-width", 1);
+
+    // draw the arrows
+    /*
+    svg
+      .selectAll(".arrow")
+      .data(data)
+      .enter()
+      .append("polygon")
+      .attr("class", "arrow")
+      .attr("points", (d) => `${d.x},${-5} ${d.x - 5},${0} ${d.x + 5},${0}`)
+      .attr("fill", "black")
+      .attr("stroke", "black")
+      .attr("stroke-width", 2);*/
+
+    // draw the elippses
+    if (numberOfLines > 100) {
+      svg
+        .append("ellipse")
+        .attr("cx", maxLength / 2)
+        .attr("cy", height / 2)
+        .attr("rx", gap / 2)
+        .attr("ry", 10)
+        .attr("fill", "black")
+        .attr("stroke", "black")
+        .attr("stroke-width", 2);
+    }
+  }, [chartData, width, height]);
 
   return (
     <div>
       <div className="svg-container">
-        <svg
-          className="svg-element"
-          width={100}
-          height={100}
-          viewBox="-100 -100 1000 1000"
-        ></svg>
+        <svg className="svg-element" width={width} height={height}></svg>
       </div>
-      <TableComponent />
     </div>
   );
 }

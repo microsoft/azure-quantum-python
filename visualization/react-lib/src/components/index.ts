@@ -1,3 +1,4 @@
 export { SpaceChart} from "./space-chart";
-export {TimeDiagram} from "./time-diagram";
-export {default as SpaceDiagram} from "./SpaceDiagram";
+export {TimeChart} from "./time-chart";
+export {SpaceDiagram} from "./resource-estimator";
+export {TimeDiagram} from "./resource-estimator";
