@@ -34,7 +34,7 @@ function TimeChart({
     },
   ];
 
-  const chartLength = width - 10;
+  const chartLength = width - 100;
 
   return (
     <div>

@@ -22,53 +22,86 @@ function LineChart({ chartData, chartLength, width, height }: LineChartProps) {
     const svg = d3.select("svg");
     svg.selectAll("*").remove();
 
-    const lengthInner = chartLength - 20;
+    /* Define Constants */
+    const colors = getComputedStyle(
+      document.documentElement
+    ).getPropertyValue("--d3-colors");
+    const colorArray = colors.split(',');
+    const algorithmRunTimeColor = colorArray[1];
+    const tfactoryLineColor = colorArray[0];
+    const timeLineColor = "#323130";
 
-    var algorithmRunTimeLine = [
-      [0, 0],
-      [lengthInner, 0],
+    const bottomY = 400;
+    const distBetweenCharts = 100;
+    const lengthInner = chartLength - 40;
+    const originPoint = [0, 0];
+
+    const algorithmRunTimeLine = [
+      [0, bottomY - distBetweenCharts],
+      [lengthInner, bottomY - distBetweenCharts],
     ];
 
     const timeLine = [
-      [0, 0],
-      [chartLength, 0],
+      [0, bottomY],
+      [chartLength, bottomY],
     ];
+
     const startDashedLine = [
-      [40, -70],
-      [40, 0],
+      [40, bottomY],
+      [40, bottomY - (distBetweenCharts * 2)],
     ];
 
     const endDashedLine = [
-      [lengthInner, -70],
-      [lengthInner, 0],
+      [lengthInner + 7, bottomY],
+      [lengthInner + 7, bottomY - distBetweenCharts],
     ];
 
-    var startMarkerPoints = [
-      [0, 0],
-      [0, 10],
-      [2, 10],
-      [2, 0],
+    const startMarkerBoxWidth = 1;
+    const startMarkerBoxHeight = 10;
+    const refXStartMarker = 1;
+    const refYStartMarker = startMarkerBoxHeight / 2;
+
+    const startMarkerPoints = [
+      originPoint,
+      [0, startMarkerBoxHeight],
+      [startMarkerBoxWidth, startMarkerBoxHeight],
+      [startMarkerBoxWidth, 0],
     ];
 
-    var startMarkerBoxWidth = 10;
-    var startMarkerBoxHeight = 10;
-    var refXRect = 2;
-    var refYRect = startMarkerBoxHeight / 2;
-
-    var arrowPoints = [
+    const arrowPoints = [
       [0, 0],
       [0, 8],
       [8, 4],
     ];
-    var markerBoxWidth = 8;
-    var markerBoxHeight = 8;
-    var refX = markerBoxWidth / 2;
-    var refY = markerBoxHeight / 2;
 
-    var lineGenerator = d3.line();
+    const markerBoxWidth = 8;
+    const markerBoxHeight = 8;
+    const refX = markerBoxWidth / 2;
+    const refY = markerBoxHeight / 2;
 
+    // Create line generator 
+    const lineGenerator = d3.line();
+
+    /* Create algorithm line */
+
+    // Create algorithm start bar
     svg
       .append("defs")
+      .append("marker")
+      .attr("id", "startMarkerAlgorithm")
+      .attr("class", "startMarkerAlgorithm")
+      .attr("refX", refXStartMarker)
+      .attr("refY", refYStartMarker)
+      .attr("markerHeight", startMarkerBoxHeight)
+      .attr("markerWidth", startMarkerBoxWidth)
+      .style("fill", algorithmRunTimeColor)
+      .style("stroke", algorithmRunTimeColor)
+      .attr("orient", "auto-start-reverse")
+      .append("path")
+      .attr("d", d3.line()(startMarkerPoints));
+
+    // Create algorithm end arrow
+    svg
       .append("marker")
       .attr("id", "arrowAlgorithmLine")
       .attr("viewBox", [0, 0, markerBoxWidth + 4, markerBoxHeight])
@@ -76,45 +109,78 @@ function LineChart({ chartData, chartLength, width, height }: LineChartProps) {
       .attr("refY", refY)
       .attr("markerWidth", markerBoxWidth - 3)
       .attr("markerHeight", markerBoxHeight - 4)
-      .style("fill", "#00A2AD")
-      .style("stroke", "#00A2AD")
+      .style("fill", algorithmRunTimeColor)
+      .style("stroke", algorithmRunTimeColor)
       .style("stroke-width", "1")
       .attr("orient", "auto-start-reverse")
       .append("path")
       .attr("d", d3.line()(arrowPoints));
 
+    // Draw algorithm line
+    svg
+      .append("path")
+      .attr("class", "line")
+      .attr("d", lineGenerator(algorithmRunTimeLine))
+      .style("fill", "none")
+      .attr("stroke-width", "2")
+      .attr("marker-end", "url(#arrowAlgorithmLine)")
+      .attr("marker-start", "url(#startMarkerAlgorithm)")
+      .style("stroke", algorithmRunTimeColor);
+
+    /* Create time line */
+
+    // Create timeline start bar
     svg
       .append("defs")
       .append("marker")
       .attr("id", "startMarkerTimeLine")
-      .attr("viewBox", [0, 0, startMarkerBoxWidth + 4, startMarkerBoxHeight])
-      .attr("refX", refXRect)
-      .attr("refY", refYRect)
-      .attr("markerWidth", startMarkerBoxWidth)
+      .attr("refX", refXStartMarker)
+      .attr("refY", refYStartMarker)
       .attr("markerHeight", startMarkerBoxHeight)
-      .style("fill", "#323130")
-      .style("stroke", "#323130")
-      .style("stroke-width", "1")
+      .attr("markerWidth", startMarkerBoxWidth)
+      .style("fill", timeLineColor)
+      .style("stroke", timeLineColor)
       .attr("orient", "auto-start-reverse")
       .append("path")
       .attr("d", d3.line()(startMarkerPoints));
 
+    // Create timeline end arrow
     svg
-      .append("defs")
       .append("marker")
-      .attr("id", "startMarkerAlgorithm")
-      .attr("viewBox", [0, 0, startMarkerBoxWidth + 4, startMarkerBoxHeight])
-      .attr("refX", refXRect)
-      .attr("refY", refYRect)
-      .attr("markerWidth", startMarkerBoxWidth - 3)
-      .attr("markerHeight", startMarkerBoxHeight - 4)
-      .style("fill", "#00A2AD")
-      .style("stroke", "#00A2AD")
+      .attr("id", "arrowTimeLine")
+      .attr("viewBox", [0, 0, markerBoxWidth + 4, markerBoxHeight])
+      .attr("refX", refX)
+      .attr("refY", refY)
+      .attr("markerWidth", markerBoxWidth - 3)
+      .attr("markerHeight", markerBoxHeight - 4)
+      .style("fill", timeLineColor)
+      .style("stroke", timeLineColor)
       .style("stroke-width", "1")
       .attr("orient", "auto-start-reverse")
       .append("path")
-      .attr("d", d3.line()(startMarkerPoints));
+      .attr("d", d3.line()(arrowPoints));
 
+    // Draw timeline.
+    svg
+      .append("path")
+      .attr("class", "line")
+      .attr("id", "timeline")
+      .attr("d", lineGenerator(timeLine))
+      .attr("stroke-width", "2")
+      .attr("marker-start", "url(#startMarkerTimeLine)")
+      .attr("marker-end", "url(#arrowTimeLine)")
+      .style("fill", timeLineColor)
+      .style("stroke", timeLineColor)
+
+    // Append text label to  time line.
+    svg
+      .append("text")
+      .attr("x", chartLength + 10)
+      .attr("y", bottomY + 5)
+      .text(`Time`)
+      .attr("class", "time");
+
+      // Define circle markers for dashed lines.
     svg
       .append("defs")
       .append("marker")
@@ -128,44 +194,16 @@ function LineChart({ chartData, chartLength, width, height }: LineChartProps) {
       .attr("cx", 5)
       .attr("cy", 5)
       .attr("r", 3)
-      .style("fill", "#323130");
+      .style("fill", timeLineColor);
 
+      // Define dashed vertical lines.
     svg
       .append("path")
       .attr("class", "line")
-      .attr("d", lineGenerator(algorithmRunTimeLine))
-      .style("fill", "none")
-      .attr("stroke-width", "3")
-      .attr("marker-end", "url(#arrowAlgorithmLine)")
-      .attr("marker-start", "url(#startMarkerAlgorithm)")
-      .attr("stroke", "#00A2AD");
-
-    svg
-      .append("text")
-      .attr("x", timeLine[1][0] + 15)
-      .attr("y", timeLine[1][1] + 75)
-      .text(`Time`)
-      .attr("class", "time");
-
-    svg
-      .append("path")
-      .attr("class", "line")
-      .attr("transform", "translate(" + 0 + "," + 70 + ")")
-      .attr("d", lineGenerator(timeLine))
-      .attr("stroke-width", "2")
-      .style("fill", "none")
-      .style("stroke", "#323130")
-      .attr("marker-end", "url(#arrowTimeLine)")
-      .attr("marker-start", "url(#startMarkerTimeLine)");
-
-    svg
-      .append("path")
-      .attr("class", "line")
-      .attr("transform", "translate(" + 0 + "," + 70 + ")")
       .attr("d", lineGenerator(startDashedLine))
       .attr("stroke-width", "2")
       .style("fill", "none")
-      .style("stroke", "#323130")
+      .style("stroke", timeLineColor)
       .style("stroke-dasharray", "3,3")
       .attr("marker-end", "url(#circleMarker)")
       .attr("marker-start", "url(#circleMarker)");
@@ -173,83 +211,114 @@ function LineChart({ chartData, chartLength, width, height }: LineChartProps) {
     svg
       .append("path")
       .attr("class", "line")
-      .attr("transform", "translate(" + 8 + "," + 70 + ")")
       .attr("d", lineGenerator(endDashedLine))
       .attr("stroke-width", "2")
       .style("fill", "none")
-      .style("stroke", "#323130")
+      .style("stroke", timeLineColor)
       .style("stroke-dasharray", "3,3")
       .attr("marker-end", "url(#circleMarker)")
       .attr("marker-start", "url(#circleMarker)");
 
     // dashed lines:
 
-    // create svg
+    // Create tfactory start bar
+    svg
+      .append("defs")
+      .append("marker")
+      .attr("id", "startMarkerTFactory")
+      .attr("refX", refXStartMarker)
+      .attr("refY", refYStartMarker -2)
+      .attr("markerHeight", startMarkerBoxHeight - 4)
+      .attr("markerWidth", startMarkerBoxWidth)
+      .style("fill",tfactoryLineColor)
+      .style("stroke", tfactoryLineColor)
+      .attr("orient", "auto-start-reverse")
+      .append("path")
+      .attr("d", d3.line()(startMarkerPoints));
 
+    // Create timeline end arrow
+    svg
+      .append("marker")
+      .attr("id", "arrowTFactory")
+      .attr("viewBox", [0, 0, markerBoxWidth + 4, markerBoxHeight])
+      .attr("refX", refX + 3)
+      .attr("refY", refY)
+      .attr("markerWidth", markerBoxWidth - 3)
+      .attr("markerHeight", markerBoxHeight - 4)
+      .style("fill",tfactoryLineColor)
+      .style("stroke", tfactoryLineColor)
+      .style("stroke-width", "1")
+      .attr("orient", "auto-start-reverse")
+      .append("path")
+      .attr("d", d3.line()(arrowPoints));
+
+   
     // set the number of lines
-    const numberOfLines = 15;
+   var numLines = 60;
 
-    // set the maximum length of the chart
-    const maxLength = 300;
+ 
+      const showSplit = (numLines > 50);
+      if (showSplit) {
+        numLines = 50;
+      }
 
-    // determine the gap to place between each line
-    let gap;
-    if (numberOfLines > 100) {
-      gap = maxLength / numberOfLines;
-    } else {
-      gap = maxLength / (numberOfLines - 1);
-    }
-
-    // define the x scale
+         // define the x scale
     const xScale = d3
-      .scaleLinear()
-      .domain([0, numberOfLines])
-      .range([0, maxLength]);
+    .scaleLinear()
+    .domain([0,numLines])
+    .range([0, lengthInner]);
 
-    // define the data
-    let data = [];
-    for (let i = 0; i <= numberOfLines; i++) {
-      data.push({ x: xScale(i) });
-    }
+    // define elipses marker
+    svg
+      .append("defs")
+      .append("marker")
+      .attr("id", "circleMarkerElipses")
+      .attr("viewBox", [0, 0, 10, 10])
+      .attr("refX", 5)
+      .attr("refY", 5)
+      .attr("markerWidth", 10)
+      .attr("markerHeight", 10)
+      .append("circle")
+      .attr("cx", 5)
+      .attr("cy", 5)
+      .attr("r", 4)
+      .style("fill", timeLineColor);
 
     // draw the lines
-    svg
-      .selectAll(".line")
-      .data(data)
-      .enter()
-      .append("line")
-      .attr("class", "line")
-      .attr("x1", (d) => d.x)
-      .attr("x2", (d) => d.x + 25)
-      .attr("y1", 20)
-      .attr("y2", 20)
-      .attr("stroke", "black")
-      .attr("stroke-width", 1);
+    for (let i = 0; i < numLines; i++) {
+      let line = svg.append('line');
+      line.attr('x1', xScale(i))
+          .attr('x2', xScale(i+1))
+          .attr('y1', bottomY - (distBetweenCharts * 2 ))
+          .attr('y2', bottomY - (distBetweenCharts * 2 ))
+          .attr("stroke-width", "2")
+          .style("fill", "none")
+          .style("stroke", tfactoryLineColor)
+          .attr("marker-start", "url(#startMarkerTFactory)")
+          .attr('marker-end', 'url(#arrowTFactory)');
+    }
+          if (showSplit) {
+           svg.append('line')
+           .attr('x1', xScale(25))
+              .attr('x2', xScale(25))
+              .attr('y1', 0)
+              .attr('y2', bottomY - (distBetweenCharts * 2 ))
+              .attr('marker-end', 'url(#circleMarkerElipses)');
 
-    // draw the arrows
-    /*
-    svg
-      .selectAll(".arrow")
-      .data(data)
-      .enter()
-      .append("polygon")
-      .attr("class", "arrow")
-      .attr("points", (d) => `${d.x},${-5} ${d.x - 5},${0} ${d.x + 5},${0}`)
-      .attr("fill", "black")
-      .attr("stroke", "black")
-      .attr("stroke-width", 2);*/
+              svg.append('line')
+              .attr('x1', xScale(25+1))
+              .attr('x2', xScale(25+1))
+              .attr('y1', 0)
+              .attr('y2', bottomY - (distBetweenCharts * 2 ))
+              .attr('marker-end', 'url(#circleMarkerElipses)');
 
-    // draw the elippses
-    if (numberOfLines > 100) {
-      svg
-        .append("ellipse")
-        .attr("cx", maxLength / 2)
-        .attr("cy", height / 2)
-        .attr("rx", gap / 2)
-        .attr("ry", 10)
-        .attr("fill", "black")
-        .attr("stroke", "black")
-        .attr("stroke-width", 2);
+              svg.append('line')
+              .attr('x1', xScale(25 - 1))
+              .attr('x2', xScale(25 - 1))
+              .attr('y1', 0)
+              .attr('y2', bottomY - (distBetweenCharts * 2 ))
+              .attr('marker-end', 'url(#circleMarkerElipses)');
+
     }
   }, [chartData, width, height]);
 

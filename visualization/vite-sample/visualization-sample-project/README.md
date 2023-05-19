@@ -16,7 +16,7 @@ This sample project was created using [Vite.](https://vitejs.dev/guide/)
 2. Install vite
     `npx vite`
 3) Choose whether you want to run the <b>Time Diagram</b> or <b>Space Diagram</b> by uncommenting the diagram type you wish to run in the .env file.
-   
+   You may need to recreate the .env file if it doesn't exist. Place it in the vite-sample\visualization-sample-project root.
     ```
     cd visualization\vite-sample\visualization-sample-project
     vim .env

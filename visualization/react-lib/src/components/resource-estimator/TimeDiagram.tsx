@@ -126,7 +126,7 @@ function TimeDiagram({ width, height, data }: TimeDiagramProps) {
 
   return (
     <div className="grid-container">
-      <div>
+      <div className="diagram">
         <TimeChart
           numberTFactories={numTFactoryInvocations.toString()}
           algorithmRuntime={algorithmRuntime}
@@ -135,11 +135,12 @@ function TimeDiagram({ width, height, data }: TimeDiagramProps) {
           height={height}
         ></TimeChart>
       </div>
-      <div className="table-element">
-        <TableComponent nodes={nodes} width={width} height={height} />
-      </div>
+
     </div>
   );
 }
 
 export default TimeDiagram;
+
+
+

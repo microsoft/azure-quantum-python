@@ -16,6 +16,7 @@ import {
 import { Button, Tooltip } from "@mui/material";
 import InfoIcon from "@mui/icons-material/Info";
 
+
 export interface TableData {
   id: string;
   name: string;
@@ -37,8 +38,8 @@ function TableComponent({ nodes, width, height }: TableComponentProps) {
     HeaderCell: `font-family: 'Segoe UI';
     font-style: normal;
     font-weight: 600;
-    font-size: 16px;
-    line-height: 21px; 
+    font-size: 18px;
+    line-height: 22px; 
     color: #201F1E;
     padding: 10px `,
     BaseCell: `
@@ -47,8 +48,8 @@ function TableComponent({ nodes, width, height }: TableComponentProps) {
     font-family: 'Segoe UI';
     font-style: normal;
     font-weight: 400;
-    font-size: 13px;
-    line-height: 17px;
+    font-size: 14px;
+    line-height: 18px;
 
     &:last-of-type {
       text-align: right;
@@ -59,9 +60,12 @@ function TableComponent({ nodes, width, height }: TableComponentProps) {
   const materialTheme = getTheme(DEFAULT_OPTIONS);
   const theme = useTheme([materialTheme, customTheme]);
 
+  
+  // TO DO: edit tooltip text so that font-size can be changed.
+
   return (
-    <div style={{ width: width, height: height }}>
-      <Table data={data} theme={theme}>
+    <div style={{ width: width, height: height  }}>
+      <Table className= "table-element" data={data} theme={theme}>
         {(tableList) => (
           <>
             <Body>
@@ -75,14 +79,17 @@ function TableComponent({ nodes, width, height }: TableComponentProps) {
                   <Row key={item.id} item={item}>
                     <Cell>
                       {item.name}
-                      <Tooltip title={item.description ? item.description : ""}>
-                        <Button>
-                          {item.description ? (
-                            <InfoIcon data-show-if fontSize="small"></InfoIcon>
-                          ) : (
-                            ""
-                          )}
+                      <Tooltip  title={item.description ? item.description : null} 
+                          >
+                        {item.description ? (
+                        <Button >
+                            <InfoIcon data-show-if fontSize="small" style={{
+                              fill: "#1a5d8c",
+                          }}></InfoIcon>
+                          
                         </Button>
+                        ) : ( <div></div>
+                        )}
                       </Tooltip>
                     </Cell>
                     <Cell>{item.value.toLocaleString()}</Cell>

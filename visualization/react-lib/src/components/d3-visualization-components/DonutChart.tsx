@@ -62,24 +62,11 @@ function DonutChart({
           .split(", ")
       );
 
-    const legendColor = d3
-      .scaleOrdinal()
-      .domain(
-        d3.extent(data, (d) => {
-          return d.title;
-        }) as unknown as string
-      )
-      .range(
-        getComputedStyle(document.documentElement)
-          .getPropertyValue("--d3-colors-legend")
-          .split(", ")
-      );
-
     // Add chart title
     svg
       .append("text")
-      .attr("x", outerRadius + translationValX)
-      .attr("y", translationValX)
+      .attr("x", innerRadius + translationValX)
+      .attr("y",  translationValY - innerRadius)
       .attr("class", "title")
       .text("Space diagram");
 
@@ -105,8 +92,8 @@ function DonutChart({
       .attr("class", "arc")
       .attr(
         "transform",
-        `translate(${outerRadius + translationValX},${
-          outerRadius + translationValY
+        `translate(${innerRadius + translationValX},${
+          innerRadius + translationValY
         })`
       );
 
@@ -146,63 +133,68 @@ function DonutChart({
       .attr(
         "transform",
         (d, i) =>
-          `translate(${i * innerRadius + translationValX}, ${translationValY})`
+          `translate(${i * translationValX}, ${translationValY})`
       );
 
     legend
       .append("rect")
-      .attr("x", 100)
-      .attr("y", 500)
-      .attr("width", 5)
-      .attr("height", 45)
-      .style("fill", (d, i) => legendColor(d.title) as string);
+      .attr("width", 20)
+      .attr("height", 20)
+      .attr("x", translationValX - 30).attr("y", translationValY  + outerRadius + 10)
+      .style("fill", (d, i) => chartColor(d.title) as string);
 
     // add text to the legend
     legend
       .append("text")
-      .attr("x", 120)
-      .attr("y", 508)
       .text((d) => legendTitlePreText)
       .attr("class", "legend")
-      .attr("transform", (d, i) => `translate(${i}, 0)`);
+      .attr("x", 0).attr("y", translationValY  + outerRadius)
+      .attr("transform", (d, i) => `translate(${translationValX}, 0)`);
 
     legend
       .append("text")
-      .attr("x", 120)
-      .attr("y", 520)
+      .attr("x", 0).attr("y", translationValY  + outerRadius + 15)
       .text((d) => `${d.legendTitle}`)
       .attr("class", "legend-maintext")
-      .attr("transform", (d, i) => `translate(${i}, 0)`);
+      .attr("transform", (d, i) => `translate(${translationValX}, 0)`);
 
     legend
       .append("text")
-      .attr("x", 120)
-      .attr("y", 544)
+      .attr("x", 0).attr("y", translationValY  + outerRadius + 45)
       .text((d) => `${d.value.toLocaleString("en-US")}`)
       .attr("class", "legend-values")
-      .attr("transform", (d, i) => `translate(${i}, 0)`);
+      .attr("transform", (d, i) => `translate(${translationValX}, 0)`);
 
     // Add total qubits and title to the middle of the donut chart
     const total = d3.sum(data, (d) => d.value).toLocaleString("en-US");
 
     svg
       .append("text")
-      .attr("x", outerRadius + translationValX)
-      .attr("y", outerRadius + translationValY - 30)
       .text(donutMiddleTitle)
-      .attr("class", "donut-middle-title");
+      .attr("class", "donut-middle-title")
+      .attr(
+        "transform",
+        `translate(${innerRadius + translationValX},${
+         translationValY  + innerRadius - 25
+        })`
+      );
 
     svg
       .append("text")
-      .attr("x", outerRadius + translationValX)
-      .attr("y", outerRadius + translationValY + 30)
       .text(`${total}`)
-      .attr("class", "donut-middle-text");
+      .attr("class", "donut-middle-text")
+      .attr(
+        "transform",
+        `translate(${innerRadius + translationValX},${
+          innerRadius + translationValY + 25
+        })`
+      );
+
   }, [data, innerRadius, outerRadius]);
 
   return (
     <div className="svg-container">
-      <svg className="svg-element" width={width} height={height}></svg>
+      <svg  width={width} height={height}></svg>
     </div>
   );
 }

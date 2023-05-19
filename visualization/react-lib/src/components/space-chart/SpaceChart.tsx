@@ -1,6 +1,6 @@
 import React from "react";
 import DonutChart from "../d3-visualization-components/DonutChart";
-
+import "./SpaceChart.css";
 export type SpaceChartProps = {
   physicalQubitsAlgorithm: number;
   physicalQubitsTFactory: number;
@@ -31,11 +31,10 @@ function SpaceChart({
     },
   ];
 
-  const translationValX = 50;
-  const translationValY = 100;
+  const translationValX = width/4;
+   const translationValY = height/4;
 
   return (
-    <div>
       <DonutChart
         data={chartData}
         width={width}
@@ -45,7 +44,6 @@ function SpaceChart({
         translationValX={translationValX}
         translationValY={translationValY}
       />
-    </div>
   );
 }
 
