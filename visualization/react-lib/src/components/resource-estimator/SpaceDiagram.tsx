@@ -109,7 +109,7 @@ function SpaceDiagram({
 
   return (
     <div className="grid-container">
-      <div>
+      <div className="diagram">
         <SpaceChart
           physicalQubitsAlgorithm={physicalQubitsAlgorithm}
           physicalQubitsTFactory={physicalQubitsTFactory}
@@ -119,7 +119,7 @@ function SpaceDiagram({
           outerRadius={outerRadius}
         />
       </div>
-      <div className="table-element">
+      <div className="table">
         <TableComponent nodes={nodes} width={width} height={height} />
       </div>
     </div>
