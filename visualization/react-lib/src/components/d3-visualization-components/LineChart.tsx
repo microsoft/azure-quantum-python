@@ -149,8 +149,8 @@ function LineChart({
 
     legend
       .append("rect")
-      .attr("width", dimensionsLegend)
-      .attr("height", dimensionsLegend)
+      .attr("width", dimensionsLegend.toString())
+      .attr("height", dimensionsLegend.toString())
       .attr("x", 0)
       .attr("y", 50)
       .style("fill", (d, i) => legendColor(d.title) as string);
