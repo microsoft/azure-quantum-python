@@ -19,6 +19,8 @@ function TimeDiagram({ width, height, data }: TimeDiagramProps) {
   const numTFactoryInvocations =
     jobResults.physicalCounts.breakdown.numTfactoryRuns;
 
+  const numTStates = jobResults.tfactory.numTstates;
+
   // TO DO: get names and descriptions from data.
   const nodes: TableData[] = [
     {
@@ -128,19 +130,16 @@ function TimeDiagram({ width, height, data }: TimeDiagramProps) {
     <div className="grid-container">
       <div className="diagram">
         <TimeChart
-          numberTFactories={numTFactoryInvocations.toString()}
-          algorithmRuntime={algorithmRuntime}
+          numberTFactoryInvocations={numTFactoryInvocations}
+          numberTStates={numTStates}
+          algorithmRunTime={algorithmRuntime}
           tFactoryRunTime={tFactoryRuntime}
           width={width}
           height={height}
         ></TimeChart>
       </div>
-
     </div>
   );
 }
 
 export default TimeDiagram;
-
-
-
