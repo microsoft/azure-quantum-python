@@ -238,4 +238,10 @@ class TestMicrosoftQC(QuantumTestBase):
     def test_estimator_error_budget_partition(self):
         params = MicrosoftEstimatorParams()
         params.error_budget = ErrorBudgetPartition(0.01, 0.02, 0.03)
-        assert params.as_dict() == {"errorBudget": {"logical": 0.01, "rotations": 0.03, "tstates": 0.02}}
+        assert params.as_dict() == {
+            "errorBudget": {
+                "logical": 0.01,
+                "rotations": 0.03,
+                "tStates": 0.02
+            }
+        }

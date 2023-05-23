@@ -28,6 +28,11 @@ class QECScheme:
     FLOQUET_CODE = "floquet_code"
 
 
+def _check_error_rate(name, value):
+    if value <= 0.0 or value >= 1.0:
+        raise ValueError(f"{name} must be between 0 and 1")
+
+
 @dataclass
 class MicrosoftEstimatorQubitParams(AutoValidatingParams):
     @staticmethod
@@ -42,12 +47,6 @@ class MicrosoftEstimatorQubitParams(AutoValidatingParams):
         if re.match(pat, value) is None:
             raise ValueError(f"{name} is not a valid time string; use a "
                              "suffix s, ms, us, or ns")
-
-    @staticmethod
-    def check_error_rate(name, value):
-        if value <= 0.0 or value >= 1.0:
-            raise ValueError(f"{name} must be between 0 and 1")
-
     name: Optional[str] = None
     instruction_set: Optional[str] = validating_field(check_instruction_set)
     one_qubit_measurement_time: Optional[str] = validating_field(check_time)
@@ -57,14 +56,14 @@ class MicrosoftEstimatorQubitParams(AutoValidatingParams):
     two_qubit_gate_time: Optional[str] = validating_field(check_time)
     t_gate_time: Optional[str] = validating_field(check_time)
     one_qubit_measurement_error_rate: Optional[float] = \
-        validating_field(check_error_rate)
+        validating_field(_check_error_rate)
     two_qubit_joint_measurement_error_rate: Optional[float] = \
-        validating_field(check_error_rate)
+        validating_field(_check_error_rate)
     one_qubit_gate_error_rate: Optional[float] = \
-        validating_field(check_error_rate)
+        validating_field(_check_error_rate)
     two_qubit_gate_error_rate: Optional[float] = \
-        validating_field(check_error_rate)
-    t_gate_error_rate: Optional[float] = validating_field(check_error_rate)
+        validating_field(_check_error_rate)
+    t_gate_error_rate: Optional[float] = validating_field(_check_error_rate)
 
     _default_models = [QubitParams.GATE_US_E3, QubitParams.GATE_US_E4,
                        QubitParams.GATE_NS_E3, QubitParams.GATE_NS_E4,
@@ -103,7 +102,8 @@ class MicrosoftEstimatorQubitParams(AutoValidatingParams):
 @dataclass
 class MicrosoftEstimatorQecScheme(AutoValidatingParams):
     name: Optional[str] = None
-    error_correction_threshold: Optional[float] = None
+    error_correction_threshold: Optional[float] = \
+        validating_field(_check_error_rate)
     crossing_prefactor: Optional[float] = None
     logical_cycle_time: Optional[str] = None
     physical_qubits_per_logical_qubit: Optional[str] = None
@@ -112,14 +112,19 @@ class MicrosoftEstimatorQecScheme(AutoValidatingParams):
 @dataclass
 class ErrorBudgetPartition(AutoValidatingParams):
     logical: float = 0.001 / 3
-    tstates: float = 0.001 / 3
+    t_states: float = 0.001 / 3
     rotations: float = 0.001 / 3
 
 
 @dataclass
 class MicrosoftEstimatorConstraints(AutoValidatingParams):
-    logical_depth_scaling: Optional[float] = None
-    max_tfactories: Optional[int] = None
+    @staticmethod
+    def at_least_one(name, value):
+        if value < 1:
+            raise ValueError(f"{name} must be at least 1")
+
+    logical_depth_factor: Optional[float] = validating_field(at_least_one)
+    max_t_factories: Optional[int] = validating_field(at_least_one)
 
 
 class MicrosoftEstimatorInputParamsItem(InputParamsItem):
@@ -156,9 +161,12 @@ class MicrosoftEstimatorInputParamsItem(InputParamsItem):
             result["constraints"] = constraints
 
         if self.error_budget is not None:
-            if isinstance(self.error_budget, float):
-                if validate and (self.error_budget <= 0 or self.error_budget >= 1):
-                    raise ValueError("error_budget must be value between 0 and 1")
+            if isinstance(self.error_budget, float) or \
+                    isinstance(self.error_budget, int):
+                if validate and \
+                        (self.error_budget <= 0 or self.error_budget >= 1):
+                    message = "error_budget must be value between 0 and 1"
+                    raise ValueError(message)
                 result["errorBudget"] = self.error_budget
             elif isinstance(self.error_budget, ErrorBudgetPartition):
                 result["errorBudget"] = self.error_budget.as_dict(validate)
