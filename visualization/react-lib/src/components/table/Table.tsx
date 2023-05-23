@@ -16,7 +16,6 @@ import {
 import { Button, Tooltip } from "@mui/material";
 import InfoIcon from "@mui/icons-material/Info";
 
-
 export interface TableData {
   id: string;
   name: string;
@@ -60,13 +59,12 @@ function TableComponent({ nodes, width, height }: TableComponentProps) {
   const materialTheme = getTheme(DEFAULT_OPTIONS);
   const theme = useTheme([materialTheme, customTheme]);
 
-  
   // TO DO: edit tooltip text so that font-size can be changed.
 
   return (
-    <div style={{ width: width, height: height  }}>
-      <Table className= "table-element" data={data} theme={theme}>
-        {(tableList) => (
+    <div style={{ width: width, height: height }}>
+      <Table className="table-element" data={data} theme={theme}>
+        {(tableList: any[]) => (
           <>
             <Body>
               {tableList.map((item) =>
@@ -79,16 +77,21 @@ function TableComponent({ nodes, width, height }: TableComponentProps) {
                   <Row key={item.id} item={item}>
                     <Cell>
                       {item.name}
-                      <Tooltip  title={item.description ? item.description : null} 
-                          >
+                      <Tooltip
+                        title={item.description ? item.description : null}
+                      >
                         {item.description ? (
-                        <Button >
-                            <InfoIcon data-show-if fontSize="small" style={{
-                              fill: "#1a5d8c",
-                          }}></InfoIcon>
-                          
-                        </Button>
-                        ) : ( <div></div>
+                          <Button>
+                            <InfoIcon
+                              data-show-if
+                              fontSize="small"
+                              style={{
+                                fill: "#1a5d8c",
+                              }}
+                            ></InfoIcon>
+                          </Button>
+                        ) : (
+                          <div></div>
                         )}
                       </Tooltip>
                     </Cell>

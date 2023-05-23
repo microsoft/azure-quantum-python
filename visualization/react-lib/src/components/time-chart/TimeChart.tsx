@@ -2,45 +2,30 @@ import React from "react";
 import LineChart from "../d3-visualization-components/LineChart";
 
 export type TimeChartProps = {
-  numberTFactoryInvocations: number;
-  numberTStates: number;
-  algorithmRunTime: string;
-  tFactoryRunTime: string;
+  chartData: { [key: string]: any };
   width: number;
   height: number;
 };
 
-function TimeChart({
-  numberTFactoryInvocations,
-  numberTStates,
-  algorithmRunTime,
-  tFactoryRunTime,
-  width,
-  height,
-}: TimeChartProps): JSX.Element {
-  const chartLength = width - 100;
-
+function TimeChart({ chartData, width, height }: TimeChartProps): JSX.Element {
   const legendData = [
     {
       title: "Algorithm",
-      value: algorithmRunTime,
+      value: chartData["algorithmRuntimeFormatted"].value,
       legendTitle: "runtime",
     },
     {
       title: "Single T-factory invocation",
-      value: tFactoryRunTime,
+      value: chartData["tFactoryRuntimeFormatted"].value,
       legendTitle: "runtime",
     },
   ];
+
   return (
     <div>
       <LineChart
         legendData={legendData}
-        numberTFactoryInvocations={numberTFactoryInvocations}
-        numberTStates={numberTStates}
-        algorithmRunTime={algorithmRunTime}
-        tFactoryRunTime={tFactoryRunTime}
-        chartLength={chartLength}
+        chartData={chartData}
         width={width}
         height={height}
       />

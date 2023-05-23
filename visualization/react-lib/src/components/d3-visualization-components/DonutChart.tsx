@@ -37,9 +37,7 @@ function DonutChart({
     const outerRadiusHover = outerRadius + 25;
     const donutMiddleTitle = "Total physical qubits";
     const legendTitlePreText = "Physical";
-    const padAngle = getComputedStyle(
-      document.documentElement
-    ).getPropertyValue("--pad-angle");
+    const padAngle: number = 0.01;
 
     const chartOpacity = getComputedStyle(
       document.documentElement
@@ -66,7 +64,7 @@ function DonutChart({
     svg
       .append("text")
       .attr("x", innerRadius + translationValX)
-      .attr("y",  translationValY - innerRadius)
+      .attr("y", translationValY - innerRadius)
       .attr("class", "title")
       .text("Space diagram");
 
@@ -110,11 +108,11 @@ function DonutChart({
           .arc<PieArcDatum<Data>>()
           .innerRadius(innerRadiusHover)
           .outerRadius(outerRadiusHover);
-        d3.select(d.target).attr("d", arcHover);
+        d3.select(d.target).attr("d", arcHover as any);
         d3.select(d.target).style("opacity", chartHoverOpacity);
       })
       .on("mouseout", (d) => {
-        d3.select(d.target).attr("d", arcGenerator);
+        d3.select(d.target).attr("d", arcGenerator as any);
         d3.select(d.target).style("opacity", chartOpacity);
       });
 
@@ -132,15 +130,15 @@ function DonutChart({
       .attr("class", "legend")
       .attr(
         "transform",
-        (d, i) =>
-          `translate(${i * translationValX}, ${translationValY})`
+        (d, i) => `translate(${i * translationValX}, ${translationValY})`
       );
 
     legend
       .append("rect")
       .attr("width", 20)
       .attr("height", 20)
-      .attr("x", translationValX - 30).attr("y", translationValY  + outerRadius + 10)
+      .attr("x", translationValX - 30)
+      .attr("y", translationValY + outerRadius + 10)
       .style("fill", (d, i) => chartColor(d.title) as string);
 
     // add text to the legend
@@ -148,19 +146,22 @@ function DonutChart({
       .append("text")
       .text((d) => legendTitlePreText)
       .attr("class", "legend")
-      .attr("x", 0).attr("y", translationValY  + outerRadius)
+      .attr("x", 0)
+      .attr("y", translationValY + outerRadius)
       .attr("transform", (d, i) => `translate(${translationValX}, 0)`);
 
     legend
       .append("text")
-      .attr("x", 0).attr("y", translationValY  + outerRadius + 15)
+      .attr("x", 0)
+      .attr("y", translationValY + outerRadius + 15)
       .text((d) => `${d.legendTitle}`)
       .attr("class", "legend-maintext")
       .attr("transform", (d, i) => `translate(${translationValX}, 0)`);
 
     legend
       .append("text")
-      .attr("x", 0).attr("y", translationValY  + outerRadius + 45)
+      .attr("x", 0)
+      .attr("y", translationValY + outerRadius + 45)
       .text((d) => `${d.value.toLocaleString("en-US")}`)
       .attr("class", "legend-values")
       .attr("transform", (d, i) => `translate(${translationValX}, 0)`);
@@ -175,7 +176,7 @@ function DonutChart({
       .attr(
         "transform",
         `translate(${innerRadius + translationValX},${
-         translationValY  + innerRadius - 25
+          translationValY + innerRadius - 25
         })`
       );
 
@@ -189,12 +190,11 @@ function DonutChart({
           innerRadius + translationValY + 25
         })`
       );
-
   }, [data, innerRadius, outerRadius]);
 
   return (
     <div className="svg-container">
-      <svg  width={width} height={height}></svg>
+      <svg width={width} height={height}></svg>
     </div>
   );
 }
