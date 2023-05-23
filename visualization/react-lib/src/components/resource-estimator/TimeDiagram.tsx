@@ -14,126 +14,98 @@ interface TimeDiagramProps {
 function TimeDiagram({ width, height, data }: TimeDiagramProps) {
   let jobResults = JSON.parse(data) as JobResults;
 
-  const algorithmRuntime = jobResults.physicalCountsFormatted.runtime;
-  const tFactoryRuntime = jobResults.physicalCountsFormatted.tfactoryRuntime;
+  const algorithmRuntimeFormatted = jobResults.physicalCountsFormatted.runtime;
+  const tFactoryRuntimeFormatted =
+    jobResults.physicalCountsFormatted.tfactoryRuntime;
   const numTFactoryInvocations =
     jobResults.physicalCounts.breakdown.numTfactoryRuns;
-
   const numTStates = jobResults.tfactory.numTstates;
 
   // TO DO: get names and descriptions from data.
-  const nodes: TableData[] = [
-    {
-      id: "0",
-      name: "Physical resource estimates",
+  const tableDictionary = {
+    "Physical resource estimates": {
       type: 0,
     },
-    {
-      id: "1",
-      name: "Runtime",
+    "Algorithm runtime": {
       type: 1,
-      value: algorithmRuntime,
+      value: algorithmRuntimeFormatted,
       description: "Total runtime of algorithm",
     },
-    {
-      id: "2",
-      name: "T-factory parameters",
+    "T-factory parameters": {
       type: 0,
     },
-    {
-      id: "3",
-      name: "Runtime",
+    "T-factory runtime": {
       type: 1,
-      value: tFactoryRuntime,
+      value: tFactoryRuntimeFormatted,
       description: "Single T-factory invocation runtime",
     },
-    {
-      id: "4",
-      name: "Resource estimation breakdown",
+    "Resource estimation breakdown": {
       type: 0,
     },
-    {
-      id: "5",
-      name: "Number of T-factory invocations",
+    "Number of T-factory invocations": {
       type: 1,
       value: numTFactoryInvocations.toString(),
     },
-    {
-      id: "6",
-      name: "Logical depth",
+    "Logical depth": {
       type: 1,
       value: jobResults.physicalCounts.breakdown.logicalDepth.toString(),
     },
-    {
-      id: "7",
-      name: "Algorithmic logical depth",
+    "Algorithmic logical depth": {
       type: 1,
       value:
         jobResults.physicalCounts.breakdown.algorithmicLogicalDepth.toString(),
     },
-    {
-      id: "8",
-      name: "Pre-layout logical resources",
+    "Pre-layout logical resources": {
       type: 0,
     },
-    {
-      id: "9",
-      name: "T-gates",
+    "T-gates": {
       type: 1,
       value: jobResults.logicalCounts.tCount.toString(),
     },
-    {
-      id: "10",
-      name: "R-gates",
+    "R-gates": {
       type: 1,
       value: jobResults.logicalCounts.rotationCount.toString(),
     },
-    {
-      id: "11",
-      name: "Logical depth rotation gates",
+    "Logical depth rotation gates": {
       type: 1,
       value: jobResults.logicalCounts.rotationDepth.toString(),
     },
-
-    {
-      id: "12",
-      name: "CCZ gates",
+    "CCZ gates": {
       type: 1,
       value: jobResults.logicalCounts.cczCount.toString(),
     },
-    {
-      id: "13",
-      name: "CCIX gates",
+    "CCIX gates": {
       type: 1,
       value: jobResults.logicalCounts.ccixCount.toString(),
     },
-    {
-      id: "14",
-      name: "Measurement operations",
+    "Measurement operations": {
       type: 1,
       value: jobResults.logicalCounts.measurementCount.toString(),
     },
-    {
-      id: "15",
-      name: "Logical qubit parameters",
+    "Logical qubit parameters": {
       type: 0,
     },
-    {
-      id: "16",
-      name: "Logical cycle time",
+    "Logical cycle time": {
       type: 1,
       value: jobResults.physicalCountsFormatted.logicalCycleTime,
     },
-  ];
+  };
+
+  const chartDictionary: { [key: string]: any } = {
+    numberTFactoryInvocations: numTFactoryInvocations.toString(),
+    numberTStates: jobResults.logicalCounts.tCount.toString(),
+    algorithmRuntime: jobResults.physicalCounts.runtime,
+    tFactoryRuntime: jobResults.tfactory.runtime,
+    algorithmRuntimeFormatted: algorithmRuntimeFormatted,
+    tFactoryRuntimeFormatted: tFactoryRuntimeFormatted,
+    chartLength: width - 100,
+  };
 
   return (
     <div className="grid-container">
       <div className="diagram">
         <TimeChart
-          numberTFactoryInvocations={numTFactoryInvocations}
-          numberTStates={numTStates}
-          algorithmRunTime={algorithmRuntime}
-          tFactoryRunTime={tFactoryRuntime}
+          chartData={chartDictionary}
           width={width}
           height={height}
         ></TimeChart>

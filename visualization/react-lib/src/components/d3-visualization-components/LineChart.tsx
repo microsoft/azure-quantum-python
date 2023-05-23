@@ -1,36 +1,22 @@
 import * as React from "react";
 import * as d3 from "d3";
 import "./CSS/LineChart.css";
+import { Tooltip } from "@mui/material";
 
-type Data = {
+type LegendData = {
   title: string;
   legendTitle: string;
   value: string;
 };
 
 interface LineChartProps {
-  legendData: Data[];
-  numberTFactoryInvocations: number;
-  numberTStates: number;
-  algorithmRunTime: string;
-  tFactoryRunTime: string;
-  chartLength: number;
+  legendData: LegendData[];
+  chartData: { [key: string]: any };
   width: number;
   height: number;
 }
 
-// THIS FILE IS UNDER CONSTRUCTION.
-
-function LineChart({
-  legendData,
-  numberTFactoryInvocations,
-  numberTStates,
-  algorithmRunTime,
-  tFactoryRunTime,
-  chartLength,
-  width,
-  height,
-}: LineChartProps) {
+function LineChart({ legendData, chartData, width, height }: LineChartProps) {
   React.useEffect(() => {
     const svg = d3.select("svg");
     svg.selectAll("*").remove();
@@ -54,6 +40,18 @@ function LineChart({
     const ellipsesColor = colorArray[2];
     const timeLineColor = colorArray[3];
 
+    /* Define chart data from dictionary */
+    const numberTStates: number = chartData["numberTStates"];
+    const numberTFactoryInvocations: number = 78;
+    //chartData["numberTFactoryInvocations"];
+    const algorithmRuntime: number = 6000;
+    const tFactoryRuntime: number = 20;
+    const algorithmRuntimeFormatted: string =
+      chartData["algorithmRuntimeFormatted"];
+    const tFactoryRuntimeFormatted: string =
+      chartData["tFactoryRuntimeFormatted"];
+    const chartLength: number = chartData["chartLength"];
+
     /* Define chart constants */
     const tfactoryLineLabel =
       numberTStates +
@@ -67,6 +65,20 @@ function LineChart({
     const originPoint = [0, 0];
     const midpoint = chartLength / 2;
 
+    /* Define chart ratios */
+    const tFactoryAlgorithmRuntimeDiffNanoseconds =
+      algorithmRuntime - tFactoryRuntime;
+    var tFactoryTimeAdjGap = 0;
+    var lengthInnerAdj = lengthInner;
+    if (tFactoryAlgorithmRuntimeDiffNanoseconds > 0) {
+      var lengthDiff = Math.round(
+        lengthInner *
+          (tFactoryAlgorithmRuntimeDiffNanoseconds / algorithmRuntime)
+      );
+      lengthInnerAdj = lengthInner - lengthDiff;
+      tFactoryTimeAdjGap = lengthDiff / numberTFactoryInvocations / 100;
+    }
+
     /* Define line points */
     const algorithmRunTimeLine = [
       [0, chartBottomY - distBetweenCharts],
@@ -76,11 +88,6 @@ function LineChart({
     const timeLine = [
       [0, chartBottomY],
       [chartLength, chartBottomY],
-    ];
-
-    const startDashedLine = [
-      [40, chartBottomY],
-      [40, chartBottomY - distBetweenCharts * 2],
     ];
 
     const endDashedLine = [
@@ -102,8 +109,8 @@ function LineChart({
 
     const arrowPoints = [
       [0, 0],
-      [0, 8],
-      [8, 4],
+      [0, 3],
+      [3, 1.5],
     ];
 
     const translationValX = width / 4;
@@ -185,7 +192,7 @@ function LineChart({
       .style("stroke", algorithmRunTimeColor)
       .attr("orient", "auto-start-reverse")
       .append("path")
-      .attr("d", d3.line()(startMarkerPoints));
+      .attr("d", d3.line()(startMarkerPoints as any));
 
     // Create algorithm end arrow
     svg
@@ -201,20 +208,18 @@ function LineChart({
       .style("stroke-width", "1")
       .attr("orient", "auto-start-reverse")
       .append("path")
-      .attr("d", d3.line()(arrowPoints));
+      .attr("d", d3.line()(arrowPoints as any));
 
     // Draw algorithm line
     svg
       .append("path")
       .attr("class", "line")
-      .attr("d", lineGenerator(algorithmRunTimeLine))
+      .attr("d", lineGenerator(algorithmRunTimeLine as any))
       .style("fill", "none")
       .attr("stroke-width", strokeWidth)
       .attr("marker-end", "url(#arrowAlgorithmLine)")
       .attr("marker-start", "url(#startMarkerAlgorithm)")
       .style("stroke", algorithmRunTimeColor);
-
-    /* Create time line */
 
     // Create timeline start bar
     svg
@@ -229,7 +234,7 @@ function LineChart({
       .style("stroke", timeLineColor)
       .attr("orient", "auto-start-reverse")
       .append("path")
-      .attr("d", d3.line()(startMarkerPoints));
+      .attr("d", d3.line()(startMarkerPoints as any));
 
     // Create timeline end arrow
     svg
@@ -245,14 +250,14 @@ function LineChart({
       .style("stroke-width", "1")
       .attr("orient", "auto-start-reverse")
       .append("path")
-      .attr("d", d3.line()(arrowPoints));
+      .attr("d", d3.line()(arrowPoints as any));
 
     // Draw timeline.
     svg
       .append("path")
       .attr("class", "line")
       .attr("id", "timeline")
-      .attr("d", lineGenerator(timeLine))
+      .attr("d", lineGenerator as any)
       .attr("stroke-width", strokeWidth)
       .attr("marker-start", "url(#startMarkerTimeLine)")
       .attr("marker-end", "url(#arrowTimeLine)")
@@ -269,23 +274,9 @@ function LineChart({
 
     svg
       .append("text")
-      .attr("x", 50)
-      .attr("y", chartBottomY - 10)
-      .text(tFactoryRunTime)
-      .attr("class", "runtimeText");
-
-    svg
-      .append("text")
       .attr("x", lengthInner + 15)
       .attr("y", chartBottomY - 10)
-      .text(algorithmRunTime)
-      .attr("class", "runtimeText");
-
-    svg
-      .append("text")
-      .attr("x", 50)
-      .attr("y", chartBottomY - distBetweenCharts * 2 + 30)
-      .text(tfactoryLineLabel)
+      .text(algorithmRuntimeFormatted)
       .attr("class", "runtimeText");
 
     // Define circle markers for dashed lines.
@@ -304,30 +295,16 @@ function LineChart({
       .attr("r", 3)
       .style("fill", timeLineColor);
 
-    // Define dashed vertical lines.
     svg
       .append("path")
       .attr("class", "line")
-      .attr("d", lineGenerator(startDashedLine))
+      .attr("d", lineGenerator(endDashedLine as any))
       .attr("stroke-width", strokeWidth)
       .style("fill", "none")
       .style("stroke", timeLineColor)
       .style("stroke-dasharray", "3,3")
       .attr("marker-end", "url(#circleMarker)")
       .attr("marker-start", "url(#circleMarker)");
-
-    svg
-      .append("path")
-      .attr("class", "line")
-      .attr("d", lineGenerator(endDashedLine))
-      .attr("stroke-width", strokeWidth)
-      .style("fill", "none")
-      .style("stroke", timeLineColor)
-      .style("stroke-dasharray", "3,3")
-      .attr("marker-end", "url(#circleMarker)")
-      .attr("marker-start", "url(#circleMarker)");
-
-    // dashed lines:
 
     // Create tfactory start bar
     svg
@@ -342,23 +319,20 @@ function LineChart({
       .style("stroke", tfactoryLineColor)
       .attr("orient", "auto-start-reverse")
       .append("path")
-      .attr("d", d3.line()(startMarkerPoints));
+      .attr("d", d3.line()(startMarkerPoints as any));
 
     // Create timeline end arrow
     svg
       .append("marker")
       .attr("id", "arrowTFactory")
-      .attr("viewBox", [0, 0, markerBoxWidth + 4, markerBoxHeight])
-      .attr("refX", refX + 3)
-      .attr("refY", refY)
-      .attr("markerWidth", markerBoxWidth - 3)
-      .attr("markerHeight", markerBoxHeight - 4)
+      .attr("refX", 2)
+      .attr("refY", 1.5)
+      .attr("markerWidth", 3)
+      .attr("markerHeight", 3)
       .style("fill", tfactoryLineColor)
-      .style("stroke", tfactoryLineColor)
-      .style("stroke-width", "1")
       .attr("orient", "auto-start-reverse")
       .append("path")
-      .attr("d", d3.line()(arrowPoints));
+      .attr("d", d3.line()(arrowPoints as any));
 
     // set the number of lines
     var numLines = numberTFactoryInvocations;
@@ -372,7 +346,7 @@ function LineChart({
     // define the x scale
     const xScale = d3
       .scaleLinear()
-      .domain([0, numLines])
+      .domain([0, numLines + numLines * tFactoryTimeAdjGap])
       .range([0, lengthInner]);
 
     // define ellipses marker
@@ -392,14 +366,49 @@ function LineChart({
       .style("fill", ellipsesColor);
 
     // draw the lines
+
+    const tFactoryDashedLine = [
+      [xScale(1) + 1, chartBottomY],
+      [xScale(1) + 1, chartBottomY - distBetweenCharts * 2],
+    ];
+
+    // Draw dashed line of single t-factory invocation runtime.
+    svg
+      .append("path")
+      .attr("class", "line")
+      .attr("d", lineGenerator(tFactoryDashedLine as any))
+      .attr("stroke-width", strokeWidth)
+      .style("fill", "none")
+      .style("stroke", timeLineColor)
+      .style("stroke-dasharray", "3,3")
+      .attr("marker-end", "url(#circleMarker)")
+      .attr("marker-start", "url(#circleMarker)");
+
+    // Append single t-factory invocation runtime text
+    svg
+      .append("text")
+      .attr("x", xScale(1) + 10)
+      .attr("y", chartBottomY - 10)
+      .text(tFactoryRuntimeFormatted)
+      .attr("class", "runtimeText");
+
+    // Append t-factory line label
+    svg
+      .append("text")
+      .attr("x", xScale(1) + 10)
+      .attr("y", chartBottomY - distBetweenCharts * 2 + 30)
+      .text(tfactoryLineLabel)
+      .attr("class", "runtimeText");
+
     for (let i = 0; i < numLines - 1; i++) {
       let line = svg.append("line");
       line
-        .attr("x1", xScale(i))
-        .attr("x2", xScale(i + 1))
+        .attr("x1", xScale(i) + i * xScale(tFactoryTimeAdjGap))
+        .attr("x2", xScale(i + 1) + i * xScale(tFactoryTimeAdjGap))
         .attr("y1", chartBottomY - distBetweenCharts * 2)
         .attr("y2", chartBottomY - distBetweenCharts * 2)
         .attr("stroke-width", strokeWidth)
+        .attr("id", "tfactoryLine")
         .style("fill", "none")
         .style("stroke", tfactoryLineColor)
         .attr("marker-start", "url(#startMarkerTFactory)")
@@ -407,13 +416,21 @@ function LineChart({
         .lower();
     }
 
-    let endLine = svg.append("line");
-    endLine
-      .attr("x1", xScale(numLines - 1))
-      .attr("x2", xScale(numLines))
+    var lastLineStartx = numLines - 1;
+    let lastLine = svg.append("line");
+    lastLine
+      .attr(
+        "x1",
+        xScale(lastLineStartx) + lastLineStartx * xScale(tFactoryTimeAdjGap)
+      )
+      .attr(
+        "x2",
+        xScale(lastLineStartx + 1) + lastLineStartx * xScale(tFactoryTimeAdjGap)
+      )
       .attr("y1", chartBottomY - distBetweenCharts * 2)
       .attr("y2", chartBottomY - distBetweenCharts * 2)
       .attr("stroke-width", strokeWidth)
+      .attr("id", "tfactoryLine")
       .style("fill", "none")
       .style("stroke", tfactoryLineColor)
       .attr("marker-start", "url(#startMarkerTFactory)")
@@ -423,35 +440,36 @@ function LineChart({
     if (showSplit) {
       svg
         .append("rect")
-        .attr("x", xScale(23.5))
+        .attr("x", lengthInner / 2 - 20)
         .attr("y", chartBottomY - distBetweenCharts * 2 - 10)
-        .attr("width", "55")
+        .attr("width", "40")
         .attr("height", "20")
         .attr("fill", "#FFFFFF")
         .raise();
 
-      var ellipsesStartX = 25;
+      var ellipsesStartX = numLines / 2;
+
       svg
         .append("line")
-        .attr("x1", xScale(ellipsesStartX))
-        .attr("x2", xScale(ellipsesStartX))
-        .attr("y1", 0)
+        .attr("x1", lengthInner / 2)
+        .attr("x2", lengthInner / 2)
+        .attr("y1", chartBottomY - distBetweenCharts * 2)
         .attr("y2", chartBottomY - distBetweenCharts * 2)
         .attr("marker-end", "url(#circleMarkerElipses)");
 
       svg
         .append("line")
-        .attr("x1", xScale(ellipsesStartX + 1))
-        .attr("x2", xScale(ellipsesStartX + 1))
-        .attr("y1", 0)
+        .attr("x1", lengthInner / 2 + 10)
+        .attr("x2", lengthInner / 2 + 10)
+        .attr("y1", chartBottomY - distBetweenCharts * 2)
         .attr("y2", chartBottomY - distBetweenCharts * 2)
         .attr("marker-end", "url(#circleMarkerElipses)");
 
       svg
         .append("line")
-        .attr("x1", xScale(ellipsesStartX - 1))
-        .attr("x2", xScale(ellipsesStartX - 1))
-        .attr("y1", 0)
+        .attr("x1", lengthInner / 2 - 10)
+        .attr("x2", lengthInner / 2 - 10)
+        .attr("y1", chartBottomY - distBetweenCharts * 2)
         .attr("y2", chartBottomY - distBetweenCharts * 2)
         .attr("marker-end", "url(#circleMarkerElipses)");
     }
