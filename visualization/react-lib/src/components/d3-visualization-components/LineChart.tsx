@@ -257,7 +257,7 @@ function LineChart({ legendData, chartData, width, height }: LineChartProps) {
       .append("path")
       .attr("class", "line")
       .attr("id", "timeline")
-      .attr("d", lineGenerator as any)
+      .attr("d", lineGenerator(timeLine as any))
       .attr("stroke-width", strokeWidth)
       .attr("marker-start", "url(#startMarkerTimeLine)")
       .attr("marker-end", "url(#arrowTimeLine)")
