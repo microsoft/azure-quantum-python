@@ -102,42 +102,42 @@ class TestProblemClass(unittest.TestCase):
             serialized_problem = problem.serialize()
 
             # name is in the serialized string
-            assert re.search(f'"name"\\s*:\\s*"{problem_name}"',
-                             serialized_problem,
-                             flags=re.RegexFlag.MULTILINE)
+            self.assertTrue(re.search(f'"name"\\s*:\\s*"{problem_name}"',
+                                      serialized_problem,
+                                      flags=re.RegexFlag.MULTILINE))
 
             # name is in the correct place in the json structure
             problem_json = json.loads(serialized_problem)
-            assert problem_json["metadata"]["name"] == problem_name
+            self.assertEqual(problem_json["metadata"]["name"], problem_name)
 
             # deserializes name
             deserialized_problem = Problem.deserialize(input_problem=serialized_problem)
-            assert problem_name == deserialized_problem.name
+            self.assertEqual(problem_name, deserialized_problem.name)
 
             new_problem_name = "new_problem_name"
             # use the name passed in the parameter
             deserialized_problem = Problem.deserialize(input_problem=serialized_problem,
                                                        name=new_problem_name)
-            assert new_problem_name == deserialized_problem.name
+            self.assertEqual(new_problem_name, deserialized_problem.name)
 
         # test deserializing a problem that does not have a name in the json
         # and leaving the name as None
         serialized_problem_without_name = '{"cost_function": {"version": "1.0", "type": "ising", "terms": [{"c": 3, "ids": [1, 0]}, {"c": 5, "ids": [2, 0]}]}}'        
         deserialized_problem = Problem.deserialize(input_problem=serialized_problem_without_name)
-        assert deserialized_problem.name == "Optimization problem"
+        self.assertEqual(deserialized_problem.name, "Optimization problem")
 
         # test deserializing a problem that does not have a name in the json
         # and using the name parameter
         new_problem_name = "new_problem_name"
         deserialized_problem = Problem.deserialize(input_problem=serialized_problem_without_name,
                                                    name=new_problem_name)
-        assert new_problem_name == deserialized_problem.name
+        self.assertEqual(new_problem_name, deserialized_problem.name)
 
         # test deserializing a problem that does not have a name but have a metadata in the json
         # and leaving the name as None
         serialized_problem_without_name = '{"metadata":{"somemetadata":123}, "cost_function": {"version": "1.0", "type": "ising", "terms": [{"c": 3, "ids": [1, 0]}, {"c": 5, "ids": [2, 0]}]}}'        
         deserialized_problem = Problem.deserialize(input_problem=serialized_problem_without_name)
-        assert deserialized_problem.name == "Optimization problem"
+        self.assertEqual(deserialized_problem.name, "Optimization problem")
 
     def test_upload(self):
         with patch("azure.quantum.optimization.problem.BlobClient") as mock_blob_client, \
@@ -145,7 +145,7 @@ class TestProblemClass(unittest.TestCase):
             patch("azure.quantum.job.base_job.upload_blob") as mock_upload:
             mock_blob_client.from_blob_url.return_value = Mock()
             mock_container_client.from_container_url.return_value = Mock()
-            assert(self.pubo_problem.uploaded_blob_uri == None)
+            self.assertIsNone(self.pubo_problem.uploaded_blob_uri)
             actual_result = self.pubo_problem.upload(self.mock_ws)
             mock_upload.get_blob_uri_with_sas_token = Mock()
             azure.quantum.job.base_job.upload_blob.assert_called_once()
@@ -161,18 +161,18 @@ class TestProblemClass(unittest.TestCase):
             mock_container_client.from_container_url.return_value = Mock()
             mock_blob_url = Mock()
             actual_result = self.problem.download(self.mock_ws)
-            assert actual_result.name == "test"
+            self.assertEqual(actual_result.name, "test")
             azure.quantum.optimization.problem.download_blob.assert_called_once()
 
     def test_get_term(self):
         terms = self.problem.get_terms(0)
-        assert len(terms) == 2
+        self.assertEqual(len(terms), 2)
 
     def test_get_term_raise_exception(self):
         test_prob = Problem(name="random")
         with self.assertRaises(Exception):
             test_prob.get_terms(id=0)
-    
+
     def test_grouped_type(self):
         problem = Problem(name="test_pubo_grouped", problem_type=ProblemType.pubo)
         problem.terms = [
@@ -181,14 +181,14 @@ class TestProblemClass(unittest.TestCase):
             Term(c=-1, indices=[1, 0, 0]),
             Term(c=4, indices=[0, 2, 1])
         ]
-        assert problem.problem_type is ProblemType.pubo
+        self.assertEqual(problem.problem_type, ProblemType.pubo)
         problem.add_slc_term([(3,0), (2,1), (-1,None)])
-        assert problem.problem_type is ProblemType.pubo_grouped
+        self.assertEqual(problem.problem_type, ProblemType.pubo_grouped)
 
     def test_create_npz_file_default(self):
         # When no keywords are supplied, columns have default names
         # e.g. "arr_0", "arr_1" etc
-        
+
         # QUBO
         npz_file = numpy.load(self.default_qubo_filename)
         num_columns = 3

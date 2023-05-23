@@ -13,7 +13,7 @@ interactions:
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - azsdk-python-identity/1.12.0 Python/3.9.16 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-identity/1.12.0 Python/3.9.16 (Windows-10-10.0.22621-SP0)
       x-client-cpu:
       - x64
       x-client-current-telemetry:
@@ -39,7 +39,7 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: 'b''{"containerName": "job-00000000-0000-0000-0000-000000000000"}'''
+    body: 'b''{"containerName": "job-00000000-0000-0000-0000-000000000001"}'''
     headers:
       Accept:
       - application/json
@@ -52,12 +52,12 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - testapp azsdk-python-quantum/0.0.0.1 Python/3.9.16 (Windows-10-10.0.22000-SP0)
+      - testapp azsdk-python-quantum/0.0.1 Python/3.9.16 (Windows-10-10.0.22621-SP0)
     method: POST
-    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/storage/sasUri?api-version=2022-09-12-preview
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/storage/sasUri?api-version=2022-09-12-preview&test-sequence-id=1
   response:
     body:
-      string: '{"sasUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+      string: '{"sasUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
         "access_token": "fake_token"}'
     headers:
       connection:
@@ -81,17 +81,17 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-blob/12.15.0 Python/3.9.16 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-storage-blob/12.15.0 Python/3.9.16 (Windows-10-10.0.22621-SP0)
       x-ms-date:
-      - Fri, 17 Mar 2023 21:48:20 GMT
+      - Wed, 03 May 2023 18:09:58 GMT
       x-ms-version:
       - '2021-12-02'
     method: GET
-    uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?restype=container&sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
+    uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?restype=container&sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerNotFound</Code><Message>The
-        specified container does not exist.\nRequestId:da00729b-101e-005c-021a-59e72f000000\nTime:2023-03-17T21:48:20.5382763Z</Message></Error>"
+        specified container does not exist.\nRequestId:220fb350-501e-0000-1eea-7db277000000\nTime:2023-05-03T18:09:59.0114634Z</Message></Error>"
     headers:
       content-length:
       - '223'
@@ -114,13 +114,13 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-blob/12.15.0 Python/3.9.16 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-storage-blob/12.15.0 Python/3.9.16 (Windows-10-10.0.22621-SP0)
       x-ms-date:
-      - Fri, 17 Mar 2023 21:48:20 GMT
+      - Wed, 03 May 2023 18:09:59 GMT
       x-ms-version:
       - '2021-12-02'
     method: PUT
-    uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?restype=container&sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
+    uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?restype=container&sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
   response:
     body:
       string: ''
@@ -142,13 +142,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-blob/12.15.0 Python/3.9.16 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-storage-blob/12.15.0 Python/3.9.16 (Windows-10-10.0.22621-SP0)
       x-ms-date:
-      - Fri, 17 Mar 2023 21:48:20 GMT
+      - Wed, 03 May 2023 18:09:59 GMT
       x-ms-version:
       - '2021-12-02'
     method: GET
-    uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?restype=container&sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
+    uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?restype=container&sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
   response:
     body:
       string: ''
@@ -165,7 +165,8 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: b'\x1f\x8b\x08\x00"\xe0\x14d\x02\xffU\xcc=\x0b\x830\x10\x06\xe0\xbf"7\x9b\x92\x0f\x8b\xb6\xabs\x87B\xb7*%\xd5\x14\x84&\x11s)\x14\xc9\x7fo\x88\x83\xcd\x94\xcb\xfb\xdc\xbd+h\x85r\x94(\xe1\\\xac`\xa4Vq\x80\x9brH\xae^\x1a\xf4\xfab\r\xaaV.oK:\xe0\x94\x0b*XMX]5\xac\xe9\x00BY\xc0`\x1d>^\xde\x0c8Y\x93\x8a>jq\xdb\x0c\xec@!\xee\xe0wN\xd5\xb3\x7f\xda\xf4W\x8bv1\xb8\xaf0\xc4\x87\x88\x98McJXY\xd0>\xf6nr\xdc\x81gp\xca\x80\xed\xc0w\x10\xd9\x05\xa92\xf9;\xc9\x81\xf7\xa1\x0f\xe1\x07o\r\x99\x89\x1c\x01\x00\x00'
+    body: b'\x1f\x8b\x08\x00t\xa3Rd\x02\xffU\xcc=\x0b\xc20\x10\x06\xe0\xbfRnn$\x1fV\xa8\xabs\x07\xc1\xcd\x16\x89m\x84\x82IJr\x11\xa4\xe4\xbf\x1b\xd2\xa1f\xca\xe5}\xee\xde\x15\xb4B9I\x94p\xaeV0R\xab4\xc0My$\xd7
+      \r\x06\xddY\x83\xea"\xdd\xdb\x92\x1e8\xe5\x826T\x10\xc6h\xdb\x9cz\x80XW0Z\x8f\x8fW0#\xce\xd6\xe4\xa2\x8fr~\x9b\x81\x1d(\xa4\x1d\xfc.\xb9z\tO\x9b\xff\xcai\x9f\x82\xfb\ncz\x88H\xd9<\xe5\x84\xd5\x15\x1dR\xef&\xcd\x0e\xbc\x80\xb6\x00\xb6\x03\xdfA\x14\x17\xe4X\xc8\xdfI\t|\x88C\x8c?W\xdf\x8f\xd8\x1c\x01\x00\x00'
     headers:
       Accept:
       - application/xml
@@ -174,19 +175,19 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '498'
+      - '507'
       Content-Type:
       - application/octet-stream
       User-Agent:
-      - azsdk-python-storage-blob/12.15.0 Python/3.9.16 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-storage-blob/12.15.0 Python/3.9.16 (Windows-10-10.0.22621-SP0)
       x-ms-blob-type:
       - BlockBlob
       x-ms-date:
-      - Fri, 17 Mar 2023 21:48:21 GMT
+      - Wed, 03 May 2023 18:09:59 GMT
       x-ms-version:
       - '2021-12-02'
     method: PUT
-    uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
+    uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
   response:
     body:
       string: ''
@@ -199,10 +200,10 @@ interactions:
       code: 201
       message: Created
 - request:
-    body: 'b''{"id": "00000000-0000-0000-0000-000000000000", "name": "Test-QuantumMonteCarlo-\\"20210101-000000\\"",
+    body: 'b''{"id": "00000000-0000-0000-0000-000000000001", "name": "Test-QuantumMonteCarlo-\\"20210101-000000\\"",
       "providerId": "Microsoft", "target": "microsoft.qmc.cpu", "itemType": "Job",
-      "containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
-      "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData",
+      "containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+      "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData",
       "inputDataFormat": "microsoft.qio.v2", "inputParams": {"params": {"trotter_number":
       4}}, "outputDataFormat": "microsoft.qio-results.v2"}'''
     headers:
@@ -217,399 +218,21 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - testapp azsdk-python-quantum/0.0.0.1 Python/3.9.16 (Windows-10-10.0.22000-SP0)
+      - testapp azsdk-python-quantum/0.0.1 Python/3.9.16 (Windows-10-10.0.22621-SP0)
     method: PUT
-    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000000?api-version=2022-09-12-preview
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000001?api-version=2022-09-12-preview&test-sequence-id=1
   response:
     body:
-      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
-        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData",
+      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
         "inputDataFormat": "microsoft.qio.v2", "inputParams": {"params": {"trotter_number":
         4}}, "metadata": null, "sessionId": null, "status": "Waiting", "jobType":
         "Optimization", "outputDataFormat": "microsoft.qio-results.v2", "outputDataUri":
-        "https://mystorage.blob.core.windows.net:443/job-00000000-0000-0000-0000-000000000000/outputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "https://mystorage.blob.core.windows.net:443/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         null, "errorData": null, "isCancelling": false, "tags": [], "name": "Test-QuantumMonteCarlo-\"20210101-000000\"",
-        "id": "00000000-0000-0000-0000-000000000000", "providerId": "microsoft", "target":
-        "microsoft.qmc.cpu", "creationTime": "2023-03-17T21:48:21.2185778+00:00",
-        "endExecutionTime": null, "costEstimate": null, "itemType": "Job", "access_token":
-        "fake_token"}'
-    headers:
-      connection:
-      - keep-alive
-      content-length:
-      - '1126'
-      content-type:
-      - application/json; charset=utf-8
-      transfer-encoding:
-      - chunked
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - testapp azsdk-python-quantum/0.0.0.1 Python/3.9.16 (Windows-10-10.0.22000-SP0)
-    method: GET
-    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000000?api-version=2022-09-12-preview
-  response:
-    body:
-      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
-        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-QuantumMonteCarlo-%252220210101-000000%2522-6dbca6a1-c50d-11ed-af47-b5d177e8d905.input.json",
-        "inputDataFormat": "microsoft.qio.v2", "inputParams": {"params": {"trotter_number":
-        4}}, "metadata": null, "sessionId": null, "status": "Succeeded", "jobType":
-        "Optimization", "outputDataFormat": "microsoft.qio-results.v2", "outputDataUri":
-        "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-QuantumMonteCarlo-%252220210101-000000%2522-6dbca6a1-c50d-11ed-af47-b5d177e8d905.output.json",
-        "beginExecutionTime": "2023-03-17T21:48:10.8912001Z", "cancellationTime":
-        null, "quantumComputingData": null, "errorData": null, "isCancelling": false,
-        "tags": [], "name": "Test-QuantumMonteCarlo-\"20210101-000000\"", "id": "00000000-0000-0000-0000-000000000000",
-        "providerId": "microsoft", "target": "microsoft.qmc.cpu", "creationTime":
-        "2023-03-17T21:48:21.2185778+00:00", "endExecutionTime": "2023-03-17T21:48:11.7214425Z",
-        "costEstimate": null, "itemType": "Job", "access_token": "fake_token"}'
-    headers:
-      connection:
-      - keep-alive
-      content-length:
-      - '1484'
-      content-type:
-      - application/json; charset=utf-8
-      transfer-encoding:
-      - chunked
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/xml
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-storage-blob/12.15.0 Python/3.9.16 (Windows-10-10.0.22000-SP0)
-      x-ms-date:
-      - Fri, 17 Mar 2023 21:48:23 GMT
-      x-ms-range:
-      - bytes=0-33554431
-      x-ms-version:
-      - '2021-12-02'
-    method: GET
-    uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-QuantumMonteCarlo-%252220210101-000000%2522-6dbca6a1-c50d-11ed-af47-b5d177e8d905.output.json
-  response:
-    body:
-      string: '{"version": "1.0", "configuration": {"0": 1, "1": 1, "2": 0, "3": 1},
-        "cost": -5.0, "parameters": {"beta_start": 1.0, "beta_stop": 1.0, "restarts":
-        1, "seed": 2291313486, "sweeps": 10000, "transverse_field_high": 5.0, "transverse_field_low":
-        0.0, "trotter_number": 4}, "solutions": [{"configuration": {"0": 1, "1": 1,
-        "2": 0, "3": 1}, "cost": -5.0}], "access_token": "fake_token"}'
-    headers:
-      accept-ranges:
-      - bytes
-      content-length:
-      - '380'
-      content-range:
-      - bytes 0-513/514
-      content-type:
-      - application/json
-      x-ms-blob-content-md5:
-      - OTR7UbezGZtjuO/9RgrVZw==
-      x-ms-blob-type:
-      - BlockBlob
-      x-ms-creation-time:
-      - Fri, 17 Mar 2023 21:48:21 GMT
-      x-ms-lease-state:
-      - available
-      x-ms-lease-status:
-      - unlocked
-      x-ms-server-encrypted:
-      - 'true'
-      x-ms-version:
-      - '2021-12-02'
-    status:
-      code: 206
-      message: Partial Content
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - testapp azsdk-python-quantum/0.0.0.1 Python/3.9.16 (Windows-10-10.0.22000-SP0)
-    method: GET
-    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000000?api-version=2022-09-12-preview
-  response:
-    body:
-      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
-        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-QuantumMonteCarlo-%252220210101-000000%2522-6dbca6a1-c50d-11ed-af47-b5d177e8d905.input.json",
-        "inputDataFormat": "microsoft.qio.v2", "inputParams": {"params": {"trotter_number":
-        4}}, "metadata": null, "sessionId": null, "status": "Succeeded", "jobType":
-        "Optimization", "outputDataFormat": "microsoft.qio-results.v2", "outputDataUri":
-        "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-QuantumMonteCarlo-%252220210101-000000%2522-6dbca6a1-c50d-11ed-af47-b5d177e8d905.output.json",
-        "beginExecutionTime": "2023-03-17T21:48:10.8912001Z", "cancellationTime":
-        null, "quantumComputingData": null, "errorData": null, "isCancelling": false,
-        "tags": [], "name": "Test-QuantumMonteCarlo-\"20210101-000000\"", "id": "00000000-0000-0000-0000-000000000000",
-        "providerId": "microsoft", "target": "microsoft.qmc.cpu", "creationTime":
-        "2023-03-17T21:48:21.2185778+00:00", "endExecutionTime": "2023-03-17T21:48:11.7214425Z",
-        "costEstimate": null, "itemType": "Job", "access_token": "fake_token"}'
-    headers:
-      connection:
-      - keep-alive
-      content-length:
-      - '1484'
-      content-type:
-      - application/json; charset=utf-8
-      transfer-encoding:
-      - chunked
-    status:
-      code: 200
-      message: OK
-- request:
-    body: client_id=PLACEHOLDER&grant_type=client_credentials&client_info=1&client_secret=PLACEHOLDER&claims=PLACEHOLDER&scope=https%3A%2F%2Fquantum.microsoft.com%2F.default
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '163'
-      Content-Type:
-      - application/x-www-form-urlencoded
-      User-Agent:
-      - azsdk-python-identity/1.12.0 Python/3.9.16 (Windows-10-10.0.22000-SP0)
-      x-client-cpu:
-      - x64
-      x-client-current-telemetry:
-      - 4|730,0|
-      x-client-os:
-      - win32
-      x-client-sku:
-      - MSAL.Python
-      x-client-ver:
-      - 1.21.0
-    method: POST
-    uri: https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token
-  response:
-    body:
-      string: '{"token_type": "Bearer", "expires_in": 86399, "ext_expires_in": 86399,
-        "refresh_in": 43199, "access_token": "fake_token"}'
-    headers:
-      content-length:
-      - '121'
-      content-type:
-      - application/json; charset=utf-8
-    status:
-      code: 200
-      message: OK
-- request:
-    body: 'b''{"containerName": "job-00000000-0000-0000-0000-000000000000"}'''
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '64'
-      Content-Type:
-      - application/json
-      User-Agent:
-      - testapp azsdk-python-quantum/0.0.0.1 Python/3.9.16 (Windows-10-10.0.22000-SP0)
-    method: POST
-    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/storage/sasUri?api-version=2022-09-12-preview
-  response:
-    body:
-      string: '{"sasUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
-        "access_token": "fake_token"}'
-    headers:
-      connection:
-      - keep-alive
-      content-length:
-      - '190'
-      content-type:
-      - application/json; charset=utf-8
-      transfer-encoding:
-      - chunked
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/xml
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-storage-blob/12.15.0 Python/3.9.16 (Windows-10-10.0.22000-SP0)
-      x-ms-date:
-      - Fri, 17 Mar 2023 21:48:25 GMT
-      x-ms-version:
-      - '2021-12-02'
-    method: GET
-    uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?restype=container&sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
-  response:
-    body:
-      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerNotFound</Code><Message>The
-        specified container does not exist.\nRequestId:151a4340-b01e-0008-1d1a-59a878000000\nTime:2023-03-17T21:48:26.5059540Z</Message></Error>"
-    headers:
-      content-length:
-      - '223'
-      content-type:
-      - application/xml
-      x-ms-version:
-      - '2021-12-02'
-    status:
-      code: 404
-      message: The specified container does not exist.
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/xml
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '0'
-      User-Agent:
-      - azsdk-python-storage-blob/12.15.0 Python/3.9.16 (Windows-10-10.0.22000-SP0)
-      x-ms-date:
-      - Fri, 17 Mar 2023 21:48:26 GMT
-      x-ms-version:
-      - '2021-12-02'
-    method: PUT
-    uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?restype=container&sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
-  response:
-    body:
-      string: ''
-    headers:
-      content-length:
-      - '0'
-      x-ms-version:
-      - '2021-12-02'
-    status:
-      code: 201
-      message: Created
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/xml
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-storage-blob/12.15.0 Python/3.9.16 (Windows-10-10.0.22000-SP0)
-      x-ms-date:
-      - Fri, 17 Mar 2023 21:48:26 GMT
-      x-ms-version:
-      - '2021-12-02'
-    method: GET
-    uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?restype=container&sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
-  response:
-    body:
-      string: ''
-    headers:
-      content-length:
-      - '0'
-      x-ms-lease-state:
-      - available
-      x-ms-lease-status:
-      - unlocked
-      x-ms-version:
-      - '2021-12-02'
-    status:
-      code: 200
-      message: OK
-- request:
-    body: b'\x1f\x8b\x08\x00(\xe0\x14d\x02\xffm\x8fQ\x0b\xc2 \x14\x85\xff\xca\xb8\xcf3\xa6.V\xbd\xf6\xdcC\xd0[\x1b\xc3\x9c\xc5`\xd315\x88\xb1\xff\x9em\x84J\xe1\x83\x97\xf3y\xcf9N\xd0\x0b\xc3\x1af\x18\x1c\x92\t$\xeb\x85\x1b\xe0"\xb4Ag\xcb\xa4\xb1\xfdII#\x8el\xec\x14*\x81d\x84f\x14\x17\x08\x17\xf9\x8e\xe4%\xc0\x9c&\xc0\x956\xf5\xddJnZ%\x17\xa3\xa7\x18\xf5:\x03\xded\xe0\xde\x98\xd7\xb0X\x0f\xf6\xa6\xea\xc7\xa8\xec
-      \x9aE\x17c\xaf\x1d\xb8N\xc0\xdd\x85\xa8\xd3\xdafQp\x9ad\x95\xf3_\xc9\xd6\x03\x12\x81}\x04\xb0\x07\xc4\x03\x1am\xa0<"\xc1J\x0cH5W\xdf\x8a\xb5\xee\xb8\xaf\x89\x7f\x9b\x07iAT\xf8\x9d\xbf1\x9f\x0cw\xe67\x98\xc4\x9e\xc6\x8a\x01\x00\x00'
-    headers:
-      Accept:
-      - application/xml
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '636'
-      Content-Type:
-      - application/octet-stream
-      User-Agent:
-      - azsdk-python-storage-blob/12.15.0 Python/3.9.16 (Windows-10-10.0.22000-SP0)
-      x-ms-blob-type:
-      - BlockBlob
-      x-ms-date:
-      - Fri, 17 Mar 2023 21:48:27 GMT
-      x-ms-version:
-      - '2021-12-02'
-    method: PUT
-    uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
-  response:
-    body:
-      string: ''
-    headers:
-      content-length:
-      - '0'
-      x-ms-version:
-      - '2021-12-02'
-    status:
-      code: 201
-      message: Created
-- request:
-    body: 'b''{"id": "00000000-0000-0000-0000-000000000000", "name": "Test-QuantumMonteCarlo-\\"20210101-000000\\"",
-      "providerId": "Microsoft", "target": "microsoft.qmc.cpu", "itemType": "Job",
-      "containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
-      "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData",
-      "inputDataFormat": "microsoft.qio.v2", "inputParams": {"params": {"trotter_number":
-      4}}, "outputDataFormat": "microsoft.qio-results.v2"}'''
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '595'
-      Content-Type:
-      - application/json
-      User-Agent:
-      - testapp azsdk-python-quantum/0.0.0.1 Python/3.9.16 (Windows-10-10.0.22000-SP0)
-    method: PUT
-    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000000?api-version=2022-09-12-preview
-  response:
-    body:
-      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
-        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
-        "inputDataFormat": "microsoft.qio.v2", "inputParams": {"params": {"trotter_number":
-        4}}, "metadata": null, "sessionId": null, "status": "Waiting", "jobType":
-        "Optimization", "outputDataFormat": "microsoft.qio-results.v2", "outputDataUri":
-        "https://mystorage.blob.core.windows.net:443/job-00000000-0000-0000-0000-000000000000/outputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
-        "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
-        null, "errorData": null, "isCancelling": false, "tags": [], "name": "Test-QuantumMonteCarlo-\"20210101-000000\"",
-        "id": "00000000-0000-0000-0000-000000000000", "providerId": "microsoft", "target":
-        "microsoft.qmc.cpu", "creationTime": "2023-03-17T21:48:27.6296083+00:00",
+        "id": "00000000-0000-0000-0000-000000000001", "providerId": "microsoft", "target":
+        "microsoft.qmc.cpu", "creationTime": "2023-05-03T18:09:59.9384208+00:00",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Job", "access_token":
         "fake_token"}'
     headers:
@@ -634,28 +257,262 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - testapp azsdk-python-quantum/0.0.0.1 Python/3.9.16 (Windows-10-10.0.22000-SP0)
+      - testapp azsdk-python-quantum/0.0.1 Python/3.9.16 (Windows-10-10.0.22621-SP0)
     method: GET
-    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000000?api-version=2022-09-12-preview
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000001?api-version=2022-09-12-preview&test-sequence-id=1
   response:
     body:
-      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
-        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-QuantumMonteCarlo-%252220210101-000000%2522-713426cc-c50d-11ed-8e6e-b5d177e8d905.input.json",
+      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-QuantumMonteCarlo-%252220210101-000000%2522-00000000-0000-0000-0000-000000000001.input.json",
+        "inputDataFormat": "microsoft.qio.v2", "inputParams": {"params": {"trotter_number":
+        4}}, "metadata": null, "sessionId": null, "status": "Waiting", "jobType":
+        "Optimization", "outputDataFormat": "microsoft.qio-results.v2", "outputDataUri":
+        "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-QuantumMonteCarlo-%252220210101-000000%2522-00000000-0000-0000-0000-000000000001.output.json",
+        "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
+        null, "errorData": null, "isCancelling": false, "tags": [], "name": "Test-QuantumMonteCarlo-\"20210101-000000\"",
+        "id": "00000000-0000-0000-0000-000000000001", "providerId": "microsoft", "target":
+        "microsoft.qmc.cpu", "creationTime": "2023-05-03T18:09:59.9384208+00:00",
+        "endExecutionTime": null, "costEstimate": null, "itemType": "Job", "access_token":
+        "fake_token"}'
+    headers:
+      connection:
+      - keep-alive
+      content-length:
+      - '1427'
+      content-type:
+      - application/json; charset=utf-8
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - testapp azsdk-python-quantum/0.0.1 Python/3.9.16 (Windows-10-10.0.22621-SP0)
+    method: GET
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000001?api-version=2022-09-12-preview&test-sequence-id=2
+  response:
+    body:
+      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-QuantumMonteCarlo-%252220210101-000000%2522-00000000-0000-0000-0000-000000000001.input.json",
+        "inputDataFormat": "microsoft.qio.v2", "inputParams": {"params": {"trotter_number":
+        4}}, "metadata": null, "sessionId": null, "status": "Waiting", "jobType":
+        "Optimization", "outputDataFormat": "microsoft.qio-results.v2", "outputDataUri":
+        "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-QuantumMonteCarlo-%252220210101-000000%2522-00000000-0000-0000-0000-000000000001.output.json",
+        "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
+        null, "errorData": null, "isCancelling": false, "tags": [], "name": "Test-QuantumMonteCarlo-\"20210101-000000\"",
+        "id": "00000000-0000-0000-0000-000000000001", "providerId": "microsoft", "target":
+        "microsoft.qmc.cpu", "creationTime": "2023-05-03T18:09:59.9384208+00:00",
+        "endExecutionTime": null, "costEstimate": null, "itemType": "Job", "access_token":
+        "fake_token"}'
+    headers:
+      connection:
+      - keep-alive
+      content-length:
+      - '1427'
+      content-type:
+      - application/json; charset=utf-8
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - testapp azsdk-python-quantum/0.0.1 Python/3.9.16 (Windows-10-10.0.22621-SP0)
+    method: GET
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000001?api-version=2022-09-12-preview&test-sequence-id=3
+  response:
+    body:
+      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-QuantumMonteCarlo-%252220210101-000000%2522-00000000-0000-0000-0000-000000000001.input.json",
+        "inputDataFormat": "microsoft.qio.v2", "inputParams": {"params": {"trotter_number":
+        4}}, "metadata": null, "sessionId": null, "status": "Waiting", "jobType":
+        "Optimization", "outputDataFormat": "microsoft.qio-results.v2", "outputDataUri":
+        "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-QuantumMonteCarlo-%252220210101-000000%2522-00000000-0000-0000-0000-000000000001.output.json",
+        "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
+        null, "errorData": null, "isCancelling": false, "tags": [], "name": "Test-QuantumMonteCarlo-\"20210101-000000\"",
+        "id": "00000000-0000-0000-0000-000000000001", "providerId": "microsoft", "target":
+        "microsoft.qmc.cpu", "creationTime": "2023-05-03T18:09:59.9384208+00:00",
+        "endExecutionTime": null, "costEstimate": null, "itemType": "Job", "access_token":
+        "fake_token"}'
+    headers:
+      connection:
+      - keep-alive
+      content-length:
+      - '1427'
+      content-type:
+      - application/json; charset=utf-8
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - testapp azsdk-python-quantum/0.0.1 Python/3.9.16 (Windows-10-10.0.22621-SP0)
+    method: GET
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000001?api-version=2022-09-12-preview&test-sequence-id=4
+  response:
+    body:
+      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-QuantumMonteCarlo-%252220210101-000000%2522-00000000-0000-0000-0000-000000000001.input.json",
+        "inputDataFormat": "microsoft.qio.v2", "inputParams": {"params": {"trotter_number":
+        4}}, "metadata": null, "sessionId": null, "status": "Waiting", "jobType":
+        "Optimization", "outputDataFormat": "microsoft.qio-results.v2", "outputDataUri":
+        "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-QuantumMonteCarlo-%252220210101-000000%2522-00000000-0000-0000-0000-000000000001.output.json",
+        "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
+        null, "errorData": null, "isCancelling": false, "tags": [], "name": "Test-QuantumMonteCarlo-\"20210101-000000\"",
+        "id": "00000000-0000-0000-0000-000000000001", "providerId": "microsoft", "target":
+        "microsoft.qmc.cpu", "creationTime": "2023-05-03T18:09:59.9384208+00:00",
+        "endExecutionTime": null, "costEstimate": null, "itemType": "Job", "access_token":
+        "fake_token"}'
+    headers:
+      connection:
+      - keep-alive
+      content-length:
+      - '1427'
+      content-type:
+      - application/json; charset=utf-8
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - testapp azsdk-python-quantum/0.0.1 Python/3.9.16 (Windows-10-10.0.22621-SP0)
+    method: GET
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000001?api-version=2022-09-12-preview&test-sequence-id=5
+  response:
+    body:
+      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-QuantumMonteCarlo-%252220210101-000000%2522-00000000-0000-0000-0000-000000000001.input.json",
+        "inputDataFormat": "microsoft.qio.v2", "inputParams": {"params": {"trotter_number":
+        4}}, "metadata": null, "sessionId": null, "status": "Waiting", "jobType":
+        "Optimization", "outputDataFormat": "microsoft.qio-results.v2", "outputDataUri":
+        "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-QuantumMonteCarlo-%252220210101-000000%2522-00000000-0000-0000-0000-000000000001.output.json",
+        "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
+        null, "errorData": null, "isCancelling": false, "tags": [], "name": "Test-QuantumMonteCarlo-\"20210101-000000\"",
+        "id": "00000000-0000-0000-0000-000000000001", "providerId": "microsoft", "target":
+        "microsoft.qmc.cpu", "creationTime": "2023-05-03T18:09:59.9384208+00:00",
+        "endExecutionTime": null, "costEstimate": null, "itemType": "Job", "access_token":
+        "fake_token"}'
+    headers:
+      connection:
+      - keep-alive
+      content-length:
+      - '1427'
+      content-type:
+      - application/json; charset=utf-8
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - testapp azsdk-python-quantum/0.0.1 Python/3.9.16 (Windows-10-10.0.22621-SP0)
+    method: GET
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000001?api-version=2022-09-12-preview&test-sequence-id=6
+  response:
+    body:
+      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-QuantumMonteCarlo-%252220210101-000000%2522-00000000-0000-0000-0000-000000000001.input.json",
         "inputDataFormat": "microsoft.qio.v2", "inputParams": {"params": {"trotter_number":
         4}}, "metadata": null, "sessionId": null, "status": "Succeeded", "jobType":
         "Optimization", "outputDataFormat": "microsoft.qio-results.v2", "outputDataUri":
-        "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-QuantumMonteCarlo-%252220210101-000000%2522-713426cc-c50d-11ed-8e6e-b5d177e8d905.output.json",
-        "beginExecutionTime": "2023-03-17T21:48:17.5684432Z", "cancellationTime":
-        null, "quantumComputingData": null, "errorData": null, "isCancelling": false,
-        "tags": [], "name": "Test-QuantumMonteCarlo-\"20210101-000000\"", "id": "00000000-0000-0000-0000-000000000000",
+        "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-QuantumMonteCarlo-%252220210101-000000%2522-00000000-0000-0000-0000-000000000001.output.json",
+        "beginExecutionTime": "2023-05-03T18:09:33.082655Z", "cancellationTime": null,
+        "quantumComputingData": null, "errorData": null, "isCancelling": false, "tags":
+        [], "name": "Test-QuantumMonteCarlo-\"20210101-000000\"", "id": "00000000-0000-0000-0000-000000000001",
         "providerId": "microsoft", "target": "microsoft.qmc.cpu", "creationTime":
-        "2023-03-17T21:48:27.6296083+00:00", "endExecutionTime": "2023-03-17T21:48:18.3466421Z",
+        "2023-05-03T18:09:59.9384208+00:00", "endExecutionTime": "2023-05-03T18:09:33.9159319Z",
         "costEstimate": null, "itemType": "Job", "access_token": "fake_token"}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '1484'
+      - '1483'
+      content-type:
+      - application/json; charset=utf-8
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - testapp azsdk-python-quantum/0.0.1 Python/3.9.16 (Windows-10-10.0.22621-SP0)
+    method: GET
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000001?api-version=2022-09-12-preview&test-sequence-id=7
+  response:
+    body:
+      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-QuantumMonteCarlo-%252220210101-000000%2522-00000000-0000-0000-0000-000000000001.input.json",
+        "inputDataFormat": "microsoft.qio.v2", "inputParams": {"params": {"trotter_number":
+        4}}, "metadata": null, "sessionId": null, "status": "Succeeded", "jobType":
+        "Optimization", "outputDataFormat": "microsoft.qio-results.v2", "outputDataUri":
+        "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-QuantumMonteCarlo-%252220210101-000000%2522-00000000-0000-0000-0000-000000000001.output.json",
+        "beginExecutionTime": "2023-05-03T18:09:33.082655Z", "cancellationTime": null,
+        "quantumComputingData": null, "errorData": null, "isCancelling": false, "tags":
+        [], "name": "Test-QuantumMonteCarlo-\"20210101-000000\"", "id": "00000000-0000-0000-0000-000000000001",
+        "providerId": "microsoft", "target": "microsoft.qmc.cpu", "creationTime":
+        "2023-05-03T18:09:59.9384208+00:00", "endExecutionTime": "2023-05-03T18:09:33.9159319Z",
+        "costEstimate": null, "itemType": "Job", "access_token": "fake_token"}'
+    headers:
+      connection:
+      - keep-alive
+      content-length:
+      - '1483'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -673,37 +530,37 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-blob/12.15.0 Python/3.9.16 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-storage-blob/12.15.0 Python/3.9.16 (Windows-10-10.0.22621-SP0)
       x-ms-date:
-      - Fri, 17 Mar 2023 21:48:30 GMT
+      - Wed, 03 May 2023 18:10:03 GMT
       x-ms-range:
       - bytes=0-33554431
       x-ms-version:
       - '2021-12-02'
     method: GET
-    uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-QuantumMonteCarlo-%252220210101-000000%2522-713426cc-c50d-11ed-8e6e-b5d177e8d905.output.json
+    uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-QuantumMonteCarlo-%252220210101-000000%2522-00000000-0000-0000-0000-000000000001.output.json
   response:
     body:
-      string: '{"version": "1.0", "configuration": {"0": 0, "1": 0, "2": 0, "3": 0},
-        "cost": 0.0, "parameters": {"beta_start": 1.0, "beta_stop": 1.0, "restarts":
-        1, "seed": 2297984793, "sweeps": 10000, "transverse_field_high": 5.0, "transverse_field_low":
-        0.0, "trotter_number": 4}, "solutions": [{"configuration": {"0": 0, "1": 0,
-        "2": 0, "3": 0}, "cost": 0.0}], "access_token": "fake_token"}'
+      string: '{"version": "1.0", "configuration": {"0": 1, "1": 1, "2": 0, "3": 1},
+        "cost": -5.0, "parameters": {"beta_start": 1.0, "beta_stop": 1.0, "restarts":
+        1, "seed": 4114312907, "sweeps": 10000, "transverse_field_high": 5.0, "transverse_field_low":
+        0.0, "trotter_number": 4}, "solutions": [{"configuration": {"0": 1, "1": 1,
+        "2": 0, "3": 1}, "cost": -5.0}], "access_token": "fake_token"}'
     headers:
       accept-ranges:
       - bytes
       content-length:
-      - '378'
+      - '380'
       content-range:
-      - bytes 0-511/512
+      - bytes 0-513/514
       content-type:
       - application/json
       x-ms-blob-content-md5:
-      - 5kd3JyRVPNko46L2B6pjJw==
+      - KHVLYjMUowkYJaJ+j82AOQ==
       x-ms-blob-type:
       - BlockBlob
       x-ms-creation-time:
-      - Fri, 17 Mar 2023 21:48:27 GMT
+      - Wed, 03 May 2023 18:10:00 GMT
       x-ms-lease-state:
       - available
       x-ms-lease-status:
@@ -725,28 +582,600 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - testapp azsdk-python-quantum/0.0.0.1 Python/3.9.16 (Windows-10-10.0.22000-SP0)
+      - testapp azsdk-python-quantum/0.0.1 Python/3.9.16 (Windows-10-10.0.22621-SP0)
     method: GET
-    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000000?api-version=2022-09-12-preview
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000001?api-version=2022-09-12-preview&test-sequence-id=8
   response:
     body:
-      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
-        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-QuantumMonteCarlo-%252220210101-000000%2522-713426cc-c50d-11ed-8e6e-b5d177e8d905.input.json",
+      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-QuantumMonteCarlo-%252220210101-000000%2522-00000000-0000-0000-0000-000000000001.input.json",
         "inputDataFormat": "microsoft.qio.v2", "inputParams": {"params": {"trotter_number":
         4}}, "metadata": null, "sessionId": null, "status": "Succeeded", "jobType":
         "Optimization", "outputDataFormat": "microsoft.qio-results.v2", "outputDataUri":
-        "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000000/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-QuantumMonteCarlo-%252220210101-000000%2522-713426cc-c50d-11ed-8e6e-b5d177e8d905.output.json",
-        "beginExecutionTime": "2023-03-17T21:48:17.5684432Z", "cancellationTime":
-        null, "quantumComputingData": null, "errorData": null, "isCancelling": false,
-        "tags": [], "name": "Test-QuantumMonteCarlo-\"20210101-000000\"", "id": "00000000-0000-0000-0000-000000000000",
+        "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-QuantumMonteCarlo-%252220210101-000000%2522-00000000-0000-0000-0000-000000000001.output.json",
+        "beginExecutionTime": "2023-05-03T18:09:33.082655Z", "cancellationTime": null,
+        "quantumComputingData": null, "errorData": null, "isCancelling": false, "tags":
+        [], "name": "Test-QuantumMonteCarlo-\"20210101-000000\"", "id": "00000000-0000-0000-0000-000000000001",
         "providerId": "microsoft", "target": "microsoft.qmc.cpu", "creationTime":
-        "2023-03-17T21:48:27.6296083+00:00", "endExecutionTime": "2023-03-17T21:48:18.3466421Z",
+        "2023-05-03T18:09:59.9384208+00:00", "endExecutionTime": "2023-05-03T18:09:33.9159319Z",
         "costEstimate": null, "itemType": "Job", "access_token": "fake_token"}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '1484'
+      - '1483'
+      content-type:
+      - application/json; charset=utf-8
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
+- request:
+    body: client_id=PLACEHOLDER&grant_type=client_credentials&client_info=1&client_secret=PLACEHOLDER&claims=PLACEHOLDER&scope=https%3A%2F%2Fquantum.microsoft.com%2F.default
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '163'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      User-Agent:
+      - azsdk-python-identity/1.12.0 Python/3.9.16 (Windows-10-10.0.22621-SP0)
+      x-client-cpu:
+      - x64
+      x-client-current-telemetry:
+      - 4|730,0|
+      x-client-os:
+      - win32
+      x-client-sku:
+      - MSAL.Python
+      x-client-ver:
+      - 1.21.0
+    method: POST
+    uri: https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token
+  response:
+    body:
+      string: '{"token_type": "Bearer", "expires_in": 86399, "ext_expires_in": 86399,
+        "refresh_in": 43199, "access_token": "fake_token"}'
+    headers:
+      content-length:
+      - '121'
+      content-type:
+      - application/json; charset=utf-8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: 'b''{"containerName": "job-00000000-0000-0000-0000-000000000002"}'''
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '64'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - testapp azsdk-python-quantum/0.0.1 Python/3.9.16 (Windows-10-10.0.22621-SP0)
+    method: POST
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/storage/sasUri?api-version=2022-09-12-preview&test-sequence-id=2
+  response:
+    body:
+      string: '{"sasUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000002?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "access_token": "fake_token"}'
+    headers:
+      connection:
+      - keep-alive
+      content-length:
+      - '190'
+      content-type:
+      - application/json; charset=utf-8
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-blob/12.15.0 Python/3.9.16 (Windows-10-10.0.22621-SP0)
+      x-ms-date:
+      - Wed, 03 May 2023 18:10:05 GMT
+      x-ms-version:
+      - '2021-12-02'
+    method: GET
+    uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000002?restype=container&sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
+  response:
+    body:
+      string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerNotFound</Code><Message>The
+        specified container does not exist.\nRequestId:b390f600-001e-006f-0aea-7db884000000\nTime:2023-05-03T18:10:06.6832025Z</Message></Error>"
+    headers:
+      content-length:
+      - '223'
+      content-type:
+      - application/xml
+      x-ms-version:
+      - '2021-12-02'
+    status:
+      code: 404
+      message: The specified container does not exist.
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '0'
+      User-Agent:
+      - azsdk-python-storage-blob/12.15.0 Python/3.9.16 (Windows-10-10.0.22621-SP0)
+      x-ms-date:
+      - Wed, 03 May 2023 18:10:06 GMT
+      x-ms-version:
+      - '2021-12-02'
+    method: PUT
+    uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000002?restype=container&sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      x-ms-version:
+      - '2021-12-02'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-blob/12.15.0 Python/3.9.16 (Windows-10-10.0.22621-SP0)
+      x-ms-date:
+      - Wed, 03 May 2023 18:10:06 GMT
+      x-ms-version:
+      - '2021-12-02'
+    method: GET
+    uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000002?restype=container&sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      x-ms-lease-state:
+      - available
+      x-ms-lease-status:
+      - unlocked
+      x-ms-version:
+      - '2021-12-02'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: b'\x1f\x8b\x08\x00|\xa3Rd\x02\xffm\x8f\xcd\n\xc20\x10\x84_\xa5\xec\xb9\x91$m\x0fz\xf5\xecA\xf0fK\x89i\x94B\x9b\x94\xfc\x08R\xfa\xee\xc6\x14i\x82\x92C\x96\xf9\xb23\x93\x19FaY\xc7,\x83C6\x83d\xa3\xf0\x03\\\x84\xb1\xe8\xec\x98\xb4n<)i\xc5\x91\xe9A\xa1\x1a(\xa6\x05\xaep\x81\x08!\x18\x975\xc0\x92g\xc0\x95\xb1\xed\xddIn{%\x83\xd1Sh\xb3\xce@v\x18\xfc\x1b\xfb\x9a\x82\xf5\xe4n\xaa}h\xe5&\xd1\x05]\xe8\xd1xp\x9d\x81\xfb\x0b\x15^\xeb\xbb\xa0\x90<\xc3\x8d\xf7_I\xb5\x01\x9a\x80}\x02\xc8\x06\xe8\x06\x8ad\x03\x95\t\x89VR@\x9b\xa5\xf9Vl\xcd\xc0\xb7\x9a\xe4\xb7y\x94\x16E\xc5\xdf\xf9\x1b\xf3\xc9\xf0gy\x03\x8f\x0f\x87&\x8a\x01\x00\x00'
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '623'
+      Content-Type:
+      - application/octet-stream
+      User-Agent:
+      - azsdk-python-storage-blob/12.15.0 Python/3.9.16 (Windows-10-10.0.22621-SP0)
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-date:
+      - Wed, 03 May 2023 18:10:07 GMT
+      x-ms-version:
+      - '2021-12-02'
+    method: PUT
+    uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000002/inputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      x-ms-version:
+      - '2021-12-02'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: 'b''{"id": "00000000-0000-0000-0000-000000000002", "name": "Test-QuantumMonteCarlo-\\"20210101-000000\\"",
+      "providerId": "Microsoft", "target": "microsoft.qmc.cpu", "itemType": "Job",
+      "containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000002?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+      "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000002/inputData",
+      "inputDataFormat": "microsoft.qio.v2", "inputParams": {"params": {"trotter_number":
+      4}}, "outputDataFormat": "microsoft.qio-results.v2"}'''
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '595'
+      Content-Type:
+      - application/json
+      User-Agent:
+      - testapp azsdk-python-quantum/0.0.1 Python/3.9.16 (Windows-10-10.0.22621-SP0)
+    method: PUT
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000002?api-version=2022-09-12-preview&test-sequence-id=1
+  response:
+    body:
+      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000002?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000002/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=rcw",
+        "inputDataFormat": "microsoft.qio.v2", "inputParams": {"params": {"trotter_number":
+        4}}, "metadata": null, "sessionId": null, "status": "Waiting", "jobType":
+        "Optimization", "outputDataFormat": "microsoft.qio-results.v2", "outputDataUri":
+        "https://mystorage.blob.core.windows.net:443/job-00000000-0000-0000-0000-000000000002/outputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
+        null, "errorData": null, "isCancelling": false, "tags": [], "name": "Test-QuantumMonteCarlo-\"20210101-000000\"",
+        "id": "00000000-0000-0000-0000-000000000002", "providerId": "microsoft", "target":
+        "microsoft.qmc.cpu", "creationTime": "2023-05-03T18:10:07.8759264+00:00",
+        "endExecutionTime": null, "costEstimate": null, "itemType": "Job", "access_token":
+        "fake_token"}'
+    headers:
+      connection:
+      - keep-alive
+      content-length:
+      - '1184'
+      content-type:
+      - application/json; charset=utf-8
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - testapp azsdk-python-quantum/0.0.1 Python/3.9.16 (Windows-10-10.0.22621-SP0)
+    method: GET
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000002?api-version=2022-09-12-preview&test-sequence-id=1
+  response:
+    body:
+      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000002?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000002/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-QuantumMonteCarlo-%252220210101-000000%2522-00000000-0000-0000-0000-000000000002.input.json",
+        "inputDataFormat": "microsoft.qio.v2", "inputParams": {"params": {"trotter_number":
+        4}}, "metadata": null, "sessionId": null, "status": "Waiting", "jobType":
+        "Optimization", "outputDataFormat": "microsoft.qio-results.v2", "outputDataUri":
+        "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000002/outputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-QuantumMonteCarlo-%252220210101-000000%2522-00000000-0000-0000-0000-000000000002.output.json",
+        "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
+        null, "errorData": null, "isCancelling": false, "tags": [], "name": "Test-QuantumMonteCarlo-\"20210101-000000\"",
+        "id": "00000000-0000-0000-0000-000000000002", "providerId": "microsoft", "target":
+        "microsoft.qmc.cpu", "creationTime": "2023-05-03T18:10:07.8759264+00:00",
+        "endExecutionTime": null, "costEstimate": null, "itemType": "Job", "access_token":
+        "fake_token"}'
+    headers:
+      connection:
+      - keep-alive
+      content-length:
+      - '1427'
+      content-type:
+      - application/json; charset=utf-8
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - testapp azsdk-python-quantum/0.0.1 Python/3.9.16 (Windows-10-10.0.22621-SP0)
+    method: GET
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000002?api-version=2022-09-12-preview&test-sequence-id=2
+  response:
+    body:
+      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000002?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000002/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-QuantumMonteCarlo-%252220210101-000000%2522-00000000-0000-0000-0000-000000000002.input.json",
+        "inputDataFormat": "microsoft.qio.v2", "inputParams": {"params": {"trotter_number":
+        4}}, "metadata": null, "sessionId": null, "status": "Waiting", "jobType":
+        "Optimization", "outputDataFormat": "microsoft.qio-results.v2", "outputDataUri":
+        "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000002/outputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-QuantumMonteCarlo-%252220210101-000000%2522-00000000-0000-0000-0000-000000000002.output.json",
+        "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
+        null, "errorData": null, "isCancelling": false, "tags": [], "name": "Test-QuantumMonteCarlo-\"20210101-000000\"",
+        "id": "00000000-0000-0000-0000-000000000002", "providerId": "microsoft", "target":
+        "microsoft.qmc.cpu", "creationTime": "2023-05-03T18:10:07.8759264+00:00",
+        "endExecutionTime": null, "costEstimate": null, "itemType": "Job", "access_token":
+        "fake_token"}'
+    headers:
+      connection:
+      - keep-alive
+      content-length:
+      - '1427'
+      content-type:
+      - application/json; charset=utf-8
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - testapp azsdk-python-quantum/0.0.1 Python/3.9.16 (Windows-10-10.0.22621-SP0)
+    method: GET
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000002?api-version=2022-09-12-preview&test-sequence-id=3
+  response:
+    body:
+      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000002?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000002/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-QuantumMonteCarlo-%252220210101-000000%2522-00000000-0000-0000-0000-000000000002.input.json",
+        "inputDataFormat": "microsoft.qio.v2", "inputParams": {"params": {"trotter_number":
+        4}}, "metadata": null, "sessionId": null, "status": "Waiting", "jobType":
+        "Optimization", "outputDataFormat": "microsoft.qio-results.v2", "outputDataUri":
+        "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000002/outputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-QuantumMonteCarlo-%252220210101-000000%2522-00000000-0000-0000-0000-000000000002.output.json",
+        "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
+        null, "errorData": null, "isCancelling": false, "tags": [], "name": "Test-QuantumMonteCarlo-\"20210101-000000\"",
+        "id": "00000000-0000-0000-0000-000000000002", "providerId": "microsoft", "target":
+        "microsoft.qmc.cpu", "creationTime": "2023-05-03T18:10:07.8759264+00:00",
+        "endExecutionTime": null, "costEstimate": null, "itemType": "Job", "access_token":
+        "fake_token"}'
+    headers:
+      connection:
+      - keep-alive
+      content-length:
+      - '1427'
+      content-type:
+      - application/json; charset=utf-8
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - testapp azsdk-python-quantum/0.0.1 Python/3.9.16 (Windows-10-10.0.22621-SP0)
+    method: GET
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000002?api-version=2022-09-12-preview&test-sequence-id=4
+  response:
+    body:
+      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000002?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000002/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-QuantumMonteCarlo-%252220210101-000000%2522-00000000-0000-0000-0000-000000000002.input.json",
+        "inputDataFormat": "microsoft.qio.v2", "inputParams": {"params": {"trotter_number":
+        4}}, "metadata": null, "sessionId": null, "status": "Waiting", "jobType":
+        "Optimization", "outputDataFormat": "microsoft.qio-results.v2", "outputDataUri":
+        "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000002/outputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-QuantumMonteCarlo-%252220210101-000000%2522-00000000-0000-0000-0000-000000000002.output.json",
+        "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
+        null, "errorData": null, "isCancelling": false, "tags": [], "name": "Test-QuantumMonteCarlo-\"20210101-000000\"",
+        "id": "00000000-0000-0000-0000-000000000002", "providerId": "microsoft", "target":
+        "microsoft.qmc.cpu", "creationTime": "2023-05-03T18:10:07.8759264+00:00",
+        "endExecutionTime": null, "costEstimate": null, "itemType": "Job", "access_token":
+        "fake_token"}'
+    headers:
+      connection:
+      - keep-alive
+      content-length:
+      - '1427'
+      content-type:
+      - application/json; charset=utf-8
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - testapp azsdk-python-quantum/0.0.1 Python/3.9.16 (Windows-10-10.0.22621-SP0)
+    method: GET
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000002?api-version=2022-09-12-preview&test-sequence-id=5
+  response:
+    body:
+      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000002?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000002/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-QuantumMonteCarlo-%252220210101-000000%2522-00000000-0000-0000-0000-000000000002.input.json",
+        "inputDataFormat": "microsoft.qio.v2", "inputParams": {"params": {"trotter_number":
+        4}}, "metadata": null, "sessionId": null, "status": "Succeeded", "jobType":
+        "Optimization", "outputDataFormat": "microsoft.qio-results.v2", "outputDataUri":
+        "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000002/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-QuantumMonteCarlo-%252220210101-000000%2522-00000000-0000-0000-0000-000000000002.output.json",
+        "beginExecutionTime": "2023-05-03T18:09:50.470718Z", "cancellationTime": null,
+        "quantumComputingData": null, "errorData": null, "isCancelling": false, "tags":
+        [], "name": "Test-QuantumMonteCarlo-\"20210101-000000\"", "id": "00000000-0000-0000-0000-000000000002",
+        "providerId": "microsoft", "target": "microsoft.qmc.cpu", "creationTime":
+        "2023-05-03T18:10:07.8759264+00:00", "endExecutionTime": "2023-05-03T18:09:51.3049921Z",
+        "costEstimate": null, "itemType": "Job", "access_token": "fake_token"}'
+    headers:
+      connection:
+      - keep-alive
+      content-length:
+      - '1483'
+      content-type:
+      - application/json; charset=utf-8
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - testapp azsdk-python-quantum/0.0.1 Python/3.9.16 (Windows-10-10.0.22621-SP0)
+    method: GET
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000002?api-version=2022-09-12-preview&test-sequence-id=6
+  response:
+    body:
+      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000002?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000002/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-QuantumMonteCarlo-%252220210101-000000%2522-00000000-0000-0000-0000-000000000002.input.json",
+        "inputDataFormat": "microsoft.qio.v2", "inputParams": {"params": {"trotter_number":
+        4}}, "metadata": null, "sessionId": null, "status": "Succeeded", "jobType":
+        "Optimization", "outputDataFormat": "microsoft.qio-results.v2", "outputDataUri":
+        "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000002/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-QuantumMonteCarlo-%252220210101-000000%2522-00000000-0000-0000-0000-000000000002.output.json",
+        "beginExecutionTime": "2023-05-03T18:09:50.470718Z", "cancellationTime": null,
+        "quantumComputingData": null, "errorData": null, "isCancelling": false, "tags":
+        [], "name": "Test-QuantumMonteCarlo-\"20210101-000000\"", "id": "00000000-0000-0000-0000-000000000002",
+        "providerId": "microsoft", "target": "microsoft.qmc.cpu", "creationTime":
+        "2023-05-03T18:10:07.8759264+00:00", "endExecutionTime": "2023-05-03T18:09:51.3049921Z",
+        "costEstimate": null, "itemType": "Job", "access_token": "fake_token"}'
+    headers:
+      connection:
+      - keep-alive
+      content-length:
+      - '1483'
+      content-type:
+      - application/json; charset=utf-8
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-blob/12.15.0 Python/3.9.16 (Windows-10-10.0.22621-SP0)
+      x-ms-date:
+      - Wed, 03 May 2023 18:10:10 GMT
+      x-ms-range:
+      - bytes=0-33554431
+      x-ms-version:
+      - '2021-12-02'
+    method: GET
+    uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000002/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-QuantumMonteCarlo-%252220210101-000000%2522-00000000-0000-0000-0000-000000000002.output.json
+  response:
+    body:
+      string: '{"version": "1.0", "configuration": {"0": 0, "1": 0, "2": 0, "3": 0},
+        "cost": 0.0, "parameters": {"beta_start": 1.0, "beta_stop": 1.0, "restarts":
+        1, "seed": 4131695426, "sweeps": 10000, "transverse_field_high": 5.0, "transverse_field_low":
+        0.0, "trotter_number": 4}, "solutions": [{"configuration": {"0": 0, "1": 0,
+        "2": 0, "3": 0}, "cost": 0.0}], "access_token": "fake_token"}'
+    headers:
+      accept-ranges:
+      - bytes
+      content-length:
+      - '378'
+      content-range:
+      - bytes 0-511/512
+      content-type:
+      - application/json
+      x-ms-blob-content-md5:
+      - foY2LENZI2f+K4ntcsz04A==
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-creation-time:
+      - Wed, 03 May 2023 18:10:08 GMT
+      x-ms-lease-state:
+      - available
+      x-ms-lease-status:
+      - unlocked
+      x-ms-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2021-12-02'
+    status:
+      code: 206
+      message: Partial Content
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - testapp azsdk-python-quantum/0.0.1 Python/3.9.16 (Windows-10-10.0.22621-SP0)
+    method: GET
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000002?api-version=2022-09-12-preview&test-sequence-id=7
+  response:
+    body:
+      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000002?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000002/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-QuantumMonteCarlo-%252220210101-000000%2522-00000000-0000-0000-0000-000000000002.input.json",
+        "inputDataFormat": "microsoft.qio.v2", "inputParams": {"params": {"trotter_number":
+        4}}, "metadata": null, "sessionId": null, "status": "Succeeded", "jobType":
+        "Optimization", "outputDataFormat": "microsoft.qio-results.v2", "outputDataUri":
+        "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000002/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3DTest-QuantumMonteCarlo-%252220210101-000000%2522-00000000-0000-0000-0000-000000000002.output.json",
+        "beginExecutionTime": "2023-05-03T18:09:50.470718Z", "cancellationTime": null,
+        "quantumComputingData": null, "errorData": null, "isCancelling": false, "tags":
+        [], "name": "Test-QuantumMonteCarlo-\"20210101-000000\"", "id": "00000000-0000-0000-0000-000000000002",
+        "providerId": "microsoft", "target": "microsoft.qmc.cpu", "creationTime":
+        "2023-05-03T18:10:07.8759264+00:00", "endExecutionTime": "2023-05-03T18:09:51.3049921Z",
+        "costEstimate": null, "itemType": "Job", "access_token": "fake_token"}'
+    headers:
+      connection:
+      - keep-alive
+      content-length:
+      - '1483'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:

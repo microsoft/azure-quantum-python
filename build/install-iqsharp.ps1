@@ -13,11 +13,6 @@
 $nugetVersion = $Env:NUGET_VERSION
 $pythonVersion = $Env:PYTHON_VERSION
 
-# Temporary using the beta package until the qdk-python
-# build takes a dependency on the iqsharp build
-$nugetVersion = "0.27.261334-beta"
-$pythonVersion = "0.27.261334b1"
-
 # Install prerequisites.
 Write-Host "Installing Python prerequisites"
 pip install --user `
@@ -37,6 +32,12 @@ if (Test-Path $iqsharpNugetPackagePath -PathType Leaf) {
             dotnet tool uninstall Microsoft.Quantum.IQSharp --tool-path $Env:TOOLS_DIR | Write-Host
         }
     } catch {}
+
+    # Make sure the NUGET_OUTDIR is listed as a nuget source, otherwise
+    # IQ# will fail to load when packages are loaded.
+    $SourceName = "build"
+    Write-Host "Adding nuget source $SourceName=$Env:NUGET_OUTDIR"
+    dotnet nuget add source $Env:NUGET_OUTDIR --name $SourceName
 
     Write-Host "Installing the IQ# dotnet tool specific version from the build drop folder."
     Write-Host "  Version: $nugetVersion"

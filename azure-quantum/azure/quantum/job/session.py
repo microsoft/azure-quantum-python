@@ -83,7 +83,10 @@ class Session(WorkspaceItem):
             import re
             id = id if id is not None else str(uuid.uuid1())
             name = name if name is not None else f"session-{id}"
-            provider_id = provider_id if provider_id is not None else re.match(r"(\w+)\.", target_name).group(1)
+            if provider_id is None:
+                match = re.match(r"(\w+)\.", target_name)
+                if match is not None:
+                    provider_id = match.group(1)
             details = SessionDetails(id=id,
                                      name=name,
                                      provider_id=provider_id,
@@ -238,6 +241,10 @@ class SessionHost(Protocol):
     def _get_azure_target_id(self) -> str:
         raise NotImplementedError
 
+    @abstractmethod
+    def _get_azure_provider_id(self) -> str:
+        raise NotImplementedError
+
     def open_session(
         self,
         details: Optional[SessionDetails] = None,
@@ -291,6 +298,7 @@ class SessionHost(Protocol):
                           job_failure_policy=job_failure_policy,
                           workspace=self._get_azure_workspace(),
                           target=self._get_azure_target_id(),
+                          provider_id=self._get_azure_provider_id(),
                           **kwargs)
         self.latest_session = session
         return session.open()
