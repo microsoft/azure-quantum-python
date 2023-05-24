@@ -145,6 +145,7 @@ class TestMicrosoftQC(QuantumTestBase):
 
         from qiskit import QuantumCircuit
         circ = QuantumCircuit(3)
+        circ.crx(0.2, 0, 1)
         circ.ccx(0, 1, 2)
 
         job = estimator.submit(circ)

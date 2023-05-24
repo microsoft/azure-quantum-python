@@ -219,9 +219,13 @@ class MicrosoftEstimator(Target):
                input_params: Union[Dict[str, Any], InputParams, None] = None,
                **kwargs) -> Job:
         try:
-            from qiskit import QuantumCircuit
+            from qiskit import QuantumCircuit, transpile
             from qiskit_qir import to_qir_module
+            from qiskit_qir.visitor import SUPPORTED_INSTRUCTIONS
             if isinstance(input_data, QuantumCircuit):
+                input_data = transpile(input_data,
+                                       basis_gates=SUPPORTED_INSTRUCTIONS,
+                                       optimization_level=0)
                 (module, _) = to_qir_module(input_data, record_output=False)
                 input_data = module.bitcode
         finally:
