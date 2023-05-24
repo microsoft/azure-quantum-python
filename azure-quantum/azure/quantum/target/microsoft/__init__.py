@@ -11,11 +11,11 @@ from .qio import (
     Tabu,
 )
 
-__all__ = ["MicrosoftEstimator", "MicrosoftEstimatorJob",
-           "MicrosoftEstimatorResult", "MicrosoftEstimatorParams",
-           "QECScheme", "QubitParams"]
+__all__ = ["ErrorBudgetPartition", "MicrosoftEstimator",
+           "MicrosoftEstimatorJob", "MicrosoftEstimatorResult",
+           "MicrosoftEstimatorParams", "QECScheme", "QubitParams"]
 
 from .job import MicrosoftEstimatorJob
 from .result import MicrosoftEstimatorResult
-from .target import MicrosoftEstimator, MicrosoftEstimatorParams, QECScheme, \
-    QubitParams
+from .target import ErrorBudgetPartition, MicrosoftEstimator, \
+    MicrosoftEstimatorParams, QECScheme, QubitParams

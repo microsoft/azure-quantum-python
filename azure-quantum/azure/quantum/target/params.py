@@ -115,7 +115,11 @@ class AutoValidatingParams:
             if field_value is not None:
                 # validate field?
                 if validate and "validate" in field.metadata:
-                    field.metadata["validate"].__func__(name, field_value)
+                    func = field.metadata["validate"]
+                    # check for indirect call (like in @staticmethod)
+                    if hasattr(func, "__func__"):
+                        func = func.__func__
+                    func(name, field_value)
 
                 # translate field name to camel case
                 s = sub(r"(_|-)+", " ", name).title().replace(" ", "")
@@ -135,6 +139,7 @@ class AutoValidatingParams:
         Here result is the current dictionary.
         """
         pass
+
 
 def validating_field(validation_func, default=None):
     """

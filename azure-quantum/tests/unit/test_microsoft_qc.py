@@ -12,7 +12,7 @@ from common import QuantumTestBase, DEFAULT_TIMEOUT_SECS
 from azure.quantum import JobStatus
 from azure.quantum.target.microsoft import MicrosoftEstimator, \
     MicrosoftEstimatorJob, MicrosoftEstimatorResult, \
-    MicrosoftEstimatorParams, QubitParams
+    MicrosoftEstimatorParams, QubitParams, ErrorBudgetPartition
 
 
 class TestMicrosoftQC(QuantumTestBase):
@@ -230,3 +230,19 @@ class TestMicrosoftQC(QuantumTestBase):
         with raises(LookupError, match="one_qubit_measurement_time must be "
                                        "set"):
             params.as_dict()
+
+    def test_estimator_error_budget_float(self):
+        params = MicrosoftEstimatorParams()
+        params.error_budget = 0.001
+        assert params.as_dict() == {"errorBudget": 0.001}
+
+    def test_estimator_error_budget_partition(self):
+        params = MicrosoftEstimatorParams()
+        params.error_budget = ErrorBudgetPartition(0.01, 0.02, 0.03)
+        assert params.as_dict() == {
+            "errorBudget": {
+                "logical": 0.01,
+                "rotations": 0.03,
+                "tStates": 0.02
+            }
+        }
