@@ -40,7 +40,7 @@ function Install-Package() {
             if ($LASTEXITCODE -ne 0) { throw "Error installing qsharp-core wheel" }
         Pop-Location
     } else {
-        Write-Host "##[info]Install package $PackageName for env $EnvName"
+        Write-Host "##[info]Install latest package $PackageName for env $EnvName from PyPI"
         pip install $PackageName
     }
 }
@@ -55,7 +55,7 @@ function GetEnvName {
     #   2. add conda env suffix
     #   3. remove "-" since its invalid
     #   4. remove ".aio" and use the same environment as the non-async version
-    return ($PackageName.Split("=")[0] + $CondaEnvironmentSuffix).replace("-", "").replace(".aio", "")
+    return ($PackageName.Split("[")[0].Split("=")[0] + $CondaEnvironmentSuffix).replace("-", "").replace(".aio", "")
 }
 
 function Install-PackageInEnv {

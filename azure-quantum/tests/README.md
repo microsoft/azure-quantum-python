@@ -114,3 +114,30 @@ Example:
 ```bash
 pytest -k test_job_refresh
 ```
+
+## E2E Live Test Pipeline
+
+We have a private E2E test pipeline that run all the tests against
+a live environment on a regular basis.
+
+By default that pipeline will use the latest tests from the `main` branch
+of this repository, but will install the latest released `azure-quantum` package from PyPI.
+
+That can create an issue if you add tests for a new feature that has not been
+released/published yet, since the tests will expect that feature but the current released
+package does not have it.
+
+To mitigate this issue you can add a `pytest.mark.skipif` mark to those new tests if the version
+if less or equal to the latest published version.
+
+For example:
+
+```python
+import pytest
+from azure.quantum.version import __version__
+skip_older_version = pytest.mark.skipif(__version__ != "0.0.1" and __version__ <= "0.28.263081", reason="Test requires the version to be > 0.28.263081.")
+
+@skip_older_version
+def test_my_test(self):
+    pass
+```
