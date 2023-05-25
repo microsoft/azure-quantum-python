@@ -34,6 +34,11 @@ if (-not $Env:PYTHON_OUTDIR) {
     "== To use build artifacts, download the artifacts locally and point the variable to this folder." | Write-Warning
     "" | Write-Warning
     Exit 1
+} 
+# this condition is used by the E2E Live test pipeline
+elseif (($Env:PICK_QDK_VERSION -eq "auto") -and ([string]::IsNullOrEmpty($PackageName) -or ($PackageName -eq "azure-quantum"))) {
+    "== Installing latest published azure-quantum package from PyPI..." | Write-Host
+    Install-PackageInEnv -PackageName $PackageName -FromSource $False
 } else {
     "== Preparing environment to use artifacts with version '$Env:PYTHON_VERSION' " | Write-Host
     "== from '$Env:PYTHON_OUTDIR'" | Write-Host
