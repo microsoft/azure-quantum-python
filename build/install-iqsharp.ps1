@@ -22,7 +22,8 @@ pip install --user `
 $iqsharpNugetPackage = "Microsoft.Quantum.IQSharp.$nugetVersion.nupkg"
 $iqsharpNugetPackagePath = !($Env:NUGET_OUTDIR) ? $iqsharpNugetPackage : (Join-Path $Env:NUGET_OUTDIR $iqsharpNugetPackage)
 
-if (Test-Path $iqsharpNugetPackagePath -PathType Leaf) {
+# PICK_QDK_VERSION="auto" is used by the E2E Live test pipeline by default
+if ((Test-Path $iqsharpNugetPackagePath -PathType Leaf) -and ($Env:PICK_QDK_VERSION -ne "auto")) {
     # Uninstall if different version is already installed
     try {
         $currentInstalledVersion = dotnet tool list --tool-path $Env:TOOLS_DIR | Select-String -Pattern "microsoft.quantum.iqsharp\s+(.*)\s+" | foreach { $matches[1] }
