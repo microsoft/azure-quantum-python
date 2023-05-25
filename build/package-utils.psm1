@@ -32,16 +32,16 @@ function Install-Package() {
         $ParentPath = Split-Path -parent $PSScriptRoot
         $AbsPackageName = Join-Path $ParentPath $PackageName
         Write-Host "##[info]Install package $AbsPackageName in development mode for env $EnvName"
-        pip install -e $AbsPackageName
+        pip install -e "$AbsPackageName[all]"
     } elseif ("" -ne $BuildArtifactPath) {
         Write-Host "##[info]Installing $PackageName from $BuildArtifactPath"
         Push-Location $BuildArtifactPath
-            pip install $PackageName --pre --find-links $BuildArtifactPath
+            pip install "$PackageName[all]" --pre --find-links $BuildArtifactPath
             if ($LASTEXITCODE -ne 0) { throw "Error installing qsharp-core wheel" }
         Pop-Location
     } else {
-        Write-Host "##[info]Install package $PackageName for env $EnvName"
-        pip install $PackageName
+        Write-Host "##[info]Install package $PackageName for env $EnvName from PyPI"
+        pip install "$PackageName[all]"
     }
 }
 
