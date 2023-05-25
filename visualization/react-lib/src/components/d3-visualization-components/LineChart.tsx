@@ -16,6 +16,190 @@ interface LineChartProps {
   height: number;
 }
 
+function drawLine(
+  svg: d3.Selection<d3.BaseType, unknown, HTMLElement, any>,
+  linePoints: number[][],
+  className: string,
+  id: string,
+  strokeWidth: string,
+  markerStart: string,
+  markerEnd: string,
+  fillColor: string,
+  strokeColor: string,
+  isDashed: boolean
+) {
+  // Create line generator
+  const lineGenerator = d3.line();
+  if (isDashed) {
+    svg
+      .append("path")
+      .attr("class", className)
+      .attr("id", id)
+      .attr("d", lineGenerator(linePoints as any))
+      .attr("stroke-width", strokeWidth)
+      .attr("marker-start", markerStart)
+      .attr("marker-end", markerEnd)
+      .style("fill", fillColor)
+      .style("stroke-dasharray", "3,3")
+      .style("stroke", strokeColor);
+  } else {
+    svg
+      .append("path")
+      .attr("class", className)
+      .attr("id", id)
+      .attr("d", lineGenerator(linePoints as any))
+      .attr("stroke-width", strokeWidth)
+      .attr("marker-start", markerStart)
+      .attr("marker-end", markerEnd)
+      .style("fill", fillColor)
+      .style("stroke", strokeColor)
+      .lower();
+  }
+}
+
+function drawLegend(
+  svg: d3.Selection<d3.BaseType, unknown, HTMLElement, any>,
+  legendData: LegendData[],
+  dimensionsLegend: string,
+  midpoint: number,
+  chartBottomY: number,
+  legendColor: d3.ScaleOrdinal<string, unknown, never>
+) {
+  const legend = svg
+    .selectAll(".legend")
+    .data(legendData)
+    .enter()
+    .append("g")
+    .attr("class", "legend")
+    .attr(
+      "transform",
+      (d, i) => `translate(${(i * midpoint) / 4}, ${chartBottomY})`
+    );
+
+  legend
+    .append("rect")
+    .attr("width", dimensionsLegend.toString())
+    .attr("height", dimensionsLegend.toString())
+    .attr("x", 0)
+    .attr("y", 50)
+    .style("fill", (d, i) => legendColor(d.title) as string);
+
+  legend
+    .append("text")
+    .attr("x", 25)
+    .attr("y", 60)
+    .text((d) => `${d.title}`)
+    .attr("class", "legend");
+
+  legend
+    .append("text")
+    .attr("x", 25)
+    .attr("y", 75)
+    .text((d) => `${d.legendTitle}`)
+    .attr("class", "legend-maintext");
+}
+
+function drawText(
+  svg: d3.Selection<d3.BaseType, unknown, HTMLElement, any>,
+  text: string,
+  x: number,
+  y: number,
+  className: string
+) {
+  svg
+    .append("text")
+    .attr("x", x)
+    .attr("y", y)
+    .text(text)
+    .attr("class", className);
+}
+
+function drawArrow(
+  svg: d3.Selection<d3.BaseType, unknown, HTMLElement, any>,
+  color: string,
+  id: string
+) {
+  const markerDim = 3;
+  const refX = 2;
+  const refY = 1.5;
+  const arrowPoints = [
+    [0, 0],
+    [0, markerDim],
+    [markerDim, refY],
+  ];
+
+  svg
+    .append("marker")
+    .attr("id", id)
+    .attr("refX", refX)
+    .attr("refY", refY)
+    .attr("markerWidth", markerDim)
+    .attr("markerHeight", markerDim)
+    .style("fill", color)
+    .attr("orient", "auto-start-reverse")
+    .append("path")
+    .attr("d", d3.line()(arrowPoints as any));
+}
+
+function drawLineTick(
+  svg: d3.Selection<d3.BaseType, unknown, HTMLElement, any>,
+  width: number,
+  height: number,
+  color: string,
+  id: string
+) {
+  const refX = 1;
+  const refY = height / 2;
+
+  const markerPoints = [
+    [0, 0],
+    [0, height],
+    [width, height],
+    [width, 0],
+  ];
+
+  svg
+    .append("defs")
+    .append("marker")
+    .attr("id", id)
+    .attr("refX", refX)
+    .attr("refY", refY)
+    .attr("markerHeight", height)
+    .attr("markerWidth", width)
+    .style("fill", color)
+    .style("stroke", color)
+    .attr("orient", "auto-start-reverse")
+    .append("path")
+    .attr("d", d3.line()(markerPoints as any));
+}
+
+function drawCircleMarkers(
+  svg: d3.Selection<d3.BaseType, unknown, HTMLElement, any>,
+  width: number,
+  height: number,
+  color: string,
+  radius: number,
+  refX: number,
+  refY: number,
+  cx: number,
+  cy: number,
+  id: string
+) {
+  svg
+    .append("defs")
+    .append("marker")
+    .attr("id", id)
+    .attr("refX", refX)
+    .attr("refY", refY)
+    .attr("markerWidth", width)
+    .attr("markerHeight", height)
+    .append("circle")
+    .attr("cx", cx)
+    .attr("cy", cy)
+    .attr("r", radius)
+    .style("fill", color);
+}
+
 function LineChart({ legendData, chartData, width, height }: LineChartProps) {
   React.useEffect(() => {
     const svg = d3.select("svg");
@@ -42,10 +226,10 @@ function LineChart({ legendData, chartData, width, height }: LineChartProps) {
 
     /* Define chart data from dictionary */
     const numberTStates: number = chartData["numberTStates"];
-    const numberTFactoryInvocations: number = 78;
-    //chartData["numberTFactoryInvocations"];
-    const algorithmRuntime: number = 6000;
-    const tFactoryRuntime: number = 20;
+    const numberTFactoryInvocations: number =
+      chartData["numberTFactoryInvocations"];
+    const algorithmRuntime: number = chartData["algorithmRuntime"];
+    const tFactoryRuntime: number = chartData["tFactoryRuntime"];
     const algorithmRuntimeFormatted: string =
       chartData["algorithmRuntimeFormatted"];
     const tFactoryRuntimeFormatted: string =
@@ -62,7 +246,6 @@ function LineChart({ legendData, chartData, width, height }: LineChartProps) {
     const chartBottomY = width / 2;
     const distBetweenCharts = 100;
     const lengthInner = chartLength - 100;
-    const originPoint = [0, 0];
     const midpoint = chartLength / 2;
 
     /* Define chart ratios */
@@ -95,43 +278,14 @@ function LineChart({ legendData, chartData, width, height }: LineChartProps) {
       [lengthInner + 7, chartBottomY - distBetweenCharts],
     ];
 
-    const startMarkerBoxWidth = 1;
-    const startMarkerBoxHeight = 10;
-    const refXStartMarker = 1;
-    const refYStartMarker = startMarkerBoxHeight / 2;
-
-    const startMarkerPoints = [
-      originPoint,
-      [0, startMarkerBoxHeight],
-      [startMarkerBoxWidth, startMarkerBoxHeight],
-      [startMarkerBoxWidth, 0],
-    ];
-
-    const arrowPoints = [
-      [0, 0],
-      [0, 3],
-      [3, 1.5],
-    ];
-
-    const translationValX = width / 4;
-    const translationValY = height / 4;
-
-    // Define values for arrows
-    const markerBoxWidth = 8;
-    const markerBoxHeight = 8;
-    const refX = markerBoxWidth / 2;
-    const refY = markerBoxHeight / 2;
-
-    // Create line generator
-    const lineGenerator = d3.line();
-
     // Add chart title
-    svg
-      .append("text")
-      .attr("x", midpoint)
-      .attr("y", chartBottomY - distBetweenCharts * 3)
-      .attr("class", "title")
-      .text("Time diagram");
+    drawText(
+      svg,
+      "Time diagram",
+      midpoint,
+      chartBottomY - distBetweenCharts * 3,
+      "title"
+    );
 
     // Create legend
     var legendColor = d3
@@ -142,197 +296,94 @@ function LineChart({ legendData, chartData, width, height }: LineChartProps) {
         }) as unknown as string
       )
       .range([algorithmRunTimeColor, tfactoryLineColor]);
-
-    const legend = svg
-      .selectAll(".legend")
-      .data(legendData)
-      .enter()
-      .append("g")
-      .attr("class", "legend")
-      .attr(
-        "transform",
-        (d, i) => `translate(${(i * midpoint) / 4}, ${chartBottomY})`
-      );
-
-    legend
-      .append("rect")
-      .attr("width", dimensionsLegend.toString())
-      .attr("height", dimensionsLegend.toString())
-      .attr("x", 0)
-      .attr("y", 50)
-      .style("fill", (d, i) => legendColor(d.title) as string);
-
-    legend
-      .append("text")
-      .attr("x", 25)
-      .attr("y", 60)
-      .text((d) => `${d.title}`)
-      .attr("class", "legend");
-
-    legend
-      .append("text")
-      .attr("x", 25)
-      .attr("y", 75)
-      .text((d) => `${d.legendTitle}`)
-      .attr("class", "legend-maintext");
+    drawLegend(
+      svg,
+      legendData,
+      dimensionsLegend,
+      midpoint,
+      chartBottomY,
+      legendColor
+    );
 
     /* Create algorithm line */
 
     // Create algorithm start bar
-    svg
-      .append("defs")
-      .append("marker")
-      .attr("id", "startMarkerAlgorithm")
-      .attr("class", "startMarkerAlgorithm")
-      .attr("refX", refXStartMarker)
-      .attr("refY", refYStartMarker)
-      .attr("markerHeight", startMarkerBoxHeight)
-      .attr("markerWidth", startMarkerBoxWidth)
-      .style("fill", algorithmRunTimeColor)
-      .style("stroke", algorithmRunTimeColor)
-      .attr("orient", "auto-start-reverse")
-      .append("path")
-      .attr("d", d3.line()(startMarkerPoints as any));
-
+    drawLineTick(svg, 1, 10, algorithmRunTimeColor, "algorithmTick");
     // Create algorithm end arrow
-    svg
-      .append("marker")
-      .attr("id", "arrowAlgorithmLine")
-      .attr("viewBox", [0, 0, markerBoxWidth + 4, markerBoxHeight])
-      .attr("refX", refX)
-      .attr("refY", refY)
-      .attr("markerWidth", markerBoxWidth - 3)
-      .attr("markerHeight", markerBoxHeight - 4)
-      .style("fill", algorithmRunTimeColor)
-      .style("stroke", algorithmRunTimeColor)
-      .style("stroke-width", "1")
-      .attr("orient", "auto-start-reverse")
-      .append("path")
-      .attr("d", d3.line()(arrowPoints as any));
+    drawArrow(svg, algorithmRunTimeColor, "arrowAlgorithmLine");
 
     // Draw algorithm line
-    svg
-      .append("path")
-      .attr("class", "line")
-      .attr("d", lineGenerator(algorithmRunTimeLine as any))
-      .style("fill", "none")
-      .attr("stroke-width", strokeWidth)
-      .attr("marker-end", "url(#arrowAlgorithmLine)")
-      .attr("marker-start", "url(#startMarkerAlgorithm)")
-      .style("stroke", algorithmRunTimeColor);
+    drawLine(
+      svg,
+      algorithmRunTimeLine,
+      "line",
+      "algorithmRunTimeLine",
+      strokeWidth,
 
+      "url(#algorithmTick)",
+      "url(#arrowAlgorithmLine)",
+      algorithmRunTimeColor,
+      algorithmRunTimeColor,
+      false
+    );
+
+    /* Create TimeLine */
     // Create timeline start bar
-    svg
-      .append("defs")
-      .append("marker")
-      .attr("id", "startMarkerTimeLine")
-      .attr("refX", refXStartMarker)
-      .attr("refY", refYStartMarker)
-      .attr("markerHeight", startMarkerBoxHeight)
-      .attr("markerWidth", startMarkerBoxWidth)
-      .style("fill", timeLineColor)
-      .style("stroke", timeLineColor)
-      .attr("orient", "auto-start-reverse")
-      .append("path")
-      .attr("d", d3.line()(startMarkerPoints as any));
-
+    drawLineTick(svg, 1, 10, timeLineColor, "timeLineTick");
     // Create timeline end arrow
-    svg
-      .append("marker")
-      .attr("id", "arrowTimeLine")
-      .attr("viewBox", [0, 0, markerBoxWidth + 4, markerBoxHeight])
-      .attr("refX", refX)
-      .attr("refY", refY)
-      .attr("markerWidth", markerBoxWidth - 3)
-      .attr("markerHeight", markerBoxHeight - 4)
-      .style("fill", timeLineColor)
-      .style("stroke", timeLineColor)
-      .style("stroke-width", "1")
-      .attr("orient", "auto-start-reverse")
-      .append("path")
-      .attr("d", d3.line()(arrowPoints as any));
-
+    drawArrow(svg, timeLineColor, "arrowTimeLine");
     // Draw timeline.
-    svg
-      .append("path")
-      .attr("class", "line")
-      .attr("id", "timeline")
-      .attr("d", lineGenerator(timeLine as any))
-      .attr("stroke-width", strokeWidth)
-      .attr("marker-start", "url(#startMarkerTimeLine)")
-      .attr("marker-end", "url(#arrowTimeLine)")
-      .style("fill", timeLineColor)
-      .style("stroke", timeLineColor);
-
+    drawLine(
+      svg,
+      timeLine,
+      "line",
+      "timeline",
+      strokeWidth,
+      "url(#timeLineTick)",
+      "url(#arrowTimeLine)",
+      timeLineColor,
+      timeLineColor,
+      false
+    );
     // Append text labels to  time line.
-    svg
-      .append("text")
-      .attr("x", chartLength + 10)
-      .attr("y", chartBottomY + 10)
-      .text("Time")
-      .attr("class", "time");
+    drawText(svg, "Time", chartLength + 10, chartBottomY + 10, "time");
+    drawText(
+      svg,
+      algorithmRuntimeFormatted,
+      lengthInner + 15,
+      chartBottomY - 10,
+      "runtimeText"
+    );
 
-    svg
-      .append("text")
-      .attr("x", lengthInner + 15)
-      .attr("y", chartBottomY - 10)
-      .text(algorithmRuntimeFormatted)
-      .attr("class", "runtimeText");
-
-    // Define circle markers for dashed lines.
-    svg
-      .append("defs")
-      .append("marker")
-      .attr("id", "circleMarker")
-      .attr("viewBox", [0, 0, 20, 20])
-      .attr("refX", 5)
-      .attr("refY", 5)
-      .attr("markerWidth", 10)
-      .attr("markerHeight", 10)
-      .append("circle")
-      .attr("cx", 5)
-      .attr("cy", 5)
-      .attr("r", 3)
-      .style("fill", timeLineColor);
-
-    svg
-      .append("path")
-      .attr("class", "line")
-      .attr("d", lineGenerator(endDashedLine as any))
-      .attr("stroke-width", strokeWidth)
-      .style("fill", "none")
-      .style("stroke", timeLineColor)
-      .style("stroke-dasharray", "3,3")
-      .attr("marker-end", "url(#circleMarker)")
-      .attr("marker-start", "url(#circleMarker)");
-
+    drawLine(
+      svg,
+      endDashedLine,
+      "line",
+      "endDashedLine",
+      strokeWidth,
+      "url(#circleMarker)",
+      "url(#circleMarker)",
+      "none",
+      timeLineColor,
+      true
+    );
+    drawCircleMarkers(
+      svg,
+      10,
+      10,
+      timeLineColor,
+      1.5,
+      5,
+      5,
+      5,
+      5,
+      "circleMarker"
+    );
     // Create tfactory start bar
-    svg
-      .append("defs")
-      .append("marker")
-      .attr("id", "startMarkerTFactory")
-      .attr("refX", refXStartMarker)
-      .attr("refY", refYStartMarker - 2)
-      .attr("markerHeight", startMarkerBoxHeight - 4)
-      .attr("markerWidth", startMarkerBoxWidth)
-      .style("fill", tfactoryLineColor)
-      .style("stroke", tfactoryLineColor)
-      .attr("orient", "auto-start-reverse")
-      .append("path")
-      .attr("d", d3.line()(startMarkerPoints as any));
+    drawLineTick(svg, 1, 6, tfactoryLineColor, "tFactoryTick");
 
-    // Create timeline end arrow
-    svg
-      .append("marker")
-      .attr("id", "arrowTFactory")
-      .attr("refX", 2)
-      .attr("refY", 1.5)
-      .attr("markerWidth", 3)
-      .attr("markerHeight", 3)
-      .style("fill", tfactoryLineColor)
-      .attr("orient", "auto-start-reverse")
-      .append("path")
-      .attr("d", d3.line()(arrowPoints as any));
+    // Create tfactory end arrow
+    drawArrow(svg, tfactoryLineColor, "arrowTFactory");
 
     // set the number of lines
     var numLines = numberTFactoryInvocations;
@@ -350,22 +401,18 @@ function LineChart({ legendData, chartData, width, height }: LineChartProps) {
       .range([0, lengthInner]);
 
     // define ellipses marker
-    svg
-      .append("defs")
-      .append("marker")
-      .attr("id", "circleMarkerElipses")
-      .attr("viewBox", [0, 0, 10, 10])
-      .attr("refX", 5)
-      .attr("refY", 5)
-      .attr("markerWidth", 10)
-      .attr("markerHeight", 10)
-      .append("circle")
-      .attr("cx", 5)
-      .attr("cy", 5)
-      .attr("r", 3)
-      .style("fill", ellipsesColor);
-
-    // draw the lines
+    drawCircleMarkers(
+      svg,
+      10,
+      10,
+      ellipsesColor,
+      3,
+      5,
+      5,
+      5,
+      5,
+      "circleMarkerEllipses"
+    );
 
     const tFactoryDashedLine = [
       [xScale(1) + 1, chartBottomY],
@@ -373,69 +420,84 @@ function LineChart({ legendData, chartData, width, height }: LineChartProps) {
     ];
 
     // Draw dashed line of single t-factory invocation runtime.
-    svg
-      .append("path")
-      .attr("class", "line")
-      .attr("d", lineGenerator(tFactoryDashedLine as any))
-      .attr("stroke-width", strokeWidth)
-      .style("fill", "none")
-      .style("stroke", timeLineColor)
-      .style("stroke-dasharray", "3,3")
-      .attr("marker-end", "url(#circleMarker)")
-      .attr("marker-start", "url(#circleMarker)");
+    drawLine(
+      svg,
+      tFactoryDashedLine,
+      "line",
+      "tfactoryDashedLine",
+      strokeWidth,
+      "url(#circleMarker)",
+      "url(#circleMarker)",
+      "none",
+      timeLineColor,
+      true
+    );
 
     // Append single t-factory invocation runtime text
-    svg
-      .append("text")
-      .attr("x", xScale(1) + 10)
-      .attr("y", chartBottomY - 10)
-      .text(tFactoryRuntimeFormatted)
-      .attr("class", "runtimeText");
+    drawText(
+      svg,
+      tFactoryRuntimeFormatted,
+      xScale(1) + 10,
+      chartBottomY - 10,
+      "runtimeText"
+    );
 
     // Append t-factory line label
-    svg
-      .append("text")
-      .attr("x", xScale(1) + 10)
-      .attr("y", chartBottomY - distBetweenCharts * 2 + 30)
-      .text(tfactoryLineLabel)
-      .attr("class", "runtimeText");
+    drawText(
+      svg,
+      tfactoryLineLabel,
+      xScale(1) + 10,
+      chartBottomY - distBetweenCharts * 2 + 30,
+      "runtimeText"
+    );
 
     for (let i = 0; i < numLines - 1; i++) {
       let line = svg.append("line");
-      line
-        .attr("x1", xScale(i) + i * xScale(tFactoryTimeAdjGap))
-        .attr("x2", xScale(i + 1) + i * xScale(tFactoryTimeAdjGap))
-        .attr("y1", chartBottomY - distBetweenCharts * 2)
-        .attr("y2", chartBottomY - distBetweenCharts * 2)
-        .attr("stroke-width", strokeWidth)
-        .attr("id", "tfactoryLine")
-        .style("fill", "none")
-        .style("stroke", tfactoryLineColor)
-        .attr("marker-start", "url(#startMarkerTFactory)")
-        .attr("marker-end", "url(#arrowTFactory)")
-        .lower();
+      var x1 = xScale(i) + i * xScale(tFactoryTimeAdjGap);
+      var x2 = xScale(i + 1) + i * xScale(tFactoryTimeAdjGap);
+      var y = chartBottomY - distBetweenCharts * 2;
+      var points = [
+        [x1, y],
+        [x2, y],
+      ];
+
+      drawLine(
+        svg,
+        points,
+        "line",
+        "tfactoryLine",
+        strokeWidth,
+        "url(#tFactoryTick)",
+        "url(#arrowTFactory)",
+        "none",
+        tfactoryLineColor,
+        false
+      );
     }
 
     var lastLineStartx = numLines - 1;
-    let lastLine = svg.append("line");
-    lastLine
-      .attr(
-        "x1",
-        xScale(lastLineStartx) + lastLineStartx * xScale(tFactoryTimeAdjGap)
-      )
-      .attr(
-        "x2",
-        xScale(lastLineStartx + 1) + lastLineStartx * xScale(tFactoryTimeAdjGap)
-      )
-      .attr("y1", chartBottomY - distBetweenCharts * 2)
-      .attr("y2", chartBottomY - distBetweenCharts * 2)
-      .attr("stroke-width", strokeWidth)
-      .attr("id", "tfactoryLine")
-      .style("fill", "none")
-      .style("stroke", tfactoryLineColor)
-      .attr("marker-start", "url(#startMarkerTFactory)")
-      .attr("marker-end", "url(#arrowTFactory)")
-      .lower();
+    var x1 =
+      xScale(lastLineStartx) + lastLineStartx * xScale(tFactoryTimeAdjGap);
+    var x2 =
+      xScale(lastLineStartx + 1) + lastLineStartx * xScale(tFactoryTimeAdjGap);
+    var y = chartBottomY - distBetweenCharts * 2;
+    var points = [
+      [x1, y],
+      [x2, y],
+    ];
+
+    drawLine(
+      svg,
+      points,
+      "line",
+      "tfactoryLine",
+      strokeWidth,
+      "url(#tFactoryTick)",
+      "url(#arrowTFactory)",
+      "none",
+      tfactoryLineColor,
+      false
+    );
 
     if (showSplit) {
       svg
@@ -447,15 +509,13 @@ function LineChart({ legendData, chartData, width, height }: LineChartProps) {
         .attr("fill", "#FFFFFF")
         .raise();
 
-      var ellipsesStartX = numLines / 2;
-
       svg
         .append("line")
         .attr("x1", lengthInner / 2)
         .attr("x2", lengthInner / 2)
         .attr("y1", chartBottomY - distBetweenCharts * 2)
         .attr("y2", chartBottomY - distBetweenCharts * 2)
-        .attr("marker-end", "url(#circleMarkerElipses)");
+        .attr("marker-end", "url(#circleMarkerEllipses)");
 
       svg
         .append("line")
@@ -463,7 +523,7 @@ function LineChart({ legendData, chartData, width, height }: LineChartProps) {
         .attr("x2", lengthInner / 2 + 10)
         .attr("y1", chartBottomY - distBetweenCharts * 2)
         .attr("y2", chartBottomY - distBetweenCharts * 2)
-        .attr("marker-end", "url(#circleMarkerElipses)");
+        .attr("marker-end", "url(#circleMarkerEllipses)");
 
       svg
         .append("line")
@@ -471,7 +531,7 @@ function LineChart({ legendData, chartData, width, height }: LineChartProps) {
         .attr("x2", lengthInner / 2 - 10)
         .attr("y1", chartBottomY - distBetweenCharts * 2)
         .attr("y2", chartBottomY - distBetweenCharts * 2)
-        .attr("marker-end", "url(#circleMarkerElipses)");
+        .attr("marker-end", "url(#circleMarkerEllipses)");
     }
   }, [width, height]);
 
