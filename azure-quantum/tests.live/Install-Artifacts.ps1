@@ -36,8 +36,8 @@ if (-not $Env:PYTHON_OUTDIR) {
     Exit 1
 } 
 # this condition is used by the E2E Live test pipeline
-elseif (($Env:PICK_QDK_VERSION -eq "auto") -and ([string]::IsNullOrEmpty($PackageName) -or ($PackageName -eq "azure-quantum"))) {
-    "== Installing latest published azure-quantum package from PyPI..." | Write-Host
+elseif ($Env:PICK_QDK_VERSION -eq "auto") {
+    "== Installing latest published $PackageName package from PyPI..." | Write-Host
     Install-PackageInEnv -PackageName $PackageName -FromSource $False
 } else {
     "== Preparing environment to use artifacts with version '$Env:PYTHON_VERSION' " | Write-Host
