@@ -23,7 +23,7 @@ if (-not $Env:PYTHON_OUTDIR) {
     "== We will install $PackageName from source." | Write-Host
     "" | Write-Host
 
-    Install-PackageInEnv -PackageName $PackageName -FromSource $True
+    Install-PackageInEnv -PackageName "$PackageName[all]" -FromSource $True
 
     "" | Write-Host
     "== $PackageName installed from source. ==" | Write-Host
@@ -43,9 +43,9 @@ elseif (($Env:PICK_QDK_VERSION -eq "auto") -and ([string]::IsNullOrEmpty($Packag
     "== Preparing environment to use artifacts with version '$Env:PYTHON_VERSION' " | Write-Host
     "== from '$Env:PYTHON_OUTDIR'" | Write-Host
     if ($Env:PYTHON_VERSION) {
-        $NameAndVersion = "$PackageName==$($Env:PYTHON_VERSION)"
+        $NameAndVersion = "$PackageName[all]==$($Env:PYTHON_VERSION)"
     } else {
-        $NameAndVersion = $PackageName
+        $NameAndVersion = "$PackageName[all]"
     }
     
     Install-PackageInEnv -PackageName $NameAndVersion -FromSource $False -BuildArtifactPath $Env:PYTHON_OUTDIR
