@@ -70,8 +70,18 @@ class TestQuantinuum(QuantumTestBase):
 
     @pytest.mark.quantinuum
     @pytest.mark.live_test
-    def test_job_submit_quantinuum_h2(self):
+    def test_job_submit_quantinuum_h2_1e(self):
         self._test_job_submit_quantinuum("quantinuum.sim.h2-1e")
+
+    @pytest.mark.quantinuum
+    @pytest.mark.live_test
+    def test_job_submit_quantinuum_h2_1sc(self):
+        self._test_job_submit_quantinuum("quantinuum.sim.h2-1sc")
+
+    @pytest.mark.quantinuum
+    @pytest.mark.skip("Target was unavailable at the moment of the recording")
+    def test_job_submit_quantinuum_h2_1qpu(self):
+        self._test_job_submit_quantinuum("quantinuum.qpu.h2-1")
 
     def _test_job_submit_quantinuum(self, target_name):
         workspace = self.create_workspace()

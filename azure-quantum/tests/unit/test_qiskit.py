@@ -693,10 +693,24 @@ class TestQiskit(QuantumTestBase):
 
     @pytest.mark.quantinuum
     @pytest.mark.live_test
-    def test_plugins_submit_qiskit_to_quantinuum_h2(self):
+    def test_plugins_submit_qiskit_to_quantinuum_h2_1e(self):
         circuit = self._3_qubit_ghz()
         self._test_qiskit_submit_quantinuum(circuit,
                                             target="quantinuum.sim.h2-1e")
+
+    @pytest.mark.quantinuum
+    @pytest.mark.live_test
+    def test_plugins_submit_qiskit_to_quantinuum_h2_1sc(self):
+        circuit = self._3_qubit_ghz()
+        self._test_qiskit_submit_quantinuum(circuit,
+                                            target="quantinuum.sim.h2-1sc")
+
+    @pytest.mark.quantinuum
+    @pytest.mark.skip("Target was unavailable at the moment of the recording")
+    def test_plugins_submit_qiskit_to_quantinuum_h2_1qpu(self):
+        circuit = self._3_qubit_ghz()
+        self._test_qiskit_submit_quantinuum(circuit,
+                                            target="quantinuum.qpu.h2-1")
 
     @pytest.mark.quantinuum
     @pytest.mark.live_test
