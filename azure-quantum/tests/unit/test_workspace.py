@@ -108,7 +108,10 @@ class TestWorkspace(QuantumTestBase):
             'quantinuum.sim.h1-1e',
             'quantinuum.sim.h1-2e',
             'quantinuum.qpu.h1-1',
-            'quantinuum.qpu.h1-2'
+            'quantinuum.qpu.h1-2',
+            'quantinuum.sim.h2-1sc',
+            'quantinuum.sim.h2-1e',
+            'quantinuum.qpu.h2-1'
         ])
         self.assertTrue(test_targets.issubset(set([t.name for t in targets])))
 

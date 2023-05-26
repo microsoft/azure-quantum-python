@@ -666,6 +666,18 @@ class TestQiskit(QuantumTestBase):
         cost = backend.estimate_cost(circuit, shots=100e3)
         self.assertEqual(cost.estimated_total, 745.0)
 
+        backend = provider.get_backend("quantinuum.sim.h2-1sc")
+        cost = backend.estimate_cost(circuit, shots=100e3)
+        self.assertEqual(cost.estimated_total, 0.0)
+
+        backend = provider.get_backend("quantinuum.sim.h2-1e")
+        cost = backend.estimate_cost(circuit, shots=100e3)
+        self.assertEqual(cost.estimated_total, 745.0)
+
+        backend = provider.get_backend("quantinuum.qpu.h2-1")
+        cost = backend.estimate_cost(circuit, shots=100e3)
+        self.assertEqual(cost.estimated_total, 745.0)
+
     @pytest.mark.live_test
     def test_plugins_submit_qiskit_noexistent_target(self):
         workspace = self.create_workspace()
@@ -678,6 +690,13 @@ class TestQiskit(QuantumTestBase):
     def test_plugins_submit_qiskit_to_quantinuum(self):
         circuit = self._3_qubit_ghz()
         self._test_qiskit_submit_quantinuum(circuit)
+
+    @pytest.mark.quantinuum
+    @pytest.mark.live_test
+    def test_plugins_submit_qiskit_to_quantinuum_h2(self):
+        circuit = self._3_qubit_ghz()
+        self._test_qiskit_submit_quantinuum(circuit,
+                                            target="quantinuum.sim.h2-1e")
 
     @pytest.mark.quantinuum
     @pytest.mark.live_test
@@ -702,16 +721,16 @@ class TestQiskit(QuantumTestBase):
             backend.run(circuit=[circuit, circuit], shots=None)
         self.assertEqual(str(context.exception), "Multi-experiment jobs are not supported!")
 
-    def _test_qiskit_submit_quantinuum(self, circuit, **kwargs):
+    def _test_qiskit_submit_quantinuum(self, circuit, target="quantinuum.sim.h1-1e", **kwargs):
         workspace = self.create_workspace()
         provider = AzureQuantumProvider(workspace=workspace)
-        backend = provider.get_backend("quantinuum.sim.h1-1e")
+        backend = provider.get_backend(target)
         expected_data_format = (
             kwargs["input_data_format"]
             if "input_data_format" in kwargs
             else "honeywell.openqasm.v1"
         )
-        self.assertIn("quantinuum.sim.h1-1e", backend.backend_names)
+        self.assertIn(target, backend.backend_names)
         self.assertIn(backend.backend_names[0], [
             t.name for t in workspace.get_targets(provider_id="quantinuum")
         ])
@@ -726,7 +745,7 @@ class TestQiskit(QuantumTestBase):
         qiskit_job = backend.run(circuit, **kwargs)
 
         # Check job metadata:
-        self.assertEqual(qiskit_job._azure_job.details.target, "quantinuum.sim.h1-1e")
+        self.assertEqual(qiskit_job._azure_job.details.target, target)
         self.assertEqual(qiskit_job._azure_job.details.provider_id, "quantinuum")
         self.assertEqual(qiskit_job._azure_job.details.input_data_format, expected_data_format)
         self.assertEqual(qiskit_job._azure_job.details.output_data_format, "honeywell.quantum-results.v1")
@@ -782,14 +801,6 @@ class TestQiskit(QuantumTestBase):
             "quantinuum.qpu.h1-1",
             "quantinuum.sim.h1-1sc",
             "quantinuum.sim.h1-1e",
-        ]:
-            config = provider.get_backend(target_name).configuration()
-            # We check for name so the test log includes it when reporting a failure
-            self.assertIsNotNone(target_name)
-            self.assertEqual(20, config.num_qubits)
-
-        # The following backends should have 12 qubits
-        for target_name in [
             "quantinuum.qpu.h1-2",
             "quantinuum.sim.h1-2sc",
             "quantinuum.sim.h1-2e",
@@ -797,7 +808,18 @@ class TestQiskit(QuantumTestBase):
             config = provider.get_backend(target_name).configuration()
             # We check for name so the test log includes it when reporting a failure
             self.assertIsNotNone(target_name)
-            self.assertEqual(12, config.num_qubits)
+            self.assertEqual(20, config.num_qubits)
+
+        # The following backends should have 32 qubits
+        for target_name in [
+            "quantinuum.qpu.h2-1",
+            "quantinuum.sim.h2-1sc",
+            "quantinuum.sim.h2-1e",
+        ]:
+            config = provider.get_backend(target_name).configuration()
+            # We check for name so the test log includes it when reporting a failure
+            self.assertIsNotNone(target_name)
+            self.assertEqual(32, config.num_qubits)
 
     @pytest.mark.rigetti
     @pytest.mark.live_test
