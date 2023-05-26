@@ -1,7 +1,6 @@
 import * as React from "react";
 import * as d3 from "d3";
 import "./CSS/LineChart.css";
-import { Tooltip } from "@mui/material";
 
 type LegendData = {
   title: string;
@@ -16,6 +15,27 @@ interface LineChartProps {
   height: number;
 }
 
+/* Helper Functions */
+function drawEllipses(svg: d3.Selection<d3.BaseType, unknown, HTMLElement, any>, cx: number, cy: number, radius: number, fillColor: string) {
+  svg.append("circle")
+    .attr("cx", cx)
+    .attr("cy", cy)
+    .attr("fill", fillColor)
+    .attr("r", radius);
+
+  svg.append("circle")
+    .attr("cx", cx + 15)
+    .attr("cy", cy)
+    .attr("fill", fillColor)
+    .attr("r", radius);
+
+  svg.append("circle")
+    .attr("cx", cx + 30)
+    .attr("cy", cy)
+    .attr("fill", fillColor)
+    .attr("r", radius);
+
+}
 function drawLine(
   svg: d3.Selection<d3.BaseType, unknown, HTMLElement, any>,
   linePoints: number[][],
@@ -110,7 +130,7 @@ function drawText(
     .append("text")
     .attr("x", x)
     .attr("y", y)
-    .text(text)
+    .text(text).raise()
     .attr("class", className);
 }
 
@@ -226,8 +246,7 @@ function LineChart({ legendData, chartData, width, height }: LineChartProps) {
 
     /* Define chart data from dictionary */
     const numberTStates: number = chartData["numberTStates"];
-    const numberTFactoryInvocations: number =
-      chartData["numberTFactoryInvocations"];
+    const numberTFactoryInvocations: number = chartData["numberTFactoryInvocations"];
     const algorithmRuntime: number = chartData["algorithmRuntime"];
     const tFactoryRuntime: number = chartData["tFactoryRuntime"];
     const algorithmRuntimeFormatted: string =
@@ -240,32 +259,69 @@ function LineChart({ legendData, chartData, width, height }: LineChartProps) {
     const tfactoryLineLabel =
       numberTStates +
       (numberTStates == 1
-        ? " T-state produced after each invocations runtime"
-        : " T-states produced after each invocations runtime");
+        ? " T-state produced after each invocation's runtime"
+        : " T-states produced after each invocation's runtime");
 
     const chartBottomY = width / 2;
     const distBetweenCharts = 100;
     const lengthInner = chartLength - 100;
+    const lengthTFactoryLine = lengthInner;
     const midpoint = chartLength / 2;
+    const algorithmLineY = chartBottomY - distBetweenCharts;
+    const tFactoryLineY = chartBottomY - distBetweenCharts * 2;
+    const minAlgorithmLineLength = 50;
+    const minTFactoryLength = 20;
 
     /* Define chart ratios */
-    const tFactoryAlgorithmRuntimeDiffNanoseconds =
-      algorithmRuntime - tFactoryRuntime;
-    var tFactoryTimeAdjGap = 0;
-    var lengthInnerAdj = lengthInner;
-    if (tFactoryAlgorithmRuntimeDiffNanoseconds > 0) {
-      var lengthDiff = Math.round(
-        lengthInner *
-          (tFactoryAlgorithmRuntimeDiffNanoseconds / algorithmRuntime)
-      );
-      lengthInnerAdj = lengthInner - lengthDiff;
-      tFactoryTimeAdjGap = lengthDiff / numberTFactoryInvocations / 100;
+    var lengthAlgorithmLine = lengthInner;
+    var runtimeRatio = 1;
+
+    var totalTFactoryRuntime = numberTFactoryInvocations * tFactoryRuntime;
+    if (algorithmRuntime >= totalTFactoryRuntime) {
+      runtimeRatio = algorithmRuntime / totalTFactoryRuntime;
     }
+    else {
+      lengthAlgorithmLine = Math.round((algorithmRuntime / totalTFactoryRuntime) * lengthInner);
+      if(lengthAlgorithmLine < minAlgorithmLineLength){
+        lengthAlgorithmLine = minAlgorithmLineLength;
+      }
+    }
+    /* Define t-factory xScale and line points */
+    // set the number of lines
+    var numLines = numberTFactoryInvocations;
+
+    // If more t-factory invocations than 50, set showSplit variable to insert ellipses.
+    const showSplit = numLines > 50;
+    if (showSplit) {
+      numLines = 50;
+    }
+
+    // define the x scale
+    const xScale = d3
+      .scaleLinear()
+      .domain([0, numLines])
+      .range([0, lengthTFactoryLine]);
+console.log(runtimeRatio);
+      console.log(xScale(1));
+    var tFactoryRefX = xScale(1) - runtimeRatio;
+    console.log(tFactoryRefX);
+
+    var tFactoryDashedLine = [
+      [tFactoryRefX + 3, chartBottomY],
+      [tFactoryRefX + 3, tFactoryLineY],
+    ];
+    if(tFactoryRefX <= 0 ){
+      runtimeRatio = 5;
+      tFactoryRefX = minTFactoryLength;
+    }
+   
+    var algorithmDashedLineStart = lengthAlgorithmLine + 5;
+    var algorithmTextY = chartBottomY - 10;
 
     /* Define line points */
     const algorithmRunTimeLine = [
-      [0, chartBottomY - distBetweenCharts],
-      [lengthInner, chartBottomY - distBetweenCharts],
+      [0, algorithmLineY],
+      [lengthAlgorithmLine, algorithmLineY],
     ];
 
     const timeLine = [
@@ -273,9 +329,9 @@ function LineChart({ legendData, chartData, width, height }: LineChartProps) {
       [chartLength, chartBottomY],
     ];
 
-    const endDashedLine = [
-      [lengthInner + 7, chartBottomY],
-      [lengthInner + 7, chartBottomY - distBetweenCharts],
+    const algorithmDashedLine = [
+      [algorithmDashedLineStart, chartBottomY],
+      [algorithmDashedLineStart, algorithmLineY],
     ];
 
     // Add chart title
@@ -319,7 +375,6 @@ function LineChart({ legendData, chartData, width, height }: LineChartProps) {
       "line",
       "algorithmRunTimeLine",
       strokeWidth,
-
       "url(#algorithmTick)",
       "url(#arrowAlgorithmLine)",
       algorithmRunTimeColor,
@@ -347,17 +402,18 @@ function LineChart({ legendData, chartData, width, height }: LineChartProps) {
     );
     // Append text labels to  time line.
     drawText(svg, "Time", chartLength + 10, chartBottomY + 10, "time");
+
     drawText(
       svg,
       algorithmRuntimeFormatted,
-      lengthInner + 15,
-      chartBottomY - 10,
+      lengthAlgorithmLine + 10,
+      algorithmTextY,
       "runtimeText"
     );
 
     drawLine(
       svg,
-      endDashedLine,
+      algorithmDashedLine,
       "line",
       "endDashedLine",
       strokeWidth,
@@ -385,40 +441,6 @@ function LineChart({ legendData, chartData, width, height }: LineChartProps) {
     // Create tfactory end arrow
     drawArrow(svg, tfactoryLineColor, "arrowTFactory");
 
-    // set the number of lines
-    var numLines = numberTFactoryInvocations;
-
-    // If more t-factory invocations than 50, set showSplit variable to insert ellipses.
-    const showSplit = numLines > 50;
-    if (showSplit) {
-      numLines = 50;
-    }
-
-    // define the x scale
-    const xScale = d3
-      .scaleLinear()
-      .domain([0, numLines + numLines * tFactoryTimeAdjGap])
-      .range([0, lengthInner]);
-
-    // define ellipses marker
-    drawCircleMarkers(
-      svg,
-      10,
-      10,
-      ellipsesColor,
-      3,
-      5,
-      5,
-      5,
-      5,
-      "circleMarkerEllipses"
-    );
-
-    const tFactoryDashedLine = [
-      [xScale(1) + 1, chartBottomY],
-      [xScale(1) + 1, chartBottomY - distBetweenCharts * 2],
-    ];
-
     // Draw dashed line of single t-factory invocation runtime.
     drawLine(
       svg,
@@ -437,8 +459,8 @@ function LineChart({ legendData, chartData, width, height }: LineChartProps) {
     drawText(
       svg,
       tFactoryRuntimeFormatted,
-      xScale(1) + 10,
-      chartBottomY - 10,
+      tFactoryRefX + 5,
+      chartBottomY + 20,
       "runtimeText"
     );
 
@@ -446,16 +468,23 @@ function LineChart({ legendData, chartData, width, height }: LineChartProps) {
     drawText(
       svg,
       tfactoryLineLabel,
-      xScale(1) + 10,
-      chartBottomY - distBetweenCharts * 2 + 30,
+      tFactoryRefX + 10,
+      tFactoryLineY + 30,
+      "runtimeText"
+    );
+    var numberTFactoryInvocationsText = numberTFactoryInvocations + " Total T-factory invocations"
+    drawText(
+      svg,
+      numberTFactoryInvocationsText,
+      tFactoryRefX + 10,
+      tFactoryLineY - 20,
       "runtimeText"
     );
 
-    for (let i = 0; i < numLines - 1; i++) {
-      let line = svg.append("line");
-      var x1 = xScale(i) + i * xScale(tFactoryTimeAdjGap);
-      var x2 = xScale(i + 1) + i * xScale(tFactoryTimeAdjGap);
-      var y = chartBottomY - distBetweenCharts * 2;
+    for (let i = 0; i < numLines; i++) {
+      var x1 = xScale(i);
+      var x2 = xScale(i + 1) - runtimeRatio;
+      var y = tFactoryLineY;
       var points = [
         [x1, y],
         [x2, y],
@@ -475,63 +504,21 @@ function LineChart({ legendData, chartData, width, height }: LineChartProps) {
       );
     }
 
-    var lastLineStartx = numLines - 1;
-    var x1 =
-      xScale(lastLineStartx) + lastLineStartx * xScale(tFactoryTimeAdjGap);
-    var x2 =
-      xScale(lastLineStartx + 1) + lastLineStartx * xScale(tFactoryTimeAdjGap);
-    var y = chartBottomY - distBetweenCharts * 2;
-    var points = [
-      [x1, y],
-      [x2, y],
-    ];
-
-    drawLine(
-      svg,
-      points,
-      "line",
-      "tfactoryLine",
-      strokeWidth,
-      "url(#tFactoryTick)",
-      "url(#arrowTFactory)",
-      "none",
-      tfactoryLineColor,
-      false
-    );
-
     if (showSplit) {
+      var rectWidth = (xScale(2) - xScale(1)) * 3 + 15;
       svg
         .append("rect")
-        .attr("x", lengthInner / 2 - 20)
-        .attr("y", chartBottomY - distBetweenCharts * 2 - 10)
-        .attr("width", "40")
+        .attr("x", xScale(25))
+        .attr("y", tFactoryLineY - 10)
+        .attr("width", rectWidth)
         .attr("height", "20")
         .attr("fill", "#FFFFFF")
         .raise();
 
-      svg
-        .append("line")
-        .attr("x1", lengthInner / 2)
-        .attr("x2", lengthInner / 2)
-        .attr("y1", chartBottomY - distBetweenCharts * 2)
-        .attr("y2", chartBottomY - distBetweenCharts * 2)
-        .attr("marker-end", "url(#circleMarkerEllipses)");
-
-      svg
-        .append("line")
-        .attr("x1", lengthInner / 2 + 10)
-        .attr("x2", lengthInner / 2 + 10)
-        .attr("y1", chartBottomY - distBetweenCharts * 2)
-        .attr("y2", chartBottomY - distBetweenCharts * 2)
-        .attr("marker-end", "url(#circleMarkerEllipses)");
-
-      svg
-        .append("line")
-        .attr("x1", lengthInner / 2 - 10)
-        .attr("x2", lengthInner / 2 - 10)
-        .attr("y1", chartBottomY - distBetweenCharts * 2)
-        .attr("y2", chartBottomY - distBetweenCharts * 2)
-        .attr("marker-end", "url(#circleMarkerEllipses)");
+      var cx = xScale(25) + 15;
+      var cy = tFactoryLineY;
+      var radius = 4;
+      drawEllipses(svg, cx, cy, radius, ellipsesColor);
     }
   }, [width, height]);
 
