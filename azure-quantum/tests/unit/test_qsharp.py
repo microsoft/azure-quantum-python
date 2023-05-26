@@ -24,6 +24,10 @@ class TestQSharpQIRJob(QuantumTestBase):
         self._run_job("rigetti.sim.qvm", inline=False)
 
     @pytest.mark.quantinuum
+    def test_qsharp_qir_inline_quantinuum_h2(self):
+        self._run_job("quantinuum.sim.h2-1e", inline=True)
+
+    @pytest.mark.quantinuum
     def test_qsharp_qir_inline_quantinuum(self):
         self._run_job("quantinuum.sim.h1-1e", inline=True)
 

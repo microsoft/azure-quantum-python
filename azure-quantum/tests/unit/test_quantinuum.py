@@ -55,12 +55,38 @@ class TestQuantinuum(QuantumTestBase):
         cost = target.estimate_cost(circuit, num_shots=100e3)
         self.assertEqual(cost.estimated_total, 845.0)
 
+        target = Quantinuum(workspace=workspace, name="quantinuum.sim.h2-1sc")
+        cost = target.estimate_cost(circuit, num_shots=100e3)
+        self.assertEqual(cost.estimated_total, 0.0)
+
+        target = Quantinuum(workspace=workspace, name="quantinuum.qpu.h2-1")
+        cost = target.estimate_cost(circuit, num_shots=100e3)
+        self.assertEqual(cost.estimated_total, 845.0)
+
     @pytest.mark.quantinuum
     @pytest.mark.live_test
     def test_job_submit_quantinuum(self):
+        self._test_job_submit_quantinuum("quantinuum.sim.h1-1e")
+
+    @pytest.mark.quantinuum
+    @pytest.mark.live_test
+    def test_job_submit_quantinuum_h2_1e(self):
+        self._test_job_submit_quantinuum("quantinuum.sim.h2-1e")
+
+    @pytest.mark.quantinuum
+    @pytest.mark.live_test
+    def test_job_submit_quantinuum_h2_1sc(self):
+        self._test_job_submit_quantinuum("quantinuum.sim.h2-1sc")
+
+    @pytest.mark.quantinuum
+    @pytest.mark.skip("Target was unavailable at the moment of the recording")
+    def test_job_submit_quantinuum_h2_1qpu(self):
+        self._test_job_submit_quantinuum("quantinuum.qpu.h2-1")
+
+    def _test_job_submit_quantinuum(self, target_name):
         workspace = self.create_workspace()
         circuit = self._teleport()
-        target = workspace.get_targets("quantinuum.sim.h1-1e")
+        target = workspace.get_targets(target_name)
         job = target.submit(circuit)
         self.assertEqual(False, job.has_completed())
         job.wait_until_completed(timeout_secs=DEFAULT_TIMEOUT_SECS)
