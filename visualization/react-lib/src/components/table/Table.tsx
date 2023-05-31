@@ -42,7 +42,7 @@ function TableComponent({ nodes, width, height }: TableComponentProps) {
     color: #201F1E;
     padding: 10px `,
     BaseCell: `
-    padding: 6px 20px;
+    padding: 0px 20px;
     
     font-family: 'Segoe UI';
     font-style: normal;
@@ -54,6 +54,9 @@ function TableComponent({ nodes, width, height }: TableComponentProps) {
       text-align: right;
     }
   `,
+    Table: `
+ width: 700px;
+`,
     Row: `&:nth-child(n){.td:nth-child(n){ border-bottom: none}} `,
   };
   const materialTheme = getTheme(DEFAULT_OPTIONS);

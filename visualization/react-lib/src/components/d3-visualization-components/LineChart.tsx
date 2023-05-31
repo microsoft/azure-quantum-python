@@ -16,25 +16,33 @@ interface LineChartProps {
 }
 
 /* Helper Functions */
-function drawEllipses(svg: d3.Selection<d3.BaseType, unknown, HTMLElement, any>, cx: number, cy: number, radius: number, fillColor: string) {
-  svg.append("circle")
+function drawEllipses(
+  svg: d3.Selection<d3.BaseType, unknown, HTMLElement, any>,
+  cx: number,
+  cy: number,
+  radius: number,
+  fillColor: string
+) {
+  svg
+    .append("circle")
     .attr("cx", cx)
     .attr("cy", cy)
     .attr("fill", fillColor)
     .attr("r", radius);
 
-  svg.append("circle")
+  svg
+    .append("circle")
     .attr("cx", cx + 15)
     .attr("cy", cy)
     .attr("fill", fillColor)
     .attr("r", radius);
 
-  svg.append("circle")
+  svg
+    .append("circle")
     .attr("cx", cx + 30)
     .attr("cy", cy)
     .attr("fill", fillColor)
     .attr("r", radius);
-
 }
 function drawLine(
   svg: d3.Selection<d3.BaseType, unknown, HTMLElement, any>,
@@ -130,7 +138,8 @@ function drawText(
     .append("text")
     .attr("x", x)
     .attr("y", y)
-    .text(text).raise()
+    .text(text)
+    .raise()
     .attr("class", className);
 }
 
@@ -246,8 +255,9 @@ function LineChart({ legendData, chartData, width, height }: LineChartProps) {
 
     /* Define chart data from dictionary */
     const numberTStates: number = chartData["numberTStates"];
-    const numberTFactoryInvocations: number = chartData["numberTFactoryInvocations"];
-    const algorithmRuntime: number = chartData["algorithmRuntime"];
+    const numberTFactoryInvocations: number =
+      chartData["numberTFactoryInvocations"];
+    const algorithmRuntime: number = 4500;
     const tFactoryRuntime: number = chartData["tFactoryRuntime"];
     const algorithmRuntimeFormatted: string =
       chartData["algorithmRuntimeFormatted"];
@@ -259,8 +269,8 @@ function LineChart({ legendData, chartData, width, height }: LineChartProps) {
     const tfactoryLineLabel =
       numberTStates +
       (numberTStates == 1
-        ? " T-state produced after each invocation's runtime"
-        : " T-states produced after each invocation's runtime");
+        ? " T state produced after each invocation's runtime"
+        : " T states produced after each invocation's runtime");
 
     const chartBottomY = width / 2;
     const distBetweenCharts = 100;
@@ -279,10 +289,11 @@ function LineChart({ legendData, chartData, width, height }: LineChartProps) {
     var totalTFactoryRuntime = numberTFactoryInvocations * tFactoryRuntime;
     if (algorithmRuntime >= totalTFactoryRuntime) {
       runtimeRatio = algorithmRuntime / totalTFactoryRuntime;
-    }
-    else {
-      lengthAlgorithmLine = Math.round((algorithmRuntime / totalTFactoryRuntime) * lengthInner);
-      if(lengthAlgorithmLine < minAlgorithmLineLength){
+    } else {
+      lengthAlgorithmLine = Math.round(
+        (algorithmRuntime / totalTFactoryRuntime) * lengthInner
+      );
+      if (lengthAlgorithmLine < minAlgorithmLineLength) {
         lengthAlgorithmLine = minAlgorithmLineLength;
       }
     }
@@ -301,20 +312,18 @@ function LineChart({ legendData, chartData, width, height }: LineChartProps) {
       .scaleLinear()
       .domain([0, numLines])
       .range([0, lengthTFactoryLine]);
-console.log(runtimeRatio);
-      console.log(xScale(1));
+
     var tFactoryRefX = xScale(1) - runtimeRatio;
-    console.log(tFactoryRefX);
 
     var tFactoryDashedLine = [
       [tFactoryRefX + 3, chartBottomY],
       [tFactoryRefX + 3, tFactoryLineY],
     ];
-    if(tFactoryRefX <= 0 ){
+    if (tFactoryRefX <= 0) {
       runtimeRatio = 5;
       tFactoryRefX = minTFactoryLength;
     }
-   
+
     var algorithmDashedLineStart = lengthAlgorithmLine + 5;
     var algorithmTextY = chartBottomY - 10;
 
@@ -333,6 +342,8 @@ console.log(runtimeRatio);
       [algorithmDashedLineStart, chartBottomY],
       [algorithmDashedLineStart, algorithmLineY],
     ];
+
+    /* Chart drawing */
 
     // Add chart title
     drawText(
@@ -382,6 +393,41 @@ console.log(runtimeRatio);
       false
     );
 
+    // draw algorithm dashed line to show time
+    drawLine(
+      svg,
+      algorithmDashedLine,
+      "line",
+      "endDashedLine",
+      strokeWidth,
+      "url(#circleMarker)",
+      "url(#circleMarker)",
+      "none",
+      timeLineColor,
+      true
+    );
+
+    drawCircleMarkers(
+      svg,
+      10,
+      10,
+      timeLineColor,
+      1.5,
+      5,
+      5,
+      5,
+      5,
+      "circleMarker"
+    );
+
+    drawText(
+      svg,
+      algorithmRuntimeFormatted,
+      lengthAlgorithmLine + 10,
+      algorithmTextY,
+      "runtimeText"
+    );
+
     /* Create TimeLine */
     // Create timeline start bar
     drawLineTick(svg, 1, 10, timeLineColor, "timeLineTick");
@@ -400,41 +446,11 @@ console.log(runtimeRatio);
       timeLineColor,
       false
     );
+
     // Append text labels to  time line.
     drawText(svg, "Time", chartLength + 10, chartBottomY + 10, "time");
 
-    drawText(
-      svg,
-      algorithmRuntimeFormatted,
-      lengthAlgorithmLine + 10,
-      algorithmTextY,
-      "runtimeText"
-    );
-
-    drawLine(
-      svg,
-      algorithmDashedLine,
-      "line",
-      "endDashedLine",
-      strokeWidth,
-      "url(#circleMarker)",
-      "url(#circleMarker)",
-      "none",
-      timeLineColor,
-      true
-    );
-    drawCircleMarkers(
-      svg,
-      10,
-      10,
-      timeLineColor,
-      1.5,
-      5,
-      5,
-      5,
-      5,
-      "circleMarker"
-    );
+    /* Create T-factory line */
     // Create tfactory start bar
     drawLineTick(svg, 1, 6, tfactoryLineColor, "tFactoryTick");
 
@@ -472,7 +488,9 @@ console.log(runtimeRatio);
       tFactoryLineY + 30,
       "runtimeText"
     );
-    var numberTFactoryInvocationsText = numberTFactoryInvocations + " Total T-factory invocations"
+
+    var numberTFactoryInvocationsText =
+      numberTFactoryInvocations + " T factory invocations";
     drawText(
       svg,
       numberTFactoryInvocationsText,
@@ -481,6 +499,7 @@ console.log(runtimeRatio);
       "runtimeText"
     );
 
+    // Draw individual invocations lines
     for (let i = 0; i < numLines; i++) {
       var x1 = xScale(i);
       var x2 = xScale(i + 1) - runtimeRatio;
@@ -504,6 +523,7 @@ console.log(runtimeRatio);
       );
     }
 
+    // Draw ellipses if more than 50 invocations.
     if (showSplit) {
       var rectWidth = (xScale(2) - xScale(1)) * 3 + 15;
       svg
@@ -525,7 +545,12 @@ console.log(runtimeRatio);
   return (
     <div>
       <div className="svg-container">
-        <svg className="svg-element" width={width} height={height}></svg>
+        <svg
+          className="svg-element"
+          id="linechart"
+          width={width}
+          height={height}
+        ></svg>
       </div>
     </div>
   );
