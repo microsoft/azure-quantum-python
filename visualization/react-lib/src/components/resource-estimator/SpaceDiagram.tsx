@@ -32,80 +32,67 @@ function SpaceDiagram({
     physicalQubitsTFactory / numTFactories
   );
 
-  // TO DO: make name and description come from job results.
-  const nodes: TableData[] = [
-    {
-      id: "0",
-      name: "Physical resource estimates",
-      type: 0,
-    },
-    {
-      id: "1",
-      name: "Total physical qubits",
+  const tableDictionary: {
+    [name: string]: {
+      type: number;
+      description?: string;
+      value?: string;
+    };
+  } = {
+    "Physical resource estimates": { type: 0 },
+    "Total physical qubits": {
       type: 1,
-      value: jobResults.physicalCounts.physicalQubits.toString(),
       description:
-        "Total physical qubits required for algorithm and t-factories.",
+        "Total physical qubits required for algorithm and T factories.",
+      value: jobResults.physicalCounts.physicalQubits.toString(),
     },
-    {
-      id: "2",
-      name: "T-factory parameters",
-      type: 0,
-    },
-    {
-      id: "3",
-      name: "Total T-factory physical qubits",
+    "T factory parameters": { type: 0 },
+    "Physical T factory qubits": {
       type: 1,
+      description: "Number of physical qubits for the T factories.",
       value: physicalQubitsTFactory.toString(),
-      description: "Total physical qubits required for t-factories.",
     },
-    {
-      id: "4",
-      name: "Resource estimation breakdown",
-      type: 0,
-    },
-    {
-      id: "5",
-      name: "Number of T-factory copies",
+    "Resource estimation breakdown": { type: 0 },
+    "Number of T factory copies": {
       type: 1,
+      description:
+        "Number of T factories capable of producing the demanded T states during the algorithm's runtime.",
       value: numTFactories.toString(),
     },
-    {
-      id: "6",
-      name: "Physical qubits for single T-factory copy",
+    "Physical qubits for single T factory": {
       type: 1,
       value: numQubitsPerTFactory.toString(),
     },
-    {
-      id: "8",
-      name: "Physical algorithmic qubits",
+    "Physical algorithmic qubits": {
       type: 1,
+      description: "Number of logical qubits for the algorithm after layout.",
       value: physicalQubitsAlgorithm.toString(),
-      description: "Total physical qubits required for algorithm execution.",
     },
-    {
-      id: "9",
-      name: "Logical algorithmic qubits",
+    "Logical algorithmic qubits": {
       type: 1,
+      description: "Number of logical qubits for the algorithm after layout.",
       value:
         jobResults.physicalCounts.breakdown.algorithmicLogicalQubits.toString(),
-      description:
-        "Total logical qubits made up of algorithmic physical qubits required for algorithm.",
     },
-    {
-      id: "10",
-      name: "Logical qubit parameters",
-      type: 0,
-    },
-    {
-      id: "11",
-      name: "Physical qubits",
+    "Logical qubit parameters": { type: 0 },
+    "Physical qubits": {
       type: 1,
+      description: "Number of physical qubits per logical qubit.",
       value: jobResults.logicalQubit.physicalQubits.toString(),
-      description:
-        "Number of physical qubits which make up one logical algorithmic qubit.",
     },
-  ];
+  };
+
+  const tableDataArray: TableData[] = Object.keys(tableDictionary).map(
+    (key, i) => {
+      return {
+        id: i.toString(),
+        name: key,
+        type: tableDictionary[key].type,
+        value: tableDictionary[key].value,
+        description: tableDictionary[key].description,
+      };
+    }
+  );
 
   return (
     <div className="grid-container">
@@ -120,7 +107,7 @@ function SpaceDiagram({
         />
       </div>
       <div className="table">
-        <TableComponent nodes={nodes} width={width} height={height} />
+        <TableComponent nodes={tableDataArray} width={width} height={height} />
       </div>
     </div>
   );

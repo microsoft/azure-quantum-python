@@ -25,25 +25,25 @@ function SpaceChart({
       legendTitle: "Algorithm qubits",
     },
     {
-      title: "Physical T-factory qubits",
+      title: "Physical T factory qubits",
       value: physicalQubitsTFactory,
-      legendTitle: "T-factory qubits",
+      legendTitle: "T factory qubits",
     },
   ];
 
-  const translationValX = width/4;
-   const translationValY = height/4;
+  const translationValX = width / 4;
+  const translationValY = height / 4;
 
   return (
-      <DonutChart
-        data={chartData}
-        width={width}
-        height={height}
-        innerRadius={innerRadius}
-        outerRadius={outerRadius}
-        translationValX={translationValX}
-        translationValY={translationValY}
-      />
+    <DonutChart
+      data={chartData}
+      width={width}
+      height={height}
+      innerRadius={innerRadius}
+      outerRadius={outerRadius}
+      translationValX={translationValX}
+      translationValY={translationValY}
+    />
   );
 }
 
