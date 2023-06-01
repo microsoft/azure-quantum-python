@@ -2,8 +2,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 ##
-import warnings
-
 import logging
 
 from typing import TYPE_CHECKING, Union, Any, Optional
@@ -54,8 +52,7 @@ class RangeSchedule:
 
 proto_valid_solver_names = [
     "PopulationAnnealing",
-    "SubstochasticMonteCarlo",
-    "toshiba.sbm.ising"
+    "SubstochasticMonteCarlo"
 ]
 
 class Solver(Target):
@@ -119,8 +116,7 @@ class Solver(Target):
             or the URL of an Azure Storage Blob where the serialized version
             of a Problem has been uploaded.
         """
-        if (self.provider_id == "Microsoft"):
-            warnings.warn('Please note that Microsoft QIO solvers will be deprecated and no longer available in Azure Quantum after June 30th 2023.')
+        
         from azure.quantum.optimization import Problem
         if isinstance(problem, Problem):
             self.check_valid_problem(problem)
@@ -153,8 +149,7 @@ class Solver(Target):
                 provider_id=self.provider_id,
                 input_data_format=self.input_data_format,
                 output_data_format=self.output_data_format,
-                input_params=self.params,
-                session_id=self.get_latest_session_id()
+                input_params=self.params
             )
 
         return job
@@ -246,7 +241,7 @@ class Solver(Target):
                 raise ValueError(
                     f"Solver `{self.name} type is not compatible "
                     f"for serialization with protobuf; "
-                    f"Try PopulationAnnealing, SubstochasticMonteCarlo or Toshiba's SimulatedBifurcationMachine."
+                    f"Try PopulationAnnealing or SubstochasticMonteCarlo."
                 )
 
     def supports_grouped_terms(self):
