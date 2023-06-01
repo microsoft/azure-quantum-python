@@ -2,6 +2,10 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 ##
+import warnings
+warnings.warn("Please note that Microsoft QIO solvers will be deprecated and \
+no longer available in Azure Quantum after June 30th 2023.")
+
 import logging
 from multiprocessing.sharedctypes import Value
 
@@ -16,10 +20,10 @@ logger = logging.getLogger(__name__)
 
 
 class SimulatedAnnealing(Solver):
-    target_names = [
+    target_names = (
         "microsoft.simulatedannealing.cpu",
         "microsoft.simulatedannealing-parameterfree.cpu"
-    ]
+    )
     def __init__(
         self,
         workspace: Workspace,

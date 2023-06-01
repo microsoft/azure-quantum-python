@@ -10,3 +10,12 @@ from .qio import (
     SubstochasticMonteCarlo,
     Tabu,
 )
+
+__all__ = ["ErrorBudgetPartition", "MicrosoftEstimator",
+           "MicrosoftEstimatorJob", "MicrosoftEstimatorResult",
+           "MicrosoftEstimatorParams", "QECScheme", "QubitParams"]
+
+from .job import MicrosoftEstimatorJob
+from .result import MicrosoftEstimatorResult
+from .target import ErrorBudgetPartition, MicrosoftEstimator, \
+    MicrosoftEstimatorParams, QECScheme, QubitParams

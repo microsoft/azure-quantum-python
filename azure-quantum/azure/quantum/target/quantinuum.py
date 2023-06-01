@@ -2,7 +2,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 ##
-import io
 from typing import Any, Dict
 
 from azure.quantum.target.target import Target
@@ -12,19 +11,27 @@ from azure.quantum._client.models import CostEstimate, UsageEvent
 
 
 class Quantinuum(Target):
-    """Quantinuum (formerly Honeywell) target."""
+    """Quantinuum target."""
     target_names = (
-        "quantinuum.hqs-lt-s1",
-        "quantinuum.hqs-lt-s1-apival",
-        "quantinuum.hqs-lt-s1-sim",
+        # Note: Target names on the same line are equivalent.
+        "quantinuum.hqs-lt-s1",        "quantinuum.qpu.h1-1",
+        "quantinuum.hqs-lt-s1-apival", "quantinuum.sim.h1-1sc",
+        "quantinuum.hqs-lt-s1-sim",    "quantinuum.sim.h1-1e",
+        "quantinuum.hqs-lt-s2",        "quantinuum.qpu.h1-2",
+        "quantinuum.hqs-lt-s2-apival", "quantinuum.sim.h1-2sc",
+        "quantinuum.hqs-lt-s2-sim",    "quantinuum.sim.h1-2e"
+        "quantinuum.qpu.h2-1",
+        "quantinuum.sim.h2-1sc",
+        "quantinuum.sim.h2-1e",
     )
 
     def __init__(
         self,
         workspace: Workspace,
-        name: str = "quantinuum.hqs-lt-s1-apival",
+        name: str = "quantinuum.sim.h1-1sc",
         input_data_format: str = "honeywell.openqasm.v1",
         output_data_format: str = "honeywell.quantum-results.v1",
+        capability: str = "AdaptiveExecution",
         provider_id: str = "quantinuum",
         content_type: str = "application/qasm",
         encoding: str = "",
@@ -35,27 +42,22 @@ class Quantinuum(Target):
             name=name,
             input_data_format=input_data_format,
             output_data_format=output_data_format,
+            capability=capability,
             provider_id=provider_id,
             content_type=content_type,
             encoding=encoding,
             **kwargs
         )
 
-    @staticmethod
-    def _encode_input_data(data: str) -> bytes:
-        stream = io.BytesIO()
-        stream.write(data.encode())
-        return stream.getvalue()
-
     def submit(
         self,
-        circuit: str,
+        circuit: str = None,
         name: str = "quantinuum-job",
         num_shots: int = None,
         input_params: Dict[str, Any] = None,
         **kwargs
     ) -> Job:
-        """Submit a Quantinuum (formerly Honeywell) program (OpenQASM 2.0 format)
+        """Submit a Quantinuum program (OpenQASM 2.0 format)
 
         :param circuit: Quantum circuit in Quantinuum OpenQASM 2.0 format
         :type circuit: str
@@ -68,6 +70,11 @@ class Quantinuum(Target):
         :return: Azure Quantum job
         :rtype: Job
         """
+        input_data = kwargs.pop("input_data", circuit)
+        if input_data is None:
+            raise ValueError(
+                "Either the `circuit` parameter or the `input_data` parameter must have a value."
+            )
         if input_params is None:
             input_params = {}
         if num_shots is not None:
@@ -75,7 +82,7 @@ class Quantinuum(Target):
             input_params["count"] = num_shots
 
         return super().submit(
-            input_data=circuit,
+            input_data=input_data,
             name=name,
             input_params=input_params,
             **kwargs
@@ -141,12 +148,16 @@ class Quantinuum(Target):
                         else:
                             N_2q += 1
 
-        if "sim" in self.name:
+        import re
+        is_emulator_regex = re.compile("^.*(-sim|-[0-9]*e)$")
+        is_syntax_checker_regex = re.compile("^.*(-apival|-[0-9]*sc)$")
+
+        if is_emulator_regex.match(self.name):
             currency_code = "EHQC"
         else:
             currency_code = "HQC"
 
-        if "apival" in self.name:
+        if is_syntax_checker_regex.match(self.name):
             HQC = 0.0
         else:
             HQC = 5 + num_shots * (N_1q + 10 * N_2q + 5 * N_m) / 5000

@@ -23,13 +23,7 @@ JsmeValue = namedtuple("JsmeValue", ["jme", "molblock", "smiles"])
 
 # Rel file path for Javascript source
 JS_SOURCE = "jsme/jsme.nocache.js"
-
-# Base URL for widget source javascript
-BASE_URL = "/nbextensions/jupyter_jsme"
-
-if check_nbextension("jupyter_jsme") is False:
-    # Fallback option in case user didn't install Jupyter extension
-    BASE_URL = "https://peter-ertl.com/jsme/JSME_2020-06-11"
+BASE_URL = "https://peter-ertl.com/jsme/JSME_2020-06-11"
 
 _HTML_STR_FORMAT = '''
 <script type="text/javascript" src="{base_url}/{js_source}"></script>

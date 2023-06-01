@@ -2,56 +2,72 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 ##
-import warnings
 
-from typing import TYPE_CHECKING, Union, List
+from typing import TYPE_CHECKING, Dict
 from azure.quantum.version import __version__
-from azure.quantum.qiskit.job import AzureQuantumJob
-
-from .backend import AzureBackend
+from abc import abstractmethod
+from .backend import AzureQirBackend
 
 from qiskit.providers.models import BackendConfiguration
-from qiskit.providers import Options
-from qiskit_qir import SUPPORTED_INSTRUCTIONS as QIR_BASIS_GATES
+from qiskit.providers import Options, Provider
+
+QIR_BASIS_GATES = [
+    "measure",
+    "m",
+    "barrier",
+    "cx",
+    "cz",
+    "h",
+    "reset",
+    "rx",
+    "ry",
+    "rz",
+    "s",
+    "sdg",
+    "swap",
+    "t",
+    "tdg",
+    "x",
+    "y",
+    "z",
+    "id",
+]
 
 if TYPE_CHECKING:
     from azure.quantum.qiskit import AzureQuantumProvider
 
 import logging
+
 logger = logging.getLogger(__name__)
 
-__all__ = [
-    "QCISimulatorBackend"
-    "QCIQPUBackend"
-]
+__all__ = ["QCISimulatorBackend" "QCIQPUBackend"]
 
-class QCIBackend(AzureBackend):
-    """Base class for interfacing with a QCI backend in Azure Quantum"""
 
-    @classmethod
-    def _default_options(cls):
-        return Options(shots=500, entryPoint="main", arguments=[], targetCapability="AdaptiveExecution")
+class QCIBackend(AzureQirBackend):
+    @abstractmethod
+    def __init__(
+        self, configuration: BackendConfiguration, provider: Provider = None, **fields
+    ):
+        super().__init__(configuration, provider, **fields)
 
     @classmethod
-    def _azure_config(cls):
-        return {
-            "blob_name": "inputData",
-            "content_type": "qir.v1",
-            "provider_id": "qci",
-            "input_data_format": "qir.v1",
-            "output_data_format": "microsoft.quantum-results.v1",
-        }
+    def _default_options(cls) -> Options:
+        return Options(shots=500, targetCapability="AdaptiveExecution")
+
+    def _azure_config(self) -> Dict[str, str]:
+        config = super()._azure_config()
+        config.update(
+            {
+                "provider_id": "qci",
+            }
+        )
+        return config
 
 
 class QCISimulatorBackend(QCIBackend):
-    backend_names = ("qci.simulator",)
+    backend_names = ("qci.simulator", "qci.simulator.noisy")
 
-    def __init__(
-        self,
-        name: str,
-        provider: "AzureQuantumProvider",
-        **kwargs
-    ):
+    def __init__(self, name: str, provider: "AzureQuantumProvider", **kwargs):
         """Base class for interfacing with an QCI Simulator backend"""
         default_config = BackendConfiguration.from_dict(
             {
@@ -64,8 +80,8 @@ class QCISimulatorBackend(QCIBackend):
                 "basis_gates": QIR_BASIS_GATES,
                 "memory": False,
                 "n_qubits": 29,
-                "conditional": False,
-                "max_shots": 1,
+                "conditional": True,
+                "max_shots": 1e6,
                 "max_experiments": 1,
                 "open_pulse": False,
                 "gates": [{"name": "TODO", "parameters": [], "qasm_def": "TODO"}],
@@ -73,19 +89,16 @@ class QCISimulatorBackend(QCIBackend):
             }
         )
         logger.info("Initializing QCISimulatorBackend")
-        configuration: BackendConfiguration = kwargs.pop("configuration", default_config)
+        configuration: BackendConfiguration = kwargs.pop(
+            "configuration", default_config
+        )
         super().__init__(configuration=configuration, provider=provider, **kwargs)
 
 
 class QCIQPUBackend(QCIBackend):
     backend_names = ("qci.machine1",)
 
-    def __init__(
-        self,
-        name: str,
-        provider: "AzureQuantumProvider",
-        **kwargs
-    ):
+    def __init__(self, name: str, provider: "AzureQuantumProvider", **kwargs):
         """Base class for interfacing with an QCI QPU backend"""
         default_config = BackendConfiguration.from_dict(
             {
@@ -98,7 +111,7 @@ class QCIQPUBackend(QCIBackend):
                 "basis_gates": QIR_BASIS_GATES,
                 "memory": False,
                 "n_qubits": 11,
-                "conditional": False,
+                "conditional": True,
                 "max_shots": 10000,
                 "max_experiments": 1,
                 "open_pulse": False,
@@ -107,5 +120,7 @@ class QCIQPUBackend(QCIBackend):
             }
         )
         logger.info("Initializing QCIQPUBackend")
-        configuration: BackendConfiguration = kwargs.pop("configuration", default_config)
+        configuration: BackendConfiguration = kwargs.pop(
+            "configuration", default_config
+        )
         super().__init__(configuration=configuration, provider=provider, **kwargs)
