@@ -2,10 +2,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 ##
-import warnings
-warnings.warn("Please note that Microsoft QIO solvers will be deprecated and \
-no longer available in Azure Quantum after June 30th 2023.")
-
 import logging
 
 from typing import Optional
@@ -60,7 +56,6 @@ class PopulationAnnealing(Solver):
             solver may run longer than the value specified. Setting this value
             will trigger the parameter free population annealing solver.
         """
-
         if timeout is not None:
             name = "microsoft.populationannealing-parameterfree.cpu"
 

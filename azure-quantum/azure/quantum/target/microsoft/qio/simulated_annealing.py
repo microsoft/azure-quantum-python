@@ -2,10 +2,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 ##
-import warnings
-warnings.warn("Please note that Microsoft QIO solvers will be deprecated and \
-no longer available in Azure Quantum after June 30th 2023.")
-
 import logging
 from multiprocessing.sharedctypes import Value
 
@@ -61,6 +57,7 @@ class SimulatedAnnealing(Solver):
             specifies hardware platform
             HardwarePlatform.CPU.
         """
+        
         param_free = (
             beta_start is None
             and beta_stop is None

@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 ##
+import warnings
 import logging
 
 from typing import TYPE_CHECKING, Union, Any, Optional
@@ -116,7 +117,8 @@ class Solver(Target):
             or the URL of an Azure Storage Blob where the serialized version
             of a Problem has been uploaded.
         """
-        
+        if (self.provider_id == "Microsoft"):
+            warnings.warn('Please note that Microsoft QIO solvers will be deprecated and no longer available in Azure Quantum after June 30th 2023.')
         from azure.quantum.optimization import Problem
         if isinstance(problem, Problem):
             self.check_valid_problem(problem)

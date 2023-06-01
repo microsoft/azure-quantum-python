@@ -2,10 +2,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 ##
-import warnings
-warnings.warn("Please note that Microsoft QIO solvers will be deprecated and \
-no longer available in Azure Quantum after June 30th 2023.")
-
 import logging
 
 from typing import Optional
@@ -16,6 +12,7 @@ from azure.quantum.workspace import Workspace
 logger = logging.getLogger(__name__)
 
 class Tabu(Solver):
+
     target_names = (
         "microsoft.tabu.cpu",
         "microsoft.tabu-parameterfree.cpu"
