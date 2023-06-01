@@ -117,7 +117,7 @@ class Solver(Target):
             or the URL of an Azure Storage Blob where the serialized version
             of a Problem has been uploaded.
         """
-        if(self.provider_id == 'Microsoft'):
+        if (self.provider_id == "Microsoft"):
             warnings.warn('Please note that Microsoft QIO solvers will be deprecated and no longer available in Azure Quantum after June 30th 2023.')
         from azure.quantum.optimization import Problem
         if isinstance(problem, Problem):
@@ -151,7 +151,8 @@ class Solver(Target):
                 provider_id=self.provider_id,
                 input_data_format=self.input_data_format,
                 output_data_format=self.output_data_format,
-                input_params=self.params
+                input_params=self.params,
+                session_id=self.get_latest_session_id()
             )
 
         return job
