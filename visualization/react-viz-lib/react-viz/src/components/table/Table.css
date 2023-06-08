@@ -1,0 +1,33 @@
+.tooltip {
+  padding: 5px;
+  text-align: center;
+  align-items: center;
+  animation: tooltipFadeIn ease-in 0.2s;
+  border-radius: 6px;
+  &::after {
+    content: "";
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid #cccccc;
+    top: -5px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes tooltipFadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.table-element{
+justify-content: center;
+background-color: blue;
+}
