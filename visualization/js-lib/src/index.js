@@ -1,6 +1,6 @@
 import * as React from "react";
-import * as ReactDom from "react-dom";
-import { SpaceDiagram } from "quantum-visualization/src";
+import { createRoot } from 'react-dom/client';
+import { SpaceDiagram } from "quantum-visualization";
 
 const sample = {
   errorBudget: {
@@ -554,16 +554,14 @@ const sample = {
 
 class SpaceDiagramComponent extends HTMLElement {
   connectedCallback() {
-    const mountPoint = document.createElement("span");
-    this.attachShadow({ mode: "open" }).appendChild(mountPoint);
-
+    this.innerHTML = `<div id="root"> </div>`;
     // const data = this.getAttribute("data");
     var data = JSON.stringify(sample);
     if (data) {
-      ReactDom.render(
-        <SpaceDiagram width={1000} height={1000} data={data} />,
-        mountPoint
+      const root = createRoot(
+        document.getElementById('root')
       );
+      root.render(<SpaceDiagram width={1000} height={1000} data={data} />);
     } else {
       console.error("You must pass in data");
     }
