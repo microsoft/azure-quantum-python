@@ -5,6 +5,7 @@ module.exports = {
     entry: './src/index.ts',
     output: {
         path: path.resolve(__dirname, 'dist'),
+        libraryTarget: 'commonjs'
     },
     plugins: [new CleanWebpackPlugin()],
     module: {
@@ -23,5 +24,8 @@ module.exports = {
                 exclude: /node_modules/,
             }
         ]
+    },
+    externals: {
+      'react': 'react',
     }
 };
