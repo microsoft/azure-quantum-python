@@ -563,11 +563,31 @@ class SpaceDiagramComponent extends HTMLElement {
       );
       root.render(<SpaceDiagram width={1000} height={1000} data={data} />);
     } else {
-      console.error("You must pass in data");
+      console.error("Rendering error: Space Diagram requires data.");
     }
   }
 }
-export default SpaceDiagramComponent;
+
+class TimeDiagramComponent extends HTMLElement {
+  connectedCallback() {
+    this.innerHTML = `<div id="root"> </div>`;
+    // const data = this.getAttribute("data");
+    var data = JSON.stringify(sample);
+    if (data) {
+      const root = createRoot(
+        document.getElementById('root')
+      );
+      root.render(<TimeDiagram width={1000} height={1000} data={data} />);
+    } else {
+      console.error("Rendering error: Time Diagram requires data.");
+    }
+  }
+}
+
+export {SpaceDiagramComponent, TimeDiagramComponent};
 
 window.customElements.get("re-space-diagram") ||
-  window.customElements.define("re-space-diagram", SpaceDiagramComponent);
+window.customElements.define("re-space-diagram", SpaceDiagramComponent);
+
+window.customElements.get("re-time-diagram") ||
+window.customElements.define("re-time-diagram", TimeDiagramComponent);

@@ -20,7 +20,10 @@ module.exports = {
             },
             {
                 test: /\.css$/,
-                use: ['css-loader'],
+                use: [
+                    "style-loader",
+                    { loader: "css-loader", options: { sourceMap: true } },
+                  ],
                 exclude: /node_modules/,
             }
         ]
