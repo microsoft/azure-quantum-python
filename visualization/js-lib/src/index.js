@@ -1,7 +1,6 @@
 import * as React from "react";
 import { createRoot } from 'react-dom/client';
-import { SpaceDiagram } from "quantum-visualization";
-import { TimeDiagram } from "quantum-visualization";
+import { SpaceDiagram, TimeDiagram } from "quantum-visualization";
 
 const sample = {
   errorBudget: {
@@ -555,14 +554,14 @@ const sample = {
 
 class SpaceDiagramComponent extends HTMLElement {
   connectedCallback() {
-    this.innerHTML = `<div id="root"> </div>`;
+    // TODO :we need to genarate a random id
+    this.innerHTML = `<div id="space-diagram"> </div>`;
     // const data = this.getAttribute("data");
     var data = JSON.stringify(sample);
     if (data) {
-      const root =  createRoot(
-          document.getElementById('root')
-        );
-      
+      const root = createRoot(
+        document.getElementById('space-diagram')
+      );
       root.render(<SpaceDiagram width={1000} height={1000} data={data} />);
     } else {
       console.error("Rendering error: Space Diagram requires data.");
@@ -572,12 +571,12 @@ class SpaceDiagramComponent extends HTMLElement {
 
 class TimeDiagramComponent extends HTMLElement {
   connectedCallback() {
-    this.innerHTML = `<div id="root"> </div>`;
+    this.innerHTML = `<div id="time-diagram"> </div>`;
     // const data = this.getAttribute("data");
     var data = JSON.stringify(sample);
     if (data) {
-      const root =  createRoot(
-        document.getElementById('root')
+      const root = createRoot(
+        document.getElementById('time-diagram')
       );
     
 
@@ -587,8 +586,6 @@ class TimeDiagramComponent extends HTMLElement {
     }
   }
 }
-
-export {SpaceDiagramComponent, TimeDiagramComponent};
 
 window.customElements.get("re-space-diagram") ||
 window.customElements.define("re-space-diagram", SpaceDiagramComponent);
