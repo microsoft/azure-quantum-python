@@ -1,6 +1,7 @@
 import * as React from "react";
 import { createRoot } from 'react-dom/client';
 import { SpaceDiagram } from "quantum-visualization";
+import { TimeDiagram } from "quantum-visualization";
 
 const sample = {
   errorBudget: {
@@ -558,9 +559,10 @@ class SpaceDiagramComponent extends HTMLElement {
     // const data = this.getAttribute("data");
     var data = JSON.stringify(sample);
     if (data) {
-      const root = createRoot(
-        document.getElementById('root')
-      );
+      const root =  createRoot(
+          document.getElementById('root')
+        );
+      
       root.render(<SpaceDiagram width={1000} height={1000} data={data} />);
     } else {
       console.error("Rendering error: Space Diagram requires data.");
@@ -574,10 +576,12 @@ class TimeDiagramComponent extends HTMLElement {
     // const data = this.getAttribute("data");
     var data = JSON.stringify(sample);
     if (data) {
-      const root = createRoot(
+      const root =  createRoot(
         document.getElementById('root')
       );
-      root.render(<TimeDiagram width={1000} height={1000} data={data} />);
+    
+
+      root.render(<TimeDiagram data={data}  width={1000} height={1000}/>);
     } else {
       console.error("Rendering error: Time Diagram requires data.");
     }

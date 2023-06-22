@@ -3,7 +3,6 @@ import TableComponent from "../table/Table";
 import { JobResults } from "../../models/JobResults";
 import "./Diagram.css";
 import { TimeChart } from "../time-chart";
-import { index } from "d3";
 import { TableData } from "../table/Table";
 
 interface TimeDiagramProps {
@@ -122,7 +121,7 @@ function TimeDiagram({ width, height, data }: TimeDiagramProps) {
     tFactoryRuntime: jobResults.tfactory.runtime,
     algorithmRuntimeFormatted: algorithmRuntimeFormatted,
     tFactoryRuntimeFormatted: tFactoryRuntimeFormatted,
-    chartLength: width - 175,
+    chartLength: width - 200,
   };
 
   const tableDataArray: TableData[] = Object.keys(tableDictionary).map(
