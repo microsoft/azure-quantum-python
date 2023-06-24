@@ -29,7 +29,7 @@ function DonutChart({
   translationValY,
 }: DonutChartProps) {
   React.useEffect(() => {
-    const svg = d3.select("svg");
+    const svg = d3.select("#donutchart");
     svg.selectAll("*").remove();
 
     // Define constants
@@ -194,7 +194,7 @@ function DonutChart({
 
   return (
     <div className="svg-container">
-      <svg width={width} height={height}></svg>
+      <svg className="svg-element-flex" id="donutchart" width={width} height={height}></svg>
     </div>
   );
 }

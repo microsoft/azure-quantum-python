@@ -231,7 +231,7 @@ function drawCircleMarkers(
 
 function LineChart({ legendData, chartData, width, height }: LineChartProps) {
   React.useEffect(() => {
-    const svg = d3.select("svg");
+    const svg = d3.select("#linechart");
     svg.selectAll("*").remove();
 
     /* Define Constants from CSS */
@@ -546,7 +546,7 @@ function LineChart({ legendData, chartData, width, height }: LineChartProps) {
     <div>
       <div className="svg-container">
         <svg
-          className="svg-element"
+          className="svg-element-flex"
           id="linechart"
           width={width}
           height={height}
