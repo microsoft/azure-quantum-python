@@ -1,1 +1,1 @@
-export {default as SpaceChart } from "./SpaceChart";
+export { default as SpaceChart } from "./SpaceChart";
