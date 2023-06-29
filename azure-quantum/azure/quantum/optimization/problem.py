@@ -171,11 +171,11 @@ class Problem:
         name: Optional[str] = None, 
         content_type: Optional[ContentType] = None) -> Problem:
         """Deserializes the problem from a
-        JSON string or protobuf messages serialized with Problem.serialize()
+        JSON string serialized with Problem.serialize()
         Also used to deserialize the messages downloaded from the blob
 
         :param input_problem:
-            The json string or the list of protobuf messages to be deserialized to a `Problem` instance
+            The json string
         :type input_problem: Union[str,list]
         :param
         :param name: 
@@ -187,10 +187,7 @@ class Problem:
         :param content_type: The content type of the input problem data
         :type: Optional, ContentType
         """
-        if content_type == ContentType.protobuf or type(input_problem) == list :
-            return cls.from_proto(input_problem, name) 
-        else :
-            return cls.from_json(input_problem, name)
+        return cls.from_json(input_problem, name)
 
     def add_term(self, c: Union[int, float], indices: List[int]):
         """Adds a single monomial term to the `Problem` representation
@@ -272,13 +269,10 @@ class Problem:
         debug_input_string = input_problem if type(input_problem) is str else b''.join( input_problem).decode('latin-1')
         logger.debug("Input Problem: " + debug_input_string)
         data = io.BytesIO()
-        if self.content_type == ContentType.protobuf:
-          return self.compress_protobuf(input_problem)                   
-        else:
-            with gzip.GzipFile(fileobj=data, mode="w") as fo:
-                fo.write(input_problem.encode())
+        with gzip.GzipFile(fileobj=data, mode="w") as fo:
+            fo.write(input_problem.encode())
 
-            return data.getvalue()
+        return data.getvalue()
     
     def _blob_name(self):
         import uuid
