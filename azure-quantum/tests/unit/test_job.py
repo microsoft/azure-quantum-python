@@ -12,7 +12,7 @@ from datetime import date, datetime, timedelta
 from common import QuantumTestBase, DEFAULT_TIMEOUT_SECS
 from azure.quantum.job.base_job import ContentType
 from azure.quantum import Job
-from azure.quantum.optimization import Problem, ProblemType, Term, SlcTerm
+from azure.quantum.optimization import Problem, ProblemType, Term
 import azure.quantum.target.oneqbit as oneqbit
 import azure.quantum.target.toshiba as toshiba
 
@@ -178,7 +178,6 @@ class TestJob(QuantumTestBase):
         self,
         solver_name,
         solver_type,
-        test_grouped=False,
         content_type=ContentType.json,
         solver_kwargs=None
     ):
@@ -190,7 +189,7 @@ class TestJob(QuantumTestBase):
 
         problem_name = f'Test-{solver_name}-{datetime.now():"%Y%m%d-%H%M%S"}'
 
-        problem = self.create_problem(name=problem_name, test_grouped=test_grouped,content_type=content_type)
+        problem = self.create_problem(name=problem_name,content_type=content_type)
 
         self._test_job_submit_problem(solver_type, problem, solver_kwargs)
     
@@ -232,7 +231,6 @@ class TestJob(QuantumTestBase):
             name: str,
             init: bool = False,
             problem_type: ProblemType = ProblemType.pubo,
-            test_grouped: bool = False,
             content_type: ContentType = None ,
         ) -> Problem:
         """Create optimization problem with some default terms
@@ -250,11 +248,6 @@ class TestJob(QuantumTestBase):
             Term(w=-4, indices=[3, 1]),
             Term(w=4, indices=[3, 2]),
         ]
-        if test_grouped:
-            terms.append(SlcTerm(
-                c=1,
-                terms=[Term(c=i+2, indices=[i]) for i in range(3)]
-            ))
 
         initial_config = {"1": 0, "0": 1, "2": 0, "3": 1} if init \
                          else None
