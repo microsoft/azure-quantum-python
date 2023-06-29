@@ -100,11 +100,6 @@ class TestJobPayloadFactory(unittest.TestCase):
         import qiskit
         self.assertIsInstance(JobPayloadFactory.get_qiskit_circuit_bell_state(), qiskit.QuantumCircuit)
 
-    @pytest.mark.qio
-    def test_get_qio_ising_problem(self):
-        import azure.quantum.optimization as optimization
-        self.assertIsInstance(JobPayloadFactory.get_qio_ising_problem(), optimization.Problem)
-
     @pytest.mark.qsharp
     @skip_if_no_qsharp
     def test_get_qsharp_inline_callable_bell_state(self):
