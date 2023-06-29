@@ -13,18 +13,11 @@ from common import QuantumTestBase, DEFAULT_TIMEOUT_SECS
 from azure.quantum.job.base_job import ContentType
 from azure.quantum import Job
 from azure.quantum.optimization import Problem, ProblemType, Term, SlcTerm
-import azure.quantum.optimization as microsoft
 import azure.quantum.target.oneqbit as oneqbit
 import azure.quantum.target.toshiba as toshiba
 
 
 SOLVER_TYPES = [
-    functools.partial(microsoft.SimulatedAnnealing, beta_start=0),
-    functools.partial(microsoft.ParallelTempering, sweeps=100),
-    functools.partial(microsoft.Tabu, sweeps=100),
-    functools.partial(microsoft.QuantumMonteCarlo, trotter_number=4),
-    functools.partial(microsoft.PopulationAnnealing, sweeps=200),
-    functools.partial(microsoft.SubstochasticMonteCarlo, step_limit=280),
     functools.partial(oneqbit.TabuSearch, improvement_cutoff=10),
     functools.partial(oneqbit.PticmSolver, num_sweeps_per_run=99),
     functools.partial(oneqbit.PathRelinkingSolver, distance_scale=0.44),
