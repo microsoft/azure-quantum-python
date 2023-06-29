@@ -127,14 +127,4 @@ class TestProblemClass(unittest.TestCase):
         test_prob = Problem(name="random")
         with self.assertRaises(Exception):
             test_prob.get_terms(id=0)
-    
-    def tearDown(self):
-        test_files = [
-            self.default_qubo_filename,
-            self.default_pubo_filename
-        ]
-
-        for test_file in test_files:
-            if os.path.isfile(test_file):
-                os.remove(test_file)
       
