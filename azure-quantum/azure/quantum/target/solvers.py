@@ -18,15 +18,10 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 __all__ = [
-    "HardwarePlatform",
     "RangeSchedule",
     "Solver",
 ]
 
-
-class HardwarePlatform(Enum):
-    CPU = 1,
-    FPGA = 2
 
 
 class RangeSchedule:
