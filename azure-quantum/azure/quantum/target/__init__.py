@@ -4,14 +4,6 @@
 ##
 from .target import Target
 from .solvers import Solver
-from .microsoft.qio import (
-    ParallelTempering,
-    SimulatedAnnealing,
-    Tabu,
-    QuantumMonteCarlo,
-    PopulationAnnealing,
-    SubstochasticMonteCarlo,
-)
 from .oneqbit import (
     TabuSearch,
     PticmSolver,
@@ -30,7 +22,6 @@ DEFAULT_TARGETS = {
     "ionq": IonQ,
     "quantinuum": Quantinuum,
     "rigetti": Rigetti,
-    "Microsoft": Solver,
     "toshiba": Solver,
     "1qbit": Solver,
 }
