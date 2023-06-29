@@ -109,7 +109,6 @@ class Solver(Target):
         """
         from azure.quantum.optimization import Problem
         if isinstance(problem, Problem):
-            self.check_valid_problem(problem)
             return super().submit(
                 input_data=problem,
                 name=problem.name,
@@ -216,24 +215,6 @@ class Solver(Target):
                         Otherwise, consider cancelling the job \
                         and resubmitting with a lower timeout."
                 )
-
-    def check_valid_problem(self, problem):
-        # Evaluate Problem and Solver compatibility.
-        from azure.quantum.optimization.problem import ProblemType
-        if problem.problem_type in {ProblemType.pubo_grouped, ProblemType.ising_grouped}:
-            if not self.supports_grouped_terms():
-                raise ValueError(
-                    f"Solver type is not compatible"
-                    f"with problem type {problem.problem_type};"
-                    f"Try PopulationAnnealing or SubstochasticMonteCarlo."
-                )
-
-    def supports_grouped_terms(self):
-        """
-        Return whether or not the Solver class supported grouped terms in the cost function.
-        This should be overridden by Solver subclasses which do support grouped terms.
-        """
-        return False
     
     class ScheduleEvolution(Enum):
         INCREASING = 1
