@@ -4,11 +4,6 @@
 ##
 from azure.quantum.aio.target.target import Target
 from azure.quantum.aio.target.solvers import Solver
-from .oneqbit import (
-    TabuSearch,
-    PticmSolver,
-    PathRelinkingSolver,
-)
 from .toshiba import (
     SimulatedBifurcationMachine
 )
@@ -20,6 +15,5 @@ from .quantinuum import Quantinuum
 DEFAULT_TARGETS = {
     "ionq": IonQ,
     "quantinuum": Quantinuum,
-    "toshiba": Solver,
-    "1qbit": Solver,
+    "toshiba": Solver
 }

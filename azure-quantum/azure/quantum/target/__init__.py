@@ -4,11 +4,6 @@
 ##
 from .target import Target
 from .solvers import Solver
-from .oneqbit import (
-    TabuSearch,
-    PticmSolver,
-    PathRelinkingSolver,
-)
 from .toshiba import (
     SimulatedBifurcationMachine
 )
@@ -22,6 +17,5 @@ DEFAULT_TARGETS = {
     "ionq": IonQ,
     "quantinuum": Quantinuum,
     "rigetti": Rigetti,
-    "toshiba": Solver,
-    "1qbit": Solver,
+    "toshiba": Solver
 }
