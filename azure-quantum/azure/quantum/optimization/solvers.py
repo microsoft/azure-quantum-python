@@ -8,11 +8,3 @@ warnings.warn("The azure.quantum.optimization.solvers namespace will be deprecat
 Please use azure.quantum.target instead.")
 
 from azure.quantum.target.solvers import Solver
-from azure.quantum.target.microsoft.qio import (
-    ParallelTempering,
-    SimulatedAnnealing,
-    Tabu,
-    QuantumMonteCarlo,
-    PopulationAnnealing,
-    SubstochasticMonteCarlo,
-)
