@@ -61,7 +61,7 @@ class Solver(Target):
         self,
         workspace: Workspace,
         name: str,
-        provider_id: str = "Microsoft",
+        provider_id: str,
         input_data_format="microsoft.qio.v2",
         output_data_format="microsoft.qio-results.v2",
         nested_params: bool = True,
