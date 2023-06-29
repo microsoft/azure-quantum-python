@@ -204,7 +204,7 @@ class TestJob(QuantumTestBase):
     def _test_job_submit_problem(self, solver_type, problem, solver_kwargs=None):
         """Tests the job submission and its lifecycle for a given solver.
         :param solver_type:
-            The class name of the solver, for example "SimulatedAnnealing".
+            The class name of the solver, for example "SimulatedBifurcationMachine".
         :param problem
             The problem to submit
         :param solver_kwargs
