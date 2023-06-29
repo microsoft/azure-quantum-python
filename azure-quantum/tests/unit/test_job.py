@@ -192,7 +192,7 @@ class TestJob(QuantumTestBase):
         """Tests the job submission and its lifecycle for a given solver.
 
         :param solver_type:
-            The class name of the solver, for example "SimulatedAnnealing".
+            The class name of the solver, for example "SimulatedBifurcationMachine".
         """
 
         problem_name = f'Test-{solver_name}-{datetime.now():"%Y%m%d-%H%M%S"}'
