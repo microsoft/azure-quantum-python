@@ -15,7 +15,6 @@ import os
 import re
 from unittest.mock import Mock, patch
 from typing import TYPE_CHECKING
-from azure.quantum.serialization import ProtoProblem
 from azure.quantum.optimization import Problem, ProblemType, Term, SlcTerm
 import azure.quantum.optimization.problem
 from common import expected_terms
@@ -352,59 +351,6 @@ class TestProblemClass(unittest.TestCase):
             ),
             self.pubo_problem.terms
         )
-    
-    def test_serialzie_proto_problem(self):
-        problem = Problem(name = "test_proto", problem_type = ProblemType.ising, content_type=ContentType.protobuf)
-        problem.terms = [
-            Term(c=3, indices=[1, 0]),
-            Term(c=5, indices=[2, 0]),
-            Term(c=3, indices=[1, 0]),
-            Term(c=5, indices=[2, 0]),
-            Term(c=3, indices=[1, 0]),
-            Term(c=5, indices=[2, 0]),
-            Term(c=3, indices=[1, 0]),
-            Term(c=5, indices=[2, 0]),
-            Term(c=3, indices=[1, 0]),
-            Term(c=5, indices=[2, 0]),
-            Term(c=3, indices=[1, 0]),
-            Term(c=5, indices=[2, 0]),
-        ]
-        problem_msgs = problem.serialize()
-        self.assertEqual(
-            len(problem_msgs), 1
-        )
-        proto_problem = ProtoProblem()
-        proto_problem.ParseFromString(problem_msgs[0])
-        self.assertEqual(
-            proto_problem.cost_function.type, 
-            ProtoProblem.ProblemType.ISING
-        )
-        self.assertEqual(
-            len(proto_problem.cost_function.terms),
-            12
-        )
-    
-    def test_deserialize_proto_problem(self):
-        problem = Problem(name = "test_proto", problem_type = ProblemType.pubo, content_type=ContentType.protobuf)
-        problem.terms = [
-            Term(c=3, indices=[1, 0]),
-            Term(c=5, indices=[2, 0]),
-            Term(c=3, indices=[1, 0]),
-            Term(c=5, indices=[2, 0]),
-            Term(c=3, indices=[1, 0]),
-            Term(c=5, indices=[2, 0]),
-            Term(c=3, indices=[1, 0]),
-            Term(c=5, indices=[2, 0]),
-            Term(c=3, indices=[1, 0]),
-            Term(c=5, indices=[2, 0]),
-            Term(c=3, indices=[1, 0]),
-            Term(c=5, indices=[2, 0]),
-        ]
-        problem_msgs = problem.serialize()
-        deserialized_problem = Problem.deserialize(problem_msgs)
-        self.assertEqual( len(deserialized_problem.terms), 12 )
-        self.assertEqual(deserialized_problem.problem_type, ProblemType.pubo)
-        self.assertEqual(deserialized_problem.name, problem.name)
     
     def tearDown(self):
         test_files = [
