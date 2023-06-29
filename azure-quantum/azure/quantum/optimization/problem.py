@@ -26,8 +26,6 @@ from azure.quantum.storage import (
 from azure.quantum.job.base_job import ContentType
 from azure.quantum.job.job import Job
 from azure.quantum.target.target import Target
-from azure.quantum.serialization import ProtoProblem
-from google.protobuf import struct_pb2
 
 logger = logging.getLogger(__name__)
 
@@ -41,11 +39,6 @@ class ProblemType(str, Enum):
     ising = 1
     pubo_grouped = 2
     ising_grouped = 3
-
-proto_types = {
-    ProblemType.ising: ProtoProblem.ProblemType.ISING,
-    ProblemType.pubo: ProtoProblem.ProblemType.PUBO, 
-}
 
 
 class Problem:
@@ -63,7 +56,7 @@ class Problem:
     :param problem_type: Problem type (ProblemType.pubo or
         ProblemType.ising), defaults to ProblemType.ising
     :type problem_type: ProblemType, optional
-    :param content_type: Content type, eg: application/json. application/x-protobuf. Default is application/json
+    :param content_type: Content type, eg: application/json. Default is application/json
     :type content_type: ContentType, optional
     """
 
@@ -104,12 +97,9 @@ class Problem:
 
 
     def serialize(self) -> Union[str, list]:
-        """Wrapper function for serialzing. It may serialize to json or protobuf
+        """Wrapper function for serializing to json
         """ 
-        if (self.content_type == ContentType.protobuf and len(self.terms_slc) == 0):
-            return self.to_proto()
-        else:
-            return self.to_json()
+        return self.to_json()
 
     def to_json(self) -> str:
         """Serializes the problem to a JSON string"""
@@ -130,62 +120,6 @@ class Problem:
             result["cost_function"]["initial_configuration"] = self.init_config
 
         return json.dumps(result)
-    
-    def to_proto(self) -> list:
-        """Serializes a problem to a list serialized protobuf messages
-        Every problem is built into a series of protobuf messages 
-        each with 1000 terms and added to a list of proto messages.
-        In this version only ising and pubo are supported. The grouped terms will be added in the
-        subsquent PR.
-        Every message in the list is a byte string
-        """
-        proto_messages = []
-        msg_count = 0
-        terms_remaining = len(self.terms)
-        terms_read = 0
-        while terms_remaining > 0:   
-            proto_problem = ProtoProblem()
-            cost_function = proto_problem.cost_function
-            metadata = proto_problem.metadata
-            if msg_count == 0:
-                cost_function.version = "1.0"
-                cost_function.type = proto_types[self.problem_type]
-                metadata["name"] = self.name
-            # add 1000 terms per proto message
-            if terms_remaining - 1000 > 0: 
-                for i in range (terms_read,terms_read + 1000):
-                    term = cost_function.terms.add()
-                    term.c = self.terms[i].c
-                    for j in range (len(self.terms[i].ids)):
-                        term.ids.append(self.terms[i].ids[j])
-            else:
-                # add the remaining terms to the last message
-                for i in range(terms_remaining):
-                    term = cost_function.terms.add()
-                    term.c = self.terms[i].c
-                    for j in range (len(self.terms[i].ids)):
-                        term.ids.append(self.terms[i].ids[j])
-            msg_count += 1
-            terms_remaining -= 1000
-            terms_read += 1000
-            proto_messages.append(proto_problem.SerializeToString())
-        return proto_messages
-    
-    def compress_protobuf(self, 
-    proto_messages: List[str] ) -> bytes:
-    # Write to a series of files to folder and compress
-        data = io.BytesIO()
-        file_name_prefix = "gzipinputfile_pb"
-        file_count = 0
-        with tarfile.open(fileobj = data, mode = 'w:gz') as tar:
-            for msg in proto_messages:
-                file_name = file_name_prefix+"_"+str(file_count)+".pb"
-                info = tarfile.TarInfo(name=file_name)
-                info.size = len(msg)
-                msg_data = io.BytesIO(msg)
-                tar.addfile(info, msg_data)
-                file_count += 1
-        return data.getvalue() 
 
     
     @classmethod
@@ -228,54 +162,6 @@ class Problem:
         if "initial_configuration" in result["cost_function"]:
             problem.init_config = result["cost_function"]["initial_configuration"]
 
-        return problem
-    
-    @classmethod
-    def from_proto(
-        cls,
-        input_problem: list,
-        name: Optional[str] = None
-    ) -> Problem:
-        """Deserializes the problem from a
-        protobuf messages serialized with Problem.serialize()
-
-        :param input_problem:
-            the list of protobuf messages to be deserialized to a `Problem` instance
-        :type input_problem: list
-        :param
-        :param name: 
-            The name of the problem is optional, since it will try 
-            to read the serialized name from the json payload.
-            If this parameter is not empty, it will use it as the
-            problem name ignoring the serialized value.
-        :type name: Optional[str]
-        """
-        msg_count = 0
-
-        problem = cls(
-            name = name
-        )
-
-        for msg in input_problem:
-            proto_problem = ProtoProblem()
-            proto_problem.ParseFromString(msg)
-            if msg_count == 0:
-                for qdk_type, proto_type in proto_types.items():
-                    if proto_problem.cost_function.type == proto_type:
-                        problem.problem_type = qdk_type
-                metadata = proto_problem.metadata               
-                if name is None:
-                    name = metadata["name"]
-                    problem.name = name
-            for msg_term in proto_problem.cost_function.terms:
-                term = Term(
-                    c = msg_term.c
-                )
-                term.ids = []
-                for msg_term_id in msg_term.ids:
-                    term.ids.append(msg_term_id)
-                problem.terms.append(term)
-        
         return problem
 
     @classmethod
