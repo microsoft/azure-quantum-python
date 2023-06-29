@@ -410,19 +410,3 @@ class Solver(Target):
                     f"{parameter_name}={parameter_value}."
                 )
 
-    def check_supported_hardware(
-        self,
-        platform
-    ):
-        """Check whether `platform` is a supported hardware type.
-
-        :param platform:
-            Name of the hardware platform, either CPU or FPGA.
-        """
-        if platform == HardwarePlatform.FPGA:
-            raise ValueError(
-                f"The FPGA hardware option for Microsoft QIO "
-                f"solvers has been deprecated. Please remove "
-                f"the 'platform' parameter from your solver "
-                f"declaration and resubmit your problem.")
-
