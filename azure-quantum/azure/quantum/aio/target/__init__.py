@@ -4,14 +4,6 @@
 ##
 from azure.quantum.aio.target.target import Target
 from azure.quantum.aio.target.solvers import Solver
-from .microsoft.qio import (
-    ParallelTempering,
-    SimulatedAnnealing,
-    Tabu,
-    QuantumMonteCarlo,
-    PopulationAnnealing,
-    SubstochasticMonteCarlo,
-)
 from .oneqbit import (
     TabuSearch,
     PticmSolver,
@@ -28,7 +20,6 @@ from .quantinuum import Quantinuum
 DEFAULT_TARGETS = {
     "ionq": IonQ,
     "quantinuum": Quantinuum,
-    "Microsoft": Solver,
     "toshiba": Solver,
     "1qbit": Solver,
 }
