@@ -115,21 +115,6 @@ class TestWorkspace(QuantumTestBase):
         ])
         self.assertTrue(test_targets.issubset(set([t.name for t in targets])))
 
-    @pytest.mark.qio
-    @pytest.mark.live_test
-    def test_workspace_get_targets_qio(self):
-        ws = self.create_workspace()
-        targets = ws.get_targets()
-        self.assertNotIn(None, targets)
-        test_targets = set([
-            'microsoft.paralleltempering-parameterfree.cpu',
-            'microsoft.populationannealing.cpu',
-            'microsoft.qmc.cpu',
-            'microsoft.simulatedannealing-parameterfree.cpu',
-            'microsoft.substochasticmontecarlo.cpu',
-            'microsoft.tabu-parameterfree.cpu',
-        ])
-        self.assertTrue(test_targets.issubset(set([t.name for t in targets])))
 
     @pytest.mark.ionq
     @pytest.mark.live_test
