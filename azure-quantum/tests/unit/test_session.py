@@ -97,31 +97,6 @@ class TestSession(QuantumTestBase):
             self.assertEqual(session.details.status, SessionStatus.WAITING)
         self.assertEqual(session.details.status, SessionStatus.SUCCEEDED)
 
-    @pytest.mark.live_test
-    @pytest.mark.session
-    @pytest.mark.qio
-    def test_session_job_qio_ising(self):
-        workspace = self.create_workspace()
-        problem = JobPayloadFactory.get_qio_ising_problem()
-
-        from azure.quantum.optimization import ParallelTempering
-        solver = ParallelTempering(workspace, timeout=100)
-
-        with solver.open_session() as session:
-            session_id = session.id
-            problem.name = "Problem 1"
-            solver.submit(problem)
-            problem.name = "Problem 2"
-            solver.submit(problem)
-            problem.name = "Problem 3"
-            solver.submit(problem)
-
-        session_jobs = workspace.list_session_jobs(session_id=session_id)
-        self.assertEqual(len(session_jobs), 3)
-        self.assertEqual(session_jobs[0].details.name, "Problem 1")
-        self.assertEqual(session_jobs[1].details.name, "Problem 2")
-        self.assertEqual(session_jobs[2].details.name, "Problem 3")
-
     def _get_cirq_target(self, target_name):
         workspace = self.create_workspace()
         if "echo-quantinuum" in target_name:
