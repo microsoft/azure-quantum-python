@@ -189,7 +189,7 @@ class StreamingProblem(object):
     def upload(
         self,
         workspace,
-        container_name: str = "qio-problems",
+        container_name: str = "optimization-problems",
         blob_name: str = None,
     ):
         """Uploads an optimization problem instance
