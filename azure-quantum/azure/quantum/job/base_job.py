@@ -26,7 +26,6 @@ DEFAULT_TIMEOUT = 300  # Default timeout for waiting for job to complete
 
 class ContentType(str, Enum):
     json = "application/json"
-    protobuf = "application/x-protobuf"
 
 class BaseJob(WorkspaceItem):
     # Optionally override these to create a Provider-specific Job subclass
