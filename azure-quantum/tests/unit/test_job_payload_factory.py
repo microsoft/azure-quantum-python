@@ -88,18 +88,6 @@ class JobPayloadFactory():
         circuit.measure([0, 1], [0, 1])
         return circuit
 
-    @staticmethod
-    def get_qio_ising_problem() -> "optimization.Problem":
-        import azure.quantum.optimization as optimization
-        problem = optimization.Problem(name="Ising Problem",
-                                       problem_type=optimization.ProblemType.ising)
-        terms = [
-            optimization.Term(c=1, indices=[0]),
-            optimization.Term(c=2, indices=[1, 0]),
-        ]
-        problem.add_terms(terms=terms)
-        return problem
-
 
 class TestJobPayloadFactory(unittest.TestCase):
     @pytest.mark.cirq
