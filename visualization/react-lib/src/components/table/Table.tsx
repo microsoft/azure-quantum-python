@@ -16,19 +16,19 @@ import {
 import { Button, Tooltip } from "@mui/material";
 import InfoIcon from "@mui/icons-material/Info";
 
-export interface TableData {
+export type TableData = {
   id: string;
   name: string;
   type: number;
   value?: string;
   description?: string;
-}
+};
 
-export interface TableComponentProps {
+export type TableComponentProps = {
   nodes: TableData[];
   width: number;
   height: number;
-}
+};
 
 function TableComponent({ nodes, width, height }: TableComponentProps) {
   const data = { nodes };

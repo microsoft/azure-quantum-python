@@ -6,30 +6,34 @@
   "types": "src/index.ts",
   "scripts": {
     "build": "webpack --mode development",
-    "test": "jest --config ./test-config/jest.config.js --verbose=true"
+    "tests": "jest --config ./test-config/jest.config.js --verbose=true",
+    "testsonly": "jest --config ./test-config/jest.config.js --verbose=true --no-coverage",
+    "updatetests": "jest --config ./test-config/jest.config.js --verbose=true --no-coverage --updateSnapshot"
   },
-  "jest":{
-  "transformIgnorePatterns": "[`/node_modules/('d3', 'd3-array', 'd3-shape'].join('|'))`]",
-  "moduleNameMapper": {
-    "\\.(css|less)$": "<rootDir>/__mocks__/styleMock.js"
-  }},
+  "jest": {
+    "transformIgnorePatterns": "[`/node_modules/('@table-library/react-table-library/theme', '@table-library/react-table-library/material-ui', '@table-library/react-table-library/table', '@mui/material', '@mui/icons-material/Info')].join('|'))`]",
+    "moduleNameMapper": {
+      "d3": "<rootDir>/node_modules/d3/dist/d3.min.js",
+      "\\.(css|less)$": "<rootDir>/__mocks__/styleMock.js"
+    }
+  },
   "license": "MIT",
   "devDependencies": {
     "@types/d3": "^7.4.0",
     "@types/d3-tip": "^3.5.5",
-    "@types/enzyme": "^3.10.13",
     "@types/jest": "^29.5.2",
     "@types/react": "^18.0.28",
     "@types/react-color": "^3.0.6",
+    "@types/react-test-renderer": "^18.0.0",
     "clean-webpack-plugin": "^4.0.0",
     "css-loader": "^6.7.3",
-    "enzyme-to-json": "^3.6.2",
     "jest": "^29.5.0",
     "jest-environment-jsdom": "^29.5.0",
     "jest-junit": "^16.0.0",
     "jest-snapshot": "^29.5.0",
     "path": "^0.12.7",
     "react": "^18.2.0",
+    "react-test-renderer": "^18.2.0",
     "style-loader": "^3.3.3",
     "ts-jest": "^29.1.0",
     "ts-loader": "^9.4.2",
