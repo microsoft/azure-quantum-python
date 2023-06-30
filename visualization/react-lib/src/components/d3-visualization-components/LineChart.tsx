@@ -2,18 +2,18 @@ import * as React from "react";
 import * as d3 from "d3";
 import "./CSS/LineChart.css";
 
-type LegendData = {
+export type LegendData = {
   title: string;
   legendTitle: string;
   value: string;
 };
 
-interface LineChartProps {
+export type LineChartProps = {
   legendData: LegendData[];
   chartData: { [key: string]: any };
   width: number;
   height: number;
-}
+};
 
 /* Helper Functions */
 function drawEllipses(

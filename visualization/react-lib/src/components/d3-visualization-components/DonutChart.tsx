@@ -3,13 +3,13 @@ import * as d3 from "d3";
 import { PieArcDatum } from "d3-shape";
 import "./CSS/DonutChart.css";
 
-type Data = {
+export type Data = {
   title: string;
   legendTitle: string;
   value: number;
 };
 
-interface DonutChartProps {
+export type DonutChartProps = {
   data: Data[];
   width: number;
   height: number;
@@ -17,7 +17,7 @@ interface DonutChartProps {
   outerRadius: number;
   translationValX: number;
   translationValY: number;
-}
+};
 
 function DonutChart({
   data,
@@ -194,7 +194,12 @@ function DonutChart({
 
   return (
     <div className="svg-container">
-      <svg className="svg-element-flex" id="donutchart" width={width} height={height}></svg>
+      <svg
+        className="svg-element-flex"
+        id="donutchart"
+        width={width}
+        height={height}
+      ></svg>
     </div>
   );
 }

@@ -1,0 +1,37 @@
+# Builds react-lib, js-lib and links the packages.
+
+steps:
+  - task: NodeTool@0
+    inputs:
+      versionSpec: "14.x"
+    displayName: "Install Node.js"
+  # Add later
+  # - task: npmAuthenticate@0
+  #   inputs:
+  #     workingFile: "$(Build.SourcesDirectory)/$(project)/.npmrc"
+  #   displayName: "npm authenticate"
+
+  - script: |
+      npm install
+      npm run build
+    workingDirectory: "$(project)"
+    displayName: "npm install and build"
+
+  - task: Npm@1
+    displayName: npm run test
+    inputs:
+      workingDir: "$(project)"
+      command: "custom"
+      customCommand: "run test:ci"
+
+  - task: CopyFiles@2
+    inputs:
+      SourceFolder: "$(project)"
+      Contents: "**"
+      TargetFolder: "$(outputDirectory)"
+    displayName: "Copy build artifacts to output directory"
+
+  - script: |
+      rm *.js
+    displayName: "Cleanup Bundle Build Files"
+    workingDirectory: "$(project)/dist"

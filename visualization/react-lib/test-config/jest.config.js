@@ -1,4 +1,4 @@
-const esModules = ['d3', 'd3-array', 'd3-shape'].join('|');
+const esModules = ['@table-library/react-table-library/theme', '@table-library/react-table-library/material-ui', '@table-library/react-table-library/table', '@mui/material', '@mui/icons-material/Info'].join('|');
 module.exports = {
     preset: "ts-jest",
     moduleNameMapper: {
@@ -40,7 +40,6 @@ module.exports = {
         "**/*.{ts,tsx}",
         "!**/node_modules/**",
     ],
-    snapshotSerializers: ["enzyme-to-json/serializer"],
     modulePaths: [
         "<rootDir>"
     ],
