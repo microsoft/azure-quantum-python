@@ -47,12 +47,12 @@ stages:
       lfs: true
     - template: react-lib-build.yml
       parameters:
-      jslib: $(jslib)
-      rootDirectory: $(rootDirectory)
-      project: $(project)
-      reactnodemodules: $(reactnodemodules)
-      outputDirectory: $(outputDirectory)
-      tests: $(tests)
+        jslib: $(jslib)
+        rootDirectory: $(rootDirectory)
+        project: $(project)
+        reactnodemodules: $(reactnodemodules)
+        outputDirectory: $(outputDirectory)
+        tests: $(tests)
     - publish: $(outputDirectory)
       artifact: react-lib-build
 
@@ -68,9 +68,9 @@ stages:
       lfs: true
     - template: js-lib-build.yml
       parameters:
-      jslib: $(jslib)
-      rootDirectory: $(rootDirectory)
-      projectname: $(projectname)
+        jslib: $(jslib)
+        rootDirectory: $(rootDirectory)
+        projectname: $(projectname)
 
     - publish: $(outputDirectory)
       artifact: js-lib-build
