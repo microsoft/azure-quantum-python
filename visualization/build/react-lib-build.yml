@@ -1,4 +1,5 @@
 # Builds react-lib, js-lib and links the packages.
+# TO DO: separate builds into separate yaml templates.
 
 resources:
 - repo: self
@@ -9,6 +10,8 @@ trigger:
   branches:
       include:
         - main
+
+        #TO DO: remove after publish
         - users/kamcclin/re-visual2
   paths:
     include:
@@ -95,7 +98,7 @@ steps:
   - task: PublishCodeCoverageResults@1
     displayName: "Publish Code Coverage Results"
     inputs:
-      codeCoverageTool: "Cobertura"
+      codeCoverageTool: "babel"
       summaryFileLocation: "$(project)/coverage/coverage-final.json"
 
   - task: CopyFiles@2
