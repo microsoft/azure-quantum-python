@@ -1,11 +1,16 @@
-variables:
-  jslib: js-lib
-  rootDirectory: visualization
-  project: $(rootDirectory)/react-lib
-  reactnodemodules: node-modules/react
-  projectname: quantum-visualization
-  outputDirectory: $(Agent.BuildDirectory)/output
-  tests: $(project)/TestResults
+parameters:
+  - name: jslib
+    type: string
+  - name: rootDirectory
+    type: string
+  - name: project
+    type: string
+  - name: reactnodemodules
+    type: string
+  - name: outputDirectory
+    type: string
+  - name: tests
+    type: string
 
 steps:
   - task: NodeTool@0
@@ -16,29 +21,29 @@ steps:
   # Add later
   # - task: npmAuthenticate@0
   #   inputs:
-  #     workingFile: "$(Build.SourcesDirectory)/$(project)/.npmrc"
+  #     workingFile: "$(Build.SourcesDirectory)/${{ parameters.project }}/.npmrc"
   #   displayName: "npm authenticate"
 
   - script: |
       npm install
       npm run build
-    workingDirectory: "$(project)"
+    workingDirectory: "${{ parameters.project }}"
     displayName: "npm install and build react-lib"
 
   - script: |
       npm link
-    workingDirectory: "$(project)"
+    workingDirectory: "${{ parameters.project }}"
     displayName: "npm link react-lib"
 
   - script: 
       npm link
-    workingDirectory: "$(project)/$(reactnodemodules)"
+    workingDirectory: "${{ parameters.project }}/${{ parameters.reactnodemodules }}"
     displayName: "npm link react"
 
   - task: Npm@1
     displayName: npm run test
     inputs:
-      workingDir: "$(project)"
+      workingDir: "${{ parameters.project }}"
       command: "custom"
       customCommand: "run tests"
 
@@ -46,17 +51,17 @@ steps:
     displayName: "publish test results"
     condition: succeededOrFailed() 
     inputs:
-      testResultsFiles: "$(tests)/test-results.xml"
+      testResultsFiles: "${{ parameters.tests }}/test-results.xml"
 
   - task: PublishCodeCoverageResults@1
     displayName: "Publish Code Coverage Results"
     inputs:
       codeCoverageTool: "babel"
-      summaryFileLocation: "$(project)/coverage/coverage-final.json"
+      summaryFileLocation: "${{ parameters.project }}/coverage/coverage-final.json"
 
   - task: CopyFiles@2
     inputs:
-      SourceFolder: "$(rootDirectory)/$(jslib)/dist"
+      SourceFolder: "${{ parameters.rootDirectory }}/${{ parameters.jslib }}/dist"
       Contents: "**"
-      TargetFolder: "$(outputDirectory)"
+      TargetFolder: "${{ parameters.outputDirectory  }}"
     displayName: "Copy build artifacts to output directory"

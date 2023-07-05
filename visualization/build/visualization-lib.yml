@@ -26,7 +26,13 @@ pr:
     - visualization
 
 variables:
+  jslib: js-lib
+  rootDirectory: visualization
+  project: $(rootDirectory)/react-lib
+  reactnodemodules: node-modules/react
+  projectname: quantum-visualization
   outputDirectory: $(Agent.BuildDirectory)/output
+  tests: $(project)/TestResults
 
 stages:
 
@@ -40,6 +46,13 @@ stages:
     - checkout: self
       lfs: true
     - template: react-lib-build.yml
+      parameters:
+      jslib: $(jslib)
+      rootDirectory: $(rootDirectory)
+      project: $(project)
+      reactnodemodules: $(reactnodemodules)
+      outputDirectory: $(outputDirectory)
+      tests: $(tests)
     - publish: $(outputDirectory)
       artifact: react-lib-build
 
@@ -54,6 +67,11 @@ stages:
     - checkout: self
       lfs: true
     - template: js-lib-build.yml
+      parameters:
+      jslib: $(jslib)
+      rootDirectory: $(rootDirectory)
+      projectname: $(projectname)
+
     - publish: $(outputDirectory)
       artifact: js-lib-build
 
