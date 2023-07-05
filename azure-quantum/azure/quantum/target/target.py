@@ -226,13 +226,6 @@ target '{self.name}' of provider '{self.provider_id}' not found."
         """
         return InputParams()
 
-    def supports_protobuf(self):
-        """
-        Return whether or not the Solver class supports protobuf serialization.
-        This should be overridden by Solver subclasses which do support protobuf.
-        """
-        return False
-
     def estimate_cost(
         self,
         input_data: Any,

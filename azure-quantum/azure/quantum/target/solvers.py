@@ -18,15 +18,10 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 __all__ = [
-    "HardwarePlatform",
     "RangeSchedule",
     "Solver",
 ]
 
-
-class HardwarePlatform(Enum):
-    CPU = 1,
-    FPGA = 2
 
 
 class RangeSchedule:
@@ -51,17 +46,12 @@ class RangeSchedule:
                 '"schedule_type" must be "linear" or "geometric"!'
             )
 
-proto_valid_solver_names = [
-    "PopulationAnnealing",
-    "SubstochasticMonteCarlo"
-]
-
 class Solver(Target):
     def __init__(
         self,
         workspace: Workspace,
         name: str,
-        provider_id: str = "Microsoft",
+        provider_id: str,
         input_data_format="microsoft.qio.v2",
         output_data_format="microsoft.qio-results.v2",
         nested_params: bool = True,
@@ -117,11 +107,8 @@ class Solver(Target):
             or the URL of an Azure Storage Blob where the serialized version
             of a Problem has been uploaded.
         """
-        if (self.provider_id == "Microsoft"):
-            warnings.warn('Please note that Microsoft QIO solvers will be deprecated and no longer available in Azure Quantum after June 30th 2023.')
         from azure.quantum.optimization import Problem
         if isinstance(problem, Problem):
-            self.check_valid_problem(problem)
             return super().submit(
                 input_data=problem,
                 name=problem.name,
@@ -228,31 +215,6 @@ class Solver(Target):
                         Otherwise, consider cancelling the job \
                         and resubmitting with a lower timeout."
                 )
-
-    def check_valid_problem(self, problem):
-        # Evaluate Problem and Solver compatibility.
-        from azure.quantum.optimization.problem import ProblemType
-        if problem.problem_type in {ProblemType.pubo_grouped, ProblemType.ising_grouped}:
-            if not self.supports_grouped_terms():
-                raise ValueError(
-                    f"Solver type is not compatible"
-                    f"with problem type {problem.problem_type};"
-                    f"Try PopulationAnnealing or SubstochasticMonteCarlo."
-                )
-        if problem.content_type == ContentType.protobuf:
-            if not self.supports_protobuf() and self.name not in proto_valid_solver_names:
-                raise ValueError(
-                    f"Solver `{self.name} type is not compatible "
-                    f"for serialization with protobuf; "
-                    f"Try PopulationAnnealing or SubstochasticMonteCarlo."
-                )
-
-    def supports_grouped_terms(self):
-        """
-        Return whether or not the Solver class supported grouped terms in the cost function.
-        This should be overridden by Solver subclasses which do support grouped terms.
-        """
-        return False
     
     class ScheduleEvolution(Enum):
         INCREASING = 1
@@ -411,20 +373,4 @@ class Solver(Target):
                     f"{lower_bound_inclusive}; found "
                     f"{parameter_name}={parameter_value}."
                 )
-
-    def check_supported_hardware(
-        self,
-        platform
-    ):
-        """Check whether `platform` is a supported hardware type.
-
-        :param platform:
-            Name of the hardware platform, either CPU or FPGA.
-        """
-        if platform == HardwarePlatform.FPGA:
-            raise ValueError(
-                f"The FPGA hardware option for Microsoft QIO "
-                f"solvers has been deprecated. Please remove "
-                f"the 'platform' parameter from your solver "
-                f"declaration and resubmit your problem.")
 

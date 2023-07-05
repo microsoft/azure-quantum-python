@@ -12,36 +12,22 @@ from datetime import date, datetime, timedelta
 from common import QuantumTestBase, DEFAULT_TIMEOUT_SECS
 from azure.quantum.job.base_job import ContentType
 from azure.quantum import Job
-from azure.quantum.optimization import Problem, ProblemType, Term, SlcTerm
-import azure.quantum.optimization as microsoft
-import azure.quantum.target.oneqbit as oneqbit
+from azure.quantum.optimization import Problem, ProblemType, Term
 import azure.quantum.target.toshiba as toshiba
 
 
 SOLVER_TYPES = [
-    functools.partial(microsoft.SimulatedAnnealing, beta_start=0),
-    functools.partial(microsoft.ParallelTempering, sweeps=100),
-    functools.partial(microsoft.Tabu, sweeps=100),
-    functools.partial(microsoft.QuantumMonteCarlo, trotter_number=4),
-    functools.partial(microsoft.PopulationAnnealing, sweeps=200),
-    functools.partial(microsoft.SubstochasticMonteCarlo, step_limit=280),
-    functools.partial(oneqbit.TabuSearch, improvement_cutoff=10),
-    functools.partial(oneqbit.PticmSolver, num_sweeps_per_run=99),
-    functools.partial(oneqbit.PathRelinkingSolver, distance_scale=0.44),
     functools.partial(toshiba.SimulatedBifurcationMachine, loops=10),
 ]
 
 def get_solver_types():
-    one_qbit_enabled = os.environ.get("AZURE_QUANTUM_1QBIT", "") == "1"
     toshiba_enabled = os.environ.get("AZURE_QUANTUM_TOSHIBA", "") == "1"
     
     solver_types = []
     for solver_type in SOLVER_TYPES:
         solver_type_name = f'{solver_type.func.__module__}.{solver_type.func.__qualname__}'
         
-        if (solver_type_name.startswith("azure.quantum.target.solvers.") # Microsoft solvers
-            or (solver_type_name.__contains__("toshiba") and toshiba_enabled)
-            or (solver_type_name.__contains__("oneqbit") and one_qbit_enabled)):
+        if (solver_type_name.__contains__("toshiba") and toshiba_enabled):
             solver_types.append(solver_type)
     return solver_types
 
@@ -82,160 +68,6 @@ class TestJob(QuantumTestBase):
 
     Tests the azure.quantum.job module.
     """
-
-    @pytest.mark.live_test
-    @pytest.mark.qio
-    def test_job_submit_microsoft_simulated_annealing(self):
-        solver_type = functools.partial(microsoft.SimulatedAnnealing, beta_start=0)
-        solver_name = "SimulatedAnnealing"
-        self._test_job_submit(solver_name, solver_type)
-        self._test_job_filter(solver_type)
-        self._test_job_submit(solver_name, solver_type, test_grouped=True)
-
-    @pytest.mark.live_test
-    @pytest.mark.qio
-    def test_job_submit_microsoft_parallel_tempering(self):
-        solver_type = functools.partial(microsoft.ParallelTempering, sweeps=100)
-        solver_name = "ParallelTempering"
-        self._test_job_submit(solver_name, solver_type)
-        self._test_job_submit(solver_name, solver_type, test_grouped=True)
-
-    @pytest.mark.live_test
-    @pytest.mark.qio
-    def test_job_submit_microsoft_tabu(self):
-        solver_type = functools.partial(microsoft.Tabu, sweeps=100)
-        solver_name = "Tabu"
-        self._test_job_submit(solver_name, solver_type)
-        self._test_job_submit(solver_name, solver_type, test_grouped=True)
-
-    @pytest.mark.live_test
-    @pytest.mark.qio
-    def test_job_submit_microsoft_quantum_monte_carlo(self):
-        solver_type = functools.partial(microsoft.QuantumMonteCarlo, trotter_number=4)
-        solver_name = "QuantumMonteCarlo"
-        self._test_job_submit(solver_name, solver_type)
-        self._test_job_submit(solver_name, solver_type, test_grouped=True)
-
-    @pytest.mark.live_test
-    @pytest.mark.qio
-    def test_job_submit_microsoft_population_annealing(self):
-        solver_type = functools.partial(microsoft.PopulationAnnealing, sweeps=200)
-        solver_name = "PopulationAnnealing"
-        self._test_job_submit(solver_name, solver_type)
-        self._test_job_submit(solver_name, solver_type, test_grouped=True)
-
-    @pytest.mark.live_test
-    @pytest.mark.qio
-    def test_job_submit_microsoft_substochastic_monte_carlo(self):
-        solver_type = functools.partial(microsoft.SubstochasticMonteCarlo, step_limit=280)
-        solver_name = "SubstochasticMonteCarlo"
-        self._test_job_submit(solver_name, solver_type)
-        self._test_job_submit(solver_name, solver_type, test_grouped=True)
-
-    @pytest.mark.live_test
-    @pytest.mark.qio
-    def test_job_submit_microsoft_population_annealing_proto(self):
-        solver_type = functools.partial(microsoft.PopulationAnnealing, sweeps=200, content_type = ContentType.protobuf)
-        solver_name = "PopulationAnnealing"
-        self._test_job_submit(solver_name, solver_type, content_type=ContentType.protobuf)
-
-    @pytest.mark.qio
-    def test_job_submit_microsoft_substochastic_monte_carlo_proto(self):
-        solver_type = functools.partial(microsoft.SubstochasticMonteCarlo, step_limit=280, content_type = ContentType.protobuf)
-        solver_name = "SubstochasticMonteCarlo"
-        self._test_job_submit(solver_name, solver_type, content_type=ContentType.protobuf)
-
-    @pytest.mark.live_test
-    @pytest.mark.qio
-    def test_job_upload_and_run_solvers(self):
-        problem_name = f'Test-problem-{datetime.now():"%Y%m%d-%H%M%S"}'
-        problem = self.create_problem(name=problem_name)
-        workspace = self.create_workspace()
-
-        workspace = self.create_workspace()
-        # Upload the blob data
-        input_data_uri = problem.upload(
-            workspace=workspace,
-            blob_name="inputData",
-            container_name=f"job-{Job.create_job_id()}"
-        )
-
-        for solver_type in get_solver_types():
-            solver = solver_type(workspace)
-
-            # Submit the blob data URI and run job
-            job = solver.submit(input_data_uri)
-            job.wait_until_completed(timeout_secs=DEFAULT_TIMEOUT_SECS)
-            job.refresh()
-            job.get_results(timeout_secs=DEFAULT_TIMEOUT_SECS)
-            self.assertTrue(job.has_completed())
-            self.assertEqual(job.details.status, "Succeeded")
-
-    @pytest.mark.skipif(not(os.environ.get("AZURE_QUANTUM_1QBIT", "") == "1"), reason="1Qbit tests not enabled")
-    @pytest.mark.oneqbit
-    @pytest.mark.live_test
-    def test_job_submit_oneqbit_tabu_search(self):
-        solver_type = functools.partial(oneqbit.TabuSearch, improvement_cutoff=10)
-        solver_name = "TabuSearch"
-        solver_kwargs = {
-            "improvement_cutoff": 2,
-            "improvement_tolerance": 1e-9,
-            "seed": 123,
-            "tabu_tenure": 2,
-            "tabu_tenure_rand_max": 2,
-            "timeout": 2,
-        }
-        self._test_job_submit(solver_name, solver_type, solver_kwargs=solver_kwargs)
-
-    @pytest.mark.skipif(not(os.environ.get("AZURE_QUANTUM_1QBIT", "") == "1"), reason="1Qbit tests not enabled")
-    @pytest.mark.oneqbit
-    @pytest.mark.live_test
-    def test_job_submit_oneqbit_pticm_solver(self):
-        solver_type = functools.partial(oneqbit.PticmSolver, num_sweeps_per_run=99)
-        solver_name = "PticmSolver"
-        solver_kwargs = {
-            "auto_set_temperatures": False,
-            "elite_threshold": 0.3,
-            "frac_icm_thermal_layers": 0.5,
-            "frac_sweeps_fixing": 0.15,
-            "frac_sweeps_idle": 1.0,
-            "frac_sweeps_stagnation": 1.0,
-            "goal": "OPTIMIZE",
-            "high_temp": 2,
-            "low_temp": 0.2,
-            "max_samples_per_layer": 10,
-            "max_total_sweeps": 1000,
-            "num_elite_temps": 4,
-            "num_replicas": 2,
-            "num_sweeps_per_run": 100,
-            "num_temps": 30,
-            "perform_icm": True,
-            "scaling_type": "MEDIAN",
-            "seed": 42,
-            "var_fixing_type": "NO_FIXING"
-        }
-
-        with pytest.deprecated_call():
-            self._test_job_submit(solver_name, solver_type, solver_kwargs=solver_kwargs.copy())
-        
-        solver_kwargs.pop("perform_icm")
-        self._test_job_submit(solver_name, solver_type, solver_kwargs=solver_kwargs)
-
-    @pytest.mark.skipif(not(os.environ.get("AZURE_QUANTUM_1QBIT", "") == "1"), reason="1Qbit tests not enabled")
-    @pytest.mark.oneqbit
-    @pytest.mark.live_test
-    def test_job_submit_oneqbit_path_relinking_solver(self):
-        solver_type = functools.partial(oneqbit.PathRelinkingSolver, distance_scale=0.44)
-        solver_name = "PathRelinkingSolver"
-        solver_kwargs = {
-            "distance_scale": 0.33,
-            "greedy_path_relinking": False,
-            "ref_set_count": 10,
-            "seed": 123,
-            "timeout": 0,
-        }
-        self._test_job_submit(solver_name, solver_type, solver_kwargs=solver_kwargs)
-
     @pytest.mark.skipif(not(os.environ.get("AZURE_QUANTUM_TOSHIBA", "") == "1"), reason="Toshiba tests not enabled")
     @pytest.mark.toshiba
     @pytest.mark.live_test
@@ -273,26 +105,25 @@ class TestJob(QuantumTestBase):
         self,
         solver_name,
         solver_type,
-        test_grouped=False,
         content_type=ContentType.json,
         solver_kwargs=None
     ):
         """Tests the job submission and its lifecycle for a given solver.
 
         :param solver_type:
-            The class name of the solver, for example "SimulatedAnnealing".
+            The class name of the solver, for example "SimulatedBifurcationMachine".
         """
 
         problem_name = f'Test-{solver_name}-{datetime.now():"%Y%m%d-%H%M%S"}'
 
-        problem = self.create_problem(name=problem_name, test_grouped=test_grouped,content_type=content_type)
+        problem = self.create_problem(name=problem_name,content_type=content_type)
 
         self._test_job_submit_problem(solver_type, problem, solver_kwargs)
     
     def _test_job_submit_problem(self, solver_type, problem, solver_kwargs=None):
         """Tests the job submission and its lifecycle for a given solver.
         :param solver_type:
-            The class name of the solver, for example "SimulatedAnnealing".
+            The class name of the solver, for example "SimulatedBifurcationMachine".
         :param problem
             The problem to submit
         :param solver_kwargs
@@ -322,64 +153,11 @@ class TestJob(QuantumTestBase):
         self.assertEqual(job.details.status, "Succeeded")
 
 
-    @pytest.mark.live_test
-    @pytest.mark.qio
-    def test_problem_upload_download(self):
-        solver_type = functools.partial(microsoft.SimulatedAnnealing, beta_start=0)
-        workspace = self.create_workspace()
-        solver = solver_type(workspace)
-        problem_name = f'job-{Job.create_job_id()}' if not self.is_playback else "job-00000000-0000-0000-0000-000000000002"
-        problem = self.create_problem(name=problem_name)
-        job = solver.submit(problem)
-        # Check if problem can be successfully downloaded and deserialized
-        problem_as_json = job.download_data(job.details.input_data_uri)
-        downloaded_problem = Problem.deserialize(input_problem=problem_as_json)
-
-        actual = downloaded_problem.serialize()
-        expected = problem.serialize()
-        self.assertEqual(expected, actual)
-
-    @pytest.mark.live_test
-    @pytest.mark.qio
-    def test_job_attachments(self):
-        workspace = self.create_workspace()
-        solver = microsoft.SimulatedAnnealing(workspace)
-
-        expected_1 = "Some data 1".encode('utf-8')
-        expected_2 = "Some other random data 2".encode('utf-8')
-        problem = self.create_problem(name="test_job_attachments")
-
-        job = solver.submit(problem)
-
-        url1 = job.upload_attachment("test-1", expected_1)
-        self.assertTrue(job.id in url1)
-        self.assertTrue("test-1" in url1)
-
-        url2 = job.upload_attachment("test-2", expected_2)
-        self.assertTrue(job.id in url2)
-        self.assertTrue("test-2" in url2)
-
-        actual_1 = job.download_attachment("test-1")
-        self.assertEqual(expected_1, actual_1)
-
-        actual_2 = job.download_attachment("test-2")
-        self.assertEqual(expected_2, actual_2)
-
-        # Check if download_attachment can successfully download other blobs 
-        # automatically created
-        problem_as_json = job.download_attachment("inputData")
-        downloaded_problem = Problem.deserialize(input_problem=problem_as_json)
-        actual = downloaded_problem.serialize()
-        expected = problem.serialize()
-        self.assertEqual(expected, actual)
-
-
     def create_problem(
             self,
             name: str,
             init: bool = False,
             problem_type: ProblemType = ProblemType.pubo,
-            test_grouped: bool = False,
             content_type: ContentType = None ,
         ) -> Problem:
         """Create optimization problem with some default terms
@@ -397,11 +175,6 @@ class TestJob(QuantumTestBase):
             Term(w=-4, indices=[3, 1]),
             Term(w=4, indices=[3, 2]),
         ]
-        if test_grouped:
-            terms.append(SlcTerm(
-                c=1,
-                terms=[Term(c=i+2, indices=[i]) for i in range(3)]
-            ))
 
         initial_config = {"1": 0, "0": 1, "2": 0, "3": 1} if init \
                          else None

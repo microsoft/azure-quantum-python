@@ -80,18 +80,6 @@ class TestWorkspace(QuantumTestBase):
         with pytest.raises(ValueError):
             Workspace(storage=storage)
 
-    def test_workspace_get_targets(self):
-        ws = self.create_async_workspace()
-        targets = self.get_async_result(ws.get_targets())
-        test_targets = set([
-            'microsoft.paralleltempering-parameterfree.cpu',
-            'microsoft.populationannealing.cpu',
-            'microsoft.qmc.cpu',
-            'microsoft.simulatedannealing-parameterfree.cpu',
-            'microsoft.substochasticmontecarlo.cpu',
-            'microsoft.tabu-parameterfree.cpu',
-        ])
-        self.assertTrue(test_targets.issubset(set([t.name for t in targets])))
 
     def test_workspace_job_quotas(self):
         ws = self.create_async_workspace()

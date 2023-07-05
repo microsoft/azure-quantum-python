@@ -29,7 +29,6 @@ AZURE_QUANTUM_WORKSPACE_LOCATION
 
 Optionally, to test 3rd party solvers, set:
 ```plaintext
-AZURE_QUANTUM_1QBIT=1
 AZURE_QUANTUM_TOSHIBA=1
 ```
 

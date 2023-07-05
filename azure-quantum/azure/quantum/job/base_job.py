@@ -26,7 +26,6 @@ DEFAULT_TIMEOUT = 300  # Default timeout for waiting for job to complete
 
 class ContentType(str, Enum):
     json = "application/json"
-    protobuf = "application/x-protobuf"
 
 class BaseJob(WorkspaceItem):
     # Optionally override these to create a Provider-specific Job subclass
@@ -237,7 +236,7 @@ class BaseJob(WorkspaceItem):
         :type container_uri: str
         :param input_data: Input data in binary format
         :type input_data: bytes
-        :param content_type: Content type, e.g. "application/json" or "application/x-protobuf"
+        :param content_type: Content type, e.g. "application/json"
         :type content_type: Optional, ContentType
         :param blob_name: Blob name, defaults to "inputData"
         :type blob_name: str, optional

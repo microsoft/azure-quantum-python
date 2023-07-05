@@ -123,14 +123,12 @@ class StreamingProblem(object):
 
     def add_terms(
         self,
-        terms: List[Term],
-        c: Union[int, float] = 1
+        terms: List[Term]
     ):
         """Adds a list of terms to the `Problem`
          representation and queues them to be uploaded. Special terms are not supported.
 
         :param terms: The list of terms to add to the problem
-        :param c: Weight of grouped term, if applicable
         """
         if self.uploaded_uri is not None:
             raise Exception("Cannot add terms after problem has been uploaded")
@@ -189,7 +187,7 @@ class StreamingProblem(object):
     def upload(
         self,
         workspace,
-        container_name: str = "qio-problems",
+        container_name: str = "optimization-problems",
         blob_name: str = None,
     ):
         """Uploads an optimization problem instance
