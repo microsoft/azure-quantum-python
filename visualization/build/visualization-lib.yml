@@ -1,5 +1,4 @@
 # Builds react-lib, js-lib and links the packages.
-
 resources:
 - repo: self
   clean: true
@@ -9,7 +8,6 @@ trigger:
   branches:
       include:
         - main
-
         #TO DO: remove after publish
         - users/kamcclin/re-visual2
   paths:
@@ -40,7 +38,7 @@ stages:
   pool:
     vmImage: 'windows-latest'
   jobs:
-  - job: Build
+  - job: Build and run tests
     steps:
     # Need to specify this explicitly to ensure we fetch with git-lfs enabled
     - checkout: self
@@ -61,7 +59,7 @@ stages:
   pool:
     vmImage: 'windows-latest'
   jobs:
-  - job: Build
+  - job: Build and publish
     steps:
     # Need to specify this explicitly to ensure we fetch with git-lfs enabled
     - checkout: self
