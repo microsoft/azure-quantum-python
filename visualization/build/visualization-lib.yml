@@ -36,7 +36,7 @@ variables:
 
 stages:
 
-- stage: Build_React-Lib
+- stage: Build_React_Lib
   pool:
     vmImage: 'windows-latest'
   jobs:
@@ -57,7 +57,7 @@ stages:
       artifact: react-lib-build
 
 - stage: Build_Visualization_Library 
-  dependsOn: [Build_React-Lib]
+  dependsOn: [Build_React_Lib]
   pool:
     vmImage: 'windows-latest'
   jobs:
