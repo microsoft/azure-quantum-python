@@ -1,0 +1,60 @@
+# Builds react-lib, js-lib and links the packages.
+
+resources:
+- repo: self
+  clean: true
+
+# Trigger whenever a commit occurs in these branches
+trigger:
+  branches:
+      include:
+        - main
+
+        #TO DO: remove after publish
+        - users/kamcclin/re-visual2
+  paths:
+    include:
+    - visualization
+
+# Trigger whenever a PR is submitted
+pr:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+    - visualization
+
+variables:
+  outputDirectory: $(Agent.BuildDirectory)/output
+
+stages:
+
+- stage: Build_React-Lib
+  pool:
+    vmImage: 'windows-latest'
+  jobs:
+  - job: Build
+    steps:
+    # Need to specify this explicitly to ensure we fetch with git-lfs enabled
+    - checkout: self
+      lfs: true
+    - template: react-lib-build.yml
+    - publish: $(outputDirectory)
+      artifact: react-lib-build
+
+- stage: Build_Visualization_Library 
+  dependsOn: [Build_React-Lib]
+  pool:
+    vmImage: 'windows-latest'
+  jobs:
+  - job: Build
+    steps:
+    # Need to specify this explicitly to ensure we fetch with git-lfs enabled
+    - checkout: self
+      lfs: true
+    - template: js-lib-build.yml
+    - publish: $(outputDirectory)
+      artifact: js-lib-build
+
+

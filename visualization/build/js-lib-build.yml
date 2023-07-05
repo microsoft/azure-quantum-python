@@ -1,0 +1,34 @@
+variables:
+  jslib: js-lib
+  rootDirectory: visualization
+  projectname: quantum-visualization
+
+steps:
+  - task: NodeTool@0
+    inputs:
+      versionSpec: "16.x"
+    displayName: "Install Node.js"
+
+  # Add later
+  # - task: npmAuthenticate@0
+  #   inputs:
+  #     workingFile: "$(Build.SourcesDirectory)/$(project)/.npmrc"
+  #   displayName: "npm authenticate"
+
+  - script: 
+      npm link react $(projectname)
+    workingDirectory: "$(rootDirectory)/$(jslib)"
+    displayName: "npm link react and quantum visualization to js-lib"
+
+  - script: |
+      npm install
+      npm run build
+    workingDirectory: "$(rootDirectory)/$(jslib)"
+    displayName: "npm install and build js-lib"
+
+  - task: CopyFiles@2
+    inputs:
+      SourceFolder: "$(rootDirectory)/$(jslib)/dist"
+      Contents: "**"
+      TargetFolder: "$(outputDirectory)"
+    displayName: "Copy build artifacts to output directory"

@@ -1,33 +1,3 @@
-# Builds react-lib, js-lib and links the packages.
-# TO DO: separate builds into separate yaml templates.
-
-resources:
-- repo: self
-  clean: true
-
-# Trigger whenever a commit occurs in these branches
-trigger:
-  branches:
-      include:
-        - main
-
-        #TO DO: remove after publish
-        - users/kamcclin/re-visual2
-  paths:
-    include:
-    - visualization
-
-# Trigger whenever a PR is submitted
-pr:
-  branches:
-    include:
-      - main
-  paths:
-    include:
-    - visualization
-
-stage: Build Visualization Library
- 
 variables:
   jslib: js-lib
   rootDirectory: visualization
@@ -36,12 +6,6 @@ variables:
   projectname: quantum-visualization
   outputDirectory: $(Agent.BuildDirectory)/output
   tests: $(project)/TestResults
-
-  dependsOn: []
-  pool:
-    vmImage: 'windows-latest'
-  jobs:
-  - job: Build
 
 steps:
   - task: NodeTool@0
@@ -70,17 +34,6 @@ steps:
       npm link
     workingDirectory: "$(project)/$(reactnodemodules)"
     displayName: "npm link react"
-
-  - script: 
-      npm link react $(projectname)
-    workingDirectory: "$(rootDirectory)/$(jslib)"
-    displayName: "npm link react and quantum visualization to js-lib"
-
-  - script: |
-      npm install
-      npm run build
-    workingDirectory: "$(rootDirectory)/$(jslib)"
-    displayName: "npm install and build js-lib"
 
   - task: Npm@1
     displayName: npm run test
