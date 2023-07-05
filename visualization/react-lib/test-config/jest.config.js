@@ -21,7 +21,8 @@ module.exports = {
     collectCoverage: true,
     coverageReporters: [
         "text",
-        "lcov"
+        "html",
+        "json"
     ],
     coverageThreshold: {
         "../**/*": {
