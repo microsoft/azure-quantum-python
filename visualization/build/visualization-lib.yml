@@ -34,11 +34,11 @@ variables:
 
 stages:
 
-- stage: Build_React_Lib
+- stage: Build_Visualization_Library
   pool:
     vmImage: 'windows-latest'
   jobs:
-  - job: Build_And_Run_Tests
+  - job: Build_React_lib
     steps:
     # Need to specify this explicitly to ensure we fetch with git-lfs enabled
     - checkout: self
@@ -49,14 +49,6 @@ stages:
         rootDirectory: $(rootDirectory)
         project: $(project)
         reactnodemodules: $(reactnodemodules)
-        tests: $(tests)
-
-- stage: Build_Visualization_Library 
-  dependsOn: [Build_React_Lib]
-  condition: succeededOrFailed() 
-  pool:
-    vmImage: 'windows-latest'
-  jobs:
   - job: Build_And_Publish
     steps:
     # Need to specify this explicitly to ensure we fetch with git-lfs enabled
