@@ -1,18 +1,18 @@
 # Builds react-lib, js-lib and links the packages.
 resources:
-- repo: self
-  clean: true
+  - repo: self
+    clean: true
 
 # Trigger whenever a commit occurs in these branches
 trigger:
   branches:
-      include:
-        - main
-        #TO DO: remove after publish
-        - users/kamcclin/re-visual2
+    include:
+      - main
+      #TO DO: remove after publish
+      - users/kamcclin/re-visual2
   paths:
     include:
-    - visualization
+      - visualization
 
 # Trigger whenever a PR is submitted
 pr:
@@ -21,7 +21,7 @@ pr:
       - main
   paths:
     include:
-    - visualization
+      - visualization
 
 variables:
   rootDirectory: visualization
@@ -33,39 +33,38 @@ variables:
   tests: $(project)/TestResults
 
 stages:
+  - stage: Build_Visualization_Library
+    pool:
+      vmImage: "windows-latest"
+    jobs:
+      - job: Build_React_lib
+        steps:
+          # Need to specify this explicitly to ensure we fetch with git-lfs enabled
+          - checkout: self
+            lfs: true
+          - template: react-lib-build-publish.yml
+            parameters:
+              jslib: $(jslib)
+              rootDirectory: $(rootDirectory)
+              project: $(project)
+              reactnodemodules: $(reactnodemodules)
+              tests: $(tests)
+              projectname: $(projectname)
+              outputDirectory: $(outputDirectory)
+          - publish: $(outputDirectory)
+            artifact: js-lib-build
 
-- stage: Build_Visualization_Library
-  pool:
-    vmImage: 'windows-latest'
-  jobs:
-  - job: Build_React_lib
-    steps:
-    # Need to specify this explicitly to ensure we fetch with git-lfs enabled
-    - checkout: self
-      lfs: true
-    - template: react-lib-build-publish.yml
-      parameters:
-        jslib: $(jslib)
-        rootDirectory: $(rootDirectory)
-        project: $(project)
-        reactnodemodules: $(reactnodemodules)
-        tests: $(tests)
-        projectname: $(projectname)
-        outputDirectory: $(outputDirectory)
-
-  - job: Build_JS_Lib_And_Publish
-    dependsOn: [Build_React_lib]
-    condition: succeededOrFailed() 
-    steps:
-    # Need to specify this explicitly to ensure we fetch with git-lfs enabled
-    - checkout: self
-      lfs: true
-    - template: js-lib-build.yml
-      parameters:
-        jslib: $(jslib)
-        projectname: $(projectname)
-        outputDirectory: $(outputDirectory)
-    - publish: $(outputDirectory)
-      artifact: js-lib-build
-
-
+    # - job: Build_JS_Lib_And_Publish
+    #   dependsOn: [Build_React_lib]
+    #   condition: succeededOrFailed()
+    #   steps:
+    #   # Need to specify this explicitly to ensure we fetch with git-lfs enabled
+    #   - checkout: self
+    #     lfs: true
+    #   - template: js-lib-build.yml
+    #     parameters:
+    #       jslib: $(jslib)
+    #       projectname: $(projectname)
+    #       outputDirectory: $(outputDirectory)
+    #   - publish: $(outputDirectory)
+    #     artifact: js-lib-build
