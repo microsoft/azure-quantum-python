@@ -1,8 +1,6 @@
 parameters:
   - name: jslib
     type: string
-  - name: rootDirectory
-    type: string
   - name: projectname
     type: string
 steps:
@@ -14,23 +12,23 @@ steps:
   # Add later
   # - task: npmAuthenticate@0
   #   inputs:
-  #     workingFile: "$(Build.SourcesDirectory)/$(project)/.npmrc"
+  #     workingFile: "<path>/.npmrc"
   #   displayName: "npm authenticate"
 
   - script: 
-      npm link react $(projectname)
-    workingDirectory: "$(rootDirectory)/$(jslib)"
+      npm link react ${{ parameters.projectname }}
+    workingDirectory: "${{ parameters.jslib  }}"
     displayName: "npm link react and quantum visualization to js-lib"
 
   - script: |
       npm install
       npm run build
-    workingDirectory: "$(rootDirectory)/$(jslib)"
+    workingDirectory: "${{ parameters.jslib  }}"
     displayName: "npm install and build js-lib"
 
   - task: CopyFiles@2
     inputs:
-      SourceFolder: "$(rootDirectory)/$(jslib)/dist"
+      SourceFolder: "${{ parameters.jslib }}/dist"
       Contents: "**"
-      TargetFolder: "$(outputDirectory)"
+      TargetFolder: "${{ parameters.outputDirectory }}"
     displayName: "Copy build artifacts to output directory"
