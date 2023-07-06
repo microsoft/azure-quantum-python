@@ -22,7 +22,7 @@ module.exports = {
     coverageReporters: [
         "text",
         "html",
-        "json"
+        "cobertura"
     ],
     coverageThreshold: {
         "../**/*": {
