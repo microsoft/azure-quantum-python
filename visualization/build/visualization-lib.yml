@@ -54,6 +54,7 @@ stages:
       artifact: js-lib-build
   - job: Build_JS_Lib_And_Publish
     dependsOn: [Build_React_lib]
+    condition: succeededOrFailed() 
     steps:
     # Need to specify this explicitly to ensure we fetch with git-lfs enabled
     - checkout: self
