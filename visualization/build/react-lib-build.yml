@@ -12,7 +12,7 @@ parameters:
   - name: projectname
     type: string
   - name: outputDirectory
-    type: string   
+    type: string
 
 steps:
   - task: NodeTool@0
@@ -32,35 +32,32 @@ steps:
     workingDirectory: "${{ parameters.project }}"
     displayName: "npm install and build react-lib"
 
-  # - script: |
-  #     npm link
-  #   workingDirectory: "${{ parameters.project }}"
-  #   displayName: "npm link react-lib"
+  - script: |
+      npm link
+    workingDirectory: "${{ parameters.project }}"
+    displayName: "npm link react-lib"
 
-  # - script: 
-  #     npm link
-  #   workingDirectory: "${{ parameters.project }}/${{ parameters.reactnodemodules }}"
-  #   displayName: "npm link react"
+  - script: npm link
+    workingDirectory: "${{ parameters.project }}/${{ parameters.reactnodemodules }}"
+    displayName: "npm link react"
 
-    
-  # - script: 
-  #     npm link react ${{ parameters.projectname }}
-  #   workingDirectory: "${{ parameters.jslib  }}"
-  #   displayName: "npm link react and quantum visualization to js-lib"
+  - script: npm link react ${{ parameters.projectname }}
+    workingDirectory: "${{ parameters.jslib  }}"
+    displayName: "npm link react and quantum visualization to js-lib"
 
   - script: |
-      npm install
       npm run build
     workingDirectory: "${{ parameters.jslib  }}"
-    displayName: "npm install and build js-lib"
+    displayName: "npm build js-lib"
 
   - task: CopyFiles@2
     inputs:
-      SourceFolder: "${{ parameters.jslib }}/dist"
+      conditions: succeededOrFailed()
+      #SourceFolder: "${{ parameters.jslib }}/dist"
+      SourceFolder: "visualization/"
       Contents: "**"
       TargetFolder: "${{ parameters.outputDirectory }}"
     displayName: "Copy build artifacts to output directory"
-
 
   - task: Npm@1
     displayName: npm run test
@@ -71,13 +68,13 @@ steps:
 
   - task: PublishTestResults@2
     displayName: "publish test results"
-    condition: succeededOrFailed() 
+    condition: succeededOrFailed()
     inputs:
       testResultsFiles: "${{ parameters.tests }}/test-results.xml"
 
   - task: PublishCodeCoverageResults@1
     displayName: "Publish Code Coverage Results"
-    condition: succeededOrFailed() 
+    condition: succeededOrFailed()
     inputs:
       codeCoverageTool: "cobertura"
       summaryFileLocation: "${{ parameters.project }}/coverage/cobertura-coverage.xml"
