@@ -5,7 +5,7 @@ parameters:
     type: string
   - name: outputDirectory
     type: string
-    
+
 steps:
   - task: NodeTool@0
     inputs:
@@ -35,3 +35,4 @@ steps:
       Contents: "**"
       TargetFolder: "${{ parameters.outputDirectory }}"
     displayName: "Copy build artifacts to output directory"
+

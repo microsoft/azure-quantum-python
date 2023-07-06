@@ -59,11 +59,3 @@ steps:
     inputs:
       codeCoverageTool: "cobertura"
       summaryFileLocation: "${{ parameters.project }}/coverage/cobertura-coverage.xml"
-
-  - task: CopyFiles@2
-    condition: succeededOrFailed() 
-    inputs:
-      SourceFolder: "${{ parameters.rootDirectory }}/${{ parameters.jslib }}/dist"
-      Contents: "**"
-      TargetFolder: "${{ parameters.outputDirectory  }}"
-    displayName: "Copy build artifacts to output directory"
