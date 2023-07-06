@@ -49,10 +49,8 @@ stages:
         rootDirectory: $(rootDirectory)
         project: $(project)
         reactnodemodules: $(reactnodemodules)
-        outputDirectory: $(outputDirectory)
         tests: $(tests)
-    - publish: $(outputDirectory)
-      artifact: react-lib-build
+
 
 - stage: Build_Visualization_Library 
   dependsOn: [Build_React_Lib]
