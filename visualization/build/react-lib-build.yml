@@ -55,11 +55,13 @@ steps:
 
   - task: PublishCodeCoverageResults@1
     displayName: "Publish Code Coverage Results"
+    condition: succeededOrFailed() 
     inputs:
       codeCoverageTool: "babel"
       summaryFileLocation: "${{ parameters.project }}/coverage/coverage-final.json"
 
   - task: CopyFiles@2
+    condition: succeededOrFailed() 
     inputs:
       SourceFolder: "${{ parameters.rootDirectory }}/${{ parameters.jslib }}/dist"
       Contents: "**"
