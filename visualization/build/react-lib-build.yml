@@ -9,6 +9,10 @@ parameters:
     type: string
   - name: tests
     type: string
+  - name: projectname
+    type: string
+  - name: outputDirectory
+    type: string   
 
 steps:
   - task: NodeTool@0
@@ -37,6 +41,26 @@ steps:
       npm link
     workingDirectory: "${{ parameters.project }}/${{ parameters.reactnodemodules }}"
     displayName: "npm link react"
+
+    
+  - script: 
+      npm link react ${{ parameters.projectname }}
+    workingDirectory: "${{ parameters.jslib  }}"
+    displayName: "npm link react and quantum visualization to js-lib"
+
+  - script: |
+      npm install
+      npm run build
+    workingDirectory: "${{ parameters.jslib  }}"
+    displayName: "npm install and build js-lib"
+
+  - task: CopyFiles@2
+    inputs:
+      SourceFolder: "${{ parameters.jslib }}/dist"
+      Contents: "**"
+      TargetFolder: "${{ parameters.outputDirectory }}"
+    displayName: "Copy build artifacts to output directory"
+
 
   - task: Npm@1
     displayName: npm run test
