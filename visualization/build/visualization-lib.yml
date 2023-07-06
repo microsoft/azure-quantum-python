@@ -49,6 +49,9 @@ stages:
         rootDirectory: $(rootDirectory)
         project: $(project)
         reactnodemodules: $(reactnodemodules)
+        tests: $(tests)
+    - publish: $(outputDirectory)
+      artifact: js-lib-build
   - job: Build_And_Publish
     steps:
     # Need to specify this explicitly to ensure we fetch with git-lfs enabled
