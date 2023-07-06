@@ -21,10 +21,6 @@ steps:
     displayName: "Install Node.js"
 
 
-  - task: npmAuthenticate@0
-    inputs:
-        workingFile: "${{ parameters.project }}/.npmrc"
-    displayName: "npm authenticate"
 
   - script: |
       npm install
@@ -32,6 +28,10 @@ steps:
     workingDirectory: "${{ parameters.project }}"
     displayName: "npm install and build react-lib"
 
+  - task: npmAuthenticate@0
+    inputs:
+        workingFile: "${{ parameters.project }}/.npmrc"
+    displayName: "npm authenticate"
 # TO DO Uncomment
   # - task: Npm@1
   #   displayName: npm run test
@@ -54,6 +54,7 @@ steps:
   #     summaryFileLocation: "${{ parameters.project }}/coverage/cobertura-coverage.xml"
 
   - task: Npm@1
+    displayName: "Publish feed"
     inputs:
       command: publish
       publishRegistry: useFeed
