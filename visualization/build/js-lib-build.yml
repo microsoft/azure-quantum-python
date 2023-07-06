@@ -5,6 +5,8 @@ parameters:
     type: string
   - name: outputDirectory
     type: string
+  - name: project
+    type: string
 
 steps:
   - task: NodeTool@0
@@ -12,16 +14,16 @@ steps:
       versionSpec: "16.x"
     displayName: "Install Node.js"
 
-  # Add later
-  # - task: npmAuthenticate@0
-  #   inputs:
-  #     workingFile: "<path>/.npmrc"
-  #   displayName: "npm authenticate"
 
-  - script: 
-      npm link react ${{ parameters.projectname }}
-    workingDirectory: "${{ parameters.jslib  }}"
-    displayName: "npm link react and quantum visualization to js-lib"
+  - task: npmAuthenticate@0
+    inputs:
+      workingFile: "${{ parameters.jslib }}.npmrc"
+    displayName: "npm authenticate"
+
+  # - script: 
+  #     npm link react ${{ parameters.projectname }}
+  #   workingDirectory: "${{ parameters.jslib  }}"
+  #   displayName: "npm link react and quantum visualization to js-lib"
 
   - script: |
       npm install

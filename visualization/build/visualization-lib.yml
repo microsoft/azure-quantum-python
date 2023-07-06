@@ -43,7 +43,7 @@ stages:
     # Need to specify this explicitly to ensure we fetch with git-lfs enabled
     - checkout: self
       lfs: true
-    - template: react-lib-build.yml
+    - template: react-lib-build-publish.yml
       parameters:
         jslib: $(jslib)
         rootDirectory: $(rootDirectory)
@@ -52,22 +52,20 @@ stages:
         tests: $(tests)
         projectname: $(projectname)
         outputDirectory: $(outputDirectory)
+
+  - job: Build_JS_Lib_And_Publish
+    dependsOn: [Build_React_lib]
+    condition: succeededOrFailed() 
+    steps:
+    # Need to specify this explicitly to ensure we fetch with git-lfs enabled
+    - checkout: self
+      lfs: true
+    - template: js-lib-build.yml
+      parameters:
+        jslib: $(jslib)
+        projectname: $(projectname)
+        outputDirectory: $(outputDirectory)
     - publish: $(outputDirectory)
       artifact: js-lib-build
-      
-  # - job: Build_JS_Lib_And_Publish
-  #   dependsOn: [Build_React_lib]
-  #   condition: succeededOrFailed() 
-  #   steps:
-  #   # Need to specify this explicitly to ensure we fetch with git-lfs enabled
-  #   - checkout: self
-  #     lfs: true
-  #   - template: js-lib-build.yml
-  #     parameters:
-  #       jslib: $(jslib)
-  #       projectname: $(projectname)
-  #       outputDirectory: $(outputDirectory)
-  #   - publish: $(outputDirectory)
-  #     artifact: js-lib-build
 
 

@@ -32,23 +32,24 @@ steps:
     workingDirectory: "${{ parameters.project }}"
     displayName: "npm install and build react-lib"
 
-  - script: |
-      npm link
-    workingDirectory: "${{ parameters.project }}"
-    displayName: "npm link react-lib"
+  # - script: |
+  #     npm link
+  #   workingDirectory: "${{ parameters.project }}"
+  #   displayName: "npm link react-lib"
 
-  - script: 
-      npm link
-    workingDirectory: "${{ parameters.project }}/${{ parameters.reactnodemodules }}"
-    displayName: "npm link react"
+  # - script: 
+  #     npm link
+  #   workingDirectory: "${{ parameters.project }}/${{ parameters.reactnodemodules }}"
+  #   displayName: "npm link react"
 
     
-  - script: 
-      npm link react ${{ parameters.projectname }}
-    workingDirectory: "${{ parameters.jslib  }}"
-    displayName: "npm link react and quantum visualization to js-lib"
+  # - script: 
+  #     npm link react ${{ parameters.projectname }}
+  #   workingDirectory: "${{ parameters.jslib  }}"
+  #   displayName: "npm link react and quantum visualization to js-lib"
 
   - script: |
+      npm install
       npm run build
     workingDirectory: "${{ parameters.jslib  }}"
     displayName: "npm install and build js-lib"
