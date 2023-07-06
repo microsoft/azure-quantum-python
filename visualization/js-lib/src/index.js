@@ -1,6 +1,6 @@
 import * as React from "react";
 import { createRoot } from 'react-dom/client';
-import { SpaceDiagram, TimeDiagram } from "./quantum-visualization";
+import { SpaceDiagram, TimeDiagram } from "quantum-visualization";
 
 const sample = {
   errorBudget: {
