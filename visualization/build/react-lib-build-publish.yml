@@ -12,7 +12,7 @@ parameters:
   - name: projectname
     type: string
   - name: outputDirectory
-    type: string   
+    type: string
 
 steps:
   - task: NodeTool@0
@@ -20,7 +20,10 @@ steps:
       versionSpec: "16.x"
     displayName: "Install Node.js"
 
-
+  - task: npmAuthenticate@0
+    inputs:
+      workingFile: "${{ parameters.project }}/.npmrc"
+    displayName: "npm authenticate"
 
   - script: |
       npm install
@@ -28,11 +31,7 @@ steps:
     workingDirectory: "${{ parameters.project }}"
     displayName: "npm install and build react-lib"
 
-  - task: npmAuthenticate@0
-    inputs:
-        workingFile: "${{ parameters.project }}/.npmrc"
-    displayName: "npm authenticate"
-# TO DO Uncomment
+  # TO DO Uncomment
   # - task: Npm@1
   #   displayName: npm run test
   #   inputs:
@@ -42,13 +41,13 @@ steps:
 
   # - task: PublishTestResults@2
   #   displayName: "publish test results"
-  #   condition: succeededOrFailed() 
+  #   condition: succeededOrFailed()
   #   inputs:
   #     testResultsFiles: "${{ parameters.tests }}/test-results.xml"
 
   # - task: PublishCodeCoverageResults@1
   #   displayName: "Publish Code Coverage Results"
-  #   condition: succeededOrFailed() 
+  #   condition: succeededOrFailed()
   #   inputs:
   #     codeCoverageTool: "cobertura"
   #     summaryFileLocation: "${{ parameters.project }}/coverage/cobertura-coverage.xml"
