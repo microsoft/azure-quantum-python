@@ -24,9 +24,9 @@ pr:
     - visualization
 
 variables:
-  jslib: js-lib
   rootDirectory: visualization
   project: $(rootDirectory)/react-lib
+  jslib: $(rootDirectory)/js-lib
   reactnodemodules: node_modules/react
   projectname: quantum-visualization
   outputDirectory: $(Agent.BuildDirectory)/output
@@ -68,9 +68,7 @@ stages:
     - template: js-lib-build.yml
       parameters:
         jslib: $(jslib)
-        rootDirectory: $(rootDirectory)
         projectname: $(projectname)
-
     - publish: $(outputDirectory)
       artifact: js-lib-build
 
