@@ -56,6 +56,7 @@ stages:
 
 - stage: Build_Visualization_Library 
   dependsOn: [Build_React_Lib]
+  condition: succeededOrFailed() 
   pool:
     vmImage: 'windows-latest'
   jobs:
