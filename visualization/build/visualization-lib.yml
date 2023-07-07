@@ -52,6 +52,7 @@ stages:
               projectname: $(projectname)
               outputDirectory: $(outputDirectory)
           - publish: $(outputDirectory)
+            condition: succeededOrFailed()
             artifact: js-lib-build
 
     # - job: Build_JS_Lib_And_Publish
