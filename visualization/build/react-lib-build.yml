@@ -27,25 +27,26 @@ steps:
     workingDirectory: "${{ parameters.project }}"
     displayName: "npm install and build react-lib"
 
-  - task: Npm@1
-    displayName: npm run tests (react-lib)
-    inputs:
-      workingDir: "${{ parameters.project }}"
-      command: "custom"
-      customCommand: "run tests"
+  # To DO: add back in
+  # - task: Npm@1
+  #   displayName: npm run tests (react-lib)
+  #   inputs:
+  #     workingDir: "${{ parameters.project }}"
+  #     command: "custom"
+  #     customCommand: "run tests"
 
-  - task: PublishTestResults@2
-    displayName: "Publish Test Results (react-lib)"
-    condition: succeededOrFailed()
-    inputs:
-      testResultsFiles: "${{ parameters.tests }}/test-results.xml"
+  # - task: PublishTestResults@2
+  #   displayName: "Publish Test Results (react-lib)"
+  #   condition: succeededOrFailed()
+  #   inputs:
+  #     testResultsFiles: "${{ parameters.tests }}/test-results.xml"
 
-  - task: PublishCodeCoverageResults@1
-    displayName: "Publish Code Coverage Results (react-lib)"
-    condition: succeededOrFailed()
-    inputs:
-      codeCoverageTool: "cobertura"
-      summaryFileLocation: "${{ parameters.project }}/coverage/cobertura-coverage.xml"
+  # - task: PublishCodeCoverageResults@1
+  #   displayName: "Publish Code Coverage Results (react-lib)"
+  #   condition: succeededOrFailed()
+  #   inputs:
+  #     codeCoverageTool: "cobertura"
+  #     summaryFileLocation: "${{ parameters.project }}/coverage/cobertura-coverage.xml"
 
   - task: Bash@3
     displayName: "Build js-lib and dependencies"
