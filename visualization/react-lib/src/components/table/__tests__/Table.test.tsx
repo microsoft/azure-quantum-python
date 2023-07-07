@@ -124,7 +124,7 @@ describe("Table tests", () => {
 
     // Mock success so builds pass.
     // TO DO: fix test.
+    console.log("Test is under construction.");
     expect(1==1);
-
   });
 });
