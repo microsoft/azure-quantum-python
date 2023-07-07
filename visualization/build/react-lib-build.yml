@@ -27,36 +27,37 @@ steps:
     displayName: "npm install and build react-lib"
 
   - task: Npm@1
-    displayName: npm run test
+    displayName: npm run tests (react-lib)
     inputs:
       workingDir: "${{ parameters.project }}"
       command: "custom"
       customCommand: "run tests"
 
   - task: PublishTestResults@2
-    displayName: "publish test results"
+    displayName: "Publish Test Results (react-lib)"
     condition: succeededOrFailed()
     inputs:
       testResultsFiles: "${{ parameters.tests }}/test-results.xml"
 
   - task: PublishCodeCoverageResults@1
-    displayName: "Publish Code Coverage Results"
+    displayName: "Publish Code Coverage Results (react-lib)"
     condition: succeededOrFailed()
     inputs:
       codeCoverageTool: "cobertura"
       summaryFileLocation: "${{ parameters.project }}/coverage/cobertura-coverage.xml"
 
   - task: Bash@3
+    displayName: "Build js-lib and dependencies"
+    condition: succeededOrFailed()
     inputs:
       targetType: "filePath"
-      condition: succeededOrFailed()
       filePath: "${{ parameters.rootDirectory }}/build/build-jslib.sh"
       failOnStderr: true
       workingDirectory: "${{ parameters.rootDirectory }}/build/"
 
   - task: CopyFiles@2
+    condition: succeededOrFailed()
     inputs:
-      conditions: succeededOrFailed()
       SourceFolder: "${{ parameters.jslib}}/dist/"
       Contents: "**"
       TargetFolder: "${{ parameters.outputDirectory }}"
