@@ -20,8 +20,8 @@
 
 #### [<i> microsoft.visualization <i>](https://ms-quantum.visualstudio.com/Quantum%20Program/_build?definitionId=789&_a=summary)
 
-The build pipeline is divided into 3 yaml files.
+The build pipeline is divided into 2 yaml files and uses build-jslib.sh script.
 
 1. The root build, visualization-lib.yml, is triggered with PRs and branch commits.
-2. Visualization-lib.yml triggers react-lib-build.yml which builds react-lib and creates an npm link.
-3. Following react-lib-build.yml, js-lib-build.yml is triggered which links to react-lib and builds the js-lib and publishes the index.js to the build artifacts for library consumption.
+2. Visualization-lib.yml triggers react-lib-build.yml which builds react-lib and runs tests and code coverage.
+3. Then, react-lib-build.yml calls build-jslib.sh to link react-lib to js-lib, build js-lib and publishes the index.js to the build artifacts for library consumption.
