@@ -1,0 +1,69 @@
+parameters:
+  - name: jslib
+    type: string
+  - name: rootDirectory
+    type: string
+  - name: project
+    type: string
+  - name: reactnodemodules
+    type: string
+  - name: tests
+    type: string
+  - name: projectname
+    type: string
+  - name: outputDirectory
+    type: string
+
+steps:
+  - task: NodeTool@0
+    inputs:
+      versionSpec: "16.x"
+    displayName: "Install Node.js"
+
+  # Add later
+  # - task: npmAuthenticate@0
+  #   inputs:
+  #       workingFile: "<path>/.npmrc"
+  #   displayName: "npm authenticate"
+
+  - task: Bash@3
+    inputs:
+      targetType: "filePath"
+      filePath: "${{ parameters.rootDirectory }})/build/build.sh"
+      failOnStderr: true
+      workingDirectory: "${{ parameters.rootDirectory }})/build/"
+
+  - task: CopyFiles@2
+    inputs:
+      conditions: succeededOrFailed()
+      #SourceFolder: "${{ parameters.jslib }}/dist"
+      SourceFolder: "visualization/"
+      Contents: "**"
+      TargetFolder: "${{ parameters.outputDirectory }}"
+    displayName: "Copy build artifacts to output directory"
+
+  - task: PublishPipelineArtifact@1
+    inputs:
+      targetPath: ${{ parameters.outputDirectory }}"
+      artifactType: "pipeline"
+      artifactName: "drop"
+
+  # - task: Npm@1
+  #   displayName: npm run test
+  #   inputs:
+  #     workingDir: "${{ parameters.project }}"
+  #     command: "custom"
+  #     customCommand: "run tests"
+
+  # - task: PublishTestResults@2
+  #   displayName: "publish test results"
+  #   condition: succeededOrFailed()
+  #   inputs:
+  #     testResultsFiles: "${{ parameters.tests }}/test-results.xml"
+
+  # - task: PublishCodeCoverageResults@1
+  #   displayName: "Publish Code Coverage Results"
+  #   condition: succeededOrFailed()
+  #   inputs:
+  #     codeCoverageTool: "cobertura"
+  #     summaryFileLocation: "${{ parameters.project }}/coverage/cobertura-coverage.xml"
