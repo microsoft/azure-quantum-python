@@ -30,8 +30,7 @@ steps:
   - task: CopyFiles@2
     inputs:
       conditions: succeededOrFailed()
-      #SourceFolder: "${{ parameters.jslib }}/dist"
-      SourceFolder: "visualization/"
+      SourceFolder: "${{ parameters.jslib}}/dist/"
       Contents: "**"
       TargetFolder: "${{ parameters.outputDirectory }}"
     displayName: "Copy build artifacts to output directory"
