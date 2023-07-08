@@ -34,17 +34,6 @@ function SpaceChart({
   const translationValX = width / 4;
   const translationValY = height / 4;
 
-  const donutChartPropsObj  = {
-      data:{chartData},
-      width:{width},
-      height:{height},
-      innerRadius:{innerRadius},
-      outerRadius:{outerRadius},
-      translationValX:{translationValX},
-      translationValY:{translationValY} };
-
-
-
   return (
     <div>
       <DonutChart
@@ -54,9 +43,8 @@ function SpaceChart({
       innerRadius={innerRadius}
       outerRadius={outerRadius}
       translationValX={translationValX}
-      translationValY={translationValY}
-    />
-      </div>
+      translationValY={translationValY}/>
+    </div>
   );
 }
 
