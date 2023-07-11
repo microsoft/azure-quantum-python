@@ -14,7 +14,7 @@ class SpaceDiagramComponent extends HTMLElement {
     const data = this.getAttribute("data");
     if (data) {
       const root = createRoot(
-        document.getElementById('space-diagram')
+        document.getElementById(divId)
       );
       root.render(<SpaceDiagram width={1000} height={1000} data={data} />);
     } else {
@@ -30,7 +30,7 @@ class TimeDiagramComponent extends HTMLElement {
     const data = this.getAttribute("data");
     if (data) {
       const root = createRoot(
-        document.getElementById('time-diagram')
+        document.getElementById(divId)
       );
 
       root.render(<TimeDiagram data={data}  width={1000} height={1000}/>);
