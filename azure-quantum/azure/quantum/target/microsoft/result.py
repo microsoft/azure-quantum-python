@@ -386,7 +386,7 @@ class EstimatorResultDiagram:
     def __init__(self, data):
         data.pop("reportData")
         self.data_json = json.dumps(data).replace(" ", "")
-        self.vis_lib = "https://staquavisualizationtest.blob.core.windows.net/resource-estimation/index-local.js"
+        self.vis_lib = "https://cdn-aquavisualization-prod.azureedge.net/resource-estimation/index.js"
         self.space = HTMLWrapper(self._space_diagram())
         self.time = HTMLWrapper(self._time_diagram())
 
