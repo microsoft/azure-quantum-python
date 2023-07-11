@@ -68,3 +68,7 @@ class Target(abc.ABC, SessionHost):
     @abc.abstractmethod
     def _get_azure_target_id(self) -> str:
         raise NotImplementedError
+
+    @abc.abstractmethod
+    def _get_azure_provider_id(self) -> str:
+        raise NotImplementedError

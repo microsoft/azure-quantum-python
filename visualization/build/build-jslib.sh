@@ -2,6 +2,16 @@
 # assume working directory to be "visualization/build"
 
 cd ../react-lib
+npm install
+if [ $? -eq 0 ]; then
+  echo 'Successfully install: react-lib'
+fi
+
+npm run build
+if [ $? -eq 0 ]; then
+  echo 'Successfully build: react-lib'
+fi
+
 npm link
 if [ $? -eq 0 ]; then
   echo 'Successfully created link: react-lib'

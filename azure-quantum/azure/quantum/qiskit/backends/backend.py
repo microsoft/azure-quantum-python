@@ -40,7 +40,10 @@ To install run: pip install azure-quantum[qiskit]"
 class AzureBackendBase(Backend, SessionHost):
     @abstractmethod
     def __init__(
-        self, configuration: BackendConfiguration, provider: Provider = None, **fields
+        self,
+        configuration: BackendConfiguration,
+        provider: Provider = None,
+        **fields
     ):
         super().__init__(configuration, provider, **fields)
 
@@ -201,6 +204,10 @@ class AzureBackendBase(Backend, SessionHost):
     def _get_azure_target_id(self) -> str:
         return self.name()
 
+    def _get_azure_provider_id(self) -> str:
+        return self._azure_config()["provider_id"]
+
+
 class AzureQirBackend(AzureBackendBase):
     @abstractmethod
     def __init__(
@@ -265,7 +272,7 @@ class AzureQirBackend(AzureBackendBase):
             job_name = circuits[0].name
         job_name = options.pop("job_name", job_name)
 
-        metadata = options.pop("metadata", {})
+        metadata = options.pop("metadata", self._prepare_job_metadata(circuits))
 
         input_data = self._translate_input(circuits, input_params)
 
@@ -275,6 +282,22 @@ class AzureQirBackend(AzureBackendBase):
         )
 
         return job
+
+    def _prepare_job_metadata(self, circuits: List[QuantumCircuit]) -> Dict[str, str]:
+        """Returns the metadata relative to the given circuits that will be attached to the Job"""
+        if len(circuits) == 1:
+            circuit: QuantumCircuit = circuits[0]
+            return {
+                "qiskit": str(True),
+                "name": circuit.name,
+                "num_qubits": circuit.num_qubits,
+                "metadata": json.dumps(circuit.metadata),
+            }
+        # for batch jobs, we don't want to store the metadata of each circuit
+        # we fill out the result header in output processing.
+        # These headers don't matter for execution are are only used for
+        # result processing.
+        return {}
 
     def _generate_qir(
         self, circuits, targetCapability, **to_qir_kwargs

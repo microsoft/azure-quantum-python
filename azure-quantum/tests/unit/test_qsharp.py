@@ -3,59 +3,57 @@
 # Licensed under the MIT License.
 ##
 
-import unittest
-import warnings
 import pytest
-from azure.quantum.job import Job
-from common import QuantumTestBase, ZERO_UID
+from azure.quantum import JobStatus
+from common import QuantumTestBase, DEFAULT_TIMEOUT_SECS
+from import_qsharp import skip_if_no_qsharp
+from test_job_payload_factory import JobPayloadFactory
+
 
 @pytest.mark.qsharp
 @pytest.mark.live_test
-@pytest.mark.skip(reason="Temporarily disabling these tests as they are failing the QDK build")
+@skip_if_no_qsharp
 class TestQSharpQIRJob(QuantumTestBase):
 
     @pytest.mark.rigetti
-    def test_qsharp_qir_rigetti(self):
-        self._run_job("rigetti.sim.qvm")
+    def test_qsharp_qir_inline_rigetti(self):
+        self._run_job("rigetti.sim.qvm", inline=True)
+
+    @pytest.mark.rigetti
+    def test_qsharp_qir_file_rigetti(self):
+        self._run_job("rigetti.sim.qvm", inline=False)
 
     @pytest.mark.quantinuum
-    def test_qsharp_qir_quantinuum(self):
-        self._run_job("quantinuum.sim.h1-1sc")
+    def test_qsharp_qir_inline_quantinuum_h2(self):
+        self._run_job("quantinuum.sim.h2-1e", inline=True)
 
-    @pytest.fixture(autouse=True, scope='class')
-    def _qsharp_callable(self):
-        import qsharp
-        TestQSharpQIRJob.qsharp_callable = qsharp.compile("""
-            open Microsoft.Quantum.Intrinsic;
-            operation GenerateRandomBit_Inline() : Result {
-                use q0 = Qubit();
-                H(q0);
-                return M(q0);
-            }
-        """)
+    @pytest.mark.quantinuum
+    def test_qsharp_qir_inline_quantinuum(self):
+        self._run_job("quantinuum.sim.h1-1e", inline=True)
 
-    def _run_job(self, target_name):
-        with unittest.mock.patch.object(
-            Job,
-            "create_job_id",
-            return_value=ZERO_UID if self.is_playback else Job.create_job_id(),
-        ):
-            workspace = self.create_workspace()
-            target = workspace.get_targets(target_name)
-            job = target.submit(input_data=TestQSharpQIRJob.qsharp_callable)
+    @pytest.mark.quantinuum
+    def test_qsharp_qir_file_quantinuum(self):
+        self._run_job("quantinuum.sim.h1-1e", inline=False)
 
-            self.pause_recording()
-            try:
-                job.wait_until_completed(timeout_secs=60)
-            except TimeoutError:
-                warnings.warn(
-                    "Wait_until_completed exceeded timeout. Skipping fetching results."
-                )
-                return None
-            self.resume_recording()
+    @pytest.mark.microsoft_qc
+    def test_qsharp_qir_inline_microsoft_qc(self):
+        self._run_job("microsoft.estimator", inline=True)
 
-            job.refresh()
-            assert job.details.status == "Succeeded"
+    @pytest.mark.microsoft_qc
+    def test_qsharp_qir_file_microsoft_qc(self):
+        self._run_job("microsoft.estimator", inline=False)
 
-            results = job.get_results()
-            assert results is not None
+    def _run_job(self, target_name, inline):
+        workspace = self.create_workspace()
+        target = workspace.get_targets(target_name)
+        input_data = (JobPayloadFactory.get_qsharp_inline_callable_bell_state()[0] if inline
+                      else JobPayloadFactory.get_qsharp_file_callable_bell_state()[0])
+        job = target.submit(input_data=input_data)
+
+        job.wait_until_completed(timeout_secs=DEFAULT_TIMEOUT_SECS)
+
+        job.refresh()
+        self.assertEqual(job.details.status, JobStatus.SUCCEEDED)
+
+        results = job.get_results(timeout_secs=DEFAULT_TIMEOUT_SECS)
+        self.assertIsNotNone(results)

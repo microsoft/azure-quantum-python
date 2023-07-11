@@ -27,7 +27,6 @@ class TimeDiagramComponent extends HTMLElement {
     const divId = "time-diagram-" + randomId();
     this.innerHTML = `<div id=${divId}> </div>`;
     const data = this.getAttribute("data");
-
     if (data) {
       const root = createRoot(
         document.getElementById(divId)
