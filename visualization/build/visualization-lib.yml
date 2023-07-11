@@ -39,33 +39,47 @@ stages:
     jobs:
       - job: Build_Test_Link_Publish
         steps:
-          # Need to specify this explicitly to ensure we fetch with git-lfs enabled
-          - checkout: self
-            lfs: true
-          - template: react-lib-build.yml
-            parameters:
-              jslib: $(jslib)
-              rootDirectory: $(rootDirectory)
-              project: $(project)
-              reactnodemodules: $(reactnodemodules)
-              tests: $(tests)
-              projectname: $(projectname)
-              outputDirectory: $(outputDirectory)
-          - publish: $(outputDirectory)
-            condition: succeededOrFailed()
-            artifact: microsoft-visualization
+          - task: NodeTool@0
+            inputs:
+            versionSpec: "16.x"
 
-    # - job: Build_JS_Lib_And_Publish
-    #   dependsOn: [Build_React_lib]
-    #   condition: succeededOrFailed()
-    #   steps:
-    #   # Need to specify this explicitly to ensure we fetch with git-lfs enabled
-    #   - checkout: self
-    #     lfs: true
-    #   - template: js-lib-build.yml
-    #     parameters:
-    #       jslib: $(jslib)
-    #       projectname: $(projectname)
-    #       outputDirectory: $(outputDirectory)
-    #   - publish: $(outputDirectory)
-    #     artifact: js-lib-build
+          - task: Bash@3
+            displayName: "Build js-lib and dependencies"
+            inputs:
+              targetType: "filePath"
+              filePath: "$(rootDirectory)/build/build-jslib.sh"
+              failOnStderr: true
+              workingDirectory: "$(rootDirectory)/build/"
+
+          - task: CopyFiles@2
+            inputs:
+              SourceFolder: "$(jslib)/dist/"
+              Contents: "**"
+              TargetFolder: "$(outputDirectory)"
+            displayName: "Copy build artifacts to output directory"
+
+          - task: Npm@1
+            displayName: npm run tests (react-lib)
+            inputs:
+              workingDir: "$(project)"
+              command: "custom"
+              customCommand: "run tests"
+
+          - task: PublishTestResults@2
+            displayName: "Publish Test Results (react-lib)"
+            condition: succeededOrFailed()
+            inputs:
+              testResultsFiles: "$(tests)/test-results.xml"
+
+          - task: PublishCodeCoverageResults@1
+            displayName: "Publish Code Coverage Results (react-lib)"
+            condition: succeededOrFailed()
+            inputs:
+              codeCoverageTool: "cobertura"
+              summaryFileLocation: "$(project)/coverage/cobertura-coverage.xml"
+
+          - task: PublishPipelineArtifact@1
+            inputs:
+              targetPath: $(outputDirectory)"
+              artifactType: "pipeline"
+              artifactName: "microsoft-visualization"
