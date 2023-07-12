@@ -55,8 +55,8 @@ function TableComponent({ nodes, width, height }: TableComponentProps) {
     }
   `,
     Table: `
- width: 700px;
-`,
+    max-width: 700px;
+  `,
     Row: `&:nth-child(n){.td:nth-child(n){ border-bottom: none}} `,
   };
   const materialTheme = getTheme(DEFAULT_OPTIONS);

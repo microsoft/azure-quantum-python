@@ -6,21 +6,41 @@ import { JobResults } from "../../models/JobResults";
 import "./Diagram.css";
 
 interface SpaceDiagramProps {
-  width: number;
-  height: number;
-  innerRadius: number;
-  outerRadius: number;
   data: string;
 }
 
 function SpaceDiagram({
-  width,
-  height,
-  innerRadius = 150,
-  outerRadius = 225,
   data,
 }: SpaceDiagramProps) {
   let jobResults = JSON.parse(data) as JobResults;
+
+  const diagramRef = React.useRef<any>();
+
+  const [width, setWidth] = React.useState(0);
+  const [height, setHeight] = React.useState(0);
+  const [innerRadius, setInnerRadius] = React.useState(0);
+  const [outerRadius, setOuterRadius] = React.useState(0);
+
+  const handleSize = () => {
+    const height = diagramRef?.current?.offsetHeight;
+    const width = diagramRef?.current?.offsetWidth;
+    if (height) {
+      setHeight(height);
+    }
+    if (width) {
+      setWidth(width);
+    }
+    if (height && width) {
+      const outerRadius = 0.3 * Math.min(height * 0.7, width);
+      const innerRadius = 0.75 * outerRadius;
+      setOuterRadius(outerRadius);
+      setInnerRadius(innerRadius);
+    }
+  }
+  React.useLayoutEffect(() => {
+    handleSize();
+    window.addEventListener("resize", handleSize);
+  }, [diagramRef]);
 
   const physicalQubitsAlgorithm =
     jobResults.physicalCounts.breakdown.physicalQubitsForAlgorithm;
@@ -96,7 +116,7 @@ function SpaceDiagram({
 
   return (
     <div className="grid-container">
-      <div className="diagram">
+      <div className="diagram" ref={diagramRef}>
         <SpaceChart
           physicalQubitsAlgorithm={physicalQubitsAlgorithm}
           physicalQubitsTFactory={physicalQubitsTFactory}

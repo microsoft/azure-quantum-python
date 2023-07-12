@@ -6,13 +6,31 @@ import { TimeChart } from "../time-chart";
 import { TableData } from "../table/Table";
 
 interface TimeDiagramProps {
-  width: number;
-  height: number;
   data: string;
 }
 
-function TimeDiagram({ width, height, data }: TimeDiagramProps) {
+function TimeDiagram({ data }: TimeDiagramProps) {
   let jobResults = JSON.parse(data) as JobResults;
+
+  const diagramRef = React.useRef<any>();
+
+  const [width, setWidth] = React.useState(0);
+  const [height, setHeight] = React.useState(0);
+
+  const handleSize = () => {
+    const height = diagramRef?.current?.offsetHeight;
+    const width = diagramRef?.current?.offsetWidth;
+    if (height) {
+      setHeight(height);
+    }
+    if (width) {
+      setWidth(width * 0.8);
+    }
+  }
+  React.useLayoutEffect(() => {
+    handleSize();
+    window.addEventListener("resize", handleSize);
+  }, [diagramRef]);
 
   const algorithmRuntimeFormatted = jobResults.physicalCountsFormatted.runtime;
   const tFactoryRuntimeFormatted =
@@ -138,7 +156,7 @@ function TimeDiagram({ width, height, data }: TimeDiagramProps) {
 
   return (
     <div className="grid-container">
-      <div className="diagram">
+      <div className="diagram" ref={diagramRef}>
         <TimeChart
           chartData={chartDictionary}
           width={width}

@@ -273,7 +273,7 @@ function LineChart({ legendData, chartData, width, height }: LineChartProps) {
         : " T states produced after each invocation's runtime");
 
     const chartBottomY = width / 2;
-    const distBetweenCharts = 100;
+    const distBetweenCharts = 0.1 * height;
     const lengthInner = chartLength - 100;
     const lengthTFactoryLine = lengthInner;
     const midpoint = chartLength / 2;
@@ -540,13 +540,14 @@ function LineChart({ legendData, chartData, width, height }: LineChartProps) {
       var radius = 4;
       drawEllipses(svg, cx, cy, radius, ellipsesColor);
     }
+    
+    svg.attr("transform", `translate(${0.1*width}, 0)`);
   }, [width, height]);
 
   return (
     <div>
-      <div className="svg-container">
+      <div className="line-svg-container">
         <svg
-          className="svg-element-flex"
           id="linechart"
           width={width}
           height={height}

@@ -193,9 +193,8 @@ function DonutChart({
   }, [data, innerRadius, outerRadius]);
 
   return (
-    <div className="svg-container">
+    <div className="donut-svg-container">
       <svg
-        className="svg-element-flex"
         id="donutchart"
         width={width}
         height={height}

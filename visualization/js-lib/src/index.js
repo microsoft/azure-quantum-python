@@ -15,7 +15,7 @@ class SpaceDiagramComponent extends HTMLElement {
       const root = createRoot(
         document.getElementById(divId)
       );
-      root.render(<SpaceDiagram width={1000} height={1000} data={data} />);
+      root.render(<SpaceDiagram data={data}/>);
     } else {
       console.error("Rendering error: Space Diagram requires data.");
     }
@@ -32,7 +32,7 @@ class TimeDiagramComponent extends HTMLElement {
         document.getElementById(divId)
       );
 
-      root.render(<TimeDiagram data={data}  width={1000} height={1000}/>);
+      root.render(<TimeDiagram data={data}/>);
     } else {
       console.error("Rendering error: Time Diagram requires data.");
     }
