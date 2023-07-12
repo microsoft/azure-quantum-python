@@ -10,7 +10,7 @@ else
   echo 'Successfully install: react-lib'
 fi
 
-npm run build
+npm run build:prod
 if [ $? -ne 0 ]; then
   echo 'Failed to build: react-lib'
   exit 1
@@ -44,7 +44,7 @@ else
   echo 'Successfully linked react and quantum-visualization to js-lib'
 fi
 
-npm run build
+npm run build:prod
 if [ $? -ne 0 ]; then
   echo 'Failed to build js-lib'
   exit 1
