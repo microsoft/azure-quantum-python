@@ -273,7 +273,7 @@ function LineChart({ legendData, chartData, width, height }: LineChartProps) {
         : " T states produced after each invocation's runtime");
 
     const chartBottomY = width / 2;
-    const distBetweenCharts = 0.1 * height;
+    const distBetweenCharts = 100;
     const lengthInner = chartLength - 100;
     const lengthTFactoryLine = lengthInner;
     const midpoint = chartLength / 2;
