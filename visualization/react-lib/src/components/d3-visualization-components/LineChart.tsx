@@ -104,6 +104,9 @@ function drawLegend(
     "transform",
     (d, i) => `translate(${( midpoint  * i + chartStartX )}, ${chartBottomY})`);
 
+    //.attr(
+    //  "transform",
+    //  (d, i) => `translate(${( midpoint)}, ${chartBottomY})`
   legend
     .append("rect")
     .attr("width", dimensionsLegend.toString())
@@ -352,7 +355,7 @@ function LineChart({ legendData, chartData, width, height }: LineChartProps) {
     // Add chart title
     drawText(
       svg,
-      "Time diagram",
+      "Time diagramasdfadfs",
       midpoint,
       chartBottomY - distBetweenCharts * 3,
       "title"
