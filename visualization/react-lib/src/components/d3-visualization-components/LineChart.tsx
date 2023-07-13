@@ -91,6 +91,7 @@ function drawLegend(
   dimensionsLegend: string,
   midpoint: number,
   chartBottomY: number,
+  chartStartX: number,
   legendColor: d3.ScaleOrdinal<string, unknown, never>
 ) {
   const legend = svg
@@ -100,9 +101,8 @@ function drawLegend(
     .append("g")
     .attr("class", "legend")
     .attr(
-      "transform",
-      (d, i) => `translate(${(i * midpoint) / 4}, ${chartBottomY})`
-    );
+    "transform",
+    (d, i) => `translate(${( midpoint  * i + chartStartX )}, ${chartBottomY})`);
 
   legend
     .append("rect")
@@ -171,7 +171,7 @@ function drawArrow(
 }
 
 function drawLineTick(
-  svg: d3.Selection<d3.BaseType, unknown, HTMLElement, any>,
+  svg: d3.Selection<d3.BaseType, unknown, HTMLElement, any>,  
   width: number,
   height: number,
   color: string,
@@ -263,7 +263,6 @@ function LineChart({ legendData, chartData, width, height }: LineChartProps) {
       chartData["algorithmRuntimeFormatted"];
     const tFactoryRuntimeFormatted: string =
       chartData["tFactoryRuntimeFormatted"];
-    const chartLength: number = chartData["chartLength"];
 
     /* Define chart constants */
     const tfactoryLineLabel =
@@ -274,16 +273,20 @@ function LineChart({ legendData, chartData, width, height }: LineChartProps) {
 
     const chartBottomY = 0.6 * height;
     const distBetweenCharts = 0.15 * height;
-    const lengthInner = chartLength - 100;
-    const lengthTFactoryLine = lengthInner;
-    const midpoint = chartLength / 2;
+    const xAxisLength = 0.9 * width;
+    const chartStartX = 0.05 * width; 
+    
+    const chartLength = xAxisLength - (xAxisLength * 0.1)
+    const lengthTFactoryLine = chartLength;
+    const midpoint = xAxisLength / 2;
     const algorithmLineY = chartBottomY - distBetweenCharts;
     const tFactoryLineY = chartBottomY - distBetweenCharts * 2;
-    const minAlgorithmLineLength = 50;
+    const minAlgorithmLineLength = xAxisLength * 0.05;
+    
     const minTFactoryLength = 20;
 
     /* Define chart ratios */
-    var lengthAlgorithmLine = lengthInner;
+    var lengthAlgorithmLine = chartLength;
     var runtimeRatio = 1;
 
     var totalTFactoryRuntime = numberTFactoryInvocations * tFactoryRuntime;
@@ -291,7 +294,7 @@ function LineChart({ legendData, chartData, width, height }: LineChartProps) {
       runtimeRatio = algorithmRuntime / totalTFactoryRuntime;
     } else {
       lengthAlgorithmLine = Math.round(
-        (algorithmRuntime / totalTFactoryRuntime) * lengthInner
+        (algorithmRuntime / totalTFactoryRuntime) * chartLength
       );
       if (lengthAlgorithmLine < minAlgorithmLineLength) {
         lengthAlgorithmLine = minAlgorithmLineLength;
@@ -311,13 +314,13 @@ function LineChart({ legendData, chartData, width, height }: LineChartProps) {
     const xScale = d3
       .scaleLinear()
       .domain([0, numLines])
-      .range([0, lengthTFactoryLine]);
+      .range([0, lengthTFactoryLine + chartStartX]);
 
     var tFactoryRefX = xScale(1) - runtimeRatio;
 
     var tFactoryDashedLine = [
-      [tFactoryRefX + 3, chartBottomY],
-      [tFactoryRefX + 3, tFactoryLineY],
+      [chartStartX + tFactoryRefX, chartBottomY],
+      [chartStartX + tFactoryRefX, tFactoryLineY],
     ];
     if (tFactoryRefX <= 0) {
       runtimeRatio = 5;
@@ -327,20 +330,21 @@ function LineChart({ legendData, chartData, width, height }: LineChartProps) {
     var algorithmDashedLineStart = lengthAlgorithmLine + 5;
     var algorithmTextY = chartBottomY - 10;
 
-    /* Define line points */
+    /* Define horizontal line points */
     const algorithmRunTimeLine = [
-      [0, algorithmLineY],
-      [lengthAlgorithmLine, algorithmLineY],
+      [chartStartX, algorithmLineY],
+      [chartStartX + lengthAlgorithmLine, algorithmLineY],
     ];
 
     const timeLine = [
-      [0, chartBottomY],
-      [chartLength, chartBottomY],
+      [chartStartX, chartBottomY],
+      [chartStartX + xAxisLength, chartBottomY],
     ];
 
+    /* Define vertical line points */
     const algorithmDashedLine = [
-      [algorithmDashedLineStart, chartBottomY],
-      [algorithmDashedLineStart, algorithmLineY],
+      [chartStartX + algorithmDashedLineStart, chartBottomY],
+      [chartStartX + algorithmDashedLineStart, algorithmLineY],
     ];
 
     /* Chart drawing */
@@ -363,19 +367,21 @@ function LineChart({ legendData, chartData, width, height }: LineChartProps) {
         }) as unknown as string
       )
       .range([algorithmRunTimeColor, tfactoryLineColor]);
-    drawLegend(
+   
+      drawLegend(
       svg,
       legendData,
       dimensionsLegend,
       midpoint,
       chartBottomY,
+      chartStartX,
       legendColor
     );
 
     /* Create algorithm line */
 
     // Create algorithm start bar
-    drawLineTick(svg, 1, 10, algorithmRunTimeColor, "algorithmTick");
+    drawLineTick(svg ,1, 10, algorithmRunTimeColor, "algorithmTick");
     // Create algorithm end arrow
     drawArrow(svg, algorithmRunTimeColor, "arrowAlgorithmLine");
 
@@ -423,14 +429,14 @@ function LineChart({ legendData, chartData, width, height }: LineChartProps) {
     drawText(
       svg,
       algorithmRuntimeFormatted,
-      lengthAlgorithmLine + 10,
+      lengthAlgorithmLine + chartStartX + 10,
       algorithmTextY,
       "runtimeText"
     );
 
     /* Create TimeLine */
     // Create timeline start bar
-    drawLineTick(svg, 1, 10, timeLineColor, "timeLineTick");
+    drawLineTick(svg,  1, 10, timeLineColor, "timeLineTick");
     // Create timeline end arrow
     drawArrow(svg, timeLineColor, "arrowTimeLine");
     // Draw timeline.
@@ -448,7 +454,7 @@ function LineChart({ legendData, chartData, width, height }: LineChartProps) {
     );
 
     // Append text labels to  time line.
-    drawText(svg, "Time", chartLength + 10, chartBottomY + 10, "time");
+    drawText(svg, "Time", xAxisLength + chartStartX + 10, chartBottomY + 10, "time");
 
     /* Create T-factory line */
     // Create tfactory start bar
@@ -475,7 +481,7 @@ function LineChart({ legendData, chartData, width, height }: LineChartProps) {
     drawText(
       svg,
       tFactoryRuntimeFormatted,
-      tFactoryRefX + 5,
+      tFactoryRefX + chartStartX + 5,
       chartBottomY + 20,
       "runtimeText"
     );
@@ -484,7 +490,7 @@ function LineChart({ legendData, chartData, width, height }: LineChartProps) {
     drawText(
       svg,
       tfactoryLineLabel,
-      tFactoryRefX + 10,
+      tFactoryRefX + chartStartX + 10,
       tFactoryLineY + 30,
       "runtimeText"
     );
@@ -494,15 +500,15 @@ function LineChart({ legendData, chartData, width, height }: LineChartProps) {
     drawText(
       svg,
       numberTFactoryInvocationsText,
-      tFactoryRefX + 10,
+      tFactoryRefX + chartStartX + 10,
       tFactoryLineY - 20,
       "runtimeText"
     );
 
     // Draw individual invocations lines
     for (let i = 0; i < numLines; i++) {
-      var x1 = xScale(i);
-      var x2 = xScale(i + 1) - runtimeRatio;
+      var x1 = xScale(i) + chartStartX;
+      var x2 = (xScale(i + 1) - runtimeRatio ) + chartStartX;
       var y = tFactoryLineY;
       var points = [
         [x1, y],
@@ -541,7 +547,6 @@ function LineChart({ legendData, chartData, width, height }: LineChartProps) {
       drawEllipses(svg, cx, cy, radius, ellipsesColor);
     }
     
-    svg.attr("transform", `translate(${0.1*width}, 0)`);
   }, [width, height]);
 
   return (

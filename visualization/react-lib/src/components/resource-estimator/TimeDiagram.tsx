@@ -139,7 +139,6 @@ function TimeDiagram({ data }: TimeDiagramProps) {
     tFactoryRuntime: jobResults.tfactory.runtime,
     algorithmRuntimeFormatted: algorithmRuntimeFormatted,
     tFactoryRuntimeFormatted: tFactoryRuntimeFormatted,
-    chartLength: width - 200,
   };
 
   const tableDataArray: TableData[] = Object.keys(tableDictionary).map(
