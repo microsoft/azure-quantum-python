@@ -98,12 +98,11 @@ function drawLegend(
     .data(legendData)
     .enter()
     .append("g")
-    .attr("class", "legend")
-    .attr(
-      "transform",
-      (d, i) => `translate(${(i * midpoint) / 4}, ${chartBottomY})`
-    );
+    .attr("class", "legend");
 
+    //.attr(
+    //  "transform",
+    //  (d, i) => `translate(${( midpoint)}, ${chartBottomY})`
   legend
     .append("rect")
     .attr("width", dimensionsLegend.toString())
@@ -263,7 +262,6 @@ function LineChart({ legendData, chartData, width, height }: LineChartProps) {
       chartData["algorithmRuntimeFormatted"];
     const tFactoryRuntimeFormatted: string =
       chartData["tFactoryRuntimeFormatted"];
-    const chartLength: number = chartData["chartLength"];
 
     /* Define chart constants */
     const tfactoryLineLabel =
@@ -274,16 +272,19 @@ function LineChart({ legendData, chartData, width, height }: LineChartProps) {
 
     const chartBottomY = 0.6 * height;
     const distBetweenCharts = 0.15 * height;
-    const lengthInner = chartLength - 100;
-    const lengthTFactoryLine = lengthInner;
-    const midpoint = chartLength / 2;
+    const xAxisLength = 0.9 * width;
+    const chartStartX = 0.05 * width; 
+    
+    const chartLength = xAxisLength - (xAxisLength * 0.1)
+    const lengthTFactoryLine = chartLength;
+    const midpoint = xAxisLength / 2;
     const algorithmLineY = chartBottomY - distBetweenCharts;
     const tFactoryLineY = chartBottomY - distBetweenCharts * 2;
-    const minAlgorithmLineLength = 50;
+    const minAlgorithmLineLength = xAxisLength * 0.05;
     const minTFactoryLength = 20;
 
     /* Define chart ratios */
-    var lengthAlgorithmLine = lengthInner;
+    var lengthAlgorithmLine = chartLength;
     var runtimeRatio = 1;
 
     var totalTFactoryRuntime = numberTFactoryInvocations * tFactoryRuntime;
@@ -291,7 +292,7 @@ function LineChart({ legendData, chartData, width, height }: LineChartProps) {
       runtimeRatio = algorithmRuntime / totalTFactoryRuntime;
     } else {
       lengthAlgorithmLine = Math.round(
-        (algorithmRuntime / totalTFactoryRuntime) * lengthInner
+        (algorithmRuntime / totalTFactoryRuntime) * chartLength
       );
       if (lengthAlgorithmLine < minAlgorithmLineLength) {
         lengthAlgorithmLine = minAlgorithmLineLength;
@@ -316,8 +317,8 @@ function LineChart({ legendData, chartData, width, height }: LineChartProps) {
     var tFactoryRefX = xScale(1) - runtimeRatio;
 
     var tFactoryDashedLine = [
-      [tFactoryRefX + 3, chartBottomY],
-      [tFactoryRefX + 3, tFactoryLineY],
+      [chartStartX + tFactoryRefX, chartBottomY],
+      [chartStartX + tFactoryRefX, tFactoryLineY],
     ];
     if (tFactoryRefX <= 0) {
       runtimeRatio = 5;
@@ -327,20 +328,21 @@ function LineChart({ legendData, chartData, width, height }: LineChartProps) {
     var algorithmDashedLineStart = lengthAlgorithmLine + 5;
     var algorithmTextY = chartBottomY - 10;
 
-    /* Define line points */
+    /* Define horizontal line points */
     const algorithmRunTimeLine = [
-      [0, algorithmLineY],
-      [lengthAlgorithmLine, algorithmLineY],
+      [chartStartX, algorithmLineY],
+      [chartStartX + lengthAlgorithmLine, algorithmLineY],
     ];
 
     const timeLine = [
-      [0, chartBottomY],
-      [chartLength, chartBottomY],
+      [chartStartX, chartBottomY],
+      [chartStartX + xAxisLength, chartBottomY],
     ];
 
+    /* Define vertical line points */
     const algorithmDashedLine = [
-      [algorithmDashedLineStart, chartBottomY],
-      [algorithmDashedLineStart, algorithmLineY],
+      [chartStartX + algorithmDashedLineStart, chartBottomY],
+      [chartStartX + algorithmDashedLineStart, algorithmLineY],
     ];
 
     /* Chart drawing */
@@ -348,7 +350,7 @@ function LineChart({ legendData, chartData, width, height }: LineChartProps) {
     // Add chart title
     drawText(
       svg,
-      "Time diagram",
+      "Time diagramasdfadfs",
       midpoint,
       chartBottomY - distBetweenCharts * 3,
       "title"
@@ -363,7 +365,8 @@ function LineChart({ legendData, chartData, width, height }: LineChartProps) {
         }) as unknown as string
       )
       .range([algorithmRunTimeColor, tfactoryLineColor]);
-    drawLegend(
+   
+      drawLegend(
       svg,
       legendData,
       dimensionsLegend,
@@ -448,7 +451,7 @@ function LineChart({ legendData, chartData, width, height }: LineChartProps) {
     );
 
     // Append text labels to  time line.
-    drawText(svg, "Time", chartLength + 10, chartBottomY + 10, "time");
+    drawText(svg, "Time", xAxisLength + 10, chartBottomY + 10, "time");
 
     /* Create T-factory line */
     // Create tfactory start bar
@@ -541,7 +544,6 @@ function LineChart({ legendData, chartData, width, height }: LineChartProps) {
       drawEllipses(svg, cx, cy, radius, ellipsesColor);
     }
     
-    svg.attr("transform", `translate(${0.1*width}, 0)`);
   }, [width, height]);
 
   return (
