@@ -40,7 +40,7 @@ function SpaceDiagram({
   React.useLayoutEffect(() => {
     handleSize();
     window.addEventListener("resize", handleSize);
-  }, [diagramRef]);
+  }, [diagramRef.current]);
 
   const physicalQubitsAlgorithm =
     jobResults.physicalCounts.breakdown.physicalQubitsForAlgorithm;

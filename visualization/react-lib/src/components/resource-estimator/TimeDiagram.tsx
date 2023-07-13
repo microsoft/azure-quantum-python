@@ -24,13 +24,13 @@ function TimeDiagram({ data }: TimeDiagramProps) {
       setHeight(height);
     }
     if (width) {
-      setWidth(width * 0.8);
+      setWidth(width);
     }
   }
   React.useLayoutEffect(() => {
     handleSize();
     window.addEventListener("resize", handleSize);
-  }, [diagramRef]);
+  }, [diagramRef.current]);
 
   const algorithmRuntimeFormatted = jobResults.physicalCountsFormatted.runtime;
   const tFactoryRuntimeFormatted =

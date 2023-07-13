@@ -65,7 +65,7 @@ function TableComponent({ nodes, width, height }: TableComponentProps) {
   // TO DO: edit tooltip text so that font-size can be changed.
 
   return (
-    <div style={{ width: width, height: height }}>
+    <div>
       <Table className="table-element" data={data} theme={theme}>
         {(tableList: any[]) => (
           <>
