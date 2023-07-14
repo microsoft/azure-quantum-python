@@ -21,25 +21,28 @@ function SpaceDiagram({
   const [innerRadius, setInnerRadius] = React.useState(0);
   const [outerRadius, setOuterRadius] = React.useState(0);
 
-  const handleSize = () => {
-    const height = diagramRef?.current?.offsetHeight;
+  const handleWidth = () => {
     const width = diagramRef?.current?.offsetWidth;
-    if (height) {
-      setHeight(height);
-    }
     if (width) {
       setWidth(width);
+      if (height) {
+        const outerRadius = 0.3 * Math.min(height * 0.7, width);
+        const innerRadius = 0.75 * outerRadius;
+        setOuterRadius(outerRadius);
+        setInnerRadius(innerRadius);
+      }
     }
-    if (height && width) {
-      const outerRadius = 0.3 * Math.min(height * 0.7, width);
-      const innerRadius = 0.75 * outerRadius;
-      setOuterRadius(outerRadius);
-      setInnerRadius(innerRadius);
+  }
+  const handleSize = () => {
+    handleWidth();
+    const height = diagramRef?.current?.offsetHeight;
+    if (height) {
+      setHeight(height);
     }
   }
   React.useLayoutEffect(() => {
     handleSize();
-    window.addEventListener("resize", handleSize);
+    window.addEventListener("resize", handleWidth);
   }, [diagramRef.current]);
 
   const physicalQubitsAlgorithm =

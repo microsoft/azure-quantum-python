@@ -17,19 +17,22 @@ function TimeDiagram({ data }: TimeDiagramProps) {
   const [width, setWidth] = React.useState(0);
   const [height, setHeight] = React.useState(0);
 
-  const handleSize = () => {
-    const height = diagramRef?.current?.offsetHeight;
+  const handleWidth = () => {
     const width = diagramRef?.current?.offsetWidth;
-    if (height) {
-      setHeight(height);
-    }
     if (width) {
       setWidth(width);
     }
   }
+  const handleSize = () => {
+    handleWidth();
+    const height = diagramRef?.current?.offsetHeight;
+    if (height) {
+      setHeight(height);
+    }
+  }
   React.useLayoutEffect(() => {
     handleSize();
-    window.addEventListener("resize", handleSize);
+    window.addEventListener("resize", handleWidth);
   }, [diagramRef.current]);
 
   const algorithmRuntimeFormatted = jobResults.physicalCountsFormatted.runtime;
