@@ -4,6 +4,7 @@
 ##
 from typing import Any, Dict, List, Optional, Union
 
+import json
 import markdown
 
 
@@ -30,6 +31,8 @@ class MicrosoftEstimatorResult(dict):
             self._is_simple = True
             self._repr = self._item_result_table()
             self.summary = HTMLWrapper(self._item_result_summary_table())
+            self.diagram = EstimatorResultDiagram(self.data().copy())
+
         elif isinstance(data, list):
             super().__init__({idx: MicrosoftEstimatorResult(item_data)
                               for idx, item_data in enumerate(data)})
@@ -376,4 +379,25 @@ class MicrosoftEstimatorResult(dict):
             html += f"<li>{md.convert(assumption)}</li>"
         html += "</ul></details>"
 
+        return html
+
+
+class EstimatorResultDiagram:
+    def __init__(self, data):
+        data.pop("reportData")
+        self.data_json = json.dumps(data).replace(" ", "")
+        self.vis_lib = "https://cdn-aquavisualization-prod.azureedge.net/resource-estimation/index.js"
+        self.space = HTMLWrapper(self._space_diagram())
+        self.time = HTMLWrapper(self._time_diagram())
+
+    def _space_diagram(self):
+        html = f"""
+            <script src={self.vis_lib}></script>
+            <re-space-diagram data={self.data_json}></re-space-diagram>"""
+        return html
+
+    def _time_diagram(self):
+        html = f"""
+            <script src={self.vis_lib}></script>
+            <re-time-diagram data={self.data_json}></re-time-diagram>"""
         return html
