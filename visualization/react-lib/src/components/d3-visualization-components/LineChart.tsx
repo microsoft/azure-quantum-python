@@ -454,7 +454,7 @@ function LineChart({ legendData, chartData, width, height }: LineChartProps) {
     );
 
     // Append text labels to  time line.
-    drawText(svg, "Time", xAxisLength + chartStartX + 10, chartBottomY + 10, "time");
+    drawText(svg, "Time", xAxisLength + chartStartX - 20, chartBottomY + 20, "time");
 
     /* Create T-factory line */
     // Create tfactory start bar
