@@ -38,6 +38,10 @@ stages:
     jobs:
       - job: Build_Test_Link_Publish
         steps:
+        - task: UseDotNet@2
+          inputs:
+            version: "3.1.x"
+
           - task: NodeTool@0
             inputs:
               versionSpec: "16.x"
