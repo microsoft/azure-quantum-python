@@ -38,6 +38,10 @@ stages:
     jobs:
       - job: Build_Test_Link_Publish
         steps:
+          - task: UseDotNet@2
+            inputs:
+              version: "3.1.x"
+
           - task: NodeTool@0
             inputs:
               versionSpec: "16.x"
@@ -49,6 +53,17 @@ stages:
               filePath: "$(rootDirectory)/build/build-jslib.sh"
               failOnStderr: true
               workingDirectory: "$(rootDirectory)/build/"
+
+          # - task: SFP.build-tasks.custom-build-task-1.EsrpCodeSigning@1
+          #   displayName: 'Signing'
+          #   inputs:
+          #     ConnectedServiceName: CodeSign
+          #     FolderPath: "$(jslib)/dist/"
+          #     Pattern: "*.js"
+          #     CertificateId: 100040160
+          #     OpusName: "Microsoft Quantum Development Kit"
+          #     OpusInfo: "https://www.microsoft.com/quantum"
+          #     SessionTimeout: 120
 
           - task: CopyFiles@2
             inputs:
