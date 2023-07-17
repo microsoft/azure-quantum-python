@@ -101,8 +101,8 @@ function drawLegend(
     .append("g")
     .attr("class", "legend")
     .attr(
-    "transform",
-    (d, i) => `translate(${( midpoint  * i + chartStartX )}, ${chartBottomY})`);
+      "transform",
+      (d, i) => `translate(${(midpoint * i + chartStartX)}, ${chartBottomY})`);
 
   legend
     .append("rect")
@@ -171,7 +171,7 @@ function drawArrow(
 }
 
 function drawLineTick(
-  svg: d3.Selection<d3.BaseType, unknown, HTMLElement, any>,  
+  svg: d3.Selection<d3.BaseType, unknown, HTMLElement, any>,
   width: number,
   height: number,
   color: string,
@@ -257,7 +257,7 @@ function LineChart({ legendData, chartData, width, height }: LineChartProps) {
     const numberTStates: number = chartData["numberTStates"];
     const numberTFactoryInvocations: number =
       chartData["numberTFactoryInvocations"];
-    const algorithmRuntime: number = 4500;
+    const algorithmRuntime: number = chartData["algorithmRuntime"]
     const tFactoryRuntime: number = chartData["tFactoryRuntime"];
     const algorithmRuntimeFormatted: string =
       chartData["algorithmRuntimeFormatted"];
@@ -274,15 +274,15 @@ function LineChart({ legendData, chartData, width, height }: LineChartProps) {
     const chartBottomY = 0.6 * height;
     const distBetweenCharts = 0.15 * height;
     const xAxisLength = 0.9 * width;
-    const chartStartX = 0.05 * width; 
-    
+    const chartStartX = 0.05 * width;
+
     const chartLength = xAxisLength - (xAxisLength * 0.1)
     const lengthTFactoryLine = chartLength;
     const midpoint = xAxisLength / 2;
     const algorithmLineY = chartBottomY - distBetweenCharts;
     const tFactoryLineY = chartBottomY - distBetweenCharts * 2;
     const minAlgorithmLineLength = xAxisLength * 0.05;
-    
+
     const minTFactoryLength = 20;
 
     /* Define chart ratios */
@@ -367,8 +367,8 @@ function LineChart({ legendData, chartData, width, height }: LineChartProps) {
         }) as unknown as string
       )
       .range([algorithmRunTimeColor, tfactoryLineColor]);
-   
-      drawLegend(
+
+    drawLegend(
       svg,
       legendData,
       dimensionsLegend,
@@ -381,7 +381,7 @@ function LineChart({ legendData, chartData, width, height }: LineChartProps) {
     /* Create algorithm line */
 
     // Create algorithm start bar
-    drawLineTick(svg ,1, 10, algorithmRunTimeColor, "algorithmTick");
+    drawLineTick(svg, 1, 10, algorithmRunTimeColor, "algorithmTick");
     // Create algorithm end arrow
     drawArrow(svg, algorithmRunTimeColor, "arrowAlgorithmLine");
 
@@ -436,7 +436,7 @@ function LineChart({ legendData, chartData, width, height }: LineChartProps) {
 
     /* Create TimeLine */
     // Create timeline start bar
-    drawLineTick(svg,  1, 10, timeLineColor, "timeLineTick");
+    drawLineTick(svg, 1, 10, timeLineColor, "timeLineTick");
     // Create timeline end arrow
     drawArrow(svg, timeLineColor, "arrowTimeLine");
     // Draw timeline.
@@ -508,7 +508,7 @@ function LineChart({ legendData, chartData, width, height }: LineChartProps) {
     // Draw individual invocations lines
     for (let i = 0; i < numLines; i++) {
       var x1 = xScale(i) + chartStartX;
-      var x2 = (xScale(i + 1) - runtimeRatio ) + chartStartX;
+      var x2 = (xScale(i + 1) - runtimeRatio) + chartStartX;
       var y = tFactoryLineY;
       var points = [
         [x1, y],
@@ -546,7 +546,7 @@ function LineChart({ legendData, chartData, width, height }: LineChartProps) {
       var radius = 4;
       drawEllipses(svg, cx, cy, radius, ellipsesColor);
     }
-    
+
   }, [width, height]);
 
   return (

@@ -1,9 +1,10 @@
 import React from "react";
-import TableComponent from "../table/Table";
+import { TableComponent, IItem, IState } from "../table/Table";
 import { JobResults } from "../../models/JobResults";
 import "./Diagram.css";
 import { TimeChart } from "../time-chart";
-import { TableData } from "../table/Table";
+import { ThemeProvider, IGroup, GroupHeader, IColumn } from "@fluentui/react";
+//import { TableData } from "../table/Table";
 
 interface TimeDiagramProps {
   data: string;
@@ -38,99 +39,122 @@ function TimeDiagram({ data }: TimeDiagramProps) {
   const numTFactoryInvocations =
     jobResults.physicalCounts.breakdown.numTfactoryRuns;
 
-  // TO DO: get names and descriptions from data.
-  const tableDictionary: {
-    [name: string]: {
-      type: number;
-      description?: string;
-      value?: string;
-    };
-  } = {
-    "Physical resource estimates": {
-      type: 0,
-    },
-    "Algorithm runtime": {
-      type: 1,
+  const items: IItem[] = [
+    {
+      name: "Algorithm runtime",
       value: algorithmRuntimeFormatted,
-      description: "Total runtime of algorithm.",
+      description: "Total runtime of algorithm."
     },
-    "T-factory parameters": {
-      type: 0,
-    },
-    "T-factory runtime": {
-      type: 1,
+    {
+      name: "T-factory runtime",
       value: tFactoryRuntimeFormatted,
-      description: "Runtime of a single T factory.",
+      description: "Runtime of a single T factory."
     },
-    "Resource estimation breakdown": {
-      type: 0,
-    },
-    "Number of T-factory invocations": {
-      type: 1,
+    {
+      name: "Number of T-factory invocations",
       value: numTFactoryInvocations.toString(),
       description: "Number of times all T factories are invoked.",
     },
-    "Number of T states per invocation": {
-      type: 1,
+    {
+      name: "Number of T states per invocation",
       value: jobResults.logicalCounts.tCount.toString(),
       description:
         "Number of output T states produced in a single run of T factory.",
     },
-    "Logical depth": {
-      type: 1,
+    {
+      name: "Logical depth",
       value: jobResults.physicalCounts.breakdown.logicalDepth.toString(),
       description:
         "A single T factory may cause logical depth to increase from algorithmic logical depth if its execution time is slower than the algorithm's.",
     },
-    "Algorithmic logical depth": {
-      type: 1,
+    {
+      name: "Algorithmic logical depth",
       value:
         jobResults.physicalCounts.breakdown.algorithmicLogicalDepth.toString(),
       description: "Number of logical cycles for the algorithm.",
     },
-    "Pre-layout logical resources": {
-      type: 0,
-    },
-    "T-gates": {
-      type: 1,
+    {
+      name: "T-gates",
       value: jobResults.logicalCounts.tCount.toString(),
       description: "Number of T gates in the input quantum program.",
     },
-    "R-gates": {
-      type: 1,
+    {
+      name: "R-gates",
       value: jobResults.logicalCounts.rotationCount.toString(),
       description: "Number of rotation gates in the input quantum program.",
     },
-    "Logical depth rotation gates": {
-      type: 1,
+    {
+      name: "Logical depth rotation gates",
       value: jobResults.logicalCounts.rotationDepth.toString(),
       description: "Depth of rotation gates in the input quantum program.",
     },
-    "CCZ gates": {
-      type: 1,
+    {
+      name: "CCZ gates",
       value: jobResults.logicalCounts.cczCount.toString(),
       description: "Number of CCZ-gates in the input quantum program.",
     },
-    "CCiX gates": {
-      type: 1,
+    {
+      name: "CCiX gates",
       value: jobResults.logicalCounts.ccixCount.toString(),
       description: "Number of CCiX-gates in the input quantum program.",
     },
-    "Measurement operations": {
-      type: 1,
+    {
+      name: "Measurement operations",
       value: jobResults.logicalCounts.measurementCount.toString(),
       description:
         "Number of single qubit measurements in the input quantum program.",
     },
-    "Logical qubit parameters": {
-      type: 0,
-    },
-    "Logical cycle time": {
-      type: 1,
+    {
+      name: "Logical cycle time",
       value: jobResults.physicalCountsFormatted.logicalCycleTime,
       description: "Duration of a logical cycle in nanoseconds.",
+    }
+  ];
+  const groups: IGroup[] = [
+    {
+      key: "1",
+      name: 'Physical resource estimates',
+      startIndex: 0,
+      count: 1
     },
+    {
+      key: "2",
+      name: 'T-factory parameters',
+      startIndex: 1,
+      count: 1
+    },
+    {
+      key: "3",
+      name: 'Resource estimation breakdown',
+      startIndex: 2,
+      count: 4,
+    },
+    {
+      key: "4",
+      name: 'Pre-layout logical resources',
+      startIndex: 6,
+      count: 6,
+    },
+    {
+      key: "5",
+      name: 'Logical cycle time',
+      startIndex: 12,
+      count: 1,
+    }
+  ];
+
+  const tableProps: IState =
+  {
+    items,
+    groups,
+    showItemIndexInView: false,
+    isCompactMode: false,
   };
+
+  const columns: IColumn[] = [
+    { key: 'name', name: 'Name', fieldName: 'name', minWidth: 100, maxWidth: 200, isResizable: true },
+    { key: 'value', name: 'Value', fieldName: 'value', minWidth: 100, maxWidth: 200 },
+  ];
 
   const chartDictionary: { [key: string]: any } = {
     numberTFactoryInvocations: numTFactoryInvocations.toString(),
@@ -141,17 +165,8 @@ function TimeDiagram({ data }: TimeDiagramProps) {
     tFactoryRuntimeFormatted: tFactoryRuntimeFormatted,
   };
 
-  const tableDataArray: TableData[] = Object.keys(tableDictionary).map(
-    (key, i) => {
-      return {
-        id: i.toString(),
-        name: key,
-        type: tableDictionary[key].type,
-        value: tableDictionary[key].value,
-        description: tableDictionary[key].description,
-      };
-    }
-  );
+  const Table = () => <ThemeProvider><TableComponent state={tableProps} columns={columns} /></ThemeProvider>;
+
 
   return (
     <div className="grid-container">
@@ -163,10 +178,11 @@ function TimeDiagram({ data }: TimeDiagramProps) {
         ></TimeChart>
       </div>
       <div className="table">
-        <TableComponent nodes={tableDataArray} width={width} height={height} />
+        <Table />
       </div>
     </div>
   );
 }
 
 export default TimeDiagram;
+

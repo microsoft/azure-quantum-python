@@ -1,7 +1,7 @@
 import React from "react";
 import { SpaceChart } from "../space-chart";
-import TableComponent from "../table/Table";
-import { TableData } from "../table/Table";
+//import TableComponent from "../table/Table";
+//import { TableData } from "../table/Table";
 import { JobResults } from "../../models/JobResults";
 import "./Diagram.css";
 
@@ -102,7 +102,7 @@ function SpaceDiagram({
     },
   };
 
-  const tableDataArray: TableData[] = Object.keys(tableDictionary).map(
+  /*const tableDataArray: TableData[] = Object.keys(tableDictionary).map(
     (key, i) => {
       return {
         id: i.toString(),
@@ -112,7 +112,7 @@ function SpaceDiagram({
         description: tableDictionary[key].description,
       };
     }
-  );
+  );*/
 
   return (
     <div className="grid-container">
@@ -126,11 +126,14 @@ function SpaceDiagram({
           outerRadius={outerRadius}
         />
       </div>
-      <div className="table">
-        <TableComponent nodes={tableDataArray} width={width} height={height} />
-      </div>
+     
     </div>
   );
 }
 
 export default SpaceDiagram;
+
+/*
+ <div className="table">
+        <TableComponent nodes={tableDataArray} width={width} height={height} />
+      </div>*/

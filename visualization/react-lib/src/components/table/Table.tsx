@@ -1,113 +1,130 @@
 import * as React from "react";
-import "./Table.css";
 import {
-  Table,
-  HeaderRow,
-  Body,
-  Row,
-  HeaderCell,
-  Cell,
-} from "@table-library/react-table-library/table";
-import { useTheme } from "@table-library/react-table-library/theme";
-import {
-  DEFAULT_OPTIONS,
-  getTheme,
-} from "@table-library/react-table-library/material-ui";
-import { Button, Tooltip } from "@mui/material";
-import InfoIcon from "@mui/icons-material/Info";
+  DetailsList,
+  IColumn,
+  IDetailsList,
+  IGroup,
+  IDetailsGroupRenderProps,
+  SelectionMode
+} from "@fluentui/react";
+import { getTheme, mergeStyleSets } from "@fluentui/react/lib/Styling";
 
-export type TableData = {
-  id: string;
+const ROW_HEIGHT: number = 42; // from DEFAULT_ROW_HEIGHTS in DetailsRow.styles.ts
+const GROUP_HEADER_AND_FOOTER_SPACING: number = 8;
+const GROUP_HEADER_AND_FOOTER_BORDER_WIDTH: number = 1;
+const GROUP_HEADER_HEIGHT: number = 95;
+const GROUP_FOOTER_HEIGHT: number =
+  GROUP_HEADER_AND_FOOTER_SPACING * 4 +
+  GROUP_HEADER_AND_FOOTER_BORDER_WIDTH * 2;
+
+const theme = getTheme();
+
+const classNames = mergeStyleSets({
+  headerAndFooter: {
+    borderTop: `${GROUP_HEADER_AND_FOOTER_BORDER_WIDTH}px solid ${theme.palette.neutralQuaternary}`,
+    borderBottom: `${GROUP_HEADER_AND_FOOTER_BORDER_WIDTH}px solid ${theme.palette.neutralQuaternary}`,
+    padding: GROUP_HEADER_AND_FOOTER_SPACING,
+    margin: `${GROUP_HEADER_AND_FOOTER_SPACING}px 0`,
+    background: theme.palette.neutralLighterAlt,
+    // Overlay the sizer bars
+    position: "relative",
+    zIndex: 100,
+  },
+  headerTitle: [
+    theme.fonts.large,
+    {
+      padding: "4px 0",
+    },
+  ],
+});
+
+export interface IItem {
   name: string;
-  type: number;
-  value?: string;
-  description?: string;
-};
-
-export type TableComponentProps = {
-  nodes: TableData[];
-  width: number;
-  height: number;
-};
-
-function TableComponent({ nodes, width, height }: TableComponentProps) {
-  const data = { nodes };
-
-  const customTheme = {
-    HeaderCell: `font-family: 'Segoe UI';
-    font-style: normal;
-    font-weight: 600;
-    font-size: 18px;
-    line-height: 22px; 
-    color: #201F1E;
-    padding: 10px `,
-    BaseCell: `
-    padding: 0px 20px;
-    
-    font-family: 'Segoe UI';
-    font-style: normal;
-    font-weight: 400;
-    font-size: 14px;
-    line-height: 18px;
-
-    &:last-of-type {
-      text-align: right;
-    }
-  `,
-    Table: `
-    max-width: 700px;
-  `,
-    Row: `&:nth-child(n){.td:nth-child(n){ border-bottom: none}} `,
-  };
-  const materialTheme = getTheme(DEFAULT_OPTIONS);
-  const theme = useTheme([materialTheme, customTheme]);
-
-  // TO DO: edit tooltip text so that font-size can be changed.
-
-  return (
-    <div>
-      <Table className="table-element" data={data} theme={theme}>
-        {(tableList: any[]) => (
-          <>
-            <Body>
-              {tableList.map((item) =>
-                item.type === 0 ? (
-                  <HeaderRow key={item.id} item={item}>
-                    <HeaderCell> {item.name} </HeaderCell>
-                    <HeaderCell> </HeaderCell>
-                  </HeaderRow>
-                ) : (
-                  <Row key={item.id} item={item}>
-                    <Cell>
-                      {item.name}
-                      <Tooltip
-                        title={item.description ? item.description : null}
-                      >
-                        {item.description ? (
-                          <Button>
-                            <InfoIcon
-                              data-show-if
-                              fontSize="small"
-                              style={{
-                                fill: "#1a5d8c",
-                              }}
-                            ></InfoIcon>
-                          </Button>
-                        ) : (
-                          <div></div>
-                        )}
-                      </Tooltip>
-                    </Cell>
-                    <Cell>{item.value.toLocaleString()}</Cell>
-                  </Row>
-                )
-              )}
-            </Body>
-          </>
-        )}
-      </Table>
-    </div>
-  );
+  value: string;
+  description: string;
 }
 
-export default TableComponent;
+export interface IState {
+  items: IItem[];
+  groups: IGroup[];
+  showItemIndexInView: boolean;
+  isCompactMode: boolean;
+}
+
+export class TableComponent extends React.Component<{ state: IState, columns: IColumn[] }, IState> {
+  private _root = React.createRef<IDetailsList>();
+  private _columns: IColumn[];
+
+  constructor(props: { state: IState, columns: IColumn[] }) {
+    super(props);
+
+    this.state = props.state;
+    this._columns = props.columns;
+  }
+
+  public componentWillUnmount() {
+    if (this.state.showItemIndexInView) {
+      const itemIndexInView = this._root.current!.getStartItemIndexInView();
+      alert("first item index that was in view: " + itemIndexInView);
+    }
+  }
+
+  public render() {
+    const { items, groups, isCompactMode } = this.state;
+
+    return (
+      <div>
+        <DetailsList
+          componentRef={this._root}
+          items={items}
+          groups={groups}
+          columns={this._columns}
+          groupProps={{
+            onRenderHeader: this._onRenderGroupHeader,
+            showEmptyGroups: false,
+          }}
+          onRenderItemColumn={this._onRenderColumn}
+          compact={isCompactMode}
+          getGroupHeight={this._getGroupHeight}
+          selectionMode={SelectionMode.none}
+          isHeaderVisible={false}
+        />
+      </div>
+    );
+  }
+
+  private _onRenderGroupHeader: IDetailsGroupRenderProps["onRenderHeader"] = (
+    props
+  ) => {
+    if (props) {
+      return (
+        <div className={classNames.headerAndFooter}>
+          <div className={classNames.headerTitle}>{`${props.group!.name}`}</div>
+        </div>
+      );
+    }
+
+    return null;
+  };
+
+  private _onRenderColumn(item: any, index?: number, column?: IColumn) {
+    const value =
+      item && column && column.fieldName
+        ? item[column.fieldName as keyof IItem] || ""
+        : "";
+
+    return <div data-is-focusable={true}>{value}</div>;
+  }
+
+  private _getGroupTotalRowHeight = (group: IGroup): number => {
+    return group.isCollapsed ? 0 : ROW_HEIGHT * group.count;
+  };
+
+  private _getGroupHeight = (group: IGroup, _groupIndex: number): number => {
+    return (
+      GROUP_HEADER_HEIGHT +
+      GROUP_FOOTER_HEIGHT +
+      this._getGroupTotalRowHeight(group)
+    );
+  };
+}
