@@ -54,16 +54,16 @@ stages:
               failOnStderr: true
               workingDirectory: "$(rootDirectory)/build/"
 
-          - task: SFP.build-tasks.custom-build-task-1.EsrpCodeSigning@1
-            displayName: 'Signing'
-            inputs:
-              ConnectedServiceName: CodeSign
-              FolderPath: "$(jslib)/dist/"
-              Pattern: "*.js"
-              CertificateId: 100040160
-              OpusName: "Microsoft Quantum Development Kit"
-              OpusInfo: "https://www.microsoft.com/quantum"
-              SessionTimeout: 120
+          # - task: SFP.build-tasks.custom-build-task-1.EsrpCodeSigning@1
+          #   displayName: 'Signing'
+          #   inputs:
+          #     ConnectedServiceName: CodeSign
+          #     FolderPath: "$(jslib)/dist/"
+          #     Pattern: "*.js"
+          #     CertificateId: 100040160
+          #     OpusName: "Microsoft Quantum Development Kit"
+          #     OpusInfo: "https://www.microsoft.com/quantum"
+          #     SessionTimeout: 120
 
           - task: CopyFiles@2
             inputs:
