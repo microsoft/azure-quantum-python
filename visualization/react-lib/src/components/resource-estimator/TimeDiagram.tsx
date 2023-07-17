@@ -1,10 +1,9 @@
 import React from "react";
 import { TableComponent, IItem, IState } from "../table/Table";
+import { ThemeProvider, IGroup, IColumn } from "@fluentui/react";
 import { JobResults } from "../../models/JobResults";
 import "./Diagram.css";
 import { TimeChart } from "../time-chart";
-import { ThemeProvider, IGroup, GroupHeader, IColumn } from "@fluentui/react";
-//import { TableData } from "../table/Table";
 
 interface TimeDiagramProps {
   data: string;
@@ -42,7 +41,7 @@ function TimeDiagram({ data }: TimeDiagramProps) {
   const numTFactoryInvocations =
     jobResults.physicalCounts.breakdown.numTfactoryRuns;
 
-  const items: IItem[] = [
+  const tableItems: IItem[] = [
     {
       name: "Algorithm runtime",
       value: algorithmRuntimeFormatted,
@@ -113,7 +112,8 @@ function TimeDiagram({ data }: TimeDiagramProps) {
       description: "Duration of a logical cycle in nanoseconds.",
     }
   ];
-  const groups: IGroup[] = [
+
+  const tableGroups: IGroup[] = [
     {
       key: "1",
       name: 'Physical resource estimates',
@@ -148,8 +148,8 @@ function TimeDiagram({ data }: TimeDiagramProps) {
 
   const tableProps: IState =
   {
-    items,
-    groups,
+    items: tableItems,
+    groups: tableGroups,
     showItemIndexInView: false,
     isCompactMode: false,
   };
@@ -169,7 +169,6 @@ function TimeDiagram({ data }: TimeDiagramProps) {
   };
 
   const Table = () => <ThemeProvider><TableComponent state={tableProps} columns={columns} /></ThemeProvider>;
-
 
   return (
     <div className="grid-container">
