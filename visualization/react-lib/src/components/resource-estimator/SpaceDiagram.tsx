@@ -1,7 +1,7 @@
 import React from "react";
 import { SpaceChart } from "../space-chart";
-//import TableComponent from "../table/Table";
-//import { TableData } from "../table/Table";
+import { TableComponent, IItem, IState } from "../table/Table";
+import { ThemeProvider, IGroup, IColumn } from "@fluentui/react";
 import { JobResults } from "../../models/JobResults";
 import "./Diagram.css";
 
@@ -55,67 +55,86 @@ function SpaceDiagram({
     physicalQubitsTFactory / numTFactories
   );
 
-  const tableDictionary: {
-    [name: string]: {
-      type: number;
-      description?: string;
-      value?: string;
-    };
-  } = {
-    "Physical resource estimates": { type: 0 },
-    "Total physical qubits": {
-      type: 1,
+  const tableItems: IItem[] = [
+    {
+      name: "Total physical qubits",
+      value: jobResults.physicalCounts.physicalQubits.toString(),
       description:
         "Total physical qubits required for algorithm and T factories.",
-      value: jobResults.physicalCounts.physicalQubits.toString(),
     },
-    "T factory parameters": { type: 0 },
-    "Physical T factory qubits": {
-      type: 1,
-      description: "Number of physical qubits for the T factories.",
+    {
+      name: "Physical T factory qubits",
       value: physicalQubitsTFactory.toString(),
+      description: "Number of physical qubits for the T factories.",
     },
-    "Resource estimation breakdown": { type: 0 },
-    "Number of T factory copies": {
-      type: 1,
-      description:
-        "Number of T factories capable of producing the demanded T states during the algorithm's runtime.",
+    {
+      name: "Number of T factory copies",
       value: numTFactories.toString(),
+      description: "Number of T factories capable of producing the demanded T states during the algorithm's runtime."
     },
-    "Physical qubits for single T factory": {
-      type: 1,
+    {
+      name: "Physical qubits for single T factory",
       value: numQubitsPerTFactory.toString(),
+      description: ""
     },
-    "Physical algorithmic qubits": {
-      type: 1,
-      description: "Number of logical qubits for the algorithm after layout.",
+    {
+      name: "Physical algorithmic qubits",
       value: physicalQubitsAlgorithm.toString(),
+      description: "Number of logical qubits for the algorithm after layout."
     },
-    "Logical algorithmic qubits": {
-      type: 1,
-      description: "Number of logical qubits for the algorithm after layout.",
-      value:
-        jobResults.physicalCounts.breakdown.algorithmicLogicalQubits.toString(),
+    {
+      name: "Logical algorithmic qubits",
+      value: jobResults.physicalCounts.breakdown.algorithmicLogicalQubits.toString(),
+      description: "Number of logical qubits for the algorithm after layout."
     },
-    "Logical qubit parameters": { type: 0 },
-    "Physical qubits": {
-      type: 1,
-      description: "Number of physical qubits per logical qubit.",
+    {
+      name: "Physical qubits",
       value: jobResults.logicalQubit.physicalQubits.toString(),
+      description: "Number of physical qubits per logical qubit."
+    }
+  ];
+
+  const tableGroups: IGroup[] = [
+    {
+      key: "1",
+      name: 'Physical resource estimates',
+      startIndex: 0,
+      count: 1
     },
+    {
+      key: "2",
+      name: 'T-factory parameters',
+      startIndex: 1,
+      count: 1
+    },
+    {
+      key: "3",
+      name: 'Resource estimation breakdown',
+      startIndex: 2,
+      count: 4,
+    },
+    {
+      key: "4",
+      name: 'Logical qubit parameters',
+      startIndex: 6,
+      count: 1
+    }
+  ];
+
+  const tableProps: IState =
+  {
+    items: tableItems,
+    groups: tableGroups,
+    showItemIndexInView: false,
+    isCompactMode: false,
   };
 
-  /*const tableDataArray: TableData[] = Object.keys(tableDictionary).map(
-    (key, i) => {
-      return {
-        id: i.toString(),
-        name: key,
-        type: tableDictionary[key].type,
-        value: tableDictionary[key].value,
-        description: tableDictionary[key].description,
-      };
-    }
-  );*/
+  const columns: IColumn[] = [
+    { key: 'name', name: 'Name', fieldName: 'name', minWidth: 100, maxWidth: 200, isResizable: true },
+    { key: 'value', name: 'Value', fieldName: 'value', minWidth: 100, maxWidth: 200 },
+  ];
+
+  const Table = () => <ThemeProvider><TableComponent state={tableProps} columns={columns} /></ThemeProvider>;
 
   return (
     <div className="grid-container">
@@ -129,14 +148,11 @@ function SpaceDiagram({
           outerRadius={outerRadius}
         />
       </div>
-     
+      <div className="table">
+        <Table />
+      </div>
     </div>
   );
 }
 
 export default SpaceDiagram;
-
-/*
- <div className="table">
-        <TableComponent nodes={tableDataArray} width={width} height={height} />
-      </div>*/
