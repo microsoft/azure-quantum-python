@@ -135,14 +135,28 @@ class DistillationUnitSpecification(AutoValidatingParams):
     logical_qubit_specification: Optional[ProtocolSpecificDistillationUnitSpecification] = None
     logical_qubit_specification_first_round_override: Optional[ProtocolSpecificDistillationUnitSpecification] = None
 
+    def has_custom_specification(self):
+        return \
+        self.display_name is not None \
+        or self.num_input_ts is not None \
+        or self.num_output_ts is not None \
+        or self.failure_probability_formula is not None \
+        or self.output_error_rate_formula is not None \
+        or self.physical_qubit_specification is not None \
+        or self.logical_qubit_specification is not None \
+        or self.logical_qubit_specification_first_round_override is not None
+
+    def has_predefined_name(self):
+        return self.name is not None
+
     def post_validation(self, result):
-        if self.name is None and self.display_name is None:
+        if not self.has_custom_specification() and not self.has_predefined_name():
             raise LookupError("name must be set or custom specification must be provided")
 
-        if self.name is not None and (self.display_name is not None or self.num_input_ts is not None or self.num_output_ts is not None or self.failure_probability_formula is not None or self.output_error_rate_formula is not None or self.physical_qubit_specification is not None or self.logical_qubit_specification is not None or self.logical_qubit_specification_first_round_override is not None):
+        if self.has_custom_specification() and self.has_predefined_name():
             raise LookupError("If predefined name is provided, custom specification is not allowed. Either remove name or remove all other specification of the distillation unit")
 
-        if self.name is not None:
+        if self.has_predefined_name():
             return # all other validation is on the server side
 
         if self.num_input_ts is None:
@@ -165,7 +179,6 @@ class DistillationUnitSpecification(AutoValidatingParams):
 
         if self.logical_qubit_specification_first_round_override is not None:
             self.logical_qubit_specification_first_round_override.post_validation(result)
-
 
 @dataclass
 class ErrorBudgetPartition(AutoValidatingParams):
