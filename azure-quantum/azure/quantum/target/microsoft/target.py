@@ -33,6 +33,32 @@ def _check_error_rate(name, value):
     if value <= 0.0 or value >= 1.0:
         raise ValueError(f"{name} must be between 0 and 1")
 
+def _check_error_rate_or_process_and_readout(name, value):
+    if value is None:
+        return
+
+    if isinstance(value, float):
+        _check_error_rate(name, value)
+        return
+
+    if not isinstance(value, MeasurementErrorRate):
+        raise ValueError(f"{name} must be either a float or MeasurementErrorRate with two fields: 'process' and 'readout'")
+
+    if value.process is None:
+            raise LookupError("process must be set")
+
+    if value.readout is None:
+            raise LookupError("readout must be set")
+
+    _check_error_rate(name + ".process", value.process)
+    _check_error_rate(name + ".readout", value.readout)
+
+
+@dataclass
+class MeasurementErrorRate(AutoValidatingParams):
+    process: float = validating_field(_check_error_rate)
+    readout: float = validating_field(_check_error_rate)
+     
 
 @dataclass
 class MicrosoftEstimatorQubitParams(AutoValidatingParams):
@@ -56,15 +82,16 @@ class MicrosoftEstimatorQubitParams(AutoValidatingParams):
     one_qubit_gate_time: Optional[str] = validating_field(check_time)
     two_qubit_gate_time: Optional[str] = validating_field(check_time)
     t_gate_time: Optional[str] = validating_field(check_time)
-    one_qubit_measurement_error_rate: Optional[float] = \
-        validating_field(_check_error_rate)
-    two_qubit_joint_measurement_error_rate: Optional[float] = \
-        validating_field(_check_error_rate)
+    one_qubit_measurement_error_rate: Union[None, float, MeasurementErrorRate] = \
+        validating_field(_check_error_rate_or_process_and_readout)
+    two_qubit_joint_measurement_error_rate: Union[None, float, MeasurementErrorRate] = \
+        validating_field(_check_error_rate_or_process_and_readout)
     one_qubit_gate_error_rate: Optional[float] = \
         validating_field(_check_error_rate)
     two_qubit_gate_error_rate: Optional[float] = \
         validating_field(_check_error_rate)
     t_gate_error_rate: Optional[float] = validating_field(_check_error_rate)
+    idle_error_rate: Optional[float] = validating_field(_check_error_rate)
 
     _default_models = [QubitParams.GATE_US_E3, QubitParams.GATE_US_E4,
                        QubitParams.GATE_NS_E3, QubitParams.GATE_NS_E4,

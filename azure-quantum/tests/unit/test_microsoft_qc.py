@@ -6,7 +6,7 @@ import pytest
 from pytest import raises
 from os import path
 import re
-from azure.quantum.target.microsoft.target import DistillationUnitSpecification, ProtocolSpecificDistillationUnitSpecification
+from azure.quantum.target.microsoft.target import DistillationUnitSpecification, ProtocolSpecificDistillationUnitSpecification, MeasurementErrorRate
 
 from common import QuantumTestBase, DEFAULT_TIMEOUT_SECS
 
@@ -171,6 +171,7 @@ class TestMicrosoftQC(QuantumTestBase):
         params.qubit_params.instruction_set = "gate_based"
         params.qubit_params.t_gate_error_rate = 0.03
         params.qubit_params.t_gate_time = "10 ns"
+        params.qubit_params.idle_error_rate = 0.02
 
         # If validation would be wrong, the call to as_dict will raise an
         # exception.
@@ -230,6 +231,58 @@ class TestMicrosoftQC(QuantumTestBase):
         params.qubit_params.t_gate_time = "1 ns"
         with raises(LookupError, match="one_qubit_measurement_time must be "
                                        "set"):
+            params.as_dict()
+
+    def test_estimator_params_validation_measurement_error_rates_valid(self):
+        params = MicrosoftEstimatorParams()
+
+        params.error_budget = 0.1
+        params.qubit_params.name = QubitParams.GATE_NS_E3
+        params.qubit_params.instruction_set = "gate_based"
+        params.qubit_params.t_gate_error_rate = 0.03
+        params.qubit_params.t_gate_time = "10 ns"
+        params.qubit_params.idle_error_rate = 0.02
+        params.one_qubit_measurement_error_rate = 0.01
+
+        two_qubit_joint_measurement_error_rate = MeasurementErrorRate()
+        two_qubit_joint_measurement_error_rate.process = 0.02
+        two_qubit_joint_measurement_error_rate.readout = 0.03
+        params.qubit_params.two_qubit_joint_measurement_error_rate = two_qubit_joint_measurement_error_rate
+
+        params.as_dict()
+
+    def test_estimator_params_validation_measurement_error_rates_missing_process(self):
+        params = MicrosoftEstimatorParams()
+
+        params.error_budget = 0.1
+        params.qubit_params.name = QubitParams.GATE_NS_E3
+        params.qubit_params.instruction_set = "gate_based"
+        params.qubit_params.t_gate_error_rate = 0.03
+        params.qubit_params.t_gate_time = "10 ns"
+        params.qubit_params.idle_error_rate = 0.02
+
+        two_qubit_joint_measurement_error_rate = MeasurementErrorRate()
+        two_qubit_joint_measurement_error_rate.readout = 0.03
+        params.qubit_params.two_qubit_joint_measurement_error_rate = two_qubit_joint_measurement_error_rate
+
+        with raises(LookupError, match="process must be set"):
+            params.as_dict()
+
+    def test_estimator_params_validation_measurement_error_rates_missing_readout(self):
+        params = MicrosoftEstimatorParams()
+
+        params.error_budget = 0.1
+        params.qubit_params.name = QubitParams.GATE_NS_E3
+        params.qubit_params.instruction_set = "gate_based"
+        params.qubit_params.t_gate_error_rate = 0.03
+        params.qubit_params.t_gate_time = "10 ns"
+        params.qubit_params.idle_error_rate = 0.02
+
+        two_qubit_joint_measurement_error_rate = MeasurementErrorRate()
+        two_qubit_joint_measurement_error_rate.process = 0.02
+        params.qubit_params.two_qubit_joint_measurement_error_rate = two_qubit_joint_measurement_error_rate
+
+        with raises(LookupError, match="readout must be set"):
             params.as_dict()
 
     def test_estimator_error_budget_float(self):
