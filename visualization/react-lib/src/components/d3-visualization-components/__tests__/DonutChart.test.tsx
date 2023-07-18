@@ -22,9 +22,7 @@ describe("Donut chart tests", () => {
       width: 1000,
       height: 1000,
       innerRadius: 100,
-      outerRadius: 200,
-      translationValX: 2,
-      translationValY: 1,
+      outerRadius: 200
     };
 
     const component = create(<DonutChart {...donutProps}></DonutChart>);

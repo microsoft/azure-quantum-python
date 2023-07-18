@@ -54,55 +54,55 @@ function TimeDiagram({ data }: TimeDiagramProps) {
     },
     {
       name: "Number of T-factory invocations",
-      value: numTFactoryInvocations.toString(),
+      value: numTFactoryInvocations.toLocaleString(),
       description: "Number of times all T factories are invoked.",
     },
     {
       name: "Number of T states per invocation",
-      value: jobResults.logicalCounts.tCount.toString(),
+      value: jobResults.logicalCounts.tCount.toLocaleString(),
       description:
         "Number of output T states produced in a single run of T factory.",
     },
     {
       name: "Logical depth",
-      value: jobResults.physicalCounts.breakdown.logicalDepth.toString(),
+      value: jobResults.physicalCounts.breakdown.logicalDepth.toLocaleString(),
       description:
         "A single T factory may cause logical depth to increase from algorithmic logical depth if its execution time is slower than the algorithm's.",
     },
     {
       name: "Algorithmic logical depth",
       value:
-        jobResults.physicalCounts.breakdown.algorithmicLogicalDepth.toString(),
+        jobResults.physicalCounts.breakdown.algorithmicLogicalDepth.toLocaleString(),
       description: "Number of logical cycles for the algorithm.",
     },
     {
       name: "T-gates",
-      value: jobResults.logicalCounts.tCount.toString(),
+      value: jobResults.logicalCounts.tCount.toLocaleString(),
       description: "Number of T gates in the input quantum program.",
     },
     {
       name: "R-gates",
-      value: jobResults.logicalCounts.rotationCount.toString(),
+      value: jobResults.logicalCounts.rotationCount.toLocaleString(),
       description: "Number of rotation gates in the input quantum program.",
     },
     {
       name: "Logical depth rotation gates",
-      value: jobResults.logicalCounts.rotationDepth.toString(),
+      value: jobResults.logicalCounts.rotationDepth.toLocaleString(),
       description: "Depth of rotation gates in the input quantum program.",
     },
     {
       name: "CCZ gates",
-      value: jobResults.logicalCounts.cczCount.toString(),
+      value: jobResults.logicalCounts.cczCount.toLocaleString(),
       description: "Number of CCZ-gates in the input quantum program.",
     },
     {
       name: "CCiX gates",
-      value: jobResults.logicalCounts.ccixCount.toString(),
+      value: jobResults.logicalCounts.ccixCount.toLocaleString(),
       description: "Number of CCiX-gates in the input quantum program.",
     },
     {
       name: "Measurement operations",
-      value: jobResults.logicalCounts.measurementCount.toString(),
+      value: jobResults.logicalCounts.measurementCount.toLocaleString(),
       description:
         "Number of single qubit measurements in the input quantum program.",
     },

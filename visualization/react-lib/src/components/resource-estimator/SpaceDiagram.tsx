@@ -58,38 +58,38 @@ function SpaceDiagram({
   const tableItems: IItem[] = [
     {
       name: "Total physical qubits",
-      value: jobResults.physicalCounts.physicalQubits.toString(),
+      value: jobResults.physicalCounts.physicalQubits.toLocaleString(),
       description:
         "Total physical qubits required for algorithm and T factories.",
     },
     {
       name: "Physical T factory qubits",
-      value: physicalQubitsTFactory.toString(),
+      value: physicalQubitsTFactory.toLocaleString(),
       description: "Number of physical qubits for the T factories.",
     },
     {
       name: "Number of T factory copies",
-      value: numTFactories.toString(),
+      value: numTFactories.toLocaleString(),
       description: "Number of T factories capable of producing the demanded T states during the algorithm's runtime."
     },
     {
       name: "Physical qubits for single T factory",
-      value: numQubitsPerTFactory.toString(),
+      value: numQubitsPerTFactory.toLocaleString(),
       description: ""
     },
     {
       name: "Physical algorithmic qubits",
-      value: physicalQubitsAlgorithm.toString(),
+      value: physicalQubitsAlgorithm.toLocaleString(),
       description: "Number of logical qubits for the algorithm after layout."
     },
     {
       name: "Logical algorithmic qubits",
-      value: jobResults.physicalCounts.breakdown.algorithmicLogicalQubits.toString(),
+      value: jobResults.physicalCounts.breakdown.algorithmicLogicalQubits.toLocaleString(),
       description: "Number of logical qubits for the algorithm after layout."
     },
     {
       name: "Physical qubits",
-      value: jobResults.logicalQubit.physicalQubits.toString(),
+      value: jobResults.logicalQubit.physicalQubits.toLocaleString(),
       description: "Number of physical qubits per logical qubit."
     }
   ];
