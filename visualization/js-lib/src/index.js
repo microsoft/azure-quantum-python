@@ -1,6 +1,9 @@
 import * as React from "react";
 import { createRoot } from 'react-dom/client';
 import { SpaceDiagram, TimeDiagram } from "quantum-visualization";
+import { initializeIcons } from '@fluentui/react/lib/Icons';
+
+initializeIcons();
 
 const randomId = () => {
   return Math.random().toString(36).substring(7);

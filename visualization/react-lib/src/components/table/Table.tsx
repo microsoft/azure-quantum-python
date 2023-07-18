@@ -70,7 +70,7 @@ export class TableComponent extends React.Component<{ state: IState, columns: IC
   }
 
   public render() {
-    const { items, groups, isCompactMode } = this.state;
+    const { items, groups } = this.state;
 
     return (
       <div>
@@ -83,8 +83,8 @@ export class TableComponent extends React.Component<{ state: IState, columns: IC
             onRenderHeader: this._onRenderGroupHeader,
             showEmptyGroups: false,
           }}
-          onRenderItemColumn={this._onRenderColumn}
-          compact={isCompactMode}
+          compact={true}
+          indentWidth = {4}
           getGroupHeight={this._getGroupHeight}
           selectionMode={SelectionMode.none}
           isHeaderVisible={false}
@@ -106,15 +106,6 @@ export class TableComponent extends React.Component<{ state: IState, columns: IC
 
     return null;
   };
-
-  private _onRenderColumn(item: any, index?: number, column?: IColumn) {
-    const value =
-      item && column && column.fieldName
-        ? item[column.fieldName as keyof IItem] || ""
-        : "";
-
-    return <div data-is-focusable={true}>{value}</div>;
-  }
 
   private _getGroupTotalRowHeight = (group: IGroup): number => {
     return group.isCollapsed ? 0 : ROW_HEIGHT * group.count;
