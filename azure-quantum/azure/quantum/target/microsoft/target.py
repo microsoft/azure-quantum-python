@@ -127,6 +127,17 @@ class MicrosoftEstimatorConstraints(AutoValidatingParams):
     max_t_factories: Optional[int] = validating_field(at_least_one)
 
 
+@dataclass
+class MicrosoftEstimatorProfiling(AutoValidatingParams):
+    @staticmethod
+    def at_most_30(name, value):
+        if value < 0 or value > 30:
+            raise ValueError(f"{name} must be nonnegative and at most 30")
+
+    call_stack_depth: Optional[int] = validating_field(at_most_30)
+    inline_functions: Optional[bool] = None
+
+
 class MicrosoftEstimatorInputParamsItem(InputParamsItem):
     """
     Input params for microsoft.estimator target
@@ -143,6 +154,8 @@ class MicrosoftEstimatorInputParamsItem(InputParamsItem):
             MicrosoftEstimatorQecScheme()
         self.constraints: MicrosoftEstimatorConstraints = \
             MicrosoftEstimatorConstraints()
+        self.profiling: MicrosoftEstimatorProfiling = \
+            MicrosoftEstimatorProfiling()
         self.error_budget: Optional[Union[float, ErrorBudgetPartition]] = None
 
     def as_dict(self, validate=True) -> Dict[str, Any]:
@@ -159,6 +172,10 @@ class MicrosoftEstimatorInputParamsItem(InputParamsItem):
         constraints = self.constraints.as_dict(validate)
         if len(constraints) != 0:
             result["constraints"] = constraints
+
+        profiling = self.profiling.as_dict(validate)
+        if len(profiling) != 0:
+            result["profiling"] = profiling
 
         if self.error_budget is not None:
             if isinstance(self.error_budget, float) or \
