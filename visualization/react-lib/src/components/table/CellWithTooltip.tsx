@@ -31,9 +31,9 @@
 //             <Text className={styles.cellText}>{tooltipHostProps.column.name}</Text>
 //             {!tooltipHostProps.column.data?.tooltipContent
 //                 ? <></>
-//                 : <TooltipHost hostClassName={styles.tooltipHost} content={tooltipHostProps.column.data.tooltipContent}>
+//                 : `<TooltipHost hostClassName={styles.tooltipHost} content={tooltipHostProps.column.data.tooltipContent}>
 //                     <Icon iconName="InfoSolid" className={styles.infoIcon}/>
-//                 </TooltipHost>
+//                 </TooltipHost>`
 //             }
 //         </>;
 // };

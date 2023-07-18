@@ -4,10 +4,31 @@ import { ThemeProvider, IGroup, IColumn } from "@fluentui/react";
 import { JobResults } from "../../models/JobResults";
 import "./Diagram.css";
 import { TimeChart } from "../time-chart";
+import { getTheme, mergeStyleSets } from "@fluentui/react/lib/Styling";
+import { TooltipHost, ITooltipHostStyles } from '@fluentui/react/lib/Tooltip';
+import { Icon } from '@fluentui/react/lib/Icon';
 
 interface TimeDiagramProps {
   data: string;
 }
+
+const classNames = mergeStyleSets({
+  cellText: {
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+  },
+  tooltipHost: {
+      marginLeft: "8px",
+      cursor: "default",
+  },
+  infoIcon: {
+      width: "12px",
+      height: "12px",
+      display: "inline-block",
+      verticalAlign: "-0.1rem",
+      fill: getTheme().semanticColors.infoIcon,
+  },
+});
 
 function TimeDiagram({ data }: TimeDiagramProps) {
   let jobResults = JSON.parse(data) as JobResults;
@@ -155,8 +176,39 @@ function TimeDiagram({ data }: TimeDiagramProps) {
   };
 
   const columns: IColumn[] = [
-    { key: 'name', name: 'Name', fieldName: 'name', minWidth: 100, maxWidth: 200, isResizable: true },
-    { key: 'value', name: 'Value', fieldName: 'value', minWidth: 100, maxWidth: 200 },
+    {
+      key: 'name',
+      name: 'Name',
+      onRender: (item: IItem) => {
+        return (
+          <div className={classNames.cellText} data-is-focusable={true}>
+            {item.name}
+            {
+              item.description 
+              ? <TooltipHost hostClassName={classNames.tooltipHost} content={item.description}>
+                  <Icon iconName="InfoSolid" className={classNames.infoIcon}/>
+                </TooltipHost>
+              : <></>
+            }
+          </div>
+        )
+      },
+      minWidth: 220,
+      flexGrow: 3,
+    },
+    {
+      key: 'value',
+      name: 'Value',
+      onRender: (item: IItem) => {
+        return (
+          <div className={classNames.cellText} data-is-focusable={true}>
+            {item.value}
+          </div>
+        )
+      },
+      minWidth: 50,
+      flexGrow: 1,
+    },
   ];
 
   const chartDictionary: { [key: string]: any } = {
