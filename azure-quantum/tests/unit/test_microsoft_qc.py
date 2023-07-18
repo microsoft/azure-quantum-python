@@ -6,6 +6,7 @@ import pytest
 from pytest import raises
 from os import path
 import re
+from azure.quantum.target.microsoft.target import DistillationUnitSpecification, ProtocolSpecificDistillationUnitSpecification
 
 from common import QuantumTestBase, DEFAULT_TIMEOUT_SECS
 
@@ -245,4 +246,81 @@ class TestMicrosoftQC(QuantumTestBase):
                 "rotations": 0.03,
                 "tStates": 0.02
             }
+        }
+        
+    def test_estimator_custom_distillation_units_by_name(self):
+        params = MicrosoftEstimatorParams()
+        unit1 = DistillationUnitSpecification()
+        unit1.name = "S"
+        params.distillation_unit_specifications.append(unit1)
+
+        unit2 = DistillationUnitSpecification()
+        unit2.name = "T"
+        params.distillation_unit_specifications.append(unit2)
+
+        assert params.as_dict() == {
+            "distillationUnitSpecifications": [{"name": "S"}, {"name": "T"}]
+        } 
+
+    def test_estimator_custom_distillation_units_empty_not_allowed(self):
+        params = MicrosoftEstimatorParams()
+        unit = DistillationUnitSpecification()
+        params.distillation_unit_specifications.append(unit)
+
+        with raises(LookupError, match="name must be set or custom specification must be provided"):
+            params.as_dict()
+    
+    def test_estimator_custom_distillation_units_name_and_custom_not_allowed_together(self):
+        params = MicrosoftEstimatorParams()
+        unit = DistillationUnitSpecification()
+        unit.name = "T"
+        unit.num_output_ts = 1
+        params.distillation_unit_specifications.append(unit)
+
+        with raises(LookupError, match="If predefined name is provided, custom specification is not allowed. Either remove name or remove all other specification of the distillation unit"):
+            params.as_dict()
+
+    def test_estimator_custom_distillation_units_by_specification_short(self):
+        params = MicrosoftEstimatorParams()
+        unit = DistillationUnitSpecification()
+        unit.display_name = "T"
+        unit.failure_probability_formula = "c"
+        unit.output_error_rate_formula = "r"
+        unit.num_input_ts = 1
+        unit.num_output_ts = 2
+        params.distillation_unit_specifications.append(unit)
+
+        assert params.as_dict() == {
+            "distillationUnitSpecifications": [{"displayName": "T", "failureProbabilityFormula": "c", "outputErrorRateFormula": "r", "numInputTs": 1, "numOutputTs": 2 }]
+        }
+
+    def test_estimator_custom_distillation_units_by_specification_full(self):
+        params = MicrosoftEstimatorParams()
+        unit = DistillationUnitSpecification()
+        unit.display_name = "T"
+        unit.failure_probability_formula = "c"
+        unit.output_error_rate_formula = "r"
+        unit.num_input_ts = 1
+        unit.num_output_ts = 2
+
+        physical_qubit_specification = ProtocolSpecificDistillationUnitSpecification()
+        physical_qubit_specification.num_unit_qubits = 1
+        physical_qubit_specification.duration_in_qubit_cycle_time = 2
+        unit.physical_qubit_specification = physical_qubit_specification
+
+        logical_qubit_specification = ProtocolSpecificDistillationUnitSpecification()
+        logical_qubit_specification.num_unit_qubits = 3
+        logical_qubit_specification.duration_in_qubit_cycle_time = 4
+        unit.logical_qubit_specification = logical_qubit_specification
+
+        logical_qubit_specification_first_round_override = ProtocolSpecificDistillationUnitSpecification()
+        logical_qubit_specification_first_round_override.num_unit_qubits = 5
+        logical_qubit_specification_first_round_override.duration_in_qubit_cycle_time = 6
+        unit.logical_qubit_specification_first_round_override = logical_qubit_specification_first_round_override
+
+        params.distillation_unit_specifications.append(unit)
+
+        print(params.as_dict())
+        assert params.as_dict() == {
+            "distillationUnitSpecifications": [{"displayName": "T", "numInputTs": 1, "numOutputTs": 2, "failureProbabilityFormula": "c", "outputErrorRateFormula": "r", "physicalQubitSpecification": {"numUnitQubits": 1, "durationInQubitCycleTime": 2}, "logicalQubitSpecification": {"numUnitQubits":3, "durationInQubitCycleTime":4}, "logicalQubitSpecificationFirstRoundOverride": {"numUnitQqubits":5, "durationInQubitCycleTime":6}}]
         }

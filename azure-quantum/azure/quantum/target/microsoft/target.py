@@ -12,6 +12,7 @@ from ..params import InputParams, InputParamsItem, AutoValidatingParams, \
     validating_field
 from ..target import Target
 from . import MicrosoftEstimatorJob
+from typing import List
 
 
 class QubitParams:
@@ -110,6 +111,63 @@ class MicrosoftEstimatorQecScheme(AutoValidatingParams):
 
 
 @dataclass
+class ProtocolSpecificDistillationUnitSpecification(AutoValidatingParams):
+    num_unit_qubits: Optional[int] = None
+    duration_in_qubit_cycle_time: Optional[int] = None
+
+    def post_validation(self, result):
+        if self.num_unit_qubits is None:
+            raise LookupError("num_unit_qubits must be set")
+
+        if self.duration_in_qubit_cycle_time is None:
+            raise LookupError("duration_in_qubit_cycle_time must be set")
+
+
+@dataclass
+class DistillationUnitSpecification(AutoValidatingParams):
+    name: Optional[str] = None
+    display_name: Optional[str] = None
+    num_input_ts: Optional[int] = None
+    num_output_ts: Optional[int] = None
+    failure_probability_formula:  Optional[str] = None
+    output_error_rate_formula:  Optional[str] = None
+    physical_qubit_specification: Optional[ProtocolSpecificDistillationUnitSpecification] = None
+    logical_qubit_specification: Optional[ProtocolSpecificDistillationUnitSpecification] = None
+    logical_qubit_specification_first_round_override: Optional[ProtocolSpecificDistillationUnitSpecification] = None
+
+    def post_validation(self, result):
+        if self.name is None and self.display_name is None:
+            raise LookupError("name must be set or custom specification must be provided")
+
+        if self.name is not None and (self.display_name is not None or self.num_input_ts is not None or self.num_output_ts is not None or self.failure_probability_formula is not None or self.output_error_rate_formula is not None or self.physical_qubit_specification is not None or self.logical_qubit_specification is not None or self.logical_qubit_specification_first_round_override is not None):
+            raise LookupError("If predefined name is provided, custom specification is not allowed. Either remove name or remove all other specification of the distillation unit")
+
+        if self.name is not None:
+            return # all other validation is on the server side
+
+        if self.num_input_ts is None:
+            raise LookupError("num_input_ts must be set")
+
+        if self.num_output_ts is None:
+            raise LookupError("num_output_ts must be set")
+
+        if self.failure_probability_formula is None:
+            raise LookupError("failure_probability_formula must be set")
+
+        if self.output_error_rate_formula is None:
+            raise LookupError("output_error_rate_formula must be set")
+
+        if self.physical_qubit_specification is not None:
+            self.physical_qubit_specification.post_validation(result)
+
+        if self.logical_qubit_specification is not None:
+            self.logical_qubit_specification.post_validation(result)
+
+        if self.logical_qubit_specification_first_round_override is not None:
+            self.logical_qubit_specification_first_round_override.post_validation(result)
+
+
+@dataclass
 class ErrorBudgetPartition(AutoValidatingParams):
     logical: float = 0.001 / 3
     t_states: float = 0.001 / 3
@@ -141,6 +199,7 @@ class MicrosoftEstimatorInputParamsItem(InputParamsItem):
             MicrosoftEstimatorQubitParams()
         self.qec_scheme: MicrosoftEstimatorQecScheme = \
             MicrosoftEstimatorQecScheme()
+        self.distillation_unit_specifications = []  # type: List[DistillationUnitSpecification]
         self.constraints: MicrosoftEstimatorConstraints = \
             MicrosoftEstimatorConstraints()
         self.error_budget: Optional[Union[float, ErrorBudgetPartition]] = None
@@ -155,6 +214,31 @@ class MicrosoftEstimatorInputParamsItem(InputParamsItem):
         qec_scheme = self.qec_scheme.as_dict(validate)
         if len(qec_scheme) != 0:
             result["qecScheme"] = qec_scheme
+
+        for specification in self.distillation_unit_specifications:
+            specification_dict = specification.as_dict(validate)
+            if len(specification_dict) != 0:
+                if result.get("distillationUnitSpecifications") is None:
+                    result["distillationUnitSpecifications"] = []
+
+                if specification.physical_qubit_specification is not None:
+                    physical_qubit_specification_dict = specification.physical_qubit_specification.as_dict(validate)
+                    if len(physical_qubit_specification_dict) != 0:
+                        specification_dict["physicalQubitSpecification"] = physical_qubit_specification_dict
+
+                if specification.logical_qubit_specification is not None:
+                    logical_qubit_specification_dict = specification.logical_qubit_specification.as_dict(validate)
+                    if len(logical_qubit_specification_dict) != 0:
+                        specification_dict["logicalQubitSpecification"] = logical_qubit_specification_dict
+
+
+                if specification.logical_qubit_specification_first_round_override is not None:
+                    logical_qubit_specification_first_round_override_dict = specification.logical_qubit_specification_first_round_override.as_dict(validate)
+                    if len(logical_qubit_specification_first_round_override_dict) != 0:
+                        specification_dict["logicalQubitSpecificationFirstRoundOverride"] = logical_qubit_specification_first_round_override_dict
+
+                result["distillationUnitSpecifications"].append(
+                    specification_dict)
 
         constraints = self.constraints.as_dict(validate)
         if len(constraints) != 0:
