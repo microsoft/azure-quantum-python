@@ -170,56 +170,24 @@ class MicrosoftEstimatorResult(dict):
         labels = labels[:len(self)]
 
         def get_row(result):
-            physical_counts = result["physicalCounts"]
-            breakdown = physical_counts["breakdown"]
+            formatted = result["physicalCountsFormatted"]
 
-            # Extract raw data from result dictionary
-            logical_qubits = breakdown["algorithmicLogicalQubits"]
-            logical_depth = breakdown["logicalDepth"]
-            num_tstates = breakdown["numTstates"]
-            code_distance = result["logicalQubit"]["codeDistance"]
-            num_tfactories = breakdown["numTfactories"]
-            tfactory_fraction = (breakdown["physicalQubitsForTfactories"] /
-                                 physical_counts["physicalQubits"]) * 100
-            physical_qubits = physical_counts["physicalQubits"]
-            runtime = physical_counts["runtime"]
-
-            # Format some entries
-            logical_depth_formatted = f"{logical_depth:.1e}"
-            num_tstates_formatted = f"{num_tstates:.1e}"
-            tfactory_fraction_formatted = f"{tfactory_fraction:.1f}%"
-            physical_qubits_formatted = f"{physical_qubits / 1e6:.2f}M"
-
-            # Make runtime human readable; we find the largest units for which
-            # the runtime has a value that is larger than 1.0. For that unit we
-            # are rounding the value and append the unit suffix.
-            units = [("nanosecs", 1), ("microsecs", 1000), ("millisecs", 1000),
-                     ("secs", 1000), ("mins", 60), ("hours", 60), ("days", 24),
-                     ("years", 365)]
-            runtime_formatted = runtime
-            for idx in range(1, len(units)):
-                if runtime_formatted / units[idx][1] < 1.0:
-                    rounded_value = round(runtime_formatted) % units[idx][1]
-                    runtime_formatted = f"{rounded_value} {units[idx - 1][0]}"
-                    break
-                else:
-                    runtime_formatted = runtime_formatted / units[idx][1]
-
-            # special case for years
-            if isinstance(runtime_formatted, float):
-                runtime_formatted = \
-                    f"{round(runtime_formatted)} {units[-1][0]}"
-
-            # Append all extracted and formatted data to data array
-            return (logical_qubits, logical_depth_formatted,
-                    num_tstates_formatted, code_distance, num_tfactories,
-                    tfactory_fraction_formatted, physical_qubits_formatted,
-                    runtime_formatted)
+            return (
+                formatted["algorithmicLogicalQubits"],
+                formatted["logicalDepth"],
+                formatted["numTstates"],
+                result["logicalQubit"]["codeDistance"],
+                formatted["numTfactories"],
+                formatted["physicalQubitsForTfactoriesPercentage"],
+                formatted["physicalQubits"],
+                formatted["rqops"],
+                formatted["runtime"]
+            )
 
         data = [get_row(self.data(index)) for index in range(len(self))]
         columns = ["Logical qubits", "Logical depth", "T states",
                    "Code distance", "T factories", "T factory fraction",
-                   "Physical qubits", "Physical runtime"]
+                   "Physical qubits", "rQOPS", "Physical runtime"]
         return pd.DataFrame(data, columns=columns, index=labels)
 
     def _item_result_table(self):
