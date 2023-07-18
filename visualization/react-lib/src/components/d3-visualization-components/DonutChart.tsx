@@ -15,8 +15,6 @@ export type DonutChartProps = {
   height: number;
   innerRadius: number;
   outerRadius: number;
-  translationValX: number;
-  translationValY: number;
 };
 
 function DonutChart({
@@ -25,8 +23,6 @@ function DonutChart({
   height,
   innerRadius,
   outerRadius,
-  translationValX,
-  translationValY,
 }: DonutChartProps) {
   React.useEffect(() => {
     const svg = d3.select("#donutchart");
@@ -39,6 +35,8 @@ function DonutChart({
     const legendTitlePreText = "Physical";
     const padAngle: number = 0.01;
 
+    const translationValX: number = width / 4;
+    const translationValY: number = height / 4;
     const chartOpacity = getComputedStyle(
       document.documentElement
     ).getPropertyValue("--chart-opacity");
@@ -90,8 +88,7 @@ function DonutChart({
       .attr("class", "arc")
       .attr(
         "transform",
-        `translate(${innerRadius + translationValX},${
-          innerRadius + translationValY
+        `translate(${innerRadius + translationValX},${innerRadius + translationValY
         })`
       );
 
@@ -175,8 +172,7 @@ function DonutChart({
       .attr("class", "donut-middle-title")
       .attr(
         "transform",
-        `translate(${innerRadius + translationValX},${
-          translationValY + innerRadius - 25
+        `translate(${innerRadius + translationValX},${translationValY + innerRadius - 25
         })`
       );
 
@@ -186,8 +182,7 @@ function DonutChart({
       .attr("class", "donut-middle-text")
       .attr(
         "transform",
-        `translate(${innerRadius + translationValX},${
-          innerRadius + translationValY + 25
+        `translate(${innerRadius + translationValX},${innerRadius + translationValY + 25
         })`
       );
   }, [data, innerRadius, outerRadius]);

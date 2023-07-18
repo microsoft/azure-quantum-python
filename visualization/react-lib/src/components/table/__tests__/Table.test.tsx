@@ -1,130 +1,128 @@
-// import React from "react";
-// import Table, { TableComponentProps, TableData } from "../Table";
-// import { create } from "react-test-renderer";
+import React from "react";
+import { TableComponent, IItem, IState } from "../Table";
+import { ThemeProvider, IGroup, IColumn } from "@fluentui/react";
+import { create } from "react-test-renderer";
+import { getTheme, mergeStyleSets } from "@fluentui/react/lib/Styling";
+import { TooltipHost, ITooltipHostStyles } from '@fluentui/react/lib/Tooltip';
+import { Icon } from '@fluentui/react/lib/Icon';
 
-// //currently broken due to imports of table //
+import { setIconOptions } from '@fluentui/react/lib/Styling';
 
-// describe("Table tests", () => {
-//   it("Verify Table", () => {
-//     const tableDictionary: {
-//       [name: string]: {
-//         type: number;
-//         description?: string;
-//         value?: string;
-//       };
-//     } = {
-//       "Physical resource estimates": {
-//         type: 0,
-//       },
-//       "Algorithm runtime": {
-//         type: 1,
-//         value: "10 ms",
-//         description: "Total runtime of algorithm.",
-//       },
-//       "T-factory parameters": {
-//         type: 0,
-//       },
-//       "T-factory runtime": {
-//         type: 1,
-//         value: "1 ms",
-//         description: "Runtime of a single T factory.",
-//       },
-//       "Resource estimation breakdown": {
-//         type: 0,
-//       },
-//       "Number of T-factory invocations": {
-//         type: 1,
-//         value: "100",
-//         description: "Number of times all T factories are invoked.",
-//       },
-//       "Number of T states per invocation": {
-//         type: 1,
-//         value: "5",
-//         description:
-//           "Number of output T states produced in a single run of T factory.",
-//       },
-//       "Logical depth": {
-//         type: 1,
-//         value: "30",
-//         description:
-//           "A single T factory may cause logical depth to increase from algorithmic logical depth if its execution time is slower than the algorithm's.",
-//       },
-//       "Algorithmic logical depth": {
-//         type: 1,
-//         value: "10",
-//         description: "Number of logical cycles for the algorithm.",
-//       },
-//       "Pre-layout logical resources": {
-//         type: 0,
-//       },
-//       "T-gates": {
-//         type: 1,
-//         value: "3",
-//         description: "Number of T gates in the input quantum program.",
-//       },
-//       "R-gates": {
-//         type: 1,
-//         value: "0",
-//         description: "Number of rotation gates in the input quantum program.",
-//       },
-//       "Logical depth rotation gates": {
-//         type: 1,
-//         value: "25",
-//         description: "Depth of rotation gates in the input quantum program.",
-//       },
-//       "CCZ gates": {
-//         type: 1,
-//         value: "2",
-//         description: "Number of CCZ-gates in the input quantum program.",
-//       },
-//       "CCiX gates": {
-//         type: 1,
-//         value: "2",
-//         description: "Number of CCiX-gates in the input quantum program.",
-//       },
-//       "Measurement operations": {
-//         type: 1,
-//         value: "105",
-//         description:
-//           "Number of single qubit measurements in the input quantum program.",
-//       },
-//       "Logical qubit parameters": {
-//         type: 0,
-//       },
-//       "Logical cycle time": {
-//         type: 1,
-//         value: "100 nanoseconds",
-//         description: "Duration of a logical cycle in nanoseconds.",
-//       },
-//     };
+// Suppress icon warnings.
+setIconOptions({
+    disableWarnings: true
+});
 
-//     const tableDataArray: TableData[] = Object.keys(tableDictionary).map(
-//       (key, i) => {
-//         return {
-//           id: i.toString(),
-//           name: key,
-//           type: tableDictionary[key].type,
-//           value: tableDictionary[key].value,
-//           description: tableDictionary[key].description,
-//         };
-//       }
-//     );
+const classNames = mergeStyleSets({
+    cellText: {
+        overflow: "hidden",
+        textOverflow: "ellipsis",
+    },
+    tooltipHost: {
+        marginLeft: "8px",
+        cursor: "default",
+    },
+    infoIcon: {
+        width: "12px",
+        height: "12px",
+        display: "inline-block",
+        verticalAlign: "-0.1rem",
+        fill: getTheme().semanticColors.infoIcon,
+    },
+});
 
-//     const tableProps: TableComponentProps = {
-//       nodes: tableDataArray,
-//       width: 1000,
-//       height: 1000,
-//     };
+describe("Table tests", () => {
+    it("Verify Table", () => {
 
-//     /*
-//     const component = create(<Table {...tableProps}></Table>);
-//     const componentInstance = component.root;
-//     expect(component.toJSON()).toMatchSnapshot("Table");
-//     */
+        const tableItems: IItem[] = [
+            {
+                name: "Total physical qubits",
+                value: "12",
+                description:
+                    "Total physical qubits required for algorithm and T factories.",
+            },
+            {
+                name: "Physical T factory qubits",
+                value: "20",
+                description: "Number of physical qubits for the T factories.",
+            },
+            {
+                name: "Number of T factory copies",
+                value: "100",
+                description: "Number of T factories capable of producing the demanded T states during the algorithm's runtime."
+            },
+            {
+                name: "Physical qubits for single T factory",
+                value: "2",
+                description: ""
+            }];
 
-//     // Mock success so builds pass.
-//     // TO DO: fix test.
-//     console.log("Test is under construction.");
-//     expect(1==1);
-//   });
-// });
+        const tableGroups: IGroup[] = [
+            {
+                key: "1",
+                name: 'Group 1',
+                startIndex: 0,
+                count: 1
+            },
+            {
+                key: "2",
+                name: 'Group 2',
+                startIndex: 1,
+                count: 2
+            },
+            {
+                key: "3",
+                name: 'Group 3',
+                startIndex: 3,
+                count: 1
+            }];
+
+        const tableProps: IState =
+        {
+            items: tableItems,
+            groups: tableGroups,
+            showItemIndexInView: false,
+            isCompactMode: false,
+        };
+
+        const columns: IColumn[] = [
+            {
+                key: 'name',
+                name: 'Name',
+                onRender: (item: IItem) => {
+                    return (
+                        <div className={classNames.cellText} data-is-focusable={true}>
+                            {item.name}
+                            {
+                                item.description
+                                    ? <TooltipHost hostClassName={classNames.tooltipHost} content={item.description}>
+                                        <Icon iconName="InfoSolid" className={classNames.infoIcon} />
+                                    </TooltipHost>
+                                    : <></>
+                            }
+                        </div>
+                    )
+                },
+                minWidth: 220,
+                flexGrow: 3,
+            },
+            {
+                key: 'value',
+                name: 'Value',
+                onRender: (item: IItem) => {
+                    return (
+                        <div className={classNames.cellText} data-is-focusable={true}>
+                            {item.value}
+                        </div>
+                    )
+                },
+                minWidth: 50,
+                flexGrow: 1,
+            },
+        ];
+
+        const component = create(<ThemeProvider><TableComponent state={tableProps} columns={columns} /></ThemeProvider>);
+        const componentInstance = component.root;
+        expect(component.toJSON()).toMatchSnapshot("Table");
+    });
+});
