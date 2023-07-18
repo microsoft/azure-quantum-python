@@ -45,10 +45,10 @@ def _check_error_rate_or_process_and_readout(name, value):
         raise ValueError(f"{name} must be either a float or MeasurementErrorRate with two fields: 'process' and 'readout'")
 
     if value.process is None:
-            raise LookupError("process must be set")
+        raise LookupError("process must be set")
 
     if value.readout is None:
-            raise LookupError("readout must be set")
+        raise LookupError("readout must be set")
 
     _check_error_rate(name + ".process", value.process)
     _check_error_rate(name + ".readout", value.readout)
@@ -271,14 +271,12 @@ class MicrosoftEstimatorInputParamsItem(InputParamsItem):
                     if len(logical_qubit_specification_dict) != 0:
                         specification_dict["logicalQubitSpecification"] = logical_qubit_specification_dict
 
-
                 if specification.logical_qubit_specification_first_round_override is not None:
                     logical_qubit_specification_first_round_override_dict = specification.logical_qubit_specification_first_round_override.as_dict(validate)
                     if len(logical_qubit_specification_first_round_override_dict) != 0:
                         specification_dict["logicalQubitSpecificationFirstRoundOverride"] = logical_qubit_specification_first_round_override_dict
 
-                result["distillationUnitSpecifications"].append(
-                    specification_dict)
+                result["distillationUnitSpecifications"].append(specification_dict)
 
         constraints = self.constraints.as_dict(validate)
         if len(constraints) != 0:
