@@ -322,5 +322,30 @@ class TestMicrosoftQC(QuantumTestBase):
 
         print(params.as_dict())
         assert params.as_dict() == {
-            "distillationUnitSpecifications": [{"displayName": "T", "numInputTs": 1, "numOutputTs": 2, "failureProbabilityFormula": "c", "outputErrorRateFormula": "r", "physicalQubitSpecification": {"numUnitQubits": 1, "durationInQubitCycleTime": 2}, "logicalQubitSpecification": {"numUnitQubits":3, "durationInQubitCycleTime":4}, "logicalQubitSpecificationFirstRoundOverride": {"numUnitQqubits":5, "durationInQubitCycleTime":6}}]
+            "distillationUnitSpecifications": [{"displayName": "T", "numInputTs": 1, "numOutputTs": 2, "failureProbabilityFormula": "c", "outputErrorRateFormula": "r", "physicalQubitSpecification": {"numUnitQubits": 1, "durationInQubitCycleTime": 2}, "logicalQubitSpecification": {"numUnitQubits":3, "durationInQubitCycleTime":4}, "logicalQubitSpecificationFirstRoundOverride": {"numUnitQubits":5, "durationInQubitCycleTime":6}}]
+        }
+
+    def test_estimator_protocol_specific_distillation_unit_specification_empty_not_allowed(self):
+        specification = ProtocolSpecificDistillationUnitSpecification()
+        with raises(LookupError, match="num_unit_qubits must be set"):
+            specification.as_dict()
+
+    def test_estimator_protocol_specific_distillation_unit_specification_missing_num_unit_qubits(self):
+        specification = ProtocolSpecificDistillationUnitSpecification()
+        specification.duration_in_qubit_cycle_time = 1
+        with raises(LookupError, match="num_unit_qubits must be set"):
+            specification.as_dict()
+
+    def test_estimator_protocol_specific_distillation_unit_specification_missing_duration_in_qubit_cycle_time(self):
+        specification = ProtocolSpecificDistillationUnitSpecification()
+        specification.num_unit_qubits = 1
+        with raises(LookupError, match="duration_in_qubit_cycle_time must be set"):
+            specification.as_dict()
+ 
+    def test_estimator_protocol_specific_distillation_unit_specification_valid(self):
+        specification = ProtocolSpecificDistillationUnitSpecification()
+        specification.num_unit_qubits = 1
+        specification.duration_in_qubit_cycle_time = 2
+        assert specification.as_dict() == {
+            "numUnitQubits": 1, "durationInQubitCycleTime": 2
         }
