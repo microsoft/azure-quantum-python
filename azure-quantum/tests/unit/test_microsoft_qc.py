@@ -14,6 +14,7 @@ from azure.quantum.target.microsoft import MicrosoftEstimator, \
     MicrosoftEstimatorJob, MicrosoftEstimatorResult, \
     MicrosoftEstimatorParams, QubitParams, ErrorBudgetPartition
 
+# test change
 
 class TestMicrosoftQC(QuantumTestBase):
     """TestMicrosoftQC
