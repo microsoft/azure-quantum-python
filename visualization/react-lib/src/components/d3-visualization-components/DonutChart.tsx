@@ -2,6 +2,7 @@ import * as React from "react";
 import * as d3 from "d3";
 import { PieArcDatum } from "d3-shape";
 import "./CSS/DonutChart.css";
+import * as d3Format from 'd3-format';
 
 export type Data = {
   title: string;
@@ -116,7 +117,7 @@ function DonutChart({
     // Add tooltips
     arcs
       .append("title")
-      .text((d) => `${d.data.title} : ${d.value.toLocaleString("en-us")}`);
+      .text((d) => `${d.data.title} : ${d3Format.format(',.0f')(d.value)}`);
 
     // Create legend
     const legend = svg
@@ -159,12 +160,13 @@ function DonutChart({
       .append("text")
       .attr("x", 0)
       .attr("y", translationValY + outerRadius + 45)
-      .text((d) => `${d.value.toLocaleString("en-US")}`)
+      .text((d) => `${d3Format.format(',.0f')(d.value)}`)
       .attr("class", "legend-values")
       .attr("transform", (d, i) => `translate(${translationValX}, 0)`);
 
     // Add total qubits and title to the middle of the donut chart
-    const total = d3.sum(data, (d) => d.value).toLocaleString("en-US");
+    const totalQubits = d3.sum(data, (d) => d.value)
+    const totalQubitsStr = d3Format.format(',.0f')(totalQubits);
 
     svg
       .append("text")
@@ -178,7 +180,7 @@ function DonutChart({
 
     svg
       .append("text")
-      .text(`${total}`)
+      .text(totalQubitsStr)
       .attr("class", "donut-middle-text")
       .attr(
         "transform",

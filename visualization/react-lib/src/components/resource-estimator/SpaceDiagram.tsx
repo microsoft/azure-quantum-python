@@ -1,28 +1,29 @@
 import React from "react";
 import { SpaceChart } from "../space-chart";
 import { TableComponent, IItem, IState } from "../table/Table";
-import { ThemeProvider, IGroup, IColumn } from "@fluentui/react";
+import { ThemeProvider, IGroup, IColumn, IDetailsColumnStyles } from "@fluentui/react";
 import { JobResults } from "../../models/JobResults";
 import "./Diagram.css";
 import { getTheme, mergeStyleSets } from "@fluentui/react/lib/Styling";
-import { TooltipHost, ITooltipHostStyles } from '@fluentui/react/lib/Tooltip';
+import { TooltipHost, TooltipOverflowMode } from '@fluentui/react/lib/Tooltip';
 import { Icon } from '@fluentui/react/lib/Icon';
 
 const classNames = mergeStyleSets({
   cellText: {
     overflow: "hidden",
     textOverflow: "ellipsis",
+    color: "#343434"
   },
   tooltipHost: {
-      marginLeft: "8px",
-      cursor: "default",
+    marginLeft: "8px",
+    cursor: "default",
   },
   infoIcon: {
-      width: "12px",
-      height: "12px",
-      display: "inline-block",
-      verticalAlign: "-0.1rem",
-      fill: getTheme().semanticColors.infoIcon,
+    width: "12px",
+    height: "12px",
+    display: "inline-block",
+    verticalAlign: "-0.1rem",
+    color: "#343434"
   },
 });
 
@@ -124,7 +125,7 @@ function SpaceDiagram({
     },
     {
       key: "2",
-      name: 'T-factory parameters',
+      name: 'T factory parameters',
       startIndex: 1,
       count: 1
     },
@@ -150,6 +151,13 @@ function SpaceDiagram({
     isCompactMode: false,
   };
 
+
+  const headerStyle: Partial<IDetailsColumnStyles> = {
+    cellTooltip: {
+      color: getTheme().palette.orange,
+    }
+  }
+
   const columns: IColumn[] = [
     {
       key: 'name',
@@ -159,25 +167,29 @@ function SpaceDiagram({
           <div className={classNames.cellText} data-is-focusable={true}>
             {item.name}
             {
-              item.description 
-              ? <TooltipHost hostClassName={classNames.tooltipHost} content={item.description}>
-                  <Icon iconName="InfoSolid" className={classNames.infoIcon}/>
+              item.description
+                ? <TooltipHost hostClassName={classNames.tooltipHost} content={item.description}>
+                  <Icon iconName="Info" className={classNames.infoIcon} />
                 </TooltipHost>
-              : <></>
+                : <></>
             }
           </div>
         )
       },
       minWidth: 220,
       flexGrow: 3,
+      styles: headerStyle,
     },
     {
       key: 'value',
       name: 'Value',
       onRender: (item: IItem) => {
         return (
+
           <div className={classNames.cellText} data-is-focusable={true}>
-            {item.value}
+            <TooltipHost hostClassName={classNames.tooltipHost} content={item.value} overflowMode={TooltipOverflowMode.Parent}>
+              {item.value}
+            </TooltipHost>
           </div>
         )
       },

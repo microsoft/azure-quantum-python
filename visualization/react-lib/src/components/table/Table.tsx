@@ -84,7 +84,7 @@ export class TableComponent extends React.Component<{ state: IState, columns: IC
             showEmptyGroups: false,
           }}
           compact={true}
-          indentWidth = {4}
+          indentWidth={4}
           getGroupHeight={this._getGroupHeight}
           selectionMode={SelectionMode.none}
           isHeaderVisible={false}

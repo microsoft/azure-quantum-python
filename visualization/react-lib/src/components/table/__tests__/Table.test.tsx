@@ -3,11 +3,10 @@ import { TableComponent, IItem, IState } from "../Table";
 import { ThemeProvider, IGroup, IColumn } from "@fluentui/react";
 import { create } from "react-test-renderer";
 import { getTheme, mergeStyleSets } from "@fluentui/react/lib/Styling";
-import { TooltipHost, ITooltipHostStyles } from '@fluentui/react/lib/Tooltip';
+import { TooltipHost } from '@fluentui/react/lib/Tooltip';
 import { Icon } from '@fluentui/react/lib/Icon';
 
 import { setIconOptions } from '@fluentui/react/lib/Styling';
-
 // Suppress icon warnings.
 setIconOptions({
     disableWarnings: true
@@ -27,7 +26,7 @@ const classNames = mergeStyleSets({
         height: "12px",
         display: "inline-block",
         verticalAlign: "-0.1rem",
-        fill: getTheme().semanticColors.infoIcon,
+        fill: getTheme().semanticColors.infoIcon
     },
 });
 
@@ -96,7 +95,7 @@ describe("Table tests", () => {
                             {
                                 item.description
                                     ? <TooltipHost hostClassName={classNames.tooltipHost} content={item.description}>
-                                        <Icon iconName="InfoSolid" className={classNames.infoIcon} />
+                                        <Icon iconName="Info" className={classNames.infoIcon} />
                                     </TooltipHost>
                                     : <></>
                             }
