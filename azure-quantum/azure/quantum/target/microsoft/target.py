@@ -203,8 +203,8 @@ class DistillationUnitSpecification(AutoValidatingParams):
         if self.logical_qubit_specification_first_round_override is not None:
             self.logical_qubit_specification_first_round_override.post_validation(result)
 
-    def as_dict_custom(self, validate):
-        specification_dict = self.as_dict(validate)
+    def as_dict(self, validate):
+        specification_dict = super().as_dict(validate)
         if len(specification_dict) != 0:
             if self.physical_qubit_specification is not None:
                 physical_qubit_specification_dict = \
@@ -279,7 +279,7 @@ class MicrosoftEstimatorInputParamsItem(InputParamsItem):
             result["qecScheme"] = qec_scheme
 
         for specification in self.distillation_unit_specifications:
-            specification_dict = specification.as_dict_custom(validate)
+            specification_dict = specification.as_dict(validate)
             if len(specification_dict) != 0:
                 if result.get("distillationUnitSpecifications") is None:
                     result["distillationUnitSpecifications"] = []
