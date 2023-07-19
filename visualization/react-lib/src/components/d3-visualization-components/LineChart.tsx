@@ -299,8 +299,8 @@ function LineChart({ legendData, chartData, width, height }: LineChartProps) {
     const tfactoryLineLabel: string =
       numTStatesString +
       (numberTStates == 1
-        ? " T state produced after  each invocation's runtime".split('  ').join('\n')
-        : " T states produced after asdfdsf  each invocation's runtime").split('  ').join('\n');
+        ? " T state produced after each invocation's runtime"
+        : " T states produced after each invocation's runtime");
 
     /* Define chart dimensions */
     const chartStartY = 0.6 * height;
