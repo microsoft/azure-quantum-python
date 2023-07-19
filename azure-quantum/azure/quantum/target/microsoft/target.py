@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 ##
 import re
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Any, Dict, Optional, Type, Union
 from ...job import Job
 from ...job.base_job import ContentType
@@ -42,22 +42,14 @@ def _check_error_rate_or_process_and_readout(name, value):
         return
 
     if not isinstance(value, MeasurementErrorRate):
-        raise ValueError(f"{name} must be either a float or MeasurementErrorRate with two fields: 'process' and 'readout'")
-
-    if value.process is None:
-        raise LookupError("process must be set")
-
-    if value.readout is None:
-        raise LookupError("readout must be set")
-
-    _check_error_rate(name + ".process", value.process)
-    _check_error_rate(name + ".readout", value.readout)
+        raise ValueError(f"{name} must be either a float or "
+                         "MeasurementErrorRate with two fields: 'process' and 'readout'")
 
 
 @dataclass
 class MeasurementErrorRate(AutoValidatingParams):
-    process: float = validating_field(_check_error_rate)
-    readout: float = validating_field(_check_error_rate)
+    process: float = field(metadata={"validate": _check_error_rate})
+    readout: float = field(metadata={"validate": _check_error_rate})
      
 
 @dataclass
@@ -160,7 +152,8 @@ class DistillationUnitSpecification(AutoValidatingParams):
     output_error_rate_formula:  Optional[str] = None
     physical_qubit_specification: Optional[ProtocolSpecificDistillationUnitSpecification] = None
     logical_qubit_specification: Optional[ProtocolSpecificDistillationUnitSpecification] = None
-    logical_qubit_specification_first_round_override: Optional[ProtocolSpecificDistillationUnitSpecification] = None
+    logical_qubit_specification_first_round_override: \
+        Optional[ProtocolSpecificDistillationUnitSpecification] = None
 
     def has_custom_specification(self):
         return \
@@ -181,7 +174,10 @@ class DistillationUnitSpecification(AutoValidatingParams):
             raise LookupError("name must be set or custom specification must be provided")
 
         if self.has_custom_specification() and self.has_predefined_name():
-            raise LookupError("If predefined name is provided, custom specification is not allowed. Either remove name or remove all other specification of the distillation unit")
+            raise LookupError("If predefined name is provided, "
+                            "custom specification is not allowed. "
+                            "Either remove name or remove all other "
+                            "specification of the distillation unit")
 
         if self.has_predefined_name():
             return # all other validation is on the server side
@@ -206,6 +202,33 @@ class DistillationUnitSpecification(AutoValidatingParams):
 
         if self.logical_qubit_specification_first_round_override is not None:
             self.logical_qubit_specification_first_round_override.post_validation(result)
+
+    def as_dict_custom(self, validate):
+        specification_dict = self.as_dict(validate)
+        if len(specification_dict) != 0:
+            if self.physical_qubit_specification is not None:
+                physical_qubit_specification_dict = \
+                self.physical_qubit_specification.as_dict(validate)
+                if len(physical_qubit_specification_dict) != 0:
+                    specification_dict["physicalQubitSpecification"] = \
+                        physical_qubit_specification_dict
+
+            if self.logical_qubit_specification is not None:
+                logical_qubit_specification_dict = \
+                self.logical_qubit_specification.as_dict(validate)
+                if len(logical_qubit_specification_dict) != 0:
+                    specification_dict["logicalQubitSpecification"] = \
+                        logical_qubit_specification_dict
+
+            if self.logical_qubit_specification_first_round_override is not None:
+                logical_qubit_specification_first_round_override_dict = \
+                self.logical_qubit_specification_first_round_override.as_dict(validate)
+                if len(logical_qubit_specification_first_round_override_dict) != 0:
+                    specification_dict["logicalQubitSpecificationFirstRoundOverride"] = \
+                        logical_qubit_specification_first_round_override_dict
+
+        return specification_dict
+
 
 @dataclass
 class ErrorBudgetPartition(AutoValidatingParams):
@@ -256,25 +279,10 @@ class MicrosoftEstimatorInputParamsItem(InputParamsItem):
             result["qecScheme"] = qec_scheme
 
         for specification in self.distillation_unit_specifications:
-            specification_dict = specification.as_dict(validate)
+            specification_dict = specification.as_dict_custom(validate)
             if len(specification_dict) != 0:
                 if result.get("distillationUnitSpecifications") is None:
                     result["distillationUnitSpecifications"] = []
-
-                if specification.physical_qubit_specification is not None:
-                    physical_qubit_specification_dict = specification.physical_qubit_specification.as_dict(validate)
-                    if len(physical_qubit_specification_dict) != 0:
-                        specification_dict["physicalQubitSpecification"] = physical_qubit_specification_dict
-
-                if specification.logical_qubit_specification is not None:
-                    logical_qubit_specification_dict = specification.logical_qubit_specification.as_dict(validate)
-                    if len(logical_qubit_specification_dict) != 0:
-                        specification_dict["logicalQubitSpecification"] = logical_qubit_specification_dict
-
-                if specification.logical_qubit_specification_first_round_override is not None:
-                    logical_qubit_specification_first_round_override_dict = specification.logical_qubit_specification_first_round_override.as_dict(validate)
-                    if len(logical_qubit_specification_first_round_override_dict) != 0:
-                        specification_dict["logicalQubitSpecificationFirstRoundOverride"] = logical_qubit_specification_first_round_override_dict
 
                 result["distillationUnitSpecifications"].append(specification_dict)
 
