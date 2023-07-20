@@ -264,11 +264,21 @@ class TestMicrosoftQC(QuantumTestBase):
         params.qubit_params.t_gate_error_rate = 0.03
         params.qubit_params.t_gate_time = "10 ns"
         params.qubit_params.idle_error_rate = 0.02
-        params.one_qubit_measurement_error_rate = 0.01
+        params.qubit_params.one_qubit_measurement_error_rate = 0.01
         params.qubit_params.two_qubit_joint_measurement_error_rate = \
         MeasurementErrorRate(process = 0.02, readout = 0.03)
 
-        params.as_dict()
+        assert params.as_dict() == {
+            "errorBudget": 0.1, 
+            "qubitParams": {"name": "qubit_gate_ns_e3", 
+                            "instructionSet": "gate_based", 
+                            "tGateErrorRate": 0.03, 
+                            "tGateTime": "10 ns", 
+                            "idleErrorRate": 0.02, 
+                            "oneQubitMeasurementErrorRate": 0.01, 
+                            "twoQubitJointMeasurementErrorRate": 
+                            {"process": 0.02, "readout": 0.03}}
+        }
 
 
     def test_estimator_error_budget_float(self):

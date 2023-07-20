@@ -50,7 +50,7 @@ def _check_error_rate_or_process_and_readout(name, value):
 class MeasurementErrorRate(AutoValidatingParams):
     process: float = field(metadata={"validate": _check_error_rate})
     readout: float = field(metadata={"validate": _check_error_rate})
-     
+
 
 @dataclass
 class MicrosoftEstimatorQubitParams(AutoValidatingParams):
@@ -117,6 +117,19 @@ class MicrosoftEstimatorQubitParams(AutoValidatingParams):
         if self.instruction_set in self._gate_based:
             if self.one_qubit_gate_time is None:
                 raise LookupError("one_qubit_gate_time must be set")
+
+    def as_dict(self, validate=True) -> Dict[str, Any]:
+        qubit_params = super().as_dict(validate)
+        if len(qubit_params) != 0:
+            if isinstance(self.one_qubit_measurement_error_rate, MeasurementErrorRate):
+                qubit_params["oneQubitMeasurementErrorRate"] = \
+                self.one_qubit_measurement_error_rate.as_dict(validate)
+
+            if isinstance(self.two_qubit_joint_measurement_error_rate, MeasurementErrorRate):
+                qubit_params["twoQubitJointMeasurementErrorRate"] = \
+                self.two_qubit_joint_measurement_error_rate.as_dict(validate)
+
+        return qubit_params
 
 
 @dataclass
@@ -203,7 +216,7 @@ class DistillationUnitSpecification(AutoValidatingParams):
         if self.logical_qubit_specification_first_round_override is not None:
             self.logical_qubit_specification_first_round_override.post_validation(result)
 
-    def as_dict(self, validate):
+    def as_dict(self, validate=True) -> Dict[str, Any]:
         specification_dict = super().as_dict(validate)
         if len(specification_dict) != 0:
             if self.physical_qubit_specification is not None:
