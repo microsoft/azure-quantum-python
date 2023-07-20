@@ -1,10 +1,11 @@
 import React from "react";
-import DonutChart, { Data, DonutChartProps } from "../DonutChart";
+import DonutChart, { DonutChartProps } from "../DonutChart";
+import { LegendData } from "../D3HelperFunctions";
 import { create } from "react-test-renderer";
 // Consider using react-faux-dom or jsdom to test d3 //
 describe("Donut chart tests", () => {
   it("Verify Donut Chart", () => {
-    const testData: Data[] = [
+    const testData: LegendData[] = [
       {
         legendTitle: "Logical qubits",
         title: "Logical qubits",

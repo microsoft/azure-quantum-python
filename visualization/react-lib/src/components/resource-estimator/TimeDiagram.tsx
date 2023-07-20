@@ -4,38 +4,18 @@ import { ThemeProvider, IGroup, IColumn } from "@fluentui/react";
 import { JobResults } from "../../models/JobResults";
 import "./Diagram.css";
 import { TimeChart } from "../time-chart";
-import { getTheme, mergeStyleSets } from "@fluentui/react/lib/Styling";
-import { TooltipHost, TooltipOverflowMode } from '@fluentui/react/lib/Tooltip';
-import { Icon } from '@fluentui/react/lib/Icon';
+import { GetColumns } from "../table/Column";
 
 interface TimeDiagramProps {
   data: string;
 }
 
-const classNames = mergeStyleSets({
-  cellText: {
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-    color: "#343434"
-  },
-  tooltipHost: {
-    marginLeft: "8px",
-    cursor: "default",
-  },
-  infoIcon: {
-    width: "12px",
-    height: "12px",
-    display: "inline-block",
-    verticalAlign: "-0.1rem",
-    color: "#343434"
-  },
-});
-
 function TimeDiagram({ data }: TimeDiagramProps) {
+  // Parse job results data.
   let jobResults = JSON.parse(data) as JobResults;
 
+  /*------------------------------ Configure canvas sizing ------------------------------  */
   const diagramRef = React.useRef<any>();
-
   const [width, setWidth] = React.useState(0);
   const [height, setHeight] = React.useState(0);
 
@@ -57,12 +37,20 @@ function TimeDiagram({ data }: TimeDiagramProps) {
     window.addEventListener("resize", handleWidth);
   }, [diagramRef.current]);
 
+
+  /*------------------------------  Define and parse table data ------------------------------  */
   const algorithmRuntimeFormatted = jobResults.physicalCountsFormatted.runtime;
   const tFactoryRuntimeFormatted =
     jobResults.physicalCountsFormatted.tfactoryRuntime;
   const numTFactoryInvocations =
     jobResults.physicalCounts.breakdown.numTfactoryRuns;
 
+  const numTfactories = jobResults.physicalCounts.breakdown.numTfactories;
+  const numTStatesPerSingleTfactory = jobResults.tfactory.numTstates;
+  const numTStatesAllTfactoriesOneInvocation = numTStatesPerSingleTfactory * numTfactories;
+
+  const numTStatesPerInvocationString = "Output T states of single T factory  (" + numTStatesPerSingleTfactory + ") * T factories (" + numTfactories + ") = " + numTStatesAllTfactoriesOneInvocation
+    + " T states produced by a single invocation of all T factories."
   const tableItems: IItem[] = [
     {
       name: "Algorithm runtime",
@@ -75,15 +63,24 @@ function TimeDiagram({ data }: TimeDiagramProps) {
       description: "Runtime of a single T factory."
     },
     {
+      name: "Number of T factories",
+      value: numTfactories.toLocaleString(),
+      description: "Number of T factories which are executed in parallel."
+    },
+    {
       name: "Number of T factory invocations",
       value: numTFactoryInvocations.toLocaleString(),
-      description: "Number of times all T factories are invoked.",
+      description: "Number of times all T factories are invoked concurrently.",
+    },
+    {
+      name: "Number of T states produced by one T factory",
+      value: "~ " + numTStatesPerSingleTfactory,
+      description: "Number of T states produced by a single T factory run."
     },
     {
       name: "Number of T states per invocation",
-      value: jobResults.logicalCounts.tCount.toLocaleString(),
-      description:
-        "Number of output T states produced in a single run of T factory.",
+      value: numTStatesAllTfactoriesOneInvocation.toLocaleString(),
+      description: numTStatesPerInvocationString
     },
     {
       name: "Logical depth",
@@ -152,22 +149,23 @@ function TimeDiagram({ data }: TimeDiagramProps) {
       key: "3",
       name: 'Resource estimation breakdown',
       startIndex: 2,
-      count: 4,
+      count: 6,
     },
     {
       key: "4",
       name: 'Pre-layout logical resources',
-      startIndex: 6,
+      startIndex: 8,
       count: 6,
     },
     {
       key: "5",
       name: 'Logical cycle time',
-      startIndex: 12,
+      startIndex: 14,
       count: 1,
     }
   ];
 
+  /*------------------------------  Create table ------------------------------  */
   const tableProps: IState =
   {
     items: tableItems,
@@ -175,55 +173,18 @@ function TimeDiagram({ data }: TimeDiagramProps) {
     showItemIndexInView: false,
     isCompactMode: false,
   };
+  const columns: IColumn[] = GetColumns();
+  const Table = () => <ThemeProvider><TableComponent state={tableProps} columns={columns} /></ThemeProvider>;
 
-  const columns: IColumn[] = [
-    {
-      key: 'name',
-      name: 'Name',
-      onRender: (item: IItem) => {
-        return (
-          <div className={classNames.cellText} data-is-focusable={true}>
-            {item.name}
-            {
-              item.description
-                ? <TooltipHost hostClassName={classNames.tooltipHost} content={item.description}>
-                  <Icon iconName="Info" className={classNames.infoIcon} />
-                </TooltipHost>
-                : <></>
-            }
-          </div>
-        )
-      },
-      minWidth: 220,
-      flexGrow: 3,
-    },
-    {
-      key: 'value',
-      name: 'Value',
-      onRender: (item: IItem) => {
-        return (
-          <div className={classNames.cellText} data-is-focusable={true}>
-            <TooltipHost hostClassName={classNames.tooltipHost} content={item.value} overflowMode={TooltipOverflowMode.Parent}>
-              {item.value}
-            </TooltipHost>
-          </div>
-        )
-      },
-      minWidth: 50,
-      flexGrow: 1,
-    },
-  ];
-
+  /*------------------------------  Create chart data dictionary ------------------------------  */
   const chartDictionary: { [key: string]: any } = {
     numberTFactoryInvocations: numTFactoryInvocations.toString(),
-    numberTStates: jobResults.logicalCounts.tCount.toString(),
+    numberTStates: numTStatesAllTfactoriesOneInvocation,
     algorithmRuntime: jobResults.physicalCounts.runtime,
     tFactoryRuntime: jobResults.tfactory.runtime,
     algorithmRuntimeFormatted: algorithmRuntimeFormatted,
     tFactoryRuntimeFormatted: tFactoryRuntimeFormatted,
   };
-
-  const Table = () => <ThemeProvider><TableComponent state={tableProps} columns={columns} /></ThemeProvider>;
 
   return (
     <div className="grid-container">

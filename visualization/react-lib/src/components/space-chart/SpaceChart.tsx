@@ -20,12 +20,12 @@ function SpaceChart({
 }: SpaceChartProps) {
   const chartData = [
     {
-      title: "Physical algorithmic qubits",
+      title: "Physical",
       value: physicalQubitsAlgorithm,
       legendTitle: "Algorithm qubits",
     },
     {
-      title: "Physical T factory qubits",
+      title: "Physical",
       value: physicalQubitsTFactory,
       legendTitle: "T factory qubits",
     },

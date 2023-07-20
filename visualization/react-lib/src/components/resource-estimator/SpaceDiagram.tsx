@@ -4,28 +4,7 @@ import { TableComponent, IItem, IState } from "../table/Table";
 import { ThemeProvider, IGroup, IColumn, IDetailsColumnStyles } from "@fluentui/react";
 import { JobResults } from "../../models/JobResults";
 import "./Diagram.css";
-import { getTheme, mergeStyleSets } from "@fluentui/react/lib/Styling";
-import { TooltipHost, TooltipOverflowMode } from '@fluentui/react/lib/Tooltip';
-import { Icon } from '@fluentui/react/lib/Icon';
-
-const classNames = mergeStyleSets({
-  cellText: {
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-    color: "#343434"
-  },
-  tooltipHost: {
-    marginLeft: "8px",
-    cursor: "default",
-  },
-  infoIcon: {
-    width: "12px",
-    height: "12px",
-    display: "inline-block",
-    verticalAlign: "-0.1rem",
-    color: "#343434"
-  },
-});
+import { GetColumns } from "../table/Column";
 
 interface SpaceDiagramProps {
   data: string;
@@ -34,10 +13,11 @@ interface SpaceDiagramProps {
 function SpaceDiagram({
   data,
 }: SpaceDiagramProps) {
+  // Parse job results data.
   let jobResults = JSON.parse(data) as JobResults;
 
+  /*------------------------------ Configure canvas sizing ------------------------------  */
   const diagramRef = React.useRef<any>();
-
   const [width, setWidth] = React.useState(0);
   const [height, setHeight] = React.useState(0);
   const [innerRadius, setInnerRadius] = React.useState(0);
@@ -67,6 +47,7 @@ function SpaceDiagram({
     window.addEventListener("resize", handleWidth);
   }, [diagramRef.current]);
 
+  /*------------------------------  Define and parse table data ------------------------------  */
   const physicalQubitsAlgorithm =
     jobResults.physicalCounts.breakdown.physicalQubitsForAlgorithm;
   const physicalQubitsTFactory =
@@ -143,6 +124,7 @@ function SpaceDiagram({
     }
   ];
 
+  /*------------------------------  Create table ------------------------------  */
   const tableProps: IState =
   {
     items: tableItems,
@@ -150,54 +132,7 @@ function SpaceDiagram({
     showItemIndexInView: false,
     isCompactMode: false,
   };
-
-
-  const headerStyle: Partial<IDetailsColumnStyles> = {
-    cellTooltip: {
-      color: getTheme().palette.orange,
-    }
-  }
-
-  const columns: IColumn[] = [
-    {
-      key: 'name',
-      name: 'Name',
-      onRender: (item: IItem) => {
-        return (
-          <div className={classNames.cellText} data-is-focusable={true}>
-            {item.name}
-            {
-              item.description
-                ? <TooltipHost hostClassName={classNames.tooltipHost} content={item.description}>
-                  <Icon iconName="Info" className={classNames.infoIcon} />
-                </TooltipHost>
-                : <></>
-            }
-          </div>
-        )
-      },
-      minWidth: 220,
-      flexGrow: 3,
-      styles: headerStyle,
-    },
-    {
-      key: 'value',
-      name: 'Value',
-      onRender: (item: IItem) => {
-        return (
-
-          <div className={classNames.cellText} data-is-focusable={true}>
-            <TooltipHost hostClassName={classNames.tooltipHost} content={item.value} overflowMode={TooltipOverflowMode.Parent}>
-              {item.value}
-            </TooltipHost>
-          </div>
-        )
-      },
-      minWidth: 50,
-      flexGrow: 1,
-    },
-  ];
-
+  const columns: IColumn[] = GetColumns();
   const Table = () => <ThemeProvider><TableComponent state={tableProps} columns={columns} /></ThemeProvider>;
 
   return (

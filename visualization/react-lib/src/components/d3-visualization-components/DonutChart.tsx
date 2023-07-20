@@ -2,16 +2,12 @@ import * as React from "react";
 import * as d3 from "d3";
 import { PieArcDatum } from "d3-shape";
 import "./CSS/DonutChart.css";
-import * as d3Format from 'd3-format';
-
-export type Data = {
-  title: string;
-  legendTitle: string;
-  value: number;
-};
+import * as d3Format from "d3-format";
+import * as d3Helper from "./D3HelperFunctions";
+import "./CSS/Shared.css";
 
 export type DonutChartProps = {
-  data: Data[];
+  data: d3Helper.LegendData[];
   width: number;
   height: number;
   innerRadius: number;
@@ -26,18 +22,20 @@ function DonutChart({
   outerRadius,
 }: DonutChartProps) {
   React.useEffect(() => {
+    /* ------------------------------------------------------------ Set up and define constants ------------------------------------------------------------  */
     const svg = d3.select("#donutchart");
     svg.selectAll("*").remove();
 
-    // Define constants
+    /*------------------------------  Define chart dimensions ------------------------------  */
     const innerRadiusHover = innerRadius;
     const outerRadiusHover = outerRadius + 25;
     const donutMiddleTitle = "Total physical qubits";
-    const legendTitlePreText = "Physical";
     const padAngle: number = 0.01;
 
     const translationValX: number = width / 4;
     const translationValY: number = height / 4;
+
+    /* ------------------------------  Define styles from CSS ------------------------------ */
     const chartOpacity = getComputedStyle(
       document.documentElement
     ).getPropertyValue("--chart-opacity");
@@ -45,37 +43,35 @@ function DonutChart({
       document.documentElement
     ).getPropertyValue("--chart-hover-opacity");
 
-    // Define chart and legend color ranges.
+    const colors = getComputedStyle(document.documentElement).getPropertyValue(
+      "--d3-colors"
+    );
+
+    /*------------------------------  Define color ranges  ------------------------------  */
+    const colorArray = colors.split(",");
+    const algorithmRunTimeColor = colorArray[1];
+    const tfactoryLineColor = colorArray[0];
+
     var chartColor = d3
       .scaleOrdinal()
       .domain(
         d3.extent(data, (d) => {
-          return d.title;
+          return d.legendTitle;
         }) as unknown as string
       )
-      .range(
-        getComputedStyle(document.documentElement)
-          .getPropertyValue("--d3-colors")
-          .split(", ")
-      );
+      .range([algorithmRunTimeColor, tfactoryLineColor]);
 
-    // Add chart title
-    svg
-      .append("text")
-      .attr("x", innerRadius + translationValX)
-      .attr("y", translationValY - innerRadius)
-      .attr("class", "title")
-      .text("Space diagram");
+    /* ------------------------------------------------------------ Begin draw chart ------------------------------------------------------------  */
 
-    // Create pie and arc generators
+    /*------------------------------  Create pie and arc generators  ------------------------------  */
     const pieGenerator = d3
-      .pie<Data>()
+      .pie<d3Helper.LegendData>()
       .padAngle(padAngle)
       .value((d) => d.value)
       .sort(null);
 
     const arcGenerator = d3
-      .arc<PieArcDatum<Data>>()
+      .arc<PieArcDatum<d3Helper.LegendData>>()
       .innerRadius(innerRadius)
       .outerRadius(outerRadius);
 
@@ -93,17 +89,17 @@ function DonutChart({
         })`
       );
 
-    // Fill donut chart, apply hover.
+    /*------------------------------  Fill donut chart and apply hover  ------------------------------  */
     arcs
       .append("path")
       .attr("d", arcGenerator)
       .attr("fill", (d) => {
-        return chartColor(d.data.title) as string;
+        return chartColor(d.data.legendTitle) as string;
       })
       .style("opacity", chartOpacity)
       .on("mouseover", (d) => {
         const arcHover = d3
-          .arc<PieArcDatum<Data>>()
+          .arc<PieArcDatum<d3Helper.LegendData>>()
           .innerRadius(innerRadiusHover)
           .outerRadius(outerRadiusHover);
         d3.select(d.target).attr("d", arcHover as any);
@@ -117,85 +113,61 @@ function DonutChart({
     // Add tooltips
     arcs
       .append("title")
-      .text((d) => `${d.data.title} : ${d3Format.format(',.0f')(d.value)}`);
-
-    // Create legend
-    const legend = svg
-      .selectAll(".legend")
-      .data(data)
-      .enter()
-      .append("g")
-      .attr("class", "legend")
-      .attr(
-        "transform",
-        (d, i) => `translate(${i * translationValX}, ${translationValY})`
+      .text(
+        (d) =>
+          `${d.data.title} ${d.data.legendTitle} : ${d3Format.format(",.0f")(
+            d.value
+          )}`
       );
 
-    legend
-      .append("rect")
-      .attr("width", 20)
-      .attr("height", 20)
-      .attr("x", translationValX - 30)
-      .attr("y", translationValY + outerRadius + 10)
-      .style("fill", (d, i) => chartColor(d.title) as string);
+    /*------------------------------  Draw Legend ------------------------------  */
+    var legendY = translationValY + outerRadius * 2 + 10;
+    var midpoint = outerRadius + 10;
+    d3Helper.drawLegend(
+      svg,
+      data,
+      midpoint,
+      legendY,
+      translationValX,
+      chartColor,
+      true,
+      false
+    );
 
-    // add text to the legend
-    legend
-      .append("text")
-      .text((d) => legendTitlePreText)
-      .attr("class", "legend")
-      .attr("x", 0)
-      .attr("y", translationValY + outerRadius)
-      .attr("transform", (d, i) => `translate(${translationValX}, 0)`);
+    /*------------------------------  Add text and titles  ------------------------------  */
 
-    legend
-      .append("text")
-      .attr("x", 0)
-      .attr("y", translationValY + outerRadius + 15)
-      .text((d) => `${d.legendTitle}`)
-      .attr("class", "legend-maintext")
-      .attr("transform", (d, i) => `translate(${translationValX}, 0)`);
+    // Add chart title
+    d3Helper.drawText(
+      svg,
+      "Space diagram",
+      innerRadius + translationValX,
+      translationValY - innerRadius,
+      "title"
+    );
 
-    legend
-      .append("text")
-      .attr("x", 0)
-      .attr("y", translationValY + outerRadius + 45)
-      .text((d) => `${d3Format.format(',.0f')(d.value)}`)
-      .attr("class", "legend-values")
-      .attr("transform", (d, i) => `translate(${translationValX}, 0)`);
+    // Add middle text
+    const totalQubits = d3.sum(data, (d) => d.value);
+    const totalQubitsStr = d3Format.format(",.0f")(totalQubits);
 
-    // Add total qubits and title to the middle of the donut chart
-    const totalQubits = d3.sum(data, (d) => d.value)
-    const totalQubitsStr = d3Format.format(',.0f')(totalQubits);
-
-    svg
-      .append("text")
-      .text(donutMiddleTitle)
-      .attr("class", "donut-middle-title")
-      .attr(
-        "transform",
-        `translate(${innerRadius + translationValX},${translationValY + innerRadius - 25
-        })`
-      );
-
-    svg
-      .append("text")
-      .text(totalQubitsStr)
-      .attr("class", "donut-middle-text")
-      .attr(
-        "transform",
-        `translate(${innerRadius + translationValX},${innerRadius + translationValY + 25
-        })`
-      );
+    d3Helper.drawText(
+      svg,
+      donutMiddleTitle,
+      innerRadius + translationValX,
+      translationValY + innerRadius - 25,
+      "donut-middle-title"
+    );
+    d3Helper.drawText(
+      svg,
+      totalQubitsStr,
+      innerRadius + translationValX,
+      translationValY + innerRadius + 25,
+      "donut-middle-text"
+    );
   }, [data, innerRadius, outerRadius]);
 
   return (
     <div className="donut-svg-container">
-      <svg
-        id="donutchart"
-        width={width}
-        height={height}
-      ></svg>
+      <svg id="donutchart" width={width} height={height}></svg>
     </div>
   );
 }

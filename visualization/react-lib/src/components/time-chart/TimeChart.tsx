@@ -15,7 +15,7 @@ function TimeChart({ chartData, width, height }: TimeChartProps): JSX.Element {
       legendTitle: "runtime",
     },
     {
-      title: "Single T-factory invocation",
+      title: "Single T factory invocation",
       value: chartData["tFactoryRuntimeFormatted"].value,
       legendTitle: "runtime",
     },

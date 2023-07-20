@@ -1,5 +1,6 @@
 import React from "react";
-import LineChart, { LegendData, LineChartProps } from "../LineChart";
+import LineChart, { LineChartProps } from "../LineChart";
+import { LegendData } from "../D3HelperFunctions";
 import { create } from "react-test-renderer";
 
 // Consider using react-faux-dom or jsdom to test d3 //
@@ -8,12 +9,12 @@ describe("Line chart tests", () => {
     const testLegendData: LegendData[] = [
       {
         title: "Algorithm",
-        value: "10 ms",
+        value: 10,
         legendTitle: "runtime",
       },
       {
         title: "Single T-factory invocation",
-        value: "1 ms",
+        value: 1,
         legendTitle: "runtime",
       },
     ];
