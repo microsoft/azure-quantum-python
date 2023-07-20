@@ -58,7 +58,7 @@ function SpaceDiagram({
     physicalQubitsTFactory / numTFactories
   );
 
-  const numTFactoryQubitsString = "Physical qubits per single T factory (" + numQubitsPerTFactory.toLocaleString() + ") * T factory copies ( " + numTFactories.toLocaleString() + ") = " 
+  const numTFactoryQubitsString = "Physical qubits per single T factory (" + numQubitsPerTFactory.toLocaleString() + ") * T factory copies (" + numTFactories.toLocaleString() + ") = " 
   + physicalQubitsTFactory.toLocaleString() + " Total physical qubits required for all T factories."
 
   const tableItems: IItem[] = [
