@@ -68,12 +68,12 @@ function SpaceDiagram({
     {
       name: "Physical T factory qubits",
       value: physicalQubitsTFactory.toLocaleString(),
-      description: "Number of physical qubits for the T factories.",
+      description: "Total number of physical qubits required for the T factories.",
     },
     {
-      name: "Number of T factory copies",
+      name: "T factory copies",
       value: numTFactories.toLocaleString(),
-      description: "Number of T factories capable of producing the demanded T states during the algorithm's runtime."
+      description: "Number of T factories executed in parallel capable of producing the demanded T states during the algorithm's runtime."
     },
     {
       name: "Physical qubits for single T factory",

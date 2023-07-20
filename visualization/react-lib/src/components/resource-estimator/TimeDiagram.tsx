@@ -63,22 +63,22 @@ function TimeDiagram({ data }: TimeDiagramProps) {
       description: "Runtime of a single T factory."
     },
     {
-      name: "Number of T factories",
+      name: "T factory copies",
       value: numTfactories.toLocaleString(),
-      description: "Number of T factories which are executed in parallel."
+      description: "Number of T factories executed in parallel capable of producing the demanded T states during the algorithm's runtime."
     },
     {
-      name: "Number of T factory invocations",
+      name: "T factory invocations",
       value: numTFactoryInvocations.toLocaleString(),
       description: "Number of times all T factories are invoked concurrently.",
     },
     {
-      name: "Number of T states produced by one T factory",
+      name: "T states per single T factory run",
       value: "~ " + numTStatesPerSingleTfactory,
       description: "Number of T states produced by a single T factory run."
     },
     {
-      name: "Number of T states per invocation",
+      name: "T states per invocation",
       value: numTStatesAllTfactoriesOneInvocation.toLocaleString(),
       description: numTStatesPerInvocationString
     },
