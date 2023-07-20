@@ -29,6 +29,10 @@ COPY --from=build /venv /venv
 # Mark that this Docker environment is hosted within qdk-python
 ENV IQSHARP_HOSTING_ENV=qdk-python
 
+# Jupyter is migrating its paths to use standard platformdirs
+# given by the platformdirs library.  
+ENV JUPYTER_PLATFORM_DIRS=1
+
 # Make sure the contents of our repo are in ${HOME}.
 # These steps are required for use on mybinder.org.
 USER root
@@ -44,6 +48,8 @@ RUN chown -R ${USER} ${HOME}
 
 # Finish by dropping back to the notebook user
 USER ${USER}
+
+RUN jupyter --paths
 
 # When image is run, start jupyter notebook within the environment
 ENTRYPOINT source /venv/bin/activate && \
