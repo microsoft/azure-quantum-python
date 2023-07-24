@@ -73,22 +73,34 @@ class TestMicrosoftQC(QuantumTestBase):
         params.items[0].qubit_params.instruction_set = "majorana"
         params.items[0].qubit_params.t_gate_error_rate = 0.03
         params.items[0].qubit_params.t_gate_time = "10 ns"
-        params.items[0].qubit_params.idle_error_rate = 0.02
+        params.items[0].qubit_params.idle_error_rate = 0.00002
         params.items[0].qubit_params.two_qubit_joint_measurement_error_rate = \
-            MeasurementErrorRate(process = 0.01, readout = 0.01)
+            MeasurementErrorRate(process = 0.00005, readout = 0.00007)
 
-        specification = DistillationUnitSpecification()
-        specification.display_name = "S"
-        specification.num_input_ts = 1
-        specification.num_output_ts = 1
-        specification.output_error_rate_formula = "c"
-        specification.failure_probability_formula = "r"
+        specification1 = DistillationUnitSpecification()
+        specification1.display_name = "S"
+        specification1.num_input_ts = 1
+        specification1.num_output_ts = 15
+        specification1.output_error_rate_formula = "35.0 * inputErrorRate ^ 3 + 7.1 * cliffordErrorRate"
+        specification1.failure_probability_formula = "15.0 * inputErrorRate + 356.0 * cliffordErrorRate"
 
         physical_qubit_specification = ProtocolSpecificDistillationUnitSpecification()
-        physical_qubit_specification.num_unit_qubits = 1
-        physical_qubit_specification.duration_in_qubit_cycle_time = 2
-        specification.physical_qubit_specification = physical_qubit_specification
-        params.items[0].distillation_unit_specifications = [specification]
+        physical_qubit_specification.num_unit_qubits = 12
+        physical_qubit_specification.duration_in_qubit_cycle_time = 45
+        specification1.physical_qubit_specification = physical_qubit_specification
+
+        logical_qubit_specification = ProtocolSpecificDistillationUnitSpecification()
+        logical_qubit_specification.num_unit_qubits = 20
+        logical_qubit_specification.duration_in_qubit_cycle_time = 13
+        specification1.logical_qubit_specification = physical_qubit_specification
+
+        specification2 = DistillationUnitSpecification()
+        specification2.name = "15-to-1 RM prep"
+
+        specification3= DistillationUnitSpecification()
+        specification3.name = "15-to-1 space efficient"
+
+        params.items[0].distillation_unit_specifications = [specification1, specification2, specification3]
 
         params.items[1].error_budget = 0.002
         job = estimator.submit(ccnot, input_params=params)
