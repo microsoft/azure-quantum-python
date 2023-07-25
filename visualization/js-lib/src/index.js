@@ -1,3 +1,8 @@
+/*------------------------------------
+  Copyright (c) Microsoft Corporation.
+  Licensed under the MIT License.
+  All rights reserved.
+------------------------------------ */
 import * as React from "react";
 import { createRoot } from 'react-dom/client';
 import { SpaceDiagram, TimeDiagram } from "quantum-visualization";

@@ -1,18 +1,25 @@
+/*------------------------------------
+  Copyright (c) Microsoft Corporation.
+  Licensed under the MIT License.
+  All rights reserved.
+------------------------------------ */
 import React from "react";
-import { TableComponent, IItem, IState } from "../table/Table";
-import { ThemeProvider, IGroup, IColumn } from "@fluentui/react";
-import { JobResults } from "../../models/JobResults";
-import "./Diagram.css";
-import { TimeChart } from "../time-chart";
-import { GetColumns } from "../table/Column";
+import { IColumn, IGroup, ThemeProvider } from "@fluentui/react";
 
-interface TimeDiagramProps {
+import { JobResults } from "../../models/JobResults";
+import LineChart from "../d3-visualization-components/LineChart";
+import { GetColumns } from "../table/Column";
+import { IItem, IState, TableComponent } from "../table/Table";
+
+import "./Diagram.css";
+
+export interface TimeDiagramProps {
   data: string;
 }
 
 function TimeDiagram({ data }: TimeDiagramProps) {
   // Parse job results data.
-  let jobResults = JSON.parse(data) as JobResults;
+  const jobResults = JSON.parse(data) as JobResults;
 
   /*------------------------------ Configure canvas sizing ------------------------------  */
   const diagramRef = React.useRef<any>();
@@ -24,21 +31,20 @@ function TimeDiagram({ data }: TimeDiagramProps) {
     if (width) {
       setWidth(width);
     }
-  }
+  };
   const handleSize = () => {
     handleWidth();
     const height = diagramRef?.current?.offsetHeight;
     if (height) {
       setHeight(height);
     }
-  }
+  };
   React.useLayoutEffect(() => {
     handleSize();
     window.addEventListener("resize", handleWidth);
   }, [diagramRef.current]);
 
-
-  /*------------------------------  Define and parse table data ------------------------------  */
+  /*------------------------------  Define and parse table and chart data ------------------------------  */
   const algorithmRuntimeFormatted = jobResults.physicalCountsFormatted.runtime;
   const tFactoryRuntimeFormatted =
     jobResults.physicalCountsFormatted.tfactoryRuntime;
@@ -47,25 +53,33 @@ function TimeDiagram({ data }: TimeDiagramProps) {
 
   const numTfactories = jobResults.physicalCounts.breakdown.numTfactories;
   const numTStatesPerSingleTfactory = jobResults.tfactory.numTstates;
-  const numTStatesAllTfactoriesOneInvocation = numTStatesPerSingleTfactory * numTfactories;
+  const numTStatesAllTfactoriesOneInvocation =
+    numTStatesPerSingleTfactory * numTfactories;
 
-  const numTStatesPerInvocationString = "Output T states of single T factory  (" + numTStatesPerSingleTfactory + ") * T factories (" + numTfactories + ") = " + numTStatesAllTfactoriesOneInvocation
-    + " T states produced by a single invocation of all T factories."
+  const numTStatesPerInvocationString =
+    "Output T states of single T factory  (" +
+    numTStatesPerSingleTfactory +
+    ") * T factories (" +
+    numTfactories +
+    ") = " +
+    numTStatesAllTfactoriesOneInvocation +
+    " T states produced by a single invocation of all T factories.";
   const tableItems: IItem[] = [
     {
       name: "Algorithm runtime",
       value: algorithmRuntimeFormatted,
-      description: "Total runtime of algorithm."
+      description: "Total runtime of algorithm.",
     },
     {
       name: "T factory runtime",
       value: tFactoryRuntimeFormatted,
-      description: "Runtime of a single T factory."
+      description: "Runtime of a single T factory.",
     },
     {
       name: "T factory copies",
       value: numTfactories.toLocaleString(),
-      description: "Number of T factories executed in parallel capable of producing the demanded T states during the algorithm's runtime."
+      description:
+        "Number of T factories executed in parallel capable of producing the demanded T states during the algorithm's runtime.",
     },
     {
       name: "T factory invocations",
@@ -74,13 +88,13 @@ function TimeDiagram({ data }: TimeDiagramProps) {
     },
     {
       name: "T states per single T factory run",
-      value: "~ " + numTStatesPerSingleTfactory,
-      description: "Number of T states produced by a single T factory run."
+      value: numTStatesPerSingleTfactory.toLocaleString(),
+      description: "Number of T states produced by a single T factory run.",
     },
     {
       name: "T states per invocation",
       value: numTStatesAllTfactoriesOneInvocation.toLocaleString(),
-      description: numTStatesPerInvocationString
+      description: numTStatesPerInvocationString,
     },
     {
       name: "Logical depth",
@@ -95,12 +109,12 @@ function TimeDiagram({ data }: TimeDiagramProps) {
       description: "Number of logical cycles for the algorithm.",
     },
     {
-      name: "T-gates",
+      name: "T gates",
       value: jobResults.logicalCounts.tCount.toLocaleString(),
       description: "Number of T gates in the input quantum program.",
     },
     {
-      name: "R-gates",
+      name: "R gates",
       value: jobResults.logicalCounts.rotationCount.toLocaleString(),
       description: "Number of rotation gates in the input quantum program.",
     },
@@ -129,52 +143,55 @@ function TimeDiagram({ data }: TimeDiagramProps) {
       name: "Logical cycle time",
       value: jobResults.physicalCountsFormatted.logicalCycleTime,
       description: "Duration of a logical cycle in nanoseconds.",
-    }
+    },
   ];
 
   const tableGroups: IGroup[] = [
     {
       key: "1",
-      name: 'Physical resource estimates',
+      name: "Physical resource estimates",
       startIndex: 0,
-      count: 1
+      count: 1,
     },
     {
       key: "2",
-      name: 'T factory parameters',
+      name: "T factory parameters",
       startIndex: 1,
-      count: 1
+      count: 1,
     },
     {
       key: "3",
-      name: 'Resource estimation breakdown',
+      name: "Resource estimation breakdown",
       startIndex: 2,
       count: 6,
     },
     {
       key: "4",
-      name: 'Pre-layout logical resources',
+      name: "Pre-layout logical resources",
       startIndex: 8,
       count: 6,
     },
     {
       key: "5",
-      name: 'Logical cycle time',
+      name: "Logical cycle time",
       startIndex: 14,
       count: 1,
-    }
+    },
   ];
 
   /*------------------------------  Create table ------------------------------  */
-  const tableProps: IState =
-  {
+  const tableProps: IState = {
     items: tableItems,
     groups: tableGroups,
     showItemIndexInView: false,
     isCompactMode: false,
   };
   const columns: IColumn[] = GetColumns();
-  const Table = () => <ThemeProvider><TableComponent state={tableProps} columns={columns} /></ThemeProvider>;
+  const Table = () => (
+    <ThemeProvider>
+      <TableComponent state={tableProps} columns={columns} />
+    </ThemeProvider>
+  );
 
   /*------------------------------  Create chart data dictionary ------------------------------  */
   const chartDictionary: { [key: string]: any } = {
@@ -189,11 +206,11 @@ function TimeDiagram({ data }: TimeDiagramProps) {
   return (
     <div className="grid-container">
       <div className="diagram" ref={diagramRef}>
-        <TimeChart
+        <LineChart
           chartData={chartDictionary}
           width={width}
           height={height}
-        ></TimeChart>
+        ></LineChart>
       </div>
       <div className="table">
         <Table />
@@ -203,4 +220,3 @@ function TimeDiagram({ data }: TimeDiagramProps) {
 }
 
 export default TimeDiagram;
-

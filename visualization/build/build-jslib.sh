@@ -52,4 +52,6 @@ else
   echo 'Successfully built js-lib'
 fi
 
-echo 'Successfully built js-lib and dependencies.' && exit 0
+echo 'Successfully built js-lib and dependencies.' 
+echo 'js-lib to be published to microsoft-visualization/index.js artifact."
+exit 0

@@ -1,5 +1,2 @@
-import { initializeIcons } from '@fluentui/font-icons-mdl2';
-export { SpaceChart} from "./space-chart";
-export {TimeChart} from "./time-chart";
-export {SpaceDiagram} from "./resource-estimator";
-export {TimeDiagram} from "./resource-estimator";
+export { SpaceDiagram } from "./resource-estimator";
+export { TimeDiagram } from "./resource-estimator";

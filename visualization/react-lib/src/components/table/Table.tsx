@@ -1,18 +1,23 @@
+/*------------------------------------
+  Copyright (c) Microsoft Corporation.
+  Licensed under the MIT License.
+  All rights reserved.
+------------------------------------ */
 import * as React from "react";
 import {
   DetailsList,
   IColumn,
+  IDetailsGroupRenderProps,
   IDetailsList,
   IGroup,
-  IDetailsGroupRenderProps,
-  SelectionMode
+  SelectionMode,
 } from "@fluentui/react";
 import { getTheme, mergeStyleSets } from "@fluentui/react/lib/Styling";
 
-const ROW_HEIGHT: number = 42; // from DEFAULT_ROW_HEIGHTS in DetailsRow.styles.ts
-const GROUP_HEADER_AND_FOOTER_SPACING: number = 8;
-const GROUP_HEADER_AND_FOOTER_BORDER_WIDTH: number = 1;
-const GROUP_HEADER_HEIGHT: number = 95;
+const ROW_HEIGHT = 42; // from DEFAULT_ROW_HEIGHTS in DetailsRow.styles.ts
+const GROUP_HEADER_AND_FOOTER_SPACING = 8;
+const GROUP_HEADER_AND_FOOTER_BORDER_WIDTH = 1;
+const GROUP_HEADER_HEIGHT = 95;
 const GROUP_FOOTER_HEIGHT: number =
   GROUP_HEADER_AND_FOOTER_SPACING * 4 +
   GROUP_HEADER_AND_FOOTER_BORDER_WIDTH * 2;
@@ -51,11 +56,14 @@ export interface IState {
   isCompactMode: boolean;
 }
 
-export class TableComponent extends React.Component<{ state: IState, columns: IColumn[] }, IState> {
+export class TableComponent extends React.Component<
+  { state: IState; columns: IColumn[] },
+  IState
+> {
   private _root = React.createRef<IDetailsList>();
   private _columns: IColumn[];
 
-  constructor(props: { state: IState, columns: IColumn[] }) {
+  constructor(props: { state: IState; columns: IColumn[] }) {
     super(props);
 
     this.state = props.state;
@@ -94,7 +102,7 @@ export class TableComponent extends React.Component<{ state: IState, columns: IC
   }
 
   private _onRenderGroupHeader: IDetailsGroupRenderProps["onRenderHeader"] = (
-    props
+    props,
   ) => {
     if (props) {
       return (
@@ -111,7 +119,7 @@ export class TableComponent extends React.Component<{ state: IState, columns: IC
     return group.isCollapsed ? 0 : ROW_HEIGHT * group.count;
   };
 
-  private _getGroupHeight = (group: IGroup, _groupIndex: number): number => {
+  private _getGroupHeight = (group: IGroup): number => {
     return (
       GROUP_HEADER_HEIGHT +
       GROUP_FOOTER_HEIGHT +

@@ -1,10 +1,15 @@
+/*------------------------------------
+  Copyright (c) Microsoft Corporation.
+  Licensed under the MIT License.
+  All rights reserved.
+------------------------------------ */
 import * as React from "react";
 import * as d3 from "d3";
-import { PieArcDatum } from "d3-shape";
-import "./CSS/DonutChart.css";
 import * as d3Format from "d3-format";
+import { PieArcDatum } from "d3-shape";
+
 import * as d3Helper from "./D3HelperFunctions";
-import "./CSS/Shared.css";
+import { TextStyle } from "./D3HelperFunctions";
 
 export type DonutChartProps = {
   data: d3Helper.LegendData[];
@@ -12,6 +17,46 @@ export type DonutChartProps = {
   height: number;
   innerRadius: number;
   outerRadius: number;
+};
+
+/* Define styles */
+const titleStyle: TextStyle = {
+  fontFamily: "Segoe UI",
+  fontStyle: "normal",
+  fontWeight: "600",
+  fontSize: "35",
+  lineHeight: "47",
+  display: "flex",
+  alignItems: "center",
+  textAlign: "center",
+  color: "#201f1e",
+  textAnchor: "middle",
+};
+
+const donutMiddleTitleStyle: TextStyle = {
+  fontSize: "18",
+  color: "#323130",
+  fontWeight: "400",
+  fontStyle: "normal",
+  textAnchor: "middle",
+  fontFamily: "Segoe UI",
+  lineHeight: "21",
+  alignItems: "center",
+  textAlign: "center",
+  display: "flex",
+};
+
+const donutMiddleTextStyle: TextStyle = {
+  fontSize: "55",
+  color: "#323130",
+  fontWeight: "400",
+  fontStyle: "normal",
+  textAnchor: "middle",
+  fontFamily: "Segoe UI",
+  lineHeight: "73",
+  alignItems: "center",
+  textAlign: "center",
+  display: "flex",
 };
 
 function DonutChart({
@@ -30,34 +75,26 @@ function DonutChart({
     const innerRadiusHover = innerRadius;
     const outerRadiusHover = outerRadius + 25;
     const donutMiddleTitle = "Total physical qubits";
-    const padAngle: number = 0.01;
+    const padAngle = 0.01;
 
     const translationValX: number = width / 4;
     const translationValY: number = height / 4;
 
-    /* ------------------------------  Define styles from CSS ------------------------------ */
-    const chartOpacity = getComputedStyle(
-      document.documentElement
-    ).getPropertyValue("--chart-opacity");
-    const chartHoverOpacity = getComputedStyle(
-      document.documentElement
-    ).getPropertyValue("--chart-hover-opacity");
-
-    const colors = getComputedStyle(document.documentElement).getPropertyValue(
-      "--d3-colors"
-    );
+    /* ------------------------------  Define chart styling constants ------------------------------ */
+    const chartOpacity = 0.75;
+    const chartHoverOpacity = 1;
+    const colorArray = ["#1a5d8c", "#8c1a5c", "#aebac0", "#323130"];
 
     /*------------------------------  Define color ranges  ------------------------------  */
-    const colorArray = colors.split(",");
     const algorithmRunTimeColor = colorArray[1];
     const tfactoryLineColor = colorArray[0];
 
-    var chartColor = d3
+    const chartColor = d3
       .scaleOrdinal()
       .domain(
         d3.extent(data, (d) => {
           return d.legendTitle;
-        }) as unknown as string
+        }) as unknown as string,
       )
       .range([algorithmRunTimeColor, tfactoryLineColor]);
 
@@ -85,8 +122,9 @@ function DonutChart({
       .attr("class", "arc")
       .attr(
         "transform",
-        `translate(${innerRadius + translationValX},${innerRadius + translationValY
-        })`
+        `translate(${innerRadius + translationValX},${
+          innerRadius + translationValY
+        })`,
       );
 
     /*------------------------------  Fill donut chart and apply hover  ------------------------------  */
@@ -116,13 +154,13 @@ function DonutChart({
       .text(
         (d) =>
           `${d.data.title} ${d.data.legendTitle} : ${d3Format.format(",.0f")(
-            d.value
-          )}`
+            d.value,
+          )}`,
       );
 
     /*------------------------------  Draw Legend ------------------------------  */
-    var legendY = translationValY + outerRadius * 2 + 10;
-    var midpoint = outerRadius + 10;
+    const legendY = translationValY + outerRadius * 2 + 10;
+    const midpoint = outerRadius + 10;
     d3Helper.drawLegend(
       svg,
       data,
@@ -131,7 +169,7 @@ function DonutChart({
       translationValX,
       chartColor,
       true,
-      false
+      false,
     );
 
     /*------------------------------  Add text and titles  ------------------------------  */
@@ -142,7 +180,7 @@ function DonutChart({
       "Space diagram",
       innerRadius + translationValX,
       translationValY - innerRadius,
-      "title"
+      titleStyle,
     );
 
     // Add middle text
@@ -154,19 +192,24 @@ function DonutChart({
       donutMiddleTitle,
       innerRadius + translationValX,
       translationValY + innerRadius - 25,
-      "donut-middle-title"
+      donutMiddleTitleStyle,
     );
     d3Helper.drawText(
       svg,
       totalQubitsStr,
       innerRadius + translationValX,
       translationValY + innerRadius + 25,
-      "donut-middle-text"
+      donutMiddleTextStyle,
     );
   }, [data, innerRadius, outerRadius]);
 
   return (
-    <div className="donut-svg-container">
+    <div
+      style={{
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
       <svg id="donutchart" width={width} height={height}></svg>
     </div>
   );

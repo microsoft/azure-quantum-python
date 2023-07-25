@@ -1,8 +1,14 @@
+/*------------------------------------
+  Copyright (c) Microsoft Corporation.
+  Licensed under the MIT License.
+  All rights reserved.
+------------------------------------ */
 import React from "react";
-import DonutChart, { DonutChartProps } from "../DonutChart";
-import { LegendData } from "../D3HelperFunctions";
 import { create } from "react-test-renderer";
-// Consider using react-faux-dom or jsdom to test d3 //
+
+import { LegendData } from "../D3HelperFunctions";
+import DonutChart, { DonutChartProps } from "../DonutChart";
+
 describe("Donut chart tests", () => {
   it("Verify Donut Chart", () => {
     const testData: LegendData[] = [
@@ -23,11 +29,10 @@ describe("Donut chart tests", () => {
       width: 1000,
       height: 1000,
       innerRadius: 100,
-      outerRadius: 200
+      outerRadius: 200,
     };
 
     const component = create(<DonutChart {...donutProps}></DonutChart>);
-    const componentInstance = component.root;
     expect(component.toJSON()).toMatchSnapshot("DonutChart");
   });
 });
