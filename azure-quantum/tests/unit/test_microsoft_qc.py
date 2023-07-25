@@ -95,10 +95,10 @@ class TestMicrosoftQC(QuantumTestBase):
         specification1.logical_qubit_specification = physical_qubit_specification
 
         specification2 = DistillationUnitSpecification()
-        specification2.name = "15-to-1 RM prep"
+        specification2.name = "15-1 RM"
 
         specification3= DistillationUnitSpecification()
-        specification3.name = "15-to-1 space efficient"
+        specification3.name = "15-1 space-efficient"
 
         params.items[0].distillation_unit_specifications = [specification1, specification2, specification3]
 
