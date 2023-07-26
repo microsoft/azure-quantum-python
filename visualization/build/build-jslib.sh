@@ -10,6 +10,8 @@ else
   echo 'Successfully install: react-lib'
 fi
 
+npm run lint 
+
 npm run sortpackagejson || true
 
 npm run build:prod
