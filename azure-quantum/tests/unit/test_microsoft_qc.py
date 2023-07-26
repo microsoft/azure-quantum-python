@@ -6,6 +6,7 @@ import pytest
 from pytest import raises
 from os import path
 import re
+from azure.quantum.target.microsoft.target import DistillationUnitSpecification, ProtocolSpecificDistillationUnitSpecification, MeasurementErrorRate
 
 from common import QuantumTestBase, DEFAULT_TIMEOUT_SECS
 
@@ -67,6 +68,40 @@ class TestMicrosoftQC(QuantumTestBase):
         ccnot = self._ccnot_bitcode()
         params = estimator.make_params(num_items=2)
         params.items[0].error_budget = 0.001
+
+        params.items[0].qubit_params.name = QubitParams.MAJ_NS_E4
+        params.items[0].qubit_params.instruction_set = "majorana"
+        params.items[0].qubit_params.t_gate_error_rate = 0.03
+        params.items[0].qubit_params.t_gate_time = "10 ns"
+        params.items[0].qubit_params.idle_error_rate = 0.00002
+        params.items[0].qubit_params.two_qubit_joint_measurement_error_rate = \
+            MeasurementErrorRate(process = 0.00005, readout = 0.00007)
+
+        specification1 = DistillationUnitSpecification()
+        specification1.display_name = "S"
+        specification1.num_input_ts = 1
+        specification1.num_output_ts = 15
+        specification1.output_error_rate_formula = "35.0 * inputErrorRate ^ 3 + 7.1 * cliffordErrorRate"
+        specification1.failure_probability_formula = "15.0 * inputErrorRate + 356.0 * cliffordErrorRate"
+
+        physical_qubit_specification = ProtocolSpecificDistillationUnitSpecification()
+        physical_qubit_specification.num_unit_qubits = 12
+        physical_qubit_specification.duration_in_qubit_cycle_time = 45
+        specification1.physical_qubit_specification = physical_qubit_specification
+
+        logical_qubit_specification = ProtocolSpecificDistillationUnitSpecification()
+        logical_qubit_specification.num_unit_qubits = 20
+        logical_qubit_specification.duration_in_qubit_cycle_time = 13
+        specification1.logical_qubit_specification = physical_qubit_specification
+
+        specification2 = DistillationUnitSpecification()
+        specification2.name = "15-1 RM"
+
+        specification3= DistillationUnitSpecification()
+        specification3.name = "15-1 space-efficient"
+
+        params.items[0].distillation_unit_specifications = [specification1, specification2, specification3]
+
         params.items[1].error_budget = 0.002
         job = estimator.submit(ccnot, input_params=params)
         self.assertIsInstance(job, MicrosoftEstimatorJob)
@@ -170,6 +205,7 @@ class TestMicrosoftQC(QuantumTestBase):
         params.qubit_params.instruction_set = "gate_based"
         params.qubit_params.t_gate_error_rate = 0.03
         params.qubit_params.t_gate_time = "10 ns"
+        params.qubit_params.idle_error_rate = 0.02
 
         # If validation would be wrong, the call to as_dict will raise an
         # exception.
@@ -231,6 +267,32 @@ class TestMicrosoftQC(QuantumTestBase):
                                        "set"):
             params.as_dict()
 
+    def test_estimator_params_validation_measurement_error_rates_valid(self):
+        params = MicrosoftEstimatorParams()
+
+        params.error_budget = 0.1
+        params.qubit_params.name = QubitParams.GATE_NS_E3
+        params.qubit_params.instruction_set = "gate_based"
+        params.qubit_params.t_gate_error_rate = 0.03
+        params.qubit_params.t_gate_time = "10 ns"
+        params.qubit_params.idle_error_rate = 0.02
+        params.qubit_params.one_qubit_measurement_error_rate = 0.01
+        params.qubit_params.two_qubit_joint_measurement_error_rate = \
+        MeasurementErrorRate(process = 0.02, readout = 0.03)
+
+        assert params.as_dict() == {
+            "errorBudget": 0.1, 
+            "qubitParams": {"name": "qubit_gate_ns_e3", 
+                            "instructionSet": "gate_based", 
+                            "tGateErrorRate": 0.03, 
+                            "tGateTime": "10 ns", 
+                            "idleErrorRate": 0.02, 
+                            "oneQubitMeasurementErrorRate": 0.01, 
+                            "twoQubitJointMeasurementErrorRate": 
+                            {"process": 0.02, "readout": 0.03}}
+        }
+
+
     def test_estimator_error_budget_float(self):
         params = MicrosoftEstimatorParams()
         params.error_budget = 0.001
@@ -245,4 +307,119 @@ class TestMicrosoftQC(QuantumTestBase):
                 "rotations": 0.03,
                 "tStates": 0.02
             }
+        }
+
+    def test_estimator_custom_distillation_units_by_name(self):
+        params = MicrosoftEstimatorParams()
+        unit1 = DistillationUnitSpecification()
+        unit1.name = "S"
+        params.distillation_unit_specifications.append(unit1)
+
+        unit2 = DistillationUnitSpecification()
+        unit2.name = "T"
+        params.distillation_unit_specifications.append(unit2)
+
+        assert params.as_dict() == {
+            "distillationUnitSpecifications": [{"name": "S"}, {"name": "T"}]
+        }
+
+    def test_estimator_custom_distillation_units_empty_not_allowed(self):
+        params = MicrosoftEstimatorParams()
+        unit = DistillationUnitSpecification()
+        params.distillation_unit_specifications.append(unit)
+
+        with raises(LookupError, match="name must be set or custom specification must be provided"):
+            params.as_dict()
+
+    def test_estimator_custom_distillation_units_name_and_custom_not_allowed_together(self):
+        params = MicrosoftEstimatorParams()
+        unit = DistillationUnitSpecification()
+        unit.name = "T"
+        unit.num_output_ts = 1
+        params.distillation_unit_specifications.append(unit)
+
+        with raises(LookupError, match="If predefined name is provided, "
+                                        "custom specification is not allowed. "
+                                        "Either remove name or remove all other "
+                                        "specification of the distillation unit"):
+            params.as_dict()
+
+    def test_estimator_custom_distillation_units_by_specification_short(self):
+        params = MicrosoftEstimatorParams()
+        unit = DistillationUnitSpecification()
+        unit.display_name = "T"
+        unit.failure_probability_formula = "c"
+        unit.output_error_rate_formula = "r"
+        unit.num_input_ts = 1
+        unit.num_output_ts = 2
+        params.distillation_unit_specifications.append(unit)
+
+        assert params.as_dict() == {
+            "distillationUnitSpecifications": 
+            [{"displayName": "T", "failureProbabilityFormula": "c",
+            "outputErrorRateFormula": "r", "numInputTs": 1, "numOutputTs": 2 }]
+        }
+
+    def test_estimator_custom_distillation_units_by_specification_full(self):
+        params = MicrosoftEstimatorParams()
+        unit = DistillationUnitSpecification()
+        unit.display_name = "T"
+        unit.failure_probability_formula = "c"
+        unit.output_error_rate_formula = "r"
+        unit.num_input_ts = 1
+        unit.num_output_ts = 2
+
+        physical_qubit_specification = ProtocolSpecificDistillationUnitSpecification()
+        physical_qubit_specification.num_unit_qubits = 1
+        physical_qubit_specification.duration_in_qubit_cycle_time = 2
+        unit.physical_qubit_specification = physical_qubit_specification
+
+        logical_qubit_specification = ProtocolSpecificDistillationUnitSpecification()
+        logical_qubit_specification.num_unit_qubits = 3
+        logical_qubit_specification.duration_in_qubit_cycle_time = 4
+        unit.logical_qubit_specification = logical_qubit_specification
+
+        logical_qubit_specification_first_round_override = \
+            ProtocolSpecificDistillationUnitSpecification()
+        logical_qubit_specification_first_round_override.num_unit_qubits = 5
+        logical_qubit_specification_first_round_override.duration_in_qubit_cycle_time = 6
+        unit.logical_qubit_specification_first_round_override = \
+            logical_qubit_specification_first_round_override
+
+        params.distillation_unit_specifications.append(unit)
+
+        print(params.as_dict())
+        assert params.as_dict() == {
+            "distillationUnitSpecifications": 
+            [{"displayName": "T", "numInputTs": 1, "numOutputTs": 2, 
+              "failureProbabilityFormula": "c", "outputErrorRateFormula": "r", 
+              "physicalQubitSpecification": {"numUnitQubits": 1, "durationInQubitCycleTime": 2}, 
+              "logicalQubitSpecification": {"numUnitQubits":3, "durationInQubitCycleTime":4}, 
+              "logicalQubitSpecificationFirstRoundOverride": 
+              {"numUnitQubits":5, "durationInQubitCycleTime":6}}]
+        }
+
+    def test_estimator_protocol_specific_distillation_unit_specification_empty_not_allowed(self):
+        specification = ProtocolSpecificDistillationUnitSpecification()
+        with raises(LookupError, match="num_unit_qubits must be set"):
+            specification.as_dict()
+
+    def test_estimator_protocol_specific_distillation_unit_specification_missing_num_unit_qubits(self):
+        specification = ProtocolSpecificDistillationUnitSpecification()
+        specification.duration_in_qubit_cycle_time = 1
+        with raises(LookupError, match="num_unit_qubits must be set"):
+            specification.as_dict()
+
+    def test_estimator_protocol_specific_distillation_unit_specification_missing_duration_in_qubit_cycle_time(self):
+        specification = ProtocolSpecificDistillationUnitSpecification()
+        specification.num_unit_qubits = 1
+        with raises(LookupError, match="duration_in_qubit_cycle_time must be set"):
+            specification.as_dict()
+
+    def test_estimator_protocol_specific_distillation_unit_specification_valid(self):
+        specification = ProtocolSpecificDistillationUnitSpecification()
+        specification.num_unit_qubits = 1
+        specification.duration_in_qubit_cycle_time = 2
+        assert specification.as_dict() == {
+            "numUnitQubits": 1, "durationInQubitCycleTime": 2
         }
