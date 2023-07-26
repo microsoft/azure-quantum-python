@@ -35,13 +35,6 @@ stages:
           - task: NodeTool@0
             inputs:
               versionSpec: "16.x"
-              
-          - task: Npm@1
-            displayName: npm run lint (react-lib)
-            inputs:
-              workingDir: "$(project)"
-              command: "custom"
-              customCommand: "run lint"
 
           - task: Bash@3
             displayName: "Build js-lib and dependencies"

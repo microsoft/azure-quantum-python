@@ -8,6 +8,8 @@ if [ "$1" == "buildJsLibOnly" ]; then
     echo 'Successfully linked react and quantum-visualization'
   fi
 
+  npm run lint
+  
   npm run sortpackagejson || true
   
   npm run build
