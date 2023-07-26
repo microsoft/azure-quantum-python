@@ -2,49 +2,42 @@
   "name": "quantum-visualization",
   "version": "1.0.0",
   "description": "This is a visualization library to display Azure Quantum job result.",
+  "license": "MIT",
   "main": "dist/main.js",
   "types": "src/index.ts",
   "scripts": {
     "build": "webpack --mode development",
     "build:prod": "webpack --mode production",
+    "lint": "eslint .  --ext .js,.ts,.tsx",
+    "lint-fix": "eslint --fix .  --ext .js,.ts,.tsx",
+    "sortpackagejson": "sort-package-json",
     "tests": "jest --config ./test-config/jest.config.js --verbose=true --coverageReporters=cobertura",
     "testsonly": "jest --config ./test-config/jest.config.js --verbose=true --no-coverage",
-    "updatetests": "jest --config ./test-config/jest.config.js --verbose=true --no-coverage --updateSnapshot",
-    "lint": "eslint .  --ext .js,.ts,.tsx",
-    "lint-fix": "eslint --fix .  --ext .js,.ts,.tsx"
+    "updatetests": "jest --config ./test-config/jest.config.js --verbose=true --no-coverage --updateSnapshot"
   },
   "jest": {
-    "transformIgnorePatterns": "[`/node_modules/('@table-library/react-table-library/theme', '@table-library/react-table-library/material-ui', '@table-library/react-table-library/table', '@mui/material', '@mui/icons-material/Info')].join('|'))`]",
     "moduleNameMapper": {
       "d3": "<rootDir>/node_modules/d3/dist/d3.min.js",
       "\\.(css|less)$": "<rootDir>/__mocks__/styleMock.js"
-    }
+    },
+    "transformIgnorePatterns": "[`/node_modules/('@table-library/react-table-library/theme', '@table-library/react-table-library/material-ui', '@table-library/react-table-library/table', '@mui/material', '@mui/icons-material/Info')].join('|'))`]"
   },
-  "license": "MIT",
   "dependencies": {
-    "@types/d3": "^7.4.0",
-    "@types/d3-tip": "^3.5.5",
-    "@types/jest": "^29.5.2",
-    "@types/react": "^18.0.28",
-    "@types/react-color": "^3.0.6",
-    "@types/react-test-renderer": "^18.0.0",
+    "@fluentui/react": "^8.110.8",
+    "d3": "^7.8.4",
     "d3-format": "^3.1.0",
     "d3-shape": "^3.2.0",
-    "react": "^18.2.0",
-    "@fluentui/react": "^8.110.8",
-    "d3": "^7.8.4"
+    "react": "^18.2.0"
   },
   "devDependencies": {
-    "path": "^0.12.7",
-    "clean-webpack-plugin": "^4.0.0",
-    "css-loader": "^6.7.3",
-    "style-loader": "^3.3.3",
-    "ts-jest": "^29.1.0",
-    "ts-loader": "^9.4.2",
-    "webpack": "^5.76.3",
-    "webpack-cli": "^5.1.4",
+    "@types/d3": "^7.4.0",
+    "@types/jest": "^29.5.2",
+    "@types/react": "^18.0.28",
+    "@types/react-test-renderer": "^18.0.0",
     "@typescript-eslint/eslint-plugin": "^5.62.0",
     "@typescript-eslint/parser": "^5.62.0",
+    "clean-webpack-plugin": "^4.0.0",
+    "css-loader": "^6.7.3",
     "eslint": "^8.45.0",
     "eslint-config-prettier": "^8.8.0",
     "eslint-config-standard-with-typescript": "^37.0.0",
@@ -56,13 +49,20 @@
     "eslint-plugin-promise": "^6.1.1",
     "eslint-plugin-react": "^7.33.0",
     "eslint-plugin-simple-import-sort": "^10.0.0",
-    "prettier": "^3.0.0",
-    "react-dom": "^18.2.0",
-    "typescript": "^5.1.6",
     "jest": "^29.5.0",
     "jest-environment-jsdom": "^29.6.1",
     "jest-junit": "^16.0.0",
     "jest-snapshot": "^29.5.0",
-    "react-test-renderer": "^18.2.0"
+    "path": "^0.12.7",
+    "prettier": "^3.0.0",
+    "react-dom": "^18.2.0",
+    "react-test-renderer": "^18.2.0",
+    "sort-package-json": "^2.5.1",
+    "style-loader": "^3.3.3",
+    "ts-jest": "^29.1.0",
+    "ts-loader": "^9.4.2",
+    "typescript": "^5.1.6",
+    "webpack": "^5.76.3",
+    "webpack-cli": "^5.1.4"
   }
 }

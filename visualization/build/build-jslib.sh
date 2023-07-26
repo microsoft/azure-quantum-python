@@ -10,6 +10,8 @@ else
   echo 'Successfully install: react-lib'
 fi
 
+npm run sortpackagejson || true
+
 npm run build:prod
 if [ $? -ne 0 ]; then
   echo 'Failed to build: react-lib'
@@ -44,6 +46,8 @@ else
   echo 'Successfully linked react and quantum-visualization to js-lib'
 fi
 
+npm run sortpackagejson || true
+
 npm run build:prod
 if [ $? -ne 0 ]; then
   echo 'Failed to build js-lib'
@@ -53,5 +57,5 @@ else
 fi
 
 echo 'Successfully built js-lib and dependencies.' 
-echo 'js-lib to be published to microsoft-visualization/index.js artifact."
+echo 'js-lib to be published to microsoft-visualization/index.js artifact.'
 exit 0

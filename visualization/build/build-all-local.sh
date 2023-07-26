@@ -7,6 +7,9 @@ if [ "$1" == "buildJsLibOnly" ]; then
   if [ $? -eq 0 ]; then
     echo 'Successfully linked react and quantum-visualization'
   fi
+
+  npm run sortpackagejson || true
+  
   npm run build
   if [ $? -eq 0 ]; then
     echo 'Successfully built js-lib'
@@ -20,6 +23,9 @@ else
   if [ $? -eq 0 ]; then
     echo 'Successfully installed react-lib'
   fi
+  
+  npm run sortpackagejson || true
+
   npm run build
   if [ $? -eq 0 ]; then
     echo 'Successfully built react-lib'
@@ -38,6 +44,9 @@ else
   if [ $? -eq 0 ]; then
     echo 'Successfully linked react and quantum-visualization to js-lib.'
   fi
+
+  npm run sortpackagejson || true
+
   npm run build
   if [ $? -eq 0 ]; then
     echo 'Successfully built js-lib'
