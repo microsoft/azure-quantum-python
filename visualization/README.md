@@ -7,7 +7,7 @@ This folder includes the visualization project.
 
 Refer to **build** folder to build and package the js-lib and react-lib.
 
-For react-build project:
+To build react-build project:
 
 ```
 - npm run build // builds react-lib
