@@ -105,7 +105,7 @@ function SpaceDiagram({ data }: SpaceDiagramProps) {
         "Number of T factories executed in parallel capable of producing the demanded T states during the algorithm's runtime.",
     },
     {
-      name: "Physical qubits per single T factory",
+      name: "Physical qubits per T factory",
       value: numQubitsPerTFactory.toLocaleString(),
       description: numTFactoryQubitsString,
     },
