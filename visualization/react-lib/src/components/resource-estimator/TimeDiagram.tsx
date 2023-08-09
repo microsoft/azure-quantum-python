@@ -17,6 +17,48 @@ export interface TimeDiagramProps {
   data: string;
 }
 
+// Takes the runtime string from the data and formats it with the appropriate symbol for unit of time.
+// If no mapping is found, the runtime will be returned with a space between the time and label.
+function FormatRuntime(rawRuntime : string) : string{
+   /* Define time abbreviation mapping */
+   let timeMap : Map<string, string> = new Map([
+    ["milliseconds", "ms"],
+    ["millisecs", "ms"],
+    ["seconds", "s"],
+    ["secs", "s"],
+    ["minutes", "min"],
+    ["mins", "min"],
+    ["hours", "h"],
+    ["hrs", "h"],
+    ["days", "d"],
+    ["weeks", "wk"],
+    ["wks", "wk"],
+    ["months", "mo"],
+    ["mos", "mo"],
+    ["years", "yr"],
+    ["yrs", "yr"],
+    ["microseconds", "\u00B5s"],
+    ["nanoseconds", "ns"],
+    ["picoseconds", "ps"],
+    ["microsecs", "\u00B5s"],
+    ["nanosecs", "ns"],
+    ["picosecs", "ps"]
+]);
+
+const runTimeArray = rawRuntime.split(/(\d+)/).filter(Boolean);
+const runTimeUnit = timeMap.get(runTimeArray[1]);
+
+var runTimeFormatted = "";
+if(runTimeUnit){
+  runTimeFormatted = `${runTimeArray[0]} ${runTimeUnit}`;
+}
+else{
+  runTimeFormatted = `${runTimeArray[0]} ${runTimeArray[1]}`;
+}
+
+return runTimeFormatted;
+}
+
 function TimeDiagram({ data }: TimeDiagramProps) {
   // Parse job results data.
   const jobResults = JSON.parse(data) as JobResults;
@@ -45,9 +87,10 @@ function TimeDiagram({ data }: TimeDiagramProps) {
   }, [diagramRef.current]);
 
   /*------------------------------  Define and parse table and chart data ------------------------------  */
-  const algorithmRuntimeFormatted = jobResults.physicalCountsFormatted.runtime;
-  const tFactoryRuntimeFormatted =
-    jobResults.physicalCountsFormatted.tfactoryRuntime;
+  const algorithmRuntimeFormatted = FormatRuntime(jobResults.physicalCountsFormatted.runtime);
+  const tFactoryRuntimeFormatted = FormatRuntime(jobResults.physicalCountsFormatted.tfactoryRuntime);
+  const logicalCycleTimeFormatted = FormatRuntime (jobResults.physicalCountsFormatted.logicalCycleTime);
+
   const numTFactoryInvocations =
     jobResults.physicalCounts.breakdown.numTfactoryRuns;
 
@@ -141,7 +184,7 @@ function TimeDiagram({ data }: TimeDiagramProps) {
     },
     {
       name: "Logical cycle time",
-      value: jobResults.physicalCountsFormatted.logicalCycleTime,
+      value: logicalCycleTimeFormatted,
       description: "Duration of a logical cycle in nanoseconds.",
     },
   ];
