@@ -193,8 +193,10 @@ class MicrosoftEstimatorResult(dict):
                                  "`profiling.call_stack_depth` to some value")
 
             g = graphviz.Digraph()
-            g.attr('node', shape='box', style='rounded', fontname='Arial',
-                   fontsize='10', margin='0.05,0.05', height='0', width='0')
+            g.attr('node', shape='box', style='rounded, filled',
+                   fontname='Arial', fontsize='10', margin='0.05,0.05',
+                   height='0', width='0', fillcolor='#f6f6f6', color='#e3e3e3')
+            g.attr('edge', color='#d0d0d0')
 
             nodes_indexed = [{**node, 'index': index}
                              for index, node in enumerate(data['nodes'])]
