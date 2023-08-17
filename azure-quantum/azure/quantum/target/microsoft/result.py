@@ -248,6 +248,17 @@ class MicrosoftEstimatorResult(dict):
 
         return HTMLWrapper(self._profile)
 
+    @property
+    def json(self):
+        """
+        Returns a JSON representation of the resource estimation result data.
+        """
+        if not hasattr(self, "_json"):
+            import json
+            self._json = json.dumps(self._data)
+
+        return self._json
+
     def _summary_data_frame(self, **kwargs):
         try:
             import pandas as pd

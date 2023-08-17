@@ -29,6 +29,19 @@ class TestMicrosoftQC(QuantumTestBase):
         bitcode_filename = path.join(path.dirname(__file__), "qir", "ccnot.bc")
         with open(bitcode_filename, "rb") as f:
             return f.read()
+        
+    def _mock_result_data(self) -> dict:
+        """
+        A small result data for tests.
+        """
+        return {
+            "physicalCounts": {
+                "physicalQubits": 655321,
+                "runtime": 1729,
+                "rqops": 314
+            },
+            "reportData": {"groups": [], "assumptions": []}
+        }
 
     @pytest.mark.microsoft_qc
     @pytest.mark.live_test
@@ -464,3 +477,17 @@ class TestMicrosoftQC(QuantumTestBase):
         assert specification.as_dict() == {
             "numUnitQubits": 1, "durationInQubitCycleTime": 2
         }
+
+    def test_simple_result_as_json(self):
+        data = self._mock_result_data()
+        result = MicrosoftEstimatorResult(data)
+
+        import json
+        assert json.loads(result.json) == data
+
+    def test_batch_result_as_json(self):
+        data = [self._mock_result_data(), self._mock_result_data()]
+        result = MicrosoftEstimatorResult(data)
+
+        import json
+        assert json.loads(result.json) == data
