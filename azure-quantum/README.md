@@ -76,6 +76,10 @@ job = target.submit(problem)
 result = job.get_results()
 ```
 
+## Examples ##
+
+You can find example Python scripts that use the Azure Quantum Python API in the [examples](./examples/) directory.
+
 ## Contributing ##
 
 For details on contributing to this package, see the [contributing guide](https://github.com/microsoft/qdk-python/blob/main/CONTRIBUTING.md).
