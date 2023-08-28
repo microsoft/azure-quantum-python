@@ -90,8 +90,8 @@ class QuantinuumQirBackendBase(AzureQirBackend):
 class QuantinuumSyntaxCheckerQirBackend(QuantinuumQirBackendBase):
     backend_names = (
         # Note: Target names on the same line are equivalent.
-        "quantinuum.hqs-lt-s1-apival", "quantinuum.sim.h1-1sc",
-        "quantinuum.hqs-lt-s2-apival", "quantinuum.sim.h1-2sc",
+        "quantinuum.sim.h1-1sc",
+        "quantinuum.sim.h1-2sc",
         "quantinuum.sim.h2-1sc",
     )
 
@@ -128,8 +128,8 @@ class QuantinuumSyntaxCheckerQirBackend(QuantinuumQirBackendBase):
 class QuantinuumEmulatorQirBackend(QuantinuumQirBackendBase):
     backend_names = (
         # Note: Target names on the same line are equivalent.
-        "quantinuum.hqs-lt-s1-sim", "quantinuum.sim.h1-1e",
-        "quantinuum.hqs-lt-s2-sim", "quantinuum.sim.h1-2e",
+        "quantinuum.sim.h1-1e",
+        "quantinuum.sim.h1-2e",
         "quantinuum.sim.h2-1e",
     )
 
@@ -166,8 +166,8 @@ class QuantinuumEmulatorQirBackend(QuantinuumQirBackendBase):
 class QuantinuumQPUQirBackend(QuantinuumQirBackendBase):
     backend_names = (
         # Note: Target names on the same line are equivalent.
-        "quantinuum.hqs-lt-s1", "quantinuum.qpu.h1-1",
-        "quantinuum.hqs-lt-s2", "quantinuum.qpu.h1-2",
+        "quantinuum.qpu.h1-1",
+        "quantinuum.qpu.h1-2",
         "quantinuum.qpu.h2-1",
     )
 
@@ -258,8 +258,8 @@ class QuantinuumBackend(AzureBackend):
 class QuantinuumSyntaxCheckerBackend(QuantinuumBackend):
     backend_names = (
         # Note: Target names on the same line are equivalent.
-        "quantinuum.hqs-lt-s1-apival", "quantinuum.sim.h1-1sc",
-        "quantinuum.hqs-lt-s2-apival", "quantinuum.sim.h1-2sc",
+        "quantinuum.sim.h1-1sc",
+        "quantinuum.sim.h1-2sc",
         "quantinuum.sim.h2-1sc",
     )
 
@@ -296,8 +296,8 @@ class QuantinuumSyntaxCheckerBackend(QuantinuumBackend):
 class QuantinuumEmulatorBackend(QuantinuumBackend):
     backend_names = (
         # Note: Target names on the same line are equivalent.
-        "quantinuum.hqs-lt-s1-sim", "quantinuum.sim.h1-1e",
-        "quantinuum.hqs-lt-s2-sim", "quantinuum.sim.h1-2e",
+        "quantinuum.sim.h1-1e",
+        "quantinuum.sim.h1-2e",
         "quantinuum.sim.h2-1e",
     )
 
@@ -334,8 +334,8 @@ class QuantinuumEmulatorBackend(QuantinuumBackend):
 class QuantinuumQPUBackend(QuantinuumBackend):
     backend_names = (
         # Note: Target names on the same line are equivalent.
-        "quantinuum.hqs-lt-s1", "quantinuum.qpu.h1-1",
-        "quantinuum.hqs-lt-s2", "quantinuum.qpu.h1-2",
+        "quantinuum.qpu.h1-1",
+        "quantinuum.qpu.h1-2",
         "quantinuum.qpu.h2-1",
     )
 
