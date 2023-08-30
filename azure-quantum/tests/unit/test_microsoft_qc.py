@@ -206,6 +206,28 @@ class TestMicrosoftQC(QuantumTestBase):
         result = job.get_results(timeout_secs=DEFAULT_TIMEOUT_SECS)
         self.assertIsInstance(result, MicrosoftEstimatorResult)
 
+    @pytest.mark.microsoft_qc
+    @pytest.mark.live_test
+    def test_estimator_profiling_job(self):
+        """
+        Submits a job with profiling information.
+        """
+        from graphviz import Digraph
+
+        ws = self.create_workspace()
+        estimator = MicrosoftEstimator(ws)
+
+        ccnot = self._ccnot_bitcode()
+        params = estimator.make_params()
+        params.profiling.call_stack_depth = 0
+
+        job = estimator.submit(ccnot, input_params=params)
+        job.wait_until_completed(timeout_secs=DEFAULT_TIMEOUT_SECS)
+
+        self.assertEqual(job.details.status, JobStatus.SUCCEEDED)
+        result = job.get_results(timeout_secs=DEFAULT_TIMEOUT_SECS)
+        self.assertIsInstance(result.call_graph, Digraph)
+
     def test_estimator_params_validation_valid_cases(self):
         """
         Checks validation cases for resource estimation parameters for valid
@@ -321,6 +343,25 @@ class TestMicrosoftQC(QuantumTestBase):
                 "tStates": 0.02
             }
         }
+
+    def test_estimator_profiling_valid_fields(self):
+        params = MicrosoftEstimatorParams()
+        params.profiling.call_stack_depth = 10
+        params.profiling.inline_functions = True
+        assert params.as_dict() == {
+            "profiling": {
+                "callStackDepth": 10,
+                "inlineFunctions": True
+            }
+        }
+
+    def test_estimator_profiling_invalid_fields(self):
+        params = MicrosoftEstimatorParams()
+        params.profiling.call_stack_depth = 50
+        params.profiling.inline_functions = True
+        with raises(ValueError, match="call_stack_depth must be nonnegative "
+                                      "and at most 30"):
+            params.as_dict()
 
     def test_estimator_custom_distillation_units_by_name(self):
         params = MicrosoftEstimatorParams()
