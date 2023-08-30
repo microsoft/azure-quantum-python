@@ -24,7 +24,7 @@ COST_2QUBIT_GATE_MAP = {
 MIN_PRICE_MAP = {
     "ionq.simulator" : 0.0,
     "ionq.qpu" : 1.0,
-    "ionq.qpu.aria-1" : 1.0
+    "ionq.qpu.aria-1" : 97.5
 }
 
 def int_to_bitstring(k: int, num_qubits: int, measured_qubit_ids: List[int]):
