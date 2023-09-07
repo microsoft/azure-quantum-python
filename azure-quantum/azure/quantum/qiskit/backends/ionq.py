@@ -128,7 +128,7 @@ class IonQQPUQirBackend(IonQQirBackendBase):
 
 
 class IonQAriaQirBackend(IonQQirBackendBase):
-    backend_names = ("ionq.qpu.aria-1",)
+    backend_names = ("ionq.qpu.aria-1", "ionq.qpu.aria-2")
 
     def __init__(self, name: str, provider: "AzureQuantumProvider", **kwargs):
         """Base class for interfacing with an IonQ Aria QPU backend"""
@@ -316,7 +316,7 @@ class IonQQPUNativeBackend(IonQQPUBackend):
 
 
 class IonQAriaBackend(IonQBackend):
-    backend_names = ("ionq.qpu.aria-1",)
+    backend_names = ("ionq.qpu.aria-1", "ionq.qpu.aria-2")
 
     def __init__(self, name: str, provider: "AzureQuantumProvider", **kwargs):
         """Base class for interfacing with an IonQ Aria QPU backend"""
