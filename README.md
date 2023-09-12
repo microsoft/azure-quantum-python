@@ -8,9 +8,6 @@ QDK-Python is the repository for Python packages of the Quantum Development Kit 
 
 - `qdk` [![PyPI version](https://badge.fury.io/py/qdk.svg)](https://badge.fury.io/py/qdk)
 - `azure-quantum` [![PyPI version](https://badge.fury.io/py/azure-quantum.svg)](https://badge.fury.io/py/azure-quantum)
-
-Coming soon:
-
 - qsharp
 
 ## Installation and getting started
