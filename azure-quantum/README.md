@@ -78,7 +78,7 @@ result = job.get_results()
 
 ## Examples ##
 
-You can find example Python scripts that use the Azure Quantum Python API in the [examples](./examples/) directory.
+You can find example Python scripts that use the Azure Quantum Python API in the [examples](https://github.com/microsoft/qdk-python/tree/main/azure-quantum/examples) directory.
 
 ## Contributing ##
 
