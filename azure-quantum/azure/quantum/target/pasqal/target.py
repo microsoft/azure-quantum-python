@@ -51,7 +51,7 @@ class PasqalTarget(str, Enum):
     def num_qubits(target_name) -> int:
         """Returns the number of qubits supported by the given target"""
         if target_name == PasqalTarget.SIM.value:
-            return 20 # TODO unknown
+            return 20 # TODO temp value, need info from Pasqal
 
 
 @dataclass
@@ -61,7 +61,7 @@ class InputParams:
 
 
 class Pasqal(Target):
-    """Rigetti target, defaults to the simulator RigettiTarget.QVM
+    """Pasqal target, defaults to the simulator PasqalTarget.SIM
 
     In order to process the results of a Quil input to this target, we recommend using the included Result class.
     """
