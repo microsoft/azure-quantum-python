@@ -46,16 +46,16 @@ class TestPasqalTarget(QuantumTestBase):
         num_runs = 200
         result = self._run_job(TEST_PULSER, InputParams(runs=num_runs))
         self.assertIsNotNone(result)
-        self.assertEqual(sum(result.data.values()), num_runs)
+        self.assertEqual(sum(v for v in result.data.values() if isinstance(v, int)), num_runs)
 
     def test_job_submit_pasqal_dict_input_params(self) -> None:
         num_runs = 150
         result = self._run_job(TEST_PULSER, input_params={"runs": num_runs})
         self.assertIsNotNone(result)
-        self.assertEqual(sum(result.data.values()), num_runs)
+        self.assertEqual(sum(v for v in result.data.values() if isinstance(v, int)), num_runs)
 
     def test_job_submit_pasqal_default_input_params(self) -> None:
         default_num_runs = 100
         result = self._run_job(TEST_PULSER, None)
         self.assertIsNotNone(result)
-        self.assertEqual(sum(result.data.values()), default_num_runs)
+        self.assertEqual(sum(v for v in result.data.values() if isinstance(v, int)), default_num_runs)
