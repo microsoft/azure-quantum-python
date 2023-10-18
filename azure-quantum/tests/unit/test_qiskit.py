@@ -550,8 +550,6 @@ class TestQiskit(QuantumTestBase):
         self.assertEqual("ionq.quantum-results.v1", config.azure["output_data_format"])
         self.assertEqual("qis", backend.gateset())
 
-    # The following test is skipped until we can use a workspace
-    # with this target available as part of the E2E tests.
     @pytest.mark.ionq
     def test_ionq_aria_has_default(self):
         provider = DummyProvider()
@@ -572,6 +570,28 @@ class TestQiskit(QuantumTestBase):
         provider = DummyProvider()
         provider.get_backend("ionq.qpu.aria-1", gateset="qis")
 
+    @pytest.mark.ionq
+    def test_ionq_aria2_has_default(self):
+        provider = DummyProvider()
+        provider.get_backend("ionq.qpu.aria-2")
+
+    @pytest.mark.ionq
+    def test_ionq_aria2_has_qir_target(self):
+        provider = DummyProvider()
+        provider.get_backend("ionq.qpu.aria-2", input_data_format="qir.v1")
+
+    @pytest.mark.ionq
+    def test_ionq_aria2_has_native_gateset_target(self):
+        provider = DummyProvider()
+        provider.get_backend("ionq.qpu.aria-2", gateset="native")
+
+    @pytest.mark.ionq
+    def test_ionq_aria2_has_qis_gateset_target(self):
+        provider = DummyProvider()
+        provider.get_backend("ionq.qpu.aria-2", gateset="qis")
+
+    # The following test is skipped until we can use a workspace
+    # with this target available as part of the E2E tests.
     # @pytest.mark.ionq
     # #@pytest.mark.live_test
     # def test_qiskit_get_ionq_qpu_aria_target(self):
