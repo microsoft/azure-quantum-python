@@ -24,34 +24,34 @@ class PasqalTarget(str, Enum):
     """The known targets for the Pasqal provider
     """
 
-    SIM = "pasqal.sim"
     SIM_EMU_FREE = "pasqal.sim.emu_free"
     SIM_EMU_TN = "pasqal.sim.emu_tn"
-    SIM_EMU_SV = "pasqal.sim.emu_sv"
-    QPU = "pasqal.qpu"
     QPU_FRESNEL = "pasqal.qpu.fresnel"
     """A simulator target for Quil. See https://github.com/quil-lang/qvm for more info."""
 
     def simulators() -> List[str]:
         """Returns a list of simulator targets"""
         return [
-            PasqalTarget.SIM.value,
             PasqalTarget.SIM_EMU_FREE.value,
-            PasqalTarget.SIM_EMU_TN.value,
-            PasqalTarget.SIM_EMU_SV.value,
+            PasqalTarget.SIM_EMU_TN.value
         ]
 
     def qpus() -> List[str]:
         """Returns a list of QPU targets"""
         return [
-            PasqalTarget.QPU.value,
             PasqalTarget.QPU_FRESNEL.value
         ]
 
     def num_qubits(target_name) -> int:
         """Returns the number of qubits supported by the given target"""
-        if target_name == PasqalTarget.SIM.value:
-            return 20 # TODO temp value, need info from Pasqal
+        if target_name == PasqalTarget.SIM_EMU_FREE.value:
+            return 12
+        elif target_name == PasqalTarget.SIM_EMU_TN.value:
+            return 100
+        elif target_name == PasqalTarget.QPU_FRESNEL.value:
+            return 20
+        else:
+            raise ValueError(f"Unknown target {target_name}")
 
 
 @dataclass
