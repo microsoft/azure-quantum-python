@@ -61,7 +61,7 @@ class InputParams:
 
 
 class Pasqal(Target):
-    """Pasqal target, defaults to the simulator PasqalTarget.SIM
+    """Pasqal target, defaults to the simulator PasqalTarget.SIM_EMU_FREE
 
     In order to process the results of a Quil input to this target, we recommend using the included Result class.
     """
@@ -71,7 +71,7 @@ class Pasqal(Target):
     def __init__(
         self,
         workspace: Workspace,
-        name: Union[PasqalTarget, str] = PasqalTarget.SIM,
+        name: Union[PasqalTarget, str] = PasqalTarget.SIM_EMU_FREE,
         input_data_format: str = "pasqal.pulser.v1",
         output_data_format: str = "pasqal.pulser-results.v1",
         capability: str = "BasicExecution",
