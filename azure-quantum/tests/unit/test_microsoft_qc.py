@@ -6,7 +6,7 @@ import pytest
 from pytest import raises
 from os import path
 import re
-from azure.quantum.target.microsoft.target import DistillationUnitSpecification, ProtocolSpecificDistillationUnitSpecification, MeasurementErrorRate
+from azure.quantum.target.microsoft.target import DistillationUnitSpecification, MicrosoftEstimatorConstraints, ProtocolSpecificDistillationUnitSpecification, MeasurementErrorRate
 
 from common import QuantumTestBase, DEFAULT_TIMEOUT_SECS
 
@@ -79,7 +79,7 @@ class TestMicrosoftQC(QuantumTestBase):
         estimator = MicrosoftEstimator(ws)
 
         ccnot = self._ccnot_bitcode()
-        params = estimator.make_params(num_items=2)
+        params = estimator.make_params(num_items=3)
         params.items[0].error_budget = 0.001
 
         params.items[0].qubit_params.name = QubitParams.MAJ_NS_E4
@@ -116,6 +116,11 @@ class TestMicrosoftQC(QuantumTestBase):
         params.items[0].distillation_unit_specifications = [specification1, specification2, specification3]
 
         params.items[1].error_budget = 0.002
+        params.items[1].constraints.max_duration = "20s"
+
+        params.items[2].error_budget = 0.003
+        params.items[2].constraints.max_physical_qubits = 10000
+
         job = estimator.submit(ccnot, input_params=params)
         self.assertIsInstance(job, MicrosoftEstimatorJob)
         job.wait_until_completed(timeout_secs=DEFAULT_TIMEOUT_SECS)
@@ -491,3 +496,10 @@ class TestMicrosoftQC(QuantumTestBase):
 
         import json
         assert json.loads(result.json) == data
+    
+    def test_duration_and_physical_qubits_constraints_not_allowed_together(self):
+        constraints = MicrosoftEstimatorConstraints()
+        constraints.max_physical_qubits = 100
+        constraints.max_duration = "5s"
+        with raises(LookupError, match="Both duration and number of physical qubits constraints are provided, but only one is allowe at a time."):
+            constraints.as_dict()
