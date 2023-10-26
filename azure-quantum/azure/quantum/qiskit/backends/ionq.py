@@ -36,6 +36,7 @@ __all__ = [
     "IonQQPUQirBackend",
     "IonQQPUNativeBackend",
     "IonQAriaQirBackend",
+    "IonQForteBackend",
     "IonQAriaNativeBackend",
 ]
 
@@ -128,7 +129,7 @@ class IonQQPUQirBackend(IonQQirBackendBase):
 
 
 class IonQAriaQirBackend(IonQQirBackendBase):
-    backend_names = ("ionq.qpu.aria-1", "ionq.qpu.aria-2", "ionq.qpu.forte-1")
+    backend_names = ("ionq.qpu.aria-1", "ionq.qpu.aria-2")
 
     def __init__(self, name: str, provider: "AzureQuantumProvider", **kwargs):
         """Base class for interfacing with an IonQ Aria QPU backend"""
@@ -153,6 +154,38 @@ class IonQAriaQirBackend(IonQQirBackendBase):
             }
         )
         logger.info("Initializing IonQAriaQirBackend")
+        configuration: BackendConfiguration = kwargs.pop(
+            "configuration", default_config
+        )
+        super().__init__(configuration=configuration, provider=provider, **kwargs)
+
+
+class IonQForteBackend(IonQQirBackendBase):
+    backend_names = ("ionq.qpu.forte-1")
+
+    def __init__(self, name: str, provider: "AzureQuantumProvider", **kwargs):
+        """Base class for interfacing with an IonQ Forte QPU backend"""
+
+        default_config = BackendConfiguration.from_dict(
+            {
+                "backend_name": name,
+                "backend_version": __version__,
+                "simulator": False,
+                "local": False,
+                "coupling_map": None,
+                "description": "IonQ Forte QPU on Azure Quantum",
+                "basis_gates": ionq_basis_gates,
+                "memory": False,
+                "n_qubits": 35,
+                "conditional": False,
+                "max_shots": 10000,
+                "max_experiments": 1,
+                "open_pulse": False,
+                "gates": [{"name": "TODO", "parameters": [], "qasm_def": "TODO"}],
+                "azure": self._azure_config(),
+            }
+        )
+        logger.info("Initializing IonQForteBackend")
         configuration: BackendConfiguration = kwargs.pop(
             "configuration", default_config
         )
