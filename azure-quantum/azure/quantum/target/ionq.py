@@ -29,7 +29,7 @@ MIN_PRICE_MAP = {
     "ionq.simulator" : 0.0,
     "ionq.qpu" : 1.0,
     "ionq.qpu.aria-1" : 97.5,
-    "ionq.qpu.aria-2" : 97.5
+    "ionq.qpu.aria-2" : 97.5,
     "ionq.qpu.forte-1" : 97.5
 }
 
