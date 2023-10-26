@@ -590,6 +590,26 @@ class TestQiskit(QuantumTestBase):
         provider = DummyProvider()
         provider.get_backend("ionq.qpu.aria-2", gateset="qis")
 
+    @pytest.mark.ionq
+    def test_ionq_forte1_has_default(self):
+        provider = DummyProvider()
+        provider.get_backend("ionq.qpu.forte-1")
+
+    @pytest.mark.ionq
+    def test_ionq_forte1_has_qir_target(self):
+        provider = DummyProvider()
+        provider.get_backend("ionq.qpu.forte-1", input_data_format="qir.v1")
+
+    @pytest.mark.ionq
+    def test_ionq_forte1_has_native_gateset_target(self):
+        provider = DummyProvider()
+        provider.get_backend("ionq.qpu.forte-1", gateset="native")
+
+    @pytest.mark.ionq
+    def test_ionq_forte1_has_qis_gateset_target(self):
+        provider = DummyProvider()
+        provider.get_backend("ionq.qpu.forte-1", gateset="qis")
+
     # The following test is skipped until we can use a workspace
     # with this target available as part of the E2E tests.
     # @pytest.mark.ionq
