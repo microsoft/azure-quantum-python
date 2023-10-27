@@ -38,7 +38,6 @@ To get started, visit the following Quickstart guides:
 - [Quickstart: Submit a circuit with Qiskit](https://docs.microsoft.com/azure/quantum/quickstart-microsoft-qiskit)
 - [Quickstart: Submit a circuit with Cirq](https://docs.microsoft.com/azure/quantum/quickstart-microsoft-qiskit)
 - [Quickstart: Submit a circuit with a provider-specific format](https://docs.microsoft.com/azure/quantum/quickstart-microsoft-provider-format).
-- [Quickstart: Solve a simple optimization problem](https://docs.microsoft.com/azure/quantum/quickstart-microsoft-qio?pivots=platform-microsoft#express-a-simple-problem).
 
 ## General usage ##
 
@@ -77,9 +76,13 @@ job = target.submit(problem)
 result = job.get_results()
 ```
 
+## Examples ##
+
+You can find example Python scripts that use the Azure Quantum Python API in the [examples](https://github.com/microsoft/qdk-python/tree/main/azure-quantum/examples) directory.
+
 ## Contributing ##
 
-For details on contributing to this repository, see the [contributing guide](../CONTRIBUTING.md).
+For details on contributing to this package, see the [contributing guide](https://github.com/microsoft/qdk-python/blob/main/CONTRIBUTING.md).
 
 This project welcomes contributions and suggestions. Most contributions require you to agree to a Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us the rights to use your contribution. For details, visit
 https://cla.microsoft.com.

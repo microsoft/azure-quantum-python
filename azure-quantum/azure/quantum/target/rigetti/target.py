@@ -29,8 +29,6 @@ class RigettiTarget(str, Enum):
     QVM = "rigetti.sim.qvm"
     """A simulator target for Quil. See https://github.com/quil-lang/qvm for more info."""
 
-    ASPEN_11 = "rigetti.qpu.aspen-11"
-    ASPEN_M_2 = "rigetti.qpu.aspen-m-2"
     ASPEN_M_3 = "rigetti.qpu.aspen-m-3"
 
     def simulators() -> List[str]:
@@ -42,8 +40,6 @@ class RigettiTarget(str, Enum):
     def qpus() -> List[str]:
         """Returns a list of QPU targets"""
         return [
-            RigettiTarget.ASPEN_11.value,
-            RigettiTarget.ASPEN_M_2.value,
             RigettiTarget.ASPEN_M_3.value,
         ]
 
@@ -51,9 +47,7 @@ class RigettiTarget(str, Enum):
         """Returns the number of qubits supported by the given target"""
         if target_name == RigettiTarget.QVM.value:
             return 20
-        elif target_name == RigettiTarget.ASPEN_11.value:
-            return 38
-        elif target_name == RigettiTarget.ASPEN_M_2.value:
+        elif target_name == RigettiTarget.ASPEN_M_3.value:
             return 80
         elif target_name == RigettiTarget.ASPEN_M_3.value:
             return 80
@@ -139,6 +133,7 @@ class Rigetti(Target):
         name: Union[RigettiTarget, str] = RigettiTarget.QVM,
         input_data_format: str = "rigetti.quil.v1",
         output_data_format: str = "rigetti.quil-results.v1",
+        capability: str = "BasicExecution",
         provider_id: str = "rigetti",
         encoding: str = "",
         **kwargs,
@@ -148,6 +143,7 @@ class Rigetti(Target):
             name=name,
             input_data_format=input_data_format,
             output_data_format=output_data_format,
+            capability=capability,
             provider_id=provider_id,
             content_type="text/plain",
             encoding=encoding,

@@ -7,32 +7,35 @@ from azure.quantum.qiskit.backends.ionq import (
     IonQBackend,
     IonQQPUBackend,
     IonQAriaBackend,
-    IonQSimulatorBackend
+    IonQSimulatorBackend,
+    IonQQPUQirBackend,
+    IonQAriaQirBackend,
+    IonQSimulatorQirBackend,
 )
 
 from azure.quantum.qiskit.backends.quantinuum import (
     QuantinuumBackend,
     QuantinuumQPUBackend,
     QuantinuumSyntaxCheckerBackend,
-    QuantinuumEmulatorBackend
+    QuantinuumEmulatorBackend,
+    QuantinuumQPUQirBackend,
+    QuantinuumSyntaxCheckerQirBackend,
+    QuantinuumEmulatorQirBackend,
 )
 
 from azure.quantum.qiskit.backends.rigetti import (
     RigettiBackend,
     RigettiQPUBackend,
-    RigettiSimulatorBackend
+    RigettiSimulatorBackend,
 )
 
 from azure.quantum.qiskit.backends.qci import (
     QCIBackend,
     QCISimulatorBackend,
+    QCIQPUBackend,
 )
 
 from azure.quantum.qiskit.backends.microsoft import (
     MicrosoftBackend,
-    MicrosoftResourceEstimationBackend
+    MicrosoftResourceEstimationBackend,
 )
-
-# Default targets to use when there is no target class
-# associated with a given target ID
-DEFAULT_TARGETS = {}

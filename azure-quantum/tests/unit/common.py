@@ -1,7 +1,3 @@
-#!/bin/env python
-# -*- coding: utf-8 -*-
-##
-# common.py: Contain base class and helper functions for unit tests
 ##
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
@@ -9,11 +5,12 @@
 
 import os
 import re
-from numpy import deprecate
+from unittest.mock import patch
 
 import six
 import pytest
 import asyncio
+from vcr.request import Request as VcrRequest
 
 from azure.quantum import Workspace
 from azure.identity import ClientSecretCredential
@@ -29,16 +26,19 @@ from azure_devtools.scenario_tests.recording_processors import (
     OAuthRequestResponsesFilter,
     RequestUrlNormalizer,
 )
-from azure_devtools.scenario_tests.utilities import _get_content_type
 import json
 
+from azure.quantum.job.job import Job
+
 ZERO_UID = "00000000-0000-0000-0000-000000000000"
+ONE_UID = "00000000-0000-0000-0000-000000000001"
 TENANT_ID = "72f988bf-86f1-41af-91ab-2d7cd011db47"
 PLACEHOLDER = "PLACEHOLDER"
 RESOURCE_GROUP = "myresourcegroup"
 WORKSPACE = "myworkspace"
 LOCATION = "eastus"
 STORAGE = "mystorage"
+DEFAULT_TIMEOUT_SECS = 300
 
 @pytest.mark.usefixtures("event_loop_instance")
 class QuantumTestBase(ReplayableTest):
@@ -47,7 +47,6 @@ class QuantumTestBase(ReplayableTest):
     During init, gets Azure Credentials and
     Azure Quantum Workspace parameters from OS environment variables.
     """
-
     def __init__(self, method_name):
         self._client_id = os.environ.get("AZURE_CLIENT_ID", ZERO_UID)
         self._client_secret = os.environ.get("AZURE_CLIENT_SECRET", PLACEHOLDER)
@@ -61,12 +60,10 @@ class QuantumTestBase(ReplayableTest):
         # needed to make sure the Default Credential will work
         os.environ["LOCATION"] = self._location
 
-        self._pause_recording_processor = PauseRecordingProcessor()
-        regex_replacer = CustomRecordingProcessor()
+        regex_replacer = CustomRecordingProcessor(self)
         recording_processors = [
-            self._pause_recording_processor,
             regex_replacer,
-            AccessTokenReplacer(),
+            AccessTokenReplacerWithListException(),
             InteractiveAccessTokenReplacer(),
             SubscriptionRecordingProcessor(ZERO_UID),
             AuthenticationMetadataFilter(),
@@ -75,6 +72,7 @@ class QuantumTestBase(ReplayableTest):
         ]
 
         replay_processors = [
+            regex_replacer,
             AuthenticationMetadataFilter(),
             OAuthRequestResponsesFilter(),
             RequestUrlNormalizer(),
@@ -87,6 +85,10 @@ class QuantumTestBase(ReplayableTest):
             recording_processors=recording_processors,
             replay_processors=replay_processors,
         )
+        # as we append a sequence id to every request,
+        # we ensure that that a request can only be recorded once
+        self.vcr.record_mode = 'once'
+        self.vcr.register_matcher('query', self._custom_request_query_matcher)
 
         if self.is_playback:
             self._client_id = ZERO_UID
@@ -97,6 +99,8 @@ class QuantumTestBase(ReplayableTest):
             self._workspace_name = WORKSPACE
             self._location = LOCATION
 
+        regex_replacer.register_guid_regex(
+            r"(?:job-|jobs/|session-|sessions/)((?:[a-f0-9]+[-]){4}[a-f0-9]+)")
         regex_replacer.register_regex(self.client_id, ZERO_UID)
         regex_replacer.register_regex(
             self.client_secret, PLACEHOLDER
@@ -111,24 +115,7 @@ class QuantumTestBase(ReplayableTest):
             "/subscriptions/" + ZERO_UID,
         )
         regex_replacer.register_regex(
-            r"job-([a-f0-9]+[-]){4}[a-f0-9]+", "job-" + ZERO_UID
-        )
-        regex_replacer.register_regex(
-            r"jobs/([a-f0-9]+[-]){4}[a-f0-9]+", "jobs/" + ZERO_UID
-        )
-        regex_replacer.register_regex(
-            r"job-([a-f0-9]+[-]){4}[a-f0-9]+", "job-" + ZERO_UID
-        )
-        regex_replacer.register_regex(
             r"\d{8}-\d{6}", "20210101-000000"
-        )        
-        regex_replacer.register_regex(
-            r'"id":\s*"([a-f0-9]+[-]){4}[a-f0-9]+"',
-            '"id": "{}"'.format(ZERO_UID),
-        )
-        regex_replacer.register_regex(
-            r'"containerName":\s*"([a-f0-9]+[-]){4}[a-f0-9]+"',
-            '"containerName": "{}"'.format(ZERO_UID),
         )
         regex_replacer.register_regex(
             r'blob.core.windows.net/([a-f0-9]+[-]){4}[a-f0-9]+',
@@ -159,18 +146,63 @@ class QuantumTestBase(ReplayableTest):
         regex_replacer.register_regex(r"code_verifier=[^&]+\&", "code_verifier=PLACEHOLDER&")
         regex_replacer.register_regex(r"code=[^&]+\&", "code_verifier=PLACEHOLDER&")
         regex_replacer.register_regex(r"code=[^&]+\&", "code_verifier=PLACEHOLDER&")
-        regex_replacer.register_regex(r"http://", "https://")   # Devskim: ignore DS137138 
+        regex_replacer.register_regex(r"http://", "https://")  # Devskim: ignore DS137138
 
-    def pause_recording(self):
-        self._pause_recording_processor.pause_recording()
+    @classmethod
+    def _custom_request_query_matcher(cls, r1: VcrRequest, r2: VcrRequest):
+        """ Ensure method, path, and query parameters match. """
+        from six.moves.urllib_parse import urlparse, parse_qs  # pylint: disable=import-error, relative-import
 
-    def resume_recording(self):
-        self._pause_recording_processor.resume_recording()
+        assert r1.method == r2.method, f"method: {r1.method} != {r2.method}"
+
+        url1 = urlparse(r1.uri)
+        url2 = urlparse(r2.uri)
+
+        assert url1.hostname == url2.hostname, f"hostname: {url1.hostname} != {url2.hostname}"
+        assert url1.path == url2.path, f"path: {url1.path} != {url2.path}"
+
+        q1 = parse_qs(url1.query)
+        q2 = parse_qs(url2.query)
+
+        for key in q1.keys():
+            assert key in q2, f"&{key} not found in {url2.query}"
+            assert q1[key][0].lower() == q2[key][0].lower(), f"&{key}: {q1[key][0].lower()} != {q2[key][0].lower()}"
+
+        for key in q2.keys():
+            assert key in q1, f"&{key} not found in {url1.query}"
+            assert q1[key][0].lower() == q2[key][0].lower(), f"&{key}: {q1[key][0].lower()} != {q2[key][0].lower()}"
+
+        return True
 
     def setUp(self):
+        self.in_test_setUp = True
         super(QuantumTestBase, self).setUp()
-        # mitigation for issue https://github.com/kevin1024/vcrpy/issues/533
-        self.cassette.allow_playback_repeats = True
+        # Since we are appending a sequence id to the requests
+        # we don't allow playback repeats
+        self.cassette.allow_playback_repeats = False
+
+        # modify the _default_poll_wait time to zero
+        # so that we don't artificially wait or delay
+        # the tests when in playback mode
+        self.patch_default_poll_wait = patch.object(
+            Job,
+            "_default_poll_wait",
+            0.0
+        )
+        if self.is_playback:
+            self.patch_default_poll_wait.start()
+
+        self.in_test_setUp = False
+
+    def tearDown(self):
+        self.patch_default_poll_wait.stop()
+        super().tearDown()
+
+    def pause_recording(self):
+        self.disable_recording = True
+
+    def resume_recording(self):
+        self.disable_recording = False
 
     @property
     def is_playback(self):
@@ -243,13 +275,11 @@ class QuantumTestBase(ReplayableTest):
         :return: AsyncWorkspace
         :rtype: AsyncWorkspace
         """
-
         playback_credential = AsyncClientSecretCredential(self.tenant_id,
                                                      self.client_id,
                                                      self.client_secret)
         default_credential = playback_credential if self.is_playback \
                              else None
-
         workspace = AsyncWorkspace(
             credential=default_credential,
             subscription_id=self.subscription_id,
@@ -259,58 +289,7 @@ class QuantumTestBase(ReplayableTest):
             **kwargs
         )
         workspace.append_user_agent("testapp")
-
         return workspace
-
-
-    def mock_wait(self, job_wait_until_completed):
-        # Workaround for issue #118
-        # See: https://github.com/microsoft/qdk-python/issues/118
-        # Use this method to mock out job.wait_until_completed.
-        #
-        # Example usage:
-        #
-        # with mock.patch.object(
-        #     Job,
-        #     "wait_until_completed",
-        #     self.mock_wait(Job.wait_until_completed)
-        # ):
-        #     job.wait_until_completed()
-        #
-        # Create closure to expose self and Job.wait_until_completed to
-        # mock function
-        def _mock_wait(job, *args, **kwargs):
-            # Pause recording such that we don't record multiple calls
-            self.pause_recording()
-            job_wait_until_completed(job, *args, **kwargs)
-            self.resume_recording()
-
-            # Record a single GET request such that job.wait_until_completed
-            # doesn't fail when running recorded tests
-            return job_wait_until_completed(job, *args, **kwargs)
-
-        return _mock_wait
-
-
-class PauseRecordingProcessor(RecordingProcessor):
-    def __init__(self):
-        self.is_paused = False
-
-    def pause_recording(self):
-        self.is_paused = True
-
-    def resume_recording(self):
-        self.is_paused = False
-
-    def process_request(self, request):
-        if self.is_paused:
-            return None
-        return request
-
-    def process_response(self, response):
-        if self.is_paused:
-            return None
-        return response
 
 
 class CustomUrlPlaybackProcessor(RecordingProcessor):
@@ -320,6 +299,7 @@ class CustomUrlPlaybackProcessor(RecordingProcessor):
                         request.uri,
                         flags=re.IGNORECASE)
         return request
+
 
 class CustomRecordingProcessor(RecordingProcessor):
 
@@ -356,42 +336,131 @@ class CustomRecordingProcessor(RecordingProcessor):
         "user-agent",
     ]
 
-    def __init__(self):
+    def __init__(self, quantumTest: QuantumTestBase):
         self._regexes = []
+        self._auto_guid_regexes = []
+        self._guids = dict[str, int]()
+        self._sequence_ids = dict[str, float]()
+        self._quantumTest = quantumTest
 
-    def register_regex(self, old_regex, new):
-        self._regexes.append((re.compile(pattern=old_regex, 
+    def register_regex(self, regex, replacement_text):
+        """
+        Registers a regular expression that should be used to replace the
+        HTTP requests' uri, headers and body with a replacement_text
+        """
+        self._regexes.append((re.compile(pattern=regex,
                                          flags=re.IGNORECASE | re.MULTILINE),
-                             new))
+                             replacement_text))
 
-    def regex_replace_all(self, value: str):
-        for oldRegex, new in self._regexes:
-            value = oldRegex.sub(new, value)
+    def register_guid_regex(self, guid_regex):
+        """
+        Registers a regular expression that should detect guids from
+        HTTP requests' uri, headers and body and automatically
+        register replacements with an auto-incremented deterministic guid
+        to be included in the recordings
+        """
+        self._auto_guid_regexes.append(re.compile(pattern=guid_regex,
+                                                  flags=re.IGNORECASE | re.MULTILINE))
+
+    def _search_for_guids(self, value: str):
+        """
+        Looks for a registered guid pattern and, if found,
+        automatically adds it to be replaced in future
+        requests/responses.
+        """
+        if value:
+            for regex in self._auto_guid_regexes:
+                match = regex.search(value)
+                if match:
+                    guid = match.groups(1)[0]
+                    if (guid not in self._guids
+                        and not guid.startswith("00000000-")):
+                        i = len(self._guids) + 1
+                        new_guid = "00000000-0000-0000-0000-%0.12X" % i
+                        self._guids[guid] = new_guid
+                        self.register_regex(guid, new_guid)
+
+    def _append_sequence_id(self, request: VcrRequest):
+        """
+        Appends a sequential `&test-sequence-id=` in the querystring
+        of the recordings, such that multiple calls to the same
+        URL will be recorded multiple times with potentially different
+        responses.
+
+        For example, when a job is submitted and we want to fetch
+        the job status, the HTTP request to get the job status is the same,
+        but the response can be different, initially returning
+        Status="In-Progress" and later returning Status="Completed".
+
+        The sequence is only for `quantum.azure.com` API requests
+        and is on a per Method+Uri basis.
+        """
+        if "quantum.azure.com" not in request.uri:
+            return request
+
+        import math
+        SEQUENCE_ID_KEY = "&test-sequence-id="
+        if SEQUENCE_ID_KEY not in request.uri:
+            key = f"{request.method}:{request.uri}"
+            sequence_id = self._sequence_ids.pop(key, 0.0)
+            # if we are in playback
+            # or we are recording and the recording is not suspended
+            # we increment the sequence id
+            if (self._quantumTest.is_playback or
+                not self._quantumTest.disable_recording):
+                # VCR calls this method twice per request
+                # so we need to increment the sequence by 0.5
+                # and use the ceiling
+                sequence_id += 0.5
+            self._sequence_ids[key] = sequence_id
+            if "?" not in request.uri:
+                request.uri += "?"
+            request.uri += SEQUENCE_ID_KEY + "%0.f" % math.ceil(sequence_id)
+        return request
+
+    def _regex_replace_all(self, value: str):
+        for regex, replacement_text in self._regexes:
+            value = regex.sub(replacement_text, value)
         return value
 
     def process_request(self, request):
-        headers = {}
-        for key in request.headers:
-            if key.lower() in self.ALLOW_HEADERS:
-                headers[key] = self.regex_replace_all(request.headers[key])
-        request.headers = headers
+        # when loading the VCR cassete during
+        # the test playback, just return the request
+        # that is recorded in the cassete
+        if self._quantumTest.in_test_setUp:
+            return request
 
-        request.uri = self.regex_replace_all(request.uri)
         content_type = self._get_content_type(request)
-
         body = request.body
-        if body is not None:
+        encode_body = False
+        if body:
             if ((content_type == "application/x-www-form-urlencoded") and
                 (isinstance(body, bytes) or isinstance(body, bytearray))):
                 body = body.decode("utf-8")
-                body = self.regex_replace_all(body)
-                request.body = body.encode("utf-8")
-                request.headers["content-length"] = ["%s" % len(request.body)]
+                encode_body = True
             else:
                 body = str(body)
-                body = self.regex_replace_all(body)
-                request.body = body
-                request.headers["content-length"] = ["%s" % len(body)]
+
+        for key in request.headers:
+            self._search_for_guids(request.headers[key])
+        self._search_for_guids(request.uri)
+        self._search_for_guids(body)
+
+        headers = {}
+        for key in request.headers:
+            if key.lower() in self.ALLOW_HEADERS:
+                headers[key] = self._regex_replace_all(request.headers[key])
+        request.headers = headers
+
+        request.uri = self._regex_replace_all(request.uri)
+        self._append_sequence_id(request)
+
+        if body is not None:
+            body = self._regex_replace_all(body)
+            if encode_body:
+                body = body.encode("utf-8")
+            request.body = body
+            request.headers["content-length"] = ["%s" % len(body)]
 
         return request
 
@@ -413,27 +482,37 @@ class CustomRecordingProcessor(RecordingProcessor):
         return content_type
 
     def process_response(self, response):
+        # when loading the VCR cassete during
+        # the test playback, just return the response
+        # that is recorded in the cassete
+        if self._quantumTest.in_test_setUp:
+            return response
+
         headers = {}
         for key in response["headers"]:
             if key.lower() in self.ALLOW_HEADERS:
                 new_header_values = []
                 for old_header_value in response["headers"][key]:
-                    new_header_value = self.regex_replace_all(old_header_value)
+                    new_header_value = self._regex_replace_all(old_header_value)
                     new_header_values.append(new_header_value)
                 headers[key] = new_header_values
         response["headers"] = headers
 
         if "url" in response:
-            response["url"] = self.regex_replace_all(response["url"])
+            response["url"] = self._regex_replace_all(response["url"])
 
         content_type = self._get_content_type(response)
         if is_text_payload(response) or "application/octet-stream" == content_type:
             body = response["body"]["string"]
             if body is not None:
+                encode_body = False
                 if not isinstance(body, six.string_types):
                     body = body.decode("utf-8")
+                    encode_body = True
                 if body:
-                    body = self.regex_replace_all(body)
+                    body = self._regex_replace_all(body)
+                    if encode_body:
+                        body = body.encode("utf-8")
                     response["body"]["string"] = body
                     response["headers"]["content-length"] = ["%s" % len(body)]
 
@@ -459,6 +538,28 @@ class AuthenticationMetadataFilter(RecordingProcessor):
         if "/.well-known/openid-configuration" in request.uri or "/common/discovery/instance" in request.uri:
             return None
         return request
+
+
+class AccessTokenReplacerWithListException(AccessTokenReplacer):
+    """
+    Replace the access token for service principal authentication in a response body.
+
+    This is customized for responses that return lists.
+    """
+
+    def __init__(self, replacement='fake_token'):
+        self._replacement = replacement
+
+    def process_response(self, response):
+        import json
+        try:
+            body = json.loads(response['body']['string'])
+            if not isinstance(body, list):
+                body['access_token'] = self._replacement
+        except (KeyError, ValueError):
+            return response
+        response['body']['string'] = json.dumps(body)
+        return response
 
 
 class InteractiveAccessTokenReplacer(RecordingProcessor):

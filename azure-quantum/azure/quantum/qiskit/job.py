@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 ##
 from collections import defaultdict
+from typing import Any, Dict, List, Union
 import numpy as np
 
 try:
@@ -18,7 +19,7 @@ import ast
 import json
 import re
 from azure.quantum import Job
-from azure.quantum.qiskit.results.resource_estimator import ResourceEstimatorResult
+from azure.quantum.qiskit.results.resource_estimator import make_estimator_result
 
 import logging
 logger = logging.getLogger(__name__)
@@ -34,6 +35,7 @@ AzureJobStatusMap = {
 
 # Constants for output data format:
 MICROSOFT_OUTPUT_DATA_FORMAT = "microsoft.quantum-results.v1"
+MICROSOFT_OUTPUT_DATA_FORMAT_V2 = "microsoft.quantum-results.v2"
 IONQ_OUTPUT_DATA_FORMAT = "ionq.quantum-results.v1"
 QUANTINUUM_OUTPUT_DATA_FORMAT = "honeywell.quantum-results.v1"
 RESOURCE_ESTIMATOR_OUTPUT_DATA_FORMAT = "microsoft.resource-estimates.v1"
@@ -51,6 +53,7 @@ class AzureQuantumJob(JobV1):
         if azure_job is None:
             azure_job = Job.from_input_data(
                 workspace=backend.provider().get_workspace(),
+                session_id=backend.get_latest_session_id(),
                 **kwargs
             )
 
@@ -84,7 +87,7 @@ class AzureQuantumJob(JobV1):
         results = self._format_results(sampler_seed=sampler_seed)
 
         result_dict = {
-            "results" : [results],
+            "results" : results if isinstance(results, list) else [results],
             "job_id" : self._azure_job.details.id,
             "backend_name" : self._backend.name(),
             "backend_version" : self._backend.version,
@@ -93,11 +96,10 @@ class AzureQuantumJob(JobV1):
             "error_data" : None if self._azure_job.details.error_data is None else self._azure_job.details.error_data.as_dict()
         }
 
-        result_type = Result
         if self._azure_job.details.output_data_format == RESOURCE_ESTIMATOR_OUTPUT_DATA_FORMAT:
-            result_type = ResourceEstimatorResult
-
-        return result_type.from_dict(result_dict)
+            return make_estimator_result(result_dict)
+        else:
+            return Result.from_dict(result_dict)
 
     def cancel(self):
         """Attempt to cancel the job."""
@@ -125,8 +127,12 @@ class AzureQuantumJob(JobV1):
 
         return shots
 
-    def _format_results(self, sampler_seed=None):
+    def _format_results(self, sampler_seed=None) -> Union[List[Dict[str, Any]], Dict[str, Any]]:
         """ Populates the results datastructures in a format that is compatible with qiskit libraries. """
+
+        if (self._azure_job.details.output_data_format == MICROSOFT_OUTPUT_DATA_FORMAT_V2):
+            return self._format_microsoft_v2_results()
+
         success = self._azure_job.details.status == "Succeeded"
 
         job_result = {
@@ -136,7 +142,6 @@ class AzureQuantumJob(JobV1):
         }
 
         if success:
-            is_simulator = "sim" in self._azure_job.details.target
             if (self._azure_job.details.output_data_format == MICROSOFT_OUTPUT_DATA_FORMAT):
                 job_result["data"] = self._format_microsoft_results(sampler_seed=sampler_seed)
                 
@@ -274,3 +279,88 @@ class AzureQuantumJob(JobV1):
         """ This method is called to format Job results data when the job output is in an unknown format."""
         az_result = self._azure_job.get_results()
         return az_result
+
+    def _translate_microsoft_v2_results(self):
+        """ Translate Microsoft's batching job results histograms into a format that can be consumed by qiskit libraries. """
+        az_result = self._azure_job.get_results()
+
+        if not "DataFormat" in az_result:
+            raise ValueError("DataFormat missing from Job results")
+
+        if not "Results" in az_result:
+            raise ValueError("Results missing from Job results")
+
+        histograms = []
+        results = az_result["Results"]
+        for circuit_results in results:
+            counts = {}
+            probabilities = {}
+
+            if not "TotalCount" in circuit_results:
+                raise ValueError("TotalCount missing from Job results")
+
+            total_count = circuit_results["TotalCount"]
+
+            if total_count <= 0:
+                raise ValueError("TotalCount must be a positive non-zero integer")
+
+            if not "Histogram" in circuit_results:
+                raise ValueError("Histogram missing from Job results")
+        
+            histogram = circuit_results["Histogram"]
+            for result in histogram:
+                if not "Display" in result:
+                    raise ValueError("Dispaly missing from histogram result")
+
+                if not "Count" in result:
+                    raise ValueError("Count missing from histogram result")
+
+                bitstring = AzureQuantumJob._qir_to_qiskit_bitstring(result["Display"])
+                count = result["Count"]
+                probability = count / total_count
+                counts[bitstring] = count
+                probabilities[bitstring] = probability
+            histograms.append((total_count, {"counts": counts, "probabilities": probabilities}))
+        return histograms
+
+    def _get_entry_point_names(self):
+        input_params = self._azure_job.details.input_params
+        # All V2 output is a list of entry points
+        entry_points = input_params["items"]
+        entry_point_names = []
+        for entry_point in entry_points:
+            if not "entryPoint" in entry_point:
+                raise ValueError("Entry point input_param is missing an 'entryPoint' field")
+            entry_point_names.append(entry_point["entryPoint"])
+        return entry_point_names if len(entry_point_names) > 0 else ["main"]
+
+    def _format_microsoft_v2_results(self) -> List[Dict[str, Any]]:
+        success = self._azure_job.details.status == "Succeeded"
+
+        if not success:
+            return [{
+                "data": {},
+                "success": False,
+                "header": {},
+                "shots": 0,
+            }]
+        
+        entry_point_names = self._get_entry_point_names()
+
+        results = self._translate_microsoft_v2_results()
+        
+        if len(results) != len(entry_point_names):
+            raise ValueError("The number of experiment results does not match the number of experiment names")
+        
+        status = self.status()
+
+        return [{
+            "data": result,
+            "success": success,
+            "shots": total_count,
+            "name": name,
+            "status": status,
+            "header": {
+                "name": name
+            }
+        } for name, (total_count, result) in zip(entry_point_names, results)]
