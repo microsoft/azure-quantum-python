@@ -23,7 +23,7 @@ if (-not $Env:PYTHON_OUTDIR) {
     "== We will install $PackageName from source." | Write-Host
     "" | Write-Host
 
-    Install-PackageInEnv -PackageName $PackageName -FromSource $True
+    Install-PackageInEnv -PackageName "$PackageName[all]" -FromSource $True
 
     "" | Write-Host
     "== $PackageName installed from source. ==" | Write-Host
@@ -34,13 +34,18 @@ if (-not $Env:PYTHON_OUTDIR) {
     "== To use build artifacts, download the artifacts locally and point the variable to this folder." | Write-Warning
     "" | Write-Warning
     Exit 1
+} 
+# this condition is used by the E2E Live test pipeline
+elseif ($Env:PICK_QDK_VERSION -eq "auto") {
+    "== Installing latest published $PackageName package from PyPI..." | Write-Host
+    Install-PackageInEnv -PackageName $PackageName -FromSource $False
 } else {
     "== Preparing environment to use artifacts with version '$Env:PYTHON_VERSION' " | Write-Host
     "== from '$Env:PYTHON_OUTDIR'" | Write-Host
     if ($Env:PYTHON_VERSION) {
-        $NameAndVersion = "$PackageName==$($Env:PYTHON_VERSION)"
+        $NameAndVersion = "$PackageName[all]==$($Env:PYTHON_VERSION)"
     } else {
-        $NameAndVersion = $PackageName
+        $NameAndVersion = "$PackageName[all]"
     }
     
     Install-PackageInEnv -PackageName $NameAndVersion -FromSource $False -BuildArtifactPath $Env:PYTHON_OUTDIR

@@ -6,65 +6,60 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import BlobDetails
-    from ._models_py3 import CostEstimate
-    from ._models_py3 import ErrorData
-    from ._models_py3 import JobDetails
-    from ._models_py3 import JobDetailsList
-    from ._models_py3 import JsonPatchDocument
-    from ._models_py3 import ProviderStatus
-    from ._models_py3 import ProviderStatusList
-    from ._models_py3 import Quota
-    from ._models_py3 import QuotaList
-    from ._models_py3 import RestError
-    from ._models_py3 import SasUriResponse
-    from ._models_py3 import TargetStatus
-    from ._models_py3 import UsageEvent
-except (SyntaxError, ImportError):
-    from ._models import BlobDetails  # type: ignore
-    from ._models import CostEstimate  # type: ignore
-    from ._models import ErrorData  # type: ignore
-    from ._models import JobDetails  # type: ignore
-    from ._models import JobDetailsList  # type: ignore
-    from ._models import JsonPatchDocument  # type: ignore
-    from ._models import ProviderStatus  # type: ignore
-    from ._models import ProviderStatusList  # type: ignore
-    from ._models import Quota  # type: ignore
-    from ._models import QuotaList  # type: ignore
-    from ._models import RestError  # type: ignore
-    from ._models import SasUriResponse  # type: ignore
-    from ._models import TargetStatus  # type: ignore
-    from ._models import UsageEvent  # type: ignore
+from ._models import BlobDetails
+from ._models import CostEstimate
+from ._models import ErrorData
+from ._models import ItemDetails
+from ._models import JobDetails
+from ._models import JsonPatchDocument
+from ._models import ProviderStatus
+from ._models import QuantumComputingData
+from ._models import Quota
+from ._models import RestError
+from ._models import SasUriResponse
+from ._models import SessionDetails
+from ._models import TargetStatus
+from ._models import UsageEvent
 
-from ._quantum_client_enums import (
-    DimensionScope,
-    JobStatus,
-    JsonPatchOperation,
-    MeterPeriod,
-    ProviderAvailability,
-    TargetAvailability,
-)
+from ._enums import DimensionScope
+from ._enums import ItemType
+from ._enums import JobStatus
+from ._enums import JobType
+from ._enums import JsonPatchOperation
+from ._enums import MeterPeriod
+from ._enums import ProviderAvailability
+from ._enums import SessionJobFailurePolicy
+from ._enums import SessionStatus
+from ._enums import TargetAvailability
+from ._patch import __all__ as _patch_all
+from ._patch import *  # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    'BlobDetails',
-    'CostEstimate',
-    'ErrorData',
-    'JobDetails',
-    'JobDetailsList',
-    'JsonPatchDocument',
-    'ProviderStatus',
-    'ProviderStatusList',
-    'Quota',
-    'QuotaList',
-    'RestError',
-    'SasUriResponse',
-    'TargetStatus',
-    'UsageEvent',
-    'DimensionScope',
-    'JobStatus',
-    'JsonPatchOperation',
-    'MeterPeriod',
-    'ProviderAvailability',
-    'TargetAvailability',
+    "BlobDetails",
+    "CostEstimate",
+    "ErrorData",
+    "ItemDetails",
+    "JobDetails",
+    "JsonPatchDocument",
+    "ProviderStatus",
+    "QuantumComputingData",
+    "Quota",
+    "RestError",
+    "SasUriResponse",
+    "SessionDetails",
+    "TargetStatus",
+    "UsageEvent",
+    "DimensionScope",
+    "ItemType",
+    "JobStatus",
+    "JobType",
+    "JsonPatchOperation",
+    "MeterPeriod",
+    "ProviderAvailability",
+    "SessionJobFailurePolicy",
+    "SessionStatus",
+    "TargetAvailability",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

@@ -15,7 +15,7 @@ import tarfile
 
 from typing import List, Tuple, Union, Dict, Optional, TYPE_CHECKING
 from enum import Enum
-from azure.quantum.optimization import TermBase, Term, GroupType, SlcTerm
+from azure.quantum.optimization import TermBase, Term
 from azure.quantum.storage import (
     ContainerClient,
     download_blob,
@@ -26,8 +26,6 @@ from azure.quantum.storage import (
 from azure.quantum.job.base_job import ContentType
 from azure.quantum.job.job import Job
 from azure.quantum.target.target import Target
-from azure.quantum.serialization import ProtoProblem
-from google.protobuf import struct_pb2
 
 logger = logging.getLogger(__name__)
 
@@ -39,13 +37,6 @@ if TYPE_CHECKING:
 class ProblemType(str, Enum):
     pubo = 0
     ising = 1
-    pubo_grouped = 2
-    ising_grouped = 3
-
-proto_types = {
-    ProblemType.ising: ProtoProblem.ProblemType.ISING,
-    ProblemType.pubo: ProtoProblem.ProblemType.PUBO, 
-}
 
 
 class Problem:
@@ -63,7 +54,7 @@ class Problem:
     :param problem_type: Problem type (ProblemType.pubo or
         ProblemType.ising), defaults to ProblemType.ising
     :type problem_type: ProblemType, optional
-    :param content_type: Content type, eg: application/json. application/x-protobuf. Default is application/json
+    :param content_type: Content type, eg: application/json. Default is application/json
     :type content_type: ContentType, optional
     """
 
@@ -84,17 +75,11 @@ class Problem:
 
         # each type of term has its own section for quicker serialization
         self.terms = []
-        self.terms_slc = []
 
         # set the terms
         if terms:
             for term in terms:
-                if isinstance(term, SlcTerm):
-                    self.terms_slc.append(term)
-                else:
-                    self.terms.append(term)
-
-        self.check_for_grouped_term()
+                self.terms.append(term)
 
     """
     Constant thresholds used to determine if a problem is "large".
@@ -104,12 +89,9 @@ class Problem:
 
 
     def serialize(self) -> Union[str, list]:
-        """Wrapper function for serialzing. It may serialize to json or protobuf
+        """Wrapper function for serializing to json
         """ 
-        if (self.content_type == ContentType.protobuf and len(self.terms_slc) == 0):
-            return self.to_proto()
-        else:
-            return self.to_json()
+        return self.to_json()
 
     def to_json(self) -> str:
         """Serializes the problem to a JSON string"""
@@ -123,69 +105,11 @@ class Problem:
                 "terms": [term.to_dict() for term in self.terms]
             }
         }
-        if len(self.terms_slc) > 0:
-            result["cost_function"]["terms_slc"] = [term.to_dict() for term in self.terms_slc]
 
         if self.init_config:
             result["cost_function"]["initial_configuration"] = self.init_config
 
         return json.dumps(result)
-    
-    def to_proto(self) -> list:
-        """Serializes a problem to a list serialized protobuf messages
-        Every problem is built into a series of protobuf messages 
-        each with 1000 terms and added to a list of proto messages.
-        In this version only ising and pubo are supported. The grouped terms will be added in the
-        subsquent PR.
-        Every message in the list is a byte string
-        """
-        proto_messages = []
-        msg_count = 0
-        terms_remaining = len(self.terms)
-        terms_read = 0
-        while terms_remaining > 0:   
-            proto_problem = ProtoProblem()
-            cost_function = proto_problem.cost_function
-            metadata = proto_problem.metadata
-            if msg_count == 0:
-                cost_function.version = "1.0"
-                cost_function.type = proto_types[self.problem_type]
-                metadata["name"] = self.name
-            # add 1000 terms per proto message
-            if terms_remaining - 1000 > 0: 
-                for i in range (terms_read,terms_read + 1000):
-                    term = cost_function.terms.add()
-                    term.c = self.terms[i].c
-                    for j in range (len(self.terms[i].ids)):
-                        term.ids.append(self.terms[i].ids[j])
-            else:
-                # add the remaining terms to the last message
-                for i in range(terms_remaining):
-                    term = cost_function.terms.add()
-                    term.c = self.terms[i].c
-                    for j in range (len(self.terms[i].ids)):
-                        term.ids.append(self.terms[i].ids[j])
-            msg_count += 1
-            terms_remaining -= 1000
-            terms_read += 1000
-            proto_messages.append(proto_problem.SerializeToString())
-        return proto_messages
-    
-    def compress_protobuf(self, 
-    proto_messages: List[str] ) -> bytes:
-    # Write to a series of files to folder and compress
-        data = io.BytesIO()
-        file_name_prefix = "gzipinputfile_pb"
-        file_count = 0
-        with tarfile.open(fileobj = data, mode = 'w:gz') as tar:
-            for msg in proto_messages:
-                file_name = file_name_prefix+"_"+str(file_count)+".pb"
-                info = tarfile.TarInfo(name=file_name)
-                info.size = len(msg)
-                msg_data = io.BytesIO(msg)
-                tar.addfile(info, msg_data)
-                file_count += 1
-        return data.getvalue() 
 
     
     @classmethod
@@ -216,8 +140,6 @@ class Problem:
                 name = metadata.get("name")
 
         terms = [Term.from_dict(t) for t in result["cost_function"]["terms"]] if "terms" in result["cost_function"] else []
-        if "terms_slc" in result["cost_function"]:
-            terms.append([SlcTerm.from_dict(t) for t in result["cost_function"]["terms_slc"]])
 
         problem = cls(
             name=name,
@@ -229,54 +151,6 @@ class Problem:
             problem.init_config = result["cost_function"]["initial_configuration"]
 
         return problem
-    
-    @classmethod
-    def from_proto(
-        cls,
-        input_problem: list,
-        name: Optional[str] = None
-    ) -> Problem:
-        """Deserializes the problem from a
-        protobuf messages serialized with Problem.serialize()
-
-        :param input_problem:
-            the list of protobuf messages to be deserialized to a `Problem` instance
-        :type input_problem: list
-        :param
-        :param name: 
-            The name of the problem is optional, since it will try 
-            to read the serialized name from the json payload.
-            If this parameter is not empty, it will use it as the
-            problem name ignoring the serialized value.
-        :type name: Optional[str]
-        """
-        msg_count = 0
-
-        problem = cls(
-            name = name
-        )
-
-        for msg in input_problem:
-            proto_problem = ProtoProblem()
-            proto_problem.ParseFromString(msg)
-            if msg_count == 0:
-                for qdk_type, proto_type in proto_types.items():
-                    if proto_problem.cost_function.type == proto_type:
-                        problem.problem_type = qdk_type
-                metadata = proto_problem.metadata               
-                if name is None:
-                    name = metadata["name"]
-                    problem.name = name
-            for msg_term in proto_problem.cost_function.terms:
-                term = Term(
-                    c = msg_term.c
-                )
-                term.ids = []
-                for msg_term_id in msg_term.ids:
-                    term.ids.append(msg_term_id)
-                problem.terms.append(term)
-        
-        return problem
 
     @classmethod
     def deserialize(
@@ -285,11 +159,11 @@ class Problem:
         name: Optional[str] = None, 
         content_type: Optional[ContentType] = None) -> Problem:
         """Deserializes the problem from a
-        JSON string or protobuf messages serialized with Problem.serialize()
+        JSON string serialized with Problem.serialize()
         Also used to deserialize the messages downloaded from the blob
 
         :param input_problem:
-            The json string or the list of protobuf messages to be deserialized to a `Problem` instance
+            The json string
         :type input_problem: Union[str,list]
         :param
         :param name: 
@@ -301,10 +175,7 @@ class Problem:
         :param content_type: The content type of the input problem data
         :type: Optional, ContentType
         """
-        if content_type == ContentType.protobuf or type(input_problem) == list :
-            return cls.from_proto(input_problem, name) 
-        else :
-            return cls.from_json(input_problem, name)
+        return cls.from_json(input_problem, name)
 
     def add_term(self, c: Union[int, float], indices: List[int]):
         """Adds a single monomial term to the `Problem` representation
@@ -319,62 +190,15 @@ class Problem:
 
     def add_terms(
         self, 
-        terms: List[Term],
-        term_type: GroupType=GroupType.combination,
-        c: Union[int, float]=1
+        terms: List[Term]
     ):
-        """Adds an optionally grouped list of monomial terms 
-        to the `Problem` representation
+        """Adds a list of monomial terms to the `Problem` representation
 
         :param terms: The list of terms to add to the problem
-        :param term_type: Type of grouped term being added
-            If GroupType.combination, terms will be added as ungrouped monomials.
-        :param c: Weight of grouped term, only applicable for grouped terms that support it.
         """
-        if term_type is GroupType.combination:
-            # Default type is a group of monomials
-            self.terms += terms
-        else:
-            # Slc term
-            self.terms_slc.append(SlcTerm(terms=terms, c=c))
-            self.problem_type_to_grouped()
+        self.terms += terms
         self.uploaded_blob_uri = None
     
-    def add_slc_term(
-        self,
-        terms: Union[List[Tuple[Union[int, float], Optional[int]]],
-                     List[Term]],
-        c: Union[int, float] = 1
-    ):
-        """Adds a squared linear combination term
-        to the `Problem` representation. Helper function to construct terms list.
-        
-        :param terms: List of monomial terms, with each represented by a pair.
-            The first entry represents the monomial term weight.
-            The second entry is the monomial term variable index or None.
-            Alternatively, a list of Term objects may be input.
-        :param c: Weight of SLC term
-        """
-        if all(isinstance(term, Term) for term in terms):
-            gterms = terms
-        else:
-            gterms = [Term([index], c=tc) if index is not None else Term([], c=tc)
-                      for tc,index in terms]
-        self.terms_slc.append(
-            SlcTerm(gterms, c=c)
-        )
-        self.problem_type_to_grouped()
-        self.uploaded_blob_uri = None
-
-    def check_for_grouped_term(self):
-        if len(self.terms_slc) != 0:
-            self.problem_type_to_grouped()
-    
-    def problem_type_to_grouped(self):
-        if self.problem_type == ProblemType.pubo:
-            self.problem_type = ProblemType.pubo_grouped
-        elif self.problem_type == ProblemType.ising:
-            self.problem_type = ProblemType.ising_grouped
             
     def to_blob(self) -> bytes:
         """Convert problem data to a binary blob.
@@ -386,13 +210,10 @@ class Problem:
         debug_input_string = input_problem if type(input_problem) is str else b''.join( input_problem).decode('latin-1')
         logger.debug("Input Problem: " + debug_input_string)
         data = io.BytesIO()
-        if self.content_type == ContentType.protobuf:
-          return self.compress_protobuf(input_problem)                   
-        else:
-            with gzip.GzipFile(fileobj=data, mode="w") as fo:
-                fo.write(input_problem.encode())
+        with gzip.GzipFile(fileobj=data, mode="w") as fo:
+            fo.write(input_problem.encode())
 
-            return data.getvalue()
+        return data.getvalue()
     
     def _blob_name(self):
         import uuid
@@ -401,7 +222,7 @@ class Problem:
     def upload(
         self,
         workspace: "Workspace",
-        container_name: str = "qio-problems",
+        container_name: str = "optimization-problems",
         blob_name: str = "inputData",
         container_uri: str = None,
     ):
@@ -410,7 +231,7 @@ class Problem:
 
         :param workspace: interaction terms of the problem.
         :type workspace: Workspace
-        :param container_name: Container name, defaults to "qio-problems"
+        :param container_name: Container name, defaults to "optimization-problems"
         :type container_name: str, optional
         :param blob_name: Blob name, defaults to None
         :type blob_name: str, optional
@@ -467,15 +288,14 @@ class Problem:
         new_terms = []
 
         constant = 0
-        for terms in [self.terms, self.terms_slc]:
-            for term in terms:
-                reduced_term = term.reduce_by_variable_state(fixed_transformed)
-                if reduced_term:
-                    if not isinstance(reduced_term, Term) or len(reduced_term.ids) > 0:
-                        new_terms.append(reduced_term)
-                    else:
-                        # reduced to a constant term
-                        constant += reduced_term.c
+        for term in self.terms:
+            reduced_term = term.reduce_by_variable_state(fixed_transformed)
+            if reduced_term:
+                if not isinstance(reduced_term, Term) or len(reduced_term.ids) > 0:
+                    new_terms.append(reduced_term)
+                else:
+                    # reduced to a constant term
+                    constant += reduced_term.c
 
         if constant:
             new_terms.append(Term(c=constant, indices=[]))
@@ -514,7 +334,7 @@ class Problem:
         }  # if ids are given in string form, convert them to int
 
         total_cost = 0
-        for terms in [self.terms, self.terms_slc]:
+        for terms in self.terms:
             total_cost += self._evaluate(configuration_transformed, terms)
 
         return total_cost
@@ -529,15 +349,10 @@ class Problem:
 
         set_vars = set()
         total_term_count = 0
-        for terms in [self.terms, self.terms_slc]:
-            for term in terms:
-                if isinstance(term, Term):
-                    set_vars.update(term.ids)
-                    total_term_count += 1
-                elif isinstance(term, SlcTerm):
-                    for subterm in term.terms:
-                        set_vars.update(subterm.ids)
-                        total_term_count += 1
+        for term in self.terms:
+            if isinstance(term, Term):
+                set_vars.update(term.ids)
+                total_term_count += 1
         
         return (
             len(set_vars) >= Problem.NUM_VARIABLES_LARGE
@@ -564,103 +379,15 @@ class Problem:
         a list of terms with that index
         """
         terms = []
-        if self.terms != [] or self.terms_slc != []:
-            for all_terms in [self.terms, self.terms_slc]:
-                for term in all_terms:
-                    if isinstance(term, Term):
-                        if id in term.ids:
-                            terms.append(term)
-                    elif isinstance(term, SlcTerm):
-                        for subterm in term.terms:
-                            if id in subterm.ids:
-                                terms.append(term)
-                                break
+        if self.terms != []:
+            for term in self.terms:
+                if isinstance(term, Term):
+                    if id in term.ids:
+                        terms.append(term)
             return terms
         else:
             raise Exception(
                 "There are currently no terms in this problem. \
                 Please download the problem on the client or add terms to the \
                     problem to perform this operation"
-            )
-
-    def is_valid_npz(
-        self,
-        files: List[str],
-        indices_column_names: List[str] = ["arr_0", "arr_1"],
-        c_column_name: str = "arr_2",
-    ) -> bool:
-        """Determines if the supplied npz has expected column names.
-        If none are supplied, checks default naming.
-        Otherwise, it checks user-supplied naming.
-
-        :param files: the associated column names of an npz file
-        :type: List[str]
-        :param indices_column_names: the names of the indices columns
-        :type indices_column_names: List[str], optional
-        :param c_column_name: the name of the coefficient column
-        :type c_column_name: str, optional
-        """
-
-        all_columns = indices_column_names + [c_column_name]
-
-        if len(files) != len(all_columns):
-            return False
-
-        if sorted(files) != sorted(all_columns):
-            return False
-
-        return True
-
-    def terms_from_npz(
-        self,
-        file_path=str,
-        indices_column_names: List[str] = ["arr_0", "arr_1"],
-        c_column_name: str = "arr_2",
-    ) -> List[Term]:
-        """Reads a user supplied npz file and converts it to a list of `Term`.
-        An NPZ file contains several arrays (or columns), which can specify
-        the indices of a problem term, along with the coefficient.
-        Default naming for these columns is used unless specified by the user.
-
-        :param file_path: file path of the NPZ file to be converted
-        :type file_name: str
-        :param indices_column_names: the names of the indices columns
-        :type indices_column_names: List[str], optional
-        :param c_column_name: the name of the coefficient column
-        :type c_column_name: str, optional
-        """
-
-        terms = []
-
-        if os.path.isfile(file_path):
-            problem_file = numpy.load(file_path)
-
-            # Check the default or user-supplied columns are present
-            if not (
-                self.is_valid_npz(
-                    problem_file.files, indices_column_names, c_column_name
-                )
-            ):
-                raise Exception(
-                    "Error in validating NPZ file. \
-                    Please check that the names of the arrays match the default \
-                        or user-supplied namings."
-                )
-
-            # For each of the indices column names, extract the associated indices column data
-            problem_ids = [list(problem_file[id]) for id in indices_column_names]
-
-            # Unpack the problem indices and zip with the coefficient column data
-            # to produce problem terms
-            for term in zip(*problem_ids, problem_file[c_column_name]):
-                ids = list(term[:-1])
-                indices = list(map(int, ids))
-
-                c = float(term[-1])
-                terms.append(Term(c=c, indices=indices))
-            return terms
-        else:
-            raise Exception(
-                "Unable to read NPZ file. \
-                Please check the file path supplied is correct."
             )

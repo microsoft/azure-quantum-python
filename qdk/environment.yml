@@ -10,9 +10,10 @@ dependencies:
   - pip
   - jupyter
   - pytest
-  - ipywidgets
+  - ipywidgets==8.0.4 # version 8.0.5 causes JsmolView to break. See: https://github.com/fekad/jupyter-jsmol/issues/58
   - ruamel.yaml
   - varname
+  - notebook=6.5.4   # TODO(kuzminrobin, #485): Eventually this line needs to be removed and code adapted to the change.
   - pip:
     - basis_set_exchange
     - jupyter_jsmol

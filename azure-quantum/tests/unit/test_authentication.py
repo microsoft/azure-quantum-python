@@ -26,29 +26,26 @@ class TestWorkspace(QuantumTestBase):
         credential = _TokenFileCredential()
         with pytest.raises(CredentialUnavailableError) as exception:
             credential.get_token(_AZURE_QUANTUM_SCOPE)
-
-        assert "Token file location not set." in str(exception.value)
+        self.assertIn("Token file location not set.", str(exception.value))
 
     def test_azure_quantum_token_credential_file_not_exists(self):
-        with patch.dict(os.environ, { "AZURE_QUANTUM_TOKEN_FILE": "fake_file_path" }, clear=True):
+        with patch.dict(os.environ, {"AZURE_QUANTUM_TOKEN_FILE": "fake_file_path" }, clear=True):
             with patch('os.path.isfile') as mock_isfile:
                 mock_isfile.return_value = False
                 credential = _TokenFileCredential()                
                 with pytest.raises(CredentialUnavailableError) as exception:
                     credential.get_token(_AZURE_QUANTUM_SCOPE)
-                
-                assert "Token file at fake_file_path does not exist." in str(exception.value)
+                self.assertIn("Token file at fake_file_path does not exist.", str(exception.value))
 
     def test_azure_quantum_token_credential_file_invalid_json(self):
         tmpdir = self.create_temp_dir()
         file = Path(tmpdir) / "token.json"
         file.write_text("not a json")
-        with patch.dict(os.environ, { "AZURE_QUANTUM_TOKEN_FILE": str(file.resolve()) }, clear=True):
+        with patch.dict(os.environ, {"AZURE_QUANTUM_TOKEN_FILE": str(file.resolve())}, clear=True):
             credential = _TokenFileCredential()                
             with pytest.raises(CredentialUnavailableError) as exception:
                 credential.get_token(_AZURE_QUANTUM_SCOPE)
-            
-            assert "Failed to parse token file: Invalid JSON." in str(exception.value)
+            self.assertIn("Failed to parse token file: Invalid JSON.", str(exception.value))
 
     def test_azure_quantum_token_credential_file_missing_expires_on(self):
         content = {
@@ -58,12 +55,11 @@ class TestWorkspace(QuantumTestBase):
         tmpdir = self.create_temp_dir()
         file = Path(tmpdir) / "token.json"
         file.write_text(json.dumps(content))
-        with patch.dict(os.environ, { "AZURE_QUANTUM_TOKEN_FILE": str(file.resolve()) }, clear=True):
+        with patch.dict(os.environ, {"AZURE_QUANTUM_TOKEN_FILE": str(file.resolve())}, clear=True):
             credential = _TokenFileCredential()                
             with pytest.raises(CredentialUnavailableError) as exception:
                 credential.get_token(_AZURE_QUANTUM_SCOPE)
-            
-            assert "Failed to parse token file: Missing expected value: 'expires_on'" in str(exception.value)
+            self.assertIn("Failed to parse token file: Missing expected value: 'expires_on'", str(exception.value))
 
     def test_azure_quantum_token_credential_file_token_expired(self):
         content = {
@@ -74,12 +70,11 @@ class TestWorkspace(QuantumTestBase):
         tmpdir = self.create_temp_dir()
         file = Path(tmpdir) / "token.json"
         file.write_text(json.dumps(content))
-        with patch.dict(os.environ, { "AZURE_QUANTUM_TOKEN_FILE": str(file.resolve()) }, clear=True):
+        with patch.dict(os.environ, {"AZURE_QUANTUM_TOKEN_FILE": str(file.resolve())}, clear=True):
             credential = _TokenFileCredential()                
             with pytest.raises(CredentialUnavailableError) as exception:
                 credential.get_token(_AZURE_QUANTUM_SCOPE)
-            
-            assert "Token already expired at Mon Aug  9 21:05:25 2021" in str(exception.value)
+            self.assertIn("Token already expired at Mon Aug  9 21:05:25 2021", str(exception.value))
 
     def test_azure_quantum_token_credential_file_valid_token(self):
         one_hour_ahead = time.time() + 60*60
@@ -91,9 +86,8 @@ class TestWorkspace(QuantumTestBase):
         tmpdir = self.create_temp_dir()
         file = Path(tmpdir) / "token.json"
         file.write_text(json.dumps(content))
-        with patch.dict(os.environ, { "AZURE_QUANTUM_TOKEN_FILE": str(file.resolve()) }, clear=True):
+        with patch.dict(os.environ, {"AZURE_QUANTUM_TOKEN_FILE": str(file.resolve())}, clear=True):
             credential = _TokenFileCredential()                
             token = credential.get_token(_AZURE_QUANTUM_SCOPE)
-        
-        assert token.token == "fake_token"
-        assert token.expires_on == pytest.approx(one_hour_ahead)
+        self.assertEqual(token.token, "fake_token")
+        self.assertEqual(token.expires_on, pytest.approx(one_hour_ahead))
