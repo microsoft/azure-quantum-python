@@ -3,16 +3,17 @@
 # Licensed under the MIT License.
 ##
 import abc
+from azure.quantum.job.session import SessionHost
 
 from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     import cirq
     from azure.quantum import Job as AzureJob
+    from azure.quantum import Workspace
     from azure.quantum.cirq.job import Job as CirqJob
 
-
-class Target(abc.ABC):
+class Target(abc.ABC, SessionHost):
     """Abstract base class for Cirq targets"""
     @abc.abstractstaticmethod
     def _translate_cirq_circuit(circuit):
@@ -59,3 +60,15 @@ class Target(abc.ABC):
         :rtype: Job
         """
         pass
+
+    @abc.abstractmethod
+    def _get_azure_workspace(self) -> "Workspace":
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def _get_azure_target_id(self) -> str:
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def _get_azure_provider_id(self) -> str:
+        raise NotImplementedError

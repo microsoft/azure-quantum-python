@@ -6,7 +6,7 @@ interactions:
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - azsdk-python-identity/1.10.0 Python/3.9.13 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-identity/1.12.0 Python/3.9.16 (Windows-10-10.0.22621-SP0)
       content-length:
       - '172'
     method: POST
@@ -30,23 +30,28 @@ interactions:
       Accept:
       - application/json
       User-Agent:
-      - async-testapp azsdk-python-quantum/0.0.0.1 Python/3.9.13 (Windows-10-10.0.22000-SP0)
+      - async-testapp azsdk-python-quantum/0.0.1 Python/3.9.16 (Windows-10-10.0.22621-SP0)
     method: GET
-    uri: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/quotas
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/quotas?api-version=2022-09-12-preview&test-sequence-id=1
   response:
     body:
       string: '{"value": [{"dimension": "combined_job_hours", "scope": "Workspace",
-        "providerId": "Microsoft", "utilization": 2.902383333333333e-05, "holds":
-        0.0, "limit": 5.0, "period": "Monthly"}, {"dimension": "combined_job_hours",
-        "scope": "Subscription", "providerId": "Microsoft", "utilization": 2.902383333333333e-05,
+        "providerId": "Microsoft", "utilization": 0.005441370416666669, "holds": 0.0,
+        "limit": 5.0, "period": "Monthly"}, {"dimension": "combined_job_hours", "scope":
+        "Subscription", "providerId": "Microsoft", "utilization": 0.005441370416666669,
         "holds": 0.0, "limit": 1000.0, "period": "Monthly"}, {"dimension": "concurrent_cpu_jobs",
         "scope": "Workspace", "providerId": "Microsoft", "utilization": 0.0, "holds":
         0.0, "limit": 5.0, "period": "None"}, {"dimension": "qgs", "scope": "Subscription",
-        "providerId": "ionq", "utilization": 200004.0, "holds": 0.0, "limit": 16666667.0,
-        "period": "Infinite"}], "nextLink": null, "access_token": "fake_token"}'
+        "providerId": "ionq", "utilization": 333340.0, "holds": 0.0, "limit": 16666667.0,
+        "period": "Infinite"}, {"dimension": "concurrent_resource_estimator_jobs",
+        "scope": "Workspace", "providerId": "microsoft-qc", "utilization": 0.0, "holds":
+        0.0, "limit": 10.0, "period": "None"}], "nextLink": null, "access_token":
+        "fake_token"}'
     headers:
+      connection:
+      - keep-alive
       content-length:
-      - '715'
+      - '885'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -54,5 +59,5 @@ interactions:
     status:
       code: 200
       message: OK
-    url: https://eastus.quantum.azure.com/v1.0/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/quotas
+    url: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/quotas?api-version=2022-09-12-preview
 version: 1

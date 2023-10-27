@@ -42,7 +42,7 @@ class Problem(SyncProblem):
     async def upload(
         self,
         workspace: "Workspace",
-        container_name: str = "qio-problems",
+        container_name: str = "optimization-problems",
         blob_name: str = "inputData",
         container_uri: str = None
     ):
@@ -51,7 +51,7 @@ class Problem(SyncProblem):
 
         :param workspace: interaction terms of the problem.
         :type workspace: Workspace
-        :param container_name: Container name, defaults to "qio-problems"
+        :param container_name: Container name, defaults to "optimization-problems"
         :type container_name: str, optional
         :param blob_name: Blob name, defaults to None
         :type blob_name: str, optional

@@ -51,7 +51,7 @@ if ([string]::IsNullOrEmpty($PackageVersion)) {
     $PackageVersion = "0.0.0.1"
 }
 
-$OutputFolder = Join-Path $PSScriptRoot "../azure/quantum/_client/"
+$OutputFolder = Join-Path $PSScriptRoot "../azure/quantum/_client"
 
 Write-Verbose "Output folder: $OutputFolder"
 
@@ -60,10 +60,13 @@ if (Test-Path $OutputFolder) {
     Remove-Item $OutputFolder -Recurse | Write-Verbose
 }
 
-$AutoRestConfig = "$SwaggerRepoUrl/blob/$SwaggerRepoBranch/specification/quantum/data-plane/readme.md"
+$AutoRestConfig = $SwaggerRepoUrl.StartsWith("https://") `
+                    ? "$SwaggerRepoUrl/blob/$SwaggerRepoBranch/specification/quantum/data-plane/readme.md" `
+                    : "$SwaggerRepoUrl/specification/quantum/data-plane/readme.md"
 
 Write-Verbose "Installing latest AutoRest client"
 npm install -g autorest@latest | Write-Verbose
+autorest --reset | Write-Verbose
 
 if ([string]::IsNullOrEmpty($SwaggerTagVersion))
 {
