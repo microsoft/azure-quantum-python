@@ -32,7 +32,7 @@ class RigettiTarget(str, Enum):
     ASPEN_11 = "rigetti.qpu.aspen-11"
     ASPEN_M_2 = "rigetti.qpu.aspen-m-2"
     ASPEN_M_3 = "rigetti.qpu.aspen-m-3"
-    ANKAA_@ = "rigetti.qpu.ankaa-2"
+    ANKAA_2 = "rigetti.qpu.ankaa-2"
 
     def simulators() -> List[str]:
         """Returns a list of simulator targets"""
