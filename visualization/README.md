@@ -1,6 +1,6 @@
 # Visualization
 
-This folder includes the visualization project.
+This folder includes the visualization project. This contains visualizations for the resource estimation feature.
 
 - react-lib: source code for the visualization components and D3 integration.
 - js-lib: wrapper JavaScript library which packages the visualization components into a consumable JavaScript package by clients.
