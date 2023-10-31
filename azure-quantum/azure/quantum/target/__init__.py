@@ -10,6 +10,7 @@ from .toshiba import (
 from .ionq import IonQ
 from .quantinuum import Quantinuum
 from .rigetti import Rigetti
+from .pasqal import Pasqal
 
 # Default targets to use when there is no target class
 # associated with a given target ID
@@ -17,5 +18,6 @@ DEFAULT_TARGETS = {
     "ionq": IonQ,
     "quantinuum": Quantinuum,
     "rigetti": Rigetti,
-    "toshiba": Solver
+    "toshiba": Solver,
+    "pasqal": Pasqal
 }
