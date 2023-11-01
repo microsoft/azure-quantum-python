@@ -17,7 +17,10 @@ with open("./README.md", "r") as fh:
     long_description = fh.read()
 
 import warnings
-warnings.warn("The `qdk.chemistry` package is no longer maintained. Please see the latest supported experiences for Azure Quantum here: https://learn.microsoft.com/azure/quantum/get-started-azure-quantum.")
+warnings.warn("The `qdk.chemistry` package is no longer maintained. " +
+              "Please see the latest supported experiences for Azure Quantum here: "
+              "https://learn.microsoft.com/azure/quantum/get-started-azure-quantum.",
+              DeprecationWarning, stacklevel=2)
 
 setuptools.setup(
     name="qdk",
