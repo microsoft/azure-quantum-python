@@ -396,7 +396,7 @@ class IonQForteBackend(IonQBackend):
                 "simulator": False,
                 "local": False,
                 "coupling_map": None,
-                "description": "IonQ Aria QPU on Azure Quantum",
+                "description": "IonQ Forte QPU on Azure Quantum",
                 "basis_gates": GATESET_MAP[gateset],
                 "memory": False,
                 "n_qubits": 35,
