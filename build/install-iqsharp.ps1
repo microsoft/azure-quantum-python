@@ -13,11 +13,6 @@
 $nugetVersion = $Env:NUGET_VERSION
 $pythonVersion = $Env:PYTHON_VERSION
 
-# Temporary using the beta package until the qdk-python
-# build takes a dependency on the iqsharp build
-$nugetVersion = "0.27.261334-beta"
-$pythonVersion = "0.27.261334b1"
-
 # Install prerequisites.
 Write-Host "Installing Python prerequisites"
 pip install --user `
@@ -27,7 +22,12 @@ pip install --user `
 $iqsharpNugetPackage = "Microsoft.Quantum.IQSharp.$nugetVersion.nupkg"
 $iqsharpNugetPackagePath = !($Env:NUGET_OUTDIR) ? $iqsharpNugetPackage : (Join-Path $Env:NUGET_OUTDIR $iqsharpNugetPackage)
 
-if (Test-Path $iqsharpNugetPackagePath -PathType Leaf) {
+# PICK_QDK_VERSION="auto" is used by the E2E Live test pipeline by default
+if ($Env:PICK_QDK_VERSION -eq "auto") {    
+    Write-Host "Installing the latest published IQ# dotnet tool"
+    dotnet tool install Microsoft.Quantum.IQSharp --tool-path $Env:TOOLS_DIR | Write-Host
+}
+elseif (Test-Path $iqsharpNugetPackagePath -PathType Leaf) {
     # Uninstall if different version is already installed
     try {
         $currentInstalledVersion = dotnet tool list --tool-path $Env:TOOLS_DIR | Select-String -Pattern "microsoft.quantum.iqsharp\s+(.*)\s+" | foreach { $matches[1] }
@@ -37,6 +37,12 @@ if (Test-Path $iqsharpNugetPackagePath -PathType Leaf) {
             dotnet tool uninstall Microsoft.Quantum.IQSharp --tool-path $Env:TOOLS_DIR | Write-Host
         }
     } catch {}
+
+    # Make sure the NUGET_OUTDIR is listed as a nuget source, otherwise
+    # IQ# will fail to load when packages are loaded.
+    $SourceName = "build"
+    Write-Host "Adding nuget source $SourceName=$Env:NUGET_OUTDIR"
+    dotnet nuget add source $Env:NUGET_OUTDIR --name $SourceName
 
     Write-Host "Installing the IQ# dotnet tool specific version from the build drop folder."
     Write-Host "  Version: $nugetVersion"
@@ -71,7 +77,12 @@ try {
 # Install the qsharp Python wheel
 $qsharpPythonWheel = "qsharp-$pythonVersion-py3-none-any.whl"
 $qsharpPythonWheelPath = !($Env:PYTHON_OUTDIR) ? $qsharpPythonWheel : (Join-Path $Env:PYTHON_OUTDIR $qsharpPythonWheel)
-if (Test-Path $qsharpPythonWheelPath -PathType Leaf) {
+
+# PICK_QDK_VERSION="auto" is used by the E2E Live test pipeline by default
+if ($Env:PICK_QDK_VERSION -eq "auto") {    
+    Write-Host "Installing the latest published qsharp Python package"
+    pip install --user --verbose qsharp | Write-Host
+} elseif (Test-Path $qsharpPythonWheelPath -PathType Leaf) {
     Write-Host "Installing the qsharp Python wheel from the build drop folder."
     Write-Host "  Wheel: $qsharpPythonWheelPath"
     Write-Host "  Source: $Env:PYTHON_OUTDIR"

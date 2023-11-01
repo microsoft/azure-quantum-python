@@ -2,6 +2,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 ##
+
+
 import logging
 import time
 import json
@@ -33,6 +35,8 @@ class Job(BaseJob, FilteredJob):
     :type job_details: JobDetails
     """
 
+    _default_poll_wait = 0.2
+
     def __init__(self, workspace: "Workspace", job_details: JobDetails, **kwargs):
         self.results = None
         super().__init__(
@@ -40,7 +44,7 @@ class Job(BaseJob, FilteredJob):
             details=job_details,
             **kwargs
         )
-    
+
     def submit(self):
         """Submit a job to Azure Quantum."""
         _log.debug(f"Submitting job with ID {self.id}")
@@ -77,12 +81,12 @@ class Job(BaseJob, FilteredJob):
         :raises TimeoutError: If the total poll time exceeds timeout, raise
         """
         self.refresh()
-        poll_wait = 0.2
-        total_time = 0.
+        poll_wait = Job._default_poll_wait
+        start_time = time.time()
         while not self.has_completed():
-            if timeout_secs is not None and total_time >= timeout_secs:
+            if timeout_secs is not None and (time.time() - start_time) >= timeout_secs:
                 raise TimeoutError(f"The wait time has exceeded {timeout_secs} seconds.")
- 
+
             logger.debug(
                 f"Waiting for job {self.id},"
                 + f"it is in status '{self.details.status}'"
@@ -90,7 +94,6 @@ class Job(BaseJob, FilteredJob):
             if print_progress:
                 print(".", end="", flush=True)
             time.sleep(poll_wait)
-            total_time += poll_wait
             self.refresh()
             poll_wait = (
                 max_poll_wait_secs

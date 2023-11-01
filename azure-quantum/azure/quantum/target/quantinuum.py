@@ -14,12 +14,15 @@ class Quantinuum(Target):
     """Quantinuum target."""
     target_names = (
         # Note: Target names on the same line are equivalent.
-        "quantinuum.hqs-lt-s1",        "quantinuum.qpu.h1-1",
-        "quantinuum.hqs-lt-s1-apival", "quantinuum.sim.h1-1sc",
-        "quantinuum.hqs-lt-s1-sim",    "quantinuum.sim.h1-1e",
-        "quantinuum.hqs-lt-s2",        "quantinuum.qpu.h1-2",
-        "quantinuum.hqs-lt-s2-apival", "quantinuum.sim.h1-2sc",
-        "quantinuum.hqs-lt-s2-sim",    "quantinuum.sim.h1-2e"
+        "quantinuum.qpu.h1-1",
+        "quantinuum.sim.h1-1sc",
+        "quantinuum.sim.h1-1e",
+        "quantinuum.qpu.h1-2",
+        "quantinuum.sim.h1-2sc",
+        "quantinuum.sim.h1-2e"
+        "quantinuum.qpu.h2-1",
+        "quantinuum.sim.h2-1sc",
+        "quantinuum.sim.h2-1e",
     )
 
     def __init__(
@@ -145,12 +148,16 @@ class Quantinuum(Target):
                         else:
                             N_2q += 1
 
-        if "-sim" in self.name or "sim.h1-1e" in self.name or "sim.h1-2e" in self.name:
+        import re
+        is_emulator_regex = re.compile("^.*(-sim|-[0-9]*e)$")
+        is_syntax_checker_regex = re.compile("^.*(-apival|-[0-9]*sc)$")
+
+        if is_emulator_regex.match(self.name):
             currency_code = "EHQC"
         else:
             currency_code = "HQC"
 
-        if "apival" in self.name or "sc" in self.name:
+        if is_syntax_checker_regex.match(self.name):
             HQC = 0.0
         else:
             HQC = 5 + num_shots * (N_1q + 10 * N_2q + 5 * N_m) / 5000

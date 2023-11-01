@@ -25,7 +25,25 @@ if ($True -eq $SkipInstall) {
     & (Join-Path $PSScriptRoot Install-Artifacts.ps1)
 }
 
-# Activate env
+Enable-Conda
+
+# Try installing IQ# dotnet tool, IQ# kernel and the qsharp Python package
+# Used for running tests between the Azure Quantum Python SDK and IQ# (Q#+QIR job submission)
+if ([string]::IsNullOrEmpty($PackageName) -or ($PackageName -eq "azure-quantum")) {
+    try {
+      $EnvExists = conda env list | Select-String -Pattern "azurequantum " | Measure-Object | Select-Object -Exp Count
+      if ($EnvExists) {
+        conda activate azurequantum
+        If ($null -eq $Env:TOOLS_DIR) { $Env:TOOLS_DIR =  [IO.Path]::GetFullPath((Join-Path $RootDir ".tools")) }
+        If (-not (Test-Path -Path $Env:TOOLS_DIR)) { [IO.Directory]::CreateDirectory($Env:TOOLS_DIR) }
+        & (Join-Path $RootDir "build" "install-iqsharp.ps1");
+      }    
+    }
+    catch {
+      Write-Host "##[warning]Failed to install IQ#."
+    }
+}
+
 $EnvName = GetEnvName -PackageName $PackageName
 Use-CondaEnv $EnvName
 
@@ -37,17 +55,14 @@ function PyTestMarkExpr() {
     if ($AzureQuantumCapabilities -notcontains "submit.ionq") {
         $MarkExpr += " and not ionq"
     }
-    if ($AzureQuantumCapabilities -notcontains "submit.1qbit") {
-        $MarkExpr += " and not oneqbit"
-    }
     if ($AzureQuantumCapabilities -notcontains "submit.toshiba") {
         $MarkExpr += " and not toshiba"
     }
-    if ($AzureQuantumCapabilities -notcontains "submit.microsoft") {
-        $MarkExpr += " and not qio"
-    }
     if ($AzureQuantumCapabilities -notcontains "submit.rigetti") {
         $MarkExpr += " and not rigetti"
+    }
+    if ($AzureQuantumCapabilities -notcontains "submit.pasqal") {
+        $MarkExpr += " and not pasqal"
     }
     if ($AzureQuantumCapabilities -notcontains "submit.quantinuum") {
         $MarkExpr += " and not quantinuum"
@@ -82,6 +97,9 @@ if ($PackageDir -Match "azure-quantum") {
     New-Item -ItemType Directory -Path $PSScriptRoot -Name qir
     # Copies auxiliary bitcode files that are used by unit tests in azure_quantum
     Copy-Item -Path (Join-Path $PackageDir "tests" "unit" "qir" "*.bc") -Destination (Join-Path $PSScriptRoot "qir")
+
+    Write-Host "##[info]Copy auxiliary Q# test files from $PackageDir to $PSScriptRoot"
+    Copy-Item -Path (Join-Path $PackageDir "tests" "unit" "*.qs") -Destination $PSScriptRoot
 }
 
 python -m pytest -v `

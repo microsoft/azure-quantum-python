@@ -4,6 +4,7 @@
 ##
 from typing import Any, Dict, List, Optional, Union
 
+import json
 import markdown
 
 
@@ -19,6 +20,15 @@ class HTMLWrapper:
 
 
 class MicrosoftEstimatorResult(dict):
+    """
+    Microsoft Resource Estimator result.
+
+    Job results from the `microsoft.estimator` target are represented by
+    instances of this class.  The class represents simple resource estimation
+    results as well as batching resource estimation results.  The latter can
+    be indexed by an integer index to access an individual result from the
+    batching result.
+    """
     MAX_DEFAULT_ITEMS_IN_TABLE = 5
 
     def __init__(self, data: Union[Dict, List]):
@@ -30,6 +40,8 @@ class MicrosoftEstimatorResult(dict):
             self._is_simple = True
             self._repr = self._item_result_table()
             self.summary = HTMLWrapper(self._item_result_summary_table())
+            self.diagram = EstimatorResultDiagram(self.data().copy())
+
         elif isinstance(data, list):
             super().__init__({idx: MicrosoftEstimatorResult(item_data)
                               for idx, item_data in enumerate(data)})
@@ -49,6 +61,7 @@ class MicrosoftEstimatorResult(dict):
 
             # Add plot function for batching jobs
             self.plot = self._plot
+            self.summary_data_frame = self._summary_data_frame
 
     def data(self, idx: Optional[int] = None) -> Any:
         """
@@ -108,7 +121,7 @@ class MicrosoftEstimatorResult(dict):
         [xs, ys] = zip(*[
             (self.data(i)['physicalCounts']['runtime'],
              self.data(i)['physicalCounts']['physicalQubits'])
-             for i in range(len(self))])
+            for i in range(len(self))])
 
         _ = plt.figure(figsize=(15, 8))
 
@@ -149,6 +162,138 @@ class MicrosoftEstimatorResult(dict):
         plt.xticks(time_units[0:cutoff], time_labels[0:cutoff], rotation=90)
         plt.legend(loc="upper left")
         plt.show()
+
+    @property
+    def call_graph(self):
+        """
+        Shows the call graph of a simple resource estimation result with
+        profiling information.
+        """
+        try:
+            import graphviz
+        except ImportError:
+            raise ImportError(
+                "Missing optional 'graphviz' dependency. To install run: "
+                "pip install graphviz"
+            )
+
+        if not self._is_simple:
+            raise ValueError("The `call_graph` method cannot be called on a "
+                             "batching result, try indexing into the result "
+                             "first")
+
+        if not hasattr(self, "_call_graph"):
+            from itertools import groupby
+
+            data = self.data().get("callGraph", None)
+
+            if data is None:
+                raise ValueError("The result does not contain any profiling "
+                                 "information. Set "
+                                 "`profiling.call_stack_depth` to some value")
+
+            g = graphviz.Digraph()
+            g.attr('node', shape='box', style='rounded, filled',
+                   fontname='Arial', fontsize='10', margin='0.05,0.05',
+                   height='0', width='0', fillcolor='#f6f6f6', color='#e3e3e3')
+            g.attr('edge', color='#d0d0d0')
+
+            nodes_indexed = [{**node, 'index': index}
+                             for index, node in enumerate(data['nodes'])]
+
+            def sorter(node): return node['depth']
+            nodes_indexed.sort(key=sorter)
+            for _, nodes in groupby(nodes_indexed, sorter):
+                with g.subgraph() as s:
+                    s.attr(rank='same')
+                    for node in nodes:
+                        s.node(str(node['index']), node['name'])
+
+            for edge in data['edges']:
+                g.edge(str(edge[0]), str(edge[1]))
+
+            self._call_graph = g
+
+        return self._call_graph
+
+    @property
+    def profile(self):
+        """
+        """
+        if not self._is_simple:
+            raise ValueError("The `call_graph` method cannot be called on a "
+                             "batching result, try indexing into the result "
+                             "first")
+
+        if not hasattr(self, "_profile"):
+            import base64
+            import json
+
+            profile = self.data().get("profile", None)
+
+            if profile is None:
+                raise ValueError("The result does not contain any profiling "
+                                 "information. Set "
+                                 "`profiling.call_stack_depth` to some value")
+
+            profile_encoded = json.dumps(profile).encode('utf-8')
+            data64 = base64.b64encode(profile_encoded).decode('utf-8')
+
+            self._profile = f"""
+            <a href="data:text/json;base64,{data64}" download="profile.json">
+            Download the profile</a> to your computer.  Then open the profile
+            by dragging it into <a href="https://speedscope.app"
+            target="_blank">speedscope</a>.
+            """
+
+        return HTMLWrapper(self._profile)
+
+    @property
+    def json(self):
+        """
+        Returns a JSON representation of the resource estimation result data.
+        """
+        if not hasattr(self, "_json"):
+            import json
+            self._json = json.dumps(self._data)
+
+        return self._json
+
+    def _summary_data_frame(self, **kwargs):
+        try:
+            import pandas as pd
+        except ImportError:
+            raise ImportError(
+                "Missing optional 'pandas' dependency. To install run: "
+                "pip install pandas"
+            )
+
+        # get labels or use default value, then extend with missing elements,
+        # and truncate extra elements
+        labels = kwargs.pop("labels", [])
+        labels.extend(range(len(labels), len(self)))
+        labels = labels[:len(self)]
+
+        def get_row(result):
+            formatted = result["physicalCountsFormatted"]
+
+            return (
+                formatted["algorithmicLogicalQubits"],
+                formatted["logicalDepth"],
+                formatted["numTstates"],
+                result["logicalQubit"]["codeDistance"],
+                formatted["numTfactories"],
+                formatted["physicalQubitsForTfactoriesPercentage"],
+                formatted["physicalQubits"],
+                formatted["rqops"],
+                formatted["runtime"]
+            )
+
+        data = [get_row(self.data(index)) for index in range(len(self))]
+        columns = ["Logical qubits", "Logical depth", "T states",
+                   "Code distance", "T factories", "T factory fraction",
+                   "Physical qubits", "rQOPS", "Physical runtime"]
+        return pd.DataFrame(data, columns=columns, index=labels)
 
     def _item_result_table(self):
         html = ""
@@ -307,4 +452,25 @@ class MicrosoftEstimatorResult(dict):
             html += f"<li>{md.convert(assumption)}</li>"
         html += "</ul></details>"
 
+        return html
+
+
+class EstimatorResultDiagram:
+    def __init__(self, data):
+        data.pop("reportData")
+        self.data_json = json.dumps(data).replace(" ", "")
+        self.vis_lib = "https://cdn-aquavisualization-prod.azureedge.net/resource-estimation/index.js"
+        self.space = HTMLWrapper(self._space_diagram())
+        self.time = HTMLWrapper(self._time_diagram())
+
+    def _space_diagram(self):
+        html = f"""
+            <script src={self.vis_lib}></script>
+            <re-space-diagram data={self.data_json}></re-space-diagram>"""
+        return html
+
+    def _time_diagram(self):
+        html = f"""
+            <script src={self.vis_lib}></script>
+            <re-time-diagram data={self.data_json}></re-time-diagram>"""
         return html

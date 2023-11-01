@@ -5,6 +5,7 @@
 
 from typing import Dict
 from azure.quantum.version import __version__
+import warnings
 
 from .backend import AzureBackend, AzureQirBackend
 from abc import abstractmethod
@@ -35,7 +36,6 @@ QUANTINUUM_BASIS_GATES = [
     "rz",
     "h",
     "cx",
-    "ccx",
     "cz",
     "s",
     "sdg",
@@ -50,6 +50,17 @@ QUANTINUUM_BASIS_GATES = [
 
 QUANTINUUM_PROVIDER_ID = "quantinuum"
 QUANTINUUM_PROVIDER_NAME = "Quantinuum"
+
+
+def _get_n_qubits(name):
+    name = name.lower()
+    if ".h1-" in name or "hqs-lt" in name:
+        return 20
+    if ".h2-" in name:
+        return 32
+    warnings.warn(
+        UserWarning(f"Number of qubits not known for target {name}. Defaulting to 20."))
+    return 20
 
 
 class QuantinuumQirBackendBase(AzureQirBackend):
@@ -73,15 +84,15 @@ class QuantinuumQirBackendBase(AzureQirBackend):
         return config
 
     def _get_n_qubits(self, name):
-        name = name.lower()
-        return 20 if "h1-1" in name or "s1" in name else 12
+        return _get_n_qubits(name)
 
 
 class QuantinuumSyntaxCheckerQirBackend(QuantinuumQirBackendBase):
     backend_names = (
         # Note: Target names on the same line are equivalent.
-        "quantinuum.hqs-lt-s1-apival", "quantinuum.sim.h1-1sc",
-        "quantinuum.hqs-lt-s2-apival", "quantinuum.sim.h1-2sc",
+        "quantinuum.sim.h1-1sc",
+        "quantinuum.sim.h1-2sc",
+        "quantinuum.sim.h2-1sc",
     )
 
     def __init__(self, name: str, provider: "AzureQuantumProvider", **kwargs):
@@ -117,8 +128,9 @@ class QuantinuumSyntaxCheckerQirBackend(QuantinuumQirBackendBase):
 class QuantinuumEmulatorQirBackend(QuantinuumQirBackendBase):
     backend_names = (
         # Note: Target names on the same line are equivalent.
-        "quantinuum.hqs-lt-s1-sim", "quantinuum.sim.h1-1e",
-        "quantinuum.hqs-lt-s2-sim", "quantinuum.sim.h1-2e",
+        "quantinuum.sim.h1-1e",
+        "quantinuum.sim.h1-2e",
+        "quantinuum.sim.h2-1e",
     )
 
     def __init__(self, name: str, provider: "AzureQuantumProvider", **kwargs):
@@ -154,8 +166,9 @@ class QuantinuumEmulatorQirBackend(QuantinuumQirBackendBase):
 class QuantinuumQPUQirBackend(QuantinuumQirBackendBase):
     backend_names = (
         # Note: Target names on the same line are equivalent.
-        "quantinuum.hqs-lt-s1", "quantinuum.qpu.h1-1",
-        "quantinuum.hqs-lt-s2", "quantinuum.qpu.h1-2",
+        "quantinuum.qpu.h1-1",
+        "quantinuum.qpu.h1-2",
+        "quantinuum.qpu.h2-1",
     )
 
     def __init__(self, name: str, provider: "AzureQuantumProvider", **kwargs):
@@ -239,15 +252,15 @@ class QuantinuumBackend(AzureBackend):
         return target.estimate_cost(input_data, num_shots=shots)
 
     def _get_n_qubits(self, name):
-        name = name.lower()
-        return 20 if "h1-1" in name or "s1" in name else 12
+        return _get_n_qubits(name)
 
 
 class QuantinuumSyntaxCheckerBackend(QuantinuumBackend):
     backend_names = (
         # Note: Target names on the same line are equivalent.
-        "quantinuum.hqs-lt-s1-apival", "quantinuum.sim.h1-1sc",
-        "quantinuum.hqs-lt-s2-apival", "quantinuum.sim.h1-2sc",
+        "quantinuum.sim.h1-1sc",
+        "quantinuum.sim.h1-2sc",
+        "quantinuum.sim.h2-1sc",
     )
 
     def __init__(self, name: str, provider: "AzureQuantumProvider", **kwargs):
@@ -283,8 +296,9 @@ class QuantinuumSyntaxCheckerBackend(QuantinuumBackend):
 class QuantinuumEmulatorBackend(QuantinuumBackend):
     backend_names = (
         # Note: Target names on the same line are equivalent.
-        "quantinuum.hqs-lt-s1-sim", "quantinuum.sim.h1-1e",
-        "quantinuum.hqs-lt-s2-sim", "quantinuum.sim.h1-2e",
+        "quantinuum.sim.h1-1e",
+        "quantinuum.sim.h1-2e",
+        "quantinuum.sim.h2-1e",
     )
 
     def __init__(self, name: str, provider: "AzureQuantumProvider", **kwargs):
@@ -320,8 +334,9 @@ class QuantinuumEmulatorBackend(QuantinuumBackend):
 class QuantinuumQPUBackend(QuantinuumBackend):
     backend_names = (
         # Note: Target names on the same line are equivalent.
-        "quantinuum.hqs-lt-s1", "quantinuum.qpu.h1-1",
-        "quantinuum.hqs-lt-s2", "quantinuum.qpu.h1-2",
+        "quantinuum.qpu.h1-1",
+        "quantinuum.qpu.h1-2",
+        "quantinuum.qpu.h2-1",
     )
 
     def __init__(self, name: str, provider: "AzureQuantumProvider", **kwargs):

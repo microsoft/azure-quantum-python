@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: client_id=PLACEHOLDER&grant_type=client_credentials&client_info=1&client_secret=PLACEHOLDER&claims=PLACEHOLDER&scope=https%3A%2F%2Fquantum.microsoft.com%2F.default
+    body: client_id=PLACEHOLDER&grant_type=client_credentials&client_info=1&client_secret=PLACEHOLDER&scope=https%3A%2F%2Fquantum.microsoft.com%2F.default
     headers:
       Accept:
       - application/json
@@ -9,21 +9,21 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '163'
+      - '144'
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - azsdk-python-identity/1.12.0 Python/3.9.16 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-identity/1.14.0 Python/3.9.18 (Windows-10-10.0.22621-SP0)
       x-client-cpu:
       - x64
       x-client-current-telemetry:
-      - 4|730,0|
+      - 4|730,2|
       x-client-os:
       - win32
       x-client-sku:
       - MSAL.Python
       x-client-ver:
-      - 1.21.0
+      - 1.23.0
     method: POST
     uri: https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token
   response:
@@ -48,96 +48,81 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - testapp-azure-quantum-qiskit azsdk-python-quantum/0.0.0.1 Python/3.9.16 (Windows-10-10.0.22000-SP0)
+      - testapp-azure-quantum-qiskit azsdk-python-quantum/0.0.1 Python/3.9.18 (Windows-10-10.0.22621-SP0)
     method: GET
-    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/providerStatus?api-version=2022-09-12-preview
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/providerStatus?api-version=2022-09-12-preview&test-sequence-id=1
   response:
     body:
-      string: '{"value": [{"id": "Microsoft", "currentAvailability": "Available",
-        "targets": [{"id": "microsoft.paralleltempering-parameterfree.cpu", "currentAvailability":
-        "Available", "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.paralleltempering.cpu",
-        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null},
-        {"id": "microsoft.simulatedannealing-parameterfree.cpu", "currentAvailability":
-        "Available", "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.simulatedannealing.cpu",
-        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null},
-        {"id": "microsoft.tabu-parameterfree.cpu", "currentAvailability": "Available",
-        "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.tabu.cpu", "currentAvailability":
-        "Available", "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.qmc.cpu",
-        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null},
-        {"id": "microsoft.populationannealing.cpu", "currentAvailability": "Available",
-        "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.populationannealing-parameterfree.cpu",
-        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null},
-        {"id": "microsoft.substochasticmontecarlo.cpu", "currentAvailability": "Available",
-        "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.substochasticmontecarlo-parameterfree.cpu",
-        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null},
-        {"id": "microsoft.populationannealing-parameterfree.cpu", "currentAvailability":
-        "Available", "averageQueueTime": 0, "statusPage": null}]}, {"id": "ionq",
-        "currentAvailability": "Available", "targets": [{"id": "ionq.qpu", "currentAvailability":
-        "Available", "averageQueueTime": 18268, "statusPage": "https://status.ionq.co"},
-        {"id": "ionq.qpu.aria-1", "currentAvailability": "Available", "averageQueueTime":
-        345782, "statusPage": "https://status.ionq.co"}, {"id": "ionq.simulator",
-        "currentAvailability": "Available", "averageQueueTime": 3, "statusPage": "https://status.ionq.co"}]},
-        {"id": "quantinuum", "currentAvailability": "Degraded", "targets": [{"id":
-        "quantinuum.hqs-lt-s1", "currentAvailability": "Degraded", "averageQueueTime":
-        58708, "statusPage": "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.hqs-lt-s1-apival",
-        "currentAvailability": "Available", "averageQueueTime": 2, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.hqs-lt-s2", "currentAvailability": "Unavailable", "averageQueueTime":
-        0, "statusPage": "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.hqs-lt-s2-apival",
-        "currentAvailability": "Available", "averageQueueTime": 1, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.hqs-lt-s1-sim", "currentAvailability": "Available", "averageQueueTime":
-        332, "statusPage": "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.hqs-lt-s2-sim",
-        "currentAvailability": "Available", "averageQueueTime": 163, "statusPage":
-        "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.hqs-lt", "currentAvailability":
-        "Degraded", "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.qpu.h1-1", "currentAvailability": "Degraded", "averageQueueTime":
-        58708, "statusPage": "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.sim.h1-1sc",
-        "currentAvailability": "Available", "averageQueueTime": 2, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.qpu.h1-2", "currentAvailability": "Unavailable", "averageQueueTime":
-        0, "statusPage": "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.sim.h1-2sc",
-        "currentAvailability": "Available", "averageQueueTime": 1, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.sim.h1-1e", "currentAvailability": "Available", "averageQueueTime":
-        332, "statusPage": "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.sim.h1-2e",
-        "currentAvailability": "Available", "averageQueueTime": 163, "statusPage":
-        "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.qpu.h1", "currentAvailability":
-        "Unavailable", "averageQueueTime": 0, "statusPage": null}, {"id": "quantinuum.sim.h1-1sc-preview",
-        "currentAvailability": "Available", "averageQueueTime": 2, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.sim.h1-2sc-preview", "currentAvailability": "Available",
-        "averageQueueTime": 1, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.sim.h1-1e-preview", "currentAvailability": "Available",
-        "averageQueueTime": 332, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.sim.h1-2e-preview", "currentAvailability": "Available",
-        "averageQueueTime": 163, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.qpu.h1-1-preview", "currentAvailability": "Degraded", "averageQueueTime":
-        58708, "statusPage": "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.qpu.h1-2-preview",
-        "currentAvailability": "Unavailable", "averageQueueTime": 0, "statusPage":
-        "https://www.quantinuum.com/products/h1"}]}, {"id": "rigetti", "currentAvailability":
-        "Available", "targets": [{"id": "rigetti.sim.qvm", "currentAvailability":
-        "Available", "averageQueueTime": 5, "statusPage": "https://rigetti.statuspage.io/"},
-        {"id": "rigetti.qpu.aspen-m-2", "currentAvailability": "Available", "averageQueueTime":
-        5, "statusPage": "https://rigetti.statuspage.io/"}, {"id": "rigetti.qpu.aspen-m-3",
-        "currentAvailability": "Available", "averageQueueTime": 5, "statusPage": "https://rigetti.statuspage.io/"}]},
-        {"id": "1qbit", "currentAvailability": "Degraded", "targets": [{"id": "1qbit.tabu",
-        "currentAvailability": "Unavailable", "averageQueueTime": -1, "statusPage":
-        "https://status.1qbit.com/"}, {"id": "1qbit.pathrelinking", "currentAvailability":
-        "Unavailable", "averageQueueTime": -1, "statusPage": "https://status.1qbit.com/"},
-        {"id": "1qbit.pticm", "currentAvailability": "Unavailable", "averageQueueTime":
-        -1, "statusPage": "https://status.1qbit.com/"}]}, {"id": "toshiba", "currentAvailability":
-        "Available", "targets": [{"id": "toshiba.sbm.ising", "currentAvailability":
-        "Available", "averageQueueTime": 0, "statusPage": "https://aq-sbm.net/v1/service_monitor/index.html"}]},
+      string: '{"value": [{"id": "ionq", "currentAvailability": "Degraded", "targets":
+        [{"id": "ionq.qpu", "currentAvailability": "Available", "averageQueueTime":
+        0, "statusPage": "https://status.ionq.co"}, {"id": "ionq.qpu.aria-1", "currentAvailability":
+        "Unavailable", "averageQueueTime": 755821, "statusPage": "https://status.ionq.co"},
+        {"id": "ionq.qpu.aria-2", "currentAvailability": "Available", "averageQueueTime":
+        78188, "statusPage": "https://status.ionq.co"}, {"id": "ionq.simulator", "currentAvailability":
+        "Available", "averageQueueTime": 1249, "statusPage": "https://status.ionq.co"}]},
         {"id": "microsoft-qc", "currentAvailability": "Available", "targets": [{"id":
         "microsoft.estimator", "currentAvailability": "Available", "averageQueueTime":
-        0, "statusPage": null}]}, {"id": "qci", "currentAvailability": "Degraded",
-        "targets": [{"id": "qci.simulator", "currentAvailability": "Available", "averageQueueTime":
-        1, "statusPage": "https://quantumcircuits.com"}, {"id": "qci.machine1", "currentAvailability":
-        "Unavailable", "averageQueueTime": 1, "statusPage": "https://quantumcircuits.com"},
-        {"id": "qci.simulator.noisy", "currentAvailability": "Available", "averageQueueTime":
-        0, "statusPage": "https://quantumcircuits.com"}]}], "nextLink": null, "access_token":
+        0, "statusPage": null}]}, {"id": "pasqal", "currentAvailability": "Available",
+        "targets": [{"id": "pasqal.sim.emu_free", "currentAvailability": "Available",
+        "averageQueueTime": 0, "statusPage": "https://pasqal.com"}, {"id": "pasqal.sim.emu_tn",
+        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": "https://pasqal.com"},
+        {"id": "pasqal.qpu.fresnel", "currentAvailability": "Available", "averageQueueTime":
+        0, "statusPage": "https://pasqal.com"}]}, {"id": "quantinuum", "currentAvailability":
+        "Degraded", "targets": [{"id": "quantinuum.qpu.h1-1", "currentAvailability":
+        "Unavailable", "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        {"id": "quantinuum.sim.h1-1sc", "currentAvailability": "Available", "averageQueueTime":
+        0, "statusPage": "https://www.quantinuum.com/hardware/h1"}, {"id": "quantinuum.qpu.h1-2",
+        "currentAvailability": "Unavailable", "averageQueueTime": 0, "statusPage":
+        "https://www.quantinuum.com/hardware/h1"}, {"id": "quantinuum.sim.h1-2sc",
+        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        {"id": "quantinuum.sim.h1-1e", "currentAvailability": "Available", "averageQueueTime":
+        7, "statusPage": "https://www.quantinuum.com/hardware/h1"}, {"id": "quantinuum.sim.h1-2e",
+        "currentAvailability": "Available", "averageQueueTime": 9, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        {"id": "quantinuum.qpu.h2-1", "currentAvailability": "Unavailable", "averageQueueTime":
+        0, "statusPage": "https://www.quantinuum.com/hardware/h2"}, {"id": "quantinuum.sim.h2-1sc",
+        "currentAvailability": "Available", "averageQueueTime": 7, "statusPage": "https://www.quantinuum.com/hardware/h2"},
+        {"id": "quantinuum.sim.h2-1e", "currentAvailability": "Available", "averageQueueTime":
+        0, "statusPage": "https://www.quantinuum.com/hardware/h2"}, {"id": "quantinuum.sim.h1-1sc-preview",
+        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        {"id": "quantinuum.sim.h1-2sc-preview", "currentAvailability": "Available",
+        "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        {"id": "quantinuum.sim.h1-1e-preview", "currentAvailability": "Available",
+        "averageQueueTime": 7, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        {"id": "quantinuum.sim.h1-2e-preview", "currentAvailability": "Available",
+        "averageQueueTime": 9, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        {"id": "quantinuum.qpu.h1-1-preview", "currentAvailability": "Unavailable",
+        "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        {"id": "quantinuum.qpu.h1-2-preview", "currentAvailability": "Unavailable",
+        "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h1"}]},
+        {"id": "rigetti", "currentAvailability": "Degraded", "targets": [{"id": "rigetti.sim.qvm",
+        "currentAvailability": "Available", "averageQueueTime": 5, "statusPage": "https://rigetti.statuspage.io/"},
+        {"id": "rigetti.qpu.aspen-m-2", "currentAvailability": "Unavailable", "averageQueueTime":
+        0, "statusPage": null}, {"id": "rigetti.qpu.aspen-m-3", "currentAvailability":
+        "Available", "averageQueueTime": 5, "statusPage": "https://rigetti.statuspage.io/"}]},
+        {"id": "qci", "currentAvailability": "Degraded", "targets": [{"id": "qci.simulator",
+        "currentAvailability": "Available", "averageQueueTime": 1, "statusPage": "https://quantumcircuits.com"},
+        {"id": "qci.machine1", "currentAvailability": "Unavailable", "averageQueueTime":
+        1, "statusPage": "https://quantumcircuits.com"}, {"id": "qci.simulator.noisy",
+        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": "https://quantumcircuits.com"}]},
+        {"id": "Microsoft.Test", "currentAvailability": "Available", "targets": [{"id":
+        "echo-rigetti", "currentAvailability": "Available", "averageQueueTime": 1,
+        "statusPage": ""}, {"id": "echo-quantinuum", "currentAvailability": "Available",
+        "averageQueueTime": 1, "statusPage": ""}, {"id": "echo-qci", "currentAvailability":
+        "Available", "averageQueueTime": 1, "statusPage": ""}, {"id": "echo-ionq",
+        "currentAvailability": "Available", "averageQueueTime": 1, "statusPage": ""},
+        {"id": "sparse-sim-rigetti", "currentAvailability": "Available", "averageQueueTime":
+        1, "statusPage": ""}, {"id": "sparse-sim-quantinuum", "currentAvailability":
+        "Available", "averageQueueTime": 1, "statusPage": ""}, {"id": "sparse-sim-qci",
+        "currentAvailability": "Available", "averageQueueTime": 1, "statusPage": ""},
+        {"id": "sparse-sim-ionq", "currentAvailability": "Available", "averageQueueTime":
+        1, "statusPage": ""}, {"id": "echo-output", "currentAvailability": "Available",
+        "averageQueueTime": 1, "statusPage": ""}]}], "nextLink": null, "access_token":
         "fake_token"}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '6967'
+      - '5502'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -155,96 +140,81 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - testapp-azure-quantum-qiskit azsdk-python-quantum/0.0.0.1 Python/3.9.16 (Windows-10-10.0.22000-SP0)
+      - testapp-azure-quantum-qiskit azsdk-python-quantum/0.0.1 Python/3.9.18 (Windows-10-10.0.22621-SP0)
     method: GET
-    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/providerStatus?api-version=2022-09-12-preview
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/providerStatus?api-version=2022-09-12-preview&test-sequence-id=2
   response:
     body:
-      string: '{"value": [{"id": "Microsoft", "currentAvailability": "Available",
-        "targets": [{"id": "microsoft.paralleltempering-parameterfree.cpu", "currentAvailability":
-        "Available", "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.paralleltempering.cpu",
-        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null},
-        {"id": "microsoft.simulatedannealing-parameterfree.cpu", "currentAvailability":
-        "Available", "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.simulatedannealing.cpu",
-        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null},
-        {"id": "microsoft.tabu-parameterfree.cpu", "currentAvailability": "Available",
-        "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.tabu.cpu", "currentAvailability":
-        "Available", "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.qmc.cpu",
-        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null},
-        {"id": "microsoft.populationannealing.cpu", "currentAvailability": "Available",
-        "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.populationannealing-parameterfree.cpu",
-        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null},
-        {"id": "microsoft.substochasticmontecarlo.cpu", "currentAvailability": "Available",
-        "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.substochasticmontecarlo-parameterfree.cpu",
-        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null},
-        {"id": "microsoft.populationannealing-parameterfree.cpu", "currentAvailability":
-        "Available", "averageQueueTime": 0, "statusPage": null}]}, {"id": "ionq",
-        "currentAvailability": "Available", "targets": [{"id": "ionq.qpu", "currentAvailability":
-        "Available", "averageQueueTime": 18268, "statusPage": "https://status.ionq.co"},
-        {"id": "ionq.qpu.aria-1", "currentAvailability": "Available", "averageQueueTime":
-        345782, "statusPage": "https://status.ionq.co"}, {"id": "ionq.simulator",
-        "currentAvailability": "Available", "averageQueueTime": 3, "statusPage": "https://status.ionq.co"}]},
-        {"id": "quantinuum", "currentAvailability": "Degraded", "targets": [{"id":
-        "quantinuum.hqs-lt-s1", "currentAvailability": "Degraded", "averageQueueTime":
-        58708, "statusPage": "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.hqs-lt-s1-apival",
-        "currentAvailability": "Available", "averageQueueTime": 2, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.hqs-lt-s2", "currentAvailability": "Unavailable", "averageQueueTime":
-        0, "statusPage": "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.hqs-lt-s2-apival",
-        "currentAvailability": "Available", "averageQueueTime": 1, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.hqs-lt-s1-sim", "currentAvailability": "Available", "averageQueueTime":
-        332, "statusPage": "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.hqs-lt-s2-sim",
-        "currentAvailability": "Available", "averageQueueTime": 163, "statusPage":
-        "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.hqs-lt", "currentAvailability":
-        "Degraded", "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.qpu.h1-1", "currentAvailability": "Degraded", "averageQueueTime":
-        58708, "statusPage": "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.sim.h1-1sc",
-        "currentAvailability": "Available", "averageQueueTime": 2, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.qpu.h1-2", "currentAvailability": "Unavailable", "averageQueueTime":
-        0, "statusPage": "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.sim.h1-2sc",
-        "currentAvailability": "Available", "averageQueueTime": 1, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.sim.h1-1e", "currentAvailability": "Available", "averageQueueTime":
-        332, "statusPage": "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.sim.h1-2e",
-        "currentAvailability": "Available", "averageQueueTime": 163, "statusPage":
-        "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.qpu.h1", "currentAvailability":
-        "Unavailable", "averageQueueTime": 0, "statusPage": null}, {"id": "quantinuum.sim.h1-1sc-preview",
-        "currentAvailability": "Available", "averageQueueTime": 2, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.sim.h1-2sc-preview", "currentAvailability": "Available",
-        "averageQueueTime": 1, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.sim.h1-1e-preview", "currentAvailability": "Available",
-        "averageQueueTime": 332, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.sim.h1-2e-preview", "currentAvailability": "Available",
-        "averageQueueTime": 163, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.qpu.h1-1-preview", "currentAvailability": "Degraded", "averageQueueTime":
-        58708, "statusPage": "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.qpu.h1-2-preview",
-        "currentAvailability": "Unavailable", "averageQueueTime": 0, "statusPage":
-        "https://www.quantinuum.com/products/h1"}]}, {"id": "rigetti", "currentAvailability":
-        "Available", "targets": [{"id": "rigetti.sim.qvm", "currentAvailability":
-        "Available", "averageQueueTime": 5, "statusPage": "https://rigetti.statuspage.io/"},
-        {"id": "rigetti.qpu.aspen-m-2", "currentAvailability": "Available", "averageQueueTime":
-        5, "statusPage": "https://rigetti.statuspage.io/"}, {"id": "rigetti.qpu.aspen-m-3",
-        "currentAvailability": "Available", "averageQueueTime": 5, "statusPage": "https://rigetti.statuspage.io/"}]},
-        {"id": "1qbit", "currentAvailability": "Degraded", "targets": [{"id": "1qbit.tabu",
-        "currentAvailability": "Unavailable", "averageQueueTime": -1, "statusPage":
-        "https://status.1qbit.com/"}, {"id": "1qbit.pathrelinking", "currentAvailability":
-        "Unavailable", "averageQueueTime": -1, "statusPage": "https://status.1qbit.com/"},
-        {"id": "1qbit.pticm", "currentAvailability": "Unavailable", "averageQueueTime":
-        -1, "statusPage": "https://status.1qbit.com/"}]}, {"id": "toshiba", "currentAvailability":
-        "Available", "targets": [{"id": "toshiba.sbm.ising", "currentAvailability":
-        "Available", "averageQueueTime": 0, "statusPage": "https://aq-sbm.net/v1/service_monitor/index.html"}]},
+      string: '{"value": [{"id": "ionq", "currentAvailability": "Degraded", "targets":
+        [{"id": "ionq.qpu", "currentAvailability": "Available", "averageQueueTime":
+        0, "statusPage": "https://status.ionq.co"}, {"id": "ionq.qpu.aria-1", "currentAvailability":
+        "Unavailable", "averageQueueTime": 755821, "statusPage": "https://status.ionq.co"},
+        {"id": "ionq.qpu.aria-2", "currentAvailability": "Available", "averageQueueTime":
+        78188, "statusPage": "https://status.ionq.co"}, {"id": "ionq.simulator", "currentAvailability":
+        "Available", "averageQueueTime": 1249, "statusPage": "https://status.ionq.co"}]},
         {"id": "microsoft-qc", "currentAvailability": "Available", "targets": [{"id":
         "microsoft.estimator", "currentAvailability": "Available", "averageQueueTime":
-        0, "statusPage": null}]}, {"id": "qci", "currentAvailability": "Degraded",
-        "targets": [{"id": "qci.simulator", "currentAvailability": "Available", "averageQueueTime":
-        1, "statusPage": "https://quantumcircuits.com"}, {"id": "qci.machine1", "currentAvailability":
-        "Unavailable", "averageQueueTime": 1, "statusPage": "https://quantumcircuits.com"},
-        {"id": "qci.simulator.noisy", "currentAvailability": "Available", "averageQueueTime":
-        0, "statusPage": "https://quantumcircuits.com"}]}], "nextLink": null, "access_token":
+        0, "statusPage": null}]}, {"id": "pasqal", "currentAvailability": "Available",
+        "targets": [{"id": "pasqal.sim.emu_free", "currentAvailability": "Available",
+        "averageQueueTime": 0, "statusPage": "https://pasqal.com"}, {"id": "pasqal.sim.emu_tn",
+        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": "https://pasqal.com"},
+        {"id": "pasqal.qpu.fresnel", "currentAvailability": "Available", "averageQueueTime":
+        0, "statusPage": "https://pasqal.com"}]}, {"id": "quantinuum", "currentAvailability":
+        "Degraded", "targets": [{"id": "quantinuum.qpu.h1-1", "currentAvailability":
+        "Unavailable", "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        {"id": "quantinuum.sim.h1-1sc", "currentAvailability": "Available", "averageQueueTime":
+        0, "statusPage": "https://www.quantinuum.com/hardware/h1"}, {"id": "quantinuum.qpu.h1-2",
+        "currentAvailability": "Unavailable", "averageQueueTime": 0, "statusPage":
+        "https://www.quantinuum.com/hardware/h1"}, {"id": "quantinuum.sim.h1-2sc",
+        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        {"id": "quantinuum.sim.h1-1e", "currentAvailability": "Available", "averageQueueTime":
+        7, "statusPage": "https://www.quantinuum.com/hardware/h1"}, {"id": "quantinuum.sim.h1-2e",
+        "currentAvailability": "Available", "averageQueueTime": 9, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        {"id": "quantinuum.qpu.h2-1", "currentAvailability": "Unavailable", "averageQueueTime":
+        0, "statusPage": "https://www.quantinuum.com/hardware/h2"}, {"id": "quantinuum.sim.h2-1sc",
+        "currentAvailability": "Available", "averageQueueTime": 7, "statusPage": "https://www.quantinuum.com/hardware/h2"},
+        {"id": "quantinuum.sim.h2-1e", "currentAvailability": "Available", "averageQueueTime":
+        0, "statusPage": "https://www.quantinuum.com/hardware/h2"}, {"id": "quantinuum.sim.h1-1sc-preview",
+        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        {"id": "quantinuum.sim.h1-2sc-preview", "currentAvailability": "Available",
+        "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        {"id": "quantinuum.sim.h1-1e-preview", "currentAvailability": "Available",
+        "averageQueueTime": 7, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        {"id": "quantinuum.sim.h1-2e-preview", "currentAvailability": "Available",
+        "averageQueueTime": 9, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        {"id": "quantinuum.qpu.h1-1-preview", "currentAvailability": "Unavailable",
+        "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        {"id": "quantinuum.qpu.h1-2-preview", "currentAvailability": "Unavailable",
+        "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h1"}]},
+        {"id": "rigetti", "currentAvailability": "Degraded", "targets": [{"id": "rigetti.sim.qvm",
+        "currentAvailability": "Available", "averageQueueTime": 5, "statusPage": "https://rigetti.statuspage.io/"},
+        {"id": "rigetti.qpu.aspen-m-2", "currentAvailability": "Unavailable", "averageQueueTime":
+        0, "statusPage": null}, {"id": "rigetti.qpu.aspen-m-3", "currentAvailability":
+        "Available", "averageQueueTime": 5, "statusPage": "https://rigetti.statuspage.io/"}]},
+        {"id": "qci", "currentAvailability": "Degraded", "targets": [{"id": "qci.simulator",
+        "currentAvailability": "Available", "averageQueueTime": 1, "statusPage": "https://quantumcircuits.com"},
+        {"id": "qci.machine1", "currentAvailability": "Unavailable", "averageQueueTime":
+        1, "statusPage": "https://quantumcircuits.com"}, {"id": "qci.simulator.noisy",
+        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": "https://quantumcircuits.com"}]},
+        {"id": "Microsoft.Test", "currentAvailability": "Available", "targets": [{"id":
+        "echo-rigetti", "currentAvailability": "Available", "averageQueueTime": 1,
+        "statusPage": ""}, {"id": "echo-quantinuum", "currentAvailability": "Available",
+        "averageQueueTime": 1, "statusPage": ""}, {"id": "echo-qci", "currentAvailability":
+        "Available", "averageQueueTime": 1, "statusPage": ""}, {"id": "echo-ionq",
+        "currentAvailability": "Available", "averageQueueTime": 1, "statusPage": ""},
+        {"id": "sparse-sim-rigetti", "currentAvailability": "Available", "averageQueueTime":
+        1, "statusPage": ""}, {"id": "sparse-sim-quantinuum", "currentAvailability":
+        "Available", "averageQueueTime": 1, "statusPage": ""}, {"id": "sparse-sim-qci",
+        "currentAvailability": "Available", "averageQueueTime": 1, "statusPage": ""},
+        {"id": "sparse-sim-ionq", "currentAvailability": "Available", "averageQueueTime":
+        1, "statusPage": ""}, {"id": "echo-output", "currentAvailability": "Available",
+        "averageQueueTime": 1, "statusPage": ""}]}], "nextLink": null, "access_token":
         "fake_token"}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '6967'
+      - '5502'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -262,96 +232,81 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - testapp-azure-quantum-qiskit azsdk-python-quantum/0.0.0.1 Python/3.9.16 (Windows-10-10.0.22000-SP0)
+      - testapp-azure-quantum-qiskit azsdk-python-quantum/0.0.1 Python/3.9.18 (Windows-10-10.0.22621-SP0)
     method: GET
-    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/providerStatus?api-version=2022-09-12-preview
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/providerStatus?api-version=2022-09-12-preview&test-sequence-id=3
   response:
     body:
-      string: '{"value": [{"id": "Microsoft", "currentAvailability": "Available",
-        "targets": [{"id": "microsoft.paralleltempering-parameterfree.cpu", "currentAvailability":
-        "Available", "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.paralleltempering.cpu",
-        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null},
-        {"id": "microsoft.simulatedannealing-parameterfree.cpu", "currentAvailability":
-        "Available", "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.simulatedannealing.cpu",
-        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null},
-        {"id": "microsoft.tabu-parameterfree.cpu", "currentAvailability": "Available",
-        "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.tabu.cpu", "currentAvailability":
-        "Available", "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.qmc.cpu",
-        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null},
-        {"id": "microsoft.populationannealing.cpu", "currentAvailability": "Available",
-        "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.populationannealing-parameterfree.cpu",
-        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null},
-        {"id": "microsoft.substochasticmontecarlo.cpu", "currentAvailability": "Available",
-        "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.substochasticmontecarlo-parameterfree.cpu",
-        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null},
-        {"id": "microsoft.populationannealing-parameterfree.cpu", "currentAvailability":
-        "Available", "averageQueueTime": 0, "statusPage": null}]}, {"id": "ionq",
-        "currentAvailability": "Available", "targets": [{"id": "ionq.qpu", "currentAvailability":
-        "Available", "averageQueueTime": 18268, "statusPage": "https://status.ionq.co"},
-        {"id": "ionq.qpu.aria-1", "currentAvailability": "Available", "averageQueueTime":
-        345782, "statusPage": "https://status.ionq.co"}, {"id": "ionq.simulator",
-        "currentAvailability": "Available", "averageQueueTime": 3, "statusPage": "https://status.ionq.co"}]},
-        {"id": "quantinuum", "currentAvailability": "Degraded", "targets": [{"id":
-        "quantinuum.hqs-lt-s1", "currentAvailability": "Degraded", "averageQueueTime":
-        58708, "statusPage": "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.hqs-lt-s1-apival",
-        "currentAvailability": "Available", "averageQueueTime": 2, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.hqs-lt-s2", "currentAvailability": "Unavailable", "averageQueueTime":
-        0, "statusPage": "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.hqs-lt-s2-apival",
-        "currentAvailability": "Available", "averageQueueTime": 1, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.hqs-lt-s1-sim", "currentAvailability": "Available", "averageQueueTime":
-        332, "statusPage": "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.hqs-lt-s2-sim",
-        "currentAvailability": "Available", "averageQueueTime": 163, "statusPage":
-        "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.hqs-lt", "currentAvailability":
-        "Degraded", "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.qpu.h1-1", "currentAvailability": "Degraded", "averageQueueTime":
-        58708, "statusPage": "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.sim.h1-1sc",
-        "currentAvailability": "Available", "averageQueueTime": 2, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.qpu.h1-2", "currentAvailability": "Unavailable", "averageQueueTime":
-        0, "statusPage": "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.sim.h1-2sc",
-        "currentAvailability": "Available", "averageQueueTime": 1, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.sim.h1-1e", "currentAvailability": "Available", "averageQueueTime":
-        332, "statusPage": "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.sim.h1-2e",
-        "currentAvailability": "Available", "averageQueueTime": 163, "statusPage":
-        "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.qpu.h1", "currentAvailability":
-        "Unavailable", "averageQueueTime": 0, "statusPage": null}, {"id": "quantinuum.sim.h1-1sc-preview",
-        "currentAvailability": "Available", "averageQueueTime": 2, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.sim.h1-2sc-preview", "currentAvailability": "Available",
-        "averageQueueTime": 1, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.sim.h1-1e-preview", "currentAvailability": "Available",
-        "averageQueueTime": 332, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.sim.h1-2e-preview", "currentAvailability": "Available",
-        "averageQueueTime": 163, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.qpu.h1-1-preview", "currentAvailability": "Degraded", "averageQueueTime":
-        58708, "statusPage": "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.qpu.h1-2-preview",
-        "currentAvailability": "Unavailable", "averageQueueTime": 0, "statusPage":
-        "https://www.quantinuum.com/products/h1"}]}, {"id": "rigetti", "currentAvailability":
-        "Available", "targets": [{"id": "rigetti.sim.qvm", "currentAvailability":
-        "Available", "averageQueueTime": 5, "statusPage": "https://rigetti.statuspage.io/"},
-        {"id": "rigetti.qpu.aspen-m-2", "currentAvailability": "Available", "averageQueueTime":
-        5, "statusPage": "https://rigetti.statuspage.io/"}, {"id": "rigetti.qpu.aspen-m-3",
-        "currentAvailability": "Available", "averageQueueTime": 5, "statusPage": "https://rigetti.statuspage.io/"}]},
-        {"id": "1qbit", "currentAvailability": "Degraded", "targets": [{"id": "1qbit.tabu",
-        "currentAvailability": "Unavailable", "averageQueueTime": -1, "statusPage":
-        "https://status.1qbit.com/"}, {"id": "1qbit.pathrelinking", "currentAvailability":
-        "Unavailable", "averageQueueTime": -1, "statusPage": "https://status.1qbit.com/"},
-        {"id": "1qbit.pticm", "currentAvailability": "Unavailable", "averageQueueTime":
-        -1, "statusPage": "https://status.1qbit.com/"}]}, {"id": "toshiba", "currentAvailability":
-        "Available", "targets": [{"id": "toshiba.sbm.ising", "currentAvailability":
-        "Available", "averageQueueTime": 0, "statusPage": "https://aq-sbm.net/v1/service_monitor/index.html"}]},
+      string: '{"value": [{"id": "ionq", "currentAvailability": "Degraded", "targets":
+        [{"id": "ionq.qpu", "currentAvailability": "Available", "averageQueueTime":
+        0, "statusPage": "https://status.ionq.co"}, {"id": "ionq.qpu.aria-1", "currentAvailability":
+        "Unavailable", "averageQueueTime": 755821, "statusPage": "https://status.ionq.co"},
+        {"id": "ionq.qpu.aria-2", "currentAvailability": "Available", "averageQueueTime":
+        78188, "statusPage": "https://status.ionq.co"}, {"id": "ionq.simulator", "currentAvailability":
+        "Available", "averageQueueTime": 1249, "statusPage": "https://status.ionq.co"}]},
         {"id": "microsoft-qc", "currentAvailability": "Available", "targets": [{"id":
         "microsoft.estimator", "currentAvailability": "Available", "averageQueueTime":
-        0, "statusPage": null}]}, {"id": "qci", "currentAvailability": "Degraded",
-        "targets": [{"id": "qci.simulator", "currentAvailability": "Available", "averageQueueTime":
-        1, "statusPage": "https://quantumcircuits.com"}, {"id": "qci.machine1", "currentAvailability":
-        "Unavailable", "averageQueueTime": 1, "statusPage": "https://quantumcircuits.com"},
-        {"id": "qci.simulator.noisy", "currentAvailability": "Available", "averageQueueTime":
-        0, "statusPage": "https://quantumcircuits.com"}]}], "nextLink": null, "access_token":
+        0, "statusPage": null}]}, {"id": "pasqal", "currentAvailability": "Available",
+        "targets": [{"id": "pasqal.sim.emu_free", "currentAvailability": "Available",
+        "averageQueueTime": 0, "statusPage": "https://pasqal.com"}, {"id": "pasqal.sim.emu_tn",
+        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": "https://pasqal.com"},
+        {"id": "pasqal.qpu.fresnel", "currentAvailability": "Available", "averageQueueTime":
+        0, "statusPage": "https://pasqal.com"}]}, {"id": "quantinuum", "currentAvailability":
+        "Degraded", "targets": [{"id": "quantinuum.qpu.h1-1", "currentAvailability":
+        "Unavailable", "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        {"id": "quantinuum.sim.h1-1sc", "currentAvailability": "Available", "averageQueueTime":
+        0, "statusPage": "https://www.quantinuum.com/hardware/h1"}, {"id": "quantinuum.qpu.h1-2",
+        "currentAvailability": "Unavailable", "averageQueueTime": 0, "statusPage":
+        "https://www.quantinuum.com/hardware/h1"}, {"id": "quantinuum.sim.h1-2sc",
+        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        {"id": "quantinuum.sim.h1-1e", "currentAvailability": "Available", "averageQueueTime":
+        7, "statusPage": "https://www.quantinuum.com/hardware/h1"}, {"id": "quantinuum.sim.h1-2e",
+        "currentAvailability": "Available", "averageQueueTime": 9, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        {"id": "quantinuum.qpu.h2-1", "currentAvailability": "Unavailable", "averageQueueTime":
+        0, "statusPage": "https://www.quantinuum.com/hardware/h2"}, {"id": "quantinuum.sim.h2-1sc",
+        "currentAvailability": "Available", "averageQueueTime": 7, "statusPage": "https://www.quantinuum.com/hardware/h2"},
+        {"id": "quantinuum.sim.h2-1e", "currentAvailability": "Available", "averageQueueTime":
+        0, "statusPage": "https://www.quantinuum.com/hardware/h2"}, {"id": "quantinuum.sim.h1-1sc-preview",
+        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        {"id": "quantinuum.sim.h1-2sc-preview", "currentAvailability": "Available",
+        "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        {"id": "quantinuum.sim.h1-1e-preview", "currentAvailability": "Available",
+        "averageQueueTime": 7, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        {"id": "quantinuum.sim.h1-2e-preview", "currentAvailability": "Available",
+        "averageQueueTime": 9, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        {"id": "quantinuum.qpu.h1-1-preview", "currentAvailability": "Unavailable",
+        "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        {"id": "quantinuum.qpu.h1-2-preview", "currentAvailability": "Unavailable",
+        "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h1"}]},
+        {"id": "rigetti", "currentAvailability": "Degraded", "targets": [{"id": "rigetti.sim.qvm",
+        "currentAvailability": "Available", "averageQueueTime": 5, "statusPage": "https://rigetti.statuspage.io/"},
+        {"id": "rigetti.qpu.aspen-m-2", "currentAvailability": "Unavailable", "averageQueueTime":
+        0, "statusPage": null}, {"id": "rigetti.qpu.aspen-m-3", "currentAvailability":
+        "Available", "averageQueueTime": 5, "statusPage": "https://rigetti.statuspage.io/"}]},
+        {"id": "qci", "currentAvailability": "Degraded", "targets": [{"id": "qci.simulator",
+        "currentAvailability": "Available", "averageQueueTime": 1, "statusPage": "https://quantumcircuits.com"},
+        {"id": "qci.machine1", "currentAvailability": "Unavailable", "averageQueueTime":
+        1, "statusPage": "https://quantumcircuits.com"}, {"id": "qci.simulator.noisy",
+        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": "https://quantumcircuits.com"}]},
+        {"id": "Microsoft.Test", "currentAvailability": "Available", "targets": [{"id":
+        "echo-rigetti", "currentAvailability": "Available", "averageQueueTime": 1,
+        "statusPage": ""}, {"id": "echo-quantinuum", "currentAvailability": "Available",
+        "averageQueueTime": 1, "statusPage": ""}, {"id": "echo-qci", "currentAvailability":
+        "Available", "averageQueueTime": 1, "statusPage": ""}, {"id": "echo-ionq",
+        "currentAvailability": "Available", "averageQueueTime": 1, "statusPage": ""},
+        {"id": "sparse-sim-rigetti", "currentAvailability": "Available", "averageQueueTime":
+        1, "statusPage": ""}, {"id": "sparse-sim-quantinuum", "currentAvailability":
+        "Available", "averageQueueTime": 1, "statusPage": ""}, {"id": "sparse-sim-qci",
+        "currentAvailability": "Available", "averageQueueTime": 1, "statusPage": ""},
+        {"id": "sparse-sim-ionq", "currentAvailability": "Available", "averageQueueTime":
+        1, "statusPage": ""}, {"id": "echo-output", "currentAvailability": "Available",
+        "averageQueueTime": 1, "statusPage": ""}]}], "nextLink": null, "access_token":
         "fake_token"}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '6967'
+      - '5502'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -369,96 +324,81 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - testapp-azure-quantum-qiskit azsdk-python-quantum/0.0.0.1 Python/3.9.16 (Windows-10-10.0.22000-SP0)
+      - testapp-azure-quantum-qiskit azsdk-python-quantum/0.0.1 Python/3.9.18 (Windows-10-10.0.22621-SP0)
     method: GET
-    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/providerStatus?api-version=2022-09-12-preview
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/providerStatus?api-version=2022-09-12-preview&test-sequence-id=4
   response:
     body:
-      string: '{"value": [{"id": "Microsoft", "currentAvailability": "Available",
-        "targets": [{"id": "microsoft.paralleltempering-parameterfree.cpu", "currentAvailability":
-        "Available", "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.paralleltempering.cpu",
-        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null},
-        {"id": "microsoft.simulatedannealing-parameterfree.cpu", "currentAvailability":
-        "Available", "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.simulatedannealing.cpu",
-        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null},
-        {"id": "microsoft.tabu-parameterfree.cpu", "currentAvailability": "Available",
-        "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.tabu.cpu", "currentAvailability":
-        "Available", "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.qmc.cpu",
-        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null},
-        {"id": "microsoft.populationannealing.cpu", "currentAvailability": "Available",
-        "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.populationannealing-parameterfree.cpu",
-        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null},
-        {"id": "microsoft.substochasticmontecarlo.cpu", "currentAvailability": "Available",
-        "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.substochasticmontecarlo-parameterfree.cpu",
-        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null},
-        {"id": "microsoft.populationannealing-parameterfree.cpu", "currentAvailability":
-        "Available", "averageQueueTime": 0, "statusPage": null}]}, {"id": "ionq",
-        "currentAvailability": "Available", "targets": [{"id": "ionq.qpu", "currentAvailability":
-        "Available", "averageQueueTime": 18268, "statusPage": "https://status.ionq.co"},
-        {"id": "ionq.qpu.aria-1", "currentAvailability": "Available", "averageQueueTime":
-        345782, "statusPage": "https://status.ionq.co"}, {"id": "ionq.simulator",
-        "currentAvailability": "Available", "averageQueueTime": 3, "statusPage": "https://status.ionq.co"}]},
-        {"id": "quantinuum", "currentAvailability": "Degraded", "targets": [{"id":
-        "quantinuum.hqs-lt-s1", "currentAvailability": "Degraded", "averageQueueTime":
-        58708, "statusPage": "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.hqs-lt-s1-apival",
-        "currentAvailability": "Available", "averageQueueTime": 2, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.hqs-lt-s2", "currentAvailability": "Unavailable", "averageQueueTime":
-        0, "statusPage": "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.hqs-lt-s2-apival",
-        "currentAvailability": "Available", "averageQueueTime": 1, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.hqs-lt-s1-sim", "currentAvailability": "Available", "averageQueueTime":
-        332, "statusPage": "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.hqs-lt-s2-sim",
-        "currentAvailability": "Available", "averageQueueTime": 163, "statusPage":
-        "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.hqs-lt", "currentAvailability":
-        "Degraded", "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.qpu.h1-1", "currentAvailability": "Degraded", "averageQueueTime":
-        58708, "statusPage": "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.sim.h1-1sc",
-        "currentAvailability": "Available", "averageQueueTime": 2, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.qpu.h1-2", "currentAvailability": "Unavailable", "averageQueueTime":
-        0, "statusPage": "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.sim.h1-2sc",
-        "currentAvailability": "Available", "averageQueueTime": 1, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.sim.h1-1e", "currentAvailability": "Available", "averageQueueTime":
-        332, "statusPage": "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.sim.h1-2e",
-        "currentAvailability": "Available", "averageQueueTime": 163, "statusPage":
-        "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.qpu.h1", "currentAvailability":
-        "Unavailable", "averageQueueTime": 0, "statusPage": null}, {"id": "quantinuum.sim.h1-1sc-preview",
-        "currentAvailability": "Available", "averageQueueTime": 2, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.sim.h1-2sc-preview", "currentAvailability": "Available",
-        "averageQueueTime": 1, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.sim.h1-1e-preview", "currentAvailability": "Available",
-        "averageQueueTime": 332, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.sim.h1-2e-preview", "currentAvailability": "Available",
-        "averageQueueTime": 163, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.qpu.h1-1-preview", "currentAvailability": "Degraded", "averageQueueTime":
-        58708, "statusPage": "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.qpu.h1-2-preview",
-        "currentAvailability": "Unavailable", "averageQueueTime": 0, "statusPage":
-        "https://www.quantinuum.com/products/h1"}]}, {"id": "rigetti", "currentAvailability":
-        "Available", "targets": [{"id": "rigetti.sim.qvm", "currentAvailability":
-        "Available", "averageQueueTime": 5, "statusPage": "https://rigetti.statuspage.io/"},
-        {"id": "rigetti.qpu.aspen-m-2", "currentAvailability": "Available", "averageQueueTime":
-        5, "statusPage": "https://rigetti.statuspage.io/"}, {"id": "rigetti.qpu.aspen-m-3",
-        "currentAvailability": "Available", "averageQueueTime": 5, "statusPage": "https://rigetti.statuspage.io/"}]},
-        {"id": "1qbit", "currentAvailability": "Degraded", "targets": [{"id": "1qbit.tabu",
-        "currentAvailability": "Unavailable", "averageQueueTime": -1, "statusPage":
-        "https://status.1qbit.com/"}, {"id": "1qbit.pathrelinking", "currentAvailability":
-        "Unavailable", "averageQueueTime": -1, "statusPage": "https://status.1qbit.com/"},
-        {"id": "1qbit.pticm", "currentAvailability": "Unavailable", "averageQueueTime":
-        -1, "statusPage": "https://status.1qbit.com/"}]}, {"id": "toshiba", "currentAvailability":
-        "Available", "targets": [{"id": "toshiba.sbm.ising", "currentAvailability":
-        "Available", "averageQueueTime": 0, "statusPage": "https://aq-sbm.net/v1/service_monitor/index.html"}]},
+      string: '{"value": [{"id": "ionq", "currentAvailability": "Degraded", "targets":
+        [{"id": "ionq.qpu", "currentAvailability": "Available", "averageQueueTime":
+        0, "statusPage": "https://status.ionq.co"}, {"id": "ionq.qpu.aria-1", "currentAvailability":
+        "Unavailable", "averageQueueTime": 755821, "statusPage": "https://status.ionq.co"},
+        {"id": "ionq.qpu.aria-2", "currentAvailability": "Available", "averageQueueTime":
+        78188, "statusPage": "https://status.ionq.co"}, {"id": "ionq.simulator", "currentAvailability":
+        "Available", "averageQueueTime": 1249, "statusPage": "https://status.ionq.co"}]},
         {"id": "microsoft-qc", "currentAvailability": "Available", "targets": [{"id":
         "microsoft.estimator", "currentAvailability": "Available", "averageQueueTime":
-        0, "statusPage": null}]}, {"id": "qci", "currentAvailability": "Degraded",
-        "targets": [{"id": "qci.simulator", "currentAvailability": "Available", "averageQueueTime":
-        1, "statusPage": "https://quantumcircuits.com"}, {"id": "qci.machine1", "currentAvailability":
-        "Unavailable", "averageQueueTime": 1, "statusPage": "https://quantumcircuits.com"},
-        {"id": "qci.simulator.noisy", "currentAvailability": "Available", "averageQueueTime":
-        0, "statusPage": "https://quantumcircuits.com"}]}], "nextLink": null, "access_token":
+        0, "statusPage": null}]}, {"id": "pasqal", "currentAvailability": "Available",
+        "targets": [{"id": "pasqal.sim.emu_free", "currentAvailability": "Available",
+        "averageQueueTime": 0, "statusPage": "https://pasqal.com"}, {"id": "pasqal.sim.emu_tn",
+        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": "https://pasqal.com"},
+        {"id": "pasqal.qpu.fresnel", "currentAvailability": "Available", "averageQueueTime":
+        0, "statusPage": "https://pasqal.com"}]}, {"id": "quantinuum", "currentAvailability":
+        "Degraded", "targets": [{"id": "quantinuum.qpu.h1-1", "currentAvailability":
+        "Unavailable", "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        {"id": "quantinuum.sim.h1-1sc", "currentAvailability": "Available", "averageQueueTime":
+        0, "statusPage": "https://www.quantinuum.com/hardware/h1"}, {"id": "quantinuum.qpu.h1-2",
+        "currentAvailability": "Unavailable", "averageQueueTime": 0, "statusPage":
+        "https://www.quantinuum.com/hardware/h1"}, {"id": "quantinuum.sim.h1-2sc",
+        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        {"id": "quantinuum.sim.h1-1e", "currentAvailability": "Available", "averageQueueTime":
+        7, "statusPage": "https://www.quantinuum.com/hardware/h1"}, {"id": "quantinuum.sim.h1-2e",
+        "currentAvailability": "Available", "averageQueueTime": 9, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        {"id": "quantinuum.qpu.h2-1", "currentAvailability": "Unavailable", "averageQueueTime":
+        0, "statusPage": "https://www.quantinuum.com/hardware/h2"}, {"id": "quantinuum.sim.h2-1sc",
+        "currentAvailability": "Available", "averageQueueTime": 7, "statusPage": "https://www.quantinuum.com/hardware/h2"},
+        {"id": "quantinuum.sim.h2-1e", "currentAvailability": "Available", "averageQueueTime":
+        0, "statusPage": "https://www.quantinuum.com/hardware/h2"}, {"id": "quantinuum.sim.h1-1sc-preview",
+        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        {"id": "quantinuum.sim.h1-2sc-preview", "currentAvailability": "Available",
+        "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        {"id": "quantinuum.sim.h1-1e-preview", "currentAvailability": "Available",
+        "averageQueueTime": 7, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        {"id": "quantinuum.sim.h1-2e-preview", "currentAvailability": "Available",
+        "averageQueueTime": 9, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        {"id": "quantinuum.qpu.h1-1-preview", "currentAvailability": "Unavailable",
+        "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        {"id": "quantinuum.qpu.h1-2-preview", "currentAvailability": "Unavailable",
+        "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h1"}]},
+        {"id": "rigetti", "currentAvailability": "Degraded", "targets": [{"id": "rigetti.sim.qvm",
+        "currentAvailability": "Available", "averageQueueTime": 5, "statusPage": "https://rigetti.statuspage.io/"},
+        {"id": "rigetti.qpu.aspen-m-2", "currentAvailability": "Unavailable", "averageQueueTime":
+        0, "statusPage": null}, {"id": "rigetti.qpu.aspen-m-3", "currentAvailability":
+        "Available", "averageQueueTime": 5, "statusPage": "https://rigetti.statuspage.io/"}]},
+        {"id": "qci", "currentAvailability": "Degraded", "targets": [{"id": "qci.simulator",
+        "currentAvailability": "Available", "averageQueueTime": 1, "statusPage": "https://quantumcircuits.com"},
+        {"id": "qci.machine1", "currentAvailability": "Unavailable", "averageQueueTime":
+        1, "statusPage": "https://quantumcircuits.com"}, {"id": "qci.simulator.noisy",
+        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": "https://quantumcircuits.com"}]},
+        {"id": "Microsoft.Test", "currentAvailability": "Available", "targets": [{"id":
+        "echo-rigetti", "currentAvailability": "Available", "averageQueueTime": 1,
+        "statusPage": ""}, {"id": "echo-quantinuum", "currentAvailability": "Available",
+        "averageQueueTime": 1, "statusPage": ""}, {"id": "echo-qci", "currentAvailability":
+        "Available", "averageQueueTime": 1, "statusPage": ""}, {"id": "echo-ionq",
+        "currentAvailability": "Available", "averageQueueTime": 1, "statusPage": ""},
+        {"id": "sparse-sim-rigetti", "currentAvailability": "Available", "averageQueueTime":
+        1, "statusPage": ""}, {"id": "sparse-sim-quantinuum", "currentAvailability":
+        "Available", "averageQueueTime": 1, "statusPage": ""}, {"id": "sparse-sim-qci",
+        "currentAvailability": "Available", "averageQueueTime": 1, "statusPage": ""},
+        {"id": "sparse-sim-ionq", "currentAvailability": "Available", "averageQueueTime":
+        1, "statusPage": ""}, {"id": "echo-output", "currentAvailability": "Available",
+        "averageQueueTime": 1, "statusPage": ""}]}], "nextLink": null, "access_token":
         "fake_token"}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '6967'
+      - '5502'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -476,96 +416,81 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - testapp-azure-quantum-qiskit azsdk-python-quantum/0.0.0.1 Python/3.9.16 (Windows-10-10.0.22000-SP0)
+      - testapp-azure-quantum-qiskit azsdk-python-quantum/0.0.1 Python/3.9.18 (Windows-10-10.0.22621-SP0)
     method: GET
-    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/providerStatus?api-version=2022-09-12-preview
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/providerStatus?api-version=2022-09-12-preview&test-sequence-id=5
   response:
     body:
-      string: '{"value": [{"id": "Microsoft", "currentAvailability": "Available",
-        "targets": [{"id": "microsoft.paralleltempering-parameterfree.cpu", "currentAvailability":
-        "Available", "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.paralleltempering.cpu",
-        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null},
-        {"id": "microsoft.simulatedannealing-parameterfree.cpu", "currentAvailability":
-        "Available", "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.simulatedannealing.cpu",
-        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null},
-        {"id": "microsoft.tabu-parameterfree.cpu", "currentAvailability": "Available",
-        "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.tabu.cpu", "currentAvailability":
-        "Available", "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.qmc.cpu",
-        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null},
-        {"id": "microsoft.populationannealing.cpu", "currentAvailability": "Available",
-        "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.populationannealing-parameterfree.cpu",
-        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null},
-        {"id": "microsoft.substochasticmontecarlo.cpu", "currentAvailability": "Available",
-        "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.substochasticmontecarlo-parameterfree.cpu",
-        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null},
-        {"id": "microsoft.populationannealing-parameterfree.cpu", "currentAvailability":
-        "Available", "averageQueueTime": 0, "statusPage": null}]}, {"id": "ionq",
-        "currentAvailability": "Available", "targets": [{"id": "ionq.qpu", "currentAvailability":
-        "Available", "averageQueueTime": 18268, "statusPage": "https://status.ionq.co"},
-        {"id": "ionq.qpu.aria-1", "currentAvailability": "Available", "averageQueueTime":
-        345782, "statusPage": "https://status.ionq.co"}, {"id": "ionq.simulator",
-        "currentAvailability": "Available", "averageQueueTime": 3, "statusPage": "https://status.ionq.co"}]},
-        {"id": "quantinuum", "currentAvailability": "Degraded", "targets": [{"id":
-        "quantinuum.hqs-lt-s1", "currentAvailability": "Degraded", "averageQueueTime":
-        58708, "statusPage": "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.hqs-lt-s1-apival",
-        "currentAvailability": "Available", "averageQueueTime": 2, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.hqs-lt-s2", "currentAvailability": "Unavailable", "averageQueueTime":
-        0, "statusPage": "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.hqs-lt-s2-apival",
-        "currentAvailability": "Available", "averageQueueTime": 1, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.hqs-lt-s1-sim", "currentAvailability": "Available", "averageQueueTime":
-        332, "statusPage": "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.hqs-lt-s2-sim",
-        "currentAvailability": "Available", "averageQueueTime": 163, "statusPage":
-        "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.hqs-lt", "currentAvailability":
-        "Degraded", "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.qpu.h1-1", "currentAvailability": "Degraded", "averageQueueTime":
-        58708, "statusPage": "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.sim.h1-1sc",
-        "currentAvailability": "Available", "averageQueueTime": 2, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.qpu.h1-2", "currentAvailability": "Unavailable", "averageQueueTime":
-        0, "statusPage": "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.sim.h1-2sc",
-        "currentAvailability": "Available", "averageQueueTime": 1, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.sim.h1-1e", "currentAvailability": "Available", "averageQueueTime":
-        332, "statusPage": "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.sim.h1-2e",
-        "currentAvailability": "Available", "averageQueueTime": 163, "statusPage":
-        "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.qpu.h1", "currentAvailability":
-        "Unavailable", "averageQueueTime": 0, "statusPage": null}, {"id": "quantinuum.sim.h1-1sc-preview",
-        "currentAvailability": "Available", "averageQueueTime": 2, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.sim.h1-2sc-preview", "currentAvailability": "Available",
-        "averageQueueTime": 1, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.sim.h1-1e-preview", "currentAvailability": "Available",
-        "averageQueueTime": 332, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.sim.h1-2e-preview", "currentAvailability": "Available",
-        "averageQueueTime": 163, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.qpu.h1-1-preview", "currentAvailability": "Degraded", "averageQueueTime":
-        58708, "statusPage": "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.qpu.h1-2-preview",
-        "currentAvailability": "Unavailable", "averageQueueTime": 0, "statusPage":
-        "https://www.quantinuum.com/products/h1"}]}, {"id": "rigetti", "currentAvailability":
-        "Available", "targets": [{"id": "rigetti.sim.qvm", "currentAvailability":
-        "Available", "averageQueueTime": 5, "statusPage": "https://rigetti.statuspage.io/"},
-        {"id": "rigetti.qpu.aspen-m-2", "currentAvailability": "Available", "averageQueueTime":
-        5, "statusPage": "https://rigetti.statuspage.io/"}, {"id": "rigetti.qpu.aspen-m-3",
-        "currentAvailability": "Available", "averageQueueTime": 5, "statusPage": "https://rigetti.statuspage.io/"}]},
-        {"id": "1qbit", "currentAvailability": "Degraded", "targets": [{"id": "1qbit.tabu",
-        "currentAvailability": "Unavailable", "averageQueueTime": -1, "statusPage":
-        "https://status.1qbit.com/"}, {"id": "1qbit.pathrelinking", "currentAvailability":
-        "Unavailable", "averageQueueTime": -1, "statusPage": "https://status.1qbit.com/"},
-        {"id": "1qbit.pticm", "currentAvailability": "Unavailable", "averageQueueTime":
-        -1, "statusPage": "https://status.1qbit.com/"}]}, {"id": "toshiba", "currentAvailability":
-        "Available", "targets": [{"id": "toshiba.sbm.ising", "currentAvailability":
-        "Available", "averageQueueTime": 0, "statusPage": "https://aq-sbm.net/v1/service_monitor/index.html"}]},
+      string: '{"value": [{"id": "ionq", "currentAvailability": "Degraded", "targets":
+        [{"id": "ionq.qpu", "currentAvailability": "Available", "averageQueueTime":
+        0, "statusPage": "https://status.ionq.co"}, {"id": "ionq.qpu.aria-1", "currentAvailability":
+        "Unavailable", "averageQueueTime": 755821, "statusPage": "https://status.ionq.co"},
+        {"id": "ionq.qpu.aria-2", "currentAvailability": "Available", "averageQueueTime":
+        78188, "statusPage": "https://status.ionq.co"}, {"id": "ionq.simulator", "currentAvailability":
+        "Available", "averageQueueTime": 1249, "statusPage": "https://status.ionq.co"}]},
         {"id": "microsoft-qc", "currentAvailability": "Available", "targets": [{"id":
         "microsoft.estimator", "currentAvailability": "Available", "averageQueueTime":
-        0, "statusPage": null}]}, {"id": "qci", "currentAvailability": "Degraded",
-        "targets": [{"id": "qci.simulator", "currentAvailability": "Available", "averageQueueTime":
-        1, "statusPage": "https://quantumcircuits.com"}, {"id": "qci.machine1", "currentAvailability":
-        "Unavailable", "averageQueueTime": 1, "statusPage": "https://quantumcircuits.com"},
-        {"id": "qci.simulator.noisy", "currentAvailability": "Available", "averageQueueTime":
-        0, "statusPage": "https://quantumcircuits.com"}]}], "nextLink": null, "access_token":
+        0, "statusPage": null}]}, {"id": "pasqal", "currentAvailability": "Available",
+        "targets": [{"id": "pasqal.sim.emu_free", "currentAvailability": "Available",
+        "averageQueueTime": 0, "statusPage": "https://pasqal.com"}, {"id": "pasqal.sim.emu_tn",
+        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": "https://pasqal.com"},
+        {"id": "pasqal.qpu.fresnel", "currentAvailability": "Available", "averageQueueTime":
+        0, "statusPage": "https://pasqal.com"}]}, {"id": "quantinuum", "currentAvailability":
+        "Degraded", "targets": [{"id": "quantinuum.qpu.h1-1", "currentAvailability":
+        "Unavailable", "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        {"id": "quantinuum.sim.h1-1sc", "currentAvailability": "Available", "averageQueueTime":
+        0, "statusPage": "https://www.quantinuum.com/hardware/h1"}, {"id": "quantinuum.qpu.h1-2",
+        "currentAvailability": "Unavailable", "averageQueueTime": 0, "statusPage":
+        "https://www.quantinuum.com/hardware/h1"}, {"id": "quantinuum.sim.h1-2sc",
+        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        {"id": "quantinuum.sim.h1-1e", "currentAvailability": "Available", "averageQueueTime":
+        7, "statusPage": "https://www.quantinuum.com/hardware/h1"}, {"id": "quantinuum.sim.h1-2e",
+        "currentAvailability": "Available", "averageQueueTime": 9, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        {"id": "quantinuum.qpu.h2-1", "currentAvailability": "Unavailable", "averageQueueTime":
+        0, "statusPage": "https://www.quantinuum.com/hardware/h2"}, {"id": "quantinuum.sim.h2-1sc",
+        "currentAvailability": "Available", "averageQueueTime": 7, "statusPage": "https://www.quantinuum.com/hardware/h2"},
+        {"id": "quantinuum.sim.h2-1e", "currentAvailability": "Available", "averageQueueTime":
+        0, "statusPage": "https://www.quantinuum.com/hardware/h2"}, {"id": "quantinuum.sim.h1-1sc-preview",
+        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        {"id": "quantinuum.sim.h1-2sc-preview", "currentAvailability": "Available",
+        "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        {"id": "quantinuum.sim.h1-1e-preview", "currentAvailability": "Available",
+        "averageQueueTime": 7, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        {"id": "quantinuum.sim.h1-2e-preview", "currentAvailability": "Available",
+        "averageQueueTime": 9, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        {"id": "quantinuum.qpu.h1-1-preview", "currentAvailability": "Unavailable",
+        "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        {"id": "quantinuum.qpu.h1-2-preview", "currentAvailability": "Unavailable",
+        "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h1"}]},
+        {"id": "rigetti", "currentAvailability": "Degraded", "targets": [{"id": "rigetti.sim.qvm",
+        "currentAvailability": "Available", "averageQueueTime": 5, "statusPage": "https://rigetti.statuspage.io/"},
+        {"id": "rigetti.qpu.aspen-m-2", "currentAvailability": "Unavailable", "averageQueueTime":
+        0, "statusPage": null}, {"id": "rigetti.qpu.aspen-m-3", "currentAvailability":
+        "Available", "averageQueueTime": 5, "statusPage": "https://rigetti.statuspage.io/"}]},
+        {"id": "qci", "currentAvailability": "Degraded", "targets": [{"id": "qci.simulator",
+        "currentAvailability": "Available", "averageQueueTime": 1, "statusPage": "https://quantumcircuits.com"},
+        {"id": "qci.machine1", "currentAvailability": "Unavailable", "averageQueueTime":
+        1, "statusPage": "https://quantumcircuits.com"}, {"id": "qci.simulator.noisy",
+        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": "https://quantumcircuits.com"}]},
+        {"id": "Microsoft.Test", "currentAvailability": "Available", "targets": [{"id":
+        "echo-rigetti", "currentAvailability": "Available", "averageQueueTime": 1,
+        "statusPage": ""}, {"id": "echo-quantinuum", "currentAvailability": "Available",
+        "averageQueueTime": 1, "statusPage": ""}, {"id": "echo-qci", "currentAvailability":
+        "Available", "averageQueueTime": 1, "statusPage": ""}, {"id": "echo-ionq",
+        "currentAvailability": "Available", "averageQueueTime": 1, "statusPage": ""},
+        {"id": "sparse-sim-rigetti", "currentAvailability": "Available", "averageQueueTime":
+        1, "statusPage": ""}, {"id": "sparse-sim-quantinuum", "currentAvailability":
+        "Available", "averageQueueTime": 1, "statusPage": ""}, {"id": "sparse-sim-qci",
+        "currentAvailability": "Available", "averageQueueTime": 1, "statusPage": ""},
+        {"id": "sparse-sim-ionq", "currentAvailability": "Available", "averageQueueTime":
+        1, "statusPage": ""}, {"id": "echo-output", "currentAvailability": "Available",
+        "averageQueueTime": 1, "statusPage": ""}]}], "nextLink": null, "access_token":
         "fake_token"}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '6967'
+      - '5502'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -583,96 +508,81 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - testapp-azure-quantum-qiskit azsdk-python-quantum/0.0.0.1 Python/3.9.16 (Windows-10-10.0.22000-SP0)
+      - testapp-azure-quantum-qiskit azsdk-python-quantum/0.0.1 Python/3.9.18 (Windows-10-10.0.22621-SP0)
     method: GET
-    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/providerStatus?api-version=2022-09-12-preview
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/providerStatus?api-version=2022-09-12-preview&test-sequence-id=6
   response:
     body:
-      string: '{"value": [{"id": "Microsoft", "currentAvailability": "Available",
-        "targets": [{"id": "microsoft.paralleltempering-parameterfree.cpu", "currentAvailability":
-        "Available", "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.paralleltempering.cpu",
-        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null},
-        {"id": "microsoft.simulatedannealing-parameterfree.cpu", "currentAvailability":
-        "Available", "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.simulatedannealing.cpu",
-        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null},
-        {"id": "microsoft.tabu-parameterfree.cpu", "currentAvailability": "Available",
-        "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.tabu.cpu", "currentAvailability":
-        "Available", "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.qmc.cpu",
-        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null},
-        {"id": "microsoft.populationannealing.cpu", "currentAvailability": "Available",
-        "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.populationannealing-parameterfree.cpu",
-        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null},
-        {"id": "microsoft.substochasticmontecarlo.cpu", "currentAvailability": "Available",
-        "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.substochasticmontecarlo-parameterfree.cpu",
-        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null},
-        {"id": "microsoft.populationannealing-parameterfree.cpu", "currentAvailability":
-        "Available", "averageQueueTime": 0, "statusPage": null}]}, {"id": "ionq",
-        "currentAvailability": "Available", "targets": [{"id": "ionq.qpu", "currentAvailability":
-        "Available", "averageQueueTime": 18268, "statusPage": "https://status.ionq.co"},
-        {"id": "ionq.qpu.aria-1", "currentAvailability": "Available", "averageQueueTime":
-        345782, "statusPage": "https://status.ionq.co"}, {"id": "ionq.simulator",
-        "currentAvailability": "Available", "averageQueueTime": 3, "statusPage": "https://status.ionq.co"}]},
-        {"id": "quantinuum", "currentAvailability": "Degraded", "targets": [{"id":
-        "quantinuum.hqs-lt-s1", "currentAvailability": "Degraded", "averageQueueTime":
-        58708, "statusPage": "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.hqs-lt-s1-apival",
-        "currentAvailability": "Available", "averageQueueTime": 2, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.hqs-lt-s2", "currentAvailability": "Unavailable", "averageQueueTime":
-        0, "statusPage": "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.hqs-lt-s2-apival",
-        "currentAvailability": "Available", "averageQueueTime": 1, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.hqs-lt-s1-sim", "currentAvailability": "Available", "averageQueueTime":
-        332, "statusPage": "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.hqs-lt-s2-sim",
-        "currentAvailability": "Available", "averageQueueTime": 163, "statusPage":
-        "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.hqs-lt", "currentAvailability":
-        "Degraded", "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.qpu.h1-1", "currentAvailability": "Degraded", "averageQueueTime":
-        58708, "statusPage": "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.sim.h1-1sc",
-        "currentAvailability": "Available", "averageQueueTime": 2, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.qpu.h1-2", "currentAvailability": "Unavailable", "averageQueueTime":
-        0, "statusPage": "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.sim.h1-2sc",
-        "currentAvailability": "Available", "averageQueueTime": 1, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.sim.h1-1e", "currentAvailability": "Available", "averageQueueTime":
-        332, "statusPage": "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.sim.h1-2e",
-        "currentAvailability": "Available", "averageQueueTime": 163, "statusPage":
-        "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.qpu.h1", "currentAvailability":
-        "Unavailable", "averageQueueTime": 0, "statusPage": null}, {"id": "quantinuum.sim.h1-1sc-preview",
-        "currentAvailability": "Available", "averageQueueTime": 2, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.sim.h1-2sc-preview", "currentAvailability": "Available",
-        "averageQueueTime": 1, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.sim.h1-1e-preview", "currentAvailability": "Available",
-        "averageQueueTime": 332, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.sim.h1-2e-preview", "currentAvailability": "Available",
-        "averageQueueTime": 163, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.qpu.h1-1-preview", "currentAvailability": "Degraded", "averageQueueTime":
-        58708, "statusPage": "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.qpu.h1-2-preview",
-        "currentAvailability": "Unavailable", "averageQueueTime": 0, "statusPage":
-        "https://www.quantinuum.com/products/h1"}]}, {"id": "rigetti", "currentAvailability":
-        "Available", "targets": [{"id": "rigetti.sim.qvm", "currentAvailability":
-        "Available", "averageQueueTime": 5, "statusPage": "https://rigetti.statuspage.io/"},
-        {"id": "rigetti.qpu.aspen-m-2", "currentAvailability": "Available", "averageQueueTime":
-        5, "statusPage": "https://rigetti.statuspage.io/"}, {"id": "rigetti.qpu.aspen-m-3",
-        "currentAvailability": "Available", "averageQueueTime": 5, "statusPage": "https://rigetti.statuspage.io/"}]},
-        {"id": "1qbit", "currentAvailability": "Degraded", "targets": [{"id": "1qbit.tabu",
-        "currentAvailability": "Unavailable", "averageQueueTime": -1, "statusPage":
-        "https://status.1qbit.com/"}, {"id": "1qbit.pathrelinking", "currentAvailability":
-        "Unavailable", "averageQueueTime": -1, "statusPage": "https://status.1qbit.com/"},
-        {"id": "1qbit.pticm", "currentAvailability": "Unavailable", "averageQueueTime":
-        -1, "statusPage": "https://status.1qbit.com/"}]}, {"id": "toshiba", "currentAvailability":
-        "Available", "targets": [{"id": "toshiba.sbm.ising", "currentAvailability":
-        "Available", "averageQueueTime": 0, "statusPage": "https://aq-sbm.net/v1/service_monitor/index.html"}]},
+      string: '{"value": [{"id": "ionq", "currentAvailability": "Degraded", "targets":
+        [{"id": "ionq.qpu", "currentAvailability": "Available", "averageQueueTime":
+        0, "statusPage": "https://status.ionq.co"}, {"id": "ionq.qpu.aria-1", "currentAvailability":
+        "Unavailable", "averageQueueTime": 755821, "statusPage": "https://status.ionq.co"},
+        {"id": "ionq.qpu.aria-2", "currentAvailability": "Available", "averageQueueTime":
+        78188, "statusPage": "https://status.ionq.co"}, {"id": "ionq.simulator", "currentAvailability":
+        "Available", "averageQueueTime": 1249, "statusPage": "https://status.ionq.co"}]},
         {"id": "microsoft-qc", "currentAvailability": "Available", "targets": [{"id":
         "microsoft.estimator", "currentAvailability": "Available", "averageQueueTime":
-        0, "statusPage": null}]}, {"id": "qci", "currentAvailability": "Degraded",
-        "targets": [{"id": "qci.simulator", "currentAvailability": "Available", "averageQueueTime":
-        1, "statusPage": "https://quantumcircuits.com"}, {"id": "qci.machine1", "currentAvailability":
-        "Unavailable", "averageQueueTime": 1, "statusPage": "https://quantumcircuits.com"},
-        {"id": "qci.simulator.noisy", "currentAvailability": "Available", "averageQueueTime":
-        0, "statusPage": "https://quantumcircuits.com"}]}], "nextLink": null, "access_token":
+        0, "statusPage": null}]}, {"id": "pasqal", "currentAvailability": "Available",
+        "targets": [{"id": "pasqal.sim.emu_free", "currentAvailability": "Available",
+        "averageQueueTime": 0, "statusPage": "https://pasqal.com"}, {"id": "pasqal.sim.emu_tn",
+        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": "https://pasqal.com"},
+        {"id": "pasqal.qpu.fresnel", "currentAvailability": "Available", "averageQueueTime":
+        0, "statusPage": "https://pasqal.com"}]}, {"id": "quantinuum", "currentAvailability":
+        "Degraded", "targets": [{"id": "quantinuum.qpu.h1-1", "currentAvailability":
+        "Unavailable", "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        {"id": "quantinuum.sim.h1-1sc", "currentAvailability": "Available", "averageQueueTime":
+        0, "statusPage": "https://www.quantinuum.com/hardware/h1"}, {"id": "quantinuum.qpu.h1-2",
+        "currentAvailability": "Unavailable", "averageQueueTime": 0, "statusPage":
+        "https://www.quantinuum.com/hardware/h1"}, {"id": "quantinuum.sim.h1-2sc",
+        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        {"id": "quantinuum.sim.h1-1e", "currentAvailability": "Available", "averageQueueTime":
+        7, "statusPage": "https://www.quantinuum.com/hardware/h1"}, {"id": "quantinuum.sim.h1-2e",
+        "currentAvailability": "Available", "averageQueueTime": 9, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        {"id": "quantinuum.qpu.h2-1", "currentAvailability": "Unavailable", "averageQueueTime":
+        0, "statusPage": "https://www.quantinuum.com/hardware/h2"}, {"id": "quantinuum.sim.h2-1sc",
+        "currentAvailability": "Available", "averageQueueTime": 7, "statusPage": "https://www.quantinuum.com/hardware/h2"},
+        {"id": "quantinuum.sim.h2-1e", "currentAvailability": "Available", "averageQueueTime":
+        0, "statusPage": "https://www.quantinuum.com/hardware/h2"}, {"id": "quantinuum.sim.h1-1sc-preview",
+        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        {"id": "quantinuum.sim.h1-2sc-preview", "currentAvailability": "Available",
+        "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        {"id": "quantinuum.sim.h1-1e-preview", "currentAvailability": "Available",
+        "averageQueueTime": 7, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        {"id": "quantinuum.sim.h1-2e-preview", "currentAvailability": "Available",
+        "averageQueueTime": 9, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        {"id": "quantinuum.qpu.h1-1-preview", "currentAvailability": "Unavailable",
+        "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        {"id": "quantinuum.qpu.h1-2-preview", "currentAvailability": "Unavailable",
+        "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h1"}]},
+        {"id": "rigetti", "currentAvailability": "Degraded", "targets": [{"id": "rigetti.sim.qvm",
+        "currentAvailability": "Available", "averageQueueTime": 5, "statusPage": "https://rigetti.statuspage.io/"},
+        {"id": "rigetti.qpu.aspen-m-2", "currentAvailability": "Unavailable", "averageQueueTime":
+        0, "statusPage": null}, {"id": "rigetti.qpu.aspen-m-3", "currentAvailability":
+        "Available", "averageQueueTime": 5, "statusPage": "https://rigetti.statuspage.io/"}]},
+        {"id": "qci", "currentAvailability": "Degraded", "targets": [{"id": "qci.simulator",
+        "currentAvailability": "Available", "averageQueueTime": 1, "statusPage": "https://quantumcircuits.com"},
+        {"id": "qci.machine1", "currentAvailability": "Unavailable", "averageQueueTime":
+        1, "statusPage": "https://quantumcircuits.com"}, {"id": "qci.simulator.noisy",
+        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": "https://quantumcircuits.com"}]},
+        {"id": "Microsoft.Test", "currentAvailability": "Available", "targets": [{"id":
+        "echo-rigetti", "currentAvailability": "Available", "averageQueueTime": 1,
+        "statusPage": ""}, {"id": "echo-quantinuum", "currentAvailability": "Available",
+        "averageQueueTime": 1, "statusPage": ""}, {"id": "echo-qci", "currentAvailability":
+        "Available", "averageQueueTime": 1, "statusPage": ""}, {"id": "echo-ionq",
+        "currentAvailability": "Available", "averageQueueTime": 1, "statusPage": ""},
+        {"id": "sparse-sim-rigetti", "currentAvailability": "Available", "averageQueueTime":
+        1, "statusPage": ""}, {"id": "sparse-sim-quantinuum", "currentAvailability":
+        "Available", "averageQueueTime": 1, "statusPage": ""}, {"id": "sparse-sim-qci",
+        "currentAvailability": "Available", "averageQueueTime": 1, "statusPage": ""},
+        {"id": "sparse-sim-ionq", "currentAvailability": "Available", "averageQueueTime":
+        1, "statusPage": ""}, {"id": "echo-output", "currentAvailability": "Available",
+        "averageQueueTime": 1, "statusPage": ""}]}], "nextLink": null, "access_token":
         "fake_token"}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '6967'
+      - '5502'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -690,96 +600,81 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - testapp-azure-quantum-qiskit azsdk-python-quantum/0.0.0.1 Python/3.9.16 (Windows-10-10.0.22000-SP0)
+      - testapp-azure-quantum-qiskit azsdk-python-quantum/0.0.1 Python/3.9.18 (Windows-10-10.0.22621-SP0)
     method: GET
-    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/providerStatus?api-version=2022-09-12-preview
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/providerStatus?api-version=2022-09-12-preview&test-sequence-id=7
   response:
     body:
-      string: '{"value": [{"id": "Microsoft", "currentAvailability": "Available",
-        "targets": [{"id": "microsoft.paralleltempering-parameterfree.cpu", "currentAvailability":
-        "Available", "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.paralleltempering.cpu",
-        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null},
-        {"id": "microsoft.simulatedannealing-parameterfree.cpu", "currentAvailability":
-        "Available", "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.simulatedannealing.cpu",
-        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null},
-        {"id": "microsoft.tabu-parameterfree.cpu", "currentAvailability": "Available",
-        "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.tabu.cpu", "currentAvailability":
-        "Available", "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.qmc.cpu",
-        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null},
-        {"id": "microsoft.populationannealing.cpu", "currentAvailability": "Available",
-        "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.populationannealing-parameterfree.cpu",
-        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null},
-        {"id": "microsoft.substochasticmontecarlo.cpu", "currentAvailability": "Available",
-        "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.substochasticmontecarlo-parameterfree.cpu",
-        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null},
-        {"id": "microsoft.populationannealing-parameterfree.cpu", "currentAvailability":
-        "Available", "averageQueueTime": 0, "statusPage": null}]}, {"id": "ionq",
-        "currentAvailability": "Available", "targets": [{"id": "ionq.qpu", "currentAvailability":
-        "Available", "averageQueueTime": 18268, "statusPage": "https://status.ionq.co"},
-        {"id": "ionq.qpu.aria-1", "currentAvailability": "Available", "averageQueueTime":
-        345782, "statusPage": "https://status.ionq.co"}, {"id": "ionq.simulator",
-        "currentAvailability": "Available", "averageQueueTime": 3, "statusPage": "https://status.ionq.co"}]},
-        {"id": "quantinuum", "currentAvailability": "Degraded", "targets": [{"id":
-        "quantinuum.hqs-lt-s1", "currentAvailability": "Degraded", "averageQueueTime":
-        58708, "statusPage": "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.hqs-lt-s1-apival",
-        "currentAvailability": "Available", "averageQueueTime": 2, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.hqs-lt-s2", "currentAvailability": "Unavailable", "averageQueueTime":
-        0, "statusPage": "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.hqs-lt-s2-apival",
-        "currentAvailability": "Available", "averageQueueTime": 1, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.hqs-lt-s1-sim", "currentAvailability": "Available", "averageQueueTime":
-        332, "statusPage": "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.hqs-lt-s2-sim",
-        "currentAvailability": "Available", "averageQueueTime": 163, "statusPage":
-        "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.hqs-lt", "currentAvailability":
-        "Degraded", "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.qpu.h1-1", "currentAvailability": "Degraded", "averageQueueTime":
-        58708, "statusPage": "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.sim.h1-1sc",
-        "currentAvailability": "Available", "averageQueueTime": 2, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.qpu.h1-2", "currentAvailability": "Unavailable", "averageQueueTime":
-        0, "statusPage": "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.sim.h1-2sc",
-        "currentAvailability": "Available", "averageQueueTime": 1, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.sim.h1-1e", "currentAvailability": "Available", "averageQueueTime":
-        332, "statusPage": "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.sim.h1-2e",
-        "currentAvailability": "Available", "averageQueueTime": 163, "statusPage":
-        "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.qpu.h1", "currentAvailability":
-        "Unavailable", "averageQueueTime": 0, "statusPage": null}, {"id": "quantinuum.sim.h1-1sc-preview",
-        "currentAvailability": "Available", "averageQueueTime": 2, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.sim.h1-2sc-preview", "currentAvailability": "Available",
-        "averageQueueTime": 1, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.sim.h1-1e-preview", "currentAvailability": "Available",
-        "averageQueueTime": 332, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.sim.h1-2e-preview", "currentAvailability": "Available",
-        "averageQueueTime": 163, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.qpu.h1-1-preview", "currentAvailability": "Degraded", "averageQueueTime":
-        58708, "statusPage": "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.qpu.h1-2-preview",
-        "currentAvailability": "Unavailable", "averageQueueTime": 0, "statusPage":
-        "https://www.quantinuum.com/products/h1"}]}, {"id": "rigetti", "currentAvailability":
-        "Available", "targets": [{"id": "rigetti.sim.qvm", "currentAvailability":
-        "Available", "averageQueueTime": 5, "statusPage": "https://rigetti.statuspage.io/"},
-        {"id": "rigetti.qpu.aspen-m-2", "currentAvailability": "Available", "averageQueueTime":
-        5, "statusPage": "https://rigetti.statuspage.io/"}, {"id": "rigetti.qpu.aspen-m-3",
-        "currentAvailability": "Available", "averageQueueTime": 5, "statusPage": "https://rigetti.statuspage.io/"}]},
-        {"id": "1qbit", "currentAvailability": "Degraded", "targets": [{"id": "1qbit.tabu",
-        "currentAvailability": "Unavailable", "averageQueueTime": -1, "statusPage":
-        "https://status.1qbit.com/"}, {"id": "1qbit.pathrelinking", "currentAvailability":
-        "Unavailable", "averageQueueTime": -1, "statusPage": "https://status.1qbit.com/"},
-        {"id": "1qbit.pticm", "currentAvailability": "Unavailable", "averageQueueTime":
-        -1, "statusPage": "https://status.1qbit.com/"}]}, {"id": "toshiba", "currentAvailability":
-        "Available", "targets": [{"id": "toshiba.sbm.ising", "currentAvailability":
-        "Available", "averageQueueTime": 0, "statusPage": "https://aq-sbm.net/v1/service_monitor/index.html"}]},
+      string: '{"value": [{"id": "ionq", "currentAvailability": "Degraded", "targets":
+        [{"id": "ionq.qpu", "currentAvailability": "Available", "averageQueueTime":
+        0, "statusPage": "https://status.ionq.co"}, {"id": "ionq.qpu.aria-1", "currentAvailability":
+        "Unavailable", "averageQueueTime": 755821, "statusPage": "https://status.ionq.co"},
+        {"id": "ionq.qpu.aria-2", "currentAvailability": "Available", "averageQueueTime":
+        78188, "statusPage": "https://status.ionq.co"}, {"id": "ionq.simulator", "currentAvailability":
+        "Available", "averageQueueTime": 1249, "statusPage": "https://status.ionq.co"}]},
         {"id": "microsoft-qc", "currentAvailability": "Available", "targets": [{"id":
         "microsoft.estimator", "currentAvailability": "Available", "averageQueueTime":
-        0, "statusPage": null}]}, {"id": "qci", "currentAvailability": "Degraded",
-        "targets": [{"id": "qci.simulator", "currentAvailability": "Available", "averageQueueTime":
-        1, "statusPage": "https://quantumcircuits.com"}, {"id": "qci.machine1", "currentAvailability":
-        "Unavailable", "averageQueueTime": 1, "statusPage": "https://quantumcircuits.com"},
-        {"id": "qci.simulator.noisy", "currentAvailability": "Available", "averageQueueTime":
-        0, "statusPage": "https://quantumcircuits.com"}]}], "nextLink": null, "access_token":
+        0, "statusPage": null}]}, {"id": "pasqal", "currentAvailability": "Available",
+        "targets": [{"id": "pasqal.sim.emu_free", "currentAvailability": "Available",
+        "averageQueueTime": 0, "statusPage": "https://pasqal.com"}, {"id": "pasqal.sim.emu_tn",
+        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": "https://pasqal.com"},
+        {"id": "pasqal.qpu.fresnel", "currentAvailability": "Available", "averageQueueTime":
+        0, "statusPage": "https://pasqal.com"}]}, {"id": "quantinuum", "currentAvailability":
+        "Degraded", "targets": [{"id": "quantinuum.qpu.h1-1", "currentAvailability":
+        "Unavailable", "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        {"id": "quantinuum.sim.h1-1sc", "currentAvailability": "Available", "averageQueueTime":
+        0, "statusPage": "https://www.quantinuum.com/hardware/h1"}, {"id": "quantinuum.qpu.h1-2",
+        "currentAvailability": "Unavailable", "averageQueueTime": 0, "statusPage":
+        "https://www.quantinuum.com/hardware/h1"}, {"id": "quantinuum.sim.h1-2sc",
+        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        {"id": "quantinuum.sim.h1-1e", "currentAvailability": "Available", "averageQueueTime":
+        7, "statusPage": "https://www.quantinuum.com/hardware/h1"}, {"id": "quantinuum.sim.h1-2e",
+        "currentAvailability": "Available", "averageQueueTime": 9, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        {"id": "quantinuum.qpu.h2-1", "currentAvailability": "Unavailable", "averageQueueTime":
+        0, "statusPage": "https://www.quantinuum.com/hardware/h2"}, {"id": "quantinuum.sim.h2-1sc",
+        "currentAvailability": "Available", "averageQueueTime": 7, "statusPage": "https://www.quantinuum.com/hardware/h2"},
+        {"id": "quantinuum.sim.h2-1e", "currentAvailability": "Available", "averageQueueTime":
+        0, "statusPage": "https://www.quantinuum.com/hardware/h2"}, {"id": "quantinuum.sim.h1-1sc-preview",
+        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        {"id": "quantinuum.sim.h1-2sc-preview", "currentAvailability": "Available",
+        "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        {"id": "quantinuum.sim.h1-1e-preview", "currentAvailability": "Available",
+        "averageQueueTime": 7, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        {"id": "quantinuum.sim.h1-2e-preview", "currentAvailability": "Available",
+        "averageQueueTime": 9, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        {"id": "quantinuum.qpu.h1-1-preview", "currentAvailability": "Unavailable",
+        "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        {"id": "quantinuum.qpu.h1-2-preview", "currentAvailability": "Unavailable",
+        "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h1"}]},
+        {"id": "rigetti", "currentAvailability": "Degraded", "targets": [{"id": "rigetti.sim.qvm",
+        "currentAvailability": "Available", "averageQueueTime": 5, "statusPage": "https://rigetti.statuspage.io/"},
+        {"id": "rigetti.qpu.aspen-m-2", "currentAvailability": "Unavailable", "averageQueueTime":
+        0, "statusPage": null}, {"id": "rigetti.qpu.aspen-m-3", "currentAvailability":
+        "Available", "averageQueueTime": 5, "statusPage": "https://rigetti.statuspage.io/"}]},
+        {"id": "qci", "currentAvailability": "Degraded", "targets": [{"id": "qci.simulator",
+        "currentAvailability": "Available", "averageQueueTime": 1, "statusPage": "https://quantumcircuits.com"},
+        {"id": "qci.machine1", "currentAvailability": "Unavailable", "averageQueueTime":
+        1, "statusPage": "https://quantumcircuits.com"}, {"id": "qci.simulator.noisy",
+        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": "https://quantumcircuits.com"}]},
+        {"id": "Microsoft.Test", "currentAvailability": "Available", "targets": [{"id":
+        "echo-rigetti", "currentAvailability": "Available", "averageQueueTime": 1,
+        "statusPage": ""}, {"id": "echo-quantinuum", "currentAvailability": "Available",
+        "averageQueueTime": 1, "statusPage": ""}, {"id": "echo-qci", "currentAvailability":
+        "Available", "averageQueueTime": 1, "statusPage": ""}, {"id": "echo-ionq",
+        "currentAvailability": "Available", "averageQueueTime": 1, "statusPage": ""},
+        {"id": "sparse-sim-rigetti", "currentAvailability": "Available", "averageQueueTime":
+        1, "statusPage": ""}, {"id": "sparse-sim-quantinuum", "currentAvailability":
+        "Available", "averageQueueTime": 1, "statusPage": ""}, {"id": "sparse-sim-qci",
+        "currentAvailability": "Available", "averageQueueTime": 1, "statusPage": ""},
+        {"id": "sparse-sim-ionq", "currentAvailability": "Available", "averageQueueTime":
+        1, "statusPage": ""}, {"id": "echo-output", "currentAvailability": "Available",
+        "averageQueueTime": 1, "statusPage": ""}]}], "nextLink": null, "access_token":
         "fake_token"}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '6967'
+      - '5502'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -797,96 +692,81 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - testapp-azure-quantum-qiskit azsdk-python-quantum/0.0.0.1 Python/3.9.16 (Windows-10-10.0.22000-SP0)
+      - testapp-azure-quantum-qiskit azsdk-python-quantum/0.0.1 Python/3.9.18 (Windows-10-10.0.22621-SP0)
     method: GET
-    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/providerStatus?api-version=2022-09-12-preview
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/providerStatus?api-version=2022-09-12-preview&test-sequence-id=8
   response:
     body:
-      string: '{"value": [{"id": "Microsoft", "currentAvailability": "Available",
-        "targets": [{"id": "microsoft.paralleltempering-parameterfree.cpu", "currentAvailability":
-        "Available", "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.paralleltempering.cpu",
-        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null},
-        {"id": "microsoft.simulatedannealing-parameterfree.cpu", "currentAvailability":
-        "Available", "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.simulatedannealing.cpu",
-        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null},
-        {"id": "microsoft.tabu-parameterfree.cpu", "currentAvailability": "Available",
-        "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.tabu.cpu", "currentAvailability":
-        "Available", "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.qmc.cpu",
-        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null},
-        {"id": "microsoft.populationannealing.cpu", "currentAvailability": "Available",
-        "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.populationannealing-parameterfree.cpu",
-        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null},
-        {"id": "microsoft.substochasticmontecarlo.cpu", "currentAvailability": "Available",
-        "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.substochasticmontecarlo-parameterfree.cpu",
-        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null},
-        {"id": "microsoft.populationannealing-parameterfree.cpu", "currentAvailability":
-        "Available", "averageQueueTime": 0, "statusPage": null}]}, {"id": "ionq",
-        "currentAvailability": "Available", "targets": [{"id": "ionq.qpu", "currentAvailability":
-        "Available", "averageQueueTime": 18268, "statusPage": "https://status.ionq.co"},
-        {"id": "ionq.qpu.aria-1", "currentAvailability": "Available", "averageQueueTime":
-        345782, "statusPage": "https://status.ionq.co"}, {"id": "ionq.simulator",
-        "currentAvailability": "Available", "averageQueueTime": 3, "statusPage": "https://status.ionq.co"}]},
-        {"id": "quantinuum", "currentAvailability": "Degraded", "targets": [{"id":
-        "quantinuum.hqs-lt-s1", "currentAvailability": "Degraded", "averageQueueTime":
-        58708, "statusPage": "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.hqs-lt-s1-apival",
-        "currentAvailability": "Available", "averageQueueTime": 2, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.hqs-lt-s2", "currentAvailability": "Unavailable", "averageQueueTime":
-        0, "statusPage": "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.hqs-lt-s2-apival",
-        "currentAvailability": "Available", "averageQueueTime": 1, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.hqs-lt-s1-sim", "currentAvailability": "Available", "averageQueueTime":
-        332, "statusPage": "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.hqs-lt-s2-sim",
-        "currentAvailability": "Available", "averageQueueTime": 163, "statusPage":
-        "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.hqs-lt", "currentAvailability":
-        "Degraded", "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.qpu.h1-1", "currentAvailability": "Degraded", "averageQueueTime":
-        58708, "statusPage": "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.sim.h1-1sc",
-        "currentAvailability": "Available", "averageQueueTime": 2, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.qpu.h1-2", "currentAvailability": "Unavailable", "averageQueueTime":
-        0, "statusPage": "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.sim.h1-2sc",
-        "currentAvailability": "Available", "averageQueueTime": 1, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.sim.h1-1e", "currentAvailability": "Available", "averageQueueTime":
-        332, "statusPage": "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.sim.h1-2e",
-        "currentAvailability": "Available", "averageQueueTime": 163, "statusPage":
-        "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.qpu.h1", "currentAvailability":
-        "Unavailable", "averageQueueTime": 0, "statusPage": null}, {"id": "quantinuum.sim.h1-1sc-preview",
-        "currentAvailability": "Available", "averageQueueTime": 2, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.sim.h1-2sc-preview", "currentAvailability": "Available",
-        "averageQueueTime": 1, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.sim.h1-1e-preview", "currentAvailability": "Available",
-        "averageQueueTime": 332, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.sim.h1-2e-preview", "currentAvailability": "Available",
-        "averageQueueTime": 163, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.qpu.h1-1-preview", "currentAvailability": "Degraded", "averageQueueTime":
-        58708, "statusPage": "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.qpu.h1-2-preview",
-        "currentAvailability": "Unavailable", "averageQueueTime": 0, "statusPage":
-        "https://www.quantinuum.com/products/h1"}]}, {"id": "rigetti", "currentAvailability":
-        "Available", "targets": [{"id": "rigetti.sim.qvm", "currentAvailability":
-        "Available", "averageQueueTime": 5, "statusPage": "https://rigetti.statuspage.io/"},
-        {"id": "rigetti.qpu.aspen-m-2", "currentAvailability": "Available", "averageQueueTime":
-        5, "statusPage": "https://rigetti.statuspage.io/"}, {"id": "rigetti.qpu.aspen-m-3",
-        "currentAvailability": "Available", "averageQueueTime": 5, "statusPage": "https://rigetti.statuspage.io/"}]},
-        {"id": "1qbit", "currentAvailability": "Degraded", "targets": [{"id": "1qbit.tabu",
-        "currentAvailability": "Unavailable", "averageQueueTime": -1, "statusPage":
-        "https://status.1qbit.com/"}, {"id": "1qbit.pathrelinking", "currentAvailability":
-        "Unavailable", "averageQueueTime": -1, "statusPage": "https://status.1qbit.com/"},
-        {"id": "1qbit.pticm", "currentAvailability": "Unavailable", "averageQueueTime":
-        -1, "statusPage": "https://status.1qbit.com/"}]}, {"id": "toshiba", "currentAvailability":
-        "Available", "targets": [{"id": "toshiba.sbm.ising", "currentAvailability":
-        "Available", "averageQueueTime": 0, "statusPage": "https://aq-sbm.net/v1/service_monitor/index.html"}]},
+      string: '{"value": [{"id": "ionq", "currentAvailability": "Degraded", "targets":
+        [{"id": "ionq.qpu", "currentAvailability": "Available", "averageQueueTime":
+        0, "statusPage": "https://status.ionq.co"}, {"id": "ionq.qpu.aria-1", "currentAvailability":
+        "Unavailable", "averageQueueTime": 755821, "statusPage": "https://status.ionq.co"},
+        {"id": "ionq.qpu.aria-2", "currentAvailability": "Available", "averageQueueTime":
+        78188, "statusPage": "https://status.ionq.co"}, {"id": "ionq.simulator", "currentAvailability":
+        "Available", "averageQueueTime": 1249, "statusPage": "https://status.ionq.co"}]},
         {"id": "microsoft-qc", "currentAvailability": "Available", "targets": [{"id":
         "microsoft.estimator", "currentAvailability": "Available", "averageQueueTime":
-        0, "statusPage": null}]}, {"id": "qci", "currentAvailability": "Degraded",
-        "targets": [{"id": "qci.simulator", "currentAvailability": "Available", "averageQueueTime":
-        1, "statusPage": "https://quantumcircuits.com"}, {"id": "qci.machine1", "currentAvailability":
-        "Unavailable", "averageQueueTime": 1, "statusPage": "https://quantumcircuits.com"},
-        {"id": "qci.simulator.noisy", "currentAvailability": "Available", "averageQueueTime":
-        0, "statusPage": "https://quantumcircuits.com"}]}], "nextLink": null, "access_token":
+        0, "statusPage": null}]}, {"id": "pasqal", "currentAvailability": "Available",
+        "targets": [{"id": "pasqal.sim.emu_free", "currentAvailability": "Available",
+        "averageQueueTime": 0, "statusPage": "https://pasqal.com"}, {"id": "pasqal.sim.emu_tn",
+        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": "https://pasqal.com"},
+        {"id": "pasqal.qpu.fresnel", "currentAvailability": "Available", "averageQueueTime":
+        0, "statusPage": "https://pasqal.com"}]}, {"id": "quantinuum", "currentAvailability":
+        "Degraded", "targets": [{"id": "quantinuum.qpu.h1-1", "currentAvailability":
+        "Unavailable", "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        {"id": "quantinuum.sim.h1-1sc", "currentAvailability": "Available", "averageQueueTime":
+        0, "statusPage": "https://www.quantinuum.com/hardware/h1"}, {"id": "quantinuum.qpu.h1-2",
+        "currentAvailability": "Unavailable", "averageQueueTime": 0, "statusPage":
+        "https://www.quantinuum.com/hardware/h1"}, {"id": "quantinuum.sim.h1-2sc",
+        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        {"id": "quantinuum.sim.h1-1e", "currentAvailability": "Available", "averageQueueTime":
+        7, "statusPage": "https://www.quantinuum.com/hardware/h1"}, {"id": "quantinuum.sim.h1-2e",
+        "currentAvailability": "Available", "averageQueueTime": 9, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        {"id": "quantinuum.qpu.h2-1", "currentAvailability": "Unavailable", "averageQueueTime":
+        0, "statusPage": "https://www.quantinuum.com/hardware/h2"}, {"id": "quantinuum.sim.h2-1sc",
+        "currentAvailability": "Available", "averageQueueTime": 7, "statusPage": "https://www.quantinuum.com/hardware/h2"},
+        {"id": "quantinuum.sim.h2-1e", "currentAvailability": "Available", "averageQueueTime":
+        0, "statusPage": "https://www.quantinuum.com/hardware/h2"}, {"id": "quantinuum.sim.h1-1sc-preview",
+        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        {"id": "quantinuum.sim.h1-2sc-preview", "currentAvailability": "Available",
+        "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        {"id": "quantinuum.sim.h1-1e-preview", "currentAvailability": "Available",
+        "averageQueueTime": 7, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        {"id": "quantinuum.sim.h1-2e-preview", "currentAvailability": "Available",
+        "averageQueueTime": 9, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        {"id": "quantinuum.qpu.h1-1-preview", "currentAvailability": "Unavailable",
+        "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        {"id": "quantinuum.qpu.h1-2-preview", "currentAvailability": "Unavailable",
+        "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h1"}]},
+        {"id": "rigetti", "currentAvailability": "Degraded", "targets": [{"id": "rigetti.sim.qvm",
+        "currentAvailability": "Available", "averageQueueTime": 5, "statusPage": "https://rigetti.statuspage.io/"},
+        {"id": "rigetti.qpu.aspen-m-2", "currentAvailability": "Unavailable", "averageQueueTime":
+        0, "statusPage": null}, {"id": "rigetti.qpu.aspen-m-3", "currentAvailability":
+        "Available", "averageQueueTime": 5, "statusPage": "https://rigetti.statuspage.io/"}]},
+        {"id": "qci", "currentAvailability": "Degraded", "targets": [{"id": "qci.simulator",
+        "currentAvailability": "Available", "averageQueueTime": 1, "statusPage": "https://quantumcircuits.com"},
+        {"id": "qci.machine1", "currentAvailability": "Unavailable", "averageQueueTime":
+        1, "statusPage": "https://quantumcircuits.com"}, {"id": "qci.simulator.noisy",
+        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": "https://quantumcircuits.com"}]},
+        {"id": "Microsoft.Test", "currentAvailability": "Available", "targets": [{"id":
+        "echo-rigetti", "currentAvailability": "Available", "averageQueueTime": 1,
+        "statusPage": ""}, {"id": "echo-quantinuum", "currentAvailability": "Available",
+        "averageQueueTime": 1, "statusPage": ""}, {"id": "echo-qci", "currentAvailability":
+        "Available", "averageQueueTime": 1, "statusPage": ""}, {"id": "echo-ionq",
+        "currentAvailability": "Available", "averageQueueTime": 1, "statusPage": ""},
+        {"id": "sparse-sim-rigetti", "currentAvailability": "Available", "averageQueueTime":
+        1, "statusPage": ""}, {"id": "sparse-sim-quantinuum", "currentAvailability":
+        "Available", "averageQueueTime": 1, "statusPage": ""}, {"id": "sparse-sim-qci",
+        "currentAvailability": "Available", "averageQueueTime": 1, "statusPage": ""},
+        {"id": "sparse-sim-ionq", "currentAvailability": "Available", "averageQueueTime":
+        1, "statusPage": ""}, {"id": "echo-output", "currentAvailability": "Available",
+        "averageQueueTime": 1, "statusPage": ""}]}], "nextLink": null, "access_token":
         "fake_token"}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '6967'
+      - '5502'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -904,417 +784,81 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - testapp-azure-quantum-qiskit azsdk-python-quantum/0.0.0.1 Python/3.9.16 (Windows-10-10.0.22000-SP0)
+      - testapp-azure-quantum-qiskit azsdk-python-quantum/0.0.1 Python/3.9.18 (Windows-10-10.0.22621-SP0)
     method: GET
-    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/providerStatus?api-version=2022-09-12-preview
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/providerStatus?api-version=2022-09-12-preview&test-sequence-id=9
   response:
     body:
-      string: '{"value": [{"id": "Microsoft", "currentAvailability": "Available",
-        "targets": [{"id": "microsoft.paralleltempering-parameterfree.cpu", "currentAvailability":
-        "Available", "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.paralleltempering.cpu",
-        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null},
-        {"id": "microsoft.simulatedannealing-parameterfree.cpu", "currentAvailability":
-        "Available", "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.simulatedannealing.cpu",
-        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null},
-        {"id": "microsoft.tabu-parameterfree.cpu", "currentAvailability": "Available",
-        "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.tabu.cpu", "currentAvailability":
-        "Available", "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.qmc.cpu",
-        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null},
-        {"id": "microsoft.populationannealing.cpu", "currentAvailability": "Available",
-        "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.populationannealing-parameterfree.cpu",
-        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null},
-        {"id": "microsoft.substochasticmontecarlo.cpu", "currentAvailability": "Available",
-        "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.substochasticmontecarlo-parameterfree.cpu",
-        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null},
-        {"id": "microsoft.populationannealing-parameterfree.cpu", "currentAvailability":
-        "Available", "averageQueueTime": 0, "statusPage": null}]}, {"id": "ionq",
-        "currentAvailability": "Available", "targets": [{"id": "ionq.qpu", "currentAvailability":
-        "Available", "averageQueueTime": 18120, "statusPage": "https://status.ionq.co"},
-        {"id": "ionq.qpu.aria-1", "currentAvailability": "Available", "averageQueueTime":
-        379310, "statusPage": "https://status.ionq.co"}, {"id": "ionq.simulator",
-        "currentAvailability": "Available", "averageQueueTime": 3, "statusPage": "https://status.ionq.co"}]},
-        {"id": "quantinuum", "currentAvailability": "Degraded", "targets": [{"id":
-        "quantinuum.hqs-lt-s1", "currentAvailability": "Degraded", "averageQueueTime":
-        58708, "statusPage": "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.hqs-lt-s1-apival",
-        "currentAvailability": "Available", "averageQueueTime": 2, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.hqs-lt-s2", "currentAvailability": "Unavailable", "averageQueueTime":
-        0, "statusPage": "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.hqs-lt-s2-apival",
-        "currentAvailability": "Available", "averageQueueTime": 1, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.hqs-lt-s1-sim", "currentAvailability": "Available", "averageQueueTime":
-        332, "statusPage": "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.hqs-lt-s2-sim",
-        "currentAvailability": "Available", "averageQueueTime": 163, "statusPage":
-        "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.hqs-lt", "currentAvailability":
-        "Degraded", "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.qpu.h1-1", "currentAvailability": "Degraded", "averageQueueTime":
-        58708, "statusPage": "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.sim.h1-1sc",
-        "currentAvailability": "Available", "averageQueueTime": 2, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.qpu.h1-2", "currentAvailability": "Unavailable", "averageQueueTime":
-        0, "statusPage": "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.sim.h1-2sc",
-        "currentAvailability": "Available", "averageQueueTime": 1, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.sim.h1-1e", "currentAvailability": "Available", "averageQueueTime":
-        332, "statusPage": "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.sim.h1-2e",
-        "currentAvailability": "Available", "averageQueueTime": 163, "statusPage":
-        "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.qpu.h1", "currentAvailability":
-        "Unavailable", "averageQueueTime": 0, "statusPage": null}, {"id": "quantinuum.sim.h1-1sc-preview",
-        "currentAvailability": "Available", "averageQueueTime": 2, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.sim.h1-2sc-preview", "currentAvailability": "Available",
-        "averageQueueTime": 1, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.sim.h1-1e-preview", "currentAvailability": "Available",
-        "averageQueueTime": 332, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.sim.h1-2e-preview", "currentAvailability": "Available",
-        "averageQueueTime": 163, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.qpu.h1-1-preview", "currentAvailability": "Degraded", "averageQueueTime":
-        58708, "statusPage": "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.qpu.h1-2-preview",
-        "currentAvailability": "Unavailable", "averageQueueTime": 0, "statusPage":
-        "https://www.quantinuum.com/products/h1"}]}, {"id": "rigetti", "currentAvailability":
-        "Available", "targets": [{"id": "rigetti.sim.qvm", "currentAvailability":
-        "Available", "averageQueueTime": 5, "statusPage": "https://rigetti.statuspage.io/"},
-        {"id": "rigetti.qpu.aspen-m-2", "currentAvailability": "Available", "averageQueueTime":
-        5, "statusPage": "https://rigetti.statuspage.io/"}, {"id": "rigetti.qpu.aspen-m-3",
-        "currentAvailability": "Available", "averageQueueTime": 5, "statusPage": "https://rigetti.statuspage.io/"}]},
-        {"id": "1qbit", "currentAvailability": "Degraded", "targets": [{"id": "1qbit.tabu",
-        "currentAvailability": "Unavailable", "averageQueueTime": -1, "statusPage":
-        "https://status.1qbit.com/"}, {"id": "1qbit.pathrelinking", "currentAvailability":
-        "Unavailable", "averageQueueTime": -1, "statusPage": "https://status.1qbit.com/"},
-        {"id": "1qbit.pticm", "currentAvailability": "Unavailable", "averageQueueTime":
-        -1, "statusPage": "https://status.1qbit.com/"}]}, {"id": "toshiba", "currentAvailability":
-        "Available", "targets": [{"id": "toshiba.sbm.ising", "currentAvailability":
-        "Available", "averageQueueTime": 0, "statusPage": "https://aq-sbm.net/v1/service_monitor/index.html"}]},
+      string: '{"value": [{"id": "ionq", "currentAvailability": "Degraded", "targets":
+        [{"id": "ionq.qpu", "currentAvailability": "Available", "averageQueueTime":
+        0, "statusPage": "https://status.ionq.co"}, {"id": "ionq.qpu.aria-1", "currentAvailability":
+        "Unavailable", "averageQueueTime": 755821, "statusPage": "https://status.ionq.co"},
+        {"id": "ionq.qpu.aria-2", "currentAvailability": "Available", "averageQueueTime":
+        78188, "statusPage": "https://status.ionq.co"}, {"id": "ionq.simulator", "currentAvailability":
+        "Available", "averageQueueTime": 1249, "statusPage": "https://status.ionq.co"}]},
         {"id": "microsoft-qc", "currentAvailability": "Available", "targets": [{"id":
         "microsoft.estimator", "currentAvailability": "Available", "averageQueueTime":
-        0, "statusPage": null}]}, {"id": "qci", "currentAvailability": "Degraded",
-        "targets": [{"id": "qci.simulator", "currentAvailability": "Available", "averageQueueTime":
-        1, "statusPage": "https://quantumcircuits.com"}, {"id": "qci.machine1", "currentAvailability":
-        "Unavailable", "averageQueueTime": 1, "statusPage": "https://quantumcircuits.com"},
-        {"id": "qci.simulator.noisy", "currentAvailability": "Available", "averageQueueTime":
-        0, "statusPage": "https://quantumcircuits.com"}]}], "nextLink": null, "access_token":
+        0, "statusPage": null}]}, {"id": "pasqal", "currentAvailability": "Available",
+        "targets": [{"id": "pasqal.sim.emu_free", "currentAvailability": "Available",
+        "averageQueueTime": 0, "statusPage": "https://pasqal.com"}, {"id": "pasqal.sim.emu_tn",
+        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": "https://pasqal.com"},
+        {"id": "pasqal.qpu.fresnel", "currentAvailability": "Available", "averageQueueTime":
+        0, "statusPage": "https://pasqal.com"}]}, {"id": "quantinuum", "currentAvailability":
+        "Degraded", "targets": [{"id": "quantinuum.qpu.h1-1", "currentAvailability":
+        "Unavailable", "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        {"id": "quantinuum.sim.h1-1sc", "currentAvailability": "Available", "averageQueueTime":
+        0, "statusPage": "https://www.quantinuum.com/hardware/h1"}, {"id": "quantinuum.qpu.h1-2",
+        "currentAvailability": "Unavailable", "averageQueueTime": 0, "statusPage":
+        "https://www.quantinuum.com/hardware/h1"}, {"id": "quantinuum.sim.h1-2sc",
+        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        {"id": "quantinuum.sim.h1-1e", "currentAvailability": "Available", "averageQueueTime":
+        7, "statusPage": "https://www.quantinuum.com/hardware/h1"}, {"id": "quantinuum.sim.h1-2e",
+        "currentAvailability": "Available", "averageQueueTime": 9, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        {"id": "quantinuum.qpu.h2-1", "currentAvailability": "Unavailable", "averageQueueTime":
+        0, "statusPage": "https://www.quantinuum.com/hardware/h2"}, {"id": "quantinuum.sim.h2-1sc",
+        "currentAvailability": "Available", "averageQueueTime": 7, "statusPage": "https://www.quantinuum.com/hardware/h2"},
+        {"id": "quantinuum.sim.h2-1e", "currentAvailability": "Available", "averageQueueTime":
+        0, "statusPage": "https://www.quantinuum.com/hardware/h2"}, {"id": "quantinuum.sim.h1-1sc-preview",
+        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        {"id": "quantinuum.sim.h1-2sc-preview", "currentAvailability": "Available",
+        "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        {"id": "quantinuum.sim.h1-1e-preview", "currentAvailability": "Available",
+        "averageQueueTime": 7, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        {"id": "quantinuum.sim.h1-2e-preview", "currentAvailability": "Available",
+        "averageQueueTime": 9, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        {"id": "quantinuum.qpu.h1-1-preview", "currentAvailability": "Unavailable",
+        "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        {"id": "quantinuum.qpu.h1-2-preview", "currentAvailability": "Unavailable",
+        "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h1"}]},
+        {"id": "rigetti", "currentAvailability": "Degraded", "targets": [{"id": "rigetti.sim.qvm",
+        "currentAvailability": "Available", "averageQueueTime": 5, "statusPage": "https://rigetti.statuspage.io/"},
+        {"id": "rigetti.qpu.aspen-m-2", "currentAvailability": "Unavailable", "averageQueueTime":
+        0, "statusPage": null}, {"id": "rigetti.qpu.aspen-m-3", "currentAvailability":
+        "Available", "averageQueueTime": 5, "statusPage": "https://rigetti.statuspage.io/"}]},
+        {"id": "qci", "currentAvailability": "Degraded", "targets": [{"id": "qci.simulator",
+        "currentAvailability": "Available", "averageQueueTime": 1, "statusPage": "https://quantumcircuits.com"},
+        {"id": "qci.machine1", "currentAvailability": "Unavailable", "averageQueueTime":
+        1, "statusPage": "https://quantumcircuits.com"}, {"id": "qci.simulator.noisy",
+        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": "https://quantumcircuits.com"}]},
+        {"id": "Microsoft.Test", "currentAvailability": "Available", "targets": [{"id":
+        "echo-rigetti", "currentAvailability": "Available", "averageQueueTime": 1,
+        "statusPage": ""}, {"id": "echo-quantinuum", "currentAvailability": "Available",
+        "averageQueueTime": 1, "statusPage": ""}, {"id": "echo-qci", "currentAvailability":
+        "Available", "averageQueueTime": 1, "statusPage": ""}, {"id": "echo-ionq",
+        "currentAvailability": "Available", "averageQueueTime": 1, "statusPage": ""},
+        {"id": "sparse-sim-rigetti", "currentAvailability": "Available", "averageQueueTime":
+        1, "statusPage": ""}, {"id": "sparse-sim-quantinuum", "currentAvailability":
+        "Available", "averageQueueTime": 1, "statusPage": ""}, {"id": "sparse-sim-qci",
+        "currentAvailability": "Available", "averageQueueTime": 1, "statusPage": ""},
+        {"id": "sparse-sim-ionq", "currentAvailability": "Available", "averageQueueTime":
+        1, "statusPage": ""}, {"id": "echo-output", "currentAvailability": "Available",
+        "averageQueueTime": 1, "statusPage": ""}]}], "nextLink": null, "access_token":
         "fake_token"}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '6967'
-      content-type:
-      - application/json; charset=utf-8
-      transfer-encoding:
-      - chunked
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - testapp-azure-quantum-qiskit azsdk-python-quantum/0.0.0.1 Python/3.9.16 (Windows-10-10.0.22000-SP0)
-    method: GET
-    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/providerStatus?api-version=2022-09-12-preview
-  response:
-    body:
-      string: '{"value": [{"id": "Microsoft", "currentAvailability": "Available",
-        "targets": [{"id": "microsoft.paralleltempering-parameterfree.cpu", "currentAvailability":
-        "Available", "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.paralleltempering.cpu",
-        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null},
-        {"id": "microsoft.simulatedannealing-parameterfree.cpu", "currentAvailability":
-        "Available", "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.simulatedannealing.cpu",
-        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null},
-        {"id": "microsoft.tabu-parameterfree.cpu", "currentAvailability": "Available",
-        "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.tabu.cpu", "currentAvailability":
-        "Available", "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.qmc.cpu",
-        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null},
-        {"id": "microsoft.populationannealing.cpu", "currentAvailability": "Available",
-        "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.populationannealing-parameterfree.cpu",
-        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null},
-        {"id": "microsoft.substochasticmontecarlo.cpu", "currentAvailability": "Available",
-        "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.substochasticmontecarlo-parameterfree.cpu",
-        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null},
-        {"id": "microsoft.populationannealing-parameterfree.cpu", "currentAvailability":
-        "Available", "averageQueueTime": 0, "statusPage": null}]}, {"id": "ionq",
-        "currentAvailability": "Available", "targets": [{"id": "ionq.qpu", "currentAvailability":
-        "Available", "averageQueueTime": 18120, "statusPage": "https://status.ionq.co"},
-        {"id": "ionq.qpu.aria-1", "currentAvailability": "Available", "averageQueueTime":
-        379310, "statusPage": "https://status.ionq.co"}, {"id": "ionq.simulator",
-        "currentAvailability": "Available", "averageQueueTime": 3, "statusPage": "https://status.ionq.co"}]},
-        {"id": "quantinuum", "currentAvailability": "Degraded", "targets": [{"id":
-        "quantinuum.hqs-lt-s1", "currentAvailability": "Degraded", "averageQueueTime":
-        58708, "statusPage": "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.hqs-lt-s1-apival",
-        "currentAvailability": "Available", "averageQueueTime": 2, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.hqs-lt-s2", "currentAvailability": "Unavailable", "averageQueueTime":
-        0, "statusPage": "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.hqs-lt-s2-apival",
-        "currentAvailability": "Available", "averageQueueTime": 1, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.hqs-lt-s1-sim", "currentAvailability": "Available", "averageQueueTime":
-        332, "statusPage": "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.hqs-lt-s2-sim",
-        "currentAvailability": "Available", "averageQueueTime": 163, "statusPage":
-        "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.hqs-lt", "currentAvailability":
-        "Degraded", "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.qpu.h1-1", "currentAvailability": "Degraded", "averageQueueTime":
-        58708, "statusPage": "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.sim.h1-1sc",
-        "currentAvailability": "Available", "averageQueueTime": 2, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.qpu.h1-2", "currentAvailability": "Unavailable", "averageQueueTime":
-        0, "statusPage": "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.sim.h1-2sc",
-        "currentAvailability": "Available", "averageQueueTime": 1, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.sim.h1-1e", "currentAvailability": "Available", "averageQueueTime":
-        332, "statusPage": "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.sim.h1-2e",
-        "currentAvailability": "Available", "averageQueueTime": 163, "statusPage":
-        "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.qpu.h1", "currentAvailability":
-        "Unavailable", "averageQueueTime": 0, "statusPage": null}, {"id": "quantinuum.sim.h1-1sc-preview",
-        "currentAvailability": "Available", "averageQueueTime": 2, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.sim.h1-2sc-preview", "currentAvailability": "Available",
-        "averageQueueTime": 1, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.sim.h1-1e-preview", "currentAvailability": "Available",
-        "averageQueueTime": 332, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.sim.h1-2e-preview", "currentAvailability": "Available",
-        "averageQueueTime": 163, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.qpu.h1-1-preview", "currentAvailability": "Degraded", "averageQueueTime":
-        58708, "statusPage": "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.qpu.h1-2-preview",
-        "currentAvailability": "Unavailable", "averageQueueTime": 0, "statusPage":
-        "https://www.quantinuum.com/products/h1"}]}, {"id": "rigetti", "currentAvailability":
-        "Available", "targets": [{"id": "rigetti.sim.qvm", "currentAvailability":
-        "Available", "averageQueueTime": 5, "statusPage": "https://rigetti.statuspage.io/"},
-        {"id": "rigetti.qpu.aspen-m-2", "currentAvailability": "Available", "averageQueueTime":
-        5, "statusPage": "https://rigetti.statuspage.io/"}, {"id": "rigetti.qpu.aspen-m-3",
-        "currentAvailability": "Available", "averageQueueTime": 5, "statusPage": "https://rigetti.statuspage.io/"}]},
-        {"id": "1qbit", "currentAvailability": "Degraded", "targets": [{"id": "1qbit.tabu",
-        "currentAvailability": "Unavailable", "averageQueueTime": -1, "statusPage":
-        "https://status.1qbit.com/"}, {"id": "1qbit.pathrelinking", "currentAvailability":
-        "Unavailable", "averageQueueTime": -1, "statusPage": "https://status.1qbit.com/"},
-        {"id": "1qbit.pticm", "currentAvailability": "Unavailable", "averageQueueTime":
-        -1, "statusPage": "https://status.1qbit.com/"}]}, {"id": "toshiba", "currentAvailability":
-        "Available", "targets": [{"id": "toshiba.sbm.ising", "currentAvailability":
-        "Available", "averageQueueTime": 0, "statusPage": "https://aq-sbm.net/v1/service_monitor/index.html"}]},
-        {"id": "microsoft-qc", "currentAvailability": "Available", "targets": [{"id":
-        "microsoft.estimator", "currentAvailability": "Available", "averageQueueTime":
-        0, "statusPage": null}]}, {"id": "qci", "currentAvailability": "Degraded",
-        "targets": [{"id": "qci.simulator", "currentAvailability": "Available", "averageQueueTime":
-        1, "statusPage": "https://quantumcircuits.com"}, {"id": "qci.machine1", "currentAvailability":
-        "Unavailable", "averageQueueTime": 1, "statusPage": "https://quantumcircuits.com"},
-        {"id": "qci.simulator.noisy", "currentAvailability": "Available", "averageQueueTime":
-        0, "statusPage": "https://quantumcircuits.com"}]}], "nextLink": null, "access_token":
-        "fake_token"}'
-    headers:
-      connection:
-      - keep-alive
-      content-length:
-      - '6967'
-      content-type:
-      - application/json; charset=utf-8
-      transfer-encoding:
-      - chunked
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - testapp-azure-quantum-qiskit azsdk-python-quantum/0.0.0.1 Python/3.9.16 (Windows-10-10.0.22000-SP0)
-    method: GET
-    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/providerStatus?api-version=2022-09-12-preview
-  response:
-    body:
-      string: '{"value": [{"id": "Microsoft", "currentAvailability": "Available",
-        "targets": [{"id": "microsoft.paralleltempering-parameterfree.cpu", "currentAvailability":
-        "Available", "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.paralleltempering.cpu",
-        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null},
-        {"id": "microsoft.simulatedannealing-parameterfree.cpu", "currentAvailability":
-        "Available", "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.simulatedannealing.cpu",
-        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null},
-        {"id": "microsoft.tabu-parameterfree.cpu", "currentAvailability": "Available",
-        "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.tabu.cpu", "currentAvailability":
-        "Available", "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.qmc.cpu",
-        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null},
-        {"id": "microsoft.populationannealing.cpu", "currentAvailability": "Available",
-        "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.populationannealing-parameterfree.cpu",
-        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null},
-        {"id": "microsoft.substochasticmontecarlo.cpu", "currentAvailability": "Available",
-        "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.substochasticmontecarlo-parameterfree.cpu",
-        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null},
-        {"id": "microsoft.populationannealing-parameterfree.cpu", "currentAvailability":
-        "Available", "averageQueueTime": 0, "statusPage": null}]}, {"id": "ionq",
-        "currentAvailability": "Available", "targets": [{"id": "ionq.qpu", "currentAvailability":
-        "Available", "averageQueueTime": 18120, "statusPage": "https://status.ionq.co"},
-        {"id": "ionq.qpu.aria-1", "currentAvailability": "Available", "averageQueueTime":
-        379310, "statusPage": "https://status.ionq.co"}, {"id": "ionq.simulator",
-        "currentAvailability": "Available", "averageQueueTime": 3, "statusPage": "https://status.ionq.co"}]},
-        {"id": "quantinuum", "currentAvailability": "Degraded", "targets": [{"id":
-        "quantinuum.hqs-lt-s1", "currentAvailability": "Degraded", "averageQueueTime":
-        58708, "statusPage": "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.hqs-lt-s1-apival",
-        "currentAvailability": "Available", "averageQueueTime": 2, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.hqs-lt-s2", "currentAvailability": "Unavailable", "averageQueueTime":
-        0, "statusPage": "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.hqs-lt-s2-apival",
-        "currentAvailability": "Available", "averageQueueTime": 1, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.hqs-lt-s1-sim", "currentAvailability": "Available", "averageQueueTime":
-        332, "statusPage": "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.hqs-lt-s2-sim",
-        "currentAvailability": "Available", "averageQueueTime": 163, "statusPage":
-        "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.hqs-lt", "currentAvailability":
-        "Degraded", "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.qpu.h1-1", "currentAvailability": "Degraded", "averageQueueTime":
-        58708, "statusPage": "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.sim.h1-1sc",
-        "currentAvailability": "Available", "averageQueueTime": 2, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.qpu.h1-2", "currentAvailability": "Unavailable", "averageQueueTime":
-        0, "statusPage": "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.sim.h1-2sc",
-        "currentAvailability": "Available", "averageQueueTime": 1, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.sim.h1-1e", "currentAvailability": "Available", "averageQueueTime":
-        332, "statusPage": "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.sim.h1-2e",
-        "currentAvailability": "Available", "averageQueueTime": 163, "statusPage":
-        "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.qpu.h1", "currentAvailability":
-        "Unavailable", "averageQueueTime": 0, "statusPage": null}, {"id": "quantinuum.sim.h1-1sc-preview",
-        "currentAvailability": "Available", "averageQueueTime": 2, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.sim.h1-2sc-preview", "currentAvailability": "Available",
-        "averageQueueTime": 1, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.sim.h1-1e-preview", "currentAvailability": "Available",
-        "averageQueueTime": 332, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.sim.h1-2e-preview", "currentAvailability": "Available",
-        "averageQueueTime": 163, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.qpu.h1-1-preview", "currentAvailability": "Degraded", "averageQueueTime":
-        58708, "statusPage": "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.qpu.h1-2-preview",
-        "currentAvailability": "Unavailable", "averageQueueTime": 0, "statusPage":
-        "https://www.quantinuum.com/products/h1"}]}, {"id": "rigetti", "currentAvailability":
-        "Available", "targets": [{"id": "rigetti.sim.qvm", "currentAvailability":
-        "Available", "averageQueueTime": 5, "statusPage": "https://rigetti.statuspage.io/"},
-        {"id": "rigetti.qpu.aspen-m-2", "currentAvailability": "Available", "averageQueueTime":
-        5, "statusPage": "https://rigetti.statuspage.io/"}, {"id": "rigetti.qpu.aspen-m-3",
-        "currentAvailability": "Available", "averageQueueTime": 5, "statusPage": "https://rigetti.statuspage.io/"}]},
-        {"id": "1qbit", "currentAvailability": "Degraded", "targets": [{"id": "1qbit.tabu",
-        "currentAvailability": "Unavailable", "averageQueueTime": -1, "statusPage":
-        "https://status.1qbit.com/"}, {"id": "1qbit.pathrelinking", "currentAvailability":
-        "Unavailable", "averageQueueTime": -1, "statusPage": "https://status.1qbit.com/"},
-        {"id": "1qbit.pticm", "currentAvailability": "Unavailable", "averageQueueTime":
-        -1, "statusPage": "https://status.1qbit.com/"}]}, {"id": "toshiba", "currentAvailability":
-        "Available", "targets": [{"id": "toshiba.sbm.ising", "currentAvailability":
-        "Available", "averageQueueTime": 0, "statusPage": "https://aq-sbm.net/v1/service_monitor/index.html"}]},
-        {"id": "microsoft-qc", "currentAvailability": "Available", "targets": [{"id":
-        "microsoft.estimator", "currentAvailability": "Available", "averageQueueTime":
-        0, "statusPage": null}]}, {"id": "qci", "currentAvailability": "Degraded",
-        "targets": [{"id": "qci.simulator", "currentAvailability": "Available", "averageQueueTime":
-        1, "statusPage": "https://quantumcircuits.com"}, {"id": "qci.machine1", "currentAvailability":
-        "Unavailable", "averageQueueTime": 1, "statusPage": "https://quantumcircuits.com"},
-        {"id": "qci.simulator.noisy", "currentAvailability": "Available", "averageQueueTime":
-        0, "statusPage": "https://quantumcircuits.com"}]}], "nextLink": null, "access_token":
-        "fake_token"}'
-    headers:
-      connection:
-      - keep-alive
-      content-length:
-      - '6967'
-      content-type:
-      - application/json; charset=utf-8
-      transfer-encoding:
-      - chunked
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - testapp-azure-quantum-qiskit azsdk-python-quantum/0.0.0.1 Python/3.9.16 (Windows-10-10.0.22000-SP0)
-    method: GET
-    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/providerStatus?api-version=2022-09-12-preview
-  response:
-    body:
-      string: '{"value": [{"id": "Microsoft", "currentAvailability": "Available",
-        "targets": [{"id": "microsoft.paralleltempering-parameterfree.cpu", "currentAvailability":
-        "Available", "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.paralleltempering.cpu",
-        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null},
-        {"id": "microsoft.simulatedannealing-parameterfree.cpu", "currentAvailability":
-        "Available", "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.simulatedannealing.cpu",
-        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null},
-        {"id": "microsoft.tabu-parameterfree.cpu", "currentAvailability": "Available",
-        "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.tabu.cpu", "currentAvailability":
-        "Available", "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.qmc.cpu",
-        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null},
-        {"id": "microsoft.populationannealing.cpu", "currentAvailability": "Available",
-        "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.populationannealing-parameterfree.cpu",
-        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null},
-        {"id": "microsoft.substochasticmontecarlo.cpu", "currentAvailability": "Available",
-        "averageQueueTime": 0, "statusPage": null}, {"id": "microsoft.substochasticmontecarlo-parameterfree.cpu",
-        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": null},
-        {"id": "microsoft.populationannealing-parameterfree.cpu", "currentAvailability":
-        "Available", "averageQueueTime": 0, "statusPage": null}]}, {"id": "ionq",
-        "currentAvailability": "Available", "targets": [{"id": "ionq.qpu", "currentAvailability":
-        "Available", "averageQueueTime": 18120, "statusPage": "https://status.ionq.co"},
-        {"id": "ionq.qpu.aria-1", "currentAvailability": "Available", "averageQueueTime":
-        379310, "statusPage": "https://status.ionq.co"}, {"id": "ionq.simulator",
-        "currentAvailability": "Available", "averageQueueTime": 3, "statusPage": "https://status.ionq.co"}]},
-        {"id": "quantinuum", "currentAvailability": "Degraded", "targets": [{"id":
-        "quantinuum.hqs-lt-s1", "currentAvailability": "Degraded", "averageQueueTime":
-        58708, "statusPage": "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.hqs-lt-s1-apival",
-        "currentAvailability": "Available", "averageQueueTime": 2, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.hqs-lt-s2", "currentAvailability": "Unavailable", "averageQueueTime":
-        0, "statusPage": "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.hqs-lt-s2-apival",
-        "currentAvailability": "Available", "averageQueueTime": 1, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.hqs-lt-s1-sim", "currentAvailability": "Available", "averageQueueTime":
-        332, "statusPage": "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.hqs-lt-s2-sim",
-        "currentAvailability": "Available", "averageQueueTime": 163, "statusPage":
-        "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.hqs-lt", "currentAvailability":
-        "Degraded", "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.qpu.h1-1", "currentAvailability": "Degraded", "averageQueueTime":
-        58708, "statusPage": "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.sim.h1-1sc",
-        "currentAvailability": "Available", "averageQueueTime": 2, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.qpu.h1-2", "currentAvailability": "Unavailable", "averageQueueTime":
-        0, "statusPage": "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.sim.h1-2sc",
-        "currentAvailability": "Available", "averageQueueTime": 1, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.sim.h1-1e", "currentAvailability": "Available", "averageQueueTime":
-        332, "statusPage": "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.sim.h1-2e",
-        "currentAvailability": "Available", "averageQueueTime": 163, "statusPage":
-        "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.qpu.h1", "currentAvailability":
-        "Unavailable", "averageQueueTime": 0, "statusPage": null}, {"id": "quantinuum.sim.h1-1sc-preview",
-        "currentAvailability": "Available", "averageQueueTime": 2, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.sim.h1-2sc-preview", "currentAvailability": "Available",
-        "averageQueueTime": 1, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.sim.h1-1e-preview", "currentAvailability": "Available",
-        "averageQueueTime": 332, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.sim.h1-2e-preview", "currentAvailability": "Available",
-        "averageQueueTime": 163, "statusPage": "https://www.quantinuum.com/products/h1"},
-        {"id": "quantinuum.qpu.h1-1-preview", "currentAvailability": "Degraded", "averageQueueTime":
-        58708, "statusPage": "https://www.quantinuum.com/products/h1"}, {"id": "quantinuum.qpu.h1-2-preview",
-        "currentAvailability": "Unavailable", "averageQueueTime": 0, "statusPage":
-        "https://www.quantinuum.com/products/h1"}]}, {"id": "rigetti", "currentAvailability":
-        "Available", "targets": [{"id": "rigetti.sim.qvm", "currentAvailability":
-        "Available", "averageQueueTime": 5, "statusPage": "https://rigetti.statuspage.io/"},
-        {"id": "rigetti.qpu.aspen-m-2", "currentAvailability": "Available", "averageQueueTime":
-        5, "statusPage": "https://rigetti.statuspage.io/"}, {"id": "rigetti.qpu.aspen-m-3",
-        "currentAvailability": "Available", "averageQueueTime": 5, "statusPage": "https://rigetti.statuspage.io/"}]},
-        {"id": "1qbit", "currentAvailability": "Degraded", "targets": [{"id": "1qbit.tabu",
-        "currentAvailability": "Unavailable", "averageQueueTime": -1, "statusPage":
-        "https://status.1qbit.com/"}, {"id": "1qbit.pathrelinking", "currentAvailability":
-        "Unavailable", "averageQueueTime": -1, "statusPage": "https://status.1qbit.com/"},
-        {"id": "1qbit.pticm", "currentAvailability": "Unavailable", "averageQueueTime":
-        -1, "statusPage": "https://status.1qbit.com/"}]}, {"id": "toshiba", "currentAvailability":
-        "Available", "targets": [{"id": "toshiba.sbm.ising", "currentAvailability":
-        "Available", "averageQueueTime": 0, "statusPage": "https://aq-sbm.net/v1/service_monitor/index.html"}]},
-        {"id": "microsoft-qc", "currentAvailability": "Available", "targets": [{"id":
-        "microsoft.estimator", "currentAvailability": "Available", "averageQueueTime":
-        0, "statusPage": null}]}, {"id": "qci", "currentAvailability": "Degraded",
-        "targets": [{"id": "qci.simulator", "currentAvailability": "Available", "averageQueueTime":
-        1, "statusPage": "https://quantumcircuits.com"}, {"id": "qci.machine1", "currentAvailability":
-        "Unavailable", "averageQueueTime": 1, "statusPage": "https://quantumcircuits.com"},
-        {"id": "qci.simulator.noisy", "currentAvailability": "Available", "averageQueueTime":
-        0, "statusPage": "https://quantumcircuits.com"}]}], "nextLink": null, "access_token":
-        "fake_token"}'
-    headers:
-      connection:
-      - keep-alive
-      content-length:
-      - '6967'
+      - '5502'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:

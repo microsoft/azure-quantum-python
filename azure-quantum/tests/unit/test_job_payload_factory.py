@@ -43,11 +43,15 @@ class JobPayloadFactory():
         }
         """, "ENTRYPOINT__BellState_Inline")
 
+    qsharp_inline_callable_bell_state = None
+
     @staticmethod
     def get_qsharp_inline_callable_bell_state() -> Tuple["QSharpCallable", str]:
-        (qsharp_code, entrypoint) = JobPayloadFactory.get_qsharp_inline_code_bell_state()
-        import qsharp
-        return (qsharp.compile(qsharp_code), entrypoint)
+        if not JobPayloadFactory.qsharp_inline_callable_bell_state:
+            (qsharp_code, entrypoint) = JobPayloadFactory.get_qsharp_inline_code_bell_state()
+            import qsharp
+            JobPayloadFactory.qsharp_inline_callable_bell_state = (qsharp.compile(qsharp_code), entrypoint)
+        return JobPayloadFactory.qsharp_inline_callable_bell_state
 
     @staticmethod
     def get_qsharp_inline_qir_bitcode_bell_state(target: Union[None, str] = None) -> Tuple[bytes, str]:
@@ -55,16 +59,24 @@ class JobPayloadFactory():
         qir_bitcode = qsharpCallable._repr_qir_(target=target)
         return (qir_bitcode, entrypoint)
 
+    qsharp_file_callable_bell_state = None
+
     @staticmethod
     def get_qsharp_file_callable_bell_state() -> Tuple["QSharpCallable", str]:
-        from QSharpBellState import BellState_File
-        return (BellState_File, "BellState_File")
+        if not JobPayloadFactory.qsharp_file_callable_bell_state:
+            from QSharpBellState import BellState_File
+            JobPayloadFactory.qsharp_file_callable_bell_state = (BellState_File, "BellState_File")
+        return JobPayloadFactory.qsharp_file_callable_bell_state
+
+    qsharp_file_qir_bitcode_bell_state = None
 
     @staticmethod
     def get_qsharp_file_qir_bitcode_bell_state(target: Union[None, str] = None) -> Tuple[bytes, str]:
-        (qsharpCallable, entrypoint) = JobPayloadFactory.get_qsharp_file_callable_bell_state()
-        qir_bitcode = qsharpCallable._repr_qir_(target=target)
-        return (qir_bitcode, entrypoint)
+        if not JobPayloadFactory.qsharp_file_qir_bitcode_bell_state:
+            (qsharpCallable, entrypoint) = JobPayloadFactory.get_qsharp_file_callable_bell_state()
+            qir_bitcode = qsharpCallable._repr_qir_(target=target)
+            JobPayloadFactory.qsharp_file_qir_bitcode_bell_state = (qir_bitcode, entrypoint)
+        return JobPayloadFactory.qsharp_file_qir_bitcode_bell_state
 
     @staticmethod
     def get_qiskit_circuit_bell_state() -> "qiskit.QuantumCircuit":
@@ -75,18 +87,6 @@ class JobPayloadFactory():
         circuit.cnot(0, 1)
         circuit.measure([0, 1], [0, 1])
         return circuit
-
-    @staticmethod
-    def get_qio_ising_problem() -> "optimization.Problem":
-        import azure.quantum.optimization as optimization
-        problem = optimization.Problem(name="Ising Problem",
-                                       problem_type=optimization.ProblemType.ising)
-        terms = [
-            optimization.Term(c=1, indices=[0]),
-            optimization.Term(c=2, indices=[1, 0]),
-        ]
-        problem.add_terms(terms=terms)
-        return problem
 
 
 class TestJobPayloadFactory(unittest.TestCase):
@@ -99,11 +99,6 @@ class TestJobPayloadFactory(unittest.TestCase):
     def test_get_qiskit_circuit_bell_state(self):
         import qiskit
         self.assertIsInstance(JobPayloadFactory.get_qiskit_circuit_bell_state(), qiskit.QuantumCircuit)
-
-    @pytest.mark.qio
-    def test_get_qio_ising_problem(self):
-        import azure.quantum.optimization as optimization
-        self.assertIsInstance(JobPayloadFactory.get_qio_ising_problem(), optimization.Problem)
 
     @pytest.mark.qsharp
     @skip_if_no_qsharp
