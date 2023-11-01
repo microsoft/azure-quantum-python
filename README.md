@@ -4,7 +4,7 @@
 
 ## Introduction
 
-This repository contains the azure-quantum python SDK.
+This repository contains the azure-quantum Python SDK.
 
 Use azure-quantum SDK to submit quantum jobs written in Q#, Qiskit, or Cirq to the Azure Quantum service:
 
