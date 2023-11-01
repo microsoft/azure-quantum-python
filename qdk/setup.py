@@ -22,6 +22,7 @@ setuptools.setup(
     author="Microsoft",
     author_email="que-contacts@microsoft.com",
     description="Quantum Development Kit",
+    license="MIT License",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/microsoft/qdk-python",
