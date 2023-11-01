@@ -19,8 +19,7 @@ python -m pip install azure-quantum
 
 ## Example scripts
 
-* **[cli.py](https://github.com/microsoft/qdk-python/blob/main/azure-quantum/examples/resource_estimation/cli.py): A resource estimation CLI that can execute resource
-  estimation jobs from various input formats and generate JSON output.**
+* **[cli.py](https://github.com/microsoft/qdk-python/blob/main/azure-quantum/examples/resource_estimation/cli.py): A resource estimation CLI that can execute resource estimation jobs from various input formats and generate JSON output.**
 
   The input type is determined by file extension:
 
@@ -50,4 +49,24 @@ python -m pip install azure-quantum
   python cli.py -r "resource id" -l "location" cli_test_files/multiplier.qs \
       -p cli_test_files/multiplier.json \
       -o output.json
+  ```
+
+* **[rsa.py](https://github.com/microsoft/qdk-python/blob/main/azure-quantum/examples/resource_estimation/rsa.py): Physical resource estimation for RSA using a pre-compiled QIR code.**
+
+  You can change the parameters to the factoring algorithm, e.g., the prime product, inside the code.
+
+  Usage:
+
+  ```shell
+  python rsa.py -r "resource_id" -l "location"
+  ```
+
+* **[ecc.py](https://github.com/microsoft/qdk-python/blob/main/azure-quantum/examples/resource_estimation/ecc.py): Physical resource estimation for Elliptic Curve Cryptography starting from logical resource estimates.**
+
+  The possible key sizes are 256, 384, and 521.
+
+  Usage:
+
+  ```shell
+  python ecc.py -k 256 -r "resource_id" -l "location"
   ```
