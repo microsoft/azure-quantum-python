@@ -12,19 +12,22 @@ from azure.quantum._client.models import CostEstimate, UsageEvent
 COST_1QUBIT_GATE_MAP = {
     "ionq.simulator" : 0.0,
     "ionq.qpu" : 0.00003,
-    "ionq.qpu.aria-1" : 0.0002205
+    "ionq.qpu.aria-1" : 0.0002205,
+    "ionq.qpu.aria-2" : 0.0002205
 }
 
 COST_2QUBIT_GATE_MAP = {
     "ionq.simulator" : 0.0,
     "ionq.qpu" : 0.0003,
-    "ionq.qpu.aria-1" : 0.00098
+    "ionq.qpu.aria-1" : 0.00098,
+    "ionq.qpu.aria-2" : 0.00098
 }
 
 MIN_PRICE_MAP = {
     "ionq.simulator" : 0.0,
     "ionq.qpu" : 1.0,
-    "ionq.qpu.aria-1" : 1.0
+    "ionq.qpu.aria-1" : 97.5,
+    "ionq.qpu.aria-2" : 97.5
 }
 
 def int_to_bitstring(k: int, num_qubits: int, measured_qubit_ids: List[int]):
@@ -39,7 +42,8 @@ class IonQ(Target):
     target_names = (
         "ionq.qpu",
         "ionq.simulator",
-        "ionq.qpu.aria-1"
+        "ionq.qpu.aria-1",
+        "ionq.qpu.aria-2"
     )
 
     def __init__(
@@ -132,7 +136,7 @@ class IonQ(Target):
 
         For the most current pricing details, see
         https://docs.microsoft.com/azure/quantum/provider-ionq#pricing
-        Or find your workspace and view pricing options in the "Provider" tab
+        or find your workspace and view pricing options in the "Provider" tab
         of your workspace: https://aka.ms/aq/myworkspaces
 
         :param circuit: Quantum circuit in IonQ JSON format (for examples,

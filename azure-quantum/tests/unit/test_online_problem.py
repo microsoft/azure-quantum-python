@@ -15,6 +15,7 @@ import json
 
 class TestOnlineProblemClass(QuantumTestBase):
     def setUp(self):
+        super().setUp()
         self.mock_ws = Mock()
         self.mock_ws._get_linked_storage_sas_uri.return_value = Mock()
         self.o_problem = OnlineProblem(name="test", blob_uri="mock_blob_uri")
@@ -31,6 +32,6 @@ class TestOnlineProblemClass(QuantumTestBase):
             mock_blob_url = Mock()
             actual_result = self.o_problem.download(self.mock_ws)
             # TODO: add test that user warning was registered in log
-            assert actual_result.name == "test"
+            self.assertEqual(actual_result.name, "test")
             azure.quantum.optimization.problem.download_blob.assert_called_once()
-            assert isinstance(actual_result, Problem)
+            self.assertIsInstance(actual_result, Problem)

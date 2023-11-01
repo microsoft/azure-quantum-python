@@ -118,7 +118,7 @@ target '{self.name}' of provider '{self.provider_id}' not found."
     @property
     def current_availability(self):
         return self._current_availability
-    
+
     @property
     def average_queue_time(self):
         return self._average_queue_time
@@ -226,13 +226,6 @@ target '{self.name}' of provider '{self.provider_id}' not found."
         """
         return InputParams()
 
-    def supports_protobuf(self):
-        """
-        Return whether or not the Solver class supports protobuf serialization.
-        This should be overridden by Solver subclasses which do support protobuf.
-        """
-        return False
-    
     def estimate_cost(
         self,
         input_data: Any,
@@ -245,3 +238,6 @@ target '{self.name}' of provider '{self.provider_id}' not found."
 
     def _get_azure_target_id(self) -> str:
         return self.name
+
+    def _get_azure_provider_id(self) -> str:
+        return self.provider_id
