@@ -240,6 +240,8 @@ class InputParams(InputParamsItem):
 
         if self.has_items:
             result["items"] = [item.as_dict(validate) for item in self._items]
+            # In case of batching, no need to stop if failing an item
+            result["resumeAfterFailedItem"] = True
 
         # add fileUris if existing
         if len(self.file_uris) > 0:

@@ -38,9 +38,10 @@ class MicrosoftEstimatorResult(dict):
             super().__init__(data)
 
             self._is_simple = True
-            self._repr = self._item_result_table()
-            self.summary = HTMLWrapper(self._item_result_summary_table())
-            self.diagram = EstimatorResultDiagram(self.data().copy())
+            if hasattr(self, 'status') and self['status'] == "success":
+                self._repr = self._item_result_table()
+                self.summary = HTMLWrapper(self._item_result_summary_table())
+                self.diagram = EstimatorResultDiagram(self.data().copy())
 
         elif isinstance(data, list):
             super().__init__({idx: MicrosoftEstimatorResult(item_data)
@@ -275,19 +276,22 @@ class MicrosoftEstimatorResult(dict):
         labels = labels[:len(self)]
 
         def get_row(result):
-            formatted = result["physicalCountsFormatted"]
+            if 'status' in result and result['status'] == 'success':
+                formatted = result["physicalCountsFormatted"]
 
-            return (
-                formatted["algorithmicLogicalQubits"],
-                formatted["logicalDepth"],
-                formatted["numTstates"],
-                result["logicalQubit"]["codeDistance"],
-                formatted["numTfactories"],
-                formatted["physicalQubitsForTfactoriesPercentage"],
-                formatted["physicalQubits"],
-                formatted["rqops"],
-                formatted["runtime"]
-            )
+                return (
+                    formatted["algorithmicLogicalQubits"],
+                    formatted["logicalDepth"],
+                    formatted["numTstates"],
+                    result["logicalQubit"]["codeDistance"],
+                    formatted["numTfactories"],
+                    formatted["physicalQubitsForTfactoriesPercentage"],
+                    formatted["physicalQubits"],
+                    formatted["rqops"],
+                    formatted["runtime"]
+                )
+            else:
+                return ['No solution found'] * 9
 
         data = [get_row(self.data(index)) for index in range(len(self))]
         columns = ["Logical qubits", "Logical depth", "T states",
@@ -402,13 +406,20 @@ class MicrosoftEstimatorResult(dict):
         return html
 
     def _batch_result_table(self, indices):
+        succeeded_item_indices = [i for i in indices if 'status' in self[i] and self[i]['status'] == 'success']
+        if len(succeeded_item_indices) == 0:
+            print("None of the jobs succeeded")
+            return ""
+        
+        first_succeeded_item_index = succeeded_item_indices[0]
+
         html = ""
 
         md = markdown.Markdown(extensions=['mdx_math'])
 
         item_headers = "".join(f"<th>{i}</th>" for i in indices)
 
-        for group_index, group in enumerate(self[0]['reportData']['groups']):
+        for group_index, group in enumerate(self[first_succeeded_item_index]['reportData']['groups']):
             html += f"""
                 <details {"open" if group['alwaysVisible'] else ""}>
                     <summary style="display:list-item">
@@ -419,7 +430,7 @@ class MicrosoftEstimatorResult(dict):
 
             visited_entries = set()
 
-            for entry in [entry for index in indices for entry in self[index]['reportData']['groups'][group_index]['entries']]:
+            for entry in [entry for index in succeeded_item_indices for entry in self[index]['reportData']['groups'][group_index]['entries']]:
                 label = entry['label']
                 if label in visited_entries:
                     continue
@@ -432,12 +443,15 @@ class MicrosoftEstimatorResult(dict):
 
                 for index in indices:
                     val = self[index]
-                    for key in entry['path'].split("/"):
-                        if key in val:
-                            val = val[key]
-                        else:
-                            val = "N/A"
-                            break
+                    if index in succeeded_item_indices:
+                        for key in entry['path'].split("/"):
+                            if key in val:
+                                val = val[key]
+                            else:
+                                val = "N/A"
+                                break
+                    else:
+                        val = "N/A"
                     html += f"""
                             <td style="vertical-align: top; white-space: nowrap">{val}</td>
                     """
@@ -448,7 +462,7 @@ class MicrosoftEstimatorResult(dict):
             html += "</table></details>"
 
         html += f"<details><summary style=\"display:list-item\"><strong>Assumptions</strong></summary><ul>"
-        for assumption in self[0]['reportData']['assumptions']:
+        for assumption in self[first_succeeded_item_index]['reportData']['assumptions']:
             html += f"<li>{md.convert(assumption)}</li>"
         html += "</ul></details>"
 
