@@ -45,12 +45,16 @@ def _check_error_rate_or_process_and_readout(name, value):
         raise ValueError(f"{name} must be either a float or "
                          "MeasurementErrorRate with two fields: 'process' and 'readout'")
 
+def check_time(name, value):
+    pat = r"^(\+?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)\s*(s|ms|μs|µs|us|ns)$"
+    if re.match(pat, value) is None:
+        raise ValueError(f"{name} is not a valid time string; use a "
+                         "suffix s, ms, us, or ns")
 
 @dataclass
 class MeasurementErrorRate(AutoValidatingParams):
     process: float = field(metadata={"validate": _check_error_rate})
     readout: float = field(metadata={"validate": _check_error_rate})
-
 
 @dataclass
 class MicrosoftEstimatorQubitParams(AutoValidatingParams):
@@ -60,12 +64,6 @@ class MicrosoftEstimatorQubitParams(AutoValidatingParams):
                          "Majorana", "majorana"]:
             raise ValueError(f"{name} must be GateBased or Majorana")
 
-    @staticmethod
-    def check_time(name, value):
-        pat = r"^(\+?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?)\s*(s|ms|μs|µs|us|ns)$"
-        if re.match(pat, value) is None:
-            raise ValueError(f"{name} is not a valid time string; use a "
-                             "suffix s, ms, us, or ns")
     name: Optional[str] = None
     instruction_set: Optional[str] = validating_field(check_instruction_set)
     one_qubit_measurement_time: Optional[str] = validating_field(check_time)
@@ -259,6 +257,12 @@ class MicrosoftEstimatorConstraints(AutoValidatingParams):
 
     logical_depth_factor: Optional[float] = validating_field(at_least_one)
     max_t_factories: Optional[int] = validating_field(at_least_one)
+    max_duration: Optional[int] = validating_field(check_time)
+    max_physical_qubits: Optional[int] = validating_field(at_least_one)
+
+    def post_validation(self, result):
+        if self.max_duration is not None and self.max_physical_qubits is not None:
+            raise LookupError("Both duration and number of physical qubits constraints are provided, but only one is allowe at a time.")
 
 
 @dataclass
