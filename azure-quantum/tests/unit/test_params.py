@@ -40,7 +40,8 @@ class TestWorkspace(QuantumTestBase):
             'items': [
                 {'arguments': [{'name': 'number', 'value': 8, 'type': 'Int'}]},
                 {'arguments': [{'name': 'number', 'value': 16, 'type': 'Int'}]}
-            ]})
+            ],
+            'resumeAfterFailedItem': True})
 
     def test_params_override_argument(self):
         params = InputParams(num_items=2)
@@ -52,7 +53,8 @@ class TestWorkspace(QuantumTestBase):
             'arguments': [{'name': 'number', 'value': 8, 'type': 'Int'}],
             'items': [{},
                       {'arguments':
-                       [{'name': 'number', 'value': 16, 'type': 'Int'}]}]})
+                       [{'name': 'number', 'value': 16, 'type': 'Int'}]}],
+            'resumeAfterFailedItem': True})
 
     def test_params_file_uris(self):
         params = InputParams(num_items=2)
@@ -62,7 +64,8 @@ class TestWorkspace(QuantumTestBase):
         self.assertEqual(params.as_dict(), {
             'entryPoint': 'run_program',
             'items': [{'entryPoint': 'other_program'}, {}],
-            'fileUris': {'base': 'https://some_link'}})
+            'fileUris': {'base': 'https://some_link'},
+            'resumeAfterFailedItem': True})
 
     def test_params_for_estimator(self):
         params = MicrosoftEstimatorParams(num_items=2)
@@ -74,7 +77,8 @@ class TestWorkspace(QuantumTestBase):
             'entryPoint': 'run_program',
             'errorBudget': 0.23,
             'items': [{'entryPoint': 'other_program'}, {}],
-            'fileUris': {'base': 'https://some_link'}})
+            'fileUris': {'base': 'https://some_link'},
+            'resumeAfterFailedItem': True})
 
     def test_input_argument_simple_types(self):
         params = InputParams()
