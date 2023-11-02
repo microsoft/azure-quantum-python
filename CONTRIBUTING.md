@@ -3,6 +3,14 @@
 If you would like to become an active contributor to this project please
 follow the instructions provided in [Microsoft Azure Projects Contribution Guidelines](https://opensource.microsoft.com/collaborate/).
 
+## Pre-requisites
+
+Install pre-reqs:
+
+```bash
+pip install azure_devtools pytest pytest-azurepipelines pytest-cov
+```
+
 ## Building and testing ##
 
 The Azure Quantum team uses [Anaconda](https://www.anaconda.com/products/individual) to create virtual environments for local unit and integration testing as well as in CI/CD.

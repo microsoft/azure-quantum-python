@@ -96,6 +96,7 @@ setuptools.setup(
     version=version,
     author="Microsoft",
     description="Python client for Azure Quantum",
+    license="MIT License",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/microsoft/qdk-python",
