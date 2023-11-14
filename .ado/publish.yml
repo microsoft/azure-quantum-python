@@ -207,16 +207,16 @@ jobs:
       ls target/wheels/*
     displayName: List Py Artifacts to publish
 
-  - task: EsrpRelease@4
-    inputs:
-     ConnectedServiceName: 'ESRP_Release'
-     Intent: 'PackageDistribution'
-     ContentType: 'PyPi'
-     FolderLocation: '$(System.DefaultWorkingDirectory)/target/wheels'
-     Owners: '$(OwnerPersonalAlias)@microsoft.com'  # NB: Group email here fails the task with non-actionable output.
-     Approvers: 'billti@microsoft.com'
-     # Auto-inserted Debugging defaults:
-     ServiceEndpointUrl: 'https://api.esrp.microsoft.com'
-     MainPublisher: 'QuantumDevelpmentKit'          # ESRP Team's Correction (including the critical typo "Develpm").
-     DomainTenantId: '72f988bf-86f1-41af-91ab-2d7cd011db47'
-    displayName: Publish Py Packages
+  # - task: EsrpRelease@4
+  #   inputs:
+  #    ConnectedServiceName: 'ESRP_Release'
+  #    Intent: 'PackageDistribution'
+  #    ContentType: 'PyPi'
+  #    FolderLocation: '$(System.DefaultWorkingDirectory)/target/wheels'
+  #    Owners: '$(OwnerPersonalAlias)@microsoft.com'  # NB: Group email here fails the task with non-actionable output.
+  #    Approvers: 'billti@microsoft.com'
+  #    # Auto-inserted Debugging defaults:
+  #    ServiceEndpointUrl: 'https://api.esrp.microsoft.com'
+  #    MainPublisher: 'QuantumDevelpmentKit'          # ESRP Team's Correction (including the critical typo "Develpm").
+  #    DomainTenantId: '72f988bf-86f1-41af-91ab-2d7cd011db47'
+  #   displayName: Publish Py Packages
