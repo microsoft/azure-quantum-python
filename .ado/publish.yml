@@ -27,6 +27,9 @@ jobs:
 
     - script: |
         python set_version.py
+      env:
+        BUILD_TYPE: ${{ parameters.BUILD_TYPE }}
+        PATCH_NUMBER: ${{ parameters.PATCH_NUMBER }}
       displayName: Set version
 
     - script: |
@@ -54,6 +57,9 @@ jobs:
 
     - script: |
         python set_version.py
+      env:
+        BUILD_TYPE: ${{ parameters.BUILD_TYPE }}
+        PATCH_NUMBER: ${{ parameters.PATCH_NUMBER }}
       displayName: Set version
 
     - script: |

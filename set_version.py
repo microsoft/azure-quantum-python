@@ -11,13 +11,13 @@ BUILD_TYPE = os.environ.get("BUILD_TYPE") or "dev"
 PATCH_NUMBER = os.environ.get("PATCH_NUMBER")
 
 if BUILD_TYPE not in ["dev", "rc", "stable"]:
-    print("BUILD_TYPE environment variable must be 'dev', 'rc', or 'stable'")
+    print(f"BUILD_TYPE environment variable must be 'dev', 'rc', or 'stable'. Current value: {BUILD_TYPE}")
     exit(1)
 
 try:
     patch_ver = int(PATCH_NUMBER)
 except:
-    print("PATCH_NUMBER environment variable must be set to a valid integer")
+    print(f"PATCH_NUMBER environment variable must be set to a valid integer. Current value: {PATCH_NUMBER}")
     exit(1)
 
 version_triple = "{}.{}".format(major_minor, patch_ver)
