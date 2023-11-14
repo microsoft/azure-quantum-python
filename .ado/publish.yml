@@ -77,7 +77,8 @@ jobs:
     
     - script: |
         cd $(Build.SourcesDirectory)/azure-quantum
-        pytest --cov-report term --cov=azure-quantum --junitxml test-output-azure-quantum.xml $(Build.SourcesDirectory)/azure-quantum
+        pip install .[all]
+        pytest --cov-report term --cov=azure.quantum --junitxml test-output-azure-quantum.xml $(Build.SourcesDirectory)/azure-quantum
       displayName: Run azure-quantum unit tests
     
     - task: PublishTestResults@2
@@ -141,6 +142,7 @@ jobs:
     
     - script: |
         cd $(Build.SourcesDirectory)/qdk
+        pip install .
         pytest --cov-report term --cov=qdk --junitxml test-output-qdk.xml $(Build.SourcesDirectory)/qdk
       displayName: Run qdk unit tests
     
