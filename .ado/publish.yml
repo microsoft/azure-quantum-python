@@ -19,7 +19,11 @@ jobs:
     #   displayName: Install Prereqs and set version
 
     - script: |
-        cd azure-quantum
+        pip install -y wheel
+      displayName: Install wheel
+
+    - script: |
+        cd $(System.DefaultWorkingDirectory)/azure-quantum
         python setup.py sdist --dist-dir=target/wheels
         python setup.py bdist_wheel --dist-dir=target/wheels
       displayName: Build azure-quantum package
@@ -36,9 +40,13 @@ jobs:
     - task: UsePythonVersion@0
       inputs:
         versionSpec: '3.11'
-  
+    
     - script: |
-        cd qdk
+        pip install -y wheel
+      displayName: Install wheel
+
+    - script: |
+        cd $(System.DefaultWorkingDirectory)/qdk
         python setup.py sdist --dist-dir=target/wheels
         python setup.py bdist_wheel --dist-dir=target/wheels
       displayName: Build qdk package
