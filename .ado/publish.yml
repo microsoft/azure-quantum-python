@@ -76,6 +76,7 @@ jobs:
       displayName: List installed packages
     
     - script: |
+        cd $(Build.SourcesDirectory)/azure-quantum
         pytest --cov-report term --cov=azure-quantum --junitxml test-output-azure-quantum.xml $(Build.SourcesDirectory)/azure-quantum
       displayName: Run azure-quantum unit tests
     
@@ -139,6 +140,7 @@ jobs:
       displayName: List installed packages
     
     - script: |
+        cd $(Build.SourcesDirectory)/qdk
         pytest --cov-report term --cov=qdk --junitxml test-output-qdk.xml $(Build.SourcesDirectory)/qdk
       displayName: Run qdk unit tests
     
