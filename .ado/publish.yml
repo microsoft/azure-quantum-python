@@ -1,0 +1,75 @@
+#name: azure-quantum-python-release-$(BuildId)
+
+trigger: none
+pr: none
+
+jobs:
+- job: "azure-quantum-python"
+  pool:
+    vmImage: 'windows-latest'
+
+  steps:
+    - task: UsePythonVersion@0
+      inputs:
+        versionSpec: '3.11'
+
+    # TODO: Handle versioning
+    # - script: |
+    #   python ./prereqs.py --install && python ./version.py
+    #   displayName: Install Prereqs and set version
+
+    - script: |
+        cd azure-quantum
+        python setup.py sdist --dist-dir=target/wheels
+        python setup.py bdist_wheel --dist-dir=target/wheels
+      displayName: Build azure-quantum package
+
+    - publish: $(System.DefaultWorkingDirectory)/azure-quantum/target/wheels/
+      artifact: azure-quantum-wheels
+      displayName: Upload azure-quantum artifacts
+
+- job: "qdk-python"
+  pool:
+    vmImage: 'windows-latest'
+
+  steps:
+    - task: UsePythonVersion@0
+      inputs:
+        versionSpec: '3.11'
+  
+    - script: |
+        cd qdk
+        python setup.py sdist --dist-dir=target/wheels
+        python setup.py bdist_wheel --dist-dir=target/wheels
+      displayName: Build qdk package
+
+    - publish: $(System.DefaultWorkingDirectory)/azure-quantum/target/wheels/
+      artifact: qdk-wheels
+      displayName: Upload qdk-wheels artifacts
+
+- job: "Approval"
+  dependsOn:
+  - "azure-quantum-python"
+  pool: server
+  timeoutInMinutes: 1440 # job times out in 1 day
+  steps:
+  - task: ManualValidation@0
+    timeoutInMinutes: 1440 # task times out in 1 day
+    inputs:
+      notifyUsers: ''
+      instructions: 'Please verify artifacts and approve the release'
+      onTimeout: 'reject'
+
+- job: "Publish_Python_Packages"
+  dependsOn: Approval
+  pool:
+    vmImage: 'windows-latest'
+
+  steps:
+  - download: current
+    artifact: azure-quantum-wheels
+    displayName: Download azure-quantum artifacts
+
+  - download: current
+    artifact: qdk-wheels
+    displayName: Download qdk artifacts
