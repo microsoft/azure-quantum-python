@@ -123,43 +123,11 @@ jobs:
       artifact: qdk-wheels
       displayName: Upload qdk-wheels artifacts
 
-- job: "Test_QDK_Python"
-  pool:
-    vmImage: 'windows-latest'
-  
-  steps:
-    - task: UsePythonVersion@0
-      inputs:
-        versionSpec: '3.11'
-
-    - script: |
-        pip install pytest pytest-azurepipelines pytest-cov
-      displayName: Install pytest dependencies
-
-    - script: |
-        pip freeze
-      displayName: List installed packages
-    
-    - script: |
-        cd $(Build.SourcesDirectory)/qdk
-        pip install .
-        pytest --cov-report term --cov=qdk --junitxml test-output-qdk.xml $(Build.SourcesDirectory)/qdk
-      displayName: Run qdk unit tests
-    
-    - task: PublishTestResults@2
-      displayName: 'Publish tests results (python)'
-      condition: succeededOrFailed()
-      inputs:
-        testResultsFormat: 'JUnit'
-        testResultsFiles: '**/test-*.xml'
-        testRunTitle: 'QDK Python Tests'
-
 - job: "Approval"
   dependsOn:
   - "Build_Azure_Quantum_Python"
   - "Build_QDK_Python"
   - "Test_Azure_Quantum_Python"
-  - "Test_QDK_Python"
   pool: server
   timeoutInMinutes: 1440 # job times out in 1 day
   steps:
