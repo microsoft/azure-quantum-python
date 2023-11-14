@@ -3,6 +3,18 @@
 trigger: none
 pr: none
 
+parameters:
+- name: BUILD_TYPE
+  type: string
+  values:
+    - dev
+    - rc
+    - stable
+  default: 'dev'
+- name: PATCH_NUMBER
+  type: number
+  default: 0
+
 jobs:
 - job: "Build_Azure_Quantum_Python"
   pool:
@@ -13,10 +25,9 @@ jobs:
       inputs:
         versionSpec: '3.11'
 
-    # TODO: Handle versioning
-    # - script: |
-    #   python ./prereqs.py --install && python ./version.py
-    #   displayName: Install Prereqs and set version
+    - script: |
+        python ./version.py
+      displayName: Set version
 
     - script: |
         pip install wheel
@@ -40,7 +51,11 @@ jobs:
     - task: UsePythonVersion@0
       inputs:
         versionSpec: '3.11'
-    
+
+    - script: |
+        python ./version.py
+      displayName: Set version
+
     - script: |
         pip install wheel
       displayName: Install wheel
