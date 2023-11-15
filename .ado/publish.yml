@@ -18,6 +18,12 @@ parameters:
 - name: Deploy_QDK_Package
   type: boolean
   default: False
+- name: Create_GitHub_Release
+  type: boolean
+  default: False
+- name: Publish_PyPi_Packages
+  type: boolean
+  default: False
 
 variables:
 - name: OwnerPersonalAlias
@@ -158,7 +164,7 @@ jobs:
     inputs:
       SourceFolder: '$(Pipeline.Workspace)/azure-quantum-wheels'
       Contents: '**'
-      TargetFolder: 'target/wheels'
+      TargetFolder: '$(Build.ArtifactStagingDirectory)/target/wheels'
 
   - task: CopyFiles@2
     condition: ${{ parameters.Deploy_QDK_Package }}
@@ -166,22 +172,39 @@ jobs:
     inputs:
       SourceFolder: '$(Pipeline.Workspace)/qdk-wheels'
       Contents: '**'
-      TargetFolder: 'target/wheels'
+      TargetFolder: '$(Build.ArtifactStagingDirectory)/target/wheels'
 
   - script: |
       ls target/wheels/*
     displayName: List Py Artifacts to publish
 
-  # - task: EsrpRelease@4
-  #   inputs:
-  #    ConnectedServiceName: 'ESRP_Release'
-  #    Intent: 'PackageDistribution'
-  #    ContentType: 'PyPi'
-  #    FolderLocation: '$(System.DefaultWorkingDirectory)/target/wheels'
-  #    Owners: '$(OwnerPersonalAlias)@microsoft.com'  # NB: Group email here fails the task with non-actionable output.
-  #    Approvers: 'billti@microsoft.com'
-  #    # Auto-inserted Debugging defaults:
-  #    ServiceEndpointUrl: 'https://api.esrp.microsoft.com'
-  #    MainPublisher: 'QuantumDevelpmentKit'          # ESRP Team's Correction (including the critical typo "Develpm").
-  #    DomainTenantId: '72f988bf-86f1-41af-91ab-2d7cd011db47'
-  #   displayName: Publish Py Packages
+  - task: GitHubRelease@1
+    condition: ${{ parameters.Create_GitHub_Release }}
+    displayName: Create GitHub Release
+    inputs:
+      gitHubConnection: AzureQuantum
+      repositoryName: Microsoft/azure-quantum-python
+      action: create
+      tagSource: 'userSpecifiedTag'
+      tag: azure-quantum_v$(PYTHON_VERSION)
+      isDraft: True
+      isPreRelease: {{ parameters.Build_Type != 'stable' }}}
+      target: $(Build.SourceVersion)
+      addChangeLog: False
+      assets: |
+        $(Build.ArtifactStagingDirectory)/target/wheels/*
+
+  - task: EsrpRelease@4
+    condition: ${{ parameters.Publish_PyPi_Packages }}
+    displayName: Publish Py Packages
+    inputs:
+     ConnectedServiceName: 'ESRP_Release'
+     Intent: 'PackageDistribution'
+     ContentType: 'PyPi'
+     FolderLocation: '$(Build.ArtifactStagingDirectory)/target/wheels'
+     Owners: '$(OwnerPersonalAlias)@microsoft.com'  # NB: Group email here fails the task with non-actionable output.
+     Approvers: 'billti@microsoft.com'
+     # Auto-inserted Debugging defaults:
+     ServiceEndpointUrl: 'https://api.esrp.microsoft.com'
+     MainPublisher: 'QuantumDevelpmentKit'          # ESRP Team's Correction (including the critical typo "Develpm").
+     DomainTenantId: '72f988bf-86f1-41af-91ab-2d7cd011db47'

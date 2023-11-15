@@ -26,4 +26,10 @@ pip_suffix = {"stable": "", "rc": "rc0", "dev": "dev0"}
 pip_version = "{}{}".format(version_triple, pip_suffix.get(BUILD_TYPE))
 
 print("PYTHON_VERSION: {}".format(pip_version))
+
+# Set PYTHON_VERSION variable for steps in same job to reference as $(PYTHON_VERSION)
 print(f"##vso[task.setvariable variable=PYTHON_VERSION;]{pip_version}")
+
+# Set build tags
+print(f"##vso[build.addbuildtag]v{pip_version}")
+print(f"##vso[build.addbuildtag]{BUILD_TYPE}")
