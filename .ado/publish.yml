@@ -175,7 +175,7 @@ jobs:
       TargetFolder: '$(Build.ArtifactStagingDirectory)/target/wheels'
 
   - script: |
-      ls target/wheels/*
+      ls $(Build.ArtifactStagingDirectory)/target/wheels/*
     displayName: List Py Artifacts to publish
 
   - task: GitHubRelease@1
