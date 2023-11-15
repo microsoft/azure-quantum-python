@@ -156,7 +156,7 @@ jobs:
     condition: ${{ parameters.Deploy_Azure_Quantum_Package }}
     displayName: Copy azure-quantum artifacts
     inputs:
-      SourceFolder: 'azure-quantum-wheels'
+      SourceFolder: '$(Pipeline.Workspace)/azure-quantum-wheels'
       Contents: '**'
       TargetFolder: 'target/wheels'
 
@@ -164,7 +164,7 @@ jobs:
     condition: ${{ parameters.Deploy_QDK_Package }}
     displayName: Copy qdk artifacts
     inputs:
-      SourceFolder: 'qdk-wheels'
+      SourceFolder: '$(Pipeline.Workspace)/qdk-wheels'
       Contents: '**'
       TargetFolder: 'target/wheels'
 
