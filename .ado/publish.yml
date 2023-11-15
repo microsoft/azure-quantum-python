@@ -152,13 +152,6 @@ jobs:
     artifact: qdk-wheels
     displayName: Download qdk artifacts
 
-  - script: |
-      mkdir -p                            target/wheels
-      mv ../azure-quantum-wheels/*.whl    target/wheels
-      mv ../qdk-wheels/*.whl              target/wheels
-      ls                                  target/wheels/*
-    displayName: Move Py Artifacts to Publishing Dir
-
   - task: CopyFiles@2
     condition: ${{ parameters.Deploy_Azure_Quantum_Package }}
     displayName: Copy azure-quantum artifacts
