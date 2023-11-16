@@ -86,7 +86,7 @@ class Pasqal(Target):
             output_data_format=output_data_format,
             capability=capability,
             provider_id=provider_id,
-            content_type="text/plain",
+            content_type="application/json",
             encoding=encoding,
             **kwargs,
         )
