@@ -24,15 +24,13 @@ class PasqalTarget(str, Enum):
     """The known targets for the Pasqal provider
     """
 
-    SIM_EMU_FREE = "pasqal.sim.emu_free"
-    SIM_EMU_TN = "pasqal.sim.emu_tn"
+    SIM_EMU_TN = "pasqal.sim.emu-tn"
     QPU_FRESNEL = "pasqal.qpu.fresnel"
     """A simulator target for Quil. See https://github.com/quil-lang/qvm for more info."""
 
     def simulators() -> List[str]:
         """Returns a list of simulator targets"""
         return [
-            PasqalTarget.SIM_EMU_FREE.value,
             PasqalTarget.SIM_EMU_TN.value
         ]
 
@@ -44,9 +42,7 @@ class PasqalTarget(str, Enum):
 
     def num_qubits(target_name) -> int:
         """Returns the number of qubits supported by the given target"""
-        if target_name == PasqalTarget.SIM_EMU_FREE.value:
-            return 12
-        elif target_name == PasqalTarget.SIM_EMU_TN.value:
+        if target_name == PasqalTarget.SIM_EMU_TN.value:
             return 100
         elif target_name == PasqalTarget.QPU_FRESNEL.value:
             return 20
@@ -61,7 +57,7 @@ class InputParams:
 
 
 class Pasqal(Target):
-    """Pasqal target, defaults to the simulator PasqalTarget.SIM_EMU_FREE
+    """Pasqal target, defaults to the simulator PasqalTarget.SIM_EMU_TN
 
     In order to process the results of a Quil input to this target, we recommend using the included Result class.
     """
@@ -71,7 +67,7 @@ class Pasqal(Target):
     def __init__(
         self,
         workspace: Workspace,
-        name: Union[PasqalTarget, str] = PasqalTarget.SIM_EMU_FREE,
+        name: Union[PasqalTarget, str] = PasqalTarget.SIM_EMU_TN,
         input_data_format: str = "pasqal.pulser.v1",
         output_data_format: str = "pasqal.pulser-results.v1",
         capability: str = "BasicExecution",
