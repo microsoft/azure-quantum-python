@@ -150,6 +150,17 @@ jobs:
     vmImage: 'windows-latest'
 
   steps:
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: '3.11'
+
+  - script: |
+      python set_version.py
+    env:
+      BUILD_TYPE: ${{ parameters.Build_Type }}
+      PATCH_NUMBER: ${{ parameters.Patch_Number }}
+    displayName: Set version
+
   - download: current
     artifact: azure-quantum-wheels
     displayName: Download azure-quantum artifacts
