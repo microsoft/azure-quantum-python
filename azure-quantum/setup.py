@@ -99,13 +99,14 @@ setuptools.setup(
     license="MIT License",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/microsoft/qdk-python",
+    url="https://github.com/microsoft/azure-quantum-python",
     packages=setuptools.find_namespace_packages(include=["azure.*"]),
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
+    python_requires=">=3.7",
     install_requires=requirements,
     extras_require=extras_require
 )
