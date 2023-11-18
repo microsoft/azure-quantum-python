@@ -1,0 +1,31 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/python
+{
+    "name": "Python 3",
+    // Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
+    "image": "mcr.microsoft.com/devcontainers/python:3",
+    "features": {
+        "ghcr.io/devcontainers/features/azure-cli:1": {
+            "version": "latest"
+        }
+    },
+    "postCreateCommand": "pip3 install --user -r .devcontainer/requirements.txt",
+    "customizations": {
+        "codespaces": {
+            "openFiles": []
+        },
+        "vscode": {
+            "extensions": [
+                "quantum.qsharp-lang-vscode",
+                "ms-toolsai.jupyter",
+                "ms-python.python"
+            ]
+        }
+    },
+    "secrets": {
+        "AZURE_QUANTUM_CONNECTION_STRING": {
+          "description": "Copy & paste your Azure Quantum workspace connection string here for easy access to your workspace with azure-quantum python SDK.",
+          "documentationUrl": "https://aka.ms/AQ/azure-quantum-sdk"
+        }
+    }
+}
