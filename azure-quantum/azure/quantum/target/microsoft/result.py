@@ -65,6 +65,9 @@ class MicrosoftEstimatorResult(dict):
             # Add plot function for batching jobs
             self.plot = self._plot
             self.summary_data_frame = self._summary_data_frame
+    
+    def _is_succeeded(self):
+        return 'status' in self and self['status'] == "success"
 
     def data(self, idx: Optional[int] = None) -> Any:
         """
@@ -409,6 +412,7 @@ class MicrosoftEstimatorResult(dict):
 
     def _batch_result_table(self, indices):
         succeeded_item_indices = [i for i in indices if is_succeeded(self[i])]
+
         if len(succeeded_item_indices) == 0:
             print("None of the jobs succeeded")
             return ""
