@@ -38,7 +38,7 @@ class MicrosoftEstimatorResult(dict):
             super().__init__(data)
 
             self._is_simple = True
-            if hasattr(self, 'status') and self['status'] == "success":
+            if self._is_succeeded():
                 self._repr = self._item_result_table()
                 self.summary = HTMLWrapper(self._item_result_summary_table())
                 self.diagram = EstimatorResultDiagram(self.data().copy())
@@ -63,6 +63,9 @@ class MicrosoftEstimatorResult(dict):
             # Add plot function for batching jobs
             self.plot = self._plot
             self.summary_data_frame = self._summary_data_frame
+    
+    def _is_succeeded(self):
+        return 'status' in self and self['status'] == "success"
 
     def data(self, idx: Optional[int] = None) -> Any:
         """
@@ -276,7 +279,7 @@ class MicrosoftEstimatorResult(dict):
         labels = labels[:len(self)]
 
         def get_row(result):
-            if 'status' in result and result['status'] == 'success':
+            if self._is_succeeded():
                 formatted = result["physicalCountsFormatted"]
 
                 return (
@@ -406,7 +409,7 @@ class MicrosoftEstimatorResult(dict):
         return html
 
     def _batch_result_table(self, indices):
-        succeeded_item_indices = [i for i in indices if 'status' in self[i] and self[i]['status'] == 'success']
+        succeeded_item_indices = [i for i in indices if self[i]._is_succeeded()]
         if len(succeeded_item_indices) == 0:
             print("None of the jobs succeeded")
             return ""
