@@ -525,7 +525,7 @@ class TestQiskit(QuantumTestBase):
 
         self.assertIsInstance(payload, bytes)
         self.assertEqual(input_data_format, "qir.v1")
-        self.assertEqual(output_data_format, MICROSOFT_OUTPUT_DATA_FORMAT)
+        self.assertEqual(output_data_format, MICROSOFT_OUTPUT_DATA_FORMAT_V2)
         self.assertIn("items", input_params)
         self.assertEqual(len(input_params["items"]), 1)
         item = input_params["items"][0]
