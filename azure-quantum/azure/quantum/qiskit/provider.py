@@ -31,7 +31,23 @@ QISKIT_USER_AGENT = "azure-quantum-qiskit"
 
 
 class AzureQuantumProvider(Provider):
-    def __init__(self, workspace=None, **kwargs):
+    """
+    Class for interfacing with the Azure Quantum service
+    using Qiskit quantum circuits
+    """
+    def __init__(self, workspace: Workspace=None, **kwargs):
+        """AzureQuantumService class
+
+        :param workspace: Azure Quantum workspace. If missing it will create a new Workspace passing `kwargs` to the constructor. Defaults to None. 
+        :type workspace: Workspace, optional
+        """
+        if kwargs is not None and len(kwargs) > 0:
+            from warnings import warn
+            warn(f"""Consider passing \"workspace\" argument explicitly. 
+                 The ability to initialize AzureQuantumProvider with arguments {', '.join(f'"{argName}"' for argName in kwargs)} is going to be deprecated in future versions.""", 
+                 DeprecationWarning, 
+                 stacklevel=2)
+
         if workspace is None:
             workspace = Workspace(**kwargs)
 

@@ -43,6 +43,13 @@ class AzureQuantumService:
         :param default_target: Default target name, defaults to None
         :type default_target: Optional[str], optional
         """
+        if kwargs is not None and len(kwargs) > 0:
+            from warnings import warn
+            warn(f"""Consider passing \"workspace\" argument explicitly. 
+                 The ability to initialize AzureQuantumService with arguments {', '.join(f'"{argName}"' for argName in kwargs)} is going to be deprecated in future versions.""", 
+                 DeprecationWarning, 
+                 stacklevel=2)
+
         if workspace is None:
             workspace = Workspace(**kwargs)
 
