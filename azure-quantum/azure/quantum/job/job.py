@@ -126,7 +126,21 @@ class Job(BaseJob, FilteredJob):
         payload = self.download_data(self.details.output_data_uri)
         try:
             payload = payload.decode("utf8")
-            return json.loads(payload)
+            results = json.loads(payload)
+
+            if self.details.output_data_format == "microsoft.quantum-results.v1":
+                if "Histogram" not in results:
+                    raise f"\"Histogram\" array was expected to be in the Job results for \"{self.details.output_data_format}\" output format."
+                
+                histogram_values = results["Histogram"]
+
+                if len(histogram_values) % 2 == 0:
+                    # Re-mapping {'Histogram': ['[0]', 0.50, '[1]', 0.50] } to {'[0]': 0.50, '[1]': 0.50}
+                    return {histogram_values[i]: histogram_values[i + 1] for i in range(0, len(histogram_values), 2)}
+                else: 
+                    raise f"\"Histogram\" array has invalid format. Even number of items is expected."
+            
+            return results
         except:
             # If errors decoding the data, return the raw payload:
             return payload
