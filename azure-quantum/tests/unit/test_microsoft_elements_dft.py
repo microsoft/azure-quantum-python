@@ -13,10 +13,10 @@ class TestMicrosoftElementsDftJob(QuantumTestBase):
         dft_input_params = {
             "tasks": [
                 {
-                "taskType": "spe",
-                "basisSet": { "name": "def2-svp", "cartesian": False },
-                "xcFunctional": { "name": "m06-2x", "gridLevel": 4 },
-                "scf": { "method": "rks", "maxSteps": 100, "convergeThreshold": 1e-8 }
+                    "taskType": "spe",
+                    "basisSet": { "name": "def2-svp", "cartesian": False },
+                    "xcFunctional": { "name": "m06-2x", "gridLevel": 4 },
+                    "scf": { "method": "rks", "maxSteps": 100, "convergeThreshold": 1e-8 }
                 }
             ]
         }
@@ -30,14 +30,14 @@ class TestMicrosoftElementsDftJob(QuantumTestBase):
         self.assertIsNotNone(results[0]["return_result"])
 
     @pytest.mark.microsoft_elements_dft
-    def test_dft_faulure_invalid_input(self):
+    def test_dft_failure_invalid_input(self):
         dft_input_params = {
             "tasks": [
                 {
-                "taskType": "invlidTask",
-                "basisSet": { "name": "def2-svp", "cartesian": False },
-                "xcFunctional": { "name": "m06-2x", "gridLevel": 4 },
-                "scf": { "method": "rks", "maxSteps": 100, "convergeThreshold": 1e-8 }
+                    "taskType": "invlidTask",
+                    "basisSet": { "name": "def2-svp", "cartesian": False },
+                    "xcFunctional": { "name": "m06-2x", "gridLevel": 4 },
+                    "scf": { "method": "rks", "maxSteps": 100, "convergeThreshold": 1e-8 }
                 }
             ]
         }
@@ -51,14 +51,14 @@ class TestMicrosoftElementsDftJob(QuantumTestBase):
 
 
     @pytest.mark.microsoft_elements_dft
-    def test_dft_faulure_algorithm_produces_output(self):
+    def test_dft_failure_algorithm_produces_output(self):
         dft_input_params = {
             "tasks": [
                 {
-                "taskType": "spe",
-                "basisSet": { "name": "def2-svp", "cartesian": False },
-                "xcFunctional": { "name": "m06-2x", "gridLevel": 4 },
-                "scf": { "method": "rks", "maxSteps": 1, "convergeThreshold": 1e-8 }
+                    "taskType": "spe",
+                    "basisSet": { "name": "def2-svp", "cartesian": False },
+                    "xcFunctional": { "name": "m06-2x", "gridLevel": 4 },
+                    "scf": { "method": "rks", "maxSteps": 1, "convergeThreshold": 1e-8 }
                 }
             ]
         }

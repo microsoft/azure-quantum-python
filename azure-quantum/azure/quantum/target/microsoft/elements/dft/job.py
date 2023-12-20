@@ -15,13 +15,13 @@ class MicrosoftElementsDftJob(Job):
         try:
             job_results = super().get_results(timeout_secs)
             return job_results["results"]
-        except RuntimeError:
+        except RuntimeError as e:
             if self.details.status == "Failed":
                 job_blob_properties = self.download_blob_properties(self.details.output_data_uri)
                 if job_blob_properties.size > 0:
                     job_failure_data = self.download_data(self.details.output_data_uri)
                     raise DftRuntimeError("An error occurred during DFT-job execution. " \
-                                          "Use error.get_details() for more information.", job_failure_data)
+                                          "Use error.get_details() for more information.", job_failure_data) from e
             raise
 
 
