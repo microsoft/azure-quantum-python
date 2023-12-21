@@ -3,7 +3,7 @@ import pytest
 from azure.quantum import Job
 from common import QuantumTestBase, DEFAULT_TIMEOUT_SECS
 from azure.quantum import JobStatus
-from azure.quantum.target import DftRuntimeError
+from azure.quantum.job import JobFailedWithResultsError
 
 @pytest.mark.live_test
 class TestMicrosoftElementsDftJob(QuantumTestBase):
@@ -67,9 +67,8 @@ class TestMicrosoftElementsDftJob(QuantumTestBase):
 
         self.assertEqual(job.details.status, JobStatus.FAILED)
 
-        with pytest.raises(DftRuntimeError) as e:
+        with pytest.raises(JobFailedWithResultsError) as e:
             job.get_results(timeout_secs=DEFAULT_TIMEOUT_SECS)
-
             self.assertIsNotNone(e.value.get_details())            
 
 
@@ -77,6 +76,7 @@ class TestMicrosoftElementsDftJob(QuantumTestBase):
         workspace = self.create_workspace()
         target = workspace.get_targets("microsoft.dft")
         dir_path = os.path.dirname(os.path.realpath(__file__))
+        
         with open(f"{dir_path}/molecule.xyz", "r") as file:
             job = target.submit(input_data=file.read(), input_params=input_params)
             job.wait_until_completed(timeout_secs=DEFAULT_TIMEOUT_SECS)
