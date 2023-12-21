@@ -286,8 +286,8 @@ class BaseJob(WorkspaceItem):
         :rtype: dict
         """
 
-        lob_uri_with_sas_token = self._get_blob_uri_with_sas_token(blob_uri)
-        return download_blob_properties(lob_uri_with_sas_token)
+        blob_uri_with_sas_token = self._get_blob_uri_with_sas_token(blob_uri)
+        return download_blob_properties(blob_uri_with_sas_token)
 
 
     def upload_attachment(

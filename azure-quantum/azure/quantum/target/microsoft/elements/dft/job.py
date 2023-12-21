@@ -1,4 +1,5 @@
-from typing import Any, Dict
+import collections.abc
+from typing import Any, Dict, Union
 from azure.quantum.job import JobFailedWithResultsError
 from azure.quantum.job.job import Job, DEFAULT_TIMEOUT
 from azure.quantum._client.models import JobDetails
@@ -18,17 +19,28 @@ class MicrosoftElementsDftJob(Job):
             return job_results["results"]
         except JobFailedWithResultsError as e:
                 failure_results = e.get_failure_results()
-                if "results" in failure_results \
-                    and len(failure_results["results"]) > 0 \
-                    and "error" in failure_results["results"][0] \
-                    and "error_message" in failure_results["results"][0]["error"]:
-                    message = f'{e.get_message()} Inner error: {failure_results["results"][0]["error"]["error_message"]}'
+                if MicrosoftElementsDftJob._is_dft_failure_results(failure_results):
+                    error = failure_results["results"][0]["error"]
+                    message = f'{e.get_message()} Error type: {error["error_type"]}. Message: {error["error_message"]}'
                     raise JobFailedWithResultsError(message, failure_results) from None
 
 
     @classmethod
-    def _allow_failure_results(self) -> bool: 
+    def _allow_failure_results(cls) -> bool: 
         """
         Allow to download job results even if the Job status is "Failed".
         """
         return True
+
+
+    @staticmethod
+    def _is_dft_failure_results(failure_results: Union[Dict[str, Any], str]) -> bool:
+         return isinstance(failure_results, dict) \
+                    and "results" in failure_results \
+                    and isinstance(failure_results["results"], collections.abc.Sequence) \
+                    and len(failure_results["results"]) > 0 \
+                    and isinstance(failure_results["results"][0], dict) \
+                    and "error" in failure_results["results"][0] \
+                    and isinstance(failure_results["results"][0]["error"], dict) \
+                    and "error_type" in failure_results["results"][0]["error"] \
+                    and "error_message" in failure_results["results"][0]["error"]

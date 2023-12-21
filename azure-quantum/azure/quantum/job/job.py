@@ -140,7 +140,7 @@ class Job(BaseJob, FilteredJob):
 
 
     @classmethod
-    def _allow_failure_results(self) -> bool: 
+    def _allow_failure_results(cls) -> bool: 
         """
         Allow to download job results even if the Job status is "Failed".
 

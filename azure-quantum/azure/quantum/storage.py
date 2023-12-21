@@ -14,6 +14,7 @@ from azure.storage.blob import (
     generate_blob_sas,
     generate_container_sas,
     BlobType,
+    BlobProperties
 )
 from datetime import datetime, timedelta
 from enum import Enum
@@ -196,7 +197,7 @@ def download_blob(blob_url: str) -> Any:
     return response
 
 
-def download_blob_properties(blob_url: str) -> Dict[str, str]:
+def download_blob_properties(blob_url: str) -> BlobProperties:
     """Downloads the blob properties from Azure for the given blob URI"""
     blob_client = BlobClient.from_blob_url(blob_url)
     logger.info(

@@ -1,5 +1,5 @@
 import json
-from typing import Any, Dict
+from typing import Any, Dict, Union
 
 class JobFailedWithResultsError(RuntimeError):
     """
@@ -14,7 +14,7 @@ class JobFailedWithResultsError(RuntimeError):
         super().__init__(message, *args)
 
 
-    def _set_error_details(self, message: str, failure_results: Any):
+    def _set_error_details(self, message: str, failure_results: Any) -> None:
         self._message = message
         try:
             decoded_failure_results = failure_results.decode("utf8")
@@ -30,7 +30,7 @@ class JobFailedWithResultsError(RuntimeError):
         return self._message
 
 
-    def get_failure_results(self) -> Any:
+    def get_failure_results(self) -> Union[Dict[str, Any], str]:
         """
         Get failure results produced by the job.
         """
