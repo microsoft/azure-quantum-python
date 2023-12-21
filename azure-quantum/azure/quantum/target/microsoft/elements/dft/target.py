@@ -35,7 +35,7 @@ class MicrosoftElementsDft(Target):
             input_data_format="microsoft.xyz.v1",
             output_data_format="microsoft.dft-results.v1",
             provider_id="microsoft-elements",
-            content_type=ContentType.json,
+            content_type=ContentType.text_plain,
             **kwargs
         )
 
