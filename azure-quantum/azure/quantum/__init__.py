@@ -3,6 +3,9 @@
 # Licensed under the MIT License.
 ##
 
+"""Defines interfaces for interacting with Azure Quantum"""
+
+
 import logging
 from .version import __version__
 

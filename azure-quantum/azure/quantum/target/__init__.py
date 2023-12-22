@@ -25,8 +25,11 @@ DEFAULT_TARGETS = {
 
 __all__ = [
     "Target",
+    "Solver",
+    "SimulatedBifurcationMachine",
     "IonQ",
     "Quantinuum",
     "Rigetti",
-    "Pasqal"
+    "Pasqal",
+    "DEFAULT_TARGETS"
     ]

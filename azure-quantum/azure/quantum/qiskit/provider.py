@@ -31,6 +31,9 @@ QISKIT_USER_AGENT = "azure-quantum-qiskit"
 
 
 class AzureQuantumProvider(Provider):
+    
+    """Azure Quantum Qiskit Provider"""
+
     def __init__(self, workspace=None, **kwargs):
         if workspace is None:
             workspace = Workspace(**kwargs)

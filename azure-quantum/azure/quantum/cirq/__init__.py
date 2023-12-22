@@ -2,4 +2,11 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 ##
-from .service import AzureQuantumService
+
+"""Azure Quantum Cirq Service"""
+
+from azure.quantum.cirq.service import AzureQuantumService
+
+__all__ = [
+    "AzureQuantumService"
+    ]
