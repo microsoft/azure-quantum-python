@@ -3,6 +3,12 @@
 # Licensed under the MIT License.
 ##
 
+import warnings
+import inspect
+from itertools import groupby
+from typing import Dict, List, Tuple, Type
+from azure.quantum import Workspace
+
 try:
     from qiskit.providers import ProviderV1 as Provider
     from qiskit.providers.exceptions import QiskitBackendNotFoundError
@@ -14,15 +20,9 @@ except ImportError:
 To install run: pip install azure-quantum[qiskit]"
     )
 
-
-from typing import Dict, List, Tuple, Type
-from azure.quantum import Workspace
 from azure.quantum.qiskit.backends.backend import AzureBackendBase
 from azure.quantum.qiskit.job import AzureQuantumJob
 from azure.quantum.qiskit.backends import *
-from itertools import groupby
-import warnings
-import inspect
 
 # Target ID keyword for parameter-free solvers
 PARAMETER_FREE = "parameterfree"
@@ -31,7 +31,7 @@ QISKIT_USER_AGENT = "azure-quantum-qiskit"
 
 
 class AzureQuantumProvider(Provider):
-    
+
     """Azure Quantum Qiskit Provider"""
 
     def __init__(self, workspace=None, **kwargs):
