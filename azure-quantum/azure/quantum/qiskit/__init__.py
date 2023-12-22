@@ -5,7 +5,7 @@
 
 """Azure Quantum Qiskit Provider"""
 
-from azure.quantum.qiskit.provider import AzureQuantumProvider
+from .provider import AzureQuantumProvider
 from azure.quantum import __version__
 
 __all__ = [

@@ -25,8 +25,6 @@ DEFAULT_TARGETS = {
 
 __all__ = [
     "Target",
-    "Solver",
-    "SimulatedBifurcationMachine",
     "IonQ",
     "Quantinuum",
     "Rigetti",

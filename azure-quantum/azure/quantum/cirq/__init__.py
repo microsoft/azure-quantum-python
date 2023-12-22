@@ -5,8 +5,6 @@
 
 """Azure Quantum Cirq Service"""
 
-from azure.quantum.cirq.service import AzureQuantumService
+from .service import AzureQuantumService
 
-__all__ = [
-    "AzureQuantumService"
-    ]
+__all__ = ["AzureQuantumService"]
