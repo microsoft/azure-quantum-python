@@ -8,6 +8,9 @@ from typing import Any, Dict, List, Optional, Tuple, Type, Callable
 from ..argument_types import EmptyArray, Pauli, Range, Result
 
 
+__all__ = ["InputParams"]
+
+
 class EntryPointArguments:
     """
     Wrapper class to set QIR entry point arguments.

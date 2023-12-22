@@ -14,3 +14,6 @@ from ._client.models._enums import JobStatus, SessionStatus, SessionJobFailurePo
 
 logger = logging.getLogger(__name__)
 logger.info(f"version: {__version__}")
+
+
+__all__ = [ "Workspace" ]

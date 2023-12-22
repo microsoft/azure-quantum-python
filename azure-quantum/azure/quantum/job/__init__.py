@@ -10,11 +10,10 @@ from azure.quantum.job.session import Session, SessionHost
 from azure.quantum._client.models import JobDetails
 
 
-__all__=[
-    "Job", 
-    "WorkspaceItem", 
-    "WorkspaceItemFactory", 
-    "Session", 
-    "SessionHost", 
+__all__ = [
+    "Job",
+    "WorkspaceItem",
+    "Session",
+    "SessionHost",
     "JobDetails"
     ]
