@@ -2,6 +2,9 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 ##
+
+"""Defines set of targets for interacting with Azure Quantum"""
+
 from .target import Target
 from .solvers import Solver
 from .toshiba import (
