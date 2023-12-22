@@ -393,7 +393,12 @@ class MicrosoftEstimator(Target):
                 (module, _) = to_qir_module(input_data, record_output=False)
                 input_data = module.bitcode
         finally:
-            return super().submit(input_data, name, input_params, **kwargs)
+            return super().submit(
+                input_data=input_data, 
+                name=name, 
+                input_params=input_params, 
+                **kwargs
+            )
 
     @classmethod
     def _get_job_class(cls) -> Type[Job]:

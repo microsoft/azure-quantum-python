@@ -44,6 +44,7 @@ class TestRigettiTarget(QuantumTestBase):
         self,
         quil: str,
         input_params: Union[InputParams, Dict[str, Any], None],
+        shots: int = None,
     ) -> Optional[Result]:
         workspace = self.create_workspace()
 
@@ -51,6 +52,7 @@ class TestRigettiTarget(QuantumTestBase):
         job = target.submit(
             input_data=quil,
             name="qdk-python-test",
+            shots=shots,
             input_params=input_params,
         )
 
@@ -70,6 +72,16 @@ class TestRigettiTarget(QuantumTestBase):
         self.assertEqual(len(readout), num_shots)
         for shot in readout:
             self.assertEqual(len(shot), 2, "Bell state program should only measure 2 qubits")
+    
+    def test_job_submit_rigetti_typed_input_params_with_shots(self) -> None:
+        shots = 5
+        result = self._run_job(BELL_STATE_QUIL, input_params=InputParams(), shots=shots)
+        self.assertIsNotNone(result)
+        readout = result[READOUT]
+        self.assertEqual(len(readout), shots)
+        for shot in readout:
+            self.assertEqual(len(shot), 2, "Bell state program should only measure 2 qubits")
+    
 
     def test_job_submit_rigetti_dict_input_params(self) -> None:
         num_shots = 5
@@ -77,6 +89,16 @@ class TestRigettiTarget(QuantumTestBase):
         self.assertIsNotNone(result)
         readout = result[READOUT]
         self.assertEqual(len(readout), num_shots)
+        for shot in readout:
+            self.assertEqual(len(shot), 2, "Bell state program should only measure 2 qubits")
+    
+    
+    def test_job_submit_rigetti_dict_input_params_with_shots(self) -> None:
+        shots = 5
+        result = self._run_job(BELL_STATE_QUIL,input_params={}, shots=shots)
+        self.assertIsNotNone(result)
+        readout = result[READOUT]
+        self.assertEqual(len(readout), shots)
         for shot in readout:
             self.assertEqual(len(shot), 2, "Bell state program should only measure 2 qubits")
 
@@ -87,6 +109,7 @@ class TestRigettiTarget(QuantumTestBase):
         self.assertEqual(len(readout), 1)
         for shot in readout:
             self.assertEqual(len(shot), 2, "Bell state program should only measure 2 qubits")
+            
 
     def test_quil_syntax_error(self) -> None:
         with pytest.raises(RuntimeError) as err:

@@ -91,6 +91,7 @@ class Pasqal(Target):
         self,
         input_data: Any,
         name: str = "azure-quantum-job",
+        shots: int = None,
         input_params: Union[InputParams, None, Dict[str, Any]] = None,
         **kwargs,
     ) -> Job:
@@ -103,6 +104,8 @@ class Pasqal(Target):
         :type input_data: Any
         :param name: Job name
         :type name: str
+        :param shots: Number of shots, defaults to None
+        :type shots: int
         :param input_params: Input parameters, see :class:`azure.quantum.target.pasqal.InputParams` for details.
         :type input_params: Union[InputParams, None, Dict[str, Any]]
         :return: Azure Quantum job
@@ -113,5 +116,13 @@ class Pasqal(Target):
             input_params = {
                 "runs": typed_input_params.runs,
             }
+        
+        if shots is not None:
+            input_params["runs"] = shots
 
-        return super().submit(input_data, name, input_params, **kwargs)
+        return super().submit(
+            input_data=input_data, 
+            name=name, 
+            input_params=input_params, 
+            **kwargs
+        )

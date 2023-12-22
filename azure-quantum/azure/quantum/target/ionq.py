@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 ##
 from typing import Any, Dict, List
+from warnings import warn
 
 from azure.quantum.target.target import Target
 from azure.quantum.job.job import Job
@@ -78,7 +79,7 @@ class IonQ(Target):
         self,
         circuit: Dict[str, Any] = None,
         name: str = "ionq-job",
-        num_shots: int = None,
+        shots: int = None,
         input_params: Dict[str, Any] = None,
         **kwargs
     ) -> Job:
@@ -89,8 +90,8 @@ class IonQ(Target):
         :type circuit: Dict[str, Any]
         :param name: Job name
         :type name: str
-        :param num_shots: Number of shots, defaults to None
-        :type num_shots: int
+        :param shots: Number of shots, defaults to None
+        :type shots: int
         :param input_params: Optional input params dict
         :type input_params: Dict[str, Any]
         :return: Azure Quantum job
@@ -103,13 +104,25 @@ class IonQ(Target):
             )
         if input_params is None:
             input_params = {}
-        if num_shots is not None:
-            input_params = input_params.copy()
-            input_params["shots"] = num_shots
 
+        num_shots = kwargs.get("num_shots")
+
+        if num_shots is not None:
+            warn(
+                "The 'num_shots' will be deprecated. Please use 'shots' instead.",
+                category=DeprecationWarning,
+            )
+            shots = num_shots
+
+        if shots is not None:
+            input_params = input_params.copy()
+            input_params["shots"] = shots
+
+        
         return super().submit(
             input_data=input_data,
             name=name,
+            shots=shots,
             input_params=input_params,
             **kwargs
         )

@@ -68,6 +68,25 @@ class TestQuantinuum(QuantumTestBase):
     def test_job_submit_quantinuum(self):
         self._test_job_submit_quantinuum("quantinuum.sim.h1-1e")
 
+    
+    @pytest.mark.quantinuum
+    @pytest.mark.live_test
+    def test_job_submit_quantinuum_with_shots(self):
+        self._test_job_submit_quantinuum("quantinuum.sim.h1-1e", shots=100)
+
+
+    @pytest.mark.quantinuum
+    @pytest.mark.live_test
+    def test_job_submit_quantinuum_with_none_shots(self):
+        self._test_job_submit_quantinuum("quantinuum.sim.h1-1e", shots=None)
+
+
+    @pytest.mark.quantinuum
+    @pytest.mark.live_test
+    def test_job_submit_quantinuum_with_deprecated_num_shots(self):
+        with pytest.warns(DeprecationWarning, match="The 'num_shots' will be deprecated."):
+            self._test_job_submit_quantinuum("quantinuum.sim.h1-1e", shots=100, shots_as_deprecated_num_shots=True)
+
     @pytest.mark.quantinuum
     @pytest.mark.live_test
     def test_job_submit_quantinuum_h2_1e(self):
@@ -83,11 +102,27 @@ class TestQuantinuum(QuantumTestBase):
     def test_job_submit_quantinuum_h2_1qpu(self):
         self._test_job_submit_quantinuum("quantinuum.qpu.h2-1")
 
-    def _test_job_submit_quantinuum(self, target_name):
+    def _test_job_submit_quantinuum(
+            self, 
+            target_name, 
+            shots: int = None,
+            shots_as_deprecated_num_shots: bool = False
+        ):
         workspace = self.create_workspace()
         circuit = self._teleport()
         target = workspace.get_targets(target_name)
-        job = target.submit(circuit)
+
+        additional_kwargs = {}
+        if shots:
+            if shots_as_deprecated_num_shots:
+                additional_kwargs["num_shots"] = shots
+            else:
+                additional_kwargs["shots"] = shots
+
+        job = target.submit(
+            circuit,
+            **additional_kwargs,
+        )
         self.assertEqual(False, job.has_completed())
         job.wait_until_completed(timeout_secs=DEFAULT_TIMEOUT_SECS)
 

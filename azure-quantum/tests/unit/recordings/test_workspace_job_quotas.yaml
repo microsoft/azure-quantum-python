@@ -13,9 +13,7 @@ interactions:
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - azsdk-python-identity/1.14.0 Python/3.9.18 (Windows-10-10.0.22621-SP0)
-      x-client-cpu:
-      - x64
+      - azsdk-python-identity/1.15.0 Python/3.9.18 (Windows-10-10.0.22631-SP0)
       x-client-current-telemetry:
       - 4|730,2|
       x-client-os:
@@ -23,7 +21,7 @@ interactions:
       x-client-sku:
       - MSAL.Python
       x-client-ver:
-      - 1.23.0
+      - 1.26.0
     method: POST
     uri: https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token
   response:
@@ -48,29 +46,27 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - testapp azsdk-python-quantum/0.0.1 Python/3.9.18 (Windows-10-10.0.22621-SP0)
+      - testapp azsdk-python-quantum/0.0.1 Python/3.9.18 (Windows-10-10.0.22631-SP0)
     method: GET
     uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/quotas?api-version=2022-09-12-preview&test-sequence-id=1
   response:
     body:
       string: '{"value": [{"dimension": "qgs", "scope": "Subscription", "providerId":
-        "ionq", "utilization": 0.0, "holds": 3250000.0, "limit": 16666667.0, "period":
-        "Infinite"}, {"dimension": "concurrent_resource_estimator_jobs", "scope":
-        "Workspace", "providerId": "microsoft-qc", "utilization": 0.0, "holds": 0.0,
-        "limit": 10.0, "period": "None"}, {"dimension": "qpu_hours", "scope": "Subscription",
-        "providerId": "pasqal", "utilization": 0.0, "holds": 0.0, "limit": 0.0, "period":
-        "Infinite"}, {"dimension": "emulator_hours", "scope": "Subscription", "providerId":
-        "pasqal", "utilization": 0.0, "holds": 0.0, "limit": 200.0, "period": "Infinite"},
-        {"dimension": "provider-credit", "scope": "Subscription", "providerId": "rigetti",
-        "utilization": 0.0, "holds": 0.0, "limit": 25000.0, "period": "Infinite"},
-        {"dimension": "jobcount", "scope": "Workspace", "providerId": "qci", "utilization":
-        4.0, "holds": 0.0, "limit": 1000.0, "period": "Monthly"}], "nextLink": null,
+        "ionq", "utilization": 0.0, "holds": 0.0, "limit": 16666667.0, "period": "Infinite"},
+        {"dimension": "concurrent_resource_estimator_jobs", "scope": "Workspace",
+        "providerId": "microsoft-qc", "utilization": 0.0, "holds": 0.0, "limit": 10.0,
+        "period": "None"}, {"dimension": "qpu_hours", "scope": "Subscription", "providerId":
+        "pasqal", "utilization": 0.0, "holds": 0.0, "limit": 0.167, "period": "Infinite"},
+        {"dimension": "emulator_hours", "scope": "Subscription", "providerId": "pasqal",
+        "utilization": 0.0, "holds": 0.0, "limit": 20.0, "period": "Infinite"}, {"dimension":
+        "provider-credit", "scope": "Subscription", "providerId": "rigetti", "utilization":
+        0.0, "holds": 0.0, "limit": 25000.0, "period": "Infinite"}], "nextLink": null,
         "access_token": "fake_token"}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '984'
+      - '837'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:

@@ -150,6 +150,7 @@ target '{self.name}' of provider '{self.provider_id}' not found."
         self,
         input_data: Any,
         name: str = "azure-quantum-job",
+        shots: int = None,
         input_params: Union[Dict[str, Any], InputParams, None] = None,
         **kwargs
     ) -> Job:
@@ -162,6 +163,8 @@ target '{self.name}' of provider '{self.provider_id}' not found."
         :type input_data: Any
         :param name: Job name
         :type name: str
+        :param shots: Number of shots, defaults to None
+        :type shots: int
         :param input_params: Input parameters
         :type input_params: Dict[str, Any]
         :return: Azure Quantum job
