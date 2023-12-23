@@ -2,11 +2,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 ##
-
-from typing import Optional, Union, List, TYPE_CHECKING
-from azure.quantum import Workspace
-from azure.quantum.job.base_job import DEFAULT_TIMEOUT
-
 try:
     import cirq
 except ImportError:
@@ -15,7 +10,11 @@ except ImportError:
 To install run: pip install azure-quantum[cirq]"
 )
 
+from azure.quantum import Workspace
+from azure.quantum.job.base_job import DEFAULT_TIMEOUT
 from azure.quantum.cirq.targets import * 
+
+from typing import Optional, Union, List, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from azure.quantum.cirq.targets import Target as CirqTarget
