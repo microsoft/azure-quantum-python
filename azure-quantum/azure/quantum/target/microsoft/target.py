@@ -3,8 +3,10 @@
 # Licensed under the MIT License.
 ##
 import re
+import warnings
 from dataclasses import dataclass, field
-from typing import Any, Dict, Optional, Type, Union
+from typing import Any, Dict, Optional, Type, Union, List
+
 from ...job import Job
 from ...job.base_job import ContentType
 from ...workspace import Workspace
@@ -12,8 +14,6 @@ from ..params import InputParams, InputParamsItem, AutoValidatingParams, \
     validating_field
 from ..target import Target
 from . import MicrosoftEstimatorJob
-from typing import List
-
 
 class QubitParams:
     GATE_US_E3 = "qubit_gate_us_e3"
@@ -377,12 +377,32 @@ class MicrosoftEstimator(Target):
             **kwargs
         )
 
-    def submit(self,
-               input_data: Any,
-               name: str = "azure-quantum-job",
-               shots: int = None,
-               input_params: Union[Dict[str, Any], InputParams, None] = None,
-               **kwargs) -> Job:
+    def submit(
+        self,
+        input_data: Any,
+        name: str = "azure-quantum-job",
+        shots: int = None,
+        input_params: Union[Dict[str, Any], InputParams, None] = None,
+        **kwargs,
+    ) -> Job:
+        """
+        Submit an estimation job
+
+        :param input_data: Input data
+        :type input_data: Any
+        :param name: Job name
+        :type name: str
+        :param shots: Number of shots. Ignored in estimation. Defaults to None
+        :type shots: int
+        :param input_params: Input parameters
+        :type input_params: Dict[str, Any]
+        :return: Azure Quantum job
+        :rtype: Job
+        """
+
+        if shots is not None:
+            warnings.warn("The 'shots' parameter is ignored in resource estimation.")
+
         try:
             from qiskit import QuantumCircuit, transpile
             from qiskit_qir import to_qir_module
