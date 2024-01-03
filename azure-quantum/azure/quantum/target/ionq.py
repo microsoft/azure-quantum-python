@@ -51,6 +51,8 @@ class IonQ(Target):
         "ionq.qpu.forte-1"
     )
 
+    _SHOTS_PARAM_NAME = "shots"
+
     def __init__(
         self,
         workspace: Workspace,
@@ -105,7 +107,7 @@ class IonQ(Target):
         if input_params is None:
             input_params = {}
 
-        num_shots = kwargs.get("num_shots")
+        num_shots = kwargs.pop("num_shots", None)
 
         if num_shots is not None:
             warn(
@@ -113,10 +115,13 @@ class IonQ(Target):
                 category=DeprecationWarning,
             )
             shots = num_shots
+        
 
         if shots is not None:
             input_params = input_params.copy()
-            input_params["shots"] = shots
+            input_params[IonQ._SHOTS_PARAM_NAME] = shots
+        else:
+            shots = input_params.get(IonQ._SHOTS_PARAM_NAME)
 
         
         return super().submit(

@@ -380,6 +380,7 @@ class MicrosoftEstimator(Target):
     def submit(self,
                input_data: Any,
                name: str = "azure-quantum-job",
+               shots: int = None,
                input_params: Union[Dict[str, Any], InputParams, None] = None,
                **kwargs) -> Job:
         try:
@@ -396,6 +397,7 @@ class MicrosoftEstimator(Target):
             return super().submit(
                 input_data=input_data, 
                 name=name, 
+                shots=shots,
                 input_params=input_params, 
                 **kwargs
             )

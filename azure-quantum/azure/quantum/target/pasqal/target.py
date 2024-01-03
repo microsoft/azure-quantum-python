@@ -64,6 +64,8 @@ class Pasqal(Target):
 
     target_names = tuple(target.value for target in PasqalTarget)
 
+    _SHOTS_PARAM_NAME = "runs"
+
     def __init__(
         self,
         workspace: Workspace,
@@ -114,15 +116,21 @@ class Pasqal(Target):
         if isinstance(input_params, InputParams):
             typed_input_params = input_params
             input_params = {
-                "runs": typed_input_params.runs,
+                Pasqal._SHOTS_PARAM_NAME: typed_input_params.runs,
             }
+        elif input_params is None:
+            input_params = {}
         
         if shots is not None:
-            input_params["runs"] = shots
+            input_params[Pasqal._SHOTS_PARAM_NAME] = shots
+        else:
+            shots = input_params.get(Pasqal._SHOTS_PARAM_NAME)
+
 
         return super().submit(
             input_data=input_data, 
-            name=name, 
+            name=name,
+            shots=shots, 
             input_params=input_params, 
             **kwargs
         )

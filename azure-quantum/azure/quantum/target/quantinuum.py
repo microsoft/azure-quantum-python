@@ -26,6 +26,8 @@ class Quantinuum(Target):
         "quantinuum.sim.h2-1e",
     )
 
+    _SHOTS_PARAM_NAME = "count"
+
     def __init__(
         self,
         workspace: Workspace,
@@ -79,7 +81,7 @@ class Quantinuum(Target):
         if input_params is None:
             input_params = {}
 
-        num_shots = kwargs.get("num_shots")
+        num_shots = kwargs.pop("num_shots", None)
 
         if num_shots is not None:
             warn(
@@ -90,7 +92,9 @@ class Quantinuum(Target):
 
         if shots is not None:
             input_params = input_params.copy()
-            input_params["count"] = shots
+            input_params[Quantinuum._SHOTS_PARAM_NAME] = shots
+        else:
+            shots = input_params.get(Quantinuum._SHOTS_PARAM_NAME)
 
         return super().submit(
             input_data=input_data,
