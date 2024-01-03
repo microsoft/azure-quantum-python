@@ -100,6 +100,9 @@ if ($PackageDir -Match "azure-quantum") {
 
     Write-Host "##[info]Copy auxiliary Q# test files from $PackageDir to $PSScriptRoot"
     Copy-Item -Path (Join-Path $PackageDir "tests" "unit" "*.qs") -Destination $PSScriptRoot
+
+    Write-Host "##[info]Copy auxiliary DFT test files from $PackageDir to $PSScriptRoot"
+    Copy-Item -Path (Join-Path $PackageDir "tests" "unit" "*.xyz") -Destination $PSScriptRoot
 }
 
 python -m pytest -v `
