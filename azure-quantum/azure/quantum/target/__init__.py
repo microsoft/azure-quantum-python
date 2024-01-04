@@ -30,7 +30,5 @@ __all__ = [
     "Target",
     "IonQ",
     "Quantinuum",
-    "Rigetti",
-    "Pasqal",
     "DEFAULT_TARGETS"
     ]
