@@ -6,6 +6,7 @@
 """Defines Azure Quantum job model"""
 
 from azure.quantum.job.job import Job
+from azure.quantum.job.job_failed_with_results_error import JobFailedWithResultsError
 from azure.quantum.job.workspace_item import WorkspaceItem
 from azure.quantum.job.workspace_item_factory import WorkspaceItemFactory
 from azure.quantum.job.session import Session, SessionHost

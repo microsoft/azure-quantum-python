@@ -11,7 +11,7 @@ from urllib.parse import urlparse
 from typing import Any, Dict, Optional, TYPE_CHECKING
 from azure.storage.blob import BlobClient
 
-from azure.quantum.storage import upload_blob, download_blob, ContainerClient
+from azure.quantum.storage import upload_blob, download_blob, download_blob_properties, ContainerClient
 from azure.quantum._client.models import JobDetails
 from azure.quantum.job.workspace_item import WorkspaceItem
 
@@ -26,6 +26,7 @@ DEFAULT_TIMEOUT = 300  # Default timeout for waiting for job to complete
 
 class ContentType(str, Enum):
     json = "application/json"
+    text_plain = "text/plain"
 
 class BaseJob(WorkspaceItem):
     # Optionally override these to create a Provider-specific Job subclass
@@ -261,6 +262,7 @@ class BaseJob(WorkspaceItem):
         )
         return uploaded_blob_uri
 
+
     def download_data(self, blob_uri: str) -> dict:
         """Download file from blob uri
 
@@ -269,22 +271,25 @@ class BaseJob(WorkspaceItem):
         :return: Payload from blob
         :rtype: dict
         """
-        url = urlparse(blob_uri)
-        if url.query.find("se=") == -1:
-            # blob_uri does not contains SAS token,
-            # get sas url from service
-            blob_client = BlobClient.from_blob_url(
-                blob_uri
-            )
-            blob_uri = self.workspace._get_linked_storage_sas_uri(
-                blob_client.container_name, blob_client.blob_name
-            )
-            payload = download_blob(blob_uri)
-        else:
-            # blob_uri contains SAS token, use it
-            payload = download_blob(blob_uri)
+        
+        blob_uri_with_sas_token = self._get_blob_uri_with_sas_token(blob_uri)
+        payload = download_blob(blob_uri_with_sas_token)
 
         return payload
+
+
+    def download_blob_properties(self, blob_uri: str):
+        """Download Blob properties
+
+        :param blob_uri: Blob URI
+        :type blob_uri: str
+        :return: Blob properties
+        :rtype: dict
+        """
+
+        blob_uri_with_sas_token = self._get_blob_uri_with_sas_token(blob_uri)
+        return download_blob_properties(blob_uri_with_sas_token)
+
 
     def upload_attachment(
         self,
@@ -345,3 +350,24 @@ class BaseJob(WorkspaceItem):
         blob_client = container_client.get_blob_client(name)
         response = blob_client.download_blob().readall()
         return response
+
+
+    def _get_blob_uri_with_sas_token(self, blob_uri: str) -> str:
+        """Get Blob URI with SAS-token if one was not specified in blob_uri parameter
+        :param blob_uri: Blob URI
+        :type blob_uri: str
+        :return: Blob URI with SAS-token
+        :rtype: str
+        """
+        url = urlparse(blob_uri)
+        if url.query.find("se=") == -1:
+            # blob_uri does not contains SAS token,
+            # get sas url from service
+            blob_client = BlobClient.from_blob_url(
+                blob_uri
+            )
+            blob_uri = self.workspace._get_linked_storage_sas_uri(
+                blob_client.container_name, blob_client.blob_name
+            )
+
+        return blob_uri

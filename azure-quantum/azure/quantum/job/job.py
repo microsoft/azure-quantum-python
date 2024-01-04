@@ -11,6 +11,7 @@ import json
 from typing import TYPE_CHECKING
 
 from azure.quantum._client.models import JobDetails
+from azure.quantum.job.job_failed_with_results_error import JobFailedWithResultsError
 from azure.quantum.job.base_job import BaseJob, ContentType, DEFAULT_TIMEOUT
 from azure.quantum.job.filtered_job import FilteredJob
 
@@ -117,6 +118,12 @@ class Job(BaseJob, FilteredJob):
             self.wait_until_completed(timeout_secs=timeout_secs)
 
         if not self.details.status == "Succeeded":
+            if self.details.status == "Failed" and self._allow_failure_results():
+                job_blob_properties = self.download_blob_properties(self.details.output_data_uri)
+                if job_blob_properties.size > 0:
+                    job_failure_data = self.download_data(self.details.output_data_uri)
+                    raise JobFailedWithResultsError("An error occurred during job execution.", job_failure_data)
+
             raise RuntimeError(
                 f'{"Cannot retrieve results as job execution failed"}'
                 + f"(status: {self.details.status}."
@@ -130,3 +137,16 @@ class Job(BaseJob, FilteredJob):
         except:
             # If errors decoding the data, return the raw payload:
             return payload
+
+
+    @classmethod
+    def _allow_failure_results(cls) -> bool: 
+        """
+        Allow to download job results even if the Job status is "Failed".
+
+        This method can be overridden in derived classes to alter the default
+        behaviour.
+
+        The default is False.
+        """
+        return False
