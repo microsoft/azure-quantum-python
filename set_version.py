@@ -22,7 +22,7 @@ except:
 
 version_triple = "{}.{}".format(major_minor, patch_ver)
 
-pip_suffix = {"stable": "", "rc": "rc0", "dev": "dev0"}
+pip_suffix = {"stable": "", "rc": "rc0", "dev": ".dev0"}
 pip_version = "{}{}".format(version_triple, pip_suffix.get(BUILD_TYPE))
 
 print("PYTHON_VERSION: {}".format(pip_version))
