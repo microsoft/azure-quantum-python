@@ -5,10 +5,10 @@
 
 import os
 
-major_minor = "0.30"
+major_minor = "1.0"
 
 BUILD_TYPE = os.environ.get("BUILD_TYPE") or "dev"
-PATCH_NUMBER = os.environ.get("PATCH_NUMBER")
+PATCH_NUMBER = os.environ.get("PATCH_NUMBER") or "0"
 
 if BUILD_TYPE not in ["dev", "rc", "stable"]:
     print(f"BUILD_TYPE environment variable must be 'dev', 'rc', or 'stable'. Current value: {BUILD_TYPE}")
