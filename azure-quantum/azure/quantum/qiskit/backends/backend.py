@@ -229,7 +229,7 @@ class AzureQirBackend(AzureBackendBase):
 
         This method returns a
         :class:`~azure.quantum.qiskit.job.AzureQuantumJob` object
-        that runs circuits. This is an async call.
+        that runs circuits. 
 
         Args:
             run_input (QuantumCircuit or List[QuantumCircuit]): An individual or a
