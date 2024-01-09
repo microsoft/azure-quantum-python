@@ -5,7 +5,10 @@
 from typing import Any, Dict
 from warnings import warn
 
-from azure.quantum.target.target import Target
+from azure.quantum.target.target import (
+    Target,
+    _determine_shots_or_deprecated_num_shots,
+)
 from azure.quantum.job.job import Job
 from azure.quantum.workspace import Workspace
 from azure.quantum._client.models import CostEstimate, UsageEvent
@@ -83,18 +86,10 @@ class Quantinuum(Target):
 
         num_shots = kwargs.pop("num_shots", None)
 
-        if num_shots is not None:
-            warn(
-                "The 'num_shots' will be deprecated. Please use 'shots' instead.",
-                category=DeprecationWarning,
-            )
-            shots = num_shots
-
-        if shots is not None:
-            input_params = input_params.copy()
-            input_params[Quantinuum._SHOTS_PARAM_NAME] = shots
-        else:
-            shots = input_params.get(Quantinuum._SHOTS_PARAM_NAME)
+        shots = _determine_shots_or_deprecated_num_shots(
+            shots=shots,
+            num_shots=num_shots,
+        )
 
         return super().submit(
             input_data=input_data,

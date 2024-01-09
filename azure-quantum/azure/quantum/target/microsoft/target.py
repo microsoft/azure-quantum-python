@@ -401,7 +401,7 @@ class MicrosoftEstimator(Target):
         """
 
         if shots is not None:
-            warnings.warn("The 'shots' parameter is ignored in resource estimation.")
+            warnings.warn("The 'shots' parameter is ignored in resource estimation job.")
 
         try:
             from qiskit import QuantumCircuit, transpile

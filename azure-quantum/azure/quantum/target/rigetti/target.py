@@ -193,11 +193,6 @@ class Rigetti(Target):
                 input_params["substitutions"] = typed_input_params.substitutions
         elif input_params is None:
             input_params = {}
-        
-        if shots is not None:
-            input_params[Rigetti._SHOTS_PARAM_NAME] = shots
-        else:
-            shots = input_params.get(Rigetti._SHOTS_PARAM_NAME)
 
         return super().submit(
             input_data=input_data, 

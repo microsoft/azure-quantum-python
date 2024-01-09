@@ -43,10 +43,17 @@ class MicrosoftElementsDft(Target):
     def submit(self,
                input_data: Any,
                name: str = "azure-quantum-dft-job",
+               shots: int = None,
                input_params: Union[Dict[str, Any], InputParams, None] = None,
                **kwargs) -> MicrosoftElementsDftJob:
         
-        return super().submit(input_data, name, input_params, **kwargs)
+        return super().submit(
+            input_data=input_data,
+            name=name, 
+            shots=shots, 
+            input_params=input_params,
+            **kwargs
+        )
 
 
     @classmethod

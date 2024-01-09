@@ -120,12 +120,6 @@ class Pasqal(Target):
             }
         elif input_params is None:
             input_params = {}
-        
-        if shots is not None:
-            input_params[Pasqal._SHOTS_PARAM_NAME] = shots
-        else:
-            shots = input_params.get(Pasqal._SHOTS_PARAM_NAME)
-
 
         return super().submit(
             input_data=input_data, 
