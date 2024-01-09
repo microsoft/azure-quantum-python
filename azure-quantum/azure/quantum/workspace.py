@@ -218,21 +218,24 @@ class Workspace:
             full_user_agent = f"{full_user_agent}-{env_app_id}" if full_user_agent else env_app_id
         return full_user_agent
 
-    def append_user_agent(self, value: str):
+    def append_user_agent(self, value: Union[str, None]):
         """
         Append a new value to the Workspace's UserAgent and re-initialize the
         QuantumClient. The values are appended using a dash.
 
         :param value: UserAgent value to add, e.g. "azure-quantum-<plugin>"
         """
-        if value not in (self._user_agent or ""):
+        new_user_agent = None
+
+        if value is not None and value not in (self._user_agent or ""):
             new_user_agent = f"{self._user_agent}-{value}" if self._user_agent else value
-            if new_user_agent != self._user_agent:
-                self._user_agent = new_user_agent
-                # We need to recreate the client for it to
-                # pick the new UserAgent
-                if self._client is not None:
-                    self._client = self._create_client()
+
+        if new_user_agent != self._user_agent:
+            self._user_agent = new_user_agent
+            # We need to recreate the client for it to
+            # pick the new UserAgent
+            if self._client is not None:
+                self._client = self._create_client()
 
     def _get_top_level_items_client(self) -> TopLevelItemsOperations:
         return self._client.top_level_items
