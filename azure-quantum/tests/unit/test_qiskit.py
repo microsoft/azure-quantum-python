@@ -863,6 +863,37 @@ class TestQiskit(QuantumTestBase):
         self._qiskit_wait_to_complete(qiskit_job, provider)
         self.assertEqual(qiskit_job._azure_job.details.input_params["count"], 500)
 
+    @pytest.mark.quantinuum
+    @pytest.mark.live_test
+    def test_plugins_submit_qiskit_to_quantinuum_with_conflicting_shots_and_count_from_options(self):
+        circuit = self._3_qubit_ghz()
+        workspace = self.create_workspace()
+        provider = AzureQuantumProvider(workspace=workspace)
+        backend = provider.get_backend(name="quantinuum.sim.h1-1e")
+        
+        shots = 100
+        qiskit_job = backend.run(circuit, shots=shots, count=10)
+
+        self._qiskit_wait_to_complete(qiskit_job, provider)
+        self.assertEqual(qiskit_job._azure_job.details.input_params["count"], shots)
+
+    @pytest.mark.quantinuum
+    @pytest.mark.live_test
+    def test_plugins_submit_qiskit_to_quantinuum_with_count_from_options(self):
+        """
+        Check that backend also allows to specify shots by using a provider-specific option.
+        """
+        circuit = self._3_qubit_ghz()
+        workspace = self.create_workspace()
+        provider = AzureQuantumProvider(workspace=workspace)
+        backend = provider.get_backend(name="quantinuum.sim.h1-1e")
+        
+        shots = 100
+        qiskit_job = backend.run(circuit, count=shots)
+
+        self._qiskit_wait_to_complete(qiskit_job, provider)
+        self.assertEqual(qiskit_job._azure_job.details.input_params["count"], shots)
+
     def _test_qiskit_submit_quantinuum(self, circuit, target="quantinuum.sim.h1-1e", **kwargs):
         workspace = self.create_workspace()
         provider = AzureQuantumProvider(workspace=workspace)
@@ -1049,6 +1080,43 @@ class TestQiskit(QuantumTestBase):
 
     @pytest.mark.rigetti
     @pytest.mark.live_test
+    def test_qiskit_submit_to_rigetti_conflicting_shots_and_count_from_options(self):
+        from azure.quantum.target.rigetti import RigettiTarget
+
+        workspace = self.create_workspace()
+        provider = AzureQuantumProvider(workspace=workspace)
+        backend = provider.get_backend(RigettiTarget.QVM.value)
+        shots = 100
+        circuit = self._3_qubit_ghz()
+
+        with pytest.warns(
+            match="Parameter 'shots' conflicts with the 'count' parameter. Please provide only one option for setting shots. "
+            "Defaulting to 'shots' parameter."
+        ):
+            qiskit_job = backend.run(circuit, shots=shots, count=10)
+
+        self._qiskit_wait_to_complete(qiskit_job, provider)
+        self.assertEqual(qiskit_job._azure_job.details.input_params["count"], shots)
+    
+    
+    @pytest.mark.rigetti
+    @pytest.mark.live_test
+    def test_qiskit_submit_to_rigetti_with_count_from_options(self):
+        from azure.quantum.target.rigetti import RigettiTarget
+
+        workspace = self.create_workspace()
+        provider = AzureQuantumProvider(workspace=workspace)
+        backend = provider.get_backend(RigettiTarget.QVM.value)
+        shots = 100
+        circuit = self._3_qubit_ghz()
+
+        qiskit_job = backend.run(circuit, count=shots)
+
+        self._qiskit_wait_to_complete(qiskit_job, provider)
+        self.assertEqual(qiskit_job._azure_job.details.input_params["count"], shots)
+
+    @pytest.mark.rigetti
+    @pytest.mark.live_test
     def test_qiskit_get_rigetti_qpu_targets(self):
         from azure.quantum.target.rigetti import RigettiTarget
 
@@ -1093,7 +1161,7 @@ class TestQiskit(QuantumTestBase):
         self.assertEqual(qiskit_job._azure_job.details.provider_id, "qci")
         self.assertEqual(qiskit_job._azure_job.details.input_data_format, "qir.v1")
         self.assertEqual(qiskit_job._azure_job.details.output_data_format, "microsoft.quantum-results.v1")
-        self.assertEqual(qiskit_job._azure_job.details.input_params["count"], shots)
+        self.assertEqual(qiskit_job._azure_job.details.input_params["shots"], shots)
         self.assertEqual(qiskit_job._azure_job.details.input_params["items"][0]["entryPoint"], circuit.name)
         self.assertEqual(qiskit_job._azure_job.details.input_params["items"][0]["arguments"], [])
 

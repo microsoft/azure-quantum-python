@@ -218,11 +218,25 @@ target '{self.name}' of provider '{self.provider_id}' not found."
         
         # Set shots number, if possible.
         if self._can_send_shots_input_param():
-            if shots is None:
-                shots = input_params.get(self.__class__._SHOTS_PARAM_NAME)
+            input_params_shots = input_params.pop(self.__class__._SHOTS_PARAM_NAME, None)
+
+            # If there is a parameter conflict, choose 'shots'.
+            if shots is not None and input_params_shots is not None:
+                warnings.warn(
+                    f"Parameter 'shots' conflicts with the '{self.__class__._SHOTS_PARAM_NAME}' field of the 'input_params' "
+                    "parameter. Please provide only one option for setting shots. Defaulting to 'shots' parameter."
+                )
+                final_shots = shots
             
-            if shots is not None:
-                input_params[self.__class__._SHOTS_PARAM_NAME] = shots
+            # The 'shots' parameter has highest priority.
+            elif shots is not None:
+                final_shots = shots
+            # if nothing, try a provider-specific option.
+            else:
+                final_shots = input_params_shots
+            
+            if final_shots is not None:
+                input_params[self.__class__._SHOTS_PARAM_NAME] = final_shots
 
 
         encoding = kwargs.pop("encoding", self.encoding)

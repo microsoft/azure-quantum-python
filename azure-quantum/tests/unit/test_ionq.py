@@ -89,8 +89,45 @@ class TestIonQ(QuantumTestBase):
 
         job.wait_until_completed(timeout_secs=DEFAULT_TIMEOUT_SECS)   
         assert job.details.input_params["shots"] == shots
-        
 
+    @pytest.mark.ionq
+    @pytest.mark.live_test
+    def test_job_submit_ionq_with_shots_from_input_params(self):
+        workspace = self.create_workspace()
+        circuit = self._3_qubit_ghz()
+        target = IonQ(workspace=workspace)
+
+        shots = 100
+
+        job = target.submit(
+            circuit=circuit,
+            input_params={"shots": shots},
+        )
+
+        job.wait_until_completed(timeout_secs=DEFAULT_TIMEOUT_SECS)   
+        assert job.details.input_params["shots"] == shots
+        
+    @pytest.mark.ionq
+    @pytest.mark.live_test
+    def test_job_submit_ionq_with_conflicting_shots_from_input_params(self):
+        workspace = self.create_workspace()
+        circuit = self._3_qubit_ghz()
+        target = IonQ(workspace=workspace)
+
+        shots = 100
+
+        with pytest.warns( 
+             match="Parameter 'shots' conflicts with the 'shots' field of the 'input_params' parameter. "
+                  "Please provide only one option for setting shots. Defaulting to 'shots' parameter.",
+        ):
+            job = target.submit(
+                circuit=circuit,
+                shots=shots,
+                input_params={"shots": 20},
+            )
+
+        job.wait_until_completed(timeout_secs=DEFAULT_TIMEOUT_SECS)   
+        assert job.details.input_params["shots"] == shots
 
     @pytest.mark.ionq
     @pytest.mark.live_test

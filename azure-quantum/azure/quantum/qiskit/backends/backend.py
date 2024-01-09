@@ -125,22 +125,30 @@ class AzureBackendBase(Backend, SessionHost):
         # Backend options are mapped to input_params.
         input_params: Dict[str, Any] = vars(self.options).copy()
 
-        option_shots_param = options.pop(self.__class__._SHOTS_PARAM_NAME, None)
-
         # Determine shots number, if needed.
         if self._can_send_shots_input_param():
-            # Explicitly specified shots option is checked first. 
-            if shots is not None:
-                final_shots = shots
+            options_shots = options.pop(self.__class__._SHOTS_PARAM_NAME, None)
 
-            # We also look for a provider-specific option which is responsible for shots number.
-            # For example: 'shots'for Ionc, 'count' for quantinuum, etc.
-            elif option_shots_param is not None:
-                final_shots = option_shots_param
-            else:
-                # Fallback to a default shots option for the provider backend.
-                final_shots = input_params[self.__class__._SHOTS_PARAM_NAME]
+            # First we check for the explicitly specified 'shots' parameter, then for a provider-specific
+            # field in options, then for a backend's default value. 
+
+            # Warn abount options conflict, default to 'shots'.
+            if shots is not None and options_shots is not None:
+                warnings.warn(
+                    f"Parameter 'shots' conflicts with the '{self.__class__._SHOTS_PARAM_NAME}' parameter. "
+                    "Please provide only one option for setting shots. Defaulting to 'shots' parameter."
+                )
+                final_shots = shots
             
+            elif shots is not None:
+                final_shots = shots
+            else:
+                final_shots = options_shots
+            
+            # If nothing is found, try to get from default values.
+            if final_shots is None:
+                final_shots = input_params.get(self.__class__._SHOTS_PARAM_NAME)
+
             input_params[self.__class__._SHOTS_PARAM_NAME] = final_shots
 
         if "items" in options:

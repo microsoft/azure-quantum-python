@@ -64,7 +64,7 @@ class Pasqal(Target):
 
     target_names = tuple(target.value for target in PasqalTarget)
 
-    _SHOTS_PARAM_NAME = "runs"
+    _SHOTS_PARAM_NAME = "count"
 
     def __init__(
         self,
@@ -113,13 +113,14 @@ class Pasqal(Target):
         :return: Azure Quantum job
         :rtype: Job
         """
+
         if isinstance(input_params, InputParams):
             typed_input_params = input_params
             input_params = {
-                Pasqal._SHOTS_PARAM_NAME: typed_input_params.runs,
+                self.__class__._SHOTS_PARAM_NAME: typed_input_params.runs,
             }
-        elif input_params is None:
-            input_params = {}
+        
+        input_params = input_params or {}
 
         return super().submit(
             input_data=input_data, 
