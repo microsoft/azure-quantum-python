@@ -5,7 +5,7 @@
 
 import os
 
-major_minor = "0.29"
+major_minor = "0.30"
 
 BUILD_TYPE = os.environ.get("BUILD_TYPE") or "dev"
 PATCH_NUMBER = os.environ.get("PATCH_NUMBER")
