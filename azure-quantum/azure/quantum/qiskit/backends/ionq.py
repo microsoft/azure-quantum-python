@@ -2,12 +2,19 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 ##
-from typing import TYPE_CHECKING, Dict
+from typing import TYPE_CHECKING, Dict, List, Union
 from azure.quantum import __version__
+from azure.quantum.qiskit.job import AzureQuantumJob
 from azure.quantum.target.ionq import IonQ
 from abc import abstractmethod
 
-from .backend import AzureBackend, AzureQirBackend
+from qiskit import QuantumCircuit
+
+from .backend import (
+    AzureBackend, 
+    AzureQirBackend, 
+    _get_shots_or_deprecated_count_input_param
+)
 
 from qiskit.providers.models import BackendConfiguration
 from qiskit.providers import Options, Provider
@@ -42,9 +49,13 @@ __all__ = [
     "IonQForteNativeBackend",
 ]
 
+_IONQ_SHOTS_INPUT_PARAM_NAME = "shots"
+_DEFAULT_SHOTS_COUNT = 500
 
 class IonQQirBackendBase(AzureQirBackend):
     """Base class for interfacing with an IonQ QIR backend"""
+
+    _SHOTS_PARAM_NAME = _IONQ_SHOTS_INPUT_PARAM_NAME
 
     @abstractmethod
     def __init__(
@@ -54,7 +65,12 @@ class IonQQirBackendBase(AzureQirBackend):
 
     @classmethod
     def _default_options(cls) -> Options:
-        return Options(shots=500, targetCapability="BasicExecution")
+        return Options(
+            **{
+                cls._SHOTS_PARAM_NAME: _DEFAULT_SHOTS_COUNT,
+            },
+            targetCapability="BasicExecution",
+            )
 
     def _azure_config(self) -> Dict[str, str]:
         config = super()._azure_config()
@@ -64,6 +80,25 @@ class IonQQirBackendBase(AzureQirBackend):
             }
         )
         return config
+    
+    def run(
+        self, 
+        run_input: Union[QuantumCircuit, List[QuantumCircuit]] = [],
+        shots: int = None,
+        **options,
+    ) -> AzureQuantumJob:
+        
+        # In earlier versions, backends for all providers accepted the 'count' option,
+        # but now we accept it only for a compatibility reasons and do not recommend using it.
+        count = options.pop("count", None)
+
+        final_shots = _get_shots_or_deprecated_count_input_param(
+            param_name=self.__class__._SHOTS_PARAM_NAME,
+            shots=shots,
+            count=count,
+        )
+        
+        return super().run(run_input, shots=final_shots, **options)
 
 
 class IonQSimulatorQirBackend(IonQQirBackendBase):
@@ -199,15 +234,40 @@ class IonQBackend(AzureBackend):
 
     backend_name = None
 
+    _SHOTS_PARAM_NAME = _IONQ_SHOTS_INPUT_PARAM_NAME
+
     @abstractmethod
     def __init__(
         self, configuration: BackendConfiguration, provider: Provider = None, **fields
     ):
         super().__init__(configuration, provider, **fields)
 
+    def run(
+        self, 
+        run_input=None,
+        shots: int = None,
+        **options,
+    ) -> AzureQuantumJob:
+        
+        # In earlier versions, backends for all providers accepted the 'count' option,
+        # but now we accept it only for a compatibility reasons and do not recommend using it.
+        count = options.pop("count", None)
+
+        final_shots = _get_shots_or_deprecated_count_input_param(
+            param_name=self.__class__._SHOTS_PARAM_NAME,
+            shots=shots,
+            count=count,
+        )
+        
+        return super().run(run_input, shots=final_shots, **options)
+
     @classmethod
     def _default_options(cls):
-        return Options(shots=500)
+        return Options(
+            **{
+                cls._SHOTS_PARAM_NAME: _DEFAULT_SHOTS_COUNT,
+            },
+        )
 
     def _azure_config(self) -> Dict[str, str]:
         return {

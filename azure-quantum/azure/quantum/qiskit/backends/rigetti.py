@@ -45,6 +45,8 @@ __all__ = ["RigettiSimulatorBackend" "RigettiQPUBackend"]
 class RigettiBackend(AzureQirBackend):
     """Base class for interfacing with a Rigetti backend in Azure Quantum"""
 
+    _SHOTS_PARAM_NAME = "count"
+
     @abstractmethod
     def __init__(
         self, configuration: BackendConfiguration, provider: Provider = None, **fields
@@ -53,7 +55,10 @@ class RigettiBackend(AzureQirBackend):
 
     @classmethod
     def _default_options(cls):
-        return Options(count=500, targetCapability="BasicExecution")
+        other_options = {
+            cls._SHOTS_PARAM_NAME: 500
+        }
+        return Options(targetCapability="BasicExecution", **other_options)
 
     def _azure_config(self) -> Dict[str, str]:
         config = super()._azure_config()

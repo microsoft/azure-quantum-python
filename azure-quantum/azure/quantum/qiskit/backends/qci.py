@@ -5,8 +5,12 @@
 
 from typing import TYPE_CHECKING, Dict
 from azure.quantum.version import __version__
+from azure.quantum.qiskit.job import AzureQuantumJob
 from abc import abstractmethod
-from .backend import AzureQirBackend
+from .backend import (
+    AzureQirBackend, 
+    _get_shots_or_deprecated_count_input_param,
+)
 
 from qiskit.providers.models import BackendConfiguration
 from qiskit.providers import Options, Provider
@@ -44,6 +48,9 @@ __all__ = ["QCISimulatorBackend" "QCIQPUBackend"]
 
 
 class QCIBackend(AzureQirBackend):
+
+    _SHOTS_PARAM_NAME = "shots"
+
     @abstractmethod
     def __init__(
         self, configuration: BackendConfiguration, provider: Provider = None, **fields
@@ -52,7 +59,12 @@ class QCIBackend(AzureQirBackend):
 
     @classmethod
     def _default_options(cls) -> Options:
-        return Options(shots=500, targetCapability="AdaptiveExecution")
+        return Options(
+            **{
+                cls._SHOTS_PARAM_NAME: 500 
+            },
+            targetCapability="AdaptiveExecution",
+        )
 
     def _azure_config(self) -> Dict[str, str]:
         config = super()._azure_config()
@@ -62,6 +74,25 @@ class QCIBackend(AzureQirBackend):
             }
         )
         return config
+    
+    def run(
+        self, 
+        run_input=None,
+        shots: int = None,
+        **options,
+    ) -> AzureQuantumJob:
+        
+        # In earlier versions, backends for all providers accepted the 'count' option,
+        # but now we accept it only for a compatibility reasons and do not recommend using it.
+        count = options.pop("count", None)
+
+        final_shots = _get_shots_or_deprecated_count_input_param(
+            param_name=self.__class__._SHOTS_PARAM_NAME,
+            shots=shots,
+            count=count,
+        )
+        
+        return super().run(run_input, shots=final_shots, **options)
 
 
 class QCISimulatorBackend(QCIBackend):
