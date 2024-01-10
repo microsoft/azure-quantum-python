@@ -135,6 +135,26 @@ class TestQuantinuum(QuantumTestBase):
 
     @pytest.mark.quantinuum
     @pytest.mark.live_test
+    def test_job_submit_quantinuum_with_count_from_input_params(self):
+        workspace = self.create_workspace()
+        circuit = self._teleport()
+        target = workspace.get_targets("quantinuum.sim.h1-1e")
+
+        shots = 100
+
+        with pytest.warns(
+             match="Option 'count' from the 'input_params' is subject to change by a provider. "
+                   "Please use 'shots' parameter instead."
+        ):
+            job = target.submit(
+                circuit,
+                input_params={"count": shots}
+            )
+        job.wait_until_completed(timeout_secs=DEFAULT_TIMEOUT_SECS)
+        assert job.details.input_params["count"] == shots
+
+    @pytest.mark.quantinuum
+    @pytest.mark.live_test
     def test_job_submit_quantinuum_h2_1e(self):
         self._test_job_submit_quantinuum("quantinuum.sim.h2-1e")
 

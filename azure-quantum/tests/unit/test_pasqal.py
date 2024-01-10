@@ -99,3 +99,24 @@ class TestPasqalTarget(QuantumTestBase):
         job.refresh()
         job = workspace.get_job(job.id)
         self.assertTrue(job.has_completed())
+
+   def test_job_submit_pasqal_with_count_from_input_param(self) -> None:
+        workspace = self.create_workspace()
+        target = Pasqal(workspace=workspace, name=PasqalTarget.SIM_EMU_TN)
+        
+        shots = 150
+
+        with pytest.warns(
+             match="Option 'count' from the 'input_params' is subject to change by a provider. "
+                   "Please use 'shots' parameter instead."
+        ):
+            job = target.submit(
+                input_data=TEST_PULSER,
+                name="qdk-python-test",
+                input_params={"count": shots}
+            )
+        job.wait_until_completed(timeout_secs=DEFAULT_TIMEOUT_SECS)
+        job.refresh()
+        job = workspace.get_job(job.id)
+        self.assertTrue(job.has_completed())
+        assert job.details.input_params["count"] == shots

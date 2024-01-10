@@ -127,6 +127,17 @@ class TestRigettiTarget(QuantumTestBase):
         self.assertEqual(len(readout), 1)
         for shot in readout:
             self.assertEqual(len(shot), 2, "Bell state program should only measure 2 qubits")
+
+    def test_job_submit_rigetti_with_count(self) -> None:
+        shots = 100
+        with pytest.warns(
+            match="Option 'count' from the 'input_params' is subject to change by a provider. "
+                  "Please use 'shots' parameter instead."
+        ):
+            result = self._run_job(BELL_STATE_QUIL, input_params={"count": shots})
+        self.assertIsNotNone(result)
+        readout = result[READOUT]
+        self.assertEqual(len(readout), shots)
             
 
     def test_quil_syntax_error(self) -> None:

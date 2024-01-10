@@ -929,7 +929,8 @@ class TestQiskit(QuantumTestBase):
     @pytest.mark.live_test
     def test_plugins_submit_qiskit_to_quantinuum_with_count_from_options(self):
         """
-        Check that backend also allows to specify shots by using a provider-specific option.
+        Check that backend also allows to specify shots by using a provider-specific option,
+        but also throws warning with recommndation to use 'shots'
         """
         circuit = self._3_qubit_ghz()
         workspace = self.create_workspace()
@@ -937,7 +938,11 @@ class TestQiskit(QuantumTestBase):
         backend = provider.get_backend(name="quantinuum.sim.h1-1e")
         
         shots = 100
-        qiskit_job = backend.run(circuit, count=shots)
+
+        with pytest.warns(
+            match="Parameter 'count' is subject to change by a provider. Please use 'shots' parameter instead."
+        ):
+            qiskit_job = backend.run(circuit, count=shots)
 
         self._qiskit_wait_to_complete(qiskit_job, provider)
         self.assertEqual(qiskit_job._azure_job.details.input_params["count"], shots)
@@ -1095,9 +1100,8 @@ class TestQiskit(QuantumTestBase):
     @pytest.mark.live_test
     def test_qiskit_submit_to_rigetti_with_count_param(self):
         """
-        This test verifies that we can pass a "provider-specific" shots number option.
-        Even if the usage of the 'shots' option is encouraged, we should also be able to specify provider's 
-        native option ('count' in this case).
+        Check that backend also allows to specify shots by using a provider-specific option,
+        but also throws warning with recommndation to use 'shots'
         """
         from azure.quantum.target.rigetti import RigettiTarget
 
@@ -1106,8 +1110,10 @@ class TestQiskit(QuantumTestBase):
         backend = provider.get_backend(RigettiTarget.QVM.value)
         shots = 100
         circuit = self._3_qubit_ghz()
-
-        qiskit_job = backend.run(circuit, count=shots)
+        with pytest.warns(
+            match="Parameter 'count' is subject to change by a provider. Please use 'shots' parameter instead."
+        ):
+            qiskit_job = backend.run(circuit, count=shots)
         self._qiskit_wait_to_complete(qiskit_job, provider)
         self.assertEqual(qiskit_job._azure_job.details.input_params["count"], shots)
         

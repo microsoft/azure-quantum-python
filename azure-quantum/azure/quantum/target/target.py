@@ -242,6 +242,10 @@ target '{self.name}' of provider '{self.provider_id}' not found."
                 final_shots = shots
             # if nothing, try a provider-specific option.
             else:
+                warnings.warn(
+                    f"Option '{self.__class__._SHOTS_PARAM_NAME}' from the 'input_params' is subject to change by a provider. "
+                    "Please use 'shots' parameter instead."
+                )
                 final_shots = input_params_shots
             
             if final_shots is not None:

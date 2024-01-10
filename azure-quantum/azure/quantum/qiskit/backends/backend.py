@@ -143,6 +143,10 @@ class AzureBackendBase(Backend, SessionHost):
             elif shots is not None:
                 final_shots = shots
             else:
+                warnings.warn(
+                    f"Parameter '{self.__class__._SHOTS_PARAM_NAME}' is subject to change by a provider. "
+                    "Please use 'shots' parameter instead."
+                )
                 final_shots = options_shots
             
             # If nothing is found, try to get from default values.
