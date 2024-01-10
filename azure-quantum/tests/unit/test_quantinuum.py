@@ -101,8 +101,8 @@ class TestQuantinuum(QuantumTestBase):
 
         with pytest.warns(
             DeprecationWarning, 
-            match="Both 'shots' and 'num_shots' options are specified. Defaulting to 'shots' option. "
-                  "Please use 'shots' since 'num_shots' will be deprecated."
+            match="Both 'shots' and 'num_shots' parameters were specified. Defaulting to 'shots' parameter. "
+                  "Please, use 'shots' since 'num_shots' will be deprecated."
         ):
             job = target.submit(
                 circuit,
@@ -123,12 +123,32 @@ class TestQuantinuum(QuantumTestBase):
 
         with pytest.warns(
             match="Parameter 'shots' conflicts with the 'count' field of the 'input_params' parameter. "
-                  "Please provide only one option for setting shots. Defaulting to 'shots' parameter.",
+                  "Please, provide only one option for setting shots. Defaulting to 'shots' parameter.",
         ):
             job = target.submit(
                 circuit,
                 shots=shots,
                 input_params={"count": 20}
+            )
+        job.wait_until_completed(timeout_secs=DEFAULT_TIMEOUT_SECS)
+        assert job.details.input_params["count"] == shots
+
+    @pytest.mark.quantinuum
+    @pytest.mark.live_test
+    def test_job_submit_quantinuum_with_count_from_input_params(self):
+        workspace = self.create_workspace()
+        circuit = self._teleport()
+        target = workspace.get_targets("quantinuum.sim.h1-1e")
+
+        shots = 100
+
+        with pytest.warns(
+             match="Field 'count' from the 'input_params' parameter is subject to change in future versions. "
+                   "Please, use 'shots' parameter instead."
+        ):
+            job = target.submit(
+                circuit,
+                input_params={"count": shots}
             )
         job.wait_until_completed(timeout_secs=DEFAULT_TIMEOUT_SECS)
         assert job.details.input_params["count"] == shots

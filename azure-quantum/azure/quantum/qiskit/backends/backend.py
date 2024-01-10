@@ -136,13 +136,17 @@ class AzureBackendBase(Backend, SessionHost):
             if shots is not None and options_shots is not None:
                 warnings.warn(
                     f"Parameter 'shots' conflicts with the '{self.__class__._SHOTS_PARAM_NAME}' parameter. "
-                    "Please provide only one option for setting shots. Defaulting to 'shots' parameter."
+                    "Please, provide only one option for setting shots. Defaulting to 'shots' parameter."
                 )
                 final_shots = shots
             
             elif shots is not None:
                 final_shots = shots
             else:
+                warnings.warn(
+                    f"Parameter '{self.__class__._SHOTS_PARAM_NAME}' is subject to change in future versions. "
+                    "Please, use 'shots' parameter instead."
+                )
                 final_shots = options_shots
             
             # If nothing is found, try to get from default values.

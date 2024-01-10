@@ -87,7 +87,7 @@ class TestRigettiTarget(QuantumTestBase):
 
         with pytest.warns(
             match="Parameter 'shots' conflicts with the 'count' field of the 'input_params' parameter. "
-            "Please provide only one option for setting shots. Defaulting to 'shots' parameter."
+            "Please, provide only one option for setting shots. Defaulting to 'shots' parameter."
         ):
             result = self._run_job(
                 BELL_STATE_QUIL, 
@@ -127,6 +127,17 @@ class TestRigettiTarget(QuantumTestBase):
         self.assertEqual(len(readout), 1)
         for shot in readout:
             self.assertEqual(len(shot), 2, "Bell state program should only measure 2 qubits")
+
+    def test_job_submit_rigetti_with_count(self) -> None:
+        shots = 100
+        with pytest.warns(
+            match="Field 'count' from the 'input_params' parameter is subject to change in future versions. "
+                  "Please, use 'shots' parameter instead."
+        ):
+            result = self._run_job(BELL_STATE_QUIL, input_params={"count": shots})
+        self.assertIsNotNone(result)
+        readout = result[READOUT]
+        self.assertEqual(len(readout), shots)
             
 
     def test_quil_syntax_error(self) -> None:

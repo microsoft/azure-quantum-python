@@ -233,7 +233,7 @@ target '{self.name}' of provider '{self.provider_id}' not found."
             if shots is not None and input_params_shots is not None:
                 warnings.warn(
                     f"Parameter 'shots' conflicts with the '{self.__class__._SHOTS_PARAM_NAME}' field of the 'input_params' "
-                    "parameter. Please provide only one option for setting shots. Defaulting to 'shots' parameter."
+                    "parameter. Please, provide only one option for setting shots. Defaulting to 'shots' parameter."
                 )
                 final_shots = shots
             
@@ -242,6 +242,10 @@ target '{self.name}' of provider '{self.provider_id}' not found."
                 final_shots = shots
             # if nothing, try a provider-specific option.
             else:
+                warnings.warn(
+                    f"Field '{self.__class__._SHOTS_PARAM_NAME}' from the 'input_params' parameter is subject to change in future versions. "
+                    "Please, use 'shots' parameter instead."
+                )
                 final_shots = input_params_shots
             
             if final_shots is not None:
@@ -294,15 +298,15 @@ def _determine_shots_or_deprecated_num_shots(
     num_shots: int = None,
 ) -> int:
     """
-    This helper function checks if the deprecated 'num_shots' option is specified.
-    In earlier versions it was possible to pass this option to specify shots number for a job,
+    This helper function checks if the deprecated 'num_shots' parameter is specified.
+    In earlier versions it was possible to pass this parameter to specify shots number for a job,
     but now we only check for it for compatibility reasons.  
     """
     final_shots = None
     if shots is not None and num_shots is not None:
         warnings.warn(
-            "Both 'shots' and 'num_shots' options are specified. Defaulting to 'shots' option. "
-            "Please use 'shots' since 'num_shots' will be deprecated.",
+            "Both 'shots' and 'num_shots' parameters were specified. Defaulting to 'shots' parameter. "
+            "Please, use 'shots' since 'num_shots' will be deprecated.",
             category=DeprecationWarning,
         )
         final_shots = shots

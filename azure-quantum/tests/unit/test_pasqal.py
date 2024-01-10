@@ -87,7 +87,7 @@ class TestPasqalTarget(QuantumTestBase):
 
         with pytest.warns(
             match="Parameter 'shots' conflicts with the 'count' field of the 'input_params' parameter. "
-                  "Please provide only one option for setting shots. Defaulting to 'shots' parameter.",
+                  "Please, provide only one option for setting shots. Defaulting to 'shots' parameter.",
         ):
             job = target.submit(
                 input_data=TEST_PULSER,
@@ -99,3 +99,24 @@ class TestPasqalTarget(QuantumTestBase):
         job.refresh()
         job = workspace.get_job(job.id)
         self.assertTrue(job.has_completed())
+
+   def test_job_submit_pasqal_with_count_from_input_param(self) -> None:
+        workspace = self.create_workspace()
+        target = Pasqal(workspace=workspace, name=PasqalTarget.SIM_EMU_TN)
+        
+        shots = 150
+
+        with pytest.warns(
+             match="Field 'count' from the 'input_params' parameter is subject to change in future versions. "
+                   "Please, use 'shots' parameter instead."
+        ):
+            job = target.submit(
+                input_data=TEST_PULSER,
+                name="qdk-python-test",
+                input_params={"count": shots}
+            )
+        job.wait_until_completed(timeout_secs=DEFAULT_TIMEOUT_SECS)
+        job.refresh()
+        job = workspace.get_job(job.id)
+        self.assertTrue(job.has_completed())
+        assert job.details.input_params["count"] == shots
