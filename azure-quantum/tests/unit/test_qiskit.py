@@ -940,7 +940,7 @@ class TestQiskit(QuantumTestBase):
         shots = 100
 
         with pytest.warns(
-            match="Parameter 'count' is subject to change by a provider. Please use 'shots' parameter instead."
+            match="Parameter 'count' is subject to change in future versions. Please, use 'shots' parameter instead."
         ):
             qiskit_job = backend.run(circuit, count=shots)
 
@@ -1111,7 +1111,7 @@ class TestQiskit(QuantumTestBase):
         shots = 100
         circuit = self._3_qubit_ghz()
         with pytest.warns(
-            match="Parameter 'count' is subject to change by a provider. Please use 'shots' parameter instead."
+            match="Parameter 'count' is subject to change in future versions. Please, use 'shots' parameter instead."
         ):
             qiskit_job = backend.run(circuit, count=shots)
         self._qiskit_wait_to_complete(qiskit_job, provider)
@@ -1144,7 +1144,7 @@ class TestQiskit(QuantumTestBase):
         circuit = self._3_qubit_ghz()
 
         with pytest.warns(
-            match="Parameter 'shots' conflicts with the 'count' parameter. Please provide only one option for setting shots. "
+            match="Parameter 'shots' conflicts with the 'count' parameter. Please, provide only one option for setting shots. "
             "Defaulting to 'shots' parameter."
         ):
             qiskit_job = backend.run(circuit, shots=shots, count=10)

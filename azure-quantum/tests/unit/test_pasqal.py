@@ -87,7 +87,7 @@ class TestPasqalTarget(QuantumTestBase):
 
         with pytest.warns(
             match="Parameter 'shots' conflicts with the 'count' field of the 'input_params' parameter. "
-                  "Please provide only one option for setting shots. Defaulting to 'shots' parameter.",
+                  "Please, provide only one option for setting shots. Defaulting to 'shots' parameter.",
         ):
             job = target.submit(
                 input_data=TEST_PULSER,
@@ -107,8 +107,8 @@ class TestPasqalTarget(QuantumTestBase):
         shots = 150
 
         with pytest.warns(
-             match="Option 'count' from the 'input_params' is subject to change by a provider. "
-                   "Please use 'shots' parameter instead."
+             match="Field 'count' from the 'input_params' parameter is subject to change in future versions. "
+                   "Please, use 'shots' parameter instead."
         ):
             job = target.submit(
                 input_data=TEST_PULSER,

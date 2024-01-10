@@ -101,8 +101,8 @@ class TestQuantinuum(QuantumTestBase):
 
         with pytest.warns(
             DeprecationWarning, 
-            match="Both 'shots' and 'num_shots' options are specified. Defaulting to 'shots' option. "
-                  "Please use 'shots' since 'num_shots' will be deprecated."
+            match="Both 'shots' and 'num_shots' parameters were specified. Defaulting to 'shots' parameter. "
+                  "Please, use 'shots' since 'num_shots' will be deprecated."
         ):
             job = target.submit(
                 circuit,
@@ -123,7 +123,7 @@ class TestQuantinuum(QuantumTestBase):
 
         with pytest.warns(
             match="Parameter 'shots' conflicts with the 'count' field of the 'input_params' parameter. "
-                  "Please provide only one option for setting shots. Defaulting to 'shots' parameter.",
+                  "Please, provide only one option for setting shots. Defaulting to 'shots' parameter.",
         ):
             job = target.submit(
                 circuit,
@@ -143,8 +143,8 @@ class TestQuantinuum(QuantumTestBase):
         shots = 100
 
         with pytest.warns(
-             match="Option 'count' from the 'input_params' is subject to change by a provider. "
-                   "Please use 'shots' parameter instead."
+             match="Field 'count' from the 'input_params' parameter is subject to change in future versions. "
+                   "Please, use 'shots' parameter instead."
         ):
             job = target.submit(
                 circuit,

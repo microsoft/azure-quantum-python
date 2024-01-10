@@ -78,8 +78,8 @@ class TestIonQ(QuantumTestBase):
 
         with pytest.warns(
             DeprecationWarning, 
-            match="Both 'shots' and 'num_shots' options are specified. Defaulting to 'shots' option. "
-                  "Please use 'shots' since 'num_shots' will be deprecated."
+            match="Both 'shots' and 'num_shots' parameters were specified. Defaulting to 'shots' parameter. "
+                  "Please, use 'shots' since 'num_shots' will be deprecated."
         ):
             job = target.submit(
                 circuit=circuit,
@@ -118,7 +118,7 @@ class TestIonQ(QuantumTestBase):
 
         with pytest.warns( 
              match="Parameter 'shots' conflicts with the 'shots' field of the 'input_params' parameter. "
-                  "Please provide only one option for setting shots. Defaulting to 'shots' parameter.",
+                  "Please, provide only one option for setting shots. Defaulting to 'shots' parameter.",
         ):
             job = target.submit(
                 circuit=circuit,
