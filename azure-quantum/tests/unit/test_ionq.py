@@ -45,20 +45,94 @@ class TestIonQ(QuantumTestBase):
         cost = target.estimate_cost(circuit, num_shots=100e3)
         self.assertEqual(np.round(cost.estimated_total), 63.0)
 
+
     @pytest.mark.ionq
     @pytest.mark.live_test
     def test_job_submit_ionq(self):
-        self._test_job_submit_ionq(num_shots=None)
+        self._test_job_submit_ionq(shots=None)
 
     @pytest.mark.ionq
     @pytest.mark.live_test
     def test_job_submit_ionq_100_shots(self):
-        self._test_job_submit_ionq(num_shots=100)
+        self._test_job_submit_ionq(shots=100)
+    
+
+    @pytest.mark.ionq
+    @pytest.mark.live_test
+    def test_job_submit_ionq_100_shots_with_deprecated_num_shots(self):
+        # Call submit with a depteracted 'num_shots' argument, need to emit a deptecation warning.
+        with pytest.warns(
+            DeprecationWarning, 
+            match="The 'num_shots' parameter will be deprecated. Please, use 'shots' parameter instead."
+        ):
+            self._test_job_submit_ionq(shots=100, shots_as_deprecated_num_shots=True)
+
+    @pytest.mark.ionq
+    @pytest.mark.live_test
+    def test_job_submit_ionq_with_shots_and_num_shots(self):
+        workspace = self.create_workspace()
+        circuit = self._3_qubit_ghz()
+        target = IonQ(workspace=workspace)
+
+        shots = 100
+
+        with pytest.warns(
+            DeprecationWarning, 
+            match="Both 'shots' and 'num_shots' options are specified. Defaulting to 'shots' option. "
+                  "Please use 'shots' since 'num_shots' will be deprecated."
+        ):
+            job = target.submit(
+                circuit=circuit,
+                shots=shots,
+                num_shots=10,
+            )
+
+        job.wait_until_completed(timeout_secs=DEFAULT_TIMEOUT_SECS)   
+        assert job.details.input_params["shots"] == shots
+
+    @pytest.mark.ionq
+    @pytest.mark.live_test
+    def test_job_submit_ionq_with_shots_from_input_params(self):
+        workspace = self.create_workspace()
+        circuit = self._3_qubit_ghz()
+        target = IonQ(workspace=workspace)
+
+        shots = 100
+
+        job = target.submit(
+            circuit=circuit,
+            input_params={"shots": shots},
+        )
+
+        job.wait_until_completed(timeout_secs=DEFAULT_TIMEOUT_SECS)   
+        assert job.details.input_params["shots"] == shots
+        
+    @pytest.mark.ionq
+    @pytest.mark.live_test
+    def test_job_submit_ionq_with_conflicting_shots_from_input_params(self):
+        workspace = self.create_workspace()
+        circuit = self._3_qubit_ghz()
+        target = IonQ(workspace=workspace)
+
+        shots = 100
+
+        with pytest.warns( 
+             match="Parameter 'shots' conflicts with the 'shots' field of the 'input_params' parameter. "
+                  "Please provide only one option for setting shots. Defaulting to 'shots' parameter.",
+        ):
+            job = target.submit(
+                circuit=circuit,
+                shots=shots,
+                input_params={"shots": 20},
+            )
+
+        job.wait_until_completed(timeout_secs=DEFAULT_TIMEOUT_SECS)   
+        assert job.details.input_params["shots"] == shots
 
     @pytest.mark.ionq
     @pytest.mark.live_test
     def test_job_submit_ionq_cost_estimate(self):
-        job = self._test_job_submit_ionq(num_shots=None)
+        job = self._test_job_submit_ionq(shots=None)
         self.assertIsNotNone(job.details)
         cost_estimate: CostEstimate = job.details.cost_estimate
         self.assertIsNotNone(cost_estimate)
@@ -67,7 +141,12 @@ class TestIonQ(QuantumTestBase):
         self.assertGreater(len(events), 0)
         self.assertGreaterEqual(cost_estimate.estimated_total, 0)
 
-    def _test_job_submit_ionq(self, num_shots, circuit=None):
+    def _test_job_submit_ionq(
+            self, 
+            shots: int = None,
+            shots_as_deprecated_num_shots: bool = False, 
+            circuit=None
+        ):
         workspace = self.create_workspace()
         if circuit is None:
             circuit = self._3_qubit_ghz()
@@ -78,11 +157,20 @@ class TestIonQ(QuantumTestBase):
         self.assertEqual("IonQ", target.provider_id)
         self.assertEqual("application/json", target.content_type)
         self.assertEqual("", target.encoding)
+        
+        additional_kwargs = {}
+
+        if shots is not None:
+            if shots_as_deprecated_num_shots:
+                additional_kwargs["num_shots"] = shots
+            else:
+                additional_kwargs["shots"] = shots
+
 
         job = target.submit(
             circuit=circuit,
             name="ionq-3ghz-job",
-            num_shots=num_shots
+            **additional_kwargs,
         )
 
         job.wait_until_completed(timeout_secs=DEFAULT_TIMEOUT_SECS)
@@ -103,8 +191,8 @@ class TestIonQ(QuantumTestBase):
             self.assertEqual(results["histogram"]["0"], 0.5)
             self.assertEqual(results["histogram"]["7"], 0.5)
 
-        if num_shots:
-            self.assertEqual(job.details.input_params.get("shots"), num_shots)
+        if shots is not None:
+            self.assertEqual(job.details.input_params.get("shots"), shots)
         else:
             self.assertIsNone(job.details.input_params.get("shots"))
 

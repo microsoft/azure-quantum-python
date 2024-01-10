@@ -3,7 +3,8 @@
 # Licensed under the MIT License.
 ##
 
-from typing import Dict
+from typing import Dict, List, Union
+from azure.quantum.qiskit.job import AzureQuantumJob
 from azure.quantum.version import __version__
 import warnings
 
@@ -62,8 +63,13 @@ def _get_n_qubits(name):
         UserWarning(f"Number of qubits not known for target {name}. Defaulting to 20."))
     return 20
 
+_QUANTINUUM_COUNT_INPUT_PARAM_NAME = "count"
+_DEFAULT_SHOTS_COUNT = 500
 
 class QuantinuumQirBackendBase(AzureQirBackend):
+
+    _SHOTS_PARAM_NAME = _QUANTINUUM_COUNT_INPUT_PARAM_NAME
+
     @abstractmethod
     def __init__(
         self, configuration: BackendConfiguration, provider: Provider = None, **fields
@@ -72,7 +78,12 @@ class QuantinuumQirBackendBase(AzureQirBackend):
 
     @classmethod
     def _default_options(cls) -> Options:
-        return Options(shots=500, targetCapability="BasicExecution")
+        return Options(
+            **{
+                cls._SHOTS_PARAM_NAME: _DEFAULT_SHOTS_COUNT
+            },
+            targetCapability="BasicExecution",
+        )
 
     def _azure_config(self) -> Dict[str, str]:
         config = super()._azure_config()
@@ -204,6 +215,8 @@ class QuantinuumQPUQirBackend(QuantinuumQirBackendBase):
 class QuantinuumBackend(AzureBackend):
     """Base class for interfacing with a Quantinuum (formerly Honeywell) backend in Azure Quantum"""
 
+    _SHOTS_PARAM_NAME = _QUANTINUUM_COUNT_INPUT_PARAM_NAME
+
     @abstractmethod
     def __init__(
         self, configuration: BackendConfiguration, provider: Provider = None, **fields
@@ -212,7 +225,11 @@ class QuantinuumBackend(AzureBackend):
 
     @classmethod
     def _default_options(cls):
-        return Options(count=500)
+        return Options(
+            **{
+                cls._SHOTS_PARAM_NAME: _DEFAULT_SHOTS_COUNT,
+            },
+        )
 
     def _azure_config(self) -> Dict[str, str]:
         return {
