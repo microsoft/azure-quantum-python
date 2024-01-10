@@ -1,3 +1,5 @@
+import warnings
+
 from azure.quantum.job.base_job import ContentType
 from azure.quantum.job.job import Job
 from azure.quantum.target.target import Target
@@ -43,10 +45,20 @@ class MicrosoftElementsDft(Target):
     def submit(self,
                input_data: Any,
                name: str = "azure-quantum-dft-job",
+               shots: int = None,
                input_params: Union[Dict[str, Any], InputParams, None] = None,
                **kwargs) -> MicrosoftElementsDftJob:
+
+        if shots is not None:
+            warnings.warn("The 'shots' parameter is ignored in Microsoft Elements Dft job.")
         
-        return super().submit(input_data, name, input_params, **kwargs)
+        return super().submit(
+            input_data=input_data,
+            name=name, 
+            shots=shots, 
+            input_params=input_params,
+            **kwargs
+        )
 
 
     @classmethod
