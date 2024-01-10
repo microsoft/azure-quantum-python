@@ -40,27 +40,27 @@ class TestQuantinuum(QuantumTestBase):
         circuit = self._teleport()
 
         target = Quantinuum(workspace=workspace, name="quantinuum.sim.h1-1sc")
-        cost = target.estimate_cost(circuit, num_shots=100e3)
+        cost = target.estimate_cost(circuit, shots=100e3)
         self.assertEqual(cost.estimated_total, 0.0)
 
         target = Quantinuum(workspace=workspace, name="quantinuum.qpu.h1-1")
-        cost = target.estimate_cost(circuit, num_shots=100e3)
+        cost = target.estimate_cost(circuit, shots=100e3)
         self.assertEqual(cost.estimated_total, 845.0)
 
         target = Quantinuum(workspace=workspace, name="quantinuum.sim.h1-2sc")
-        cost = target.estimate_cost(circuit, num_shots=100e3)
+        cost = target.estimate_cost(circuit, shots=100e3)
         self.assertEqual(cost.estimated_total, 0.0)
 
         target = Quantinuum(workspace=workspace, name="quantinuum.qpu.h1-2")
-        cost = target.estimate_cost(circuit, num_shots=100e3)
+        cost = target.estimate_cost(circuit, shots=100e3)
         self.assertEqual(cost.estimated_total, 845.0)
 
         target = Quantinuum(workspace=workspace, name="quantinuum.sim.h2-1sc")
-        cost = target.estimate_cost(circuit, num_shots=100e3)
+        cost = target.estimate_cost(circuit, shots=100e3)
         self.assertEqual(cost.estimated_total, 0.0)
 
         target = Quantinuum(workspace=workspace, name="quantinuum.qpu.h2-1")
-        cost = target.estimate_cost(circuit, num_shots=100e3)
+        cost = target.estimate_cost(circuit, shots=100e3)
         self.assertEqual(cost.estimated_total, 845.0)
 
     @pytest.mark.quantinuum

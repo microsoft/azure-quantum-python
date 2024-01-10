@@ -38,11 +38,11 @@ class TestIonQ(QuantumTestBase):
         workspace = self.create_workspace()
         circuit = self._3_qubit_ghz()
         target = IonQ(workspace=workspace, name="ionq.simulator")
-        cost = target.estimate_cost(circuit, num_shots=100e3)
+        cost = target.estimate_cost(circuit, shots=100e3)
         self.assertEqual(cost.estimated_total, 0.0)
 
         target = IonQ(workspace=workspace, name="ionq.qpu")
-        cost = target.estimate_cost(circuit, num_shots=100e3)
+        cost = target.estimate_cost(circuit, shots=100e3)
         self.assertEqual(np.round(cost.estimated_total), 63.0)
 
 

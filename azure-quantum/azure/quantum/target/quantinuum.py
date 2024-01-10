@@ -105,7 +105,8 @@ class Quantinuum(Target):
         num_shots: int = None,
         N_1q: int = None,
         N_2q: int = None,
-        N_m: int = None
+        N_m: int = None,
+        shots: int = None,
     ) -> CostEstimate:
         """Estimate the cost in HQC for a given circuit.
         Optionally, you can provide the number of gate and measurement operations
@@ -130,9 +131,22 @@ class Quantinuum(Target):
         :param N_m: Number of measurement operations, if not specified,
             this is estimated from the circuit
         :type N_m: int, optional
+        :param shots: Number of shots for which to estimate costs
+        :type shots: int, optional
         :raises ImportError: If N_1q, N_2q and N_m are not specified,
             this will require a qiskit installation.
         """
+
+        if num_shots is None and shots is None:
+             raise ValueError("The 'shots' parameter has to be specified")
+
+        if num_shots is not None:
+            warn(
+                "The 'num_shots' parameter will be deprecated. Please, use 'shots' parameter instead.",
+                category=DeprecationWarning,
+            )
+            shots = num_shots
+
         if circuit is not None and (N_1q is None or N_2q is None or N_m is None):
             try:
                 from qiskit.circuit.quantumcircuit import Qasm
@@ -171,7 +185,7 @@ class Quantinuum(Target):
         if is_syntax_checker_regex.match(self.name):
             HQC = 0.0
         else:
-            HQC = 5 + num_shots * (N_1q + 10 * N_2q + 5 * N_m) / 5000
+            HQC = 5 + shots * (N_1q + 10 * N_2q + 5 * N_m) / 5000
 
         return CostEstimate(
             events=[

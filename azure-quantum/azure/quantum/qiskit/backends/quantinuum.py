@@ -258,6 +258,10 @@ class QuantinuumBackend(AzureBackend):
         :type count: int
         """
         if count is not None:
+            warnings.warn(
+                "The 'count' parameter will be deprecated. Please, use 'shots' parameter instead.",
+                category=DeprecationWarning,
+            )
             shots = count
 
         if shots is None:
@@ -266,7 +270,7 @@ class QuantinuumBackend(AzureBackend):
         input_data = circuit.qasm()
         workspace = self.provider().get_workspace()
         target = workspace.get_targets(self.name())
-        return target.estimate_cost(input_data, num_shots=shots)
+        return target.estimate_cost(input_data, shots)
 
     def _get_n_qubits(self, name):
         return _get_n_qubits(name)

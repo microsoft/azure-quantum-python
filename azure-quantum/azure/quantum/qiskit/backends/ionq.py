@@ -309,7 +309,7 @@ class IonQBackend(AzureBackend):
         }
         workspace = self.provider().get_workspace()
         target = workspace.get_targets(self.name())
-        return target.estimate_cost(input_data, num_shots=shots)
+        return target.estimate_cost(input_data, shots=shots)
 
 
 class IonQSimulatorBackend(IonQBackend):
