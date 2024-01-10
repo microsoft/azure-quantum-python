@@ -10,7 +10,7 @@ import warnings
 
 logger = logging.getLogger(__name__)
 
-from typing import Any, Dict, Tuple, Union, List
+from typing import Any, Dict, Tuple, Union, List, Optional
 from azure.quantum.version import __version__
 from azure.quantum.qiskit.job import (
     MICROSOFT_OUTPUT_DATA_FORMAT,
@@ -38,6 +38,11 @@ To install run: pip install azure-quantum[qiskit]"
 
 
 class AzureBackendBase(Backend, SessionHost):
+
+    # Name of the provider's input parameter which specifies number of shots for a submitted job.
+    # If None, backend will not pass this input parameter. 
+    _SHOTS_PARAM_NAME = None
+
     @abstractmethod
     def __init__(
         self,
@@ -46,6 +51,41 @@ class AzureBackendBase(Backend, SessionHost):
         **fields
     ):
         super().__init__(configuration, provider, **fields)
+    
+    @abstractmethod
+    def run(
+        self,
+        run_input: Union[QuantumCircuit, List[QuantumCircuit]] = [],
+        shots: int = None, 
+        **options,
+    ) -> AzureQuantumJob:
+        """Run on the backend.
+
+        This method returns a
+        :class:`~azure.quantum.qiskit.job.AzureQuantumJob` object
+        that runs circuits. 
+
+        Args:
+            run_input (QuantumCircuit or List[QuantumCircuit]): An individual or a
+            list of :class:`~qiskit.circuits.QuantumCircuit` to run on the backend.
+            shots (int, optional): Number of shots, defaults to None.
+            options: Any kwarg options to pass to the backend for running the
+            config. If a key is also present in the options
+            attribute/object then the expectation is that the value
+            specified will be used instead of what's set in the options
+            object.
+
+        Returns:
+            Job: The job object for the run
+        """
+        pass
+
+    @classmethod
+    def _can_send_shots_input_param(cls) -> bool:
+        """
+        Tells if provider's backend class is able to specify shots number for its jobs.
+        """
+        return cls._SHOTS_PARAM_NAME is not None
 
     @classmethod
     @abstractmethod
@@ -80,30 +120,43 @@ class AzureBackendBase(Backend, SessionHost):
         output_data_format = options.pop("output_data_format", azure_defined_override)
 
         return output_data_format
-
-    def _get_input_params(self, options) -> Dict[str, Any]:
+    
+    def _get_input_params(self, options, shots: int = None) -> Dict[str, Any]:
         # Backend options are mapped to input_params.
         input_params: Dict[str, Any] = vars(self.options).copy()
 
-        # The shots/count number can be specified in different ways for different providers,
-        # so let's get it first. Values in 'kwargs' take precedence over options, and to keep
-        # the convention, 'count' takes precedence over 'shots' afterwards.
-        shots_count = (
-            options["count"]
-            if "count" in options
-            else options["shots"]
-            if "shots" in options
-            else input_params["count"]
-            if "count" in input_params
-            else input_params["shots"]
-            if "shots" in input_params
-            else None
-        )
+        # Determine shots number, if needed.
+        if self._can_send_shots_input_param():
+            options_shots = options.pop(self.__class__._SHOTS_PARAM_NAME, None)
 
-        # Let's clear the options of both properties regardless of which one was used to prevent
-        # double specification of the value.
-        options.pop("shots", None)
-        options.pop("count", None)
+            # First we check for the explicitly specified 'shots' parameter, then for a provider-specific
+            # field in options, then for a backend's default value. 
+
+            # Warn abount options conflict, default to 'shots'.
+            if shots is not None and options_shots is not None:
+                warnings.warn(
+                    f"Parameter 'shots' conflicts with the '{self.__class__._SHOTS_PARAM_NAME}' parameter. "
+                    "Please provide only one option for setting shots. Defaulting to 'shots' parameter."
+                )
+                final_shots = shots
+            
+            elif shots is not None:
+                final_shots = shots
+            else:
+                final_shots = options_shots
+            
+            # If nothing is found, try to get from default values.
+            if final_shots is None:
+                final_shots = input_params.get(self.__class__._SHOTS_PARAM_NAME)
+
+            # Also add all possible shots options into input_params to make sure 
+            # that all backends covered. 
+            # TODO: Double check all backends for shots options in order to remove this extra check.
+            input_params["shots"] = final_shots
+            input_params["count"] = final_shots
+
+            input_params[self.__class__._SHOTS_PARAM_NAME] = final_shots
+            
 
         if "items" in options:
             input_params["items"] = options.pop("items")
@@ -113,9 +166,6 @@ class AzureBackendBase(Backend, SessionHost):
         for opt in options.copy():
             if opt in input_params:
                 input_params[opt] = options.pop(opt)
-
-        input_params["count"] = shots_count
-        input_params["shots"] = shots_count
 
         return input_params
 
@@ -223,18 +273,21 @@ class AzureQirBackend(AzureBackendBase):
         }
 
     def run(
-        self, run_input: Union[QuantumCircuit, List[QuantumCircuit]] = [], **options
+        self,
+        run_input: Union[QuantumCircuit, List[QuantumCircuit]] = [],
+        shots: int = None, 
+        **options,
     ) -> AzureQuantumJob:
         """Run on the backend.
 
         This method returns a
         :class:`~azure.quantum.qiskit.job.AzureQuantumJob` object
-        that runs circuits. 
+        that runs circuits.
 
         Args:
             run_input (QuantumCircuit or List[QuantumCircuit]): An individual or a
             list of :class:`~qiskit.circuits.QuantumCircuit` to run on the backend.
-
+            shots (int, optional): Number of shots, defaults to None.
             options: Any kwarg options to pass to the backend for running the
             config. If a key is also present in the options
             attribute/object then the expectation is that the value
@@ -261,13 +314,18 @@ class AzureQirBackend(AzureBackendBase):
             )
 
         # config normalization
-        input_params = self._get_input_params(options)
+        input_params = self._get_input_params(options, shots=shots)
+        
+        shots_count = None
 
-        shots_count = input_params["count"]
+        if self._can_send_shots_input_param():
+            shots_count = input_params.get(self.__class__._SHOTS_PARAM_NAME)
 
         job_name = ""
         if len(circuits) > 1:
-            job_name = f"batch-{len(circuits)}-{shots_count}"
+            job_name = f"batch-{len(circuits)}"
+            if shots_count is not None:
+                job_name = f"{job_name}-{shots_count}"
         else:
             job_name = circuits[0].name
         job_name = options.pop("job_name", job_name)
@@ -386,9 +444,13 @@ class AzureBackend(AzureBackendBase):
     def _translate_input(self, circuit):
         pass
 
-    def run(self, run_input=None, **kwargs):
-        """Submits the given circuit to run on an Azure Quantum backend."""
-        options = kwargs
+    def run(
+            self, 
+            run_input: Union[QuantumCircuit, List[QuantumCircuit]] = [],
+            shots: int = None,
+            **options,
+        ):
+        """Submits the given circuit to run on an Azure Quantum backend.""" 
         circuit = self._normalize_run_input_params(run_input, **options)
         options.pop("run_input", None)
         options.pop("circuit", None)
@@ -417,16 +479,45 @@ class AzureBackend(AzureBackendBase):
         job_name = options.pop("job_name", circuit.name)
         metadata = options.pop("metadata", self._prepare_job_metadata(circuit))
 
-        input_params = self._get_input_params(options)
+        input_params = self._get_input_params(options, shots=shots)
 
         input_data = self._translate_input(circuit)
 
         job = super()._run(job_name, input_data, input_params, metadata, **options)
 
-        shots_count = input_params["count"]
+        shots_count = None
+        if self._can_send_shots_input_param():
+            shots_count = input_params.get(self.__class__._SHOTS_PARAM_NAME)
+
         logger.info(
             f"Submitted job with id '{job.id()}' for circuit '{circuit.name}' with shot count of {shots_count}:"
         )
         logger.info(input_data)
 
         return job
+
+def _get_shots_or_deprecated_count_input_param(
+        param_name: str,
+        shots: int = None, 
+        count: int = None,
+    ) -> Optional[int]:
+    """
+    This helper function checks if the deprecated 'count' option is specified.
+    In earlier versions it was possible to pass this option to specify shots number for a job,
+    but now we only check for it for compatibility reasons.  
+    """
+
+    final_shots = None
+
+    if shots is not None:
+        final_shots = shots
+    
+    elif count is not None:
+        final_shots = count
+        warnings.warn(
+            "The 'count' parameter will be deprecated. "
+            f"Please, use '{param_name}' parameter instead.",
+            category=DeprecationWarning,
+        )
+    
+    return final_shots

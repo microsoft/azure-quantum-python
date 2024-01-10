@@ -59,7 +59,7 @@ class AzureQuantumProvider(Provider):
     def get_workspace(self) -> Workspace:
         return self._workspace
 
-    def get_backend(self, name=None, **kwargs):
+    def get_backend(self, name=None, **kwargs) -> AzureBackendBase:
         """Return a single backend matching the specified filtering.
         Args:
             name (str): name of the backend.

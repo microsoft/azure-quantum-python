@@ -229,6 +229,9 @@ class TestWorkspace(QuantumTestBase):
             ws.append_user_agent("featurex")
             self.assertEqual(ws.user_agent, f"{user_agent}-featurex-{env_var_app_id}")
 
+            ws.append_user_agent(None)
+            self.assertEqual(ws.user_agent, env_var_app_id)
+
             # Append with no UserAgent parameter and no EnvVar AppId 
             os.environ[USER_AGENT_APPID_ENV_VAR_NAME] = ""
             ws = Workspace(
@@ -239,6 +242,9 @@ class TestWorkspace(QuantumTestBase):
             )
             ws.append_user_agent("featurex")
             self.assertEqual(ws.user_agent, "featurex")
+
+            ws.append_user_agent(None)
+            self.assertEqual(ws.user_agent, None)
         finally:
             if original_env_app_id:
                 os.environ[USER_AGENT_APPID_ENV_VAR_NAME] = original_env_app_id
