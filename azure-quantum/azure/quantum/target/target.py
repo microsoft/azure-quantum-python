@@ -28,6 +28,9 @@ class QirRepresentable(Protocol):
 
 
 class Target(abc.ABC, SessionHost):
+
+    _QSHARP_USER_AGENT = "azure-quantum-qsharp"
+
     """Azure Quantum Target."""
     # Target IDs that are compatible with this Target class.
     # This variable is used by TargetFactory. To set the default
@@ -197,6 +200,10 @@ target '{self.name}' of provider '{self.provider_id}' not found."
             input_data_format = kwargs.pop("input_data_format", "qir.v1")
             output_data_format = kwargs.pop("output_data_format", self._qir_output_data_format())
             content_type = kwargs.pop("content_type", "qir.v1")
+            # setting UserAgent header to indicate Q# submission
+            # TODO: this is a temporary solution. We should be setting the User-Agent header
+            # on per-job basis as targets of different types could be submitted using the same Workspace object
+            self.workspace.append_user_agent(self._QSHARP_USER_AGENT)
 
             def _get_entrypoint(input_data):
                 # TODO: this method should be part of QirRepresentable protocol
@@ -215,6 +222,8 @@ target '{self.name}' of provider '{self.provider_id}' not found."
             input_data_format = kwargs.pop("input_data_format", self.input_data_format)
             output_data_format = kwargs.pop("output_data_format", self.output_data_format)
             content_type = kwargs.pop("content_type", self.content_type)
+            # re-setting UserAgent header to None for passthrough
+            self.workspace.append_user_agent(None)
         
         # Set shots number, if possible.
         if self._can_send_shots_input_param():
@@ -237,7 +246,6 @@ target '{self.name}' of provider '{self.provider_id}' not found."
             
             if final_shots is not None:
                 input_params[self.__class__._SHOTS_PARAM_NAME] = final_shots
-
 
         encoding = kwargs.pop("encoding", self.encoding)
         blob = self._encode_input_data(data=input_data)

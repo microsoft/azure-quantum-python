@@ -9,6 +9,7 @@
 from typing import Any, Dict, List, Tuple, Union
 import unittest
 import warnings
+from azure.quantum.workspace import Workspace
 import pytest
 import json
 import random
@@ -326,6 +327,53 @@ class TestQiskit(QuantumTestBase):
             self.assertEqual(counts, result.data()["counts"])
             self.assertEqual(result.results[0].header.num_qubits, "5")
             self.assertEqual(result.results[0].header.metadata["some"], "data")
+
+    def test_qiskit_provider_init_with_workspace_not_raises_deprecation(self):
+        # testing warning according to https://docs.python.org/3/library/warnings.html#testing-warnings
+        import warnings
+                
+        with warnings.catch_warnings(record=True) as w:
+            # Cause all warnings to always be triggered.
+            warnings.simplefilter("always")
+            # Try to trigger a warning.
+            workspace = Workspace(resource_id = "/subscriptions/00000000-0000-0000-0000-00000000000/resourceGroups/rg-test/providers/Microsoft.Quantum/Workspaces/test",
+                    location = "<region>")
+            AzureQuantumProvider(workspace)
+
+            # Verify
+            assert len(w) == 0
+
+    def test_qiskit_provider_init_without_workspace_raises_deprecation(self):
+        # testing warning according to https://docs.python.org/3/library/warnings.html#testing-warnings
+        import warnings
+                
+        with warnings.catch_warnings(record=True) as w:
+            # Cause all warnings to always be triggered.
+            warnings.simplefilter("always")
+            # Try to trigger a warning.
+            AzureQuantumProvider(
+                    resource_id = "/subscriptions/00000000-0000-0000-0000-00000000000/resourceGroups/rg-test/providers/Microsoft.Quantum/Workspaces/test",
+                    location = "<region>")
+            # Verify
+            assert len(w) == 1
+            assert issubclass(w[-1].category, DeprecationWarning)
+            assert "Consider passing \"workspace\" argument explicitly" in str(w[-1].message)
+
+        # Validate rising deprecation warning even if workspace is passed, but other parameters are also passed
+        with warnings.catch_warnings(record=True) as w:
+            # Cause all warnings to always be triggered.
+            warnings.simplefilter("always")
+            # Try to trigger a warning.
+            workspace = Workspace(resource_id = "/subscriptions/00000000-0000-0000-0000-00000000000/resourceGroups/rg-test/providers/Microsoft.Quantum/Workspaces/test",
+                    location = "<region>")
+            AzureQuantumProvider(
+                    workspace=workspace,
+                    resource_id = "/subscriptions/00000000-0000-0000-0000-00000000000/resourceGroups/rg-test/providers/Microsoft.Quantum/Workspaces/test",
+                    location = "<region>")
+            # Verify
+            assert len(w) == 1
+            assert issubclass(w[-1].category, DeprecationWarning)
+            assert "Consider passing \"workspace\" argument explicitly" in str(w[-1].message)
 
     @pytest.mark.ionq
     def test_plugins_estimate_cost_qiskit_ionq(self):

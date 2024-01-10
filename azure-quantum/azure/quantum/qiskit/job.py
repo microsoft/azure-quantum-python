@@ -229,26 +229,17 @@ class AzureQuantumJob(JobV1):
 
     def _format_microsoft_results(self, sampler_seed=None):
         """ Translate Microsoft's job results histogram into a format that can be consumed by qiskit libraries. """
-        az_result = self._azure_job.get_results()
+        histogram = self._azure_job.get_results()
         shots = self._shots_count()
 
-        if not 'Histogram' in az_result:
-            raise "Histogram missing from Job results"
-
-        histogram = az_result['Histogram']
         counts = {}
         probabilities = {}
-        # The Histogram serialization is odd entries are key and even entries values
-        # Make sure we have even entries
-        if (len(histogram) % 2) == 0:
-            items = range(0, len(histogram), 2)
-            for i in items:
-                bitstring = AzureQuantumJob._qir_to_qiskit_bitstring(histogram[i])
 
-                value = histogram[i + 1]
-                probabilities[bitstring] = value
-        else:
-            raise "Invalid number of items in Job results' histogram."
+        for key in histogram.keys():
+            bitstring = AzureQuantumJob._qir_to_qiskit_bitstring(key)
+
+            value = histogram[key]
+            probabilities[bitstring] = value
 
         if self.backend().configuration().simulator:
             counts = self._draw_random_sample(sampler_seed, probabilities, shots)
