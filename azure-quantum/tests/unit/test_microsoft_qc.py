@@ -262,6 +262,19 @@ class TestMicrosoftQC(QuantumTestBase):
         result = job.get_results(timeout_secs=DEFAULT_TIMEOUT_SECS)
         self.assertIsInstance(result.call_graph, Digraph)
 
+    @pytest.mark.microsoft_qc
+    @pytest.mark.live_test
+    def test_estimator_warn_on_passed_shots(self):
+        ws = self.create_workspace()
+        estimator = MicrosoftEstimator(ws)
+
+        ccnot = self._ccnot_bitcode()
+
+        with pytest.warns(match="The 'shots' parameter is ignored in resource estimation."):
+            job = estimator.submit(ccnot, shots=10)
+        
+        job.wait_until_completed(timeout_secs=DEFAULT_TIMEOUT_SECS)
+
     def test_estimator_params_validation_valid_cases(self):
         """
         Checks validation cases for resource estimation parameters for valid
