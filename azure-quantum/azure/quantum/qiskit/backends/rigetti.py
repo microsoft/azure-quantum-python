@@ -42,6 +42,8 @@ logger = logging.getLogger(__name__)
 __all__ = ["RigettiSimulatorBackend" "RigettiQPUBackend"]
 
 
+_DEFAULT_SHOTS_COUNT = 500
+
 class RigettiBackend(AzureQirBackend):
     """Base class for interfacing with a Rigetti backend in Azure Quantum"""
 
@@ -56,7 +58,7 @@ class RigettiBackend(AzureQirBackend):
     @classmethod
     def _default_options(cls):
         other_options = {
-            cls._SHOTS_PARAM_NAME: 500
+            cls._SHOTS_PARAM_NAME: _DEFAULT_SHOTS_COUNT,
         }
         return Options(targetCapability="BasicExecution", **other_options)
 

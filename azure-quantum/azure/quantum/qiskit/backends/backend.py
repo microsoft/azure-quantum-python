@@ -149,7 +149,14 @@ class AzureBackendBase(Backend, SessionHost):
             if final_shots is None:
                 final_shots = input_params.get(self.__class__._SHOTS_PARAM_NAME)
 
+            # Also add all possible shots options into input_params to make sure 
+            # that all backends covered. 
+            # TODO: Double check all backends for shots options in order to remove this extra check.
+            input_params["shots"] = final_shots
+            input_params["count"] = final_shots
+
             input_params[self.__class__._SHOTS_PARAM_NAME] = final_shots
+            
 
         if "items" in options:
             input_params["items"] = options.pop("items")

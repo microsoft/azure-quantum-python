@@ -47,6 +47,8 @@ logger = logging.getLogger(__name__)
 __all__ = ["QCISimulatorBackend" "QCIQPUBackend"]
 
 
+_DEFAULT_SHOTS_COUNT = 500
+
 class QCIBackend(AzureQirBackend):
 
     _SHOTS_PARAM_NAME = "shots"
@@ -61,7 +63,7 @@ class QCIBackend(AzureQirBackend):
     def _default_options(cls) -> Options:
         return Options(
             **{
-                cls._SHOTS_PARAM_NAME: 500 
+                cls._SHOTS_PARAM_NAME: _DEFAULT_SHOTS_COUNT, 
             },
             targetCapability="AdaptiveExecution",
         )
