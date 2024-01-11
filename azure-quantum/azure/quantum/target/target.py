@@ -240,13 +240,15 @@ target '{self.name}' of provider '{self.provider_id}' not found."
             # The 'shots' parameter has highest priority.
             elif shots is not None:
                 final_shots = shots
-            # if nothing, try a provider-specific option.
-            else:
+            # if 'shots' parameter is not specified, try a provider-specific option.
+            elif input_params_shots is not None:
                 warnings.warn(
                     f"Field '{self.__class__._SHOTS_PARAM_NAME}' from the 'input_params' parameter is subject to change in future versions. "
                     "Please, use 'shots' parameter instead."
                 )
                 final_shots = input_params_shots
+            else:
+                final_shots = None
             
             if final_shots is not None:
                 input_params[self.__class__._SHOTS_PARAM_NAME] = final_shots
