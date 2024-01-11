@@ -270,7 +270,7 @@ class QuantinuumBackend(AzureBackend):
         input_data = circuit.qasm()
         workspace = self.provider().get_workspace()
         target = workspace.get_targets(self.name())
-        return target.estimate_cost(input_data, shots)
+        return target.estimate_cost(input_data, shots=shots)
 
     def _get_n_qubits(self, name):
         return _get_n_qubits(name)
