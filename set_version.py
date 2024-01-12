@@ -5,10 +5,10 @@
 
 import os
 
-major_minor = "0.30"
+major_minor = "1.0"
 
 BUILD_TYPE = os.environ.get("BUILD_TYPE") or "dev"
-PATCH_NUMBER = os.environ.get("PATCH_NUMBER")
+PATCH_NUMBER = os.environ.get("PATCH_NUMBER") or "0"
 
 if BUILD_TYPE not in ["dev", "rc", "stable"]:
     print(f"BUILD_TYPE environment variable must be 'dev', 'rc', or 'stable'. Current value: {BUILD_TYPE}")
@@ -22,7 +22,7 @@ except:
 
 version_triple = "{}.{}".format(major_minor, patch_ver)
 
-pip_suffix = {"stable": "", "rc": "rc0", "dev": "dev0"}
+pip_suffix = {"stable": "", "rc": "rc0", "dev": ".dev0"}
 pip_version = "{}{}".format(version_triple, pip_suffix.get(BUILD_TYPE))
 
 print("PYTHON_VERSION: {}".format(pip_version))

@@ -7,12 +7,14 @@ import unittest
 import os
 import functools
 import pytest
+from unittest.mock import Mock
 from datetime import date, datetime, timedelta
 
 from common import QuantumTestBase, DEFAULT_TIMEOUT_SECS
 from azure.quantum.job.base_job import ContentType
 from azure.quantum import Job
 from azure.quantum.optimization import Problem, ProblemType, Term
+from azure.quantum._client.models import JobDetails
 import azure.quantum.target.toshiba as toshiba
 
 
@@ -68,6 +70,58 @@ class TestJob(QuantumTestBase):
 
     Tests the azure.quantum.job module.
     """
+
+    def test_job_success(self):
+        job_results = self._get_job_results("test_output_data_format","{\"Histogram\": [\"[0]\", 0.50, \"[1]\", 0.50]}")
+        self.assertTrue(len(job_results["Histogram"]) == 4)
+        
+
+    def test_job_for_microsoft_quantum_results_v1_success(self):
+        job_results = self._get_job_results("microsoft.quantum-results.v1","{\"Histogram\": [\"[0]\", 0.50, \"[1]\", 0.50]}")
+        self.assertTrue(len(job_results.keys()) == 2)
+        self.assertTrue(job_results["[0]"], 0.50)
+        self.assertTrue(job_results["[1]"], 0.50)
+
+    
+    def test_job_for_microsoft_quantum_results_v1_no_histogram_returns_raw_result(self):
+        job_result_raw = "{\"NotHistogramProperty\": [\"[0]\", 0.50, \"[1]\", 0.50]}"
+        job_result = self._get_job_results("microsoft.quantum-results.v1", job_result_raw)
+        self.assertTrue(job_result, job_result_raw)
+
+
+    def test_job_for_microsoft_quantum_results_v1_invalid_histogram_returns_raw_result(self):
+        job_result_raw = "{\"NotHistogramProperty\": [\"[0]\", 0.50, \"[1]\"]}"
+        job_result = self._get_job_results("microsoft.quantum-results.v1", job_result_raw)
+        self.assertTrue(job_result, job_result_raw)
+
+
+    def _get_job_results(self, output_data_format, results_as_json_str):
+        job_details = JobDetails(
+            id= "",
+            name= "",
+            provider_id="",
+            target="",
+            container_uri="",
+            input_data_format="",
+            output_data_format = output_data_format)
+        job_details.status = "Succeeded"
+        job = Job(
+            workspace=None, 
+            job_details=job_details)
+        
+        job.has_completed = Mock(return_value=True)
+        job.wait_until_completed = Mock()
+
+        class DowloadDataMock(object):
+            def decode(): str
+            pass
+
+        download_data = DowloadDataMock()
+        download_data.decode = Mock(return_value=results_as_json_str)
+        job.download_data = Mock(return_value=download_data)
+        
+        return job.get_results()
+
     @pytest.mark.skipif(not(os.environ.get("AZURE_QUANTUM_TOSHIBA", "") == "1"), reason="Toshiba tests not enabled")
     @pytest.mark.toshiba
     @pytest.mark.live_test
@@ -151,7 +205,6 @@ class TestJob(QuantumTestBase):
         self.assertEqual(True, job.has_completed())
 
         self.assertEqual(job.details.status, "Succeeded")
-
 
     def create_problem(
             self,

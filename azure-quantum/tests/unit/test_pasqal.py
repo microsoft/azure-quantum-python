@@ -17,47 +17,106 @@ TEST_PULSER = """{"sequence_builder": "{\\"version\\": \\"1\\", \\"name\\": \\"p
 
 # Comment out due to the misalignment of paspal target name.
 # Will update once paspal 
-#@pytest.mark.pasqal
-#@pytest.mark.live_test
-#class TestPasqalTarget(QuantumTestBase):
-#    """Tests the azure.quantum.target.Pasqal class."""
-#
-#    def _run_job(
-#        self,
-#        pulser: str,
-#        input_params: Union[InputParams, Dict[str, Any], None],
-#    ) -> Optional[Result]:
-#        workspace = self.create_workspace()
-#
-#        target = Pasqal(workspace=workspace, name=PasqalTarget.SIM_EMU_TN)
-#        job = target.submit(
-#            input_data=pulser,
-#            name="qdk-python-test",
-#            input_params=input_params,
-#        )
-#
-#        job.wait_until_completed(timeout_secs=DEFAULT_TIMEOUT_SECS)
-#        job.refresh()
-#
-#        job = workspace.get_job(job.id)
-#        self.assertTrue(job.has_completed())
-#
-#        return Result(job)
-#
-#    def test_job_submit_pasqal_typed_input_params(self) -> None:
-#        num_runs = 200
-#        result = self._run_job(TEST_PULSER, InputParams(runs=num_runs))
-#        self.assertIsNotNone(result)
-#        self.assertEqual(sum(v for v in result.data.values() if isinstance(v, int)), num_runs)
-#
-#    def test_job_submit_pasqal_dict_input_params(self) -> None:
-#        num_runs = 150
-#        result = self._run_job(TEST_PULSER, input_params={"runs": num_runs})
-#        self.assertIsNotNone(result)
-#        self.assertEqual(sum(v for v in result.data.values() if isinstance(v, int)), num_runs)
-#
-#    def test_job_submit_pasqal_default_input_params(self) -> None:
-#        default_num_runs = 100
-#        result = self._run_job(TEST_PULSER, None)
-#        self.assertIsNotNone(result)
-#        self.assertEqual(sum(v for v in result.data.values() if isinstance(v, int)), default_num_runs)
+@pytest.mark.pasqal
+@pytest.mark.live_test
+class TestPasqalTarget(QuantumTestBase):
+   """Tests the azure.quantum.target.Pasqal class."""
+
+   def _run_job(
+       self,
+       pulser: str,
+       input_params: Union[InputParams, Dict[str, Any], None],
+   ) -> Optional[Result]:
+       workspace = self.create_workspace()
+
+       target = Pasqal(workspace=workspace, name=PasqalTarget.SIM_EMU_TN)
+       job = target.submit(
+           input_data=pulser,
+           name="qdk-python-test",
+           input_params=input_params,
+       )
+
+       job.wait_until_completed(timeout_secs=DEFAULT_TIMEOUT_SECS)
+       job.refresh()
+
+       job = workspace.get_job(job.id)
+       self.assertTrue(job.has_completed())
+
+       return Result(job)
+
+   def test_job_submit_pasqal_typed_input_params(self) -> None:
+       num_runs = 200
+       result = self._run_job(TEST_PULSER, InputParams(runs=num_runs))
+       self.assertIsNotNone(result)
+       self.assertEqual(sum(v for v in result.data.values() if isinstance(v, int)), num_runs)
+
+   def test_job_submit_pasqal_dict_input_params(self) -> None:
+       num_runs = 150
+       result = self._run_job(TEST_PULSER, input_params={"count": num_runs})
+       self.assertIsNotNone(result)
+       self.assertEqual(sum(v for v in result.data.values() if isinstance(v, int)), num_runs)
+
+   def test_job_submit_pasqal_default_input_params(self) -> None:
+       default_num_runs = 100
+       result = self._run_job(TEST_PULSER, None)
+       self.assertIsNotNone(result)
+       self.assertEqual(sum(v for v in result.data.values() if isinstance(v, int)), default_num_runs)
+
+    
+   def test_job_submit_pasqal_with_shots_param(self) -> None:
+        workspace = self.create_workspace()
+        target = Pasqal(workspace=workspace, name=PasqalTarget.SIM_EMU_TN)
+        
+        shots = 150
+        job = target.submit(
+            input_data=TEST_PULSER,
+            name="qdk-python-test",
+            shots=shots
+        )
+        job.wait_until_completed(timeout_secs=DEFAULT_TIMEOUT_SECS)
+        job.refresh()
+        job = workspace.get_job(job.id)
+        self.assertTrue(job.has_completed())
+
+
+   def test_job_submit_pasqal_with_shots_and_count(self) -> None:
+        workspace = self.create_workspace()
+        target = Pasqal(workspace=workspace, name=PasqalTarget.SIM_EMU_TN)
+        
+        shots = 150
+
+        with pytest.warns(
+            match="Parameter 'shots' conflicts with the 'count' field of the 'input_params' parameter. "
+                  "Please, provide only one option for setting shots. Defaulting to 'shots' parameter.",
+        ):
+            job = target.submit(
+                input_data=TEST_PULSER,
+                name="qdk-python-test",
+                shots=shots,
+                input_params={"count": 20}
+            )
+        job.wait_until_completed(timeout_secs=DEFAULT_TIMEOUT_SECS)
+        job.refresh()
+        job = workspace.get_job(job.id)
+        self.assertTrue(job.has_completed())
+
+   def test_job_submit_pasqal_with_count_from_input_param(self) -> None:
+        workspace = self.create_workspace()
+        target = Pasqal(workspace=workspace, name=PasqalTarget.SIM_EMU_TN)
+        
+        shots = 150
+
+        with pytest.warns(
+             match="Field 'count' from the 'input_params' parameter is subject to change in future versions. "
+                   "Please, use 'shots' parameter instead."
+        ):
+            job = target.submit(
+                input_data=TEST_PULSER,
+                name="qdk-python-test",
+                input_params={"count": shots}
+            )
+        job.wait_until_completed(timeout_secs=DEFAULT_TIMEOUT_SECS)
+        job.refresh()
+        job = workspace.get_job(job.id)
+        self.assertTrue(job.has_completed())
+        assert job.details.input_params["count"] == shots

@@ -15,11 +15,6 @@ $Recordings_Folder =  Join-Path $PSScriptRoot "../tests/unit/recordings/"
 if (Test-Path $Recordings_Folder) {
     Get-ChildItem $Recordings_Folder -Recurse  -Filter $FileFilter | Remove-Item -Force | Write-Verbose
 }
-# Delete old recordings
-$Recordings_Folder =  Join-Path $PSScriptRoot "../tests/unit/aio/recordings/"
-if (Test-Path $Recordings_Folder) {
-    Get-ChildItem $Recordings_Folder -Recurse  -Filter $FileFilter | Remove-Item -Force | Write-Verbose
-}
 
 try
 {
