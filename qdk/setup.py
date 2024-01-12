@@ -40,7 +40,7 @@ setuptools.setup(
     ],
     python_requires=">=3.7",
     install_requires=[
-        'qsharp<=1.0',
+        'qsharp<=1.0.33',
         'jupyter_jsmol',
         'networkx',
         'varname',
