@@ -3,8 +3,12 @@
 # Licensed under the MIT License.
 ##
 from typing import Any, Dict, List
+from warnings import warn
 
-from azure.quantum.target.target import Target
+from azure.quantum.target.target import (
+    Target,
+    _determine_shots_or_deprecated_num_shots,
+)
 from azure.quantum.job.job import Job
 from azure.quantum.workspace import Workspace
 from azure.quantum._client.models import CostEstimate, UsageEvent
@@ -50,6 +54,8 @@ class IonQ(Target):
         "ionq.qpu.forte-1"
     )
 
+    _SHOTS_PARAM_NAME = "shots"
+
     def __init__(
         self,
         workspace: Workspace,
@@ -78,7 +84,7 @@ class IonQ(Target):
         self,
         circuit: Dict[str, Any] = None,
         name: str = "ionq-job",
-        num_shots: int = None,
+        shots: int = None,
         input_params: Dict[str, Any] = None,
         **kwargs
     ) -> Job:
@@ -89,8 +95,8 @@ class IonQ(Target):
         :type circuit: Dict[str, Any]
         :param name: Job name
         :type name: str
-        :param num_shots: Number of shots, defaults to None
-        :type num_shots: int
+        :param shots: Number of shots, defaults to None
+        :type shots: int
         :param input_params: Optional input params dict
         :type input_params: Dict[str, Any]
         :return: Azure Quantum job
@@ -103,13 +109,18 @@ class IonQ(Target):
             )
         if input_params is None:
             input_params = {}
-        if num_shots is not None:
-            input_params = input_params.copy()
-            input_params["shots"] = num_shots
 
+        num_shots = kwargs.pop("num_shots", None)
+
+        shots = _determine_shots_or_deprecated_num_shots(
+            shots=shots,
+            num_shots=num_shots,
+        )
+        
         return super().submit(
             input_data=input_data,
             name=name,
+            shots=shots,
             input_params=input_params,
             **kwargs
         )
@@ -117,10 +128,11 @@ class IonQ(Target):
     def estimate_cost(
         self,
         circuit: Dict[str, Any],
-        num_shots: int,
+        num_shots: int = None,
         price_1q: float = None,
         price_2q: float = None,
-        min_price: float = None
+        min_price: float = None,
+        shots: int = None
     ) -> CostEstimate:
         """Estimate the cost of submitting a circuit to IonQ targets.
         Optionally, you can provide the number of gate and measurement operations
@@ -156,7 +168,20 @@ class IonQ(Target):
         :type price_2q: float, optional
         :param min_price: The minimum price for running a job.
         :type min_price: float, optional
+        :param shots: Number of shots, defaults to None
+        :type shots: int
         """
+
+        if num_shots is None and shots is None:
+             raise ValueError("The 'shots' parameter has to be specified")
+
+        if num_shots is not None:
+            warn(
+                "The 'num_shots' parameter will be deprecated. Please, use 'shots' parameter instead.",
+                category=DeprecationWarning,
+            )
+            shots = num_shots
+
         def is_1q_gate(gate: Dict[str, Any]):
             return "controls" not in gate and "control" not in gate
 
@@ -185,7 +210,7 @@ class IonQ(Target):
         N_1q = sum(map(is_1q_gate, gates))
         N_2q = sum(map(num_2q_gates, filter(is_multi_q_gate, gates)))
 
-        price = (price_1q * N_1q + price_2q * N_2q) * num_shots
+        price = (price_1q * N_1q + price_2q * N_2q) * shots
         price = max(price, min_price)
 
         return CostEstimate(
@@ -195,7 +220,7 @@ class IonQ(Target):
                     dimension_name="1Q Gate Shot",
                     measure_unit="1q gate shot",
                     amount_billed=0.0,
-                    amount_consumed=N_1q * num_shots,
+                    amount_consumed=N_1q * shots,
                     unit_price=0.0
                 ),
                 UsageEvent(
@@ -203,7 +228,7 @@ class IonQ(Target):
                     dimension_name="2Q Gate Shot",
                     measure_unit="2q gate shot",
                     amount_billed=0.0,
-                    amount_consumed=N_2q * num_shots,
+                    amount_consumed=N_2q * shots,
                     unit_price=0.0
                 )
             ],

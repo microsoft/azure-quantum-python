@@ -91,7 +91,7 @@ class QuantinuumTarget(Quantinuum, CirqTarget):
         serialized_program = self._translate_circuit(program)
         return super().estimate_cost(
             circuit=serialized_program,
-            num_shots=repetitions
+            shots=repetitions
         )
 
     def submit(

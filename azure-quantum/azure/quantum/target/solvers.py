@@ -98,7 +98,10 @@ class Solver(Target):
         return data.to_blob()
 
     def submit(
-        self, problem: Union[str, "Problem"]) -> Job:
+        self, 
+        problem: Union[str, "Problem"],
+        shots: int = None
+    ) -> Job:
         """Submits a job to execution to the associated
         Azure Quantum Workspace.
 
@@ -107,6 +110,9 @@ class Solver(Target):
             or the URL of an Azure Storage Blob where the serialized version
             of a Problem has been uploaded.
         """
+        if shots is not None:
+            warnings.warn("The 'shots' parameter is ignored for solver job.")
+
         from azure.quantum.optimization import Problem
         if isinstance(problem, Problem):
             return super().submit(

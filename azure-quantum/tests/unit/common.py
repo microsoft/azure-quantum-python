@@ -9,13 +9,10 @@ from unittest.mock import patch
 
 import six
 import pytest
-import asyncio
 from vcr.request import Request as VcrRequest
 
 from azure.quantum import Workspace
 from azure.identity import ClientSecretCredential
-from azure.quantum.aio import Workspace as AsyncWorkspace
-from azure.identity.aio import ClientSecretCredential as AsyncClientSecretCredential
 
 from azure_devtools.scenario_tests.base import ReplayableTest
 from azure_devtools.scenario_tests.recording_processors import (
@@ -40,7 +37,6 @@ LOCATION = "eastus"
 STORAGE = "mystorage"
 DEFAULT_TIMEOUT_SECS = 300
 
-@pytest.mark.usefixtures("event_loop_instance")
 class QuantumTestBase(ReplayableTest):
     """QuantumTestBase
 
@@ -262,34 +258,7 @@ class QuantumTestBase(ReplayableTest):
         )
         workspace.append_user_agent("testapp")
 
-        return workspace
-
-    def get_async_result(self, coro):
-        return asyncio.get_event_loop().run_until_complete(coro)
-
-    def create_async_workspace(self, **kwargs) -> AsyncWorkspace:
-        """Create workspace using credentials passed via OS Environment Variables
-        described in the README.md documentation, or when in playback mode use
-        a placeholder credential.
-
-        :return: AsyncWorkspace
-        :rtype: AsyncWorkspace
-        """
-        playback_credential = AsyncClientSecretCredential(self.tenant_id,
-                                                     self.client_id,
-                                                     self.client_secret)
-        default_credential = playback_credential if self.is_playback \
-                             else None
-        workspace = AsyncWorkspace(
-            credential=default_credential,
-            subscription_id=self.subscription_id,
-            resource_group=self.resource_group,
-            name=self.workspace_name,
-            location=self.location,
-            **kwargs
-        )
-        workspace.append_user_agent("testapp")
-        return workspace
+        return workspace 
 
 
 class CustomUrlPlaybackProcessor(RecordingProcessor):

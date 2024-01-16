@@ -134,6 +134,8 @@ class Rigetti(Target):
 
     target_names = tuple(target.value for target in RigettiTarget)
 
+    _SHOTS_PARAM_NAME = "count"
+
     def __init__(
         self,
         workspace: Workspace,
@@ -161,6 +163,7 @@ class Rigetti(Target):
         self,
         input_data: Any,
         name: str = "azure-quantum-job",
+        shots: int = None,
         input_params: Union[InputParams, None, Dict[str, Any]] = None,
         **kwargs,
     ) -> Job:
@@ -173,6 +176,8 @@ class Rigetti(Target):
         :type input_data: Any
         :param name: Job name
         :type name: str
+        :param shots: Number of shots, defaults to None
+        :type shots: int
         :param input_params: Input parameters, see :class:`azure.quantum.target.rigetti.InputParams` for details.
         :type input_params: Union[InputParams, None, Dict[str, Any]]
         :return: Azure Quantum job
@@ -181,10 +186,18 @@ class Rigetti(Target):
         if isinstance(input_params, InputParams):
             typed_input_params = input_params
             input_params = {
-                "count": typed_input_params.count,
+                Rigetti._SHOTS_PARAM_NAME: typed_input_params.count,
                 "skipQuilc": typed_input_params.skip_quilc,
             }
             if typed_input_params.substitutions is not None:
                 input_params["substitutions"] = typed_input_params.substitutions
+        elif input_params is None:
+            input_params = {}
 
-        return super().submit(input_data, name, input_params, **kwargs)
+        return super().submit(
+            input_data=input_data, 
+            name=name,
+            shots=shots,
+            input_params=input_params, 
+            **kwargs
+        )
