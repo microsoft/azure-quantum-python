@@ -26,7 +26,7 @@ try:
     from qiskit.providers import Options
     from qiskit.providers import Provider
     from qiskit.providers.models import BackendConfiguration
-    from qiskit.qobj import Qobj, QasmQobj
+    from qiskit.qobj import QasmQobj
     from pyqir import Module
     from qiskit_qir import to_qir_module
 
@@ -468,13 +468,13 @@ class AzureBackend(AzureBackendBase):
 
         # If the circuit was created using qiskit.assemble,
         # disassemble into QASM here
-        if isinstance(circuit, QasmQobj) or isinstance(circuit, Qobj):
+        if isinstance(circuit, QasmQobj):
             from qiskit.assembler import disassemble
 
             circuits, run, _ = disassemble(circuit)
             circuit = circuits[0]
             if options.get("shots") is None:
-                # Note that the default number of shots for QObj is 1024
+                # Note that the default number of shots for QasmQobj is 1024
                 # unless the user specifies the backend.
                 options["shots"] = run["shots"]
 
