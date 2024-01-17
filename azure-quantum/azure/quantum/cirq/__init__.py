@@ -6,5 +6,6 @@
 """Azure Quantum Cirq Service"""
 
 from .service import AzureQuantumService
+from .job import Job
 
-__all__ = ["AzureQuantumService"]
+__all__ = ["AzureQuantumService", "Job"]

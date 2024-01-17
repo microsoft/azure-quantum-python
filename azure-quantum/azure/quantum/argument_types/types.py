@@ -7,6 +7,8 @@ from enum import Enum
 from typing import Optional, Type
 
 class Pauli(Enum):
+    """Pauli operators"""
+
     I = "PauliI"
     X = "PauliX"
     Y = "PauliY"
@@ -14,12 +16,16 @@ class Pauli(Enum):
 
 
 class Result(Enum):
+    """Result value"""
+
     Zero = False
     One = True
 
 
 @dataclass
 class Range:
+    """Range value"""
+
     start: int
     end: int
     step: Optional[int] = None
@@ -33,4 +39,7 @@ class Range:
 
 @dataclass
 class EmptyArray:
+    """Empty array value"""
+    
     element_type: Type
+    """Element type"""

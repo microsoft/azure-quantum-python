@@ -71,7 +71,8 @@ class InputParams:
     """
 
     skip_quilc: bool = False
-    """If set to True, `quilc <https://github.com/quil-lang/quilc>`_ will not be run.
+    """
+    If set to True, `quilc <https://github.com/quil-lang/quilc>`_ will not be run.
     
     This **must** be set true if using `Quil-T <https://pyquil-docs.rigetti.com/en/stable/quilt.html>`_.
     """

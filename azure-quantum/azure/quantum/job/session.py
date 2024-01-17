@@ -28,7 +28,7 @@ class Session(WorkspaceItem):
                     Either this parameter should be passed containing all
                     the session detail values, or the same values should be
                     passed as individual parameters.
-    :type details: Optional[SessionDetails]
+    :type details: Optional[azure.quantum._client.models.SessionDetails]
 
     :param target: The name of the target (or Target object) to open the session on.
     :type target: Union[str, Target, None]
@@ -46,7 +46,7 @@ class Session(WorkspaceItem):
 
     :param job_failure_policy: The policy that determines when a session would fail,
                                close and not accept further jobs.
-    :type job_failure_policy: Union[str, SessionJobFailurePolicy, None]
+    :type job_failure_policy: Union[str, azure.quantum._client.models.SessionJobFailurePolicy, None]
 
     :raises ValueError: if details is passed along individual parameters,
                         or if required parameters are missing.
@@ -103,6 +103,7 @@ class Session(WorkspaceItem):
     @property
     def details(self) -> SessionDetails:
         """Get the session details.
+
         :return: The details about the session.
         :rtype: SessionDetails
         """
@@ -111,14 +112,16 @@ class Session(WorkspaceItem):
     @details.setter
     def details(self, value: SessionDetails):
         """Set session details.
+        
         :param value: The details about the session
-        :type value: SessionDetails
+        :type value: azure.quantum._client.models.SessionDetails
         """
         self._details = value
 
     @property
     def target(self) -> "Target":
         """Get the target associated with the session.
+
         :return: The target associated with the session.
         :rtype: Target
         """
@@ -157,7 +160,7 @@ class Session(WorkspaceItem):
         """Lists all jobs associated with this session.
 
         :return: A list of all jobs associated with this session.
-        :rtype: List[Job]
+        :rtype: list[Job]
         """
         return self.workspace.list_session_jobs(session_id=self.id)
 

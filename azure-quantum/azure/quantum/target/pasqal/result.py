@@ -29,6 +29,8 @@ class Result:
         """
         Decode the results of a Job with output type of "pasqal.pulser-results.v1"
 
+        :param job: Azure Quantum job
+        :type job: Job
         :raises: RuntimeError if the job has not completed successfully
         """
 

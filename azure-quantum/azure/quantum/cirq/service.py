@@ -39,9 +39,9 @@ class AzureQuantumService:
         """AzureQuantumService class
 
         :param workspace: Azure Quantum workspace. If missing it will create a new Workspace passing `kwargs` to the constructor. Defaults to None. 
-        :type workspace: Workspace, optional
+        :type workspace: Workspace
         :param default_target: Default target name, defaults to None
-        :type default_target: Optional[str], optional
+        :type default_target: Optional[str]
         """
         if kwargs is not None and len(kwargs) > 0:
             from warnings import warn
@@ -80,7 +80,7 @@ class AzureQuantumService:
         """Get all quantum computing targets available in the Azure Quantum Workspace.
 
         :param name: Target name, defaults to None
-        :type name: str, optional
+        :type name: str
         :return: Target instance or list thereof
         :rtype: Union[Target, List[Target]]
         """
@@ -194,15 +194,15 @@ see https://aka.ms/AQ/Docs/AddProvider")
         :param repetitions: Number of measurement repetitions
         :type repetitions: int
         :param target: Target name, defaults to default_target
-        :type target: str, optional
+        :type target: str
         :param name: Program name, defaults to "cirq-job"
-        :type name: str, optional
+        :type name: str
         :param param_resolver: Cirq parameters, defaults to cirq.ParamResolver({})
-        :type param_resolver: cirq.ParamResolverOrSimilarType, optional
+        :type param_resolver: cirq.ParamResolverOrSimilarType
         :param seed: Random seed for simulator results, defaults to None
-        :type seed: cirq.RANDOM_STATE_OR_SEED_LIKE, optional
+        :type seed: cirq.RANDOM_STATE_OR_SEED_LIKE
         :param timeout_seconds: Timeout in seconds, defaults to None
-        :type timeout_seconds: int, optional
+        :type timeout_seconds: int
         :return: Measurement results
         :rtype: cirq.Result
         """

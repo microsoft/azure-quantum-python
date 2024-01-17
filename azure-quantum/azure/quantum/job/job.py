@@ -74,11 +74,11 @@ class Job(BaseJob, FilteredJob):
         until it reaches a finished status.
 
         :param max_poll_wait_secs: Maximum poll wait time, defaults to 30
-        :type max_poll_wait_secs: int, optional
+        :type max_poll_wait_secs: int
         :param timeout_secs: Timeout in seconds, defaults to None
-        :type timeout_secs: int, optional
+        :type timeout_secs: int
         :param print_progress: Print "." to stdout to display progress
-        :type print_progress: bool, optional
+        :type print_progress: bool
         :raises TimeoutError: If the total poll time exceeds timeout, raise
         """
         self.refresh()
