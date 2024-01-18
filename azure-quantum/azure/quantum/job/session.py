@@ -28,7 +28,7 @@ class Session(WorkspaceItem):
                     Either this parameter should be passed containing all
                     the session detail values, or the same values should be
                     passed as individual parameters.
-    :type details: Optional[azure.quantum._client.models.SessionDetails]
+    :type details: Optional[:py:obj:`SessionDetails`]
 
     :param target: The name of the target (or Target object) to open the session on.
     :type target: Union[str, Target, None]
@@ -46,7 +46,7 @@ class Session(WorkspaceItem):
 
     :param job_failure_policy: The policy that determines when a session would fail,
                                close and not accept further jobs.
-    :type job_failure_policy: Union[str, azure.quantum._client.models.SessionJobFailurePolicy, None]
+    :type job_failure_policy: Union[str, :py:obj:`SessionJobFailurePolicy`, None]
 
     :raises ValueError: if details is passed along individual parameters,
                         or if required parameters are missing.
@@ -105,7 +105,7 @@ class Session(WorkspaceItem):
         """Get the session details.
 
         :return: The details about the session.
-        :rtype: SessionDetails
+        :rtype: :py:obj:`SessionDetails`
         """
         return self._details
 
@@ -114,7 +114,7 @@ class Session(WorkspaceItem):
         """Set session details.
         
         :param value: The details about the session
-        :type value: azure.quantum._client.models.SessionDetails
+        :type value: :py:obj:`SessionDetails`
         """
         self._details = value
 
@@ -160,7 +160,7 @@ class Session(WorkspaceItem):
         """Lists all jobs associated with this session.
 
         :return: A list of all jobs associated with this session.
-        :rtype: list[Job]
+        :rtype: typing.List[Job]
         """
         return self.workspace.list_session_jobs(session_id=self.id)
 
@@ -203,7 +203,8 @@ class SessionHost(Protocol):
 
     Example (job 1 to 3 will be associated the session "MySession"):
 
-    .. code-block:: python
+    .. highlight:: python
+    .. code-block::
        with target.open_session(name="MySession") as session:
             job1 = target.submit(input_data=input_data, job_name="Job 1")
             job2 = target.submit(input_data=input_data, job_name="Job 2")
@@ -218,7 +219,7 @@ class SessionHost(Protocol):
         """Get the latest (open) session associated with this object.
 
         :return: The latest session object.
-        :rtype: Optional[Session]
+        :rtype: typing.Optional[Session]
         """
         return self._latest_session
 
@@ -235,7 +236,7 @@ class SessionHost(Protocol):
            This id is used to associate jobs to the latest (open) session.
 
         :return: The latest session id.
-        :rtype: Optional[str]
+        :rtype: typing.Optional[str]
         """
         return self.latest_session.id if self.latest_session else None
 
@@ -265,7 +266,8 @@ class SessionHost(Protocol):
 
         Example (job 1 to 3 will be associated the session "MySession"):
 
-        .. code-block:: python
+        .. highlight:: python
+        .. code-block::
            with target.open_session(name="MySession") as session:
                 job1 = target.submit(input_data=input_data, job_name="Job 1")
                 job2 = target.submit(input_data=input_data, job_name="Job 2")

@@ -10,10 +10,27 @@ class MicrosoftElementsDftJob(Job):
     """
 
     def __init__(self, workspace, job_details: JobDetails, **kwargs):
+        """Azure Quantum Job that is submitted to a given Workspace.
+
+        :param workspace: Workspace instance to submit job to
+        :type workspace: Workspace
+        :param job_details: Job details model,
+                contains Job ID, name and other details
+        :type job_details: :py:obj:`JobDetails`
+        """
         super().__init__(workspace, job_details, **kwargs)
 
 
     def get_results(self, timeout_secs: float = DEFAULT_TIMEOUT) -> Dict[str, Any]:
+        """Get job results by downloading the results blob from the
+        storage container linked via the workspace.
+
+        :param timeout_secs: Timeout in seconds, defaults to 300
+        :type timeout_secs: float
+        :raises RuntimeError: Raises RuntimeError if job execution failed
+        :return: Results dictionary with histogram shots, or raw results if not a json object.
+        """
+
         try:
             job_results = super().get_results(timeout_secs)
             return job_results["results"]

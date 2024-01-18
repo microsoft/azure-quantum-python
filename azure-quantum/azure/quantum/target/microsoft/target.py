@@ -16,6 +16,10 @@ from ..target import Target
 from . import MicrosoftEstimatorJob
 
 class QubitParams:
+    """
+    Resource estimator Qubit parameters.
+    """
+
     GATE_US_E3 = "qubit_gate_us_e3"
     GATE_US_E4 = "qubit_gate_us_e4"
     GATE_NS_E3 = "qubit_gate_ns_e3"
@@ -28,6 +32,7 @@ class QECScheme:
     """
     Resource estimator QEC Scheme.
     """
+
     SURFACE_CODE = "surface_code"
     FLOQUET_CODE = "floquet_code"
 

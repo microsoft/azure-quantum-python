@@ -25,6 +25,13 @@ class MicrosoftElementsDft(Target):
         name: str = "microsoft.dft",
         **kwargs
     ):
+        """
+        Initializes a new DFT target.
+
+        :param workspace: Associated workspace
+        :type workspace: Workspace
+        :param name: Target name
+        """
         # There is only a single target name for this target
         assert name == self.target_names[0]
 

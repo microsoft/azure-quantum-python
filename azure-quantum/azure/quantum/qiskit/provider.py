@@ -68,7 +68,7 @@ class AzureQuantumProvider(Provider):
             name (str): name of the backend.
             **kwargs: dict used for filtering.
         Returns:
-            Backend: a backend matching the filtering.
+            :py:obj:`Backend`: a backend matching the filtering.
         Raises:
             QiskitBackendNotFoundError: if no backend could be found or
                 more than one backend matches the filtering criteria.
@@ -112,7 +112,7 @@ see https://aka.ms/AQ/Docs/AddProvider"
             name (str): name of the backend.
             **kwargs: dict used for filtering.
         Returns:
-            list[qiskit.providers.BackendV1]: a list of Backends that match the filtering
+            typing.List[:py:obj:`qiskit.providers.BackendV1`]: a list of Backends that match the filtering
                 criteria.
         """
 

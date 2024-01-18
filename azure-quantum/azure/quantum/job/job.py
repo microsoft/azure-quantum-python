@@ -107,7 +107,7 @@ class Job(BaseJob, FilteredJob):
         storage container linked via the workspace.
 
         :param timeout_secs: Timeout in seconds, defaults to 300
-        :type timeout_secs: int
+        :type timeout_secs: float
         :raises RuntimeError: Raises RuntimeError if job execution failed
         :return: Results dictionary with histogram shots, or raw results if not a json object.
         """
