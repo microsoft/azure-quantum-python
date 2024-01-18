@@ -202,6 +202,7 @@ class SessionHost(Protocol):
     with that session.
 
     Example (job 1 to 3 will be associated the session "MySession"):
+
     >>> with target.open_session(name="MySession") as session:
     >>>     job1 = target.submit(input_data=input_data, job_name="Job 1")
     >>>     job2 = target.submit(input_data=input_data, job_name="Job 2")
@@ -215,7 +216,7 @@ class SessionHost(Protocol):
         """Get the latest (open) session associated with this object.
 
         :return: The latest session object.
-        :rtype: Optional[Session]
+        :rtype: typings.Optional[Session]
         """
         return self._latest_session
 
@@ -223,7 +224,7 @@ class SessionHost(Protocol):
     def latest_session(self, session: Optional[Session]):
         """Set the latest session.
         :param value: The latest session
-        :type value: Optional[Session]
+        :type value: typings.Optional[Session]
         """
         self._latest_session = session
 
@@ -232,7 +233,7 @@ class SessionHost(Protocol):
            This id is used to associate jobs to the latest (open) session.
 
         :return: The latest session id.
-        :rtype: Optional[str]
+        :rtype: typings.Optional[str]
         """
         return self.latest_session.id if self.latest_session else None
 
@@ -261,6 +262,7 @@ class SessionHost(Protocol):
            after exiting a `with` block).
 
         Example (job 1 to 3 will be associated the session "MySession"):
+
         >>> with target.open_session(name="MySession") as session:
         >>>     job1 = target.submit(input_data=input_data, job_name="Job 1")
         >>>     job2 = target.submit(input_data=input_data, job_name="Job 2")
@@ -287,7 +289,7 @@ class SessionHost(Protocol):
 
         :param job_failure_policy: The policy that determines when a session would fail,
                                 close and not accept further jobs.
-        :type job_failure_policy: Union[str, SessionJobFailurePolicy, None]
+        :type job_failure_policy: Union[str, azure.quantum._client.models.SessionJobFailurePolicy, None]
 
         :return: The session object with updated details after its opening.
         :rtype: Session

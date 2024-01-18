@@ -95,7 +95,7 @@ class AzureQuantumService:
         :param name: Target name
         :type name: str
         :return: Cirq target
-        :rtype: azure.quantum.cirq.targets.Target
+        :rtype: Target
         """
         if name is None:
             if self._default_target is None:
@@ -131,7 +131,7 @@ class AzureQuantumService:
         """Create job to run the given `cirq` program in Azure Quantum
 
         :param program: Cirq program or circuit
-        :type program: cirq.Circuit
+        :type program: "cirq.Circuit"
         :param repetitions: Number of measurements 
         :type repetitions: int
         :param name: Program name

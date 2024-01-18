@@ -366,7 +366,7 @@ class Workspace:
         :type provider_id: str
 
         :return: Targets
-        :rtype: Iterable[Target]
+        :rtype: typing.Iterable[Target]
         """
         from azure.quantum.target.target_factory import TargetFactory
         from azure.quantum.target import Target
@@ -385,7 +385,7 @@ class Workspace:
         """Get a list of job quotas for the given workspace.
 
         :return: Job quotas
-        :rtype: list[dict[str, Any]]
+        :rtype: typing.List[typing.Dict[str, typing.Any]]
         """
         client = self._get_quotas_client()
         return [q.as_dict() for q in client.list()]
@@ -396,7 +396,7 @@ class Workspace:
         """Get a list of top level items for the given workspace.
 
         :return: Workspace items
-        :rtype: List[WorkspaceItem]
+        :rtype: typing.List[Job] or typing.List[Session]
         """
         from azure.quantum.job.workspace_item_factory import WorkspaceItemFactory
         client = self._get_top_level_items_client()
@@ -411,7 +411,7 @@ class Workspace:
         """Get the list of sessions in the given workspace.
 
         :return: Session items
-        :rtype: List[Session]
+        :rtype: typing.List[Session]
         """
         client = self._get_sessions_client()
         session_details_list = client.list()
@@ -495,7 +495,7 @@ class Workspace:
         :type session_id: str
 
         :return: List of all jobs associated with a session.
-        :rtype: List[Job]
+        :rtype: typing.List[Job]
         """
         client = self._get_sessions_client()
         job_details_list = client.jobs_list(session_id=session_id)
