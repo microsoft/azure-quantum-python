@@ -329,7 +329,7 @@ class Workspace:
         :param status: filter by job status
         :param created_after: filter jobs after time of job creation
         :return: Jobs that matched the search criteria
-        :rtype: list[Job]
+        :rtype: typing.List[Job]
         """
         client = self._get_jobs_client()
         jobs = client.list()

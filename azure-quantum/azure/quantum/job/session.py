@@ -203,10 +203,12 @@ class SessionHost(Protocol):
 
     Example (job 1 to 3 will be associated the session "MySession"):
 
-    >>> with target.open_session(name="MySession") as session:
-    >>>     job1 = target.submit(input_data=input_data, job_name="Job 1")
-    >>>     job2 = target.submit(input_data=input_data, job_name="Job 2")
-    >>>     job3 = target.submit(input_data=input_data, job_name="Job 3")
+    .. highlight:: python
+    .. code-block:: python
+        with target.open_session(name="MySession") as session:
+            job1 = target.submit(input_data=input_data, job_name="Job 1")
+            job2 = target.submit(input_data=input_data, job_name="Job 2")
+            job3 = target.submit(input_data=input_data, job_name="Job 3")
     """
 
     _latest_session: Optional[Session] = None
@@ -263,10 +265,12 @@ class SessionHost(Protocol):
 
         Example (job 1 to 3 will be associated the session "MySession"):
 
-        >>> with target.open_session(name="MySession") as session:
-        >>>     job1 = target.submit(input_data=input_data, job_name="Job 1")
-        >>>     job2 = target.submit(input_data=input_data, job_name="Job 2")
-        >>>     job3 = target.submit(input_data=input_data, job_name="Job 3")
+        .. highlight:: python
+        .. code-block:: python
+            with target.open_session(name="MySession") as session:
+                job1 = target.submit(input_data=input_data, job_name="Job 1")
+                job2 = target.submit(input_data=input_data, job_name="Job 2")
+                job3 = target.submit(input_data=input_data, job_name="Job 3")
 
         Note: If the session host (usually a `target` or qiskit `backend`)
         already has a session associated with it (in the `latest_session` property),

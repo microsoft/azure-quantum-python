@@ -131,7 +131,6 @@ class AzureQuantumService:
         """Create job to run the given `cirq` program in Azure Quantum
 
         :param program: Cirq program or circuit
-        :type program: "cirq.Circuit"
         :param repetitions: Number of measurements 
         :type repetitions: int
         :param name: Program name
