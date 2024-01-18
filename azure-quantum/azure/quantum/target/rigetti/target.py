@@ -72,9 +72,11 @@ class InputParams:
 
     skip_quilc: bool = False
     """
-    If set to True, `quilc <https://github.com/quil-lang/quilc>`__ will not be run.
+    If set to True, `quilc`_ will not be run.
     
-    This **must** be set true if using `Quil-T <https://pyquil-docs.rigetti.com/en/stable/quilt.html>`__.
+    This **must** be set true if using `Quil-T <https://pyquil-docs.rigetti.com/en/stable/quilt.html>`_.
+    
+    .. _quilc: https://github.com/quil-lang/quilc
     """
 
     substitutions: Optional[Dict[str, List[List[float]]]] = None

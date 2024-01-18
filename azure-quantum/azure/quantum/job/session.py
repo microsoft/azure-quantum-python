@@ -28,7 +28,7 @@ class Session(WorkspaceItem):
                     Either this parameter should be passed containing all
                     the session detail values, or the same values should be
                     passed as individual parameters.
-    :type details: Optional[:py:obj:`SessionDetails`]
+    :type details: Optional[~SessionDetails]
 
     :param target: The name of the target (or Target object) to open the session on.
     :type target: Union[str, Target, None]
@@ -46,7 +46,7 @@ class Session(WorkspaceItem):
 
     :param job_failure_policy: The policy that determines when a session would fail,
                                close and not accept further jobs.
-    :type job_failure_policy: Union[str, :py:obj:`SessionJobFailurePolicy`, None]
+    :type job_failure_policy: Union[str, ~SessionJobFailurePolicy, None]
 
     :raises ValueError: if details is passed along individual parameters,
                         or if required parameters are missing.
@@ -105,7 +105,7 @@ class Session(WorkspaceItem):
         """Get the session details.
 
         :return: The details about the session.
-        :rtype: :py:obj:`SessionDetails`
+        :rtype: ~SessionDetails
         """
         return self._details
 
@@ -114,7 +114,7 @@ class Session(WorkspaceItem):
         """Set session details.
         
         :param value: The details about the session
-        :type value: :py:obj:`SessionDetails`
+        :type value: ~SessionDetails
         """
         self._details = value
 
@@ -205,6 +205,7 @@ class SessionHost(Protocol):
 
     .. highlight:: python
     .. code-block::
+
        with target.open_session(name="MySession") as session:
             job1 = target.submit(input_data=input_data, job_name="Job 1")
             job2 = target.submit(input_data=input_data, job_name="Job 2")
@@ -268,6 +269,7 @@ class SessionHost(Protocol):
 
         .. highlight:: python
         .. code-block::
+
            with target.open_session(name="MySession") as session:
                 job1 = target.submit(input_data=input_data, job_name="Job 1")
                 job2 = target.submit(input_data=input_data, job_name="Job 2")

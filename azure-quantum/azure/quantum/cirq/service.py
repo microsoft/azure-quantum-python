@@ -131,7 +131,7 @@ class AzureQuantumService:
         """Create job to run the given `cirq` program in Azure Quantum
 
         :param program: Cirq program or circuit
-        :type program: :py:obj:`cirq.Circuit`
+        :type program: ~cirq.Circuit
         :param repetitions: Number of measurements 
         :type repetitions: int
         :param name: Program name
@@ -139,7 +139,7 @@ class AzureQuantumService:
         :param target: Target name
         :type target: str
         :param param_resolver: Parameter resolver for cirq program
-        :type param_resolver: :py:obj:`cirq.ParamResolverOrSimilarType`
+        :type param_resolver: ~cirq.ParamResolverOrSimilarType
         :return: Job
         :rtype: azure.quantum.cirq.Job
         """
@@ -172,13 +172,13 @@ see https://aka.ms/AQ/Docs/AddProvider")
         Estimate the cost for a given circuit.
 
         :param program: Cirq program or circuit
-        :type program: :py:obj:`cirq.Circuit`
+        :type program: ~cirq.Circuit
         :param repetitions: Number of measurement repetitions
         :type repetitions: int
         :param target: Target name, defaults to default_target
         :type target: str
         :param param_resolver: Cirq parameters, defaults to cirq.ParamResolver({})
-        :type param_resolver: :py:obj:`cirq.ParamResolverOrSimilarType`
+        :type param_resolver: ~cirq.ParamResolverOrSimilarType
         """
         
         # Resolve parameters
@@ -203,7 +203,7 @@ see https://aka.ms/AQ/Docs/AddProvider")
         """Run Cirq circuit on specified target, if target not specified then it runs on the default target
 
         :param program: Cirq program or circuit
-        :type program: :py:obj:`cirq.Circuit`
+        :type program: ~cirq.Circuit
         :param repetitions: Number of measurement repetitions
         :type repetitions: int
         :param target: Target name, defaults to default_target
@@ -211,13 +211,13 @@ see https://aka.ms/AQ/Docs/AddProvider")
         :param name: Program name, defaults to "cirq-job"
         :type name: str
         :param param_resolver: Cirq parameters, defaults to cirq.ParamResolver({})
-        :type param_resolver: :py:obj:`cirq.ParamResolverOrSimilarType`
+        :type param_resolver: ~cirq.ParamResolverOrSimilarType
         :param seed: Random seed for simulator results, defaults to None
-        :type seed: :py:obj:`cirq.RANDOM_STATE_OR_SEED_LIKE`
+        :type seed: ~cirq.RANDOM_STATE_OR_SEED_LIKE
         :param timeout_seconds: Timeout in seconds, defaults to None
         :type timeout_seconds: int
         :return: Measurement results
-        :rtype: :py:obj:`cirq.Result`
+        :rtype: ~cirq.Result
         """
         job = self.create_job(
             program=program,
