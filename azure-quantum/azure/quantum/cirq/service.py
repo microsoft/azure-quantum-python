@@ -82,7 +82,7 @@ class AzureQuantumService:
         :param name: Target name, defaults to None
         :type name: str
         :return: Target instance or list thereof
-        :rtype: Union[Target, List[Target]]
+        :rtype: typing.Union[Target, typing.List[Target]]
         """
         return self._target_factory.get_targets(
             name=name,
@@ -95,7 +95,7 @@ class AzureQuantumService:
         :param name: Target name
         :type name: str
         :return: Cirq target
-        :rtype: CirqTarget
+        :rtype: azure.quantum.cirq.targets.Target
         """
         if name is None:
             if self._default_target is None:
@@ -111,7 +111,7 @@ class AzureQuantumService:
         :param job_id: Job ID
         :type job_id: str
         :return: Job
-        :rtype: azure.quantum.cirq.Job or cirq_ionq.Job
+        :rtype: azure.quantum.cirq.Job
         """
         job = self._workspace.get_job(job_id=job_id)
         target : CirqTarget = self._target_factory.create_target(
@@ -168,6 +168,19 @@ see https://aka.ms/AQ/Docs/AddProvider")
         param_resolver: cirq.ParamResolverOrSimilarType = cirq.ParamResolver({}),
         **kwargs
     ):
+        """
+        Estimate the cost for a given circuit.
+
+        :param program: Cirq program or circuit
+        :type program: cirq.Circuit
+        :param repetitions: Number of measurement repetitions
+        :type repetitions: int
+        :param target: Target name, defaults to default_target
+        :type target: str
+        :param param_resolver: Cirq parameters, defaults to cirq.ParamResolver({})
+        :type param_resolver: cirq.ParamResolverOrSimilarType
+        """
+        
         # Resolve parameters
         resolved_circuit = cirq.resolve_parameters(program, param_resolver)
         target = self.get_target(name=target)

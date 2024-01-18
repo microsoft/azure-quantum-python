@@ -385,7 +385,7 @@ class Workspace:
         """Get a list of job quotas for the given workspace.
 
         :return: Job quotas
-        :rtype: List[Dict[str, Any]]
+        :rtype: list[dict[str, Any]]
         """
         client = self._get_quotas_client()
         return [q.as_dict() for q in client.list()]
