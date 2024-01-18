@@ -16,7 +16,7 @@ class MicrosoftElementsDftJob(Job):
         :type workspace: Workspace
         :param job_details: Job details model,
                 contains Job ID, name and other details
-        :type job_details: :py:obj:`JobDetails`
+        :type job_details: JobDetails
         """
         super().__init__(workspace, job_details, **kwargs)
 
