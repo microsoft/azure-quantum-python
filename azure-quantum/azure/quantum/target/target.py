@@ -213,7 +213,7 @@ target '{self.name}' of provider '{self.provider_id}' not found."
         :param input_params: Input parameters
         :type input_params: Dict[str, Any]
         :return: Azure Quantum job
-        :rtype: Job
+        :rtype: azure.quantum.job.Job
         """
 
         if isinstance(input_params, InputParams):
