@@ -42,6 +42,7 @@ class BaseJob(WorkspaceItem):
 
     @property
     def details(self) -> JobDetails:
+        """Job details"""
         return self._details
 
     @details.setter
@@ -50,6 +51,7 @@ class BaseJob(WorkspaceItem):
 
     @property
     def container_name(self):
+        """Job input/output data container name"""
         return f"job-{self.id}"
 
     @classmethod
