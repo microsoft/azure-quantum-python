@@ -82,7 +82,7 @@ class BaseJob(WorkspaceItem):
         """Create a new Azure Quantum job based on a raw input_data payload.
 
         :param workspace: Azure Quantum workspace to submit the input_data to
-        :type workspace: "Workspace"
+        :type workspace: Workspace
         :param name: Name of the job
         :type name: str
         :param target: Azure Quantum target
@@ -169,7 +169,7 @@ class BaseJob(WorkspaceItem):
         to blob storage
 
         :param workspace: Azure Quantum workspace to submit the blob to
-        :type workspace: "Workspace"
+        :type workspace: Workspace
         :param name: Job name
         :type name: str
         :param target: Azure Quantum target
