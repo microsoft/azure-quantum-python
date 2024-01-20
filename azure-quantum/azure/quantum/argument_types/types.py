@@ -24,7 +24,15 @@ class Result(Enum):
 
 @dataclass
 class Range:
-    """Range value"""
+    """Range value
+    
+    :param start: Start
+    :type start: int
+    :param end: End
+    :type end: int
+    :param step: Step
+    :type step: int
+    """
 
     start: int
     end: int
@@ -32,6 +40,8 @@ class Range:
 
     @property
     def value(self):
+        """Range value"""
+        
         if self.step is None:
             return {"start": self.start, "end": self.end}
         else:
