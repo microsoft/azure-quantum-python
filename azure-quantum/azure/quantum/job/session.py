@@ -7,8 +7,8 @@ from typing import TYPE_CHECKING, Optional, Union, Protocol, List
 from abc import abstractmethod
 
 from azure.quantum._client.models import SessionDetails, SessionStatus, SessionJobFailurePolicy
-from .workspace_item import WorkspaceItem
-from .job import Job
+from azure.quantum.job.workspace_item import WorkspaceItem
+from azure.quantum.job import Job
 
 __all__ = ["Session", "SessionHost", "SessionDetails", "SessionStatus", "SessionJobFailurePolicy"]
 
@@ -28,7 +28,7 @@ class Session(WorkspaceItem):
                     Either this parameter should be passed containing all
                     the session detail values, or the same values should be
                     passed as individual parameters.
-    :type details: Optional[~SessionDetails]
+    :type details: Optional[SessionDetails]
 
     :param target: The name of the target (or Target object) to open the session on.
     :type target: Union[str, Target, None]
@@ -46,7 +46,7 @@ class Session(WorkspaceItem):
 
     :param job_failure_policy: The policy that determines when a session would fail,
                                close and not accept further jobs.
-    :type job_failure_policy: Union[str, ~SessionJobFailurePolicy, None]
+    :type job_failure_policy: Union[str, SessionJobFailurePolicy, None]
 
     :raises ValueError: if details is passed along individual parameters,
                         or if required parameters are missing.
@@ -105,7 +105,7 @@ class Session(WorkspaceItem):
         """Get the session details.
 
         :return: The details about the session.
-        :rtype: ~SessionDetails
+        :rtype: SessionDetails
         """
         return self._details
 
@@ -114,7 +114,7 @@ class Session(WorkspaceItem):
         """Set session details.
         
         :param value: The details about the session
-        :type value: ~SessionDetails
+        :type value: SessionDetails
         """
         self._details = value
 
