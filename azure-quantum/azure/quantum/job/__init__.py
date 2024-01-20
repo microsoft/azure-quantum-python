@@ -19,5 +19,10 @@ __all__ = [
     "JobDetails",
     "BaseJob",
     "FilteredJob",
-    "WorkspaceItem"
+    "WorkspaceItem",
+    "Session",
+    "SessionHost",
+    "SessionDetails",
+    "SessionStatus",
+    "SessionJobFailurePolicy"
     ]
