@@ -33,6 +33,12 @@ class BaseJob(WorkspaceItem):
     """
     Base job class with methods to create a job from raw blob data,
     upload blob data and download results.
+
+    :param workspace: Workspace instance of the job
+    :type workspace: Workspace
+    :param details: Item details model,
+            contains item ID, name and other details
+    :type details: ItemDetails
     """
 
     @staticmethod
@@ -90,17 +96,17 @@ class BaseJob(WorkspaceItem):
         :param encoding: input_data encoding, e.g. "gzip", defaults to empty string
         :type encoding: str
         :param job_id: Job ID, defaults to None
-        :type job_id: str, optional
+        :type job_id: str
         :param container_name: Container name, defaults to None
         :type container_name: str
         :param provider_id: Provider ID, defaults to None
-        :type provider_id: str, optional
+        :type provider_id: str
         :param input_data_format: Input data format, defaults to None
-        :type input_data_format: str, optional
+        :type input_data_format: str
         :param output_data_format: Output data format, defaults to None
-        :type output_data_format: str, optional
+        :type output_data_format: str
         :param input_params: Input parameters, defaults to None
-        :type input_params: Dict[str, Any], optional
+        :type input_params: Dict[str, Any]
         :param input_params: Input params for job
         :type input_params: Dict[str, Any]
         :return: Azure Quantum Job
@@ -171,17 +177,17 @@ class BaseJob(WorkspaceItem):
         :param input_data_uri: Input data URI
         :type input_data_uri: str
         :param provider_id: Provider ID
-        :type provider_id: str, optional
+        :type provider_id: str
         :param input_data_format: Input data format
-        :type input_data_format: str, optional
+        :type input_data_format: str
         :param output_data_format: Output data format
-        :type output_data_format: str, optional
+        :type output_data_format: str
         :param container_uri: Container URI, defaults to None
         :type container_uri: str
         :param job_id: Pre-generated job ID, defaults to None
         :type job_id: str
         :param input_params: Input parameters, defaults to None
-        :type input_params: Dict[str, Any], optional
+        :type input_params: Dict[str, Any]
         :param submit_job: If job should be submitted to the service, defaults to True
         :type submit_job: bool
         :return: Job instance
@@ -242,11 +248,11 @@ class BaseJob(WorkspaceItem):
         :param content_type: Content type, e.g. "application/json"
         :type content_type: Optional, ContentType
         :param blob_name: Blob name, defaults to "inputData"
-        :type blob_name: str, optional
+        :type blob_name: str
         :param encoding: Encoding, e.g. "gzip", defaults to ""
-        :type encoding: str, optional
+        :type encoding: str
         :param return_sas_token: Flag to return SAS token as part of URI, defaults to False
-        :type return_sas_token: bool, optional
+        :type return_sas_token: bool
         :return: Uploaded data URI
         :rtype: str
         """
@@ -308,7 +314,7 @@ class BaseJob(WorkspaceItem):
         :param data: Attachment data in binary format
         :type input_data: bytes
         :param container_uri: Container URI, defaults to the job's linked container.
-        :type container_uri: str, Optional
+        :type container_uri: str
 
         :return: Uploaded data URI
         :rtype: str
@@ -338,7 +344,7 @@ class BaseJob(WorkspaceItem):
         :param name: Attachment name
         :type name: str
         :param container_uri: Container URI, defaults to the job's linked container.
-        :type container_uri: str, Optional
+        :type container_uri: str
 
         :return: Attachment data
         :rtype: bytes
