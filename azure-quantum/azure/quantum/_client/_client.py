@@ -7,9 +7,11 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, TYPE_CHECKING
+from typing import Any
 
 from azure.core import PipelineClient
+from azure.core.credentials import AzureKeyCredential
+from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest, HttpResponse
 
 from . import models as _models
@@ -23,10 +25,6 @@ from .operations import (
     StorageOperations,
     TopLevelItemsOperations,
 )
-
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from azure.core.credentials import TokenCredential
 
 
 class QuantumClient:  # pylint: disable=client-accepts-api-version-keyword
@@ -44,6 +42,9 @@ class QuantumClient:  # pylint: disable=client-accepts-api-version-keyword
     :vartype sessions: azure.quantum._client.operations.SessionsOperations
     :ivar top_level_items: TopLevelItemsOperations operations
     :vartype top_level_items: azure.quantum._client.operations.TopLevelItemsOperations
+    :param azure_region: Supported Azure regions for Azure Quantum Services. For example, "eastus".
+     Required.
+    :type azure_region: str
     :param subscription_id: The Azure subscription ID. This is a GUID-formatted string (e.g.
      00000000-0000-0000-0000-000000000000). Required.
     :type subscription_id: str
@@ -52,32 +53,48 @@ class QuantumClient:  # pylint: disable=client-accepts-api-version-keyword
     :param workspace_name: Name of the workspace. Required.
     :type workspace_name: str
     :param credential: Credential needed for the client to connect to Azure. Required.
-    :type credential: ~azure.core.credentials.TokenCredential
-    :keyword endpoint: Service URL. Default value is "https://quantum.azure.com".
-    :paramtype endpoint: str
-    :keyword api_version: Api Version. Default value is "2022-09-12-preview". Note that overriding
+    :type credential: ~azure.core.credentials.AzureKeyCredential
+    :keyword api_version: Api Version. Default value is "2023-11-13-preview". Note that overriding
      this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
     def __init__(
         self,
+        azure_region: str,
         subscription_id: str,
         resource_group_name: str,
         workspace_name: str,
-        credential: "TokenCredential",
-        *,
-        endpoint: str = "https://quantum.azure.com",
+        credential: AzureKeyCredential,
         **kwargs: Any
     ) -> None:
+        _endpoint = "https://{azureRegion}.quantum.azure.com"
         self._config = QuantumClientConfiguration(
+            azure_region=azure_region,
             subscription_id=subscription_id,
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
             credential=credential,
             **kwargs
         )
-        self._client: PipelineClient = PipelineClient(base_url=endpoint, config=self._config, **kwargs)
+        _policies = kwargs.pop("policies", None)
+        if _policies is None:
+            _policies = [
+                policies.RequestIdPolicy(**kwargs),
+                self._config.headers_policy,
+                self._config.user_agent_policy,
+                self._config.proxy_policy,
+                policies.ContentDecodePolicy(**kwargs),
+                self._config.redirect_policy,
+                self._config.retry_policy,
+                self._config.authentication_policy,
+                self._config.custom_hook_policy,
+                self._config.logging_policy,
+                policies.DistributedTracingPolicy(**kwargs),
+                policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
+                self._config.http_logging_policy,
+            ]
+        self._client: PipelineClient = PipelineClient(base_url=_endpoint, policies=_policies, **kwargs)
 
         client_models = {k: v for k, v in _models._models.__dict__.items() if isinstance(v, type)}
         client_models.update({k: v for k, v in _models.__dict__.items() if isinstance(v, type)})
@@ -91,7 +108,7 @@ class QuantumClient:  # pylint: disable=client-accepts-api-version-keyword
         self.sessions = SessionsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.top_level_items = TopLevelItemsOperations(self._client, self._config, self._serialize, self._deserialize)
 
-    def send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
+    def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -110,8 +127,14 @@ class QuantumClient:  # pylint: disable=client-accepts-api-version-keyword
         """
 
         request_copy = deepcopy(request)
-        request_copy.url = self._client.format_url(request_copy.url)
-        return self._client.send_request(request_copy, **kwargs)
+        path_format_arguments = {
+            "azureRegion": self._serialize.url(
+                "self._config.azure_region", self._config.azure_region, "str", skip_quote=True
+            ),
+        }
+
+        request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
+        return self._client.send_request(request_copy, stream=stream, **kwargs)  # type: ignore
 
     def close(self) -> None:
         self._client.close()

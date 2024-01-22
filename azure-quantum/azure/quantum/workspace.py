@@ -189,18 +189,12 @@ class Workspace:
         self._client = self._create_client()
 
     def _create_client(self) -> QuantumClient:
-        endpoint = BASE_URL(self.location)
-        logger.debug(
-            f"Creating client for: subs:{self.subscription_id},"
-            + f"rg={self.resource_group}, ws={self.name}, frontdoor={endpoint}"
-        )
-
         client = QuantumClient(
             credential=self.credentials,
             subscription_id=self.subscription_id,
             resource_group_name=self.resource_group,
             workspace_name=self.name,
-            endpoint=endpoint,
+            azure_region=self.location,
             user_agent=self.user_agent
         )
         return client
