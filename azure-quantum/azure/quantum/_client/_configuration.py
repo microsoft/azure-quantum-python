@@ -6,12 +6,15 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any
+from typing import Any, TYPE_CHECKING
 
-from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline import policies
 
 from ._version import VERSION
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from azure.core.credentials import TokenCredential
 
 
 class QuantumClientConfiguration:  # pylint: disable=too-many-instance-attributes
@@ -31,7 +34,7 @@ class QuantumClientConfiguration:  # pylint: disable=too-many-instance-attribute
     :param workspace_name: Name of the workspace. Required.
     :type workspace_name: str
     :param credential: Credential needed for the client to connect to Azure. Required.
-    :type credential: ~azure.core.credentials.AzureKeyCredential
+    :type credential: ~azure.core.credentials.TokenCredential
     :keyword api_version: Api Version. Default value is "2023-11-13-preview". Note that overriding
      this default value may result in unsupported behavior.
     :paramtype api_version: str
@@ -43,7 +46,7 @@ class QuantumClientConfiguration:  # pylint: disable=too-many-instance-attribute
         subscription_id: str,
         resource_group_name: str,
         workspace_name: str,
-        credential: AzureKeyCredential,
+        credential: "TokenCredential",
         **kwargs: Any
     ) -> None:
         api_version: str = kwargs.pop("api_version", "2023-11-13-preview")
@@ -65,6 +68,7 @@ class QuantumClientConfiguration:  # pylint: disable=too-many-instance-attribute
         self.workspace_name = workspace_name
         self.credential = credential
         self.api_version = api_version
+        self.credential_scopes = kwargs.pop("credential_scopes", ["https://quantum.microsoft.com/.default"])
         kwargs.setdefault("sdk_moniker", "quantum/{}".format(VERSION))
         self.polling_interval = kwargs.get("polling_interval", 30)
         self._configure(**kwargs)
@@ -80,6 +84,6 @@ class QuantumClientConfiguration:  # pylint: disable=too-many-instance-attribute
         self.retry_policy = kwargs.get("retry_policy") or policies.RetryPolicy(**kwargs)
         self.authentication_policy = kwargs.get("authentication_policy")
         if self.credential and not self.authentication_policy:
-            self.authentication_policy = policies.AzureKeyCredentialPolicy(
-                self.credential, "x-ms-quantum-api-key", **kwargs
+            self.authentication_policy = policies.BearerTokenCredentialPolicy(
+                self.credential, *self.credential_scopes, **kwargs
             )

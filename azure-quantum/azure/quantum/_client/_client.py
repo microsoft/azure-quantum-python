@@ -7,10 +7,9 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any
+from typing import Any, TYPE_CHECKING
 
 from azure.core import PipelineClient
-from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest, HttpResponse
 
@@ -25,6 +24,10 @@ from .operations import (
     StorageOperations,
     TopLevelItemsOperations,
 )
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from azure.core.credentials import TokenCredential
 
 
 class QuantumClient:  # pylint: disable=client-accepts-api-version-keyword
@@ -53,7 +56,7 @@ class QuantumClient:  # pylint: disable=client-accepts-api-version-keyword
     :param workspace_name: Name of the workspace. Required.
     :type workspace_name: str
     :param credential: Credential needed for the client to connect to Azure. Required.
-    :type credential: ~azure.core.credentials.AzureKeyCredential
+    :type credential: ~azure.core.credentials.TokenCredential
     :keyword api_version: Api Version. Default value is "2023-11-13-preview". Note that overriding
      this default value may result in unsupported behavior.
     :paramtype api_version: str
@@ -65,7 +68,7 @@ class QuantumClient:  # pylint: disable=client-accepts-api-version-keyword
         subscription_id: str,
         resource_group_name: str,
         workspace_name: str,
-        credential: AzureKeyCredential,
+        credential: "TokenCredential",
         **kwargs: Any
     ) -> None:
         _endpoint = "https://{azureRegion}.quantum.azure.com"
