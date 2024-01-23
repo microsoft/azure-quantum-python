@@ -8,6 +8,7 @@ import os
 import re
 
 from azure.core.pipeline import policies
+from azure.core.credentials import AzureKeyCredential
 
 from typing import Any, Dict, Iterable, List, Optional, TYPE_CHECKING, Tuple, Union
 
@@ -193,6 +194,9 @@ class Workspace:
         self._client = self._create_client()
 
     def _create_client(self) -> QuantumClient:
+        apikeyCredential = self.kwargs.get("authentication_policy")
+
+        authentication_policy_dict = { 'authentication_policy' : apikeyCredential }
         client = QuantumClient(
             credential=self.credentials,
             subscription_id=self.subscription_id,
@@ -200,7 +204,7 @@ class Workspace:
             workspace_name=self.name,
             azure_region=self.location,
             user_agent=self.user_agent,
-            kwargs=self.kwargs
+            **authentication_policy_dict
         )
         return client
 
@@ -221,8 +225,8 @@ class Workspace:
     def _parse_connection_string(cls, connection_string: str):
         # The connection string looks like:
         #SubscriptionId=<subId>;ResourceGroupName=<resourceGroupName>;WorkspaceName=<workspaceName>;
-        #WorkspaceKey=<workspacekey>;QuantumEndpoint=https://<location>.quantum.azure.com; 
-        regex = r"^SubscriptionId=([a-fA-F0-9-]*);ResourceGroupName=([^\s/]*);WorkspaceName=([^\s/]*);WorkspaceKey=([^\s/]*);QuantumEndpoint=https://([^\s/]*).quantum.azure.com;$"
+        #ApiKey=<workspacekey>;QuantumEndpoint=https://<location>.quantum.azure.com/; 
+        regex = r"SubscriptionId=([a-fA-F0-9-]*);ResourceGroupName=([^\s/]*);WorkspaceName=([^\s/]*);ApiKey=([^\s/]*);QuantumEndpoint=https://([^\s/]*).quantum.azure.com/;"  
         match = re.search(regex, connection_string, re.IGNORECASE)
         if match:
             # match should contain four groups:
@@ -245,9 +249,11 @@ class Workspace:
     def from_connection_string(cls, connection_string, **kwargs):
         subscription_id, resource_group, workspace_name, location, credential = cls._parse_connection_string(connection_string)
 
-        authentication_policy = policies.AzureKeyCredentialPolicy(credential, "x-ms-quantum-api-key")
-        
-        return cls(subscription_id, resource_group, workspace_name, None, None, location, credential, None, authentication_policy, **kwargs)
+        apikeyCredential = AzureKeyCredential(credential)
+        authentication_policy = policies.AzureKeyCredentialPolicy(apikeyCredential, "x-ms-quantum-api-key")
+        kwargs["authentication_policy"] = authentication_policy
+
+        return cls(subscription_id, resource_group, workspace_name, None, None, location, credential, None, **kwargs)
 
     def append_user_agent(self, value: Union[str, None]):
         """
