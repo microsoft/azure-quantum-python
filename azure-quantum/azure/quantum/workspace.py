@@ -7,6 +7,8 @@ import logging
 import os
 import re
 
+from azure.core.pipeline import policies
+
 from typing import Any, Dict, Iterable, List, Optional, TYPE_CHECKING, Tuple, Union
 
 # Temporarily replacing the DefaultAzureCredential with
@@ -132,6 +134,7 @@ class Workspace:
         location: Optional[str] = None,
         credential: Optional[object] = None,
         user_agent: Optional[str] = None,
+        **kwargs: Any,
     ):
         if resource_id is not None:
             # A valid resource ID looks like:
@@ -178,6 +181,7 @@ class Workspace:
         self.subscription_id = subscription_id
         self.storage = storage
         self._user_agent = user_agent
+        self.kwargs = kwargs
 
         # Convert user-provided location into names
         # recognized by Azure resource manager.
@@ -195,7 +199,8 @@ class Workspace:
             resource_group_name=self.resource_group,
             workspace_name=self.name,
             azure_region=self.location,
-            user_agent=self.user_agent
+            user_agent=self.user_agent,
+            kwargs=self.kwargs
         )
         return client
 
@@ -211,6 +216,38 @@ class Workspace:
         if env_app_id:
             full_user_agent = f"{full_user_agent}-{env_app_id}" if full_user_agent else env_app_id
         return full_user_agent
+
+    @classmethod
+    def _parse_connection_string(cls, connection_string: str):
+        # The connection string looks like:
+        #SubscriptionId=<subId>;ResourceGroupName=<resourceGroupName>;WorkspaceName=<workspaceName>;
+        #WorkspaceKey=<workspacekey>;QuantumEndpoint=https://<location>.quantum.azure.com; 
+        regex = r"^SubscriptionId=([a-fA-F0-9-]*);ResourceGroupName=([^\s/]*);WorkspaceName=([^\s/]*);WorkspaceKey=([^\s/]*);QuantumEndpoint=https://([^\s/]*).quantum.azure.com;$"
+        match = re.search(regex, connection_string, re.IGNORECASE)
+        if match:
+            # match should contain four groups:
+            # -> match.group(0):
+            # The full resource ID for the Azure Quantum workspace
+            # -> match.group(1): The Azure subscription ID
+            # -> match.group(2): The Azure resource group name
+            # -> match.group(3): The Azure Quantum workspace name
+            subscription_id = match.group(1)
+            resource_group = match.group(2)
+            workspace_name = match.group(3)
+            workspace_key = match.group(4)
+            location = match.group(5)
+
+            return subscription_id, resource_group, workspace_name, location, workspace_key
+
+        raise Exception("Invalid connection string")
+
+    @classmethod
+    def from_connection_string(cls, connection_string, **kwargs):
+        subscription_id, resource_group, workspace_name, location, credential = cls._parse_connection_string(connection_string)
+
+        authentication_policy = policies.AzureKeyCredentialPolicy(credential, "x-ms-quantum-api-key")
+        
+        return cls(subscription_id, resource_group, workspace_name, None, None, location, credential, None, authentication_policy, **kwargs)
 
     def append_user_agent(self, value: Union[str, None]):
         """
