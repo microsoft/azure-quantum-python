@@ -154,33 +154,34 @@ class Workspace:
                 resource_group = match.group(2)
                 name = match.group(3)
 
-        connection_string = os.environ.get("AZURE_QUANTUM_CONNECTION_STRING")
+        if not subscription_id or not resource_group or not name or not location:
+            connection_string = os.environ.get("AZURE_QUANTUM_CONNECTION_STRING")
 
-        if not connection_string:
-            if not subscription_id or not resource_group or not name:
+            if not connection_string:
+                if not subscription_id or not resource_group or not name:
+                        raise ValueError(
+                            "Azure Quantum workspace not fully specified."
+                            + "Please specify either a valid resource ID "
+                            + "or a valid combination of subscription ID,"
+                            + "resource group name, and workspace name,"
+                            + "or a valid connection string."
+                        )
+
+                if not location:
                     raise ValueError(
-                        "Azure Quantum workspace not fully specified."
-                        + "Please specify either a valid resource ID "
-                        + "or a valid combination of subscription ID,"
-                        + "resource group name, and workspace name,"
-                        + "or a valid connection string."
-                    )
-
-            if not location:
-                raise ValueError(
-                    "Azure Quantum workspace does not have an associated location. " +
-                    "Please specify the location associated with your workspace.")
-        else:
-            if subscription_id and resource_group and name and location:
-                logger.info("Using workspace configuration.")
+                        "Azure Quantum workspace does not have an associated location. " +
+                        "Please specify the location associated with your workspace.")
             else:
-                logger.info("Using connection string configuration.")
+                if subscription_id and resource_group and name and location:
+                    logger.info("Using workspace configuration.")
+                else:
+                    logger.info("Using connection string configuration.")
 
-                subscription_id, resource_group, name, location, credential = Workspace._parse_connection_string(connection_string)
+                    subscription_id, resource_group, name, location, credential = Workspace._parse_connection_string(connection_string)
 
-                apikey_credential = AzureKeyCredential(credential)
-                authentication_policy = policies.AzureKeyCredentialPolicy(apikey_credential, "x-ms-quantum-api-key")
-                kwargs["authentication_policy"] = authentication_policy
+                    apikey_credential = AzureKeyCredential(credential)
+                    authentication_policy = policies.AzureKeyCredentialPolicy(apikey_credential, "x-ms-quantum-api-key")
+                    kwargs["authentication_policy"] = authentication_policy
 
         # Temporarily using a custom _DefaultAzureCredential
         # instead of Azure.Identity.DefaultAzureCredential
