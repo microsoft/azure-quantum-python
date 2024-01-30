@@ -25,6 +25,13 @@ class MicrosoftElementsDft(Target):
         name: str = "microsoft.dft",
         **kwargs
     ):
+        """
+        Initializes a new DFT target.
+
+        :param workspace: Associated workspace
+        :type workspace: Workspace
+        :param name: Target name
+        """
         # There is only a single target name for this target
         assert name == self.target_names[0]
 
@@ -48,6 +55,20 @@ class MicrosoftElementsDft(Target):
                shots: int = None,
                input_params: Union[Dict[str, Any], InputParams, None] = None,
                **kwargs) -> MicrosoftElementsDftJob:
+        """
+        Submit DFT job to Azure Quantum Services.
+        
+        :param input_data: Input data
+        :type input_data: Any
+        :param name: Job name
+        :type name: str
+        :param shots: Number of shots. Ignored in DFT job. Defaults to None
+        :type shots: int
+        :param input_params: Input parameters
+        :type input_params: Dict[str, Any]
+        :return: Azure Quantum job
+        :rtype: Job
+        """
 
         if shots is not None:
             warnings.warn("The 'shots' parameter is ignored in Microsoft Elements Dft job.")
