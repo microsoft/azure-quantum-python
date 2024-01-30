@@ -2,6 +2,9 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 ##
+
+"""Defines set of targets for interacting with Azure Quantum"""
+
 from .target import Target
 from .solvers import Solver
 from .toshiba import (
@@ -22,3 +25,11 @@ DEFAULT_TARGETS = {
     "toshiba": Solver,
     "pasqal": Pasqal
 }
+
+
+__all__ = [
+    "Target",
+    "IonQ",
+    "Quantinuum",
+    "DEFAULT_TARGETS"
+    ]

@@ -3,6 +3,9 @@
 # Licensed under the MIT License.
 ##
 
+"""Defines interfaces for interacting with Azure Quantum"""
+
+
 import logging
 from .version import __version__
 
@@ -14,3 +17,6 @@ from ._client.models._enums import JobStatus, SessionStatus, SessionJobFailurePo
 
 logger = logging.getLogger(__name__)
 logger.info(f"version: {__version__}")
+
+
+__all__ = [ "Workspace" ]

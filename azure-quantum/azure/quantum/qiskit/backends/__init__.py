@@ -3,6 +3,8 @@
 # Licensed under the MIT License.
 ##
 
+"""Defines set of backends for interacting with Azure Quantum"""
+
 from azure.quantum.qiskit.backends.ionq import (
     IonQBackend,
     IonQQPUBackend,

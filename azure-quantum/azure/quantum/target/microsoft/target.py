@@ -16,6 +16,10 @@ from ..target import Target
 from . import MicrosoftEstimatorJob
 
 class QubitParams:
+    """
+    Resource estimator Qubit parameters.
+    """
+
     GATE_US_E3 = "qubit_gate_us_e3"
     GATE_US_E4 = "qubit_gate_us_e4"
     GATE_NS_E3 = "qubit_gate_ns_e3"
@@ -25,6 +29,10 @@ class QubitParams:
 
 
 class QECScheme:
+    """
+    Resource estimator QEC Scheme.
+    """
+
     SURFACE_CODE = "surface_code"
     FLOQUET_CODE = "floquet_code"
 
@@ -243,6 +251,9 @@ class DistillationUnitSpecification(AutoValidatingParams):
 
 @dataclass
 class ErrorBudgetPartition(AutoValidatingParams):
+    """
+    Resource estimator error budget partition parameters.
+    """
     logical: float = 0.001 / 3
     t_states: float = 0.001 / 3
     rotations: float = 0.001 / 3
@@ -250,6 +261,10 @@ class ErrorBudgetPartition(AutoValidatingParams):
 
 @dataclass
 class MicrosoftEstimatorConstraints(AutoValidatingParams):
+    """
+    Resource estimator constraints.
+    """
+
     @staticmethod
     def at_least_one(name, value):
         if value < 1:
@@ -339,6 +354,9 @@ class MicrosoftEstimatorInputParamsItem(InputParamsItem):
 
 
 class MicrosoftEstimatorParams(InputParams, MicrosoftEstimatorInputParamsItem):
+    """
+    Resource estimator input parameters.
+    """
     def __init__(self, num_items: Optional[int] = None):
         InputParams.__init__(
             self,
@@ -386,7 +404,7 @@ class MicrosoftEstimator(Target):
         **kwargs,
     ) -> Job:
         """
-        Submit an estimation job
+        Submit an estimation job.
 
         :param input_data: Input data
         :type input_data: Any

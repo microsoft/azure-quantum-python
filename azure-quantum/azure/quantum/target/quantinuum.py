@@ -121,18 +121,18 @@ class Quantinuum(Target):
         :param circuit: Quantum circuit in OpenQASM 2.0 format
         :type circuit: str
         :param num_shots: Number of shots for which to estimate costs
-        :type num_shots: int, optional
+        :type num_shots: int
         :param N_1q: Number of one-qubit gates, if not specified,
             this is estimated from the circuit
-        :type N_1q: int, optional
+        :type N_1q: int
         :param N_2q: Number of two-qubit gates, if not specified,
             this is estimated from the circuit
-        :type N_2q: int, optional
+        :type N_2q: int
         :param N_m: Number of measurement operations, if not specified,
             this is estimated from the circuit
-        :type N_m: int, optional
+        :type N_m: int
         :param shots: Number of shots for which to estimate costs
-        :type shots: int, optional
+        :type shots: int
         :raises ImportError: If N_1q, N_2q and N_m are not specified,
             this will require a qiskit installation.
         """

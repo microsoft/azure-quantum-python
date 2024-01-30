@@ -20,7 +20,15 @@ class Job:
         program: "cirq.Circuit",
         measurement_dict: dict = None
     ):
-        """Construct a Job."""
+        """Construct a Job.
+        
+        :param azure_job: Job
+        :type azure_job: azure.quantum.job.Job
+        :param program: Cirq program
+        :type program: cirq.Circuit
+        :param measurement_dict: Measurments
+        :type measurement_dict: dict
+        """
         self._azure_job = azure_job
         self._program = program
         self._measurement_dict = measurement_dict
