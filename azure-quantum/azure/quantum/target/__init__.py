@@ -2,6 +2,9 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 ##
+
+"""Defines set of targets for interacting with Azure Quantum"""
+
 from .target import Target
 from .ionq import IonQ
 from .quantinuum import Quantinuum
@@ -17,3 +20,11 @@ DEFAULT_TARGETS = {
     "rigetti": Rigetti,
     "pasqal": Pasqal
 }
+
+
+__all__ = [
+    "Target",
+    "IonQ",
+    "Quantinuum",
+    "DEFAULT_TARGETS"
+    ]

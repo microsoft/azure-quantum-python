@@ -16,6 +16,14 @@ class MicrosoftEstimatorJob(Job):
         super().__init__(workspace, job_details, **kwargs)
 
     def get_results(self, timeout_secs: float = DEFAULT_TIMEOUT) -> MicrosoftEstimatorResult:
+        """
+        Get estimation result.
+
+        :param timeout_secs: Timeout in seconds, defaults to 300 sec.
+        :type timeout_secs: float
+        :return: Estimation result
+        :rtype: MicrosoftEstimatorResult
+        """
         try:
             results = super().get_results(timeout_secs)
             return MicrosoftEstimatorResult(results)

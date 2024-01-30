@@ -34,6 +34,8 @@ class Result:
         """
         Decode the results of a Job with output type of "rigetti.quil-results.v1"
 
+        :param job: Azure Quantum Job
+        :type job: Job
         :raises: RuntimeError if the job has not completed successfully
         """
 

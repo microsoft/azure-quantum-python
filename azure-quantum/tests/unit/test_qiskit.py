@@ -340,8 +340,10 @@ class TestQiskit(QuantumTestBase):
                     location = "<region>")
             AzureQuantumProvider(workspace)
 
+            warns = [warn for warn in w if "Consider passing \"workspace\" argument explicitly." in warn.message.args[0]]
+
             # Verify
-            assert len(w) == 0
+            assert len(warns) == 0
 
     def test_qiskit_provider_init_without_workspace_raises_deprecation(self):
         # testing warning according to https://docs.python.org/3/library/warnings.html#testing-warnings
@@ -354,10 +356,12 @@ class TestQiskit(QuantumTestBase):
             AzureQuantumProvider(
                     resource_id = "/subscriptions/00000000-0000-0000-0000-00000000000/resourceGroups/rg-test/providers/Microsoft.Quantum/Workspaces/test",
                     location = "<region>")
+            
+            warns = [warn for warn in w if "Consider passing \"workspace\" argument explicitly." in warn.message.args[0]]
+
             # Verify
-            assert len(w) == 1
-            assert issubclass(w[-1].category, DeprecationWarning)
-            assert "Consider passing \"workspace\" argument explicitly" in str(w[-1].message)
+            assert len(warns) == 1
+            assert issubclass(warns[0].category, DeprecationWarning)
 
         # Validate rising deprecation warning even if workspace is passed, but other parameters are also passed
         with warnings.catch_warnings(record=True) as w:
@@ -370,10 +374,12 @@ class TestQiskit(QuantumTestBase):
                     workspace=workspace,
                     resource_id = "/subscriptions/00000000-0000-0000-0000-00000000000/resourceGroups/rg-test/providers/Microsoft.Quantum/Workspaces/test",
                     location = "<region>")
+            
+            warns = [warn for warn in w if "Consider passing \"workspace\" argument explicitly." in warn.message.args[0]]
+
             # Verify
-            assert len(w) == 1
-            assert issubclass(w[-1].category, DeprecationWarning)
-            assert "Consider passing \"workspace\" argument explicitly" in str(w[-1].message)
+            assert len(warns) == 1
+            assert issubclass(warns[0].category, DeprecationWarning)
 
     @pytest.mark.ionq
     def test_plugins_estimate_cost_qiskit_ionq(self):

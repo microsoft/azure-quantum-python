@@ -3,6 +3,12 @@
 # Licensed under the MIT License.
 ##
 
+import warnings
+import inspect
+from itertools import groupby
+from typing import Dict, List, Tuple, Type
+from azure.quantum import Workspace
+
 try:
     from qiskit.providers import ProviderV1 as Provider
     from qiskit.providers.exceptions import QiskitBackendNotFoundError
@@ -14,15 +20,9 @@ except ImportError:
 To install run: pip install azure-quantum[qiskit]"
     )
 
-
-from typing import Dict, List, Tuple, Type
-from azure.quantum import Workspace
 from azure.quantum.qiskit.backends.backend import AzureBackendBase
 from azure.quantum.qiskit.job import AzureQuantumJob
 from azure.quantum.qiskit.backends import *
-from itertools import groupby
-import warnings
-import inspect
 
 
 QISKIT_USER_AGENT = "azure-quantum-qiskit"
@@ -37,7 +37,7 @@ class AzureQuantumProvider(Provider):
         """AzureQuantumService class
 
         :param workspace: Azure Quantum workspace. If missing it will create a new Workspace passing `kwargs` to the constructor. Defaults to None. 
-        :type workspace: Workspace, optional
+        :type workspace: Workspace
         """
         if kwargs is not None and len(kwargs) > 0:
             from warnings import warn
@@ -55,10 +55,13 @@ class AzureQuantumProvider(Provider):
         self._backends = None
 
     def get_workspace(self) -> Workspace:
+        """Return Azure Quantum Workspace"""
+
         return self._workspace
 
     def get_backend(self, name=None, **kwargs) -> AzureBackendBase:
         """Return a single backend matching the specified filtering.
+
         Args:
             name (str): name of the backend.
             **kwargs: dict used for filtering.
@@ -102,11 +105,12 @@ see https://aka.ms/AQ/Docs/AddProvider"
 
     def backends(self, name=None, **kwargs):
         """Return a list of backends matching the specified filtering.
+        
         Args:
             name (str): name of the backend.
             **kwargs: dict used for filtering.
         Returns:
-            list[Backend]: a list of Backends that match the filtering
+            typing.List[qiskit.providers.BackendV1]: a list of Backends that match the filtering
                 criteria.
         """
 
@@ -235,6 +239,7 @@ see https://aka.ms/AQ/Docs/AddProvider"
         or from a boolean callable. The criteria for filtering can
         be specified via `**kwargs` or as a callable via `filters`, and the
         backends must fulfill all specified conditions.
+        
         Args:
             backends (list[Backend]): list of backends.
             filters (callable): filtering conditions as a callable.

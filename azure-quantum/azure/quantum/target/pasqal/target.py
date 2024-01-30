@@ -52,6 +52,8 @@ class PasqalTarget(str, Enum):
 
 @dataclass
 class InputParams:
+    """Input parameters"""
+
     runs: int = 1
     """The number of times to run the experiment."""
 

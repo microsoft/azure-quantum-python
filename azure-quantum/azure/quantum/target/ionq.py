@@ -162,12 +162,12 @@ class IonQ(Target):
         :type num_shots: int
         :param price_1q: The price of running a single-qubit gate
             for one shot.
-        :type price_1q: float, optional
+        :type price_1q: float
         :param price_2q: The price of running a double-qubit gate
             for one shot.
-        :type price_2q: float, optional
+        :type price_2q: float
         :param min_price: The minimum price for running a job.
-        :type min_price: float, optional
+        :type min_price: float
         :param shots: Number of shots, defaults to None
         :type shots: int
         """

@@ -42,6 +42,7 @@ class Target(abc.ABC, SessionHost):
     # __init__ via the job_cls parameter.  This is then used by the target's
     # submit and get_job method.
     target_names = ()
+    """Tuple of target names."""
 
     # Name of the provider's input parameter which specifies number of shots for a submitted job.
     # If None, target will not pass this input parameter. 
@@ -62,6 +63,27 @@ class Target(abc.ABC, SessionHost):
     ):
         """
         Initializes a new target.
+
+        :param workspace: Associated workspace
+        :type workspace: Workspace
+        :param name: Target name
+        :type name: str
+        :param input_data_format: Format of input data (ex. "qir.v1")
+        :type input_data_format: str
+        :param output_data_format: Format of output data (ex. "microsoft.resource-estimates.v1")
+        :type output_data_format: str
+        :param capability: QIR capability
+        :type capability: str
+        :param provider_id: Id of provider (ex. "microsoft-qc")
+        :type provider_id: str
+        :param content_type: "Content-Type" attribute value to set on input blob (ex. "application/json")
+        :type content_type: ContentType
+        :param encoding: "Content-Encoding" attribute value to set on input blob (ex. "gzip")
+        :type encoding: str
+        :param average_queue_time: Set average queue time (for internal use)
+        :type average_queue_time: float
+        :param current_availability: Set current availability (for internal use)
+        :type current_availability: str
         """
         if not provider_id and "." in name:
             provider_id = name.split(".")[0]
@@ -132,10 +154,18 @@ target '{self.name}' of provider '{self.provider_id}' not found."
 
     @property
     def current_availability(self):
+        """
+        Current availability.
+        """
+
         return self._current_availability
 
     @property
     def average_queue_time(self):
+        """
+        Average queue time.
+        """
+        
         return self._average_queue_time
 
     @staticmethod
@@ -183,7 +213,7 @@ target '{self.name}' of provider '{self.provider_id}' not found."
         :param input_params: Input parameters
         :type input_params: Dict[str, Any]
         :return: Azure Quantum job
-        :rtype: Job
+        :rtype: azure.quantum.job.Job
         """
 
         if isinstance(input_params, InputParams):
@@ -283,6 +313,9 @@ target '{self.name}' of provider '{self.provider_id}' not found."
         input_data: Any,
         input_params: Union[Dict[str, Any], None] = None
     ):
+        """
+        Estimate the cost for a given circuit.
+        """
         return NotImplementedError("Price estimation is not implemented yet for this target.")
 
     def _get_azure_workspace(self) -> "Workspace":
