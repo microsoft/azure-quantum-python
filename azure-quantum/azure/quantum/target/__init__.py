@@ -3,10 +3,6 @@
 # Licensed under the MIT License.
 ##
 from .target import Target
-from .solvers import Solver
-from .toshiba import (
-    SimulatedBifurcationMachine
-)
 from .ionq import IonQ
 from .quantinuum import Quantinuum
 from .rigetti import Rigetti
@@ -19,6 +15,5 @@ DEFAULT_TARGETS = {
     "ionq": IonQ,
     "quantinuum": Quantinuum,
     "rigetti": Rigetti,
-    "toshiba": Solver,
     "pasqal": Pasqal
 }

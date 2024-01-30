@@ -24,8 +24,6 @@ from itertools import groupby
 import warnings
 import inspect
 
-# Target ID keyword for parameter-free solvers
-PARAMETER_FREE = "parameterfree"
 
 QISKIT_USER_AGENT = "azure-quantum-qiskit"
 
