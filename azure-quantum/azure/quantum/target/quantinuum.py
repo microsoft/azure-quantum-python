@@ -149,8 +149,8 @@ class Quantinuum(Target):
 
         if circuit is not None and (N_1q is None or N_2q is None or N_m is None):
             try:
-                from qiskit.circuit.quantumcircuit import Qasm
-                from qiskit.converters import ast_to_dag
+                from qiskit.qasm2 import loads
+                from qiskit.converters.circuit_to_dag import circuit_to_dag
 
             except ImportError:
                 raise ImportError(
@@ -160,9 +160,8 @@ class Quantinuum(Target):
 
             else:
                 from qiskit.dagcircuit.dagnode import DAGOpNode
-                qasm = Qasm(data=circuit)
-                ast = qasm.parse()
-                dag = ast_to_dag(ast)
+                circuit_obj = loads(string=circuit)
+                dag = circuit_to_dag(circuit=circuit_obj)
                 N_1q, N_2q, N_m = 0, 0, 0
                 for node in dag._multi_graph.nodes():
                     if isinstance(node, DAGOpNode):
