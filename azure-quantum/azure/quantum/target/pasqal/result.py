@@ -18,17 +18,23 @@ from ...job import Job
 class Result:
     """Downloads the data of a completed Job and provides a dictionary of registers.
 
-    >>> from azure.quantum.job import Job
-    >>> from azure.quantum.target.pasqal import Result
-    >>> job = Job(...)  # This job should come from a Pasqal target
-    >>> job.wait_until_completed()
-    >>> result = Result(job)
+    .. highlight:: python
+    .. code-block::
+
+       from azure.quantum.job import Job
+       from azure.quantum.target.pasqal import Result
+       job = Job(...)  # This job should come from a Pasqal target
+       job.wait_until_completed()
+       result = Result(job)
+
     """
 
     def __init__(self, job: Job) -> None:
         """
         Decode the results of a Job with output type of "pasqal.pulser-results.v1"
 
+        :param job: Azure Quantum job
+        :type job: Job
         :raises: RuntimeError if the job has not completed successfully
         """
 

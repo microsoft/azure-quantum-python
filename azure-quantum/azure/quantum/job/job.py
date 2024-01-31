@@ -11,6 +11,7 @@ import json
 from typing import TYPE_CHECKING
 
 from azure.quantum._client.models import JobDetails
+from azure.quantum.job.job_failed_with_results_error import JobFailedWithResultsError
 from azure.quantum.job.base_job import BaseJob, ContentType, DEFAULT_TIMEOUT
 from azure.quantum.job.filtered_job import FilteredJob
 
@@ -73,11 +74,11 @@ class Job(BaseJob, FilteredJob):
         until it reaches a finished status.
 
         :param max_poll_wait_secs: Maximum poll wait time, defaults to 30
-        :type max_poll_wait_secs: int, optional
+        :type max_poll_wait_secs: int
         :param timeout_secs: Timeout in seconds, defaults to None
-        :type timeout_secs: int, optional
+        :type timeout_secs: int
         :param print_progress: Print "." to stdout to display progress
-        :type print_progress: bool, optional
+        :type print_progress: bool
         :raises TimeoutError: If the total poll time exceeds timeout, raise
         """
         self.refresh()
@@ -106,7 +107,7 @@ class Job(BaseJob, FilteredJob):
         storage container linked via the workspace.
 
         :param timeout_secs: Timeout in seconds, defaults to 300
-        :type timeout_secs: int
+        :type timeout_secs: float
         :raises RuntimeError: Raises RuntimeError if job execution failed
         :return: Results dictionary with histogram shots, or raw results if not a json object.
         """
@@ -117,6 +118,12 @@ class Job(BaseJob, FilteredJob):
             self.wait_until_completed(timeout_secs=timeout_secs)
 
         if not self.details.status == "Succeeded":
+            if self.details.status == "Failed" and self._allow_failure_results():
+                job_blob_properties = self.download_blob_properties(self.details.output_data_uri)
+                if job_blob_properties.size > 0:
+                    job_failure_data = self.download_data(self.details.output_data_uri)
+                    raise JobFailedWithResultsError("An error occurred during job execution.", job_failure_data)
+
             raise RuntimeError(
                 f'{"Cannot retrieve results as job execution failed"}'
                 + f"(status: {self.details.status}."
@@ -126,7 +133,34 @@ class Job(BaseJob, FilteredJob):
         payload = self.download_data(self.details.output_data_uri)
         try:
             payload = payload.decode("utf8")
-            return json.loads(payload)
+            results = json.loads(payload)
+
+            if self.details.output_data_format == "microsoft.quantum-results.v1":
+                if "Histogram" not in results:
+                    raise f"\"Histogram\" array was expected to be in the Job results for \"{self.details.output_data_format}\" output format."
+                
+                histogram_values = results["Histogram"]
+
+                if len(histogram_values) % 2 == 0:
+                    # Re-mapping {'Histogram': ['[0]', 0.50, '[1]', 0.50] } to {'[0]': 0.50, '[1]': 0.50}
+                    return {histogram_values[i]: histogram_values[i + 1] for i in range(0, len(histogram_values), 2)}
+                else: 
+                    raise f"\"Histogram\" array has invalid format. Even number of items is expected."
+            
+            return results
         except:
             # If errors decoding the data, return the raw payload:
             return payload
+
+
+    @classmethod
+    def _allow_failure_results(cls) -> bool: 
+        """
+        Allow to download job results even if the Job status is "Failed".
+
+        This method can be overridden in derived classes to alter the default
+        behaviour.
+
+        The default is False.
+        """
+        return False

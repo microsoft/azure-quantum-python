@@ -9,6 +9,7 @@
 from typing import Any, Dict, List, Tuple, Union
 import unittest
 import warnings
+from azure.quantum.workspace import Workspace
 import pytest
 import json
 import random
@@ -327,6 +328,59 @@ class TestQiskit(QuantumTestBase):
             self.assertEqual(result.results[0].header.num_qubits, "5")
             self.assertEqual(result.results[0].header.metadata["some"], "data")
 
+    def test_qiskit_provider_init_with_workspace_not_raises_deprecation(self):
+        # testing warning according to https://docs.python.org/3/library/warnings.html#testing-warnings
+        import warnings
+                
+        with warnings.catch_warnings(record=True) as w:
+            # Cause all warnings to always be triggered.
+            warnings.simplefilter("always")
+            # Try to trigger a warning.
+            workspace = Workspace(resource_id = "/subscriptions/00000000-0000-0000-0000-00000000000/resourceGroups/rg-test/providers/Microsoft.Quantum/Workspaces/test",
+                    location = "<region>")
+            AzureQuantumProvider(workspace)
+
+            warns = [warn for warn in w if "Consider passing \"workspace\" argument explicitly." in warn.message.args[0]]
+
+            # Verify
+            assert len(warns) == 0
+
+    def test_qiskit_provider_init_without_workspace_raises_deprecation(self):
+        # testing warning according to https://docs.python.org/3/library/warnings.html#testing-warnings
+        import warnings
+                
+        with warnings.catch_warnings(record=True) as w:
+            # Cause all warnings to always be triggered.
+            warnings.simplefilter("always")
+            # Try to trigger a warning.
+            AzureQuantumProvider(
+                    resource_id = "/subscriptions/00000000-0000-0000-0000-00000000000/resourceGroups/rg-test/providers/Microsoft.Quantum/Workspaces/test",
+                    location = "<region>")
+            
+            warns = [warn for warn in w if "Consider passing \"workspace\" argument explicitly." in warn.message.args[0]]
+
+            # Verify
+            assert len(warns) == 1
+            assert issubclass(warns[0].category, DeprecationWarning)
+
+        # Validate rising deprecation warning even if workspace is passed, but other parameters are also passed
+        with warnings.catch_warnings(record=True) as w:
+            # Cause all warnings to always be triggered.
+            warnings.simplefilter("always")
+            # Try to trigger a warning.
+            workspace = Workspace(resource_id = "/subscriptions/00000000-0000-0000-0000-00000000000/resourceGroups/rg-test/providers/Microsoft.Quantum/Workspaces/test",
+                    location = "<region>")
+            AzureQuantumProvider(
+                    workspace=workspace,
+                    resource_id = "/subscriptions/00000000-0000-0000-0000-00000000000/resourceGroups/rg-test/providers/Microsoft.Quantum/Workspaces/test",
+                    location = "<region>")
+            
+            warns = [warn for warn in w if "Consider passing \"workspace\" argument explicitly." in warn.message.args[0]]
+
+            # Verify
+            assert len(warns) == 1
+            assert issubclass(warns[0].category, DeprecationWarning)
+
     @pytest.mark.ionq
     def test_plugins_estimate_cost_qiskit_ionq(self):
         circuit = self._3_qubit_ghz()
@@ -400,6 +454,51 @@ class TestQiskit(QuantumTestBase):
         self.assertEqual(expected_status, qiskit_job.status())
         qiskit_job = provider.get_job(job.id)
         self.assertEqual(expected_status, qiskit_job.status())
+
+    def test_plugins_submit_qiskit_to_ionq_with_shots_param(self):
+        circuit = self._3_qubit_ghz()
+
+        workspace = self.create_workspace()
+        provider = AzureQuantumProvider(workspace=workspace)
+        backend = provider.get_backend("ionq.simulator")
+        
+        shots = 10
+        qiskit_job = backend.run(circuit, shots=shots)
+        self._qiskit_wait_to_complete(qiskit_job, provider)
+        self.assertEqual(qiskit_job._azure_job.details.input_params["shots"], shots)
+    
+    def test_plugins_submit_qiskit_to_ionq_with_default_shots(self):
+        circuit = self._3_qubit_ghz()
+
+        workspace = self.create_workspace()
+        provider = AzureQuantumProvider(workspace=workspace)
+        backend = provider.get_backend("ionq.simulator")
+        
+        qiskit_job = backend.run(circuit)
+        self._qiskit_wait_to_complete(qiskit_job, provider)
+        self.assertEqual(qiskit_job._azure_job.details.input_params["shots"], 500)
+
+    def test_plugins_submit_qiskit_to_ionq_with_deprecated_count_param(self):
+        """
+        Verify that a warning message is printed when the 'count' option is specified.
+        This option was allowed in earlier versions, but now it is accepted only to keep existing 
+        user codebase compatible.
+        """
+        circuit = self._3_qubit_ghz()
+
+        workspace = self.create_workspace()
+        provider = AzureQuantumProvider(workspace=workspace)
+        backend = provider.get_backend("ionq.simulator")
+        
+        shots = 10
+
+        with pytest.warns(
+            DeprecationWarning, 
+            match="The 'count' parameter will be deprecated. Please, use 'shots' parameter instead."
+        ):
+            qiskit_job = backend.run(circuit, count=shots)
+        self._qiskit_wait_to_complete(qiskit_job, provider)
+        self.assertEqual(qiskit_job._azure_job.details.input_params["shots"], shots)
 
     def _test_qiskit_submit_ionq(self, circuit, **kwargs):
         workspace = self.create_workspace()
@@ -774,6 +873,85 @@ class TestQiskit(QuantumTestBase):
         with self.assertRaises(NotImplementedError) as context:
             backend.run(circuit=[circuit, circuit], shots=None)
         self.assertEqual(str(context.exception), "Multi-experiment jobs are not supported!")
+    
+    @pytest.mark.quantinuum
+    @pytest.mark.live_test
+    def test_plugins_submit_qiskit_to_quantinuum_with_counts_param(self):
+        """
+        This test verifies that we can pass a "provider-specific" shots number option.
+        Even if the usage of the 'shots' option is encouraged, we should also be able to specify provider's 
+        native option ('count' in this case).
+        """
+        circuit = self._3_qubit_ghz()
+        workspace = self.create_workspace()
+        provider = AzureQuantumProvider(workspace=workspace)
+        backend = provider.get_backend(name="quantinuum.sim.h1-1e")
+        
+        shots = 10
+        qiskit_job = backend.run(circuit, count=shots)
+        self._qiskit_wait_to_complete(qiskit_job, provider)
+        self.assertEqual(qiskit_job._azure_job.details.input_params["count"], shots)
+    
+    @pytest.mark.quantinuum
+    @pytest.mark.live_test
+    def test_plugins_submit_qiskit_to_quantinuum_with_explicit_shots_param(self):
+        circuit = self._3_qubit_ghz()
+        workspace = self.create_workspace()
+        provider = AzureQuantumProvider(workspace=workspace)
+        backend = provider.get_backend(name="quantinuum.sim.h1-1e")
+        
+        shots = 10
+        qiskit_job = backend.run(circuit, shots=shots)
+        self._qiskit_wait_to_complete(qiskit_job, provider)
+        self.assertEqual(qiskit_job._azure_job.details.input_params["count"], shots)
+
+    @pytest.mark.quantinuum
+    @pytest.mark.live_test
+    def test_plugins_submit_qiskit_to_quantinuum_with_default_shots_param(self):
+        circuit = self._3_qubit_ghz()
+        workspace = self.create_workspace()
+        provider = AzureQuantumProvider(workspace=workspace)
+        backend = provider.get_backend(name="quantinuum.sim.h1-1e")
+        
+        qiskit_job = backend.run(circuit)
+        self._qiskit_wait_to_complete(qiskit_job, provider)
+        self.assertEqual(qiskit_job._azure_job.details.input_params["count"], 500)
+
+    @pytest.mark.quantinuum
+    @pytest.mark.live_test
+    def test_plugins_submit_qiskit_to_quantinuum_with_conflicting_shots_and_count_from_options(self):
+        circuit = self._3_qubit_ghz()
+        workspace = self.create_workspace()
+        provider = AzureQuantumProvider(workspace=workspace)
+        backend = provider.get_backend(name="quantinuum.sim.h1-1e")
+        
+        shots = 100
+        qiskit_job = backend.run(circuit, shots=shots, count=10)
+
+        self._qiskit_wait_to_complete(qiskit_job, provider)
+        self.assertEqual(qiskit_job._azure_job.details.input_params["count"], shots)
+
+    @pytest.mark.quantinuum
+    @pytest.mark.live_test
+    def test_plugins_submit_qiskit_to_quantinuum_with_count_from_options(self):
+        """
+        Check that backend also allows to specify shots by using a provider-specific option,
+        but also throws warning with recommndation to use 'shots'
+        """
+        circuit = self._3_qubit_ghz()
+        workspace = self.create_workspace()
+        provider = AzureQuantumProvider(workspace=workspace)
+        backend = provider.get_backend(name="quantinuum.sim.h1-1e")
+        
+        shots = 100
+
+        with pytest.warns(
+            match="Parameter 'count' is subject to change in future versions. Please, use 'shots' parameter instead."
+        ):
+            qiskit_job = backend.run(circuit, count=shots)
+
+        self._qiskit_wait_to_complete(qiskit_job, provider)
+        self.assertEqual(qiskit_job._azure_job.details.input_params["count"], shots)
 
     def _test_qiskit_submit_quantinuum(self, circuit, target="quantinuum.sim.h1-1e", **kwargs):
         workspace = self.create_workspace()
@@ -922,7 +1100,80 @@ class TestQiskit(QuantumTestBase):
             self.assertAlmostEqual(result.data()["counts"]["000"], shots // 2, delta=20)
             self.assertAlmostEqual(result.data()["counts"]["111"], shots // 2, delta=20)
             counts = result.get_counts()
-            self.assertEqual(counts, result.data()["counts"])
+            self.assertEqual(counts, result.data()["counts"])  
+    
+    @pytest.mark.rigetti
+    @pytest.mark.live_test
+    def test_qiskit_submit_to_rigetti_with_count_param(self):
+        """
+        Check that backend also allows to specify shots by using a provider-specific option,
+        but also throws warning with recommndation to use 'shots'
+        """
+        from azure.quantum.target.rigetti import RigettiTarget
+
+        workspace = self.create_workspace()
+        provider = AzureQuantumProvider(workspace=workspace)
+        backend = provider.get_backend(RigettiTarget.QVM.value)
+        shots = 100
+        circuit = self._3_qubit_ghz()
+        with pytest.warns(
+            match="Parameter 'count' is subject to change in future versions. Please, use 'shots' parameter instead."
+        ):
+            qiskit_job = backend.run(circuit, count=shots)
+        self._qiskit_wait_to_complete(qiskit_job, provider)
+        self.assertEqual(qiskit_job._azure_job.details.input_params["count"], shots)
+        
+    @pytest.mark.rigetti
+    @pytest.mark.live_test
+    def test_qiskit_submit_to_rigetti_with_explicit_shots_param(self):
+        from azure.quantum.target.rigetti import RigettiTarget
+
+        workspace = self.create_workspace()
+        provider = AzureQuantumProvider(workspace=workspace)
+        backend = provider.get_backend(RigettiTarget.QVM.value)
+        shots = 100
+        circuit = self._3_qubit_ghz()
+        qiskit_job = backend.run(circuit, shots=shots)
+
+        self._qiskit_wait_to_complete(qiskit_job, provider)
+        self.assertEqual(qiskit_job._azure_job.details.input_params["count"], shots)
+
+    @pytest.mark.rigetti
+    @pytest.mark.live_test
+    def test_qiskit_submit_to_rigetti_conflicting_shots_and_count_from_options(self):
+        from azure.quantum.target.rigetti import RigettiTarget
+
+        workspace = self.create_workspace()
+        provider = AzureQuantumProvider(workspace=workspace)
+        backend = provider.get_backend(RigettiTarget.QVM.value)
+        shots = 100
+        circuit = self._3_qubit_ghz()
+
+        with pytest.warns(
+            match="Parameter 'shots' conflicts with the 'count' parameter. Please, provide only one option for setting shots. "
+            "Defaulting to 'shots' parameter."
+        ):
+            qiskit_job = backend.run(circuit, shots=shots, count=10)
+
+        self._qiskit_wait_to_complete(qiskit_job, provider)
+        self.assertEqual(qiskit_job._azure_job.details.input_params["count"], shots)
+    
+    
+    @pytest.mark.rigetti
+    @pytest.mark.live_test
+    def test_qiskit_submit_to_rigetti_with_count_from_options(self):
+        from azure.quantum.target.rigetti import RigettiTarget
+
+        workspace = self.create_workspace()
+        provider = AzureQuantumProvider(workspace=workspace)
+        backend = provider.get_backend(RigettiTarget.QVM.value)
+        shots = 100
+        circuit = self._3_qubit_ghz()
+
+        qiskit_job = backend.run(circuit, count=shots)
+
+        self._qiskit_wait_to_complete(qiskit_job, provider)
+        self.assertEqual(qiskit_job._azure_job.details.input_params["count"], shots)
 
     @pytest.mark.rigetti
     @pytest.mark.live_test
@@ -970,7 +1221,7 @@ class TestQiskit(QuantumTestBase):
         self.assertEqual(qiskit_job._azure_job.details.provider_id, "qci")
         self.assertEqual(qiskit_job._azure_job.details.input_data_format, "qir.v1")
         self.assertEqual(qiskit_job._azure_job.details.output_data_format, "microsoft.quantum-results.v1")
-        self.assertEqual(qiskit_job._azure_job.details.input_params["count"], shots)
+        self.assertEqual(qiskit_job._azure_job.details.input_params["shots"], shots)
         self.assertEqual(qiskit_job._azure_job.details.input_params["items"][0]["entryPoint"], circuit.name)
         self.assertEqual(qiskit_job._azure_job.details.input_params["items"][0]["arguments"], [])
 
@@ -985,6 +1236,40 @@ class TestQiskit(QuantumTestBase):
             self.assertAlmostEqual(result.data()["counts"]["111"], shots // 2, delta=20)
             counts = result.get_counts()
             self.assertEqual(counts, result.data()["counts"])
+
+    @pytest.mark.qci
+    @pytest.mark.live_test
+    def test_qiskit_submit_to_qci_with_default_shots(self):
+        workspace = self.create_workspace()
+        provider = AzureQuantumProvider(workspace=workspace)
+        backend = provider.get_backend("qci.simulator")
+
+        circuit = self._3_qubit_ghz()
+        qiskit_job = backend.run(circuit)
+        self._qiskit_wait_to_complete(qiskit_job, provider)
+        self.assertEqual(qiskit_job._azure_job.details.input_params["shots"], 500)
+
+    @pytest.mark.qci
+    @pytest.mark.live_test
+    def test_qiskit_submit_to_qci_with_deprecated_count_param(self):
+        """
+        Verify that a warning message is printed when the 'count' option is specified.
+        This option was allowed in earlier versions, but now it is accepted only to keep existing 
+        user codebase compatible.
+        """
+        workspace = self.create_workspace()
+        provider = AzureQuantumProvider(workspace=workspace)
+        backend = provider.get_backend("qci.simulator")
+
+        shots=10
+        circuit = self._3_qubit_ghz()
+        with pytest.warns(
+            DeprecationWarning, 
+            match="The 'count' parameter will be deprecated. Please, use 'shots' parameter instead."
+        ):
+            qiskit_job = backend.run(circuit, count=shots)
+        self._qiskit_wait_to_complete(qiskit_job, provider)
+        self.assertEqual(qiskit_job._azure_job.details.input_params["shots"], shots)
 
     @pytest.mark.qci
     @pytest.mark.live_test

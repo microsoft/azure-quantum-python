@@ -2,6 +2,9 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 ##
+
+"""Defines classes for interacting with Microsoft Estimator"""
+
 __all__ = ["ErrorBudgetPartition", "MicrosoftEstimator",
            "MicrosoftEstimatorJob", "MicrosoftEstimatorResult",
            "MicrosoftEstimatorParams", "QECScheme", "QubitParams"]

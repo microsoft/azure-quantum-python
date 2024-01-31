@@ -3,7 +3,6 @@
 # Licensed under the MIT License.
 ##
 import warnings
-import asyncio
 from typing import Any, Dict, List, TYPE_CHECKING, Union, Type
 from azure.quantum.target import *
 
@@ -63,7 +62,6 @@ class TargetFactory:
             for _t in t.__subclasses__() + [t]
             if hasattr(_t, "target_names")
             for name in _t.target_names
-            if not asyncio.iscoroutinefunction(_t.submit)
         }
 
     def _target_cls(self, provider_id: str, name: str):

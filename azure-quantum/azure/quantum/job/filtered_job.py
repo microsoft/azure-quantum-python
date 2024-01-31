@@ -22,9 +22,15 @@ class FilteredJob(abc.ABC):
         created_after: Optional[datetime] = None
     ) -> bool:
         """Checks if job (self) matches the given properties if any.
+
             :param name_match: regex expression for job name matching
+            :type name_match: str
             :param status: filter by job status
+            :type status: Optional[JobStatus]
             :param created_after: filter jobs after time of job creation
+            :type status: Optional[datetime]
+            :return: Is filter match
+            :rtype: bool
         """
         if name_match is not None and re.search(name_match, self.details.name) is None:
            return False

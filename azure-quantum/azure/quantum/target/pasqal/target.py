@@ -52,6 +52,8 @@ class PasqalTarget(str, Enum):
 
 @dataclass
 class InputParams:
+    """Input parameters"""
+
     runs: int = 1
     """The number of times to run the experiment."""
 
@@ -63,6 +65,8 @@ class Pasqal(Target):
     """
 
     target_names = tuple(target.value for target in PasqalTarget)
+
+    _SHOTS_PARAM_NAME = "count"
 
     def __init__(
         self,
@@ -91,6 +95,7 @@ class Pasqal(Target):
         self,
         input_data: Any,
         name: str = "azure-quantum-job",
+        shots: int = None,
         input_params: Union[InputParams, None, Dict[str, Any]] = None,
         **kwargs,
     ) -> Job:
@@ -103,15 +108,26 @@ class Pasqal(Target):
         :type input_data: Any
         :param name: Job name
         :type name: str
+        :param shots: Number of shots, defaults to None
+        :type shots: int
         :param input_params: Input parameters, see :class:`azure.quantum.target.pasqal.InputParams` for details.
         :type input_params: Union[InputParams, None, Dict[str, Any]]
         :return: Azure Quantum job
         :rtype: Job
         """
+
         if isinstance(input_params, InputParams):
             typed_input_params = input_params
             input_params = {
-                "runs": typed_input_params.runs,
+                self.__class__._SHOTS_PARAM_NAME: typed_input_params.runs,
             }
+        
+        input_params = input_params or {}
 
-        return super().submit(input_data, name, input_params, **kwargs)
+        return super().submit(
+            input_data=input_data, 
+            name=name,
+            shots=shots, 
+            input_params=input_params, 
+            **kwargs
+        )

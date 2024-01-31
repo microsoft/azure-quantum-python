@@ -8,6 +8,9 @@ from typing import Any, Dict, List, Optional, Tuple, Type, Callable
 from ..argument_types import EmptyArray, Pauli, Range, Result
 
 
+__all__ = ["InputParams"]
+
+
 class EntryPointArguments:
     """
     Wrapper class to set QIR entry point arguments.
@@ -180,7 +183,7 @@ class InputParams(InputParamsItem):
     """
     Class to define input parameters.
 
-    This class allows to define inout parameters for non-batching and batching
+    This class allows to define input parameters for non-batching and batching
     jobs.  The instance represents a batching job, if and only if num_items is
     set to some positive number less or equal to MAX_NUM_ITEMS.
 
