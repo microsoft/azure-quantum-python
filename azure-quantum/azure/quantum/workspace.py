@@ -25,10 +25,7 @@ from azure.quantum._client.operations import (
     TopLevelItemsOperations
 )
 from azure.quantum._client.models import BlobDetails, JobStatus
-from azure.quantum import (
-    Job,
-    Session,
-)
+from azure.quantum import  Job, Session
 from azure.quantum._workspace_connection_params import (
     WorkspaceConnectionParams
 )
@@ -240,6 +237,12 @@ class Workspace:
         return container_uri.sas_uri
 
     def submit_job(self, job: Job) -> Job:
+        """
+        Submit job.
+
+        :param job: Job to submit
+        :type job: Job
+        """
         client = self._get_jobs_client()
         details = client.create(
             job.details.id, job.details
@@ -247,13 +250,26 @@ class Workspace:
         return Job(self, details)
 
     def cancel_job(self, job: Job) -> Job:
+        """
+        Job to cancel.
+
+        :param job: Job to cancel
+        :type job: Job
+        """
         client = self._get_jobs_client()
         client.cancel(job.details.id)
         details = client.get(job.id)
         return Job(self, details)
 
     def get_job(self, job_id: str) -> Job:
-        """Returns the job corresponding to the given id."""
+        """
+        Returns the job corresponding to the given id.
+        
+        :param job_id: Id of a job to fetch.
+        :type job_id: str
+        :return: Job
+        :rtype: Job
+        """
         from azure.quantum.target.target_factory import TargetFactory
         from azure.quantum.target import Target
 
@@ -272,10 +288,14 @@ class Workspace:
         status: Optional[JobStatus] = None,
         created_after: Optional[datetime] = None
     ) -> List[Job]:
-        """Returns list of jobs that meet optional (limited) filter criteria. 
-            :param name_match: regex expression for job name matching
-            :param status: filter by job status
-            :param created_after: filter jobs after time of job creation
+        """
+        Returns list of jobs that meet optional (limited) filter criteria.
+
+        :param name_match: regex expression for job name matching
+        :param status: filter by job status
+        :param created_after: filter jobs after time of job creation
+        :return: Jobs that matched the search criteria
+        :rtype: typing.List[Job]
         """
         client = self._get_jobs_client()
         jobs = client.list()
@@ -299,18 +319,20 @@ class Workspace:
         ]
 
     def get_targets(
-        self,
-        name: str = None,
+        self, 
+        name: str = None, 
         provider_id: str = None,
         **kwargs
     ) -> Union["Target", Iterable["Target"]]:
         """Returns all available targets for this workspace filtered by name and provider ID.
 
+        :param name: Optional target name to filter by, defaults to None
+        :type name: str
         :param provider_id: Optional provider Id to filter by, defaults to None
-        :type provider_id: str, optional
+        :type provider_id: str
 
         :return: Targets
-        :rtype: Iterable[Target]
+        :rtype: typing.Iterable[Target]
         """
         from azure.quantum.target.target_factory import TargetFactory
         from azure.quantum.target import Target
@@ -329,7 +351,7 @@ class Workspace:
         """Get a list of job quotas for the given workspace.
 
         :return: Job quotas
-        :rtype: List[Dict[str, Any]]
+        :rtype: typing.List[typing.Dict[str, typing.Any]]
         """
         client = self._get_quotas_client()
         return [q.as_dict() for q in client.list()]
@@ -340,7 +362,7 @@ class Workspace:
         """Get a list of top level items for the given workspace.
 
         :return: Workspace items
-        :rtype: List[WorkspaceItem]
+        :rtype: typing.List[Job] or typing.List[Session]
         """
         from azure.quantum.job.workspace_item_factory import WorkspaceItemFactory
         client = self._get_top_level_items_client()
@@ -355,11 +377,11 @@ class Workspace:
         """Get the list of sessions in the given workspace.
 
         :return: Session items
-        :rtype: List[Session]
+        :rtype: typing.List[Session]
         """
         client = self._get_sessions_client()
         session_details_list = client.list()
-        result = [Session(workspace=self, details=session_details)
+        result = [Session(workspace=self,details=session_details) 
                   for session_details in session_details_list]
         return result
 
@@ -397,8 +419,7 @@ class Workspace:
 
         if session.target:
             if (session.target.latest_session
-                and session.target.latest_session.id == session.id
-                ):
+                and session.target.latest_session.id == session.id):
                 session.target.latest_session.details = session.details
 
     def refresh_session(
@@ -440,7 +461,7 @@ class Workspace:
         :type session_id: str
 
         :return: List of all jobs associated with a session.
-        :rtype: List[Job]
+        :rtype: typing.List[Job]
         """
         client = self._get_sessions_client()
         job_details_list = client.jobs_list(session_id=session_id)
@@ -458,11 +479,11 @@ class Workspace:
         Creates a new container if it does not yet exist.
 
         :param job_id: Job ID, defaults to None
-        :type job_id: str, optional
+        :type job_id: str
         :param container_name: Container name, defaults to None
-        :type container_name: str, optional
+        :type container_name: str
         :param container_name_format: Container name format, defaults to "job-{job_id}"
-        :type container_name_format: str, optional
+        :type container_name_format: str
         :return: Container URI
         :rtype: str
         """
