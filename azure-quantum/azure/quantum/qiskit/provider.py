@@ -24,6 +24,8 @@ from azure.quantum.qiskit.backends.backend import AzureBackendBase
 from azure.quantum.qiskit.job import AzureQuantumJob
 from azure.quantum.qiskit.backends import *
 
+# Target ID keyword for parameter-free solvers
+PARAMETER_FREE = "parameterfree"
 
 QISKIT_USER_AGENT = "azure-quantum-qiskit"
 
