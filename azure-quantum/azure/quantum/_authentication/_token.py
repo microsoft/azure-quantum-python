@@ -10,19 +10,9 @@ import time
 
 from azure.identity import CredentialUnavailableError
 from azure.core.credentials import AccessToken
-
-try:
-    from typing import TYPE_CHECKING
-except ImportError:
-    TYPE_CHECKING = False
-
-if TYPE_CHECKING:
-    # pylint:disable=unused-import,ungrouped-imports
-    from typing import Any
+from azure.quantum._constants import EnvironmentVariables
 
 _LOGGER = logging.getLogger(__name__)
-
-_TOKEN_FILE_ENV_VARIABLE = "AZURE_QUANTUM_TOKEN_FILE"
 
 
 class _TokenFileCredential(object):
@@ -35,16 +25,14 @@ class _TokenFileCredential(object):
     If the environment variable is not set, the file does not exist, or the token is invalid in any way (expired, for example),
     then the credential will throw CredentialUnavailableError, so that _ChainedTokenCredential can fallback to other methods.
     """
-    def __init__(self, **kwargs):
-        # type: (**Any) -> None
-        self.token_file = os.environ.get(_TOKEN_FILE_ENV_VARIABLE)
+    def __init__(self):
+        self.token_file = os.environ.get(EnvironmentVariables.QUANTUM_TOKEN_FILE)
         if self.token_file:
             _LOGGER.debug("Using provided token file location: {}".format(self.token_file))
         else:
-            _LOGGER.debug("No token file location provided for {} environment variable.".format(_TOKEN_FILE_ENV_VARIABLE))
+            _LOGGER.debug("No token file location provided for {} environment variable.".format(EnvironmentVariables.QUANTUM_TOKEN_FILE))
 
     def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
-        # type: (*str, **Any) -> AccessToken
         """Request an access token for `scopes`.
         This method is called automatically by Azure SDK clients.
         :param str scopes: desired scopes for the access token. This method only returns tokens for the https://quantum.microsoft.com/.default scope.
@@ -72,7 +60,6 @@ class _TokenFileCredential(object):
         return token
 
     def _parse_token_file(self, path):
-        # type: (*str) -> AccessToken
         with open(path, "r") as file:
             data = json.load(file)
             expires_on = int(data["expires_on"]) / 1000  # Convert ms to seconds, since python time.time only handles epoch time in seconds
