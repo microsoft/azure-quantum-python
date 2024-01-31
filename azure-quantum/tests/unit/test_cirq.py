@@ -50,7 +50,7 @@ class TestCirq(QuantumTestBase):
             "test-user-agent",
             "test-very-very-very-very-very-very-very-very-long-user-agent"
         ]:
-            workspace = self.create_workspace(user_agent=app_id)
+            workspace = self.create_workspace(user_agent_app_id=app_id)
             service = AzureQuantumService(workspace=workspace)
             self.assertIn(app_id, service._workspace.user_agent)
             self.assertIn("-azure-quantum-cirq", service._workspace.user_agent)
