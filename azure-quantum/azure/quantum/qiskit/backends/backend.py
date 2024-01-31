@@ -121,7 +121,7 @@ class AzureBackendBase(Backend, SessionHost):
 
         return output_data_format
     
-    def _get_input_params(self, options, shots: int = None) -> Dict[str, Any]:
+    def _get_input_params(self, options: Dict[str, Any], shots: int = None) -> Dict[str, Any]:
         # Backend options are mapped to input_params.
         input_params: Dict[str, Any] = vars(self.options).copy()
 
@@ -132,7 +132,7 @@ class AzureBackendBase(Backend, SessionHost):
             # First we check for the explicitly specified 'shots' parameter, then for a provider-specific
             # field in options, then for a backend's default value. 
 
-            # Warn abount options conflict, default to 'shots'.
+            # Warn about options conflict, default to 'shots'.
             if shots is not None and options_shots is not None:
                 warnings.warn(
                     f"Parameter 'shots' conflicts with the '{self.__class__._SHOTS_PARAM_NAME}' parameter. "
@@ -158,6 +158,10 @@ class AzureBackendBase(Backend, SessionHost):
             # TODO: Double check all backends for shots options in order to remove this extra check.
             input_params["shots"] = final_shots
             input_params["count"] = final_shots
+
+            # safely removing "shots" and "count" from options as they will be passed in input_params now.
+            _ = options.pop("shots", None)
+            _ = options.pop("count", None)
 
             input_params[self.__class__._SHOTS_PARAM_NAME] = final_shots
             
@@ -474,6 +478,8 @@ class AzureBackend(AzureBackendBase):
             circuits, run, _ = disassemble(circuit)
             circuit = circuits[0]
             if options.get("shots") is None:
+                # Note that qiskit.assembler.disassemble() sets the default number of shots for QasmQobj and PulseQobj to 1024
+                # unless the user specifies the backend.
                 options["shots"] = run["shots"]
 
         # If not provided as options, the values of these parameters
