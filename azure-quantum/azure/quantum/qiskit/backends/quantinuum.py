@@ -14,7 +14,6 @@ from qiskit import QuantumCircuit
 from qiskit.providers.models import BackendConfiguration
 from qiskit.providers import Options
 from qiskit.providers import Provider
-from qiskit.qasm2 import dumps
 
 import logging
 
@@ -244,7 +243,7 @@ class QuantinuumBackend(AzureBackend):
 
     def _translate_input(self, circuit):
         """Translates the input values to the format expected by the AzureBackend."""
-        return dumps(circuit)
+        return circuit.qasm()
 
     def estimate_cost(
         self, circuit: QuantumCircuit, shots: int = None, count: int = None
@@ -268,7 +267,7 @@ class QuantinuumBackend(AzureBackend):
         if shots is None:
             raise ValueError("Missing input argument 'shots'.")
 
-        input_data = dumps(circuit)
+        input_data = circuit.qasm()
         workspace = self.provider().get_workspace()
         target = workspace.get_targets(self.name())
         return target.estimate_cost(input_data, shots=shots)
