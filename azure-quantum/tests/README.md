@@ -27,6 +27,11 @@ AZURE_QUANTUM_WORKSPACE_NAME
 AZURE_QUANTUM_WORKSPACE_LOCATION
 ```
 
+Optionally, to test 3rd party solvers, set:
+```plaintext
+AZURE_QUANTUM_TOSHIBA=1
+```
+
 ## Recordings
 
 Our testing infrastructure uses Python VCR to record HTTP calls against a live service and then use

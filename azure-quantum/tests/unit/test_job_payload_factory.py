@@ -11,6 +11,7 @@ from import_qsharp import skip_if_no_qsharp
 if TYPE_CHECKING:
     import cirq
     import qiskit
+    import azure.quantum.optimization as optimization
     from qsharp import QSharpCallable
 
 
