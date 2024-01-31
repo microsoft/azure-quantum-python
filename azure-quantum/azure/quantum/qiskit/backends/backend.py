@@ -159,7 +159,7 @@ class AzureBackendBase(Backend, SessionHost):
             input_params["shots"] = final_shots
             input_params["count"] = final_shots
 
-            # safely removing "shots" and "count" from options as they will be passed in input_params now.
+            # Safely removing "shots" and "count" from options as they will be passed in input_params now.
             _ = options.pop("shots", None)
             _ = options.pop("count", None)
 
