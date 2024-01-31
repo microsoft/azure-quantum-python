@@ -1,4 +1,4 @@
-# Contributing to QDK-Python #
+# Contributing to Azure-Quantum-Python #
 
 If you would like to become an active contributor to this project please
 follow the instructions provided in [Microsoft Azure Projects Contribution Guidelines](https://opensource.microsoft.com/collaborate/).
@@ -106,4 +106,4 @@ In addition to the [common Azure SDK environment variables](https://azure.github
 ## Code of Conduct ##
 
 This project's code of conduct can be found in the
-[CODE_OF_CONDUCT.md file](https://github.com/microsoft/qdk-python/blob/main/CODE_OF_CONDUCT.md).
+[CODE_OF_CONDUCT.md file](https://github.com/microsoft/azure-quantum-python/blob/main/CODE_OF_CONDUCT.md).
