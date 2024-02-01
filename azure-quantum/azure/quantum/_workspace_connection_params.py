@@ -11,14 +11,14 @@ from typing import (
     Callable,
     Union
 )
-from azure.core.credentials import AzureKeyCredential
-from azure.core.pipeline.policies import AzureKeyCredentialPolicy
 from azure.quantum._authentication import _DefaultAzureCredential
 from azure.quantum._constants import (
     EnvironmentKind,
     EnvironmentVariables,
     QUANTUM_BASE_URL,
     QUANTUM_CANARY_BASE_URL,
+    QUANTUM_DOGFOOD_BASE_URL,
+    ARM_BASE_URL,
     DOGFOOD_ARM_BASE_URL,
 )
 
@@ -66,7 +66,7 @@ class WorkspaceConnectionParams:
         self.location = location
         self.base_url = base_url
         self.arm_base_url = arm_base_url
-        self.environment = environment or EnvironmentKind.PRODUCTION
+        self.environment = environment
         self.credential = credential
         self.resource_id = resource_id
         self.user_agent = user_agent
@@ -105,23 +105,13 @@ class WorkspaceConnectionParams:
 
     @property
     def environment(self):
-        return self._environment
+        return self._environment or EnvironmentKind.PRODUCTION
 
     @environment.setter
     def environment(self, value: Union[str, EnvironmentKind]):
         self._environment = (EnvironmentKind[value.upper()]
                              if isinstance(value, str)
                              else value)
-
-    @property
-    def api_key(self):
-        return self._api_key
-
-    @api_key.setter
-    def api_key(self, value: str):
-        if value:
-            self.credential = AzureKeyCredential(value)
-        self._api_key = value
 
     @property
     def base_url(self):
@@ -149,7 +139,7 @@ class WorkspaceConnectionParams:
             return DOGFOOD_ARM_BASE_URL
         if self.environment in [EnvironmentKind.PRODUCTION,
                                 EnvironmentKind.CANARY]:
-            return DOGFOOD_ARM_BASE_URL
+            return ARM_BASE_URL
         raise ValueError(f"Unknown environment `{self.environment}`.")
 
     @arm_base_url.setter
@@ -305,7 +295,8 @@ class WorkspaceConnectionParams:
         return (self.credential
                 or _DefaultAzureCredential(
                     subscription_id=self.subscription_id,
-                    arm_base_url=self.arm_base_url))
+                    arm_base_url=self.arm_base_url,
+                    tenant_id=self.tenant_id))
 
     def append_user_agent(self, value: str):
         """
@@ -402,7 +393,6 @@ class WorkspaceConnectionParams:
             subscription_id=get_value('subscription_id'),
             resource_group=get_value('resource_group'),
             workspace_name=get_value('workspace_name'),
-            api_key=get_value('api_key'),
             location=get_value('location'),
             base_url=get_value('base_url'),
             arm_base_url=get_value('arm_base_url'),

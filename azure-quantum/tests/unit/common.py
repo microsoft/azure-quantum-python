@@ -13,7 +13,6 @@ from azure_devtools.scenario_tests.base import ReplayableTest
 from azure_devtools.scenario_tests.recording_processors import (
     RecordingProcessor,
     is_text_payload,
-    OAuthRequestResponsesFilter,
 )
 from azure.quantum import Workspace
 from azure.quantum._workspace_connection_params import (
@@ -66,14 +65,12 @@ class QuantumTestBase(ReplayableTest):
 
         regex_replacer = CustomRecordingProcessor(self)
         recording_processors = [
-            OAuthRequestResponsesFilter(),
             AuthenticationMetadataFilter(),
             regex_replacer,
             CustomAccessTokenReplacer(),
         ]
 
         replay_processors = [
-            OAuthRequestResponsesFilter(),
             AuthenticationMetadataFilter(),
             regex_replacer,
         ]
@@ -139,7 +136,10 @@ class QuantumTestBase(ReplayableTest):
             r"/workspaces/[a-z0-9-]+/",
             f'/workspaces/{WORKSPACE}/'
         )
-
+        regex_replacer.register_regex(
+            f"https://login.(microsoftonline.com|windows-ppe.net)/{GUID_REGEX_PATTERN}/oauth2/.*",
+            f'https://login.microsoftonline.com/{ZERO_UID}/oauth2/v2.0/token'
+        )
         regex_replacer.register_regex(r"sig=[^&]+\&",
                                       "sig=PLACEHOLDER&")
         regex_replacer.register_regex(r"sv=[^&]+\&",
@@ -503,6 +503,7 @@ class AuthenticationMetadataFilter(RecordingProcessor):
         if (
             "/.well-known/openid-configuration" in request.uri
             or "/common/discovery/instance" in request.uri
+            or "&discover-tenant-id-and-authority" in request.uri
         ):
             return None
         return request
