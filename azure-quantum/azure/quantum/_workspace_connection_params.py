@@ -520,7 +520,6 @@ class WorkspaceConnectionParams:
             client_id=os.environ.get(EnvironmentVariables.AZURE_CLIENT_ID),
             client_secret=os.environ.get(EnvironmentVariables.AZURE_CLIENT_SECRET),
             connection_string=os.environ.get(EnvironmentVariables.CONNECTION_STRING),
-            api_key=os.environ.get(EnvironmentVariables.QUANTUM_API_KEY),
         )
 
     def _merge_re_match(self, re_match: Match[str]):
