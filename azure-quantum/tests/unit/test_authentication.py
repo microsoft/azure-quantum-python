@@ -180,8 +180,7 @@ class TestWorkspace(QuantumTestBase):
             targets = workspace.get_targets()
             self.assertGreater(len(targets), 1)
 
-    @pytest.mark.skip()
-    def test_workspace_auth_api_key_credential(self):
+    def test_workspace_auth_connection_string_api_key(self):
         with patch.dict(os.environ):
             self.clear_env_var(os.environ)
             connection_params = self.connection_params
@@ -194,7 +193,6 @@ class TestWorkspace(QuantumTestBase):
             )
             workspace = Workspace.from_connection_string(
                 connection_string=connection_string,
-                api_version="2023-11-13-preview",
             )
             targets = workspace.get_targets()
             self.assertGreater(len(targets), 1)
