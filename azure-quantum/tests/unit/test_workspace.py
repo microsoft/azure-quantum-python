@@ -87,9 +87,12 @@ class TestWorkspace(QuantumTestBase):
         )
         self.assertEqual(ws.location, "eastus")
 
-    def test_parse_connection_string(self):
+    def test_workspace_from_connection_string(self):
         workspace = Workspace.from_connection_string(SIMPLE_CONNECTION_STRING)
         self.assertEqual(workspace.location, LOCATION)
+        self.assertEqual(workspace.subscription_id, SUBSCRIPTION_ID)
+        self.assertEqual(workspace.name, WORKSPACE)
+        self.assertEqual(workspace.resource_group, RESOURCE_GROUP)
         self.assertIsInstance(workspace.credential, AzureKeyCredential)
         self.assertEqual(workspace.credential.key, API_KEY)
         # pylint: disable=protected-access
