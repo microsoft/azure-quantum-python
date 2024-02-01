@@ -22,6 +22,8 @@ class EnvironmentVariables:
     AZURE_CLIENT_SECRET = SdkEnvironmentVariables.AZURE_CLIENT_SECRET
     AZURE_TENANT_ID = SdkEnvironmentVariables.AZURE_TENANT_ID
     QUANTUM_TOKEN_FILE = "AZURE_QUANTUM_TOKEN_FILE"
+    CONNECTION_STRING = "AZURE_QUANTUM_CONNECTION_STRING"
+    QUANTUM_API_KEY = "AZURE_QUANTUM_API_KEY"
     ALL = [
         USER_AGENT_APPID,
         QUANTUM_LOCATION,
@@ -37,6 +39,8 @@ class EnvironmentVariables:
         AZURE_CLIENT_SECRET,
         AZURE_TENANT_ID,
         QUANTUM_TOKEN_FILE,
+        QUANTUM_API_KEY,
+        CONNECTION_STRING,
     ]
 
 
@@ -54,6 +58,15 @@ DOGFOOD_ARM_BASE_URL = "https://api-dogfood.resources.windows-int.net/"
 QUANTUM_BASE_URL = lambda location: f"https://{location}.quantum.azure.com/"
 QUANTUM_CANARY_BASE_URL = lambda location: f"https://{location or 'eastus2euap'}.quantum.azure.com/"
 QUANTUM_DOGFOOD_BASE_URL = lambda location: f"https://{location}.quantum-test.azure.com/"
+QUANTUM_API_KEY_HEADER = "x-ms-quantum-api-key"
+VALID_CONNECTION_STRING = (
+    lambda subscription_id, resource_group, workspace_name, api_key, quantum_endpoint:
+    f"SubscriptionId={subscription_id};" +
+    f"ResourceGroupName={resource_group};" +
+    f"WorkspaceName={workspace_name};" +
+    f"ApiKey={api_key};" +
+    f"QuantumEndpoint={quantum_endpoint};"
+)
 VALID_RESOURCE_ID = (
     lambda subscription_id, resource_group, workspace_name:
     f"/subscriptions/{subscription_id}" +

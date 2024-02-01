@@ -11,6 +11,8 @@ from typing import (
     Callable,
     Union
 )
+from azure.core.credentials import AzureKeyCredential
+from azure.core.pipeline.policies import AzureKeyCredentialPolicy
 from azure.quantum._authentication import _DefaultAzureCredential
 from azure.quantum._constants import (
     EnvironmentKind,
@@ -20,9 +22,21 @@ from azure.quantum._constants import (
     QUANTUM_DOGFOOD_BASE_URL,
     ARM_BASE_URL,
     DOGFOOD_ARM_BASE_URL,
+    QUANTUM_API_KEY_HEADER,
 )
 
 class WorkspaceConnectionParams:
+    CONNECTION_STRING_REGEX = re.compile(
+        r"""
+            ^
+            SubscriptionId=(?P<subscription_id>[a-fA-F0-9-]*);
+            ResourceGroupName=(?P<resource_group>[^\s/]*);
+            WorkspaceName=(?P<workspace_name>[^\s/]*);
+            ApiKey=(?P<api_key>[^\s/]*);
+            QuantumEndpoint=(?P<base_url>https://(?P<location>[^\s/]*).quantum(?:-test)?.azure.com/);
+        """,
+        re.VERBOSE | re.IGNORECASE)
+
     RESOURCE_ID_REGEX = re.compile(
         r"""
             ^
@@ -51,6 +65,8 @@ class WorkspaceConnectionParams:
         client_id: Optional[str] = None,
         client_secret: Optional[str] = None,
         api_version: Optional[str] = None,
+        api_key: Optional[str] = None,
+        connection_string: Optional[str] = None,
         on_new_client_request: Optional[Callable] = None,
         **kwargs
     ):
@@ -59,6 +75,8 @@ class WorkspaceConnectionParams:
         self._environment = None
         self._base_url = None
         self._arm_base_url = None
+        self._connection_string = None
+        self._api_key = None
 
         self.subscription_id = subscription_id
         self.resource_group = resource_group
@@ -75,6 +93,8 @@ class WorkspaceConnectionParams:
         self.client_secret = client_secret
         self.tenant_id = tenant_id
         self.api_version = api_version
+        self.connection_string = connection_string
+        self.api_key = api_key
         self.on_new_client_request = on_new_client_request
         self.merge(**kwargs)
 
@@ -87,6 +107,21 @@ class WorkspaceConnectionParams:
         self._location = (value.replace(" ", "").lower()
                           if isinstance(value, str)
                           else value)
+
+    @property
+    def connection_string(self):
+        return self._connection_string
+
+    @connection_string.setter
+    def connection_string(self, value: str):
+        self._connection_string = value
+        if value:
+            match = re.search(
+                WorkspaceConnectionParams.CONNECTION_STRING_REGEX,
+                value)
+            if not match:
+                raise ValueError("Invalid connection string")
+            self._merge_re_match(match)
 
     @property
     def resource_id(self):
@@ -112,6 +147,16 @@ class WorkspaceConnectionParams:
         self._environment = (EnvironmentKind[value.upper()]
                              if isinstance(value, str)
                              else value)
+
+    @property
+    def api_key(self):
+        return self._api_key
+
+    @api_key.setter
+    def api_key(self, value: str):
+        if value:
+            self.credential = AzureKeyCredential(value)
+        self._api_key = value
 
     @property
     def base_url(self):
@@ -197,6 +242,8 @@ class WorkspaceConnectionParams:
         client_id: Optional[str] = None,
         client_secret: Optional[str] = None,
         api_version: Optional[str] = None,
+        connection_string: Optional[str] = None,
+        api_key: Optional[str] = None,
         **kwargs
     ):
         """
@@ -229,6 +276,8 @@ class WorkspaceConnectionParams:
         client_id: Optional[str] = None,
         client_secret: Optional[str] = None,
         api_version: Optional[str] = None,
+        connection_string: Optional[str] = None,
+        api_key: Optional[str] = None,
         **kwargs
     ):
         """
@@ -298,6 +347,12 @@ class WorkspaceConnectionParams:
                     arm_base_url=self.arm_base_url,
                     tenant_id=self.tenant_id))
 
+    def get_auth_policy(self):
+        if isinstance(self.credential, AzureKeyCredential):
+            return AzureKeyCredentialPolicy(self.credential,
+                                            QUANTUM_API_KEY_HEADER)
+        return None
+
     def append_user_agent(self, value: str):
         """
         Append a new value to the Workspace's UserAgent and re-initialize the
@@ -347,6 +402,7 @@ class WorkspaceConnectionParams:
                     1) A valid combination of location and resource ID.
                     2) A valid combination of location, subscription ID,
                     resource group name, and workspace name.
+                    3) A valid connection string (via Workspace.from_connection_string()).
                 """)
 
     def default_from_env_vars(self):
@@ -384,6 +440,8 @@ class WorkspaceConnectionParams:
             tenant_id=os.environ.get(EnvironmentVariables.AZURE_TENANT_ID),
             client_id=os.environ.get(EnvironmentVariables.AZURE_CLIENT_ID),
             client_secret=os.environ.get(EnvironmentVariables.AZURE_CLIENT_SECRET),
+            connection_string=os.environ.get(EnvironmentVariables.CONNECTION_STRING),
+            api_key=os.environ.get(EnvironmentVariables.QUANTUM_API_KEY),
         )
 
     def _merge_re_match(self, re_match: Match[str]):
@@ -396,4 +454,5 @@ class WorkspaceConnectionParams:
             location=get_value('location'),
             base_url=get_value('base_url'),
             arm_base_url=get_value('arm_base_url'),
+            api_key=get_value('api_key'),
         )
