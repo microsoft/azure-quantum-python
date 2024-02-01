@@ -24,7 +24,6 @@ class EnvironmentVariables:
     AZURE_TENANT_ID = SdkEnvironmentVariables.AZURE_TENANT_ID
     QUANTUM_TOKEN_FILE = "AZURE_QUANTUM_TOKEN_FILE"
     CONNECTION_STRING = "AZURE_QUANTUM_CONNECTION_STRING"
-    QUANTUM_API_KEY = "AZURE_QUANTUM_API_KEY"
     ALL = [
         USER_AGENT_APPID,
         QUANTUM_LOCATION,
@@ -40,7 +39,6 @@ class EnvironmentVariables:
         AZURE_CLIENT_SECRET,
         AZURE_TENANT_ID,
         QUANTUM_TOKEN_FILE,
-        QUANTUM_API_KEY,
         CONNECTION_STRING,
     ]
 
