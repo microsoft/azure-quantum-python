@@ -70,7 +70,6 @@ class QuantumTestBase(ReplayableTest):
             AuthenticationMetadataFilter(),
             regex_replacer,
             CustomAccessTokenReplacer(),
-            InteractiveAccessTokenReplacer(),
         ]
 
         replay_processors = [
