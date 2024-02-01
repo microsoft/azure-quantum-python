@@ -23,6 +23,8 @@ class EnvironmentVariables:
     AZURE_CLIENT_SECRET = SdkEnvironmentVariables.AZURE_CLIENT_SECRET
     AZURE_TENANT_ID = SdkEnvironmentVariables.AZURE_TENANT_ID
     QUANTUM_TOKEN_FILE = "AZURE_QUANTUM_TOKEN_FILE"
+    CONNECTION_STRING = "AZURE_QUANTUM_CONNECTION_STRING"
+    QUANTUM_API_KEY = "AZURE_QUANTUM_API_KEY"
     ALL = [
         USER_AGENT_APPID,
         QUANTUM_LOCATION,
@@ -38,6 +40,8 @@ class EnvironmentVariables:
         AZURE_CLIENT_SECRET,
         AZURE_TENANT_ID,
         QUANTUM_TOKEN_FILE,
+        QUANTUM_API_KEY,
+        CONNECTION_STRING,
     ]
 
 
@@ -74,3 +78,14 @@ class ConnectionConstants:
         "/providers/Microsoft.Quantum/" +
         f"Workspaces/{workspace_name}"
     )
+
+    VALID_CONNECTION_STRING = (
+        lambda subscription_id, resource_group, workspace_name, api_key, quantum_endpoint:
+        f"SubscriptionId={subscription_id};" +
+        f"ResourceGroupName={resource_group};" +
+        f"WorkspaceName={workspace_name};" +
+        f"ApiKey={api_key};" +
+        f"QuantumEndpoint={quantum_endpoint};"
+    )
+
+    QUANTUM_API_KEY_HEADER = "x-ms-quantum-api-key"

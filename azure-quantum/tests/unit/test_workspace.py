@@ -19,11 +19,22 @@ from azure.quantum._constants import (
     EnvironmentVariables,
     ConnectionConstants,
 )
+from azure.core.credentials import AzureKeyCredential
+from azure.core.pipeline.policies import AzureKeyCredentialPolicy
+
 
 SIMPLE_RESOURCE_ID = ConnectionConstants.VALID_RESOURCE_ID(
     subscription_id=SUBSCRIPTION_ID,
     resource_group=RESOURCE_GROUP,
     workspace_name=WORKSPACE,
+)
+
+SIMPLE_CONNECTION_STRING = ConnectionConstants.VALID_CONNECTION_STRING(
+    subscription_id=SUBSCRIPTION_ID,
+    resource_group=RESOURCE_GROUP,
+    workspace_name=WORKSPACE,
+    api_key=API_KEY,
+    quantum_endpoint=ConnectionConstants.QUANTUM_BASE_URL(LOCATION)
 )
 
 
@@ -75,6 +86,55 @@ class TestWorkspace(QuantumTestBase):
             location=location,
         )
         self.assertEqual(ws.location, "eastus")
+
+    def test_parse_connection_string(self):
+        workspace = Workspace.from_connection_string(SIMPLE_CONNECTION_STRING)
+        self.assertEqual(workspace.location, LOCATION)
+        self.assertIsInstance(workspace.credential, AzureKeyCredential)
+        self.assertEqual(workspace.credential.key, API_KEY)
+        # pylint: disable=protected-access
+        self.assertIsInstance(workspace._client._config.authentication_policy,
+                              AzureKeyCredentialPolicy)
+        auth_policy = workspace._client._config.authentication_policy
+        self.assertEqual(auth_policy._name, ConnectionConstants.QUANTUM_API_KEY_HEADER)
+        self.assertEqual(id(auth_policy._credential), id(workspace.credential))
+
+    def test_env_connection_string(self):
+        with mock.patch.dict(
+            os.environ,
+            {EnvironmentVariables.CONNECTION_STRING: SIMPLE_CONNECTION_STRING},
+            clear=True
+        ):
+            workspace = Workspace()
+            self.assertEqual(workspace.location, LOCATION)
+            self.assertIsInstance(workspace.credential, AzureKeyCredential)
+            self.assertEqual(workspace.credential.key, API_KEY)
+            # pylint: disable=protected-access
+            self.assertIsInstance(
+                workspace._client._config.authentication_policy,
+                AzureKeyCredentialPolicy)
+            auth_policy = workspace._client._config.authentication_policy
+            self.assertEqual(auth_policy._name, ConnectionConstants.QUANTUM_API_KEY_HEADER)
+            self.assertEqual(id(auth_policy._credential),
+                             id(workspace.credential))
+
+    def test_workspace_from_connection_string(self):
+        with mock.patch.dict(
+            os.environ,
+            clear=True
+        ):
+            workspace = Workspace.from_connection_string(SIMPLE_CONNECTION_STRING)
+            self.assertEqual(workspace.location, LOCATION)
+            self.assertIsInstance(workspace.credential, AzureKeyCredential)
+            self.assertEqual(workspace.credential.key, API_KEY)
+            # pylint: disable=protected-access
+            self.assertIsInstance(
+                workspace._client._config.authentication_policy,
+                AzureKeyCredentialPolicy)
+            auth_policy = workspace._client._config.authentication_policy
+            self.assertEqual(auth_policy._name, ConnectionConstants.QUANTUM_API_KEY_HEADER)
+            self.assertEqual(id(auth_policy._credential),
+                             id(workspace.credential))
 
     def test_create_workspace_instance_invalid(self):
         def assert_value_error(exception):
@@ -140,6 +200,13 @@ class TestWorkspace(QuantumTestBase):
                     location=LOCATION,
                     resource_id="invalid/resource/id")
             self.assertIn("Invalid resource id",
+                          context.exception.args[0])
+
+            # invalid connection string
+            with self.assertRaises(ValueError) as context:
+                Workspace(
+                    connection_string="invalid;connection=string")
+            self.assertIn("Invalid connection string",
                           context.exception.args[0])
 
     @pytest.mark.ionq

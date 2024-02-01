@@ -58,6 +58,10 @@ class Workspace:
     2. specify a valid location, subscription ID,
        resource group, and workspace name.
 
+    You can also use a connection string to specify the connection parameters
+    to a Azure Quantum Workspace by calling:
+        Workspace.from_connection_string()
+
     If the Azure Quantum workspace does not have linked storage, the caller
     must also pass a valid Azure storage account connection string.
 
@@ -170,6 +174,7 @@ class Workspace:
             azure_region=connection_params.location,
             user_agent=connection_params.get_full_user_agent(),
             credential_scopes = [ConnectionConstants.DATA_PLANE_CREDENTIAL_SCOPE],
+            authentication_policy=connection_params.get_auth_policy(),
             endpoint=connection_params.base_url,
             **kwargs
         )
@@ -191,6 +196,25 @@ class Workspace:
         :param value: UserAgent value to add, e.g. "azure-quantum-<plugin>"
         """
         self._connection_params.append_user_agent(value=value)
+
+    @classmethod
+    def _parse_connection_string(cls, connection_string: str) -> WorkspaceConnectionParams:
+        return WorkspaceConnectionParams(connection_string=connection_string)
+
+    @classmethod
+    def from_connection_string(cls, connection_string: str, **kwargs) -> Workspace:
+        """
+        Creates a new Azure Quantum Workspace client from a connection string.
+        """
+        connection_params = Workspace._parse_connection_string(
+            connection_string=connection_string)
+        return cls(
+            subscription_id=connection_params.subscription_id,
+            resource_group=connection_params.resource_group,
+            name=connection_params.workspace_name,
+            location=connection_params.location,
+            credential=connection_params.get_credential_or_default(),
+            **kwargs)
 
     def _get_top_level_items_client(self) -> TopLevelItemsOperations:
         return self._client.top_level_items

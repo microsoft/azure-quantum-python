@@ -7,6 +7,7 @@ from unittest.mock import patch
 import json
 import os
 import time
+import urllib3
 import pytest
 from common import QuantumTestBase
 from azure.identity import (
@@ -14,6 +15,7 @@ from azure.identity import (
     ClientSecretCredential,
     InteractiveBrowserCredential,
 )
+from azure.quantum import Workspace
 from azure.quantum._authentication import (
     _TokenFileCredential,
     _DefaultAzureCredential,
@@ -175,5 +177,44 @@ class TestWorkspace(QuantumTestBase):
             credential = InteractiveBrowserCredential(
                 tenant_id=connection_params.tenant_id)
             workspace = self.create_workspace(credential=credential)
+            targets = workspace.get_targets()
+            self.assertGreater(len(targets), 1)
+
+    @pytest.mark.skip()
+    def test_workspace_auth_api_key_credential(self):
+        with patch.dict(os.environ):
+            self.clear_env_var(os.environ)
+            connection_params = self.connection_params
+            connection_string =  VALID_CONNECTION_STRING(
+                subscription_id=connection_params.subscription_id,
+                resource_group=connection_params.resource_group,
+                workspace_name=connection_params.workspace_name,
+                api_key=connection_params.api_key,
+                quantum_endpoint=connection_params.base_url
+            )
+            workspace = Workspace.from_connection_string(
+                connection_string=connection_string,
+                api_version="2023-11-13-preview",
+            )
+            targets = workspace.get_targets()
+            self.assertGreater(len(targets), 1)
+
+    @pytest.mark.skip()
+    def test_workspace_auth_invalid_api_key_credential(self):
+        api_key = "invalid_key"
+        with patch.dict(os.environ):
+            self.clear_env_var(os.environ)
+            connection_params = self.connection_params
+            connection_string =  VALID_CONNECTION_STRING(
+                subscription_id=connection_params.subscription_id,
+                resource_group=connection_params.resource_group,
+                workspace_name=connection_params.workspace_name,
+                api_key=api_key,
+                quantum_endpoint=connection_params.base_url
+            )
+            workspace = Workspace.from_connection_string(
+                connection_string=connection_string,
+                api_version="2023-11-13-preview",
+            )
             targets = workspace.get_targets()
             self.assertGreater(len(targets), 1)
