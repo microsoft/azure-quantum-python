@@ -8,7 +8,6 @@ languages:
 - qsharp
 - python
 products:
-- qdk
 - azure-quantum
 ---
 
