@@ -17,7 +17,8 @@ _LOGGER = logging.getLogger(__name__)
 
 class _TokenFileCredential(object):
     """
-    Implements a custom TokenCredential to use a local file as the source for an AzureQuantum token.
+    Implements a custom TokenCredential to use a local file as
+    the source for an AzureQuantum token.
 
     It will only use the local file if the AZURE_QUANTUM_TOKEN_FILE
     environment variable is set, and references an existing json file
@@ -36,7 +37,7 @@ class _TokenFileCredential(object):
             _LOGGER.debug("No token file location provided for %s environment variable.",
                           EnvironmentVariables.QUANTUM_TOKEN_FILE)
 
-    def get_token(self, *scopes, **kwargs) -> AccessToken:  # pylint:disable=unused-argument
+    def get_token(self, *scopes: str, **kwargs) -> AccessToken: # pylint:disable=unused-argument
         """Request an access token for `scopes`.
         This method is called automatically by Azure SDK clients.
         This method only returns tokens for the https://quantum.microsoft.com/.default scope.

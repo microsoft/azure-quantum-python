@@ -6,7 +6,7 @@ import logging
 import re
 from typing import Optional
 import urllib3
-from azure.identity._internal import get_default_authority, normalize_authority
+from azure.core.credentials import AccessToken
 from azure.identity import (
     AzurePowerShellCredential,
     EnvironmentCredential,
@@ -15,12 +15,13 @@ from azure.identity import (
     VisualStudioCodeCredential,
     InteractiveBrowserCredential,
     DeviceCodeCredential,
+    _internal as AzureIdentityInternals,
 )
 from ._chained import _ChainedTokenCredential
 from ._token import _TokenFileCredential
+from azure.quantum._constants import ConnectionConstants
 
 _LOGGER = logging.getLogger(__name__)
-MSA_TENANT_ID = "9188040d-6c67-4c5b-b112-36a304b66dad"
 WWW_AUTHENTICATE_REGEX = re.compile(
     r"""
         ^
@@ -50,7 +51,8 @@ class _DefaultAzureCredential(_ChainedTokenCredential):
        We need the following parameters to enable auto-detection of tenant_id
        - subscription_id
        - arm_base_url (defaults to the production url "https://management.azure.com/")
-    3) Add custom TokenFileCredential as first method to attempt, which will look for a local access token.
+    3) Add custom TokenFileCredential as first method to attempt,
+       which will look for a local access token.
     """
     def __init__(
         self,
@@ -64,7 +66,10 @@ class _DefaultAzureCredential(_ChainedTokenCredential):
             raise ValueError("arm_base_url is mandatory parameter")
         if subscription_id is None:
             raise ValueError("subscription_id is mandatory parameter")
-        self.authority = normalize_authority(authority) if authority else authority
+
+        self.authority = self._authority_or_default(
+            authority=authority,
+            arm_base_url=arm_base_url)
         self.tenant_id = tenant_id
         self.subscription_id = subscription_id
         self.arm_base_url = arm_base_url
@@ -72,8 +77,15 @@ class _DefaultAzureCredential(_ChainedTokenCredential):
         # credentials will be created lazy on the first call to get_token
         super(_DefaultAzureCredential, self).__init__()
 
+    def _authority_or_default(self, authority: str, arm_base_url: str):
+        if authority:
+            return AzureIdentityInternals.normalize_authority(authority)
+        if arm_base_url == ConnectionConstants.DOGFOOD_ARM_BASE_URL:
+            return ConnectionConstants.DOGFOOD_AUTHORITY
+        return ConnectionConstants.AUTHORITY
+
     def _initialize_credentials(self):
-        self._update_authority_and_tenant_id_(
+        self._discover_tenant_id_(
             arm_base_url=self.arm_base_url,
             subscription_id=self.subscription_id)
         credentials = []
@@ -90,12 +102,17 @@ class _DefaultAzureCredential(_ChainedTokenCredential):
                 credentials.append(DeviceCodeCredential(authority=self.authority, client_id=self.client_id, tenant_id=self.tenant_id))
         self.credentials = credentials
 
-    def get_token(self, *scopes, **kwargs):
-        """Request an access token for `scopes`.
+    def get_token(self, *scopes: str, **kwargs) -> AccessToken:
+        """
+        Request an access token for `scopes`.
         This method is called automatically by Azure SDK clients.
-        :param str scopes: desired scopes for the access token. This method requires at least one scope.
-        :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The exception has a
-          `message` attribute listing each authentication attempt and its error message.
+        
+        :param str scopes: desired scopes for the access token.
+        This method requires at least one scope.
+        
+        :raises ~azure.core.exceptions.ClientAuthenticationError:authentication failed.
+            The exception has a `message` attribute listing each authentication
+            attempt and its error message.
         """
         # lazy-initialize the credentials
         if self.credentials is None or len(self.credentials) == 0:
@@ -103,20 +120,20 @@ class _DefaultAzureCredential(_ChainedTokenCredential):
 
         return super(_DefaultAzureCredential, self).get_token(*scopes, **kwargs)
 
-    def _update_authority_and_tenant_id_(self, arm_base_url:str, subscription_id:str):
+    def _discover_tenant_id_(self, arm_base_url:str, subscription_id:str):
         """
-        If the authority or tenant_id were not given, try to obtain them
+        If the tenant_id was not given, try to obtain it
         by calling the management endpoint for the subscription_id,
         or by applying default values.
         """
-        if self.tenant_id and self.authority:
+        if self.tenant_id:
             return
 
         try:
             url = (
                 f"{arm_base_url.rstrip('/')}/subscriptions/"
                 + f"{subscription_id}?api-version=2018-01-01"
-                + "&discover-tenant-id-and-authority"  # used by the test recording infrastructure
+                + "&discover-tenant-id"  # used by the test recording infrastructure
             )
             http = urllib3.PoolManager()
             response = http.request(
@@ -128,11 +145,9 @@ class _DefaultAzureCredential(_ChainedTokenCredential):
                 match = re.search(WWW_AUTHENTICATE_REGEX, www_authenticate)
                 if match:
                     self.tenant_id = match.group("tenant_id")
-                    self.authority = match.group("authority")
         # pylint: disable=broad-exception-caught
         except Exception as ex:
             _LOGGER.error(ex)
 
         # apply default values
-        self.tenant_id = self.tenant_id or MSA_TENANT_ID
-        self.authority = self.authority or get_default_authority()
+        self.tenant_id = self.tenant_id or ConnectionConstants.MSA_TENANT_ID

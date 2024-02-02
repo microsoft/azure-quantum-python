@@ -5,6 +5,7 @@
 
 from enum import Enum
 from azure.identity._constants import EnvironmentVariables as SdkEnvironmentVariables
+from azure.identity import _internal as AzureIdentityInternals
 
 
 class EnvironmentVariables:
@@ -46,18 +47,30 @@ class EnvironmentKind(Enum):
     DOGFOOD = 3
 
 
-DATA_PLANE_CREDENTIAL_SCOPE = "https://quantum.microsoft.com/.default"
-ARM_CREDENTIAL_SCOPE = "https://management.azure.com/.default"
-ARM_BASE_URL = "https://management.azure.com/"
-DOGFOOD_ARM_BASE_URL = "https://api-dogfood.resources.windows-int.net/"
-# pylint: disable=unnecessary-lambda-assignment
-QUANTUM_BASE_URL = lambda location: f"https://{location}.quantum.azure.com/"
-QUANTUM_CANARY_BASE_URL = lambda location: f"https://{location or 'eastus2euap'}.quantum.azure.com/"
-QUANTUM_DOGFOOD_BASE_URL = lambda location: f"https://{location}.quantum-test.azure.com/"
-VALID_RESOURCE_ID = (
-    lambda subscription_id, resource_group, workspace_name:
-    f"/subscriptions/{subscription_id}" +
-    f"/resourceGroups/{resource_group}" +
-    "/providers/Microsoft.Quantum/" +
-    f"Workspaces/{workspace_name}"
-)
+class ConnectionConstants:
+    DATA_PLANE_CREDENTIAL_SCOPE = "https://quantum.microsoft.com/.default"
+    ARM_CREDENTIAL_SCOPE = "https://management.azure.com/.default"
+
+    MSA_TENANT_ID = "9188040d-6c67-4c5b-b112-36a304b66dad"
+
+    AUTHORITY = AzureIdentityInternals.get_default_authority()
+    DOGFOOD_AUTHORITY = "login.windows-ppe.net"
+
+    # pylint: disable=unnecessary-lambda-assignment
+    QUANTUM_BASE_URL = \
+        lambda location: f"https://{location}.quantum.azure.com/"
+    QUANTUM_CANARY_BASE_URL = \
+        lambda location: f"https://{location or 'eastus2euap'}.quantum.azure.com/"
+    QUANTUM_DOGFOOD_BASE_URL = \
+        lambda location: f"https://{location}.quantum-test.azure.com/"
+
+    ARM_BASE_URL = "https://management.azure.com/"
+    DOGFOOD_ARM_BASE_URL = "https://api-dogfood.resources.windows-int.net/"
+
+    VALID_RESOURCE_ID = (
+        lambda subscription_id, resource_group, workspace_name:
+        f"/subscriptions/{subscription_id}" +
+        f"/resourceGroups/{resource_group}" +
+        "/providers/Microsoft.Quantum/" +
+        f"Workspaces/{workspace_name}"
+    )

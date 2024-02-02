@@ -15,11 +15,7 @@ from azure.quantum._authentication import _DefaultAzureCredential
 from azure.quantum._constants import (
     EnvironmentKind,
     EnvironmentVariables,
-    QUANTUM_BASE_URL,
-    QUANTUM_CANARY_BASE_URL,
-    QUANTUM_DOGFOOD_BASE_URL,
-    ARM_BASE_URL,
-    DOGFOOD_ARM_BASE_URL,
+    ConnectionConstants,
 )
 
 class WorkspaceConnectionParams:
@@ -120,11 +116,11 @@ class WorkspaceConnectionParams:
         if not self.location:
             raise ValueError("Location not specified")
         if self.environment is EnvironmentKind.PRODUCTION:
-            return QUANTUM_BASE_URL(self.location)
+            return ConnectionConstants.QUANTUM_BASE_URL(self.location)
         if self.environment is EnvironmentKind.CANARY:
-            return QUANTUM_CANARY_BASE_URL(self.location)
+            return ConnectionConstants.QUANTUM_CANARY_BASE_URL(self.location)
         if self.environment is EnvironmentKind.DOGFOOD:
-            return QUANTUM_DOGFOOD_BASE_URL(self.location)
+            return ConnectionConstants.QUANTUM_DOGFOOD_BASE_URL(self.location)
         raise ValueError(f"Unknown environment `{self.environment}`.")
 
     @base_url.setter
@@ -136,10 +132,10 @@ class WorkspaceConnectionParams:
         if self._arm_base_url:
             return self._arm_base_url
         if self.environment is EnvironmentKind.DOGFOOD:
-            return DOGFOOD_ARM_BASE_URL
+            return ConnectionConstants.DOGFOOD_ARM_BASE_URL
         if self.environment in [EnvironmentKind.PRODUCTION,
                                 EnvironmentKind.CANARY]:
-            return ARM_BASE_URL
+            return ConnectionConstants.ARM_BASE_URL
         raise ValueError(f"Unknown environment `{self.environment}`.")
 
     @arm_base_url.setter

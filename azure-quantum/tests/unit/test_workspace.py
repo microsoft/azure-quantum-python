@@ -17,11 +17,10 @@ from common import (
 from azure.quantum import Workspace
 from azure.quantum._constants import (
     EnvironmentVariables,
-    VALID_RESOURCE_ID,
-    QUANTUM_BASE_URL,
+    ConnectionConstants,
 )
 
-SIMPLE_RESOURCE_ID = VALID_RESOURCE_ID(
+SIMPLE_RESOURCE_ID = ConnectionConstants.VALID_RESOURCE_ID(
     subscription_id=SUBSCRIPTION_ID,
     resource_group=RESOURCE_GROUP,
     workspace_name=WORKSPACE,

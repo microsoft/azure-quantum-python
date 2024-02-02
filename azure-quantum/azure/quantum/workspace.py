@@ -30,7 +30,7 @@ from azure.quantum._workspace_connection_params import (
     WorkspaceConnectionParams
 )
 from azure.quantum._constants import (
-    DATA_PLANE_CREDENTIAL_SCOPE,
+    ConnectionConstants,
 )
 from azure.quantum.storage import (
     create_container_using_client,
@@ -169,7 +169,7 @@ class Workspace:
             workspace_name=connection_params.workspace_name,
             azure_region=connection_params.location,
             user_agent=connection_params.get_full_user_agent(),
-            credential_scopes = [DATA_PLANE_CREDENTIAL_SCOPE],
+            credential_scopes = [ConnectionConstants.DATA_PLANE_CREDENTIAL_SCOPE],
             endpoint=connection_params.base_url,
             **kwargs
         )

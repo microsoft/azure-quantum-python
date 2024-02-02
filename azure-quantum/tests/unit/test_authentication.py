@@ -20,7 +20,7 @@ from azure.quantum._authentication import (
 )
 from azure.quantum._constants import (
     EnvironmentVariables,
-    DATA_PLANE_CREDENTIAL_SCOPE,
+    ConnectionConstants,
 )
 
 
@@ -28,7 +28,7 @@ class TestWorkspace(QuantumTestBase):
     def test_azure_quantum_token_credential_file_not_set(self):
         credential = _TokenFileCredential()
         with pytest.raises(CredentialUnavailableError) as exception:
-            credential.get_token(DATA_PLANE_CREDENTIAL_SCOPE)
+            credential.get_token(ConnectionConstants.DATA_PLANE_CREDENTIAL_SCOPE)
         self.assertIn("Token file location not set.", str(exception.value))
 
     def test_azure_quantum_token_credential_file_not_exists(self):
@@ -39,7 +39,7 @@ class TestWorkspace(QuantumTestBase):
                 mock_isfile.return_value = False
                 credential = _TokenFileCredential()
                 with pytest.raises(CredentialUnavailableError) as exception:
-                    credential.get_token(DATA_PLANE_CREDENTIAL_SCOPE)
+                    credential.get_token(ConnectionConstants.DATA_PLANE_CREDENTIAL_SCOPE)
                 self.assertIn("Token file at fake_file_path does not exist.",
                               str(exception.value))
 
@@ -52,7 +52,7 @@ class TestWorkspace(QuantumTestBase):
                         clear=True):
             credential = _TokenFileCredential()
             with pytest.raises(CredentialUnavailableError) as exception:
-                credential.get_token(DATA_PLANE_CREDENTIAL_SCOPE)
+                credential.get_token(ConnectionConstants.DATA_PLANE_CREDENTIAL_SCOPE)
             self.assertIn("Failed to parse token file: Invalid JSON.",
                           str(exception.value))
 
@@ -69,7 +69,7 @@ class TestWorkspace(QuantumTestBase):
                         clear=True):
             credential = _TokenFileCredential()
             with pytest.raises(CredentialUnavailableError) as exception:
-                credential.get_token(DATA_PLANE_CREDENTIAL_SCOPE)
+                credential.get_token(ConnectionConstants.DATA_PLANE_CREDENTIAL_SCOPE)
             self.assertIn("Failed to parse token file: " +
                           "Missing expected value: 'expires_on'""",
                           str(exception.value))
@@ -89,7 +89,7 @@ class TestWorkspace(QuantumTestBase):
                         clear=True):
             credential = _TokenFileCredential()
             with pytest.raises(CredentialUnavailableError) as exception:
-                credential.get_token(DATA_PLANE_CREDENTIAL_SCOPE)
+                credential.get_token(ConnectionConstants.DATA_PLANE_CREDENTIAL_SCOPE)
             self.assertIn("Token already expired at Mon Aug  9 21:05:25 2021",
                           str(exception.value))
 
@@ -107,7 +107,7 @@ class TestWorkspace(QuantumTestBase):
                         {EnvironmentVariables.QUANTUM_TOKEN_FILE: str(file.resolve())},
                         clear=True):
             credential = _TokenFileCredential()
-            token = credential.get_token(DATA_PLANE_CREDENTIAL_SCOPE)
+            token = credential.get_token(ConnectionConstants.DATA_PLANE_CREDENTIAL_SCOPE)
         self.assertEqual(token.token, "fake_token")
         self.assertEqual(token.expires_on, pytest.approx(one_hour_ahead))
 
@@ -119,7 +119,7 @@ class TestWorkspace(QuantumTestBase):
             credential = ClientSecretCredential(connection_params.tenant_id,
                                                 connection_params.client_id,
                                                 connection_params.client_secret)
-            token = credential.get_token(DATA_PLANE_CREDENTIAL_SCOPE)
+            token = credential.get_token(ConnectionConstants.DATA_PLANE_CREDENTIAL_SCOPE)
             content = {
                 "access_token": token.token,
                 "expires_on": token.expires_on * 1000

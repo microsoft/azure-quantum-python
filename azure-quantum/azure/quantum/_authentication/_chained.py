@@ -4,23 +4,14 @@
 # ------------------------------------
 import logging
 
+import sys
 from azure.core.exceptions import ClientAuthenticationError
-
 from azure.identity import CredentialUnavailableError
+from azure.core.credentials import AccessToken, TokenCredential
 
-try:
-    from typing import TYPE_CHECKING
-except ImportError:
-    TYPE_CHECKING = False
-
-if TYPE_CHECKING:
-    # pylint:disable=unused-import,ungrouped-imports
-    from typing import Any, Optional
-    from azure.core.credentials import AccessToken, TokenCredential
 
 _LOGGER = logging.getLogger(__name__)
 
-import sys
 
 
 def filter_credential_warnings(record):
@@ -35,7 +26,7 @@ def _get_error_message(history):
     attempts = []
     for credential, error in history:
         if error:
-            attempts.append("{}: {}".format(credential.__class__.__name__, error))
+            attempts.append(f"{credential.__class__.__name__}: {error}")
         else:
             attempts.append(credential.__class__.__name__)
     return """
@@ -54,17 +45,21 @@ class _ChainedTokenCredential(object):
     We also don't log a warning unless all credential attempts have failed.
     """
 
-    def __init__(self, *credentials):
-        # type: (*TokenCredential) -> None
-        self._successful_credential = None  # type: Optional[TokenCredential]
+    def __init__(self, *credentials: TokenCredential):
+        self._successful_credential = None
         self.credentials = credentials
 
-    def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
-        # type: (*str, **Any) -> AccessToken
-        """Request a token from each chained credential, in order, returning the first token received.
+    def get_token(self, *scopes: str, **kwargs) -> AccessToken:  # pylint:disable=unused-argument
+        """
+        Request a token from each chained credential, in order,
+        returning the first token received.
         This method is called automatically by Azure SDK clients.
-        :param str scopes: desired scopes for the access token. This method requires at least one scope.
-        :raises ~azure.core.exceptions.ClientAuthenticationError: no credential in the chain provided a token
+
+        :param str scopes: desired scopes for the access token.
+        This method requires at least one scope.
+
+        :raises ~azure.core.exceptions.ClientAuthenticationError:
+        no credential in the chain provided a token
         """
         history = []
 
@@ -85,7 +80,8 @@ class _ChainedTokenCredential(object):
                     self._successful_credential = credential
                     return token
                 except CredentialUnavailableError as ex:
-                    # credential didn't attempt authentication because it lacks required data or state -> continue
+                    # credential didn't attempt authentication because
+                    # it lacks required data or state -> continue
                     history.append((credential, ex.message))
                     _LOGGER.info(
                         "%s - %s is unavailable",
@@ -93,7 +89,8 @@ class _ChainedTokenCredential(object):
                         credential.__class__.__name__,
                     )
                 except Exception as ex:  # pylint: disable=broad-except
-                    # credential failed to authenticate, or something unexpectedly raised -> break
+                    # credential failed to authenticate,
+                    # or something unexpectedly raised -> break
                     history.append((credential, str(ex)))
                     # instead of logging a warning, we just want to log an info
                     # since other credentials might succeed
@@ -104,7 +101,8 @@ class _ChainedTokenCredential(object):
                         ex,
                         exc_info=_LOGGER.isEnabledFor(logging.DEBUG),
                     )
-                    # here we do NOT want break and will continue to try other credentials
+                    # here we do NOT want break and
+                    # will continue to try other credentials
 
         finally:
             # Re-enable warnings from credentials in Azure.Identity
