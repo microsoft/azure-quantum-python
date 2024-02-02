@@ -180,19 +180,19 @@ class TestWorkspace(QuantumTestBase):
             targets = workspace.get_targets()
             self.assertGreater(len(targets), 1)
 
-    def _get_current_primary_api_key(self):
-        # self.pause_recording()
+    def _get_current_primary_connection_string(self):
+        self.pause_recording()
         http = urllib3.PoolManager()
         connection_params = self.connection_params
-        url = ("https://api-dogfood.resources.windows-int.net" +
+        url = (connection_params.arm_base_url.rstrip('/') +
+               # connection_params.base_url.rstrip('/') +
                f"/subscriptions/{connection_params.subscription_id}" + 
                f"/resourceGroups/{connection_params.resource_group}" +
-               "/providers/microsoft.quantum" +
+               "/providers/Microsoft.Quantum" +
                f"/Workspaces/{connection_params.workspace_name}" +
                "/listKeys?api-version=2023-11-13-preview")
-        url = "https://api-dogfood.resources.windows-int.net/subscriptions/653caf24-0fdb-4486-8ab1-75314330bb8f/resourceGroups/dogfoodRG/providers/microsoft.quantum/Workspaces/DogfoodConnectionString?api-version=2022-01-10-preview"
         credential = self.connection_params.get_credential_or_default()
-        scope = "https://management.azure.com/.default"
+        scope = ConnectionConstants.ARM_CREDENTIAL_SCOPE
         token = credential.get_token(scope).token
         response = http.request(
             method="GET",
@@ -201,23 +201,31 @@ class TestWorkspace(QuantumTestBase):
                 "Authorization": f"Bearer {token}"
             }
         )
+        self.assertEqual(response.status, 200)
+        connection_strings = json.loads(response.data.decode("utf-8"))
+        # todo: get the primary connection string from
+        # the json object above
+        connection_string = ""
         self.resume_recording()
-        return ""
+        return connection_string
 
-    @pytest.mark.skip()
+    @pytest.mark.skip("Awaiting for the service rollout")
     def test_workspace_auth_connection_string_api_key(self):
-        self._get_current_primary_api_key()
-        return 
-        with patch.dict(os.environ):
-            self.clear_env_vars(os.environ)
+        connection_string = ""
+        if self.is_playback:
             connection_params = self.connection_params
-            connection_string =  VALID_CONNECTION_STRING(
+            connection_string = ConnectionConstants.VALID_CONNECTION_STRING(
                 subscription_id=connection_params.subscription_id,
                 resource_group=connection_params.resource_group,
                 workspace_name=connection_params.workspace_name,
                 api_key=connection_params.api_key,
                 quantum_endpoint=connection_params.base_url
             )
+        else:
+            connection_string = self._get_current_primary_connection_string()
+
+        with patch.dict(os.environ):
+            self.clear_env_vars(os.environ)
             workspace = Workspace.from_connection_string(
                 connection_string=connection_string,
             )
