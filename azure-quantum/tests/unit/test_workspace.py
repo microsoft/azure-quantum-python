@@ -19,6 +19,7 @@ from azure.quantum._constants import (
     EnvironmentVariables,
     ConnectionConstants,
 )
+from azure.quantum._authentication import _DefaultAzureCredential
 from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy
 
@@ -103,13 +104,15 @@ class TestWorkspace(QuantumTestBase):
         self.assertEqual(id(auth_policy._credential), id(workspace.credential))
 
     def test_env_connection_string(self):
-        with mock.patch.dict(
-            os.environ,
-            {EnvironmentVariables.CONNECTION_STRING: SIMPLE_CONNECTION_STRING},
-            clear=True
-        ):
+        with mock.patch.dict(os.environ):
+            self.clear_env_vars(os.environ)
+            os.environ[EnvironmentVariables.CONNECTION_STRING] = SIMPLE_CONNECTION_STRING
+
             workspace = Workspace()
             self.assertEqual(workspace.location, LOCATION)
+            self.assertEqual(workspace.subscription_id, SUBSCRIPTION_ID)
+            self.assertEqual(workspace.name, WORKSPACE)
+            self.assertEqual(workspace.resource_group, RESOURCE_GROUP)
             self.assertIsInstance(workspace.credential, AzureKeyCredential)
             self.assertEqual(workspace.credential.key, API_KEY)
             # pylint: disable=protected-access
@@ -138,6 +141,46 @@ class TestWorkspace(QuantumTestBase):
             self.assertEqual(auth_policy._name, ConnectionConstants.QUANTUM_API_KEY_HEADER)
             self.assertEqual(id(auth_policy._credential),
                              id(workspace.credential))
+
+        # assert that the connection string environment variable
+        # does not overwrite values that were set
+        # via the other environment variables
+        with mock.patch.dict(os.environ):
+            self.clear_env_vars(os.environ)
+
+            wrong_subscription_id = "00000000-2BAD-2BAD-2BAD-000000000000"
+            wrong_resource_group = "wrongrg"
+            wrong_workspace = "wrong-workspace"
+            wrong_location = "wrong-location"
+
+            # make sure the values above are really different from the default values
+            self.assertNotEqual(wrong_subscription_id, SUBSCRIPTION_ID)
+            self.assertNotEqual(wrong_resource_group, RESOURCE_GROUP)
+            self.assertNotEqual(wrong_workspace, WORKSPACE)
+            self.assertNotEqual(wrong_location, LOCATION)
+
+            connection_string = ConnectionConstants.VALID_CONNECTION_STRING(
+                subscription_id=wrong_subscription_id,
+                resource_group=wrong_resource_group,
+                workspace_name=wrong_workspace,
+                api_key=API_KEY,
+                quantum_endpoint=ConnectionConstants.QUANTUM_BASE_URL(wrong_location)
+            )
+
+            os.environ[EnvironmentVariables.CONNECTION_STRING] = connection_string
+            os.environ[EnvironmentVariables.LOCATION] = LOCATION
+            os.environ[EnvironmentVariables.SUBSCRIPTION_ID] = SUBSCRIPTION_ID
+            os.environ[EnvironmentVariables.RESOURCE_GROUP] = RESOURCE_GROUP
+            os.environ[EnvironmentVariables.WORKSPACE_NAME] = WORKSPACE
+
+            workspace = Workspace()
+            self.assertEqual(workspace.location, LOCATION)
+            self.assertEqual(workspace.subscription_id, SUBSCRIPTION_ID)
+            self.assertEqual(workspace.resource_group, RESOURCE_GROUP)
+            self.assertEqual(workspace.name, WORKSPACE)
+            self.assertIsInstance(workspace.credential, _DefaultAzureCredential)
+            # pylint: disable=protected-access
+            self.assertIsNone(workspace._client._config.authentication_policy)
 
     def test_create_workspace_instance_invalid(self):
         def assert_value_error(exception):
