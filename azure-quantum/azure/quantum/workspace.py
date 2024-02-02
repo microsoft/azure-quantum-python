@@ -122,6 +122,7 @@ class Workspace:
             user_agent=user_agent,
             **kwargs
         ).default_from_env_vars()
+        
         logger.info("Using %s environment.", connection_params.environment)
 
         connection_params.assert_complete()

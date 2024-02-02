@@ -19,9 +19,9 @@ from azure.quantum._constants import (
     EnvironmentVariables,
     ConnectionConstants,
 )
-from azure.quantum._authentication import _DefaultAzureCredential
 from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy
+from azure.identity import EnvironmentCredential
 
 
 SIMPLE_RESOURCE_ID = ConnectionConstants.VALID_RESOURCE_ID(
@@ -178,9 +178,12 @@ class TestWorkspace(QuantumTestBase):
             self.assertEqual(workspace.subscription_id, SUBSCRIPTION_ID)
             self.assertEqual(workspace.resource_group, RESOURCE_GROUP)
             self.assertEqual(workspace.name, WORKSPACE)
-            self.assertIsInstance(workspace.credential, _DefaultAzureCredential)
-            # pylint: disable=protected-access
-            self.assertIsNone(workspace._client._config.authentication_policy)
+            # since no credential was passed, we will use the api-key
+            # credential from the connection string
+            self.assertIsInstance(workspace.credential, AzureKeyCredential)
+            # if we pass a credential, then it should be used
+            workspace = Workspace(credential=EnvironmentCredential())
+            self.assertIsInstance(workspace.credential, EnvironmentCredential)
 
     def test_create_workspace_instance_invalid(self):
         def assert_value_error(exception):

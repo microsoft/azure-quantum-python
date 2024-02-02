@@ -418,7 +418,7 @@ class WorkspaceConnectionParams:
                     arm_base_url=self.arm_base_url,
                     tenant_id=self.tenant_id))
 
-    def get_auth_policy(self):
+    def get_auth_policy(self) -> Any:
         if isinstance(self.credential, AzureKeyCredential):
             return AzureKeyCredentialPolicy(self.credential,
                                             ConnectionConstants.QUANTUM_API_KEY_HEADER)
@@ -519,7 +519,10 @@ class WorkspaceConnectionParams:
             tenant_id=os.environ.get(EnvironmentVariables.AZURE_TENANT_ID),
             client_id=os.environ.get(EnvironmentVariables.AZURE_CLIENT_ID),
             client_secret=os.environ.get(EnvironmentVariables.AZURE_CLIENT_SECRET),
-            connection_string=os.environ.get(EnvironmentVariables.CONNECTION_STRING),
+        ).merge_connection_params(
+            WorkspaceConnectionParams(
+                connection_string=os.environ.get(EnvironmentVariables.CONNECTION_STRING)),
+            merge_default_mode=True,
         )
 
     def _merge_re_match(self, re_match: Match[str]):
