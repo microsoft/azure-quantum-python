@@ -222,7 +222,7 @@ class QuantumTestBase(ReplayableTest):
                 and not self.in_recording 
                 and not self.is_live)
 
-    def clear_env_var(self, os_environ):
+    def clear_env_vars(self, os_environ):
         for env_var in EnvironmentVariables.ALL:
             if env_var in os_environ:
                 del os_environ[env_var]

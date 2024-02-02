@@ -114,7 +114,7 @@ class TestWorkspace(QuantumTestBase):
 
     def test_workspace_auth_token_credential(self):
         with patch.dict(os.environ):
-            self.clear_env_var(os.environ)
+            self.clear_env_vars(os.environ)
             connection_params = self.connection_params
             credential = ClientSecretCredential(connection_params.tenant_id,
                                                 connection_params.client_id,
@@ -140,20 +140,19 @@ class TestWorkspace(QuantumTestBase):
 
     def test_workspace_auth_client_secret_credential(self):
         with patch.dict(os.environ):
-            self.clear_env_var(os.environ)
+            self.clear_env_vars(os.environ)
             connection_params = self.connection_params
             credential = ClientSecretCredential(
                 tenant_id=connection_params.tenant_id,
                 client_id=connection_params.client_id,
-                client_secret=connection_params.client_secret,
-                validate_authority=False)
+                client_secret=connection_params.client_secret)
             workspace = self.create_workspace(credential=credential)
             targets = workspace.get_targets()
             self.assertGreater(len(targets), 1)
 
     def test_workspace_auth_default_credential(self):
         with patch.dict(os.environ):
-            self.clear_env_var(os.environ)
+            self.clear_env_vars(os.environ)
             connection_params = self.connection_params
             os.environ[EnvironmentVariables.AZURE_CLIENT_ID] = \
                 connection_params.client_id
@@ -171,7 +170,7 @@ class TestWorkspace(QuantumTestBase):
     @pytest.mark.skip(reason="Only to be used in manual testing")
     def test_workspace_auth_interactive_credential(self):
         with patch.dict(os.environ):
-            self.clear_env_var(os.environ)
+            self.clear_env_vars(os.environ)
             connection_params = self.connection_params
             credential = InteractiveBrowserCredential(
                 tenant_id=connection_params.tenant_id)

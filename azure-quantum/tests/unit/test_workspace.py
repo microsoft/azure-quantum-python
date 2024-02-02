@@ -82,7 +82,7 @@ class TestWorkspace(QuantumTestBase):
                           exception.args[0])
 
         with mock.patch.dict(os.environ):
-            self.clear_env_var(os.environ)
+            self.clear_env_vars(os.environ)
 
             # missing location
             with self.assertRaises(ValueError) as context:
@@ -225,7 +225,7 @@ class TestWorkspace(QuantumTestBase):
         app_id = "MyEnvVarAppId"
         user_agent = "MyUserAgent"
         with mock.patch.dict(os.environ):
-            self.clear_env_var(os.environ)
+            self.clear_env_vars(os.environ)
 
             # no UserAgent parameter and no EnvVar AppId
             os.environ[EnvironmentVariables.USER_AGENT_APPID] = ""
