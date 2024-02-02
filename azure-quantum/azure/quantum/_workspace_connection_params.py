@@ -9,7 +9,8 @@ from re import Match
 from typing import (
     Optional,
     Callable,
-    Union
+    Union,
+    Any
 )
 from azure.quantum._authentication import _DefaultAzureCredential
 from azure.quantum._constants import (
@@ -226,7 +227,7 @@ class WorkspaceConnectionParams:
         client_secret: Optional[str] = None,
         api_version: Optional[str] = None,
         **kwargs
-    ):
+    ) -> WorkspaceConnectionParams:
         """
         Set all fields/properties with `not None` values
         passed in the (named or key-valued) arguments
@@ -274,7 +275,7 @@ class WorkspaceConnectionParams:
             self,
             connection_params: WorkspaceConnectionParams,
             merge_default_mode: bool = False,
-    ):
+    ) -> WorkspaceConnectionParams:
         """
         Set all fields/properties with `not None` values
         from the `connection_params` into this instance.
@@ -287,7 +288,7 @@ class WorkspaceConnectionParams:
             **kwargs)
         return self
 
-    def get_credential_or_default(self):
+    def get_credential_or_default(self) -> Any:
         return (self.credential
                 or _DefaultAzureCredential(
                     subscription_id=self.subscription_id,
@@ -345,7 +346,7 @@ class WorkspaceConnectionParams:
                     resource group name, and workspace name.
                 """)
 
-    def default_from_env_vars(self):
+    def default_from_env_vars(self) -> WorkspaceConnectionParams:
         """
         Merge values found in the environment variables
         """
@@ -357,7 +358,7 @@ class WorkspaceConnectionParams:
     @classmethod
     def from_env_vars(
         cls,
-    ):
+    ) -> WorkspaceConnectionParams:
         """
         Initialize the WorkspaceConnectionParams from values found
         in the environment variables.
