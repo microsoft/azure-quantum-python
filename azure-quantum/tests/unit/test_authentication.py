@@ -185,17 +185,16 @@ class TestWorkspace(QuantumTestBase):
         http = urllib3.PoolManager()
         connection_params = self.connection_params
         url = (connection_params.arm_base_url.rstrip('/') +
-               # connection_params.base_url.rstrip('/') +
                f"/subscriptions/{connection_params.subscription_id}" + 
                f"/resourceGroups/{connection_params.resource_group}" +
                "/providers/Microsoft.Quantum" +
-               f"/Workspaces/{connection_params.workspace_name}" +
+               f"/workspaces/{connection_params.workspace_name}" +
                "/listKeys?api-version=2023-11-13-preview")
         credential = self.connection_params.get_credential_or_default()
         scope = ConnectionConstants.ARM_CREDENTIAL_SCOPE
         token = credential.get_token(scope).token
         response = http.request(
-            method="GET",
+            method="POST",
             url=url,
             headers={
                 "Authorization": f"Bearer {token}"
@@ -203,13 +202,10 @@ class TestWorkspace(QuantumTestBase):
         )
         self.assertEqual(response.status, 200)
         connection_strings = json.loads(response.data.decode("utf-8"))
-        # todo: get the primary connection string from
-        # the json object above
-        connection_string = ""
+        connection_string = connection_strings['primaryConnectionString']
         self.resume_recording()
         return connection_string
 
-    @pytest.mark.skip("Awaiting for the service rollout")
     def test_workspace_auth_connection_string_api_key(self):
         connection_string = ""
         if self.is_playback:
