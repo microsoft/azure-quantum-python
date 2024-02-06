@@ -199,16 +199,11 @@ class Workspace:
         self._connection_params.append_user_agent(value=value)
 
     @classmethod
-    def _parse_connection_string(cls, connection_string: str) -> WorkspaceConnectionParams:
-        return WorkspaceConnectionParams(connection_string=connection_string)
-
-    @classmethod
     def from_connection_string(cls, connection_string: str, **kwargs) -> Workspace:
         """
         Creates a new Azure Quantum Workspace client from a connection string.
         """
-        connection_params = Workspace._parse_connection_string(
-            connection_string=connection_string)
+        connection_params = WorkspaceConnectionParams(connection_string=connection_string)
         return cls(
             subscription_id=connection_params.subscription_id,
             resource_group=connection_params.resource_group,
