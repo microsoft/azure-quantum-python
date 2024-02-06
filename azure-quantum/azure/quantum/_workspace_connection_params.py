@@ -20,6 +20,11 @@ from azure.quantum._constants import (
 )
 
 class WorkspaceConnectionParams:
+    """
+    Internal Azure Quantum Python SDK class to handle logic
+    for the parameters needed to connect to a Workspace.
+    """
+
     RESOURCE_ID_REGEX = re.compile(
         r"""
             ^
@@ -49,10 +54,8 @@ class WorkspaceConnectionParams:
         client_secret: Optional[str] = None,
         api_version: Optional[str] = None,
         on_new_client_request: Optional[Callable] = None,
-        **kwargs
     ):
         self._location = None
-        self._resource_id = None
         self._environment = None
         self._base_url = None
         self._arm_base_url = None
@@ -65,7 +68,6 @@ class WorkspaceConnectionParams:
         self.arm_base_url = arm_base_url
         self.environment = environment
         self.credential = credential
-        self.resource_id = resource_id
         self.user_agent = user_agent
         self.user_agent_app_id = user_agent_app_id
         self.client_id = client_id
@@ -73,10 +75,17 @@ class WorkspaceConnectionParams:
         self.tenant_id = tenant_id
         self.api_version = api_version
         self.on_new_client_request = on_new_client_request
-        self.merge(**kwargs)
+        # resource_id should override other the connection parameters
+        # so it's set last.
+        self.apply_resource_id(resource_id)
 
     @property
     def location(self):
+        """
+        The Azure location.
+        On the setter, we normalize the value removing spaces
+        and converting it to lowercase.
+        """
         return self._location
 
     @location.setter
@@ -86,22 +95,11 @@ class WorkspaceConnectionParams:
                           else value)
 
     @property
-    def resource_id(self):
-        return self._resource_id
-
-    @resource_id.setter
-    def resource_id(self, value: str):
-        self._resource_id = value
-        if value:
-            match = re.search(
-                WorkspaceConnectionParams.RESOURCE_ID_REGEX,
-                value)
-            if not match:
-                raise ValueError("Invalid resource id")
-            self._merge_re_match(match)
-
-    @property
     def environment(self):
+        """
+        The environment kind, such as dogfood, canary or production.
+        Defaults to EnvironmentKind.PRODUCTION
+        """
         return self._environment or EnvironmentKind.PRODUCTION
 
     @environment.setter
@@ -112,6 +110,10 @@ class WorkspaceConnectionParams:
 
     @property
     def base_url(self):
+        """
+        The data plane base_url.
+        Defaults to well-known base_url based on the environment.
+        """
         if self._base_url:
             return self._base_url
         if not self.location:
@@ -130,6 +132,10 @@ class WorkspaceConnectionParams:
 
     @property
     def arm_base_url(self):
+        """
+        The control plane base_url.
+        Defaults to well-known arm_base_url based on the environment.
+        """
         if self._arm_base_url:
             return self._arm_base_url
         if self.environment is EnvironmentKind.DOGFOOD:
@@ -142,21 +148,6 @@ class WorkspaceConnectionParams:
     @arm_base_url.setter
     def arm_base_url(self, value: str):
         self._arm_base_url = value
-
-    def _apply_args_to_kwargs(self, args, kwargs):
-        """
-        Store all `not None` named parameters
-        into the kwargs dictionary.
-        """
-        for key in args.keys():
-            if (
-                key not in ["self", "kwargs",
-                            "merge_default_mode"]
-                and not key.startswith("_")
-            ):
-                value = args[key]
-                if value:
-                    kwargs[key] = value
 
     def __repr__(self):
         """
@@ -174,11 +165,21 @@ class WorkspaceConnectionParams:
         info.insert(0, super().__repr__())
         return "\n".join(info)
 
+    def apply_resource_id(self, resource_id: str):
+        """
+        Parses the resource_id and set the connection
+        parameters obtained from it.
+        """
+        if resource_id:
+            match = re.search(
+                WorkspaceConnectionParams.RESOURCE_ID_REGEX,
+                resource_id)
+            if not match:
+                raise ValueError("Invalid resource id")
+            self._merge_re_match(match)
+
     def merge(
         self,
-        # Listing the named parameters for the
-        # convenience of code completion.
-        # pylint: disable=unused-argument
         subscription_id: Optional[str] = None,
         resource_group: Optional[str] = None,
         workspace_name: Optional[str] = None,
@@ -187,30 +188,39 @@ class WorkspaceConnectionParams:
         arm_base_url: Optional[str] = None,
         environment: Union[str, EnvironmentKind, None] = None,
         credential: Optional[object] = None,
-        resource_id: Optional[str] = None,
         user_agent: Optional[str] = None,
         user_agent_app_id: Optional[str] = None,
         tenant_id: Optional[str] = None,
         client_id: Optional[str] = None,
         client_secret: Optional[str] = None,
         api_version: Optional[str] = None,
-        **kwargs
     ):
         """
         Set all fields/properties with `not None` values
         passed in the (named or key-valued) arguments
         into this instance.
         """
-        self._apply_args_to_kwargs(locals(), kwargs)
-        self._merge(merge_default_mode=False,
-                    **kwargs)
+        self._merge(
+            api_version=api_version,
+            arm_base_url=arm_base_url,
+            base_url=base_url,
+            client_id=client_id,
+            client_secret=client_secret,
+            credential=credential,
+            environment=environment,
+            location=location,
+            resource_group=resource_group,
+            subscription_id=subscription_id,
+            tenant_id=tenant_id,
+            user_agent=user_agent,
+            user_agent_app_id=user_agent_app_id,
+            workspace_name=workspace_name,
+            merge_default_mode=False,
+        )
         return self
 
     def apply_defaults(
         self,
-        # Listing the named parameters for the
-        # convenience of code completion.
-        # pylint: disable=unused-argument
         subscription_id: Optional[str] = None,
         resource_group: Optional[str] = None,
         workspace_name: Optional[str] = None,
@@ -219,14 +229,12 @@ class WorkspaceConnectionParams:
         arm_base_url: Optional[str] = None,
         environment: Union[str, EnvironmentKind, None] = None,
         credential: Optional[object] = None,
-        resource_id: Optional[str] = None,
         user_agent: Optional[str] = None,
         user_agent_app_id: Optional[str] = None,
         tenant_id: Optional[str] = None,
         client_id: Optional[str] = None,
         client_secret: Optional[str] = None,
         api_version: Optional[str] = None,
-        **kwargs
     ) -> WorkspaceConnectionParams:
         """
         Set all fields/properties with `not None` values
@@ -234,61 +242,112 @@ class WorkspaceConnectionParams:
         into this instance IF the instance does not have
         the corresponding parameter set yet.
         """
-        self._apply_args_to_kwargs(locals(), kwargs)
-        self._merge(merge_default_mode=True,
-                    **kwargs)
+        self._merge(
+            api_version=api_version,
+            arm_base_url=arm_base_url,
+            base_url=base_url,
+            client_id=client_id,
+            client_secret=client_secret,
+            credential=credential,
+            environment=environment,
+            location=location,
+            resource_group=resource_group,
+            subscription_id=subscription_id,
+            tenant_id=tenant_id,
+            user_agent=user_agent,
+            user_agent_app_id=user_agent_app_id,
+            workspace_name=workspace_name,
+            merge_default_mode=True,
+        )
         return self
 
     def _merge(
         self,
         merge_default_mode: bool,
-        **kwargs
+        subscription_id: Optional[str] = None,
+        resource_group: Optional[str] = None,
+        workspace_name: Optional[str] = None,
+        location: Optional[str] = None,
+        base_url: Optional[str] = None,
+        arm_base_url: Optional[str] = None,
+        environment: Union[str, EnvironmentKind, None] = None,
+        credential: Optional[object] = None,
+        user_agent: Optional[str] = None,
+        user_agent_app_id: Optional[str] = None,
+        tenant_id: Optional[str] = None,
+        client_id: Optional[str] = None,
+        client_secret: Optional[str] = None,
+        api_version: Optional[str] = None,
     ):
         """
         Set all fields/properties with `not None` values
-        passed in the (named or key-valued) arguments
+        passed in the kwargs arguments
         into this instance.
+
+        If merge_default_mode is True, skip setting
+        the field/property if it already has a value.
         """
-        self._apply_args_to_kwargs(locals(), kwargs)
-        cls = type(self)
-        for (key, value) in kwargs.items():
-            if value:
-                if merge_default_mode and self._has_value(key):
-                    continue
+        def _get_value_or_default(old_value, new_value):
+            if merge_default_mode and old_value:
+                return old_value
+            if new_value:
+                return new_value
+            return old_value
 
-                is_public_field = key in vars(self)
-                if is_public_field:
-                    setattr(self, key, value)
-                elif hasattr(cls, key):
-                    attr = getattr(cls, key, None)
-                    if attr and isinstance(attr, property) and attr.fset:
-                        attr.fset(self, value)
+        self.subscription_id = _get_value_or_default(self.subscription_id, subscription_id)
+        self.resource_group = _get_value_or_default(self.resource_group, resource_group)
+        self.workspace_name = _get_value_or_default(self.workspace_name, workspace_name)
+        self.location = _get_value_or_default(self.location, location)
+        self.environment = _get_value_or_default(self.environment, environment)
+        self.credential = _get_value_or_default(self.credential, credential)
+        self.user_agent = _get_value_or_default(self.user_agent, user_agent)
+        self.user_agent_app_id = _get_value_or_default(self.user_agent_app_id, user_agent_app_id)
+        self.client_id = _get_value_or_default(self.client_id, client_id)
+        self.client_secret = _get_value_or_default(self.client_secret, client_secret)
+        self.tenant_id = _get_value_or_default(self.tenant_id, tenant_id)
+        self.api_version = _get_value_or_default(self.api_version, api_version)
+        # for these properties that have a default value in the getter, we use
+        # the private field as the old_value
+        self.base_url = _get_value_or_default(self._base_url, base_url)
+        self.arm_base_url = _get_value_or_default(self._arm_base_url, arm_base_url)
+        return self
 
-    def _has_value(self, key):
-        if key in vars(self):
-            return getattr(self, key) is not None
-        # re-try to get from a private field
-        key = "_" + key
-        return getattr(self, key) is not None
-
-    def merge_connection_params(
-            self,
-            connection_params: WorkspaceConnectionParams,
-            merge_default_mode: bool = False,
+    def _merge_connection_params(
+        self,
+        connection_params: WorkspaceConnectionParams,
+        merge_default_mode: bool = False,
     ) -> WorkspaceConnectionParams:
         """
         Set all fields/properties with `not None` values
         from the `connection_params` into this instance.
         """
-        kwargs = {}
-        for key in vars(connection_params):
-            kwargs[key] = connection_params.__dict__[key]
         self._merge(
+            api_version=connection_params.api_version,
+            client_id=connection_params.client_id,
+            client_secret=connection_params.client_secret,
+            credential=connection_params.credential,
+            environment=connection_params.environment,
+            location=connection_params.location,
+            resource_group=connection_params.resource_group,
+            subscription_id=connection_params.subscription_id,
+            tenant_id=connection_params.tenant_id,
+            user_agent=connection_params.user_agent,
+            user_agent_app_id=connection_params.user_agent_app_id,
+            workspace_name=connection_params.workspace_name,
             merge_default_mode=merge_default_mode,
-            **kwargs)
+            # for these properties that have a default value in the getter,
+            # so we use the private field instead
+            # pylint: disable=protected-access
+            arm_base_url=connection_params._arm_base_url,
+            base_url=connection_params._base_url,
+        )
         return self
 
     def get_credential_or_default(self) -> Any:
+        """
+        Get the credential if one was set,
+        or defaults to a new _DefaultAzureCredential.
+        """
         return (self.credential
                 or _DefaultAzureCredential(
                     subscription_id=self.subscription_id,
@@ -329,6 +388,10 @@ class WorkspaceConnectionParams:
         return full_user_agent
 
     def is_complete(self) -> bool:
+        """
+        Returns true if we have all necessary parameters
+        to connect to the Azure Quantum Workspace.
+        """
         return (self.location
                 and self.subscription_id
                 and self.resource_group
@@ -336,6 +399,10 @@ class WorkspaceConnectionParams:
                 and self.get_credential_or_default())
 
     def assert_complete(self):
+        """
+        Raises ValueError if we don't have all necessary parameters
+        to connect to the Azure Quantum Workspace.
+        """
         if not self.is_complete():
             raise ValueError(
                 """
@@ -350,7 +417,7 @@ class WorkspaceConnectionParams:
         """
         Merge values found in the environment variables
         """
-        return self.merge_connection_params(
+        return self._merge_connection_params(
             connection_params=WorkspaceConnectionParams.from_env_vars(),
             merge_default_mode=True,
         )
