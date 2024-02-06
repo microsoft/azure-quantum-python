@@ -115,21 +115,6 @@ class WorkspaceConnectionParams:
                           else value)
 
     @property
-    def resource_id(self):
-        return self._resource_id
-
-    @resource_id.setter
-    def resource_id(self, value: str):
-        self._resource_id = value
-        if value:
-            match = re.search(
-                WorkspaceConnectionParams.RESOURCE_ID_REGEX,
-                value)
-            if not match:
-                raise ValueError("Invalid resource id")
-            self._merge_re_match(match)
-
-    @property
     def environment(self):
         """
         The environment kind, such as dogfood, canary or production.
@@ -145,7 +130,12 @@ class WorkspaceConnectionParams:
 
     @property
     def api_key(self):
-        return self._api_key
+        """
+        The api-key stored in a AzureKeyCredential.
+        """
+        return (self.credential.key
+                if isinstance(self.credential, AzureKeyCredential)
+                else None)
 
     @api_key.setter
     def api_key(self, value: str):
@@ -419,6 +409,10 @@ class WorkspaceConnectionParams:
                     tenant_id=self.tenant_id))
 
     def get_auth_policy(self) -> Any:
+        """
+        Returns a AzureKeyCredentialPolicy if using an AzureKeyCredential.
+        Defaults to None.
+        """
         if isinstance(self.credential, AzureKeyCredential):
             return AzureKeyCredentialPolicy(self.credential,
                                             ConnectionConstants.QUANTUM_API_KEY_HEADER)
@@ -519,7 +513,7 @@ class WorkspaceConnectionParams:
             tenant_id=os.environ.get(EnvironmentVariables.AZURE_TENANT_ID),
             client_id=os.environ.get(EnvironmentVariables.AZURE_CLIENT_ID),
             client_secret=os.environ.get(EnvironmentVariables.AZURE_CLIENT_SECRET),
-        ).merge_connection_params(
+        )._merge_connection_params(
             WorkspaceConnectionParams(
                 connection_string=os.environ.get(EnvironmentVariables.CONNECTION_STRING)),
             merge_default_mode=True,
