@@ -64,7 +64,6 @@ class WorkspaceConnectionParams:
         user_agent_app_id: Optional[str] = None,
         tenant_id: Optional[str] = None,
         client_id: Optional[str] = None,
-        client_secret: Optional[str] = None,
         api_version: Optional[str] = None,
         api_key: Optional[str] = None,
         connection_string: Optional[str] = None,
@@ -84,7 +83,6 @@ class WorkspaceConnectionParams:
         self.user_agent = None
         self.user_agent_app_id = None
         self.client_id = None
-        self.client_secret = None
         self.tenant_id = None
         self.api_version = None
         # callback to create a new client if needed
@@ -99,7 +97,6 @@ class WorkspaceConnectionParams:
             arm_base_url=arm_base_url,
             base_url=base_url,
             client_id=client_id,
-            client_secret=client_secret,
             credential=credential,
             environment=environment,
             location=location,
@@ -253,7 +250,6 @@ class WorkspaceConnectionParams:
         user_agent_app_id: Optional[str] = None,
         tenant_id: Optional[str] = None,
         client_id: Optional[str] = None,
-        client_secret: Optional[str] = None,
         api_version: Optional[str] = None,
         api_key: Optional[str] = None,
     ):
@@ -267,7 +263,6 @@ class WorkspaceConnectionParams:
             arm_base_url=arm_base_url,
             base_url=base_url,
             client_id=client_id,
-            client_secret=client_secret,
             credential=credential,
             environment=environment,
             location=location,
@@ -296,7 +291,6 @@ class WorkspaceConnectionParams:
         user_agent_app_id: Optional[str] = None,
         tenant_id: Optional[str] = None,
         client_id: Optional[str] = None,
-        client_secret: Optional[str] = None,
         api_version: Optional[str] = None,
         api_key: Optional[str] = None,
     ) -> WorkspaceConnectionParams:
@@ -311,7 +305,6 @@ class WorkspaceConnectionParams:
             arm_base_url=arm_base_url,
             base_url=base_url,
             client_id=client_id,
-            client_secret=client_secret,
             credential=credential,
             environment=environment,
             location=location,
@@ -341,7 +334,6 @@ class WorkspaceConnectionParams:
         user_agent_app_id: Optional[str] = None,
         tenant_id: Optional[str] = None,
         client_id: Optional[str] = None,
-        client_secret: Optional[str] = None,
         api_version: Optional[str] = None,
         api_key: Optional[str] = None,
     ):
@@ -369,7 +361,6 @@ class WorkspaceConnectionParams:
         self.user_agent = _get_value_or_default(self.user_agent, user_agent)
         self.user_agent_app_id = _get_value_or_default(self.user_agent_app_id, user_agent_app_id)
         self.client_id = _get_value_or_default(self.client_id, client_id)
-        self.client_secret = _get_value_or_default(self.client_secret, client_secret)
         self.tenant_id = _get_value_or_default(self.tenant_id, tenant_id)
         self.api_version = _get_value_or_default(self.api_version, api_version)
         self.api_key = _get_value_or_default(self.api_key, api_key)
@@ -391,7 +382,6 @@ class WorkspaceConnectionParams:
         self._merge(
             api_version=connection_params.api_version,
             client_id=connection_params.client_id,
-            client_secret=connection_params.client_secret,
             credential=connection_params.credential,
             environment=connection_params.environment,
             location=connection_params.location,
@@ -493,12 +483,33 @@ class WorkspaceConnectionParams:
 
     def default_from_env_vars(self) -> WorkspaceConnectionParams:
         """
-        Merge values found in the environment variables
+        Apply default values found in the environment variables
+        if current parameters are not set.
         """
-        return self._merge_connection_params(
-            connection_params=WorkspaceConnectionParams.from_env_vars(),
-            merge_default_mode=True,
-        )
+        self.subscription_id = (self.subscription_id
+                                or os.environ.get(EnvironmentVariables.QUANTUM_SUBSCRIPTION_ID)
+                                or os.environ.get(EnvironmentVariables.SUBSCRIPTION_ID))
+        self.resource_group = (self.resource_group
+                               or os.environ.get(EnvironmentVariables.QUANTUM_RESOURCE_GROUP)
+                               or os.environ.get(EnvironmentVariables.RESOURCE_GROUP))
+        self.workspace_name = (self.workspace_name
+                               or os.environ.get(EnvironmentVariables.WORKSPACE_NAME))
+        self.location = (self.location
+                         or os.environ.get(EnvironmentVariables.QUANTUM_LOCATION)
+                         or os.environ.get(EnvironmentVariables.LOCATION))
+        self.user_agent_app_id = (self.user_agent_app_id
+                                  or os.environ.get(EnvironmentVariables.USER_AGENT_APPID))
+        self.tenant_id = (self.tenant_id
+                          or os.environ.get(EnvironmentVariables.AZURE_TENANT_ID))
+        self.client_id = (self.client_id
+                          or os.environ.get(EnvironmentVariables.AZURE_CLIENT_ID))
+        # for these properties we use the private field
+        # because the getter return default values
+        self.environment = (self._environment
+                            or os.environ.get(EnvironmentVariables.QUANTUM_ENV))
+        self.base_url = (self._base_url
+                         or os.environ.get(EnvironmentVariables.QUANTUM_BASE_URL))
+        return self
 
     @classmethod
     def from_env_vars(
@@ -508,29 +519,7 @@ class WorkspaceConnectionParams:
         Initialize the WorkspaceConnectionParams from values found
         in the environment variables.
         """
-        return WorkspaceConnectionParams(
-            subscription_id=(
-                os.environ.get(EnvironmentVariables.QUANTUM_SUBSCRIPTION_ID)
-                or os.environ.get(EnvironmentVariables.SUBSCRIPTION_ID)),
-            resource_group=(
-                os.environ.get(EnvironmentVariables.QUANTUM_RESOURCE_GROUP)
-                or os.environ.get(EnvironmentVariables.RESOURCE_GROUP)),
-            workspace_name=(
-                os.environ.get(EnvironmentVariables.WORKSPACE_NAME)),
-            location=(
-                os.environ.get(EnvironmentVariables.QUANTUM_LOCATION)
-                or os.environ.get(EnvironmentVariables.LOCATION)),
-            environment=os.environ.get(EnvironmentVariables.QUANTUM_ENV),
-            base_url=os.environ.get(EnvironmentVariables.QUANTUM_BASE_URL),
-            user_agent_app_id=os.environ.get(EnvironmentVariables.USER_AGENT_APPID),
-            tenant_id=os.environ.get(EnvironmentVariables.AZURE_TENANT_ID),
-            client_id=os.environ.get(EnvironmentVariables.AZURE_CLIENT_ID),
-            client_secret=os.environ.get(EnvironmentVariables.AZURE_CLIENT_SECRET),
-        )._merge_connection_params(
-            WorkspaceConnectionParams(
-                connection_string=os.environ.get(EnvironmentVariables.CONNECTION_STRING)),
-            merge_default_mode=True,
-        )
+        return WorkspaceConnectionParams().default_from_env_vars()
 
     def _merge_re_match(self, re_match: Match[str]):
         def get_value(group_name):

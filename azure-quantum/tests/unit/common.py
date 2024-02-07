@@ -4,6 +4,7 @@
 ##
 
 import re
+import os
 import json
 import time
 from unittest.mock import patch
@@ -54,7 +55,6 @@ class QuantumTestBase(ReplayableTest):
         connection_params = WorkspaceConnectionParams.from_env_vars()
         connection_params.apply_defaults(
             client_id=ZERO_UID,
-            client_secret=PLACEHOLDER,
             tenant_id=TENANT_ID,
             resource_group=RESOURCE_GROUP,
             subscription_id=SUBSCRIPTION_ID,
@@ -63,6 +63,7 @@ class QuantumTestBase(ReplayableTest):
             user_agent_app_id=APP_ID,
         )
         self.connection_params = connection_params
+        self._client_secret = os.environ.get(EnvironmentVariables.AZURE_CLIENT_SECRET, PLACEHOLDER)
 
         regex_replacer = CustomRecordingProcessor(self)
         recording_processors = [
@@ -86,20 +87,11 @@ class QuantumTestBase(ReplayableTest):
         self.vcr.record_mode = 'once'
         self.vcr.register_matcher('query', self._custom_request_query_matcher)
 
-        if self.is_playback:
-            self._client_id = ZERO_UID
-            self._client_secret = PLACEHOLDER
-            self._tenant_id = TENANT_ID
-            self._resource_group = RESOURCE_GROUP
-            self._subscription_id = ZERO_UID
-            self._workspace_name = WORKSPACE
-            self._location = LOCATION
-
         regex_replacer.register_guid_regex(
             f"(?:job-|jobs/|session-|sessions/){GUID_REGEX_PATTERN}")
         regex_replacer.register_regex(connection_params.client_id, ZERO_UID)
         regex_replacer.register_regex(
-            connection_params.client_secret, PLACEHOLDER
+            self._client_secret, PLACEHOLDER
         )
         regex_replacer.register_regex(connection_params.tenant_id, ZERO_UID)
         regex_replacer.register_regex(connection_params.subscription_id, ZERO_UID)
@@ -242,9 +234,9 @@ class QuantumTestBase(ReplayableTest):
 
         if not credential and self.is_playback:
             credential = ClientSecretCredential(
-                tenant_id=connection_params.tenant_id,
-                client_id=connection_params.client_id,
-                client_secret=connection_params.client_secret)
+                tenant_id=TENANT_ID,
+                client_id=ZERO_UID,
+                client_secret=PLACEHOLDER)
 
         workspace = Workspace(
             credential=credential,
