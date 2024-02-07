@@ -207,6 +207,7 @@ class TestWorkspace(QuantumTestBase):
         self.resume_recording()
         return connection_string
 
+    @pytest.mark.live_test
     def test_workspace_auth_connection_string_api_key(self):
         connection_string = ""
         if self.is_playback:

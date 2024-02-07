@@ -65,7 +65,6 @@ class WorkspaceConnectionParams:
         tenant_id: Optional[str] = None,
         client_id: Optional[str] = None,
         api_version: Optional[str] = None,
-        api_key: Optional[str] = None,
         connection_string: Optional[str] = None,
         on_new_client_request: Optional[Callable] = None,
     ):
@@ -509,6 +508,18 @@ class WorkspaceConnectionParams:
                             or os.environ.get(EnvironmentVariables.QUANTUM_ENV))
         self.base_url = (self._base_url
                          or os.environ.get(EnvironmentVariables.QUANTUM_BASE_URL))
+        # only try to use the connection string from env var if
+        # we really need it
+        if (not self.location
+            or not self.subscription_id
+            or not self.resource_group
+            or not self.workspace_name
+            or not self.credential
+        ):
+            self._merge_connection_params(
+                connection_params=WorkspaceConnectionParams(
+                    connection_string=os.environ.get(EnvironmentVariables.CONNECTION_STRING)),
+                merge_default_mode=True)
         return self
 
     @classmethod

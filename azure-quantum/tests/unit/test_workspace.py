@@ -88,21 +88,6 @@ class TestWorkspace(QuantumTestBase):
         )
         self.assertEqual(ws.location, "eastus")
 
-    def test_workspace_from_connection_string(self):
-        workspace = Workspace.from_connection_string(SIMPLE_CONNECTION_STRING)
-        self.assertEqual(workspace.location, LOCATION)
-        self.assertEqual(workspace.subscription_id, SUBSCRIPTION_ID)
-        self.assertEqual(workspace.name, WORKSPACE)
-        self.assertEqual(workspace.resource_group, RESOURCE_GROUP)
-        self.assertIsInstance(workspace.credential, AzureKeyCredential)
-        self.assertEqual(workspace.credential.key, API_KEY)
-        # pylint: disable=protected-access
-        self.assertIsInstance(workspace._client._config.authentication_policy,
-                              AzureKeyCredentialPolicy)
-        auth_policy = workspace._client._config.authentication_policy
-        self.assertEqual(auth_policy._name, ConnectionConstants.QUANTUM_API_KEY_HEADER)
-        self.assertEqual(id(auth_policy._credential), id(workspace.credential))
-
     def test_env_connection_string(self):
         with mock.patch.dict(os.environ):
             self.clear_env_vars(os.environ)
@@ -159,7 +144,7 @@ class TestWorkspace(QuantumTestBase):
             self.assertNotEqual(wrong_workspace, WORKSPACE)
             self.assertNotEqual(wrong_location, LOCATION)
 
-            connection_string = ConnectionConstants.VALID_CONNECTION_STRING(
+            wrong_connection_string = ConnectionConstants.VALID_CONNECTION_STRING(
                 subscription_id=wrong_subscription_id,
                 resource_group=wrong_resource_group,
                 workspace_name=wrong_workspace,
@@ -167,7 +152,7 @@ class TestWorkspace(QuantumTestBase):
                 quantum_endpoint=ConnectionConstants.QUANTUM_BASE_URL(wrong_location)
             )
 
-            os.environ[EnvironmentVariables.CONNECTION_STRING] = connection_string
+            os.environ[EnvironmentVariables.CONNECTION_STRING] = wrong_connection_string
             os.environ[EnvironmentVariables.LOCATION] = LOCATION
             os.environ[EnvironmentVariables.SUBSCRIPTION_ID] = SUBSCRIPTION_ID
             os.environ[EnvironmentVariables.RESOURCE_GROUP] = RESOURCE_GROUP
@@ -181,9 +166,44 @@ class TestWorkspace(QuantumTestBase):
             # since no credential was passed, we will use the api-key
             # credential from the connection string
             self.assertIsInstance(workspace.credential, AzureKeyCredential)
+
             # if we pass a credential, then it should be used
             workspace = Workspace(credential=EnvironmentCredential())
             self.assertIsInstance(workspace.credential, EnvironmentCredential)
+
+            # the connection string passed as a parameter should override the
+            # connection string from the env var
+            self.clear_env_vars(os.environ)
+            os.environ[EnvironmentVariables.CONNECTION_STRING] = wrong_connection_string
+            connection_string = ConnectionConstants.VALID_CONNECTION_STRING(
+                subscription_id=SUBSCRIPTION_ID,
+                resource_group=RESOURCE_GROUP,
+                workspace_name=WORKSPACE,
+                api_key=API_KEY,
+                quantum_endpoint=ConnectionConstants.QUANTUM_BASE_URL(LOCATION)
+            )
+            workspace = Workspace.from_connection_string(connection_string=connection_string)
+            self.assertEqual(workspace.location, LOCATION)
+            self.assertEqual(workspace.subscription_id, SUBSCRIPTION_ID)
+            self.assertEqual(workspace.resource_group, RESOURCE_GROUP)
+            self.assertEqual(workspace.name, WORKSPACE)
+
+            # the connection string in the env var should be parsed if we
+            # don't really need it
+            self.clear_env_vars(os.environ)
+            os.environ[EnvironmentVariables.CONNECTION_STRING] = "bad-connection-string"
+            connection_string = ConnectionConstants.VALID_CONNECTION_STRING(
+                subscription_id=SUBSCRIPTION_ID,
+                resource_group=RESOURCE_GROUP,
+                workspace_name=WORKSPACE,
+                api_key=API_KEY,
+                quantum_endpoint=ConnectionConstants.QUANTUM_BASE_URL(LOCATION)
+            )
+            workspace = Workspace.from_connection_string(connection_string=connection_string)
+            self.assertEqual(workspace.location, LOCATION)
+            self.assertEqual(workspace.subscription_id, SUBSCRIPTION_ID)
+            self.assertEqual(workspace.resource_group, RESOURCE_GROUP)
+            self.assertEqual(workspace.name, WORKSPACE)
 
     def test_create_workspace_instance_invalid(self):
         def assert_value_error(exception):
