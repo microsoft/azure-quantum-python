@@ -62,6 +62,7 @@ class QuantumTestBase(ReplayableTest):
             user_agent_app_id=APP_ID,
         )
         self.connection_params = connection_params
+        self._client_secret = os.environ.get(EnvironmentVariables.AZURE_CLIENT_SECRET, PLACEHOLDER)
 
         regex_replacer = CustomRecordingProcessor(self)
         recording_processors = [
@@ -89,7 +90,7 @@ class QuantumTestBase(ReplayableTest):
             f"(?:job-|jobs/|session-|sessions/){GUID_REGEX_PATTERN}")
         regex_replacer.register_regex(connection_params.client_id, ZERO_UID)
         regex_replacer.register_regex(
-            client_secret, PLACEHOLDER
+            self._client_secret, PLACEHOLDER
         )
         regex_replacer.register_regex(connection_params.tenant_id, ZERO_UID)
         regex_replacer.register_regex(connection_params.subscription_id, ZERO_UID)

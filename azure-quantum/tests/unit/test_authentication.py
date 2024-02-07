@@ -116,7 +116,7 @@ class TestWorkspace(QuantumTestBase):
             connection_params = self.connection_params
             credential = ClientSecretCredential(connection_params.tenant_id,
                                                 connection_params.client_id,
-                                                connection_params.client_secret)
+                                                self._client_secret)
             token = credential.get_token(ConnectionConstants.DATA_PLANE_CREDENTIAL_SCOPE)
             content = {
                 "access_token": token.token,
@@ -144,7 +144,7 @@ class TestWorkspace(QuantumTestBase):
             credential = ClientSecretCredential(
                 tenant_id=connection_params.tenant_id,
                 client_id=connection_params.client_id,
-                client_secret=connection_params.client_secret)
+                client_secret=self._client_secret)
             workspace = self.create_workspace(credential=credential)
             targets = workspace.get_targets()
             self.assertGreater(len(targets), 1)
@@ -157,7 +157,7 @@ class TestWorkspace(QuantumTestBase):
             os.environ[EnvironmentVariables.AZURE_CLIENT_ID] = \
                 connection_params.client_id
             os.environ[EnvironmentVariables.AZURE_CLIENT_SECRET] = \
-                connection_params.client_secret
+                self._client_secret
             os.environ[EnvironmentVariables.AZURE_TENANT_ID] = \
                 connection_params.tenant_id
             credential = _DefaultAzureCredential(
