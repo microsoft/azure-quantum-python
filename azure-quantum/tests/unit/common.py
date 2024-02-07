@@ -558,17 +558,3 @@ class InteractiveAccessTokenReplacer(RecordingProcessor):
         response['body']['string'] = body
         response['headers']['content-length'] = ["%s" % len(body)]
         return response
-
-
-def expected_terms():
-    expected = json.dumps(
-        {
-            "cost_function": {
-                "version": "1.1",
-                "type": "ising",
-                "terms": [{"c": 3, "ids": [1, 0]}, {"c": 5, "ids": [2, 0]}],
-                "initial_configuration": {"0": -1, "1": 1, "2": -1},
-            }
-        }
-    )
-    return expected
