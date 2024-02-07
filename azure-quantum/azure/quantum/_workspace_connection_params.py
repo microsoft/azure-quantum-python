@@ -70,34 +70,47 @@ class WorkspaceConnectionParams:
         connection_string: Optional[str] = None,
         on_new_client_request: Optional[Callable] = None,
     ):
+        # fields are used for these properties since
+        # they have special getters/setters
         self._location = None
         self._environment = None
         self._base_url = None
         self._arm_base_url = None
-
+        # regular connection properties
+        self.subscription_id = None
+        self.resource_group = None
+        self.workspace_name = None
+        self.credential = None
+        self.user_agent = None
+        self.user_agent_app_id = None
+        self.client_id = None
+        self.client_secret = None
+        self.tenant_id = None
+        self.api_version = None
+        # callback to create a new client if needed
+        # for example, when changing the user agent
+        self.on_new_client_request = on_new_client_request
+        # merge the connection parameters passed
         # connection_string is set first as it
         # should be overridden by other parameters
         self.apply_connection_string(connection_string)
-
-        self.subscription_id = subscription_id
-        self.resource_group = resource_group
-        self.workspace_name = workspace_name
-        self.location = location
-        self.base_url = base_url
-        self.arm_base_url = arm_base_url
-        self.environment = environment
-        self.credential = credential
-        self.user_agent = user_agent
-        self.user_agent_app_id = user_agent_app_id
-        self.client_id = client_id
-        self.client_secret = client_secret
-        self.tenant_id = tenant_id
-        self.api_version = api_version
-        self.api_key = api_key
-        self.on_new_client_request = on_new_client_request
-        # resource_id should override other the connection parameters
-        # so it's set last.
-        self.apply_resource_id(resource_id)
+        self.merge(
+            api_version=api_version,
+            arm_base_url=arm_base_url,
+            base_url=base_url,
+            client_id=client_id,
+            client_secret=client_secret,
+            credential=credential,
+            environment=environment,
+            location=location,
+            resource_group=resource_group,
+            subscription_id=subscription_id,
+            tenant_id=tenant_id,
+            user_agent=user_agent,
+            user_agent_app_id=user_agent_app_id,
+            workspace_name=workspace_name,
+        )
+        self.apply_resource_id(resource_id=resource_id)
 
     @property
     def location(self):
