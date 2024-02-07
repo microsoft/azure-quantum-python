@@ -60,7 +60,6 @@ class TestWorkspace(QuantumTestBase):
         content = {
             "access_token": "fake_token",
         }
-
         tmpdir = self.create_temp_dir()
         file = Path(tmpdir) / "token.json"
         file.write_text(json.dumps(content))
@@ -80,7 +79,6 @@ class TestWorkspace(QuantumTestBase):
             # Matches timestamp in error message below
             "expires_on": 1628543125086
         }
-
         tmpdir = self.create_temp_dir()
         file = Path(tmpdir) / "token.json"
         file.write_text(json.dumps(content))
@@ -111,7 +109,7 @@ class TestWorkspace(QuantumTestBase):
         self.assertEqual(token.token, "fake_token")
         self.assertEqual(token.expires_on, pytest.approx(one_hour_ahead))
 
-
+    @pytest.mark.live_test
     def test_workspace_auth_token_credential(self):
         with patch.dict(os.environ):
             self.clear_env_vars(os.environ)
@@ -138,6 +136,7 @@ class TestWorkspace(QuantumTestBase):
             finally:
                 os.remove(file)
 
+    @pytest.mark.live_test
     def test_workspace_auth_client_secret_credential(self):
         with patch.dict(os.environ):
             self.clear_env_vars(os.environ)
@@ -150,6 +149,7 @@ class TestWorkspace(QuantumTestBase):
             targets = workspace.get_targets()
             self.assertGreater(len(targets), 1)
 
+    @pytest.mark.live_test
     def test_workspace_auth_default_credential(self):
         with patch.dict(os.environ):
             self.clear_env_vars(os.environ)
@@ -168,6 +168,7 @@ class TestWorkspace(QuantumTestBase):
             self.assertGreater(len(targets), 1)
 
     @pytest.mark.skip(reason="Only to be used in manual testing")
+    @pytest.mark.live_test
     def test_workspace_auth_interactive_credential(self):
         with patch.dict(os.environ):
             self.clear_env_vars(os.environ)
