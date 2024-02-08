@@ -16,12 +16,13 @@ __all__ = ["WorkspaceItem"]
 
 class WorkspaceItem(abc.ABC):
     """
+    Workspace item base class.
 
     :param workspace: Workspace instance to submit job to
     :type workspace: Workspace
-    :param item_details: Item details model,
+    :param details: Item details model,
             contains item ID, name and other details
-    :type item_details: ItemDetails
+    :type details: ItemDetails
     """
 
     def __init__(self, workspace: "Workspace", details: ItemDetails, **kwargs):
@@ -31,16 +32,20 @@ class WorkspaceItem(abc.ABC):
 
     @property
     def workspace(self) -> "Workspace":
+        """Workspace of the Workspace item"""
         return self._workspace
 
     @property
     def details(self) -> Union[SessionDetails, JobDetails]:
+        """Workspace item details"""
         return self._details
 
     @property
     def id(self) -> str:
+        """Id of the Workspace item"""
         return self._details.id
 
     @property
     def item_type(self) -> ItemType:
+        """Workspace item type"""
         return self._item_type

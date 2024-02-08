@@ -55,9 +55,6 @@ function PyTestMarkExpr() {
     if ($AzureQuantumCapabilities -notcontains "submit.ionq") {
         $MarkExpr += " and not ionq"
     }
-    if ($AzureQuantumCapabilities -notcontains "submit.toshiba") {
-        $MarkExpr += " and not toshiba"
-    }
     if ($AzureQuantumCapabilities -notcontains "submit.rigetti") {
         $MarkExpr += " and not rigetti"
     }
@@ -100,6 +97,9 @@ if ($PackageDir -Match "azure-quantum") {
 
     Write-Host "##[info]Copy auxiliary Q# test files from $PackageDir to $PSScriptRoot"
     Copy-Item -Path (Join-Path $PackageDir "tests" "unit" "*.qs") -Destination $PSScriptRoot
+
+    Write-Host "##[info]Copy auxiliary DFT test files from $PackageDir to $PSScriptRoot"
+    Copy-Item -Path (Join-Path $PackageDir "tests" "unit" "*.xyz") -Destination $PSScriptRoot
 }
 
 python -m pytest -v `

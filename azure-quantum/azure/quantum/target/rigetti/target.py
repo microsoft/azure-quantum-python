@@ -29,7 +29,7 @@ class RigettiTarget(str, Enum):
     QVM = "rigetti.sim.qvm"
     """A simulator target for Quil. See https://github.com/quil-lang/qvm for more info."""
 
-    ASPEN_M_3 = "rigetti.qpu.aspen-m-3"
+    ANKAA_9Q_1 = "rigetti.qpu.ankaa-9q-1"
     ANKAA_2 = "rigetti.qpu.ankaa-2"
 
     def simulators() -> List[str]:
@@ -41,16 +41,17 @@ class RigettiTarget(str, Enum):
     def qpus() -> List[str]:
         """Returns a list of QPU targets"""
         return [
-            RigettiTarget.ASPEN_M_3.value,
+            RigettiTarget.ANKAA_9Q_1.value,
             RigettiTarget.ANKAA_2.value,
         ]
 
     def num_qubits(target_name) -> int:
         """Returns the number of qubits supported by the given target"""
-        if target_name == RigettiTarget.QVM.value:
+
+        if target_name == RigettiTarget.ANKAA_9Q_1.value:
+            return 9
+        elif target_name == RigettiTarget.QVM.value:
             return 20
-        elif target_name == RigettiTarget.ASPEN_M_3.value:
-            return 80
         elif target_name == RigettiTarget.ANKAA_2.value:
             return 84
         else:
@@ -66,9 +67,12 @@ class InputParams:
     """
 
     skip_quilc: bool = False
-    """If set to True, `quilc <https://github.com/quil-lang/quilc>`_ will not be run.
+    """
+    If set to True, `quilc`_ will not be run.
     
     This **must** be set true if using `Quil-T <https://pyquil-docs.rigetti.com/en/stable/quilt.html>`_.
+    
+    .. _quilc: https://github.com/quil-lang/quilc
     """
 
     substitutions: Optional[Dict[str, List[List[float]]]] = None
@@ -129,6 +133,8 @@ class Rigetti(Target):
 
     target_names = tuple(target.value for target in RigettiTarget)
 
+    _SHOTS_PARAM_NAME = "count"
+
     def __init__(
         self,
         workspace: Workspace,
@@ -156,6 +162,7 @@ class Rigetti(Target):
         self,
         input_data: Any,
         name: str = "azure-quantum-job",
+        shots: int = None,
         input_params: Union[InputParams, None, Dict[str, Any]] = None,
         **kwargs,
     ) -> Job:
@@ -168,6 +175,8 @@ class Rigetti(Target):
         :type input_data: Any
         :param name: Job name
         :type name: str
+        :param shots: Number of shots, defaults to None
+        :type shots: int
         :param input_params: Input parameters, see :class:`azure.quantum.target.rigetti.InputParams` for details.
         :type input_params: Union[InputParams, None, Dict[str, Any]]
         :return: Azure Quantum job
@@ -176,10 +185,18 @@ class Rigetti(Target):
         if isinstance(input_params, InputParams):
             typed_input_params = input_params
             input_params = {
-                "count": typed_input_params.count,
+                Rigetti._SHOTS_PARAM_NAME: typed_input_params.count,
                 "skipQuilc": typed_input_params.skip_quilc,
             }
             if typed_input_params.substitutions is not None:
                 input_params["substitutions"] = typed_input_params.substitutions
+        elif input_params is None:
+            input_params = {}
 
-        return super().submit(input_data, name, input_params, **kwargs)
+        return super().submit(
+            input_data=input_data, 
+            name=name,
+            shots=shots,
+            input_params=input_params, 
+            **kwargs
+        )

@@ -195,7 +195,7 @@ class TestSession(QuantumTestBase):
         workspace = self.create_workspace()
         target = self._get_target(target_name)
 
-        qsharp_callable = JobPayloadFactory.get_qsharp_inline_callable_bell_state()[0]
+        qsharp_callable = JobPayloadFactory.get_qsharp_inline_callable_bell_state()
 
         output_data_format = "honeywell.qir.v1" if "echo-quantinuum" in target_name \
                              else target._qir_output_data_format()
@@ -247,7 +247,7 @@ class TestSession(QuantumTestBase):
         workspace = self.create_workspace()
         target = self._get_target(target_name)
 
-        qsharp_callable = JobPayloadFactory.get_qsharp_inline_callable_bell_state()[0]
+        qsharp_callable = JobPayloadFactory.get_qsharp_inline_callable_bell_state()
 
         output_data_format = "honeywell.qir.v1" if "echo-quantinuum" in target_name else None
 

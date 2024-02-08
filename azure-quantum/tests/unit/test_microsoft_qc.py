@@ -29,7 +29,7 @@ class TestMicrosoftQC(QuantumTestBase):
         bitcode_filename = path.join(path.dirname(__file__), "qir", "ccnot.bc")
         with open(bitcode_filename, "rb") as f:
             return f.read()
-        
+
     def _mock_result_data(self) -> dict:
         """
         A small result data for tests.
@@ -42,6 +42,34 @@ class TestMicrosoftQC(QuantumTestBase):
             },
             "reportData": {"groups": [], "assumptions": []}
         }
+
+    def _mock_result_data_full(self, status) -> dict:
+        formatted = {
+            "algorithmicLogicalQubits": 10,
+            "logicalDepth": 100,
+            "numTstates": 15,
+            "numTfactories": 1000,
+            "physicalQubitsForTfactoriesPercentage": 10,
+            "physicalQubits": 30000,
+            "rqops": 45678,
+            "runtime": 23456789
+        }
+
+        result = {
+            "physicalCounts": {
+                "physicalQubits": 655321,
+                "runtime": 1729,
+                "rqops": 314
+            },
+            "logicalQubit": {
+                "codeDistance": 11
+            },
+            "reportData": {"groups": [], "assumptions": []}
+        }
+
+        result["physicalCountsFormatted"] = formatted
+        result["status"] = status
+        return result
 
     @pytest.mark.microsoft_qc
     @pytest.mark.live_test
@@ -88,7 +116,7 @@ class TestMicrosoftQC(QuantumTestBase):
         params.items[0].qubit_params.t_gate_time = "10 ns"
         params.items[0].qubit_params.idle_error_rate = 0.00002
         params.items[0].qubit_params.two_qubit_joint_measurement_error_rate = \
-            MeasurementErrorRate(process = 0.00005, readout = 0.00007)
+            MeasurementErrorRate(process=0.00005, readout=0.00007)
 
         specification1 = DistillationUnitSpecification()
         specification1.display_name = "S"
@@ -110,10 +138,11 @@ class TestMicrosoftQC(QuantumTestBase):
         specification2 = DistillationUnitSpecification()
         specification2.name = "15-1 RM"
 
-        specification3= DistillationUnitSpecification()
+        specification3 = DistillationUnitSpecification()
         specification3.name = "15-1 space-efficient"
 
-        params.items[0].distillation_unit_specifications = [specification1, specification2, specification3]
+        params.items[0].distillation_unit_specifications = [
+            specification1, specification2, specification3]
 
         params.items[1].error_budget = 0.002
         params.items[1].constraints.max_duration = "20s"
@@ -233,6 +262,19 @@ class TestMicrosoftQC(QuantumTestBase):
         result = job.get_results(timeout_secs=DEFAULT_TIMEOUT_SECS)
         self.assertIsInstance(result.call_graph, Digraph)
 
+    @pytest.mark.microsoft_qc
+    @pytest.mark.live_test
+    def test_estimator_warn_on_passed_shots(self):
+        ws = self.create_workspace()
+        estimator = MicrosoftEstimator(ws)
+
+        ccnot = self._ccnot_bitcode()
+
+        with pytest.warns(match="The 'shots' parameter is ignored in resource estimation."):
+            job = estimator.submit(ccnot, shots=10)
+        
+        job.wait_until_completed(timeout_secs=DEFAULT_TIMEOUT_SECS)
+
     def test_estimator_params_validation_valid_cases(self):
         """
         Checks validation cases for resource estimation parameters for valid
@@ -318,20 +360,19 @@ class TestMicrosoftQC(QuantumTestBase):
         params.qubit_params.idle_error_rate = 0.02
         params.qubit_params.one_qubit_measurement_error_rate = 0.01
         params.qubit_params.two_qubit_joint_measurement_error_rate = \
-        MeasurementErrorRate(process = 0.02, readout = 0.03)
+            MeasurementErrorRate(process=0.02, readout=0.03)
 
         assert params.as_dict() == {
-            "errorBudget": 0.1, 
-            "qubitParams": {"name": "qubit_gate_ns_e3", 
-                            "instructionSet": "gate_based", 
-                            "tGateErrorRate": 0.03, 
-                            "tGateTime": "10 ns", 
-                            "idleErrorRate": 0.02, 
-                            "oneQubitMeasurementErrorRate": 0.01, 
-                            "twoQubitJointMeasurementErrorRate": 
+            "errorBudget": 0.1,
+            "qubitParams": {"name": "qubit_gate_ns_e3",
+                            "instructionSet": "gate_based",
+                            "tGateErrorRate": 0.03,
+                            "tGateTime": "10 ns",
+                            "idleErrorRate": 0.02,
+                            "oneQubitMeasurementErrorRate": 0.01,
+                            "twoQubitJointMeasurementErrorRate":
                             {"process": 0.02, "readout": 0.03}}
         }
-
 
     def test_estimator_error_budget_float(self):
         params = MicrosoftEstimatorParams()
@@ -398,9 +439,9 @@ class TestMicrosoftQC(QuantumTestBase):
         params.distillation_unit_specifications.append(unit)
 
         with raises(LookupError, match="If predefined name is provided, "
-                                        "custom specification is not allowed. "
-                                        "Either remove name or remove all other "
-                                        "specification of the distillation unit"):
+                    "custom specification is not allowed. "
+                    "Either remove name or remove all other "
+                    "specification of the distillation unit"):
             params.as_dict()
 
     def test_estimator_custom_distillation_units_by_specification_short(self):
@@ -414,9 +455,9 @@ class TestMicrosoftQC(QuantumTestBase):
         params.distillation_unit_specifications.append(unit)
 
         assert params.as_dict() == {
-            "distillationUnitSpecifications": 
+            "distillationUnitSpecifications":
             [{"displayName": "T", "failureProbabilityFormula": "c",
-            "outputErrorRateFormula": "r", "numInputTs": 1, "numOutputTs": 2 }]
+              "outputErrorRateFormula": "r", "numInputTs": 1, "numOutputTs": 2}]
         }
 
     def test_estimator_custom_distillation_units_by_specification_full(self):
@@ -449,13 +490,13 @@ class TestMicrosoftQC(QuantumTestBase):
 
         print(params.as_dict())
         assert params.as_dict() == {
-            "distillationUnitSpecifications": 
-            [{"displayName": "T", "numInputTs": 1, "numOutputTs": 2, 
-              "failureProbabilityFormula": "c", "outputErrorRateFormula": "r", 
-              "physicalQubitSpecification": {"numUnitQubits": 1, "durationInQubitCycleTime": 2}, 
-              "logicalQubitSpecification": {"numUnitQubits":3, "durationInQubitCycleTime":4}, 
-              "logicalQubitSpecificationFirstRoundOverride": 
-              {"numUnitQubits":5, "durationInQubitCycleTime":6}}]
+            "distillationUnitSpecifications":
+            [{"displayName": "T", "numInputTs": 1, "numOutputTs": 2,
+              "failureProbabilityFormula": "c", "outputErrorRateFormula": "r",
+              "physicalQubitSpecification": {"numUnitQubits": 1, "durationInQubitCycleTime": 2},
+              "logicalQubitSpecification": {"numUnitQubits": 3, "durationInQubitCycleTime": 4},
+              "logicalQubitSpecificationFirstRoundOverride":
+              {"numUnitQubits": 5, "durationInQubitCycleTime": 6}}]
         }
 
     def test_estimator_protocol_specific_distillation_unit_specification_empty_not_allowed(self):
@@ -496,7 +537,67 @@ class TestMicrosoftQC(QuantumTestBase):
 
         import json
         assert json.loads(result.json) == data
-    
+
+    def test_list_status_all_failed(self):
+        data = [self._mock_result_data_full(
+            "error"), self._mock_result_data_full("failure")]
+        result = MicrosoftEstimatorResult(data)
+
+        import json
+        assert json.loads(result.json) == data
+
+        data_frame = result.summary_data_frame()
+        assert data_frame.values.real[0][0] == "No solution found"
+        assert data_frame.values.real[1][5] == "No solution found"
+
+        assert not hasattr(result[0], "summary")
+        assert not hasattr(result[1], "summary")
+
+        assert not hasattr(result[0], "diagram")
+        assert not hasattr(result[1], "diagram")
+
+    def test_list_status_partial_success(self):
+        data = [self._mock_result_data_full(
+            "success"), self._mock_result_data_full("error")]
+        result = MicrosoftEstimatorResult(data)
+
+        import json
+        assert json.loads(result.json) == data
+
+        data_frame = result.summary_data_frame()
+        assert data_frame.values.real[0][0] == 10
+        assert data_frame.values.real[1][5] == "No solution found"
+
+        assert hasattr(result[0], "summary")
+        assert not hasattr(result[1], "summary")
+
+        assert hasattr(result[0], "diagram")
+        assert not hasattr(result[1], "diagram")
+
+    def test_dict_status_failed(self):
+        data = self._mock_result_data_full("error")
+        result = MicrosoftEstimatorResult(data)
+
+        import json
+        assert json.loads(result.json) == data
+
+        assert not hasattr(result, "summary_data_frame")
+
+        assert not hasattr(result, "summary")
+        assert not hasattr(result, "diagram")
+
+    def test_dict_status_success(self):
+        data = self._mock_result_data_full("success")
+        result = MicrosoftEstimatorResult(data)
+
+        import json
+        assert json.loads(result.json) == data
+
+        assert not hasattr(result, "summary_data_frame")
+
+        assert hasattr(result, "summary")
+        assert hasattr(result, "diagram")
+
     def test_duration_and_physical_qubits_constraints_not_allowed_together(self):
         constraints = MicrosoftEstimatorConstraints()
         constraints.max_physical_qubits = 100

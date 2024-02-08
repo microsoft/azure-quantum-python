@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING, Any, Dict, Optional, Union, Type,  Protocol, r
 import io
 import json
 import abc
+import warnings
 
 from azure.quantum._client.models import TargetStatus, SessionDetails
 from azure.quantum._client.models._enums import SessionJobFailurePolicy
@@ -27,6 +28,9 @@ class QirRepresentable(Protocol):
 
 
 class Target(abc.ABC, SessionHost):
+
+    _QSHARP_USER_AGENT = "azure-quantum-qsharp"
+
     """Azure Quantum Target."""
     # Target IDs that are compatible with this Target class.
     # This variable is used by TargetFactory. To set the default
@@ -38,6 +42,11 @@ class Target(abc.ABC, SessionHost):
     # __init__ via the job_cls parameter.  This is then used by the target's
     # submit and get_job method.
     target_names = ()
+    """Tuple of target names."""
+
+    # Name of the provider's input parameter which specifies number of shots for a submitted job.
+    # If None, target will not pass this input parameter. 
+    _SHOTS_PARAM_NAME = None
 
     def __init__(
         self,
@@ -54,6 +63,27 @@ class Target(abc.ABC, SessionHost):
     ):
         """
         Initializes a new target.
+
+        :param workspace: Associated workspace
+        :type workspace: Workspace
+        :param name: Target name
+        :type name: str
+        :param input_data_format: Format of input data (ex. "qir.v1")
+        :type input_data_format: str
+        :param output_data_format: Format of output data (ex. "microsoft.resource-estimates.v1")
+        :type output_data_format: str
+        :param capability: QIR capability
+        :type capability: str
+        :param provider_id: Id of provider (ex. "microsoft-qc")
+        :type provider_id: str
+        :param content_type: "Content-Type" attribute value to set on input blob (ex. "application/json")
+        :type content_type: ContentType
+        :param encoding: "Content-Encoding" attribute value to set on input blob (ex. "gzip")
+        :type encoding: str
+        :param average_queue_time: Set average queue time (for internal use)
+        :type average_queue_time: float
+        :param current_availability: Set current availability (for internal use)
+        :type current_availability: str
         """
         if not provider_id and "." in name:
             provider_id = name.split(".")[0]
@@ -101,6 +131,13 @@ avg. queue time={self._average_queue_time} s, {self._current_availability}>"
         The job class used by submit and get_job.  The default is Job.
         """
         return Job
+    
+    @classmethod
+    def _can_send_shots_input_param(cls) -> bool:
+        """
+        Tells if provider's target class is able to specify shots number for its jobs.
+        """
+        return cls._SHOTS_PARAM_NAME is not None
 
     def refresh(self):
         """Update the target availability and queue time"""
@@ -117,10 +154,18 @@ target '{self.name}' of provider '{self.provider_id}' not found."
 
     @property
     def current_availability(self):
+        """
+        Current availability.
+        """
+
         return self._current_availability
 
     @property
     def average_queue_time(self):
+        """
+        Average queue time.
+        """
+        
         return self._average_queue_time
 
     @staticmethod
@@ -150,6 +195,7 @@ target '{self.name}' of provider '{self.provider_id}' not found."
         self,
         input_data: Any,
         name: str = "azure-quantum-job",
+        shots: int = None,
         input_params: Union[Dict[str, Any], InputParams, None] = None,
         **kwargs
     ) -> Job:
@@ -162,10 +208,12 @@ target '{self.name}' of provider '{self.provider_id}' not found."
         :type input_data: Any
         :param name: Job name
         :type name: str
+        :param shots: Number of shots, defaults to None
+        :type shots: int
         :param input_params: Input parameters
         :type input_params: Dict[str, Any]
         :return: Azure Quantum job
-        :rtype: Job
+        :rtype: azure.quantum.job.Job
         """
 
         if isinstance(input_params, InputParams):
@@ -182,6 +230,10 @@ target '{self.name}' of provider '{self.provider_id}' not found."
             input_data_format = kwargs.pop("input_data_format", "qir.v1")
             output_data_format = kwargs.pop("output_data_format", self._qir_output_data_format())
             content_type = kwargs.pop("content_type", "qir.v1")
+            # setting UserAgent header to indicate Q# submission
+            # TODO: this is a temporary solution. We should be setting the User-Agent header
+            # on per-job basis as targets of different types could be submitted using the same Workspace object
+            self.workspace.append_user_agent(self._QSHARP_USER_AGENT)
 
             def _get_entrypoint(input_data):
                 # TODO: this method should be part of QirRepresentable protocol
@@ -200,6 +252,36 @@ target '{self.name}' of provider '{self.provider_id}' not found."
             input_data_format = kwargs.pop("input_data_format", self.input_data_format)
             output_data_format = kwargs.pop("output_data_format", self.output_data_format)
             content_type = kwargs.pop("content_type", self.content_type)
+            # re-setting UserAgent header to None for passthrough
+            self.workspace.append_user_agent(None)
+        
+        # Set shots number, if possible.
+        if self._can_send_shots_input_param():
+            input_params_shots = input_params.pop(self.__class__._SHOTS_PARAM_NAME, None)
+
+            # If there is a parameter conflict, choose 'shots'.
+            if shots is not None and input_params_shots is not None:
+                warnings.warn(
+                    f"Parameter 'shots' conflicts with the '{self.__class__._SHOTS_PARAM_NAME}' field of the 'input_params' "
+                    "parameter. Please, provide only one option for setting shots. Defaulting to 'shots' parameter."
+                )
+                final_shots = shots
+            
+            # The 'shots' parameter has highest priority.
+            elif shots is not None:
+                final_shots = shots
+            # if 'shots' parameter is not specified, try a provider-specific option.
+            elif input_params_shots is not None:
+                warnings.warn(
+                    f"Field '{self.__class__._SHOTS_PARAM_NAME}' from the 'input_params' parameter is subject to change in future versions. "
+                    "Please, use 'shots' parameter instead."
+                )
+                final_shots = input_params_shots
+            else:
+                final_shots = None
+            
+            if final_shots is not None:
+                input_params[self.__class__._SHOTS_PARAM_NAME] = final_shots
 
         encoding = kwargs.pop("encoding", self.encoding)
         blob = self._encode_input_data(data=input_data)
@@ -231,6 +313,9 @@ target '{self.name}' of provider '{self.provider_id}' not found."
         input_data: Any,
         input_params: Union[Dict[str, Any], None] = None
     ):
+        """
+        Estimate the cost for a given circuit.
+        """
         return NotImplementedError("Price estimation is not implemented yet for this target.")
 
     def _get_azure_workspace(self) -> "Workspace":
@@ -241,3 +326,33 @@ target '{self.name}' of provider '{self.provider_id}' not found."
 
     def _get_azure_provider_id(self) -> str:
         return self.provider_id
+
+
+def _determine_shots_or_deprecated_num_shots(
+    shots: int = None,
+    num_shots: int = None,
+) -> int:
+    """
+    This helper function checks if the deprecated 'num_shots' parameter is specified.
+    In earlier versions it was possible to pass this parameter to specify shots number for a job,
+    but now we only check for it for compatibility reasons.  
+    """
+    final_shots = None
+    if shots is not None and num_shots is not None:
+        warnings.warn(
+            "Both 'shots' and 'num_shots' parameters were specified. Defaulting to 'shots' parameter. "
+            "Please, use 'shots' since 'num_shots' will be deprecated.",
+            category=DeprecationWarning,
+        )
+        final_shots = shots
+        
+    elif shots is not None:
+        final_shots = shots
+    elif num_shots is not None:
+        warnings.warn(
+            "The 'num_shots' parameter will be deprecated. Please, use 'shots' parameter instead.",
+            category=DeprecationWarning,
+        )
+        final_shots = num_shots
+
+    return final_shots

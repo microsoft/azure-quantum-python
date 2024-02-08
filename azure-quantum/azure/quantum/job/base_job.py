@@ -11,7 +11,7 @@ from urllib.parse import urlparse
 from typing import Any, Dict, Optional, TYPE_CHECKING
 from azure.storage.blob import BlobClient
 
-from azure.quantum.storage import upload_blob, download_blob, ContainerClient
+from azure.quantum.storage import upload_blob, download_blob, download_blob_properties, ContainerClient
 from azure.quantum._client.models import JobDetails
 from azure.quantum.job.workspace_item import WorkspaceItem
 
@@ -26,12 +26,19 @@ DEFAULT_TIMEOUT = 300  # Default timeout for waiting for job to complete
 
 class ContentType(str, Enum):
     json = "application/json"
+    text_plain = "text/plain"
 
 class BaseJob(WorkspaceItem):
     # Optionally override these to create a Provider-specific Job subclass
     """
     Base job class with methods to create a job from raw blob data,
     upload blob data and download results.
+
+    :param workspace: Workspace instance of the job
+    :type workspace: Workspace
+    :param details: Item details model,
+            contains item ID, name and other details
+    :type details: ItemDetails
     """
 
     @staticmethod
@@ -41,6 +48,7 @@ class BaseJob(WorkspaceItem):
 
     @property
     def details(self) -> JobDetails:
+        """Job details"""
         return self._details
 
     @details.setter
@@ -49,6 +57,7 @@ class BaseJob(WorkspaceItem):
 
     @property
     def container_name(self):
+        """Job input/output data container name"""
         return f"job-{self.id}"
 
     @classmethod
@@ -73,7 +82,7 @@ class BaseJob(WorkspaceItem):
         """Create a new Azure Quantum job based on a raw input_data payload.
 
         :param workspace: Azure Quantum workspace to submit the input_data to
-        :type workspace: "Workspace"
+        :type workspace: Workspace
         :param name: Name of the job
         :type name: str
         :param target: Azure Quantum target
@@ -87,17 +96,17 @@ class BaseJob(WorkspaceItem):
         :param encoding: input_data encoding, e.g. "gzip", defaults to empty string
         :type encoding: str
         :param job_id: Job ID, defaults to None
-        :type job_id: str, optional
+        :type job_id: str
         :param container_name: Container name, defaults to None
         :type container_name: str
         :param provider_id: Provider ID, defaults to None
-        :type provider_id: str, optional
+        :type provider_id: str
         :param input_data_format: Input data format, defaults to None
-        :type input_data_format: str, optional
+        :type input_data_format: str
         :param output_data_format: Output data format, defaults to None
-        :type output_data_format: str, optional
+        :type output_data_format: str
         :param input_params: Input parameters, defaults to None
-        :type input_params: Dict[str, Any], optional
+        :type input_params: Dict[str, Any]
         :param input_params: Input params for job
         :type input_params: Dict[str, Any]
         :return: Azure Quantum Job
@@ -160,7 +169,7 @@ class BaseJob(WorkspaceItem):
         to blob storage
 
         :param workspace: Azure Quantum workspace to submit the blob to
-        :type workspace: "Workspace"
+        :type workspace: Workspace
         :param name: Job name
         :type name: str
         :param target: Azure Quantum target
@@ -168,17 +177,17 @@ class BaseJob(WorkspaceItem):
         :param input_data_uri: Input data URI
         :type input_data_uri: str
         :param provider_id: Provider ID
-        :type provider_id: str, optional
+        :type provider_id: str
         :param input_data_format: Input data format
-        :type input_data_format: str, optional
+        :type input_data_format: str
         :param output_data_format: Output data format
-        :type output_data_format: str, optional
+        :type output_data_format: str
         :param container_uri: Container URI, defaults to None
         :type container_uri: str
         :param job_id: Pre-generated job ID, defaults to None
         :type job_id: str
         :param input_params: Input parameters, defaults to None
-        :type input_params: Dict[str, Any], optional
+        :type input_params: Dict[str, Any]
         :param submit_job: If job should be submitted to the service, defaults to True
         :type submit_job: bool
         :return: Job instance
@@ -239,11 +248,11 @@ class BaseJob(WorkspaceItem):
         :param content_type: Content type, e.g. "application/json"
         :type content_type: Optional, ContentType
         :param blob_name: Blob name, defaults to "inputData"
-        :type blob_name: str, optional
+        :type blob_name: str
         :param encoding: Encoding, e.g. "gzip", defaults to ""
-        :type encoding: str, optional
+        :type encoding: str
         :param return_sas_token: Flag to return SAS token as part of URI, defaults to False
-        :type return_sas_token: bool, optional
+        :type return_sas_token: bool
         :return: Uploaded data URI
         :rtype: str
         """
@@ -261,6 +270,7 @@ class BaseJob(WorkspaceItem):
         )
         return uploaded_blob_uri
 
+
     def download_data(self, blob_uri: str) -> dict:
         """Download file from blob uri
 
@@ -269,22 +279,25 @@ class BaseJob(WorkspaceItem):
         :return: Payload from blob
         :rtype: dict
         """
-        url = urlparse(blob_uri)
-        if url.query.find("se=") == -1:
-            # blob_uri does not contains SAS token,
-            # get sas url from service
-            blob_client = BlobClient.from_blob_url(
-                blob_uri
-            )
-            blob_uri = self.workspace._get_linked_storage_sas_uri(
-                blob_client.container_name, blob_client.blob_name
-            )
-            payload = download_blob(blob_uri)
-        else:
-            # blob_uri contains SAS token, use it
-            payload = download_blob(blob_uri)
+        
+        blob_uri_with_sas_token = self._get_blob_uri_with_sas_token(blob_uri)
+        payload = download_blob(blob_uri_with_sas_token)
 
         return payload
+
+
+    def download_blob_properties(self, blob_uri: str):
+        """Download Blob properties
+
+        :param blob_uri: Blob URI
+        :type blob_uri: str
+        :return: Blob properties
+        :rtype: dict
+        """
+
+        blob_uri_with_sas_token = self._get_blob_uri_with_sas_token(blob_uri)
+        return download_blob_properties(blob_uri_with_sas_token)
+
 
     def upload_attachment(
         self,
@@ -301,7 +314,7 @@ class BaseJob(WorkspaceItem):
         :param data: Attachment data in binary format
         :type input_data: bytes
         :param container_uri: Container URI, defaults to the job's linked container.
-        :type container_uri: str, Optional
+        :type container_uri: str
 
         :return: Uploaded data URI
         :rtype: str
@@ -331,7 +344,7 @@ class BaseJob(WorkspaceItem):
         :param name: Attachment name
         :type name: str
         :param container_uri: Container URI, defaults to the job's linked container.
-        :type container_uri: str, Optional
+        :type container_uri: str
 
         :return: Attachment data
         :rtype: bytes
@@ -345,3 +358,24 @@ class BaseJob(WorkspaceItem):
         blob_client = container_client.get_blob_client(name)
         response = blob_client.download_blob().readall()
         return response
+
+
+    def _get_blob_uri_with_sas_token(self, blob_uri: str) -> str:
+        """Get Blob URI with SAS-token if one was not specified in blob_uri parameter
+        :param blob_uri: Blob URI
+        :type blob_uri: str
+        :return: Blob URI with SAS-token
+        :rtype: str
+        """
+        url = urlparse(blob_uri)
+        if url.query.find("se=") == -1:
+            # blob_uri does not contains SAS token,
+            # get sas url from service
+            blob_client = BlobClient.from_blob_url(
+                blob_uri
+            )
+            blob_uri = self.workspace._get_linked_storage_sas_uri(
+                blob_client.container_name, blob_client.blob_name
+            )
+
+        return blob_uri

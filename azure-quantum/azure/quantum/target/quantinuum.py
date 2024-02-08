@@ -3,8 +3,12 @@
 # Licensed under the MIT License.
 ##
 from typing import Any, Dict
+from warnings import warn
 
-from azure.quantum.target.target import Target
+from azure.quantum.target.target import (
+    Target,
+    _determine_shots_or_deprecated_num_shots,
+)
 from azure.quantum.job.job import Job
 from azure.quantum.workspace import Workspace
 from azure.quantum._client.models import CostEstimate, UsageEvent
@@ -24,6 +28,8 @@ class Quantinuum(Target):
         "quantinuum.sim.h2-1sc",
         "quantinuum.sim.h2-1e",
     )
+
+    _SHOTS_PARAM_NAME = "count"
 
     def __init__(
         self,
@@ -53,7 +59,7 @@ class Quantinuum(Target):
         self,
         circuit: str = None,
         name: str = "quantinuum-job",
-        num_shots: int = None,
+        shots: int = None,
         input_params: Dict[str, Any] = None,
         **kwargs
     ) -> Job:
@@ -63,8 +69,8 @@ class Quantinuum(Target):
         :type circuit: str
         :param name: Job name
         :type name: str
-        :param num_shots: Number of shots, defaults to None
-        :type num_shots: int
+        :param shots: Number of shots, defaults to None
+        :type shots: int
         :param input_params: Optional input params dict
         :type input_params: Dict[str, Any]
         :return: Azure Quantum job
@@ -77,13 +83,18 @@ class Quantinuum(Target):
             )
         if input_params is None:
             input_params = {}
-        if num_shots is not None:
-            input_params = input_params.copy()
-            input_params["count"] = num_shots
+
+        num_shots = kwargs.pop("num_shots", None)
+
+        shots = _determine_shots_or_deprecated_num_shots(
+            shots=shots,
+            num_shots=num_shots,
+        )
 
         return super().submit(
             input_data=input_data,
             name=name,
+            shots=shots,
             input_params=input_params,
             **kwargs
         )
@@ -94,7 +105,8 @@ class Quantinuum(Target):
         num_shots: int = None,
         N_1q: int = None,
         N_2q: int = None,
-        N_m: int = None
+        N_m: int = None,
+        shots: int = None,
     ) -> CostEstimate:
         """Estimate the cost in HQC for a given circuit.
         Optionally, you can provide the number of gate and measurement operations
@@ -109,23 +121,36 @@ class Quantinuum(Target):
         :param circuit: Quantum circuit in OpenQASM 2.0 format
         :type circuit: str
         :param num_shots: Number of shots for which to estimate costs
-        :type num_shots: int, optional
+        :type num_shots: int
         :param N_1q: Number of one-qubit gates, if not specified,
             this is estimated from the circuit
-        :type N_1q: int, optional
+        :type N_1q: int
         :param N_2q: Number of two-qubit gates, if not specified,
             this is estimated from the circuit
-        :type N_2q: int, optional
+        :type N_2q: int
         :param N_m: Number of measurement operations, if not specified,
             this is estimated from the circuit
-        :type N_m: int, optional
+        :type N_m: int
+        :param shots: Number of shots for which to estimate costs
+        :type shots: int
         :raises ImportError: If N_1q, N_2q and N_m are not specified,
             this will require a qiskit installation.
         """
+
+        if num_shots is None and shots is None:
+             raise ValueError("The 'shots' parameter has to be specified")
+
+        if num_shots is not None:
+            warn(
+                "The 'num_shots' parameter will be deprecated. Please, use 'shots' parameter instead.",
+                category=DeprecationWarning,
+            )
+            shots = num_shots
+
         if circuit is not None and (N_1q is None or N_2q is None or N_m is None):
             try:
-                from qiskit.circuit.quantumcircuit import Qasm
-                from qiskit.converters import ast_to_dag
+                from qiskit.qasm2 import loads
+                from qiskit.converters.circuit_to_dag import circuit_to_dag
 
             except ImportError:
                 raise ImportError(
@@ -135,9 +160,8 @@ class Quantinuum(Target):
 
             else:
                 from qiskit.dagcircuit.dagnode import DAGOpNode
-                qasm = Qasm(data=circuit)
-                ast = qasm.parse()
-                dag = ast_to_dag(ast)
+                circuit_obj = loads(string=circuit)
+                dag = circuit_to_dag(circuit=circuit_obj)
                 N_1q, N_2q, N_m = 0, 0, 0
                 for node in dag._multi_graph.nodes():
                     if isinstance(node, DAGOpNode):
@@ -160,7 +184,7 @@ class Quantinuum(Target):
         if is_syntax_checker_regex.match(self.name):
             HQC = 0.0
         else:
-            HQC = 5 + num_shots * (N_1q + 10 * N_2q + 5 * N_m) / 5000
+            HQC = 5 + shots * (N_1q + 10 * N_2q + 5 * N_m) / 5000
 
         return CostEstimate(
             events=[

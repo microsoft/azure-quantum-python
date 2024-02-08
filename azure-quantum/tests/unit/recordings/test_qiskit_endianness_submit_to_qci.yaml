@@ -13,9 +13,7 @@ interactions:
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - azsdk-python-identity/1.14.0 Python/3.9.18 (Windows-10-10.0.22621-SP0)
-      x-client-cpu:
-      - x64
+      - azsdk-python-identity/1.15.0 Python/3.9.18 (Windows-10-10.0.22621-SP0)
       x-client-current-telemetry:
       - 4|730,2|
       x-client-os:
@@ -23,7 +21,7 @@ interactions:
       x-client-sku:
       - MSAL.Python
       x-client-ver:
-      - 1.23.0
+      - 1.26.0
     method: POST
     uri: https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token
   response:
@@ -53,76 +51,80 @@ interactions:
     uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/providerStatus?api-version=2022-09-12-preview&test-sequence-id=1
   response:
     body:
-      string: '{"value": [{"id": "ionq", "currentAvailability": "Degraded", "targets":
-        [{"id": "ionq.qpu", "currentAvailability": "Available", "averageQueueTime":
-        0, "statusPage": "https://status.ionq.co"}, {"id": "ionq.qpu.aria-1", "currentAvailability":
-        "Unavailable", "averageQueueTime": 755821, "statusPage": "https://status.ionq.co"},
-        {"id": "ionq.qpu.aria-2", "currentAvailability": "Available", "averageQueueTime":
-        78188, "statusPage": "https://status.ionq.co"}, {"id": "ionq.simulator", "currentAvailability":
-        "Available", "averageQueueTime": 1249, "statusPage": "https://status.ionq.co"}]},
-        {"id": "microsoft-qc", "currentAvailability": "Available", "targets": [{"id":
-        "microsoft.estimator", "currentAvailability": "Available", "averageQueueTime":
-        0, "statusPage": null}]}, {"id": "pasqal", "currentAvailability": "Available",
-        "targets": [{"id": "pasqal.sim.emu_free", "currentAvailability": "Available",
-        "averageQueueTime": 0, "statusPage": "https://pasqal.com"}, {"id": "pasqal.sim.emu_tn",
+      string: '{"value": [{"id": "microsoft-elements", "currentAvailability": "Available",
+        "targets": [{"id": "microsoft.dft", "currentAvailability": "Available", "averageQueueTime":
+        0, "statusPage": null}]}, {"id": "ionq", "currentAvailability": "Degraded",
+        "targets": [{"id": "ionq.qpu", "currentAvailability": "Available", "averageQueueTime":
+        381497, "statusPage": "https://status.ionq.co"}, {"id": "ionq.qpu.aria-1",
+        "currentAvailability": "Available", "averageQueueTime": 1475900, "statusPage":
+        "https://status.ionq.co"}, {"id": "ionq.qpu.aria-2", "currentAvailability":
+        "Unavailable", "averageQueueTime": 1592812, "statusPage": "https://status.ionq.co"},
+        {"id": "ionq.simulator", "currentAvailability": "Available", "averageQueueTime":
+        1, "statusPage": "https://status.ionq.co"}]}, {"id": "microsoft-qc", "currentAvailability":
+        "Available", "targets": [{"id": "microsoft.estimator", "currentAvailability":
+        "Available", "averageQueueTime": 0, "statusPage": null}]}, {"id": "pasqal",
+        "currentAvailability": "Degraded", "targets": [{"id": "pasqal.sim.emu-tn",
         "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": "https://pasqal.com"},
-        {"id": "pasqal.qpu.fresnel", "currentAvailability": "Available", "averageQueueTime":
-        0, "statusPage": "https://pasqal.com"}]}, {"id": "quantinuum", "currentAvailability":
-        "Degraded", "targets": [{"id": "quantinuum.qpu.h1-1", "currentAvailability":
-        "Unavailable", "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h1"},
-        {"id": "quantinuum.sim.h1-1sc", "currentAvailability": "Available", "averageQueueTime":
-        0, "statusPage": "https://www.quantinuum.com/hardware/h1"}, {"id": "quantinuum.qpu.h1-2",
-        "currentAvailability": "Unavailable", "averageQueueTime": 0, "statusPage":
-        "https://www.quantinuum.com/hardware/h1"}, {"id": "quantinuum.sim.h1-2sc",
-        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h1"},
-        {"id": "quantinuum.sim.h1-1e", "currentAvailability": "Available", "averageQueueTime":
-        7, "statusPage": "https://www.quantinuum.com/hardware/h1"}, {"id": "quantinuum.sim.h1-2e",
-        "currentAvailability": "Available", "averageQueueTime": 8, "statusPage": "https://www.quantinuum.com/hardware/h1"},
-        {"id": "quantinuum.qpu.h2-1", "currentAvailability": "Unavailable", "averageQueueTime":
-        0, "statusPage": "https://www.quantinuum.com/hardware/h2"}, {"id": "quantinuum.sim.h2-1sc",
-        "currentAvailability": "Available", "averageQueueTime": 7, "statusPage": "https://www.quantinuum.com/hardware/h2"},
-        {"id": "quantinuum.sim.h2-1e", "currentAvailability": "Available", "averageQueueTime":
-        0, "statusPage": "https://www.quantinuum.com/hardware/h2"}, {"id": "quantinuum.sim.h1-1sc-preview",
-        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h1"},
-        {"id": "quantinuum.sim.h1-2sc-preview", "currentAvailability": "Available",
-        "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h1"},
-        {"id": "quantinuum.sim.h1-1e-preview", "currentAvailability": "Available",
-        "averageQueueTime": 7, "statusPage": "https://www.quantinuum.com/hardware/h1"},
-        {"id": "quantinuum.sim.h1-2e-preview", "currentAvailability": "Available",
-        "averageQueueTime": 8, "statusPage": "https://www.quantinuum.com/hardware/h1"},
-        {"id": "quantinuum.qpu.h1-1-preview", "currentAvailability": "Unavailable",
-        "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h1"},
-        {"id": "quantinuum.qpu.h1-2-preview", "currentAvailability": "Unavailable",
-        "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h1"}]},
-        {"id": "rigetti", "currentAvailability": "Degraded", "targets": [{"id": "rigetti.sim.qvm",
+        {"id": "pasqal.qpu.fresnel", "currentAvailability": "Degraded", "averageQueueTime":
+        0, "statusPage": "https://pasqal.com"}]}, {"id": "rigetti", "currentAvailability":
+        "Available", "targets": [{"id": "rigetti.sim.qvm", "currentAvailability":
+        "Available", "averageQueueTime": 5, "statusPage": "https://rigetti.statuspage.io/"},
+        {"id": "rigetti.qpu.aspen-m-3", "currentAvailability": "Available", "averageQueueTime":
+        5, "statusPage": "https://rigetti.statuspage.io/"}, {"id": "rigetti.qpu.ankaa-9q-1",
         "currentAvailability": "Available", "averageQueueTime": 5, "statusPage": "https://rigetti.statuspage.io/"},
-        {"id": "rigetti.qpu.aspen-m-2", "currentAvailability": "Unavailable", "averageQueueTime":
-        0, "statusPage": null}, {"id": "rigetti.qpu.aspen-m-3", "currentAvailability":
-        "Available", "averageQueueTime": 5, "statusPage": "https://rigetti.statuspage.io/"}]},
-        {"id": "qci", "currentAvailability": "Degraded", "targets": [{"id": "qci.simulator",
-        "currentAvailability": "Available", "averageQueueTime": 1, "statusPage": "https://quantumcircuits.com"},
-        {"id": "qci.machine1", "currentAvailability": "Unavailable", "averageQueueTime":
+        {"id": "rigetti.qpu.ankaa-2", "currentAvailability": "Available", "averageQueueTime":
+        5, "statusPage": "https://rigetti.statuspage.io/"}]}, {"id": "Microsoft.Test",
+        "currentAvailability": "Available", "targets": [{"id": "echo-rigetti", "currentAvailability":
+        "Available", "averageQueueTime": 1, "statusPage": ""}, {"id": "echo-quantinuum",
+        "currentAvailability": "Available", "averageQueueTime": 1, "statusPage": ""},
+        {"id": "echo-qci", "currentAvailability": "Available", "averageQueueTime":
+        1, "statusPage": ""}, {"id": "echo-ionq", "currentAvailability": "Available",
+        "averageQueueTime": 1, "statusPage": ""}, {"id": "sparse-sim-rigetti", "currentAvailability":
+        "Available", "averageQueueTime": 1, "statusPage": ""}, {"id": "sparse-sim-quantinuum",
+        "currentAvailability": "Available", "averageQueueTime": 1, "statusPage": ""},
+        {"id": "sparse-sim-qci", "currentAvailability": "Available", "averageQueueTime":
+        1, "statusPage": ""}, {"id": "sparse-sim-ionq", "currentAvailability": "Available",
+        "averageQueueTime": 1, "statusPage": ""}, {"id": "echo-output", "currentAvailability":
+        "Available", "averageQueueTime": 1, "statusPage": ""}]}, {"id": "qci", "currentAvailability":
+        "Degraded", "targets": [{"id": "qci.simulator", "currentAvailability": "Available",
+        "averageQueueTime": 1, "statusPage": "https://quantumcircuits.com"}, {"id":
+        "qci.machine1", "currentAvailability": "Unavailable", "averageQueueTime":
         1, "statusPage": "https://quantumcircuits.com"}, {"id": "qci.simulator.noisy",
         "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": "https://quantumcircuits.com"}]},
-        {"id": "Microsoft.Test", "currentAvailability": "Available", "targets": [{"id":
-        "echo-rigetti", "currentAvailability": "Available", "averageQueueTime": 1,
-        "statusPage": ""}, {"id": "echo-quantinuum", "currentAvailability": "Available",
-        "averageQueueTime": 1, "statusPage": ""}, {"id": "echo-qci", "currentAvailability":
-        "Available", "averageQueueTime": 1, "statusPage": ""}, {"id": "echo-ionq",
-        "currentAvailability": "Available", "averageQueueTime": 1, "statusPage": ""},
-        {"id": "sparse-sim-rigetti", "currentAvailability": "Available", "averageQueueTime":
-        1, "statusPage": ""}, {"id": "sparse-sim-quantinuum", "currentAvailability":
-        "Available", "averageQueueTime": 1, "statusPage": ""}, {"id": "sparse-sim-qci",
-        "currentAvailability": "Available", "averageQueueTime": 1, "statusPage": ""},
-        {"id": "sparse-sim-ionq", "currentAvailability": "Available", "averageQueueTime":
-        1, "statusPage": ""}, {"id": "echo-output", "currentAvailability": "Available",
-        "averageQueueTime": 1, "statusPage": ""}]}], "nextLink": null, "access_token":
-        "fake_token"}'
+        {"id": "quantinuum", "currentAvailability": "Degraded", "targets": [{"id":
+        "quantinuum.qpu.h1-1", "currentAvailability": "Available", "averageQueueTime":
+        102866, "statusPage": "https://www.quantinuum.com/hardware/h1"}, {"id": "quantinuum.sim.h1-1sc",
+        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        {"id": "quantinuum.qpu.h1-2", "currentAvailability": "Unavailable", "averageQueueTime":
+        0, "statusPage": "https://www.quantinuum.com/hardware/h1"}, {"id": "quantinuum.sim.h1-2sc",
+        "currentAvailability": "Unavailable", "averageQueueTime": 0, "statusPage":
+        "https://www.quantinuum.com/hardware/h1"}, {"id": "quantinuum.sim.h1-1e",
+        "currentAvailability": "Available", "averageQueueTime": 1023, "statusPage":
+        "https://www.quantinuum.com/hardware/h1"}, {"id": "quantinuum.sim.h1-2e",
+        "currentAvailability": "Unavailable", "averageQueueTime": 0, "statusPage":
+        "https://www.quantinuum.com/hardware/h1"}, {"id": "quantinuum.qpu.h2-1", "currentAvailability":
+        "Available", "averageQueueTime": 23280, "statusPage": "https://www.quantinuum.com/hardware/h2"},
+        {"id": "quantinuum.sim.h2-1sc", "currentAvailability": "Available", "averageQueueTime":
+        13, "statusPage": "https://www.quantinuum.com/hardware/h2"}, {"id": "quantinuum.sim.h2-1e",
+        "currentAvailability": "Available", "averageQueueTime": 889, "statusPage":
+        "https://www.quantinuum.com/hardware/h2"}, {"id": "quantinuum.sim.h1-1sc-preview",
+        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        {"id": "quantinuum.sim.h1-2sc-preview", "currentAvailability": "Unavailable",
+        "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        {"id": "quantinuum.sim.h1-1e-preview", "currentAvailability": "Available",
+        "averageQueueTime": 1023, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        {"id": "quantinuum.sim.h1-2e-preview", "currentAvailability": "Unavailable",
+        "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        {"id": "quantinuum.qpu.h1-1-preview", "currentAvailability": "Available",
+        "averageQueueTime": 102866, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        {"id": "quantinuum.qpu.h1-2-preview", "currentAvailability": "Unavailable",
+        "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h1"}]}],
+        "nextLink": null, "access_token": "fake_token"}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '5502'
+      - '5753'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -149,13 +151,13 @@ interactions:
     uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/storage/sasUri?api-version=2022-09-12-preview&test-sequence-id=1
   response:
     body:
-      string: '{"sasUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+      string: '{"sasUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racwl",
         "access_token": "fake_token"}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '190'
+      - '191'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -173,24 +175,24 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-blob/12.17.0 Python/3.9.18 (Windows-10-10.0.22621-SP0)
+      - azsdk-python-storage-blob/12.19.0 Python/3.9.18 (Windows-10-10.0.22621-SP0)
       x-ms-date:
-      - Sat, 09 Sep 2023 00:31:09 GMT
+      - Thu, 01 Feb 2024 04:07:18 GMT
       x-ms-version:
-      - '2023-01-03'
+      - '2023-11-03'
     method: GET
-    uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?restype=container&sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
+    uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?restype=container&sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racwl
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerNotFound</Code><Message>The
-        specified container does not exist.\nRequestId:1295a079-001e-002e-6db4-e2117d000000\nTime:2023-09-09T00:31:10.4126730Z</Message></Error>"
+        specified container does not exist.\nRequestId:1e927c1f-001e-006e-2bc4-5479ef000000\nTime:2024-02-01T04:07:19.4450543Z</Message></Error>"
     headers:
       content-length:
       - '223'
       content-type:
       - application/xml
       x-ms-version:
-      - '2023-01-03'
+      - '2023-11-03'
     status:
       code: 404
       message: The specified container does not exist.
@@ -206,13 +208,13 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-blob/12.17.0 Python/3.9.18 (Windows-10-10.0.22621-SP0)
+      - azsdk-python-storage-blob/12.19.0 Python/3.9.18 (Windows-10-10.0.22621-SP0)
       x-ms-date:
-      - Sat, 09 Sep 2023 00:31:10 GMT
+      - Thu, 01 Feb 2024 04:07:19 GMT
       x-ms-version:
-      - '2023-01-03'
+      - '2023-11-03'
     method: PUT
-    uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?restype=container&sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
+    uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?restype=container&sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racwl
   response:
     body:
       string: ''
@@ -220,7 +222,7 @@ interactions:
       content-length:
       - '0'
       x-ms-version:
-      - '2023-01-03'
+      - '2023-11-03'
     status:
       code: 201
       message: Created
@@ -234,13 +236,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-blob/12.17.0 Python/3.9.18 (Windows-10-10.0.22621-SP0)
+      - azsdk-python-storage-blob/12.19.0 Python/3.9.18 (Windows-10-10.0.22621-SP0)
       x-ms-date:
-      - Sat, 09 Sep 2023 00:31:10 GMT
+      - Thu, 01 Feb 2024 04:07:19 GMT
       x-ms-version:
-      - '2023-01-03'
+      - '2023-11-03'
     method: GET
-    uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?restype=container&sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
+    uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?restype=container&sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racwl
   response:
     body:
       string: ''
@@ -252,7 +254,7 @@ interactions:
       x-ms-lease-status:
       - unlocked
       x-ms-version:
-      - '2023-01-03'
+      - '2023-11-03'
     status:
       code: 200
       message: OK
@@ -260,7 +262,8 @@ interactions:
     body: 'b''BC\xc0\xde5\x14\x00\x00\x05\x00\x00\x00b\x0c0$JY\xbef\x8d\xfb\xb4\xaf\x0bQ\x80L\x01\x00\x00\x00!\x0c\x00\x00\xc4\x01\x00\x00\x0b\x02!\x00\x02\x00\x00\x00\x16\x00\x00\x00\x07\x81#\x91A\xc8\x04I\x06\x1029\x92\x01\x84\x0c%\x05\x08\x19\x1e\x04\x8bb\x80\x14E\x02B\x92\x0bB\xa4\x102\x148\x08\x18K\n2R\x88Hp\xc4!#D\x12\x87\x8c\x10A\x92\x02d\xc8\x08\xb1\x14
       CF\x88 \xc9\x012R\x84\x18*(*\x901|\xb0\\\x91 \xc5\xc8\x00\x00\x00\x89 \x00\x00\x18\x00\x00\x002"H\t
       bF\x00!+$\x98\x14!%$\x98\x14\x19\''\x0c\x85\xa4\x90`Rd\\ $e\x82\xe0\x1a\x010\x01\xa00G\x80\xd00\x02
-      T\xb0P\xa9\x00\x99\xc6\x08\x00:F\x00\x88\x12\x1a+!Q\xcb4F\x00\xd02\x03@\x8c\xda\x1c\x01(\x98\x01<B\xd0\x0c\x80\x11\x92\x03\x01s\x04`0G\x10\x00\x00\x00Q\x18\x00\x000\x00\x00\x00\x1b\xd6!\xf8\xff\xff\xff\xffa(\x07w\xa0\x07y\xc8\x87_\x80\x87wH\x07w\xa0\x07\x80p\x87zh\x87_\x90\x87r\x88\x87zH\x07y(\x07r\xf8\x85x\xa8\x07qH\x07z\x98\x07`\x0e\x00\xc2\x1d\xea\xa1\x1d~A\x1e\xca!\x1e\xea!\x1d\xe4\xa1\x1c\xc8\xe1\x17\xe4\xa1\x1c\xe6\xa1\x1e\xd8\x81\x1e\xe6\x01\xc8\x03`x\x87z\xa0\x07x\xa8\x07z\xf8\x05v\x08\x07q(\x07vH\x07w8\x87_\x98\x87q@\x87rh\x87p\x00\x88xH\x07y\xf8\x05x\x90\x87w0\x87t`\x87r\x98\x07`\x1c\xeaa\x1e\xe8\xe1\x1d\xda\x01\xd8\x00\t\xff\xff\xff\xff?\x0c\xe9
+      T\xb0P\xa9\x00\x99\xc6\x08\x00:F\x00\x88\x12\x1a+!Q\xcb4F\x00\xd02\x03@\x8c\xda\x1c\x01(\x98\x01<B\xd0\x0c\x80\x11\x92\x03\x01s\x04`0G\x10\x00\x00\x00Q\x18\x00\x000\x00\x00\x00\x1b\xd6!\xf8\xff\xff\xff\xffa(\x07w\xa0\x07y\xc8\x87_\x80\x87wH\x07w\xa0\x07`x\x87z\xa0\x07x\xa8\x07z\xf8\x05v\x08\x07q(\x07vH\x07w8\x87_\x98\x87q@\x87rh\x87p\x00\x88xH\x07y\xf8\x05x\x90\x87w0\x87t`\x87r\x98\x07`\x1c\xeaa\x1e\xe8\xe1\x1d\xda\x01
+      \xe4\xa1\x1c\xe2\xa1\x1e\xd2A\x1e\xca\x81\x1c~\xc1\x1d\xea\xa1\x1d~!\x1e\xeaA\x1c\xd2\x81\x1e\xe6\x01\x98\x03\x80\x90\x87r\x88\x87zH\x07y(\x07r\xf8\x05w\xa8\x87v\xf8\x05y(\x87y\xa8\x07v\xa0\x87y\x00\xf2\x00\xd8\x00\t\xff\xff\xff\xff?\x0c\xe9
       \x0f\xf2P\x0e\xf6P\x0e\xf20\x0f\xe9 \x0e\xecP\x0e\xc0\x06b\x10\x00:\x00\x00\x00I\x18\x00\x00\x02\x00\x00\x00\x13\x82`\x82
       \x0c\x00\x00\x1a!\x0cY\x04\xc0$\x1cC*@\t\x00\x00\x08\x00\x00\x00\x00\x00\x00\x00\x00\x00\x14`H\xa5d\x05\x10\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x80\x02\x0c\xa9\xc6\xe0J\x80\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x14`H\xa5\x07X\x03\x04\x80\x00\x00\x00\x00\x00\x00\x00\x00\x00\xa0\x00C*Y\x10\x03\x08\x08\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00@\x01\x86T\xf40\x06\x12\x10\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x80\x02Hl\x10(\x8a\x1c\x00\x00\x90\x05\x02\x00\x00\x00\x07\x00\x00\x002\x1e\x98\x10\x19\x11L\x90\x8c\t&G\xc6\x04C\xaa%P\x0e#\x00dG\x00\x00\x00\x00\x00\xb1\x18\x00\x00\x97\x00\x00\x003\x08\x80\x1c\xc4\xe1\x1cf\x14\x01=\x88C8\x84\xc3\x8cB\x80\x07yx\x07s\x98q\x0c\xe6\x00\x0f\xed\x10\x0e\xf4\x80\x0e3\x0cB\x1e\xc2\xc1\x1d\xce\xa1\x1cf0\x05=\x88C8\x84\x83\x1b\xcc\x03=\xc8C=\x8c\x03=\xccx\x8ctp\x07{\x08\x07yH\x87pp\x07zp\x03vx\x87p
       \x87\x19\xcc\x11\x0e\xec\x90\x0e\xe10\x0fn0\x0f\xe3\xf0\x0e\xf0P\x0e3\x10\xc4\x1d\xde!\x1c\xd8!\x1d\xc2a\x1ef0\x89;\xbc\x83;\xd0C9\xb4\x03<\xbc\x83<\x84\x03;\xcc\xf0\x14v`\x07{h\x077h\x87rh\x077\x80\x87p\x90\x87p`\x07v(\x07v\xf8\x05vx\x87w\x80\x87_\x08\x87q\x18\x87r\x98\x87y\x98\x81,\xee\xf0\x0e\xee\xe0\x0e\xf5\xc0\x0e\xec0\x03b\xc8\xa1\x1c\xe4\xa1\x1c\xcc\xa1\x1c\xe4\xa1\x1c\xdca\x1c\xca!\x1c\xc4\x81\x1d\xcaa\x06\xd6\x90C9\xc8C9\x98C9\xc8C9\xb8\xc38\x94C8\x88\x03;\x94\xc3/\xbc\x83<\xfc\x82;\xd4\x03;\xb0\xc3\x0c\xc7i\x87pX\x87rp\x83th\x07x`\x87t\x18\x87t\xa0\x87\x19\xceS\x0f\xee\x00\x0f\xf2P\x0e\xe4\x90\x0e\xe3@\x0f\xe1
@@ -291,15 +294,15 @@ interactions:
       Content-Type:
       - application/octet-stream
       User-Agent:
-      - azsdk-python-storage-blob/12.17.0 Python/3.9.18 (Windows-10-10.0.22621-SP0)
+      - azsdk-python-storage-blob/12.19.0 Python/3.9.18 (Windows-10-10.0.22621-SP0)
       x-ms-blob-type:
       - BlockBlob
       x-ms-date:
-      - Sat, 09 Sep 2023 00:31:10 GMT
+      - Thu, 01 Feb 2024 04:07:19 GMT
       x-ms-version:
-      - '2023-01-03'
+      - '2023-11-03'
     method: PUT
-    uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw
+    uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racwl
   response:
     body:
       string: ''
@@ -307,14 +310,14 @@ interactions:
       content-length:
       - '0'
       x-ms-version:
-      - '2023-01-03'
+      - '2023-11-03'
     status:
       code: 201
       message: Created
 - request:
     body: 'b''{"id": "00000000-0000-0000-0000-000000000001", "name": "endian0cr3",
       "providerId": "qci", "target": "qci.simulator", "itemType": "Job", "containerUri":
-      "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+      "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racwl",
       "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData",
       "inputDataFormat": "qir.v1", "inputParams": {"shots": 100, "count": 100, "items":
       [{"entryPoint": "endian0cr3", "arguments": []}]}, "metadata": {"qiskit": "True",
@@ -328,7 +331,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '711'
+      - '712'
       Content-Type:
       - application/json
       User-Agent:
@@ -337,23 +340,23 @@ interactions:
     uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000001?api-version=2022-09-12-preview&test-sequence-id=1
   response:
     body:
-      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racwl",
         "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData",
         "inputDataFormat": "qir.v1", "inputParams": {"shots": 100, "count": 100, "items":
         [{"entryPoint": "endian0cr3", "arguments": []}]}, "metadata": {"qiskit": "True",
         "name": "endian0cr3", "num_qubits": "3", "metadata": "{\"some\": \"data\"}"},
         "sessionId": null, "status": "Waiting", "jobType": "QuantumComputing", "outputDataFormat":
-        "microsoft.quantum-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+        "microsoft.quantum-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racwl",
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         null, "errorData": null, "isCancelling": false, "tags": [], "name": "endian0cr3",
         "id": "00000000-0000-0000-0000-000000000001", "providerId": "qci", "target":
-        "qci.simulator", "creationTime": "2023-09-09T00:31:11.7212784+00:00", "endExecutionTime":
+        "qci.simulator", "creationTime": "2024-02-01T04:07:20.711356+00:00", "endExecutionTime":
         null, "costEstimate": null, "itemType": "Job", "access_token": "fake_token"}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '1226'
+      - '1227'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -376,7 +379,7 @@ interactions:
     uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000001?api-version=2022-09-12-preview&test-sequence-id=1
   response:
     body:
-      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racwl",
         "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3Dendian0cr3-00000000-0000-0000-0000-000000000001.input.json",
         "inputDataFormat": "qir.v1", "inputParams": {"shots": 100, "count": 100, "items":
         [{"entryPoint": "endian0cr3", "arguments": []}]}, "metadata": {"qiskit": "True",
@@ -386,7 +389,7 @@ interactions:
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         null, "errorData": null, "isCancelling": false, "tags": [], "name": "endian0cr3",
         "id": "00000000-0000-0000-0000-000000000001", "providerId": "qci", "target":
-        "qci.simulator", "creationTime": "2023-09-09T00:31:11.7212784+00:00", "endExecutionTime":
+        "qci.simulator", "creationTime": "2024-02-01T04:07:20.711356+00:00", "endExecutionTime":
         null, "costEstimate": null, "itemType": "Job", "access_token": "fake_token"}'
     headers:
       connection:
@@ -415,7 +418,7 @@ interactions:
     uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000001?api-version=2022-09-12-preview&test-sequence-id=2
   response:
     body:
-      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racwl",
         "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3Dendian0cr3-00000000-0000-0000-0000-000000000001.input.json",
         "inputDataFormat": "qir.v1", "inputParams": {"shots": 100, "count": 100, "items":
         [{"entryPoint": "endian0cr3", "arguments": []}]}, "metadata": {"qiskit": "True",
@@ -425,7 +428,7 @@ interactions:
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         null, "errorData": null, "isCancelling": false, "tags": [], "name": "endian0cr3",
         "id": "00000000-0000-0000-0000-000000000001", "providerId": "qci", "target":
-        "qci.simulator", "creationTime": "2023-09-09T00:31:11.7212784+00:00", "endExecutionTime":
+        "qci.simulator", "creationTime": "2024-02-01T04:07:20.711356+00:00", "endExecutionTime":
         null, "costEstimate": null, "itemType": "Job", "access_token": "fake_token"}'
     headers:
       connection:
@@ -454,7 +457,7 @@ interactions:
     uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000001?api-version=2022-09-12-preview&test-sequence-id=3
   response:
     body:
-      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racwl",
         "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3Dendian0cr3-00000000-0000-0000-0000-000000000001.input.json",
         "inputDataFormat": "qir.v1", "inputParams": {"shots": 100, "count": 100, "items":
         [{"entryPoint": "endian0cr3", "arguments": []}]}, "metadata": {"qiskit": "True",
@@ -464,7 +467,7 @@ interactions:
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         null, "errorData": null, "isCancelling": false, "tags": [], "name": "endian0cr3",
         "id": "00000000-0000-0000-0000-000000000001", "providerId": "qci", "target":
-        "qci.simulator", "creationTime": "2023-09-09T00:31:11.7212784+00:00", "endExecutionTime":
+        "qci.simulator", "creationTime": "2024-02-01T04:07:20.711356+00:00", "endExecutionTime":
         null, "costEstimate": null, "itemType": "Job", "access_token": "fake_token"}'
     headers:
       connection:
@@ -493,7 +496,7 @@ interactions:
     uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000001?api-version=2022-09-12-preview&test-sequence-id=4
   response:
     body:
-      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racwl",
         "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3Dendian0cr3-00000000-0000-0000-0000-000000000001.input.json",
         "inputDataFormat": "qir.v1", "inputParams": {"shots": 100, "count": 100, "items":
         [{"entryPoint": "endian0cr3", "arguments": []}]}, "metadata": {"qiskit": "True",
@@ -503,7 +506,7 @@ interactions:
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         null, "errorData": null, "isCancelling": false, "tags": [], "name": "endian0cr3",
         "id": "00000000-0000-0000-0000-000000000001", "providerId": "qci", "target":
-        "qci.simulator", "creationTime": "2023-09-09T00:31:11.7212784+00:00", "endExecutionTime":
+        "qci.simulator", "creationTime": "2024-02-01T04:07:20.711356+00:00", "endExecutionTime":
         null, "costEstimate": null, "itemType": "Job", "access_token": "fake_token"}'
     headers:
       connection:
@@ -532,7 +535,7 @@ interactions:
     uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000001?api-version=2022-09-12-preview&test-sequence-id=5
   response:
     body:
-      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racwl",
         "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3Dendian0cr3-00000000-0000-0000-0000-000000000001.input.json",
         "inputDataFormat": "qir.v1", "inputParams": {"shots": 100, "count": 100, "items":
         [{"entryPoint": "endian0cr3", "arguments": []}]}, "metadata": {"qiskit": "True",
@@ -542,7 +545,7 @@ interactions:
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         null, "errorData": null, "isCancelling": false, "tags": [], "name": "endian0cr3",
         "id": "00000000-0000-0000-0000-000000000001", "providerId": "qci", "target":
-        "qci.simulator", "creationTime": "2023-09-09T00:31:11.7212784+00:00", "endExecutionTime":
+        "qci.simulator", "creationTime": "2024-02-01T04:07:20.711356+00:00", "endExecutionTime":
         null, "costEstimate": null, "itemType": "Job", "access_token": "fake_token"}'
     headers:
       connection:
@@ -571,7 +574,7 @@ interactions:
     uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000001?api-version=2022-09-12-preview&test-sequence-id=6
   response:
     body:
-      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racwl",
         "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3Dendian0cr3-00000000-0000-0000-0000-000000000001.input.json",
         "inputDataFormat": "qir.v1", "inputParams": {"shots": 100, "count": 100, "items":
         [{"entryPoint": "endian0cr3", "arguments": []}]}, "metadata": {"qiskit": "True",
@@ -581,7 +584,7 @@ interactions:
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         null, "errorData": null, "isCancelling": false, "tags": [], "name": "endian0cr3",
         "id": "00000000-0000-0000-0000-000000000001", "providerId": "qci", "target":
-        "qci.simulator", "creationTime": "2023-09-09T00:31:11.7212784+00:00", "endExecutionTime":
+        "qci.simulator", "creationTime": "2024-02-01T04:07:20.711356+00:00", "endExecutionTime":
         null, "costEstimate": null, "itemType": "Job", "access_token": "fake_token"}'
     headers:
       connection:
@@ -610,7 +613,7 @@ interactions:
     uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000001?api-version=2022-09-12-preview&test-sequence-id=7
   response:
     body:
-      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racwl",
         "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3Dendian0cr3-00000000-0000-0000-0000-000000000001.input.json",
         "inputDataFormat": "qir.v1", "inputParams": {"shots": 100, "count": 100, "items":
         [{"entryPoint": "endian0cr3", "arguments": []}]}, "metadata": {"qiskit": "True",
@@ -618,16 +621,15 @@ interactions:
         "sessionId": null, "status": "Waiting", "jobType": "QuantumComputing", "outputDataFormat":
         "microsoft.quantum-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3Dendian0cr3-00000000-0000-0000-0000-000000000001.output.json",
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
-        {"count": 1}, "errorData": null, "isCancelling": false, "tags": [], "name":
-        "endian0cr3", "id": "00000000-0000-0000-0000-000000000001", "providerId":
-        "qci", "target": "qci.simulator", "creationTime": "2023-09-09T00:31:11.7212784+00:00",
-        "endExecutionTime": null, "costEstimate": null, "itemType": "Job", "access_token":
-        "fake_token"}'
+        null, "errorData": null, "isCancelling": false, "tags": [], "name": "endian0cr3",
+        "id": "00000000-0000-0000-0000-000000000001", "providerId": "qci", "target":
+        "qci.simulator", "creationTime": "2024-02-01T04:07:20.711356+00:00", "endExecutionTime":
+        null, "costEstimate": null, "itemType": "Job", "access_token": "fake_token"}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '1459'
+      - '1451'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -650,7 +652,7 @@ interactions:
     uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000001?api-version=2022-09-12-preview&test-sequence-id=8
   response:
     body:
-      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racwl",
         "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3Dendian0cr3-00000000-0000-0000-0000-000000000001.input.json",
         "inputDataFormat": "qir.v1", "inputParams": {"shots": 100, "count": 100, "items":
         [{"entryPoint": "endian0cr3", "arguments": []}]}, "metadata": {"qiskit": "True",
@@ -660,7 +662,7 @@ interactions:
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         {"count": 1}, "errorData": null, "isCancelling": false, "tags": [], "name":
         "endian0cr3", "id": "00000000-0000-0000-0000-000000000001", "providerId":
-        "qci", "target": "qci.simulator", "creationTime": "2023-09-09T00:31:11.7212784+00:00",
+        "qci", "target": "qci.simulator", "creationTime": "2024-02-01T04:07:20.711356+00:00",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Job", "access_token":
         "fake_token"}'
     headers:
@@ -690,7 +692,7 @@ interactions:
     uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000001?api-version=2022-09-12-preview&test-sequence-id=9
   response:
     body:
-      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racwl",
         "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3Dendian0cr3-00000000-0000-0000-0000-000000000001.input.json",
         "inputDataFormat": "qir.v1", "inputParams": {"shots": 100, "count": 100, "items":
         [{"entryPoint": "endian0cr3", "arguments": []}]}, "metadata": {"qiskit": "True",
@@ -700,7 +702,7 @@ interactions:
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         {"count": 1}, "errorData": null, "isCancelling": false, "tags": [], "name":
         "endian0cr3", "id": "00000000-0000-0000-0000-000000000001", "providerId":
-        "qci", "target": "qci.simulator", "creationTime": "2023-09-09T00:31:11.7212784+00:00",
+        "qci", "target": "qci.simulator", "creationTime": "2024-02-01T04:07:20.711356+00:00",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Job", "access_token":
         "fake_token"}'
     headers:
@@ -730,24 +732,24 @@ interactions:
     uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000001?api-version=2022-09-12-preview&test-sequence-id=10
   response:
     body:
-      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racwl",
         "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3Dendian0cr3-00000000-0000-0000-0000-000000000001.input.json",
         "inputDataFormat": "qir.v1", "inputParams": {"shots": 100, "count": 100, "items":
         [{"entryPoint": "endian0cr3", "arguments": []}]}, "metadata": {"qiskit": "True",
         "name": "endian0cr3", "num_qubits": "3", "metadata": "{\"some\": \"data\"}"},
-        "sessionId": null, "status": "Waiting", "jobType": "QuantumComputing", "outputDataFormat":
+        "sessionId": null, "status": "Finishing", "jobType": "QuantumComputing", "outputDataFormat":
         "microsoft.quantum-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3Dendian0cr3-00000000-0000-0000-0000-000000000001.output.json",
-        "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
-        {"count": 1}, "errorData": null, "isCancelling": false, "tags": [], "name":
-        "endian0cr3", "id": "00000000-0000-0000-0000-000000000001", "providerId":
-        "qci", "target": "qci.simulator", "creationTime": "2023-09-09T00:31:11.7212784+00:00",
-        "endExecutionTime": null, "costEstimate": null, "itemType": "Job", "access_token":
-        "fake_token"}'
+        "beginExecutionTime": "2024-02-01T04:07:33.560305Z", "cancellationTime": null,
+        "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling": false,
+        "tags": [], "name": "endian0cr3", "id": "00000000-0000-0000-0000-000000000001",
+        "providerId": "qci", "target": "qci.simulator", "creationTime": "2024-02-01T04:07:20.711356+00:00",
+        "endExecutionTime": "2024-02-01T04:07:34.890845Z", "costEstimate": null, "itemType":
+        "Job", "access_token": "fake_token"}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '1459'
+      - '1511'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -770,24 +772,26 @@ interactions:
     uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000001?api-version=2022-09-12-preview&test-sequence-id=11
   response:
     body:
-      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racwl",
         "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3Dendian0cr3-00000000-0000-0000-0000-000000000001.input.json",
         "inputDataFormat": "qir.v1", "inputParams": {"shots": 100, "count": 100, "items":
         [{"entryPoint": "endian0cr3", "arguments": []}]}, "metadata": {"qiskit": "True",
         "name": "endian0cr3", "num_qubits": "3", "metadata": "{\"some\": \"data\"}"},
         "sessionId": null, "status": "Succeeded", "jobType": "QuantumComputing", "outputDataFormat":
         "microsoft.quantum-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3Dendian0cr3-00000000-0000-0000-0000-000000000001.output.json",
-        "beginExecutionTime": "2023-09-09T00:31:30.974278Z", "cancellationTime": null,
+        "beginExecutionTime": "2024-02-01T04:07:33.560305Z", "cancellationTime": null,
         "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling": false,
         "tags": [], "name": "endian0cr3", "id": "00000000-0000-0000-0000-000000000001",
-        "providerId": "qci", "target": "qci.simulator", "creationTime": "2023-09-09T00:31:11.7212784+00:00",
-        "endExecutionTime": "2023-09-09T00:31:32.31446Z", "costEstimate": null, "itemType":
-        "Job", "access_token": "fake_token"}'
+        "providerId": "qci", "target": "qci.simulator", "creationTime": "2024-02-01T04:07:20.711356+00:00",
+        "endExecutionTime": "2024-02-01T04:07:34.890845Z", "costEstimate": {"currencyCode":
+        "USD", "events": [{"dimensionId": "jobseconds", "dimensionName": "Job Seconds",
+        "measureUnit": "second", "amountBilled": 1.0, "amountConsumed": 1.0, "unitPrice":
+        0.0}], "estimatedTotal": 0.0}, "itemType": "Job", "access_token": "fake_token"}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '1510'
+      - '1715'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -810,24 +814,26 @@ interactions:
     uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000001?api-version=2022-09-12-preview&test-sequence-id=12
   response:
     body:
-      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racwl",
         "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3Dendian0cr3-00000000-0000-0000-0000-000000000001.input.json",
         "inputDataFormat": "qir.v1", "inputParams": {"shots": 100, "count": 100, "items":
         [{"entryPoint": "endian0cr3", "arguments": []}]}, "metadata": {"qiskit": "True",
         "name": "endian0cr3", "num_qubits": "3", "metadata": "{\"some\": \"data\"}"},
         "sessionId": null, "status": "Succeeded", "jobType": "QuantumComputing", "outputDataFormat":
         "microsoft.quantum-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3Dendian0cr3-00000000-0000-0000-0000-000000000001.output.json",
-        "beginExecutionTime": "2023-09-09T00:31:30.974278Z", "cancellationTime": null,
+        "beginExecutionTime": "2024-02-01T04:07:33.560305Z", "cancellationTime": null,
         "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling": false,
         "tags": [], "name": "endian0cr3", "id": "00000000-0000-0000-0000-000000000001",
-        "providerId": "qci", "target": "qci.simulator", "creationTime": "2023-09-09T00:31:11.7212784+00:00",
-        "endExecutionTime": "2023-09-09T00:31:32.31446Z", "costEstimate": null, "itemType":
-        "Job", "access_token": "fake_token"}'
+        "providerId": "qci", "target": "qci.simulator", "creationTime": "2024-02-01T04:07:20.711356+00:00",
+        "endExecutionTime": "2024-02-01T04:07:34.890845Z", "costEstimate": {"currencyCode":
+        "USD", "events": [{"dimensionId": "jobseconds", "dimensionName": "Job Seconds",
+        "measureUnit": "second", "amountBilled": 1.0, "amountConsumed": 1.0, "unitPrice":
+        0.0}], "estimatedTotal": 0.0}, "itemType": "Job", "access_token": "fake_token"}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '1510'
+      - '1715'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -850,24 +856,26 @@ interactions:
     uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000001?api-version=2022-09-12-preview&test-sequence-id=13
   response:
     body:
-      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racwl",
         "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3Dendian0cr3-00000000-0000-0000-0000-000000000001.input.json",
         "inputDataFormat": "qir.v1", "inputParams": {"shots": 100, "count": 100, "items":
         [{"entryPoint": "endian0cr3", "arguments": []}]}, "metadata": {"qiskit": "True",
         "name": "endian0cr3", "num_qubits": "3", "metadata": "{\"some\": \"data\"}"},
         "sessionId": null, "status": "Succeeded", "jobType": "QuantumComputing", "outputDataFormat":
         "microsoft.quantum-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3Dendian0cr3-00000000-0000-0000-0000-000000000001.output.json",
-        "beginExecutionTime": "2023-09-09T00:31:30.974278Z", "cancellationTime": null,
+        "beginExecutionTime": "2024-02-01T04:07:33.560305Z", "cancellationTime": null,
         "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling": false,
         "tags": [], "name": "endian0cr3", "id": "00000000-0000-0000-0000-000000000001",
-        "providerId": "qci", "target": "qci.simulator", "creationTime": "2023-09-09T00:31:11.7212784+00:00",
-        "endExecutionTime": "2023-09-09T00:31:32.31446Z", "costEstimate": null, "itemType":
-        "Job", "access_token": "fake_token"}'
+        "providerId": "qci", "target": "qci.simulator", "creationTime": "2024-02-01T04:07:20.711356+00:00",
+        "endExecutionTime": "2024-02-01T04:07:34.890845Z", "costEstimate": {"currencyCode":
+        "USD", "events": [{"dimensionId": "jobseconds", "dimensionName": "Job Seconds",
+        "measureUnit": "second", "amountBilled": 1.0, "amountConsumed": 1.0, "unitPrice":
+        0.0}], "estimatedTotal": 0.0}, "itemType": "Job", "access_token": "fake_token"}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '1510'
+      - '1715'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -890,76 +898,80 @@ interactions:
     uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/providerStatus?api-version=2022-09-12-preview&test-sequence-id=2
   response:
     body:
-      string: '{"value": [{"id": "ionq", "currentAvailability": "Degraded", "targets":
-        [{"id": "ionq.qpu", "currentAvailability": "Available", "averageQueueTime":
-        0, "statusPage": "https://status.ionq.co"}, {"id": "ionq.qpu.aria-1", "currentAvailability":
-        "Unavailable", "averageQueueTime": 756396, "statusPage": "https://status.ionq.co"},
-        {"id": "ionq.qpu.aria-2", "currentAvailability": "Available", "averageQueueTime":
-        78328, "statusPage": "https://status.ionq.co"}, {"id": "ionq.simulator", "currentAvailability":
-        "Available", "averageQueueTime": 1314, "statusPage": "https://status.ionq.co"}]},
-        {"id": "microsoft-qc", "currentAvailability": "Available", "targets": [{"id":
-        "microsoft.estimator", "currentAvailability": "Available", "averageQueueTime":
-        0, "statusPage": null}]}, {"id": "pasqal", "currentAvailability": "Available",
-        "targets": [{"id": "pasqal.sim.emu_free", "currentAvailability": "Available",
-        "averageQueueTime": 0, "statusPage": "https://pasqal.com"}, {"id": "pasqal.sim.emu_tn",
+      string: '{"value": [{"id": "microsoft-elements", "currentAvailability": "Available",
+        "targets": [{"id": "microsoft.dft", "currentAvailability": "Available", "averageQueueTime":
+        0, "statusPage": null}]}, {"id": "ionq", "currentAvailability": "Degraded",
+        "targets": [{"id": "ionq.qpu", "currentAvailability": "Available", "averageQueueTime":
+        382014, "statusPage": "https://status.ionq.co"}, {"id": "ionq.qpu.aria-1",
+        "currentAvailability": "Available", "averageQueueTime": 1492484, "statusPage":
+        "https://status.ionq.co"}, {"id": "ionq.qpu.aria-2", "currentAvailability":
+        "Unavailable", "averageQueueTime": 1592812, "statusPage": "https://status.ionq.co"},
+        {"id": "ionq.simulator", "currentAvailability": "Available", "averageQueueTime":
+        4, "statusPage": "https://status.ionq.co"}]}, {"id": "microsoft-qc", "currentAvailability":
+        "Available", "targets": [{"id": "microsoft.estimator", "currentAvailability":
+        "Available", "averageQueueTime": 0, "statusPage": null}]}, {"id": "pasqal",
+        "currentAvailability": "Degraded", "targets": [{"id": "pasqal.sim.emu-tn",
         "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": "https://pasqal.com"},
-        {"id": "pasqal.qpu.fresnel", "currentAvailability": "Available", "averageQueueTime":
-        0, "statusPage": "https://pasqal.com"}]}, {"id": "quantinuum", "currentAvailability":
-        "Degraded", "targets": [{"id": "quantinuum.qpu.h1-1", "currentAvailability":
-        "Unavailable", "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h1"},
-        {"id": "quantinuum.sim.h1-1sc", "currentAvailability": "Available", "averageQueueTime":
-        0, "statusPage": "https://www.quantinuum.com/hardware/h1"}, {"id": "quantinuum.qpu.h1-2",
-        "currentAvailability": "Unavailable", "averageQueueTime": 0, "statusPage":
-        "https://www.quantinuum.com/hardware/h1"}, {"id": "quantinuum.sim.h1-2sc",
-        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h1"},
-        {"id": "quantinuum.sim.h1-1e", "currentAvailability": "Available", "averageQueueTime":
-        7, "statusPage": "https://www.quantinuum.com/hardware/h1"}, {"id": "quantinuum.sim.h1-2e",
-        "currentAvailability": "Available", "averageQueueTime": 8, "statusPage": "https://www.quantinuum.com/hardware/h1"},
-        {"id": "quantinuum.qpu.h2-1", "currentAvailability": "Unavailable", "averageQueueTime":
-        0, "statusPage": "https://www.quantinuum.com/hardware/h2"}, {"id": "quantinuum.sim.h2-1sc",
-        "currentAvailability": "Available", "averageQueueTime": 7, "statusPage": "https://www.quantinuum.com/hardware/h2"},
-        {"id": "quantinuum.sim.h2-1e", "currentAvailability": "Available", "averageQueueTime":
-        0, "statusPage": "https://www.quantinuum.com/hardware/h2"}, {"id": "quantinuum.sim.h1-1sc-preview",
-        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h1"},
-        {"id": "quantinuum.sim.h1-2sc-preview", "currentAvailability": "Available",
-        "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h1"},
-        {"id": "quantinuum.sim.h1-1e-preview", "currentAvailability": "Available",
-        "averageQueueTime": 7, "statusPage": "https://www.quantinuum.com/hardware/h1"},
-        {"id": "quantinuum.sim.h1-2e-preview", "currentAvailability": "Available",
-        "averageQueueTime": 8, "statusPage": "https://www.quantinuum.com/hardware/h1"},
-        {"id": "quantinuum.qpu.h1-1-preview", "currentAvailability": "Unavailable",
-        "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h1"},
-        {"id": "quantinuum.qpu.h1-2-preview", "currentAvailability": "Unavailable",
-        "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h1"}]},
-        {"id": "rigetti", "currentAvailability": "Degraded", "targets": [{"id": "rigetti.sim.qvm",
+        {"id": "pasqal.qpu.fresnel", "currentAvailability": "Degraded", "averageQueueTime":
+        0, "statusPage": "https://pasqal.com"}]}, {"id": "rigetti", "currentAvailability":
+        "Available", "targets": [{"id": "rigetti.sim.qvm", "currentAvailability":
+        "Available", "averageQueueTime": 5, "statusPage": "https://rigetti.statuspage.io/"},
+        {"id": "rigetti.qpu.aspen-m-3", "currentAvailability": "Available", "averageQueueTime":
+        5, "statusPage": "https://rigetti.statuspage.io/"}, {"id": "rigetti.qpu.ankaa-9q-1",
         "currentAvailability": "Available", "averageQueueTime": 5, "statusPage": "https://rigetti.statuspage.io/"},
-        {"id": "rigetti.qpu.aspen-m-2", "currentAvailability": "Unavailable", "averageQueueTime":
-        0, "statusPage": null}, {"id": "rigetti.qpu.aspen-m-3", "currentAvailability":
-        "Available", "averageQueueTime": 5, "statusPage": "https://rigetti.statuspage.io/"}]},
-        {"id": "qci", "currentAvailability": "Degraded", "targets": [{"id": "qci.simulator",
-        "currentAvailability": "Available", "averageQueueTime": 1, "statusPage": "https://quantumcircuits.com"},
-        {"id": "qci.machine1", "currentAvailability": "Unavailable", "averageQueueTime":
+        {"id": "rigetti.qpu.ankaa-2", "currentAvailability": "Available", "averageQueueTime":
+        5, "statusPage": "https://rigetti.statuspage.io/"}]}, {"id": "Microsoft.Test",
+        "currentAvailability": "Available", "targets": [{"id": "echo-rigetti", "currentAvailability":
+        "Available", "averageQueueTime": 1, "statusPage": ""}, {"id": "echo-quantinuum",
+        "currentAvailability": "Available", "averageQueueTime": 1, "statusPage": ""},
+        {"id": "echo-qci", "currentAvailability": "Available", "averageQueueTime":
+        1, "statusPage": ""}, {"id": "echo-ionq", "currentAvailability": "Available",
+        "averageQueueTime": 1, "statusPage": ""}, {"id": "sparse-sim-rigetti", "currentAvailability":
+        "Available", "averageQueueTime": 1, "statusPage": ""}, {"id": "sparse-sim-quantinuum",
+        "currentAvailability": "Available", "averageQueueTime": 1, "statusPage": ""},
+        {"id": "sparse-sim-qci", "currentAvailability": "Available", "averageQueueTime":
+        1, "statusPage": ""}, {"id": "sparse-sim-ionq", "currentAvailability": "Available",
+        "averageQueueTime": 1, "statusPage": ""}, {"id": "echo-output", "currentAvailability":
+        "Available", "averageQueueTime": 1, "statusPage": ""}]}, {"id": "qci", "currentAvailability":
+        "Degraded", "targets": [{"id": "qci.simulator", "currentAvailability": "Available",
+        "averageQueueTime": 1, "statusPage": "https://quantumcircuits.com"}, {"id":
+        "qci.machine1", "currentAvailability": "Unavailable", "averageQueueTime":
         1, "statusPage": "https://quantumcircuits.com"}, {"id": "qci.simulator.noisy",
         "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": "https://quantumcircuits.com"}]},
-        {"id": "Microsoft.Test", "currentAvailability": "Available", "targets": [{"id":
-        "echo-rigetti", "currentAvailability": "Available", "averageQueueTime": 1,
-        "statusPage": ""}, {"id": "echo-quantinuum", "currentAvailability": "Available",
-        "averageQueueTime": 1, "statusPage": ""}, {"id": "echo-qci", "currentAvailability":
-        "Available", "averageQueueTime": 1, "statusPage": ""}, {"id": "echo-ionq",
-        "currentAvailability": "Available", "averageQueueTime": 1, "statusPage": ""},
-        {"id": "sparse-sim-rigetti", "currentAvailability": "Available", "averageQueueTime":
-        1, "statusPage": ""}, {"id": "sparse-sim-quantinuum", "currentAvailability":
-        "Available", "averageQueueTime": 1, "statusPage": ""}, {"id": "sparse-sim-qci",
-        "currentAvailability": "Available", "averageQueueTime": 1, "statusPage": ""},
-        {"id": "sparse-sim-ionq", "currentAvailability": "Available", "averageQueueTime":
-        1, "statusPage": ""}, {"id": "echo-output", "currentAvailability": "Available",
-        "averageQueueTime": 1, "statusPage": ""}]}], "nextLink": null, "access_token":
-        "fake_token"}'
+        {"id": "quantinuum", "currentAvailability": "Degraded", "targets": [{"id":
+        "quantinuum.qpu.h1-1", "currentAvailability": "Available", "averageQueueTime":
+        102866, "statusPage": "https://www.quantinuum.com/hardware/h1"}, {"id": "quantinuum.sim.h1-1sc",
+        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        {"id": "quantinuum.qpu.h1-2", "currentAvailability": "Unavailable", "averageQueueTime":
+        0, "statusPage": "https://www.quantinuum.com/hardware/h1"}, {"id": "quantinuum.sim.h1-2sc",
+        "currentAvailability": "Unavailable", "averageQueueTime": 0, "statusPage":
+        "https://www.quantinuum.com/hardware/h1"}, {"id": "quantinuum.sim.h1-1e",
+        "currentAvailability": "Available", "averageQueueTime": 1021, "statusPage":
+        "https://www.quantinuum.com/hardware/h1"}, {"id": "quantinuum.sim.h1-2e",
+        "currentAvailability": "Unavailable", "averageQueueTime": 0, "statusPage":
+        "https://www.quantinuum.com/hardware/h1"}, {"id": "quantinuum.qpu.h2-1", "currentAvailability":
+        "Available", "averageQueueTime": 23280, "statusPage": "https://www.quantinuum.com/hardware/h2"},
+        {"id": "quantinuum.sim.h2-1sc", "currentAvailability": "Available", "averageQueueTime":
+        13, "statusPage": "https://www.quantinuum.com/hardware/h2"}, {"id": "quantinuum.sim.h2-1e",
+        "currentAvailability": "Available", "averageQueueTime": 889, "statusPage":
+        "https://www.quantinuum.com/hardware/h2"}, {"id": "quantinuum.sim.h1-1sc-preview",
+        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        {"id": "quantinuum.sim.h1-2sc-preview", "currentAvailability": "Unavailable",
+        "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        {"id": "quantinuum.sim.h1-1e-preview", "currentAvailability": "Available",
+        "averageQueueTime": 1021, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        {"id": "quantinuum.sim.h1-2e-preview", "currentAvailability": "Unavailable",
+        "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        {"id": "quantinuum.qpu.h1-1-preview", "currentAvailability": "Available",
+        "averageQueueTime": 102866, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        {"id": "quantinuum.qpu.h1-2-preview", "currentAvailability": "Unavailable",
+        "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h1"}]}],
+        "nextLink": null, "access_token": "fake_token"}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '5502'
+      - '5753'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -982,24 +994,26 @@ interactions:
     uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000001?api-version=2022-09-12-preview&test-sequence-id=14
   response:
     body:
-      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racwl",
         "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3Dendian0cr3-00000000-0000-0000-0000-000000000001.input.json",
         "inputDataFormat": "qir.v1", "inputParams": {"shots": 100, "count": 100, "items":
         [{"entryPoint": "endian0cr3", "arguments": []}]}, "metadata": {"qiskit": "True",
         "name": "endian0cr3", "num_qubits": "3", "metadata": "{\"some\": \"data\"}"},
         "sessionId": null, "status": "Succeeded", "jobType": "QuantumComputing", "outputDataFormat":
         "microsoft.quantum-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3Dendian0cr3-00000000-0000-0000-0000-000000000001.output.json",
-        "beginExecutionTime": "2023-09-09T00:31:30.974278Z", "cancellationTime": null,
+        "beginExecutionTime": "2024-02-01T04:07:33.560305Z", "cancellationTime": null,
         "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling": false,
         "tags": [], "name": "endian0cr3", "id": "00000000-0000-0000-0000-000000000001",
-        "providerId": "qci", "target": "qci.simulator", "creationTime": "2023-09-09T00:31:11.7212784+00:00",
-        "endExecutionTime": "2023-09-09T00:31:32.31446Z", "costEstimate": null, "itemType":
-        "Job", "access_token": "fake_token"}'
+        "providerId": "qci", "target": "qci.simulator", "creationTime": "2024-02-01T04:07:20.711356+00:00",
+        "endExecutionTime": "2024-02-01T04:07:34.890845Z", "costEstimate": {"currencyCode":
+        "USD", "events": [{"dimensionId": "jobseconds", "dimensionName": "Job Seconds",
+        "measureUnit": "second", "amountBilled": 1.0, "amountConsumed": 1.0, "unitPrice":
+        0.0}], "estimatedTotal": 0.0}, "itemType": "Job", "access_token": "fake_token"}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '1510'
+      - '1715'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -1022,24 +1036,26 @@ interactions:
     uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000001?api-version=2022-09-12-preview&test-sequence-id=15
   response:
     body:
-      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racwl",
         "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3Dendian0cr3-00000000-0000-0000-0000-000000000001.input.json",
         "inputDataFormat": "qir.v1", "inputParams": {"shots": 100, "count": 100, "items":
         [{"entryPoint": "endian0cr3", "arguments": []}]}, "metadata": {"qiskit": "True",
         "name": "endian0cr3", "num_qubits": "3", "metadata": "{\"some\": \"data\"}"},
         "sessionId": null, "status": "Succeeded", "jobType": "QuantumComputing", "outputDataFormat":
         "microsoft.quantum-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3Dendian0cr3-00000000-0000-0000-0000-000000000001.output.json",
-        "beginExecutionTime": "2023-09-09T00:31:30.974278Z", "cancellationTime": null,
+        "beginExecutionTime": "2024-02-01T04:07:33.560305Z", "cancellationTime": null,
         "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling": false,
         "tags": [], "name": "endian0cr3", "id": "00000000-0000-0000-0000-000000000001",
-        "providerId": "qci", "target": "qci.simulator", "creationTime": "2023-09-09T00:31:11.7212784+00:00",
-        "endExecutionTime": "2023-09-09T00:31:32.31446Z", "costEstimate": null, "itemType":
-        "Job", "access_token": "fake_token"}'
+        "providerId": "qci", "target": "qci.simulator", "creationTime": "2024-02-01T04:07:20.711356+00:00",
+        "endExecutionTime": "2024-02-01T04:07:34.890845Z", "costEstimate": {"currencyCode":
+        "USD", "events": [{"dimensionId": "jobseconds", "dimensionName": "Job Seconds",
+        "measureUnit": "second", "amountBilled": 1.0, "amountConsumed": 1.0, "unitPrice":
+        0.0}], "estimatedTotal": 0.0}, "itemType": "Job", "access_token": "fake_token"}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '1510'
+      - '1715'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -1062,24 +1078,26 @@ interactions:
     uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000001?api-version=2022-09-12-preview&test-sequence-id=16
   response:
     body:
-      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racw",
+      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&sig=PLACEHOLDER&se=PLACEHOLDER&srt=co&ss=b&sp=racwl",
         "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3Dendian0cr3-00000000-0000-0000-0000-000000000001.input.json",
         "inputDataFormat": "qir.v1", "inputParams": {"shots": 100, "count": 100, "items":
         [{"entryPoint": "endian0cr3", "arguments": []}]}, "metadata": {"qiskit": "True",
         "name": "endian0cr3", "num_qubits": "3", "metadata": "{\"some\": \"data\"}"},
         "sessionId": null, "status": "Succeeded", "jobType": "QuantumComputing", "outputDataFormat":
         "microsoft.quantum-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3Dendian0cr3-00000000-0000-0000-0000-000000000001.output.json",
-        "beginExecutionTime": "2023-09-09T00:31:30.974278Z", "cancellationTime": null,
+        "beginExecutionTime": "2024-02-01T04:07:33.560305Z", "cancellationTime": null,
         "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling": false,
         "tags": [], "name": "endian0cr3", "id": "00000000-0000-0000-0000-000000000001",
-        "providerId": "qci", "target": "qci.simulator", "creationTime": "2023-09-09T00:31:11.7212784+00:00",
-        "endExecutionTime": "2023-09-09T00:31:32.31446Z", "costEstimate": null, "itemType":
-        "Job", "access_token": "fake_token"}'
+        "providerId": "qci", "target": "qci.simulator", "creationTime": "2024-02-01T04:07:20.711356+00:00",
+        "endExecutionTime": "2024-02-01T04:07:34.890845Z", "costEstimate": {"currencyCode":
+        "USD", "events": [{"dimensionId": "jobseconds", "dimensionName": "Job Seconds",
+        "measureUnit": "second", "amountBilled": 1.0, "amountConsumed": 1.0, "unitPrice":
+        0.0}], "estimatedTotal": 0.0}, "itemType": "Job", "access_token": "fake_token"}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '1510'
+      - '1715'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -1097,13 +1115,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-blob/12.17.0 Python/3.9.18 (Windows-10-10.0.22621-SP0)
+      - azsdk-python-storage-blob/12.19.0 Python/3.9.18 (Windows-10-10.0.22621-SP0)
       x-ms-date:
-      - Sat, 09 Sep 2023 00:31:36 GMT
+      - Thu, 01 Feb 2024 04:07:44 GMT
       x-ms-range:
       - bytes=0-33554431
       x-ms-version:
-      - '2023-01-03'
+      - '2023-11-03'
     method: GET
     uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=PLACEHOLDER&sp=r&rscd=attachment%3B%20filename%3Dendian0cr3-00000000-0000-0000-0000-000000000001.output.json
   response:
@@ -1124,7 +1142,7 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-creation-time:
-      - Sat, 09 Sep 2023 00:31:33 GMT
+      - Thu, 01 Feb 2024 04:07:35 GMT
       x-ms-lease-state:
       - available
       x-ms-lease-status:
@@ -1132,7 +1150,7 @@ interactions:
       x-ms-server-encrypted:
       - 'true'
       x-ms-version:
-      - '2023-01-03'
+      - '2023-11-03'
     status:
       code: 206
       message: Partial Content

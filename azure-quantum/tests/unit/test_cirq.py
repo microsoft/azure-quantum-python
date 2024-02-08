@@ -4,6 +4,7 @@
 ##
 
 import unittest
+from azure.quantum.workspace import Workspace
 import pytest
 import numpy as np
 
@@ -53,6 +54,53 @@ class TestCirq(QuantumTestBase):
             service = AzureQuantumService(workspace=workspace)
             self.assertIn(app_id, service._workspace.user_agent)
             self.assertIn("-azure-quantum-cirq", service._workspace.user_agent)
+
+    def test_cirq_service_init_with_workspace_not_raises_deprecation(self):
+        # testing warning according to https://docs.python.org/3/library/warnings.html#testing-warnings
+        import warnings
+                
+        with warnings.catch_warnings(record=True) as w:
+            # Cause all warnings to always be triggered.
+            warnings.simplefilter("always")
+            # Try to trigger a warning.
+            workspace = Workspace(resource_id = "/subscriptions/00000000-0000-0000-0000-00000000000/resourceGroups/rg-test/providers/Microsoft.Quantum/Workspaces/test",
+                    location = "<region>")
+            AzureQuantumService(workspace)
+
+            # Verify
+            assert len(w) == 0
+
+    def test_cirq_service_init_without_workspace_raises_deprecation(self):
+        # testing warning according to https://docs.python.org/3/library/warnings.html#testing-warnings
+        import warnings
+                
+        with warnings.catch_warnings(record=True) as w:
+            # Cause all warnings to always be triggered.
+            warnings.simplefilter("always")
+            # Try to trigger a warning.
+            AzureQuantumService(
+                    resource_id = "/subscriptions/00000000-0000-0000-0000-00000000000/resourceGroups/rg-test/providers/Microsoft.Quantum/Workspaces/test",
+                    location = "<region>")
+            # Verify
+            assert len(w) == 1
+            assert issubclass(w[-1].category, DeprecationWarning)
+            assert "Consider passing \"workspace\" argument explicitly" in str(w[-1].message)
+
+        # Validate rising deprecation warning even if workspace is passed, but other parameters are also passed
+        with warnings.catch_warnings(record=True) as w:
+            # Cause all warnings to always be triggered.
+            warnings.simplefilter("always")
+            # Try to trigger a warning.
+            workspace = Workspace(resource_id = "/subscriptions/00000000-0000-0000-0000-00000000000/resourceGroups/rg-test/providers/Microsoft.Quantum/Workspaces/test",
+                    location = "<region>")
+            AzureQuantumService(
+                    workspace=workspace,
+                    resource_id = "/subscriptions/00000000-0000-0000-0000-00000000000/resourceGroups/rg-test/providers/Microsoft.Quantum/Workspaces/test",
+                    location = "<region>")
+            # Verify
+            assert len(w) == 1
+            assert issubclass(w[-1].category, DeprecationWarning)
+            assert "Consider passing \"workspace\" argument explicitly" in str(w[-1].message)
 
     @pytest.mark.quantinuum
     @pytest.mark.ionq

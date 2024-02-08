@@ -2,6 +2,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 ##
+__all__ = ['MicrosoftEstimatorResult']
+
 from typing import Any, Dict, List, Optional, Union
 
 import json
@@ -17,7 +19,6 @@ class HTMLWrapper:
 
     def _repr_html_(self):
         return self.content
-
 
 class MicrosoftEstimatorResult(dict):
     """
@@ -38,7 +39,7 @@ class MicrosoftEstimatorResult(dict):
             super().__init__(data)
 
             self._is_simple = True
-            if hasattr(self, 'status') and self['status'] == "success":
+            if MicrosoftEstimatorResult._is_succeeded(self):
                 self._repr = self._item_result_table()
                 self.summary = HTMLWrapper(self._item_result_summary_table())
                 self.diagram = EstimatorResultDiagram(self.data().copy())
@@ -63,6 +64,9 @@ class MicrosoftEstimatorResult(dict):
             # Add plot function for batching jobs
             self.plot = self._plot
             self.summary_data_frame = self._summary_data_frame
+    
+    def _is_succeeded(self):
+        return 'status' in self and self['status'] == "success"
 
     def data(self, idx: Optional[int] = None) -> Any:
         """
@@ -276,7 +280,7 @@ class MicrosoftEstimatorResult(dict):
         labels = labels[:len(self)]
 
         def get_row(result):
-            if 'status' in result and result['status'] == 'success':
+            if MicrosoftEstimatorResult._is_succeeded(result):
                 formatted = result["physicalCountsFormatted"]
 
                 return (
@@ -406,7 +410,7 @@ class MicrosoftEstimatorResult(dict):
         return html
 
     def _batch_result_table(self, indices):
-        succeeded_item_indices = [i for i in indices if 'status' in self[i] and self[i]['status'] == 'success']
+        succeeded_item_indices = [i for i in indices if MicrosoftEstimatorResult._is_succeeded(self[i])]
         if len(succeeded_item_indices) == 0:
             print("None of the jobs succeeded")
             return ""
@@ -468,7 +472,10 @@ class MicrosoftEstimatorResult(dict):
 
         return html
 
-
+    @staticmethod
+    def _is_succeeded(obj):
+        return 'status' in obj and obj['status'] == "success"
+    
 class EstimatorResultDiagram:
     def __init__(self, data):
         data.pop("reportData")

@@ -10,17 +10,20 @@ Use azure-quantum SDK to submit quantum jobs written in Q#, Qiskit, or Cirq to t
 
 - `azure-quantum` [![PyPI version](https://badge.fury.io/py/azure-quantum.svg)](https://badge.fury.io/py/azure-quantum)
 
-Deprecated:
-
-- `qdk` [![PyPI version](https://badge.fury.io/py/qdk.svg)](https://badge.fury.io/py/qdk)
-  - Contains the qdk.chemistry packages.
-
 ## Installation and getting started
 
 To install the Azure Quantum package, run:
 
 ```bash
 pip install azure-quantum
+```
+
+If using qiskit, cirq or qsharp, include the optional dependency as part of the install command:
+
+```bash
+pip install azure-quantum[qiskit]
+pip install azure-quantum[cirq]
+pip install azure-quantum[qsharp]
 ```
 
 To get started and submit your first job, see the official [Azure Quantum documentation](https://learn.microsoft.com/azure/quantum/quickstart-microsoft-qiskit-portal?pivots=platform-ionq).
@@ -31,7 +34,7 @@ See [CONTRIBUTING](./CONTRIBUTING.md) for instructions on how to build and test.
 
 ## Contributing
 
-For details on contributing to this repository, see the [contributing guide](https://github.com/microsoft/qdk-python/blob/main/CONTRIBUTING.md).
+For details on contributing to this repository, see the [contributing guide](https://github.com/microsoft/azure-quantum-python/blob/main/CONTRIBUTING.md).
 
 This project welcomes contributions and suggestions.  Most contributions require you to agree to a
 Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us

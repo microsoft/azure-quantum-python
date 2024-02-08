@@ -3,8 +3,10 @@
 # Licensed under the MIT License.
 ##
 import re
+import warnings
 from dataclasses import dataclass, field
-from typing import Any, Dict, Optional, Type, Union
+from typing import Any, Dict, Optional, Type, Union, List
+
 from ...job import Job
 from ...job.base_job import ContentType
 from ...workspace import Workspace
@@ -12,10 +14,12 @@ from ..params import InputParams, InputParamsItem, AutoValidatingParams, \
     validating_field
 from ..target import Target
 from . import MicrosoftEstimatorJob
-from typing import List
-
 
 class QubitParams:
+    """
+    Resource estimator Qubit parameters.
+    """
+
     GATE_US_E3 = "qubit_gate_us_e3"
     GATE_US_E4 = "qubit_gate_us_e4"
     GATE_NS_E3 = "qubit_gate_ns_e3"
@@ -25,6 +29,10 @@ class QubitParams:
 
 
 class QECScheme:
+    """
+    Resource estimator QEC Scheme.
+    """
+
     SURFACE_CODE = "surface_code"
     FLOQUET_CODE = "floquet_code"
 
@@ -243,6 +251,9 @@ class DistillationUnitSpecification(AutoValidatingParams):
 
 @dataclass
 class ErrorBudgetPartition(AutoValidatingParams):
+    """
+    Resource estimator error budget partition parameters.
+    """
     logical: float = 0.001 / 3
     t_states: float = 0.001 / 3
     rotations: float = 0.001 / 3
@@ -250,6 +261,10 @@ class ErrorBudgetPartition(AutoValidatingParams):
 
 @dataclass
 class MicrosoftEstimatorConstraints(AutoValidatingParams):
+    """
+    Resource estimator constraints.
+    """
+
     @staticmethod
     def at_least_one(name, value):
         if value < 1:
@@ -339,6 +354,9 @@ class MicrosoftEstimatorInputParamsItem(InputParamsItem):
 
 
 class MicrosoftEstimatorParams(InputParams, MicrosoftEstimatorInputParamsItem):
+    """
+    Resource estimator input parameters.
+    """
     def __init__(self, num_items: Optional[int] = None):
         InputParams.__init__(
             self,
@@ -377,11 +395,32 @@ class MicrosoftEstimator(Target):
             **kwargs
         )
 
-    def submit(self,
-               input_data: Any,
-               name: str = "azure-quantum-job",
-               input_params: Union[Dict[str, Any], InputParams, None] = None,
-               **kwargs) -> Job:
+    def submit(
+        self,
+        input_data: Any,
+        name: str = "azure-quantum-job",
+        shots: int = None,
+        input_params: Union[Dict[str, Any], InputParams, None] = None,
+        **kwargs,
+    ) -> Job:
+        """
+        Submit an estimation job.
+
+        :param input_data: Input data
+        :type input_data: Any
+        :param name: Job name
+        :type name: str
+        :param shots: Number of shots. Ignored in estimation. Defaults to None
+        :type shots: int
+        :param input_params: Input parameters
+        :type input_params: Dict[str, Any]
+        :return: Azure Quantum job
+        :rtype: Job
+        """
+
+        if shots is not None:
+            warnings.warn("The 'shots' parameter is ignored in resource estimation job.")
+
         try:
             from qiskit import QuantumCircuit, transpile
             from qiskit_qir import to_qir_module
@@ -393,7 +432,13 @@ class MicrosoftEstimator(Target):
                 (module, _) = to_qir_module(input_data, record_output=False)
                 input_data = module.bitcode
         finally:
-            return super().submit(input_data, name, input_params, **kwargs)
+            return super().submit(
+                input_data=input_data, 
+                name=name, 
+                shots=shots,
+                input_params=input_params, 
+                **kwargs
+            )
 
     @classmethod
     def _get_job_class(cls) -> Type[Job]:
