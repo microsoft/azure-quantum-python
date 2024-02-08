@@ -4,6 +4,8 @@
     "name": "Azure Quantum Samples",
     // Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
     "image": "mcr.microsoft.com/devcontainers/python:3.12",
+    "workspaceMount": "source=${localWorkspaceFolder}/samples,target=/workspace,type=bind,consistency=cached",
+    "workspaceFolder": "/workspace",
     "features": {
         "ghcr.io/devcontainers/features/azure-cli:1": {
             "version": "latest"
@@ -12,7 +14,7 @@
     "onCreateCommand": "pip3 install --user -r .devcontainer/samples-requirements.txt",
     "customizations": {
         "codespaces": {
-            "openFiles": [ "samples" ]
+            "openFiles": []
         },
         "vscode": {
             "extensions": [
