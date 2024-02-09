@@ -10,9 +10,6 @@ if TYPE_CHECKING:
     from azure.quantum import Workspace
     from azure.quantum._client.models import TargetStatus
 
-# Target ID keyword for parameter-free solvers
-PARAMETER_FREE = "parameterfree"
-
 
 class TargetFactory:
     """Factory class for generating a Target based on a
@@ -136,13 +133,10 @@ https://github.com/microsoft/qdk-python/issues.")
             return self.from_target_status(*target_statuses[0], **kwargs)
 
         else:
-            # Don't return redundant parameter-free targets
+            # Don't return redundant targets
             return [
                 self.from_target_status(_provider_id, status, **kwargs)
                 for _provider_id, status in target_statuses
-                if PARAMETER_FREE not in status.id
-                and (
-                    _provider_id.lower() in self._default_targets
+                if _provider_id.lower() in self._default_targets
                     or status.id in self._all_targets
-                )
             ]

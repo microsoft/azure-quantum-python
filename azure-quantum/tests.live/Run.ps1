@@ -27,20 +27,16 @@ if ($True -eq $SkipInstall) {
 
 Enable-Conda
 
-# Try installing IQ# dotnet tool, IQ# kernel and the qsharp Python package
-# Used for running tests between the Azure Quantum Python SDK and IQ# (Q#+QIR job submission)
+# Try activating the azurequantum conda environment
 if ([string]::IsNullOrEmpty($PackageName) -or ($PackageName -eq "azure-quantum")) {
     try {
       $EnvExists = conda env list | Select-String -Pattern "azurequantum " | Measure-Object | Select-Object -Exp Count
       if ($EnvExists) {
         conda activate azurequantum
-        If ($null -eq $Env:TOOLS_DIR) { $Env:TOOLS_DIR =  [IO.Path]::GetFullPath((Join-Path $RootDir ".tools")) }
-        If (-not (Test-Path -Path $Env:TOOLS_DIR)) { [IO.Directory]::CreateDirectory($Env:TOOLS_DIR) }
-        & (Join-Path $RootDir "build" "install-iqsharp.ps1");
       }    
     }
     catch {
-      Write-Host "##[warning]Failed to install IQ#."
+      Write-Host "##[warning]Failed to active conda environment."
     }
 }
 
@@ -54,9 +50,6 @@ function PyTestMarkExpr() {
     $MarkExpr = "live_test";
     if ($AzureQuantumCapabilities -notcontains "submit.ionq") {
         $MarkExpr += " and not ionq"
-    }
-    if ($AzureQuantumCapabilities -notcontains "submit.toshiba") {
-        $MarkExpr += " and not toshiba"
     }
     if ($AzureQuantumCapabilities -notcontains "submit.rigetti") {
         $MarkExpr += " and not rigetti"

@@ -1,0 +1,45 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/python
+{
+    "name": "Generate Recordings",
+    // Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
+    "image": "mcr.microsoft.com/devcontainers/python:3.12",
+    "features": {
+        "ghcr.io/devcontainers/features/conda:1": {},
+        "ghcr.io/devcontainers/features/powershell:1": {}
+    },
+    "customizations": {
+        "codespaces": {
+            "openFiles": []
+        },
+        "vscode": {
+            "extensions": [
+                "quantum.qsharp-lang-vscode",
+                "ms-python.python"
+            ]
+        }
+    },
+    "secrets": {
+        "AZURE_CLIENT_ID": {
+            "description": "The client ID of your Azure Quantum service principal."
+        },
+        "AZURE_CLIENT_SECRET": {
+            "description": "The client secret of your Azure Quantum service principal."
+        },
+        "AZURE_TENANT_ID": {
+            "description": "The tenant ID of your Azure Quantum service principal."
+        },
+        "AZURE_QUANTUM_SUBSCRIPTION_ID": {
+            "description": "The subscription ID of your Azure Quantum workspace."
+        },
+        "AZURE_QUANTUM_WORKSPACE_RG": {
+            "description": "The resource group of your Azure Quantum workspace."
+        },
+        "AZURE_QUANTUM_WORKSPACE_NAME": {
+            "description": "The name of your Azure Quantum workspace."
+        },
+        "AZURE_QUANTUM_WORKSPACE_LOCATION": {
+            "description": "The location of your Azure Quantum workspace."
+        }
+    }
+}
