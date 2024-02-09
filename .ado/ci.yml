@@ -1,0 +1,82 @@
+trigger:
+- main
+
+pr:
+- main
+
+schedules:
+- cron: "0 9 * * Sat"
+  displayName: 'Build for Component Governance'
+  branches:
+    include:
+    - main
+  always: true
+
+jobs:
+- job: "Build_Azure_Quantum_Python"
+  pool:
+    vmImage: 'windows-latest'
+
+  steps:
+    - task: UsePythonVersion@0
+      inputs:
+        versionSpec: '3.11'
+
+    - script: |
+        pip install wheel
+      displayName: Install wheel
+
+    - script: |
+        pip freeze
+      displayName: List installed packages
+
+    - script: |
+        python set_version.py
+      env:
+        BUILD_TYPE: dev
+        PATCH_NUMBER: 0
+      displayName: Set version
+
+    - script: |
+        cd $(Build.SourcesDirectory)/azure-quantum
+        python setup.py sdist --dist-dir=target/wheels
+        python setup.py bdist_wheel --dist-dir=target/wheels
+      displayName: Build azure-quantum package
+
+    - publish: $(Build.SourcesDirectory)/azure-quantum/target/wheels/
+      artifact: azure-quantum-wheels
+      displayName: Upload azure-quantum artifacts
+
+- job: "Test_Azure_Quantum_Python"
+  pool:
+    vmImage: 'windows-latest'
+  
+  steps:
+    - task: UsePythonVersion@0
+      inputs:
+        versionSpec: '3.11'
+
+    - script: |
+        pip install pytest pytest-azurepipelines pytest-cov
+      displayName: Install pytest dependencies
+
+    - script: |
+        pip freeze
+      displayName: List installed packages
+    
+    - script: |
+        cd $(Build.SourcesDirectory)/azure-quantum
+        pip install .[all]
+        pytest --cov-report term --cov=azure.quantum --junitxml test-output-azure-quantum.xml $(Build.SourcesDirectory)/azure-quantum
+      displayName: Run azure-quantum unit tests
+    
+    - task: PublishTestResults@2
+      displayName: 'Publish tests results (python)'
+      condition: succeededOrFailed()
+      inputs:
+        testResultsFormat: 'JUnit'
+        testResultsFiles: '**/test-*.xml'
+        testRunTitle: 'Azure Quantum Python Tests'
+
+    - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
+      displayName: 'Component detection'
