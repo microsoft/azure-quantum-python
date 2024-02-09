@@ -220,7 +220,7 @@ class BaseJob(WorkspaceItem):
         job = cls(workspace, details, **kwargs)
 
         logger.info(
-            f"Submitting problem '{name}'. \
+            f"Submitting job '{name}'. \
                 Using payload from: '{job.details.input_data_uri}'"
         )
 

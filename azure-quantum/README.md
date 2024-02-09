@@ -6,7 +6,7 @@
 
 Azure Quantum is Microsoft's cloud service for running Quantum Computing programs and circuits with our quantum partners and technologies. The `azure-quantum` package for Python provides functionality for interacting with Azure Quantum workspaces, including creating jobs, listing jobs, and retrieving job results. For more information, view the [Azure Quantum Documentation](https://learn.microsoft.com/en-us/azure/quantum/).
 
-This package supports submitting quantum circuits or problem definitions written with Python. To submit quantum programs written with Q#, Microsoft's Domain-specific language for Quantum Programming, view [Submit Q# Jobs to Azure Quantum](https://learn.microsoft.com/azure/quantum/how-to-submit-jobs).
+This package supports submitting quantum programs or circuits written with Python. To submit quantum programs written with Q#, Microsoft's Domain-specific language for Quantum Programming, view [Submit Q# Jobs to Azure Quantum](https://learn.microsoft.com/azure/quantum/how-to-submit-jobs).
 
 ## Installation ##
 
