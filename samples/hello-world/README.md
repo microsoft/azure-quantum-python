@@ -15,7 +15,7 @@ products:
 
 These are Azure Quantum sample notebooks that illustrate how to use Q#, Qiskit, or Cirq to write a simple program and run it against an Azure Quantum provider.
 
-These samples are available as part of the notebook samples gallery in Azure Quantum workspaces in the Azure Portal. For an example of how to run these notebooks in Azure, see [this getting started guide](https://docs.microsoft.com/azure/quantum/get-started-jupyter-notebook?tabs=tabid-ionq).
+These samples are available as part of the notebook samples gallery in Azure Quantum workspaces in the Azure Portal. For an example of how to run these notebooks in Azure, see [this getting started guide](https://learn.microsoft.com/azure/quantum/get-started-jupyter-notebook).
 
 ## Manifest
 

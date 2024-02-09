@@ -6,7 +6,7 @@ Quantum Resource Estimator through the `azure-quantum` Python API.
 ## Prerequisites
 
 These scripts require access to an Azure Quantum workspace.  Read [our
-documentation](https://learn.microsoft.com/azure/quantum/how-to-create-workspace?tabs=payg%2Ctabid-quick)
+documentation](https://learn.microsoft.com/azure/quantum/how-to-create-workspace)
 to learn how to set up an Azure Quantum workspace.  Once the Azure Quantum
 workspace is created, you can retrieve the _resource id_ and _location_ from
 the _Overview_ page of your workspace.

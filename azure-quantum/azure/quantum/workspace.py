@@ -111,7 +111,7 @@ class Workspace:
 
     :param credential:
         The credential to use to connect to Azure services.
-        Normally one of the credential types from Azure.Identity (https://docs.microsoft.com/python/api/overview/azure/identity-readme?view=azure-python#credential-classes).
+        Normally one of the credential types from Azure.Identity (https://learn.microsoft.com/python/api/overview/azure/identity-readme?view=azure-python#credential-classes).
 
         Defaults to \"DefaultAzureCredential\", which will attempt multiple 
         forms of authentication.
