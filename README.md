@@ -26,7 +26,11 @@ pip install azure-quantum[cirq]
 pip install azure-quantum[qsharp]
 ```
 
-To get started and submit your first job, see the official [Azure Quantum documentation](https://learn.microsoft.com/azure/quantum/quickstart-microsoft-qiskit-portal?pivots=platform-ionq).
+To get started, visit the following Quickstart guides:
+
+- [Quickstart: Submit a circuit with Qiskit](https://learn.microsoft.com/azure/quantum/quickstart-microsoft-qiskit)
+- [Quickstart: Submit a circuit with Cirq](https://learn.microsoft.com/azure/quantum/quickstart-microsoft-qiskit)
+- [Quickstart: Submit a circuit with a provider-specific format](https://learn.microsoft.com/azure/quantum/quickstart-microsoft-provider-format).
 
 ## Development
 
