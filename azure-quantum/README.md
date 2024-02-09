@@ -69,7 +69,7 @@ First, define a quantum program or circuit, and create a job by submitting it to
 target = workspace.get_targets("mytarget")
 
 # Submit quantum program or circuit
-job = target.submit(my_quantum_problem)
+job = target.submit(my_quantum_program)
 
 # Wait for job to complete and fetch results
 result = job.get_results()
