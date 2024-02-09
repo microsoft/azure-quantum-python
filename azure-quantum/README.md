@@ -4,10 +4,9 @@
 
 [![Build Status](https://dev.azure.com/ms-quantum-public/Microsoft%20Quantum%20(public)/_apis/build/status/microsoft.qdk-python?branchName=main)](https://dev.azure.com/ms-quantum-public/Microsoft%20Quantum%20(public)/_build/latest?definitionId=32&branchName=main) [![PyPI version](https://badge.fury.io/py/azure-quantum.svg)](https://badge.fury.io/py/azure-quantum)
 
-Azure Quantum is Microsoft's cloud service for running Quantum Computing circuits or solving Optimization problems with our quantum partners and technologies. The `azure-quantum` package for Python provides functionality for interacting with Azure Quantum workspaces,
-including creating jobs, listing jobs, and retrieving job results. For more information, view the [Azure Quantum Documentation](https://docs.microsoft.com/azure/quantum).
+Azure Quantum is Microsoft's cloud service for running Quantum Computing programs and circuits with our quantum partners and technologies. The `azure-quantum` package for Python provides functionality for interacting with Azure Quantum workspaces, including creating jobs, listing jobs, and retrieving job results. For more information, view the [Azure Quantum Documentation](https://learn.microsoft.com/en-us/azure/quantum/).
 
-This package supports submitting quantum circuits or problem definitions written with Python. To submit quantum programs written with Q#, Microsoft's Domain-specific language for Quantum Programming, view [Submit Q# Jobs to Azure Quantum](https://docs.microsoft.com/azure/quantum/how-to-submit-jobs).
+This package supports submitting quantum circuits or problem definitions written with Python. To submit quantum programs written with Q#, Microsoft's Domain-specific language for Quantum Programming, view [Submit Q# Jobs to Azure Quantum](https://learn.microsoft.com/azure/quantum/how-to-submit-jobs).
 
 ## Installation ##
 
@@ -31,13 +30,13 @@ pip install azure-quantum[cirq]
 
 ## Getting started and Quickstart guides ##
 
-To work in Azure Quantum, you need an Azure subscription. If you don't have an Azure subscription, create a [free account](https://azure.microsoft.com/free/). Follow the [Create an Azure Quantum workspace](https://docs.microsoft.com/azure/quantum/how-to-create-workspace) how-to guide to set up your Workspace and enable your preferred providers.
+To work in Azure Quantum, you need an Azure subscription. If you don't have an Azure subscription, create a [free account](https://azure.microsoft.com/free/). Follow the [Create an Azure Quantum workspace](https://learn.microsoft.com/azure/quantum/how-to-create-workspace) how-to guide to set up your Workspace and enable your preferred providers.
 
 To get started, visit the following Quickstart guides:
 
-- [Quickstart: Submit a circuit with Qiskit](https://docs.microsoft.com/azure/quantum/quickstart-microsoft-qiskit)
-- [Quickstart: Submit a circuit with Cirq](https://docs.microsoft.com/azure/quantum/quickstart-microsoft-qiskit)
-- [Quickstart: Submit a circuit with a provider-specific format](https://docs.microsoft.com/azure/quantum/quickstart-microsoft-provider-format).
+- [Quickstart: Submit a circuit with Qiskit](https://learn.microsoft.com/azure/quantum/quickstart-microsoft-qiskit)
+- [Quickstart: Submit a circuit with Cirq](https://learn.microsoft.com/azure/quantum/quickstart-microsoft-qiskit)
+- [Quickstart: Submit a circuit with a provider-specific format](https://learn.microsoft.com/azure/quantum/quickstart-microsoft-provider-format).
 
 ## General usage ##
 
@@ -61,16 +60,16 @@ To list all targets that are available to your workspace, run
 workspace.get_targets()
 ```
 
-### Submit a quantum circuit or optimization problem ###
+### Submit a quantum program or circuit ###
 
-First, define a quantum circuit or optimization problem, and create a job by submitting it to one of the available targets:
+First, define a quantum program or circuit, and create a job by submitting it to one of the available targets:
 
 ```python
 # Enter target name below
-target = workspace.get_targets("")
+target = workspace.get_targets("mytarget")
 
-# Submit quantum circuit or optimization problem
-job = target.submit(problem)
+# Submit quantum program or circuit
+job = target.submit(my_quantum_problem)
 
 # Wait for job to complete and fetch results
 result = job.get_results()
