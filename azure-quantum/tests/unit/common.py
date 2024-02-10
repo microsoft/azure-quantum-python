@@ -22,6 +22,7 @@ from azure.quantum._workspace_connection_params import (
 from azure.quantum._constants import (
     EnvironmentVariables,
     ConnectionConstants,
+    GUID_REGEX_PATTERN,
 )
 from azure.quantum.job.job import Job
 from azure.identity import ClientSecretCredential
@@ -39,11 +40,8 @@ STORAGE = "mystorage"
 API_KEY = "myapikey"
 APP_ID = "testapp"
 DEFAULT_TIMEOUT_SECS = 300
-GUID_REGEX_PATTERN = (
-    r"(?P<guid>[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})"
-)
 AUTH_URL = "https://login.microsoftonline.com/"
-
+GUID_REGEX_CAPTURE = f"(?P<guid>{GUID_REGEX_PATTERN})"
 
 class QuantumTestBase(ReplayableTest):
     """QuantumTestBase
@@ -88,7 +86,7 @@ class QuantumTestBase(ReplayableTest):
         self.vcr.register_matcher('query', self._custom_request_query_matcher)
 
         regex_replacer.register_guid_regex(
-            f"(?:job-|jobs/|session-|sessions/){GUID_REGEX_PATTERN}")
+            f"(?:job-|jobs/|session-|sessions/){GUID_REGEX_CAPTURE}")
         regex_replacer.register_regex(connection_params.client_id, ZERO_UID)
         regex_replacer.register_regex(
             self._client_secret, PLACEHOLDER
@@ -99,14 +97,14 @@ class QuantumTestBase(ReplayableTest):
         regex_replacer.register_regex(connection_params.location, LOCATION)
         regex_replacer.register_regex(connection_params.resource_group, RESOURCE_GROUP)
         regex_replacer.register_regex(
-            f"/subscriptions/{GUID_REGEX_PATTERN}",
+            f"/subscriptions/{GUID_REGEX_CAPTURE}",
             f"/subscriptions/{ZERO_UID}",
         )
         regex_replacer.register_regex(
             r"\d{8}-\d{6}", "20210101-000000"
         )
         regex_replacer.register_regex(
-            f'blob.core.windows.net/{GUID_REGEX_PATTERN}',
+            f'blob.core.windows.net/{GUID_REGEX_CAPTURE}',
             f'blob.core.windows.net/{ZERO_UID}',
         )
         regex_replacer.register_regex(
@@ -122,7 +120,7 @@ class QuantumTestBase(ReplayableTest):
             f'https://{STORAGE}.blob.core.windows.net'
         )
         regex_replacer.register_regex(
-            r"https://[^\.]+.quantum(-test)?.azure.com",
+            r"https://[^\.]+.quantum(-test)?.azure.com/",
             ConnectionConstants.GET_QUANTUM_PRODUCTION_ENDPOINT(LOCATION)
         )
         regex_replacer.register_regex(
@@ -130,7 +128,7 @@ class QuantumTestBase(ReplayableTest):
             f'/workspaces/{WORKSPACE}/'
         )
         regex_replacer.register_regex(
-            f"https://login.(microsoftonline.com|windows-ppe.net)/{GUID_REGEX_PATTERN}/oauth2/.*",
+            f"https://login.(microsoftonline.com|windows-ppe.net)/{GUID_REGEX_CAPTURE}/oauth2/.*",
             f'https://login.microsoftonline.com/{ZERO_UID}/oauth2/v2.0/token'
         )
         regex_replacer.register_regex(r"sig=[^&]+\&",
