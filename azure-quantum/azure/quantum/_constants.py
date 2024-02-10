@@ -17,7 +17,6 @@ class EnvironmentVariables:
     QUANTUM_SUBSCRIPTION_ID = "AZURE_QUANTUM_SUBSCRIPTION_ID"
     SUBSCRIPTION_ID = "SUBSCRIPTION_ID"
     WORKSPACE_NAME = "AZURE_QUANTUM_WORKSPACE_NAME"
-    QUANTUM_BASE_URL = "AZURE_QUANTUM_BASEURL"
     QUANTUM_ENV = "AZURE_QUANTUM_ENV"
     AZURE_CLIENT_ID = SdkEnvironmentVariables.AZURE_CLIENT_ID
     AZURE_CLIENT_SECRET = SdkEnvironmentVariables.AZURE_CLIENT_SECRET
@@ -32,7 +31,6 @@ class EnvironmentVariables:
         QUANTUM_SUBSCRIPTION_ID,
         SUBSCRIPTION_ID,
         WORKSPACE_NAME,
-        QUANTUM_BASE_URL,
         QUANTUM_ENV,
         AZURE_CLIENT_ID,
         AZURE_CLIENT_SECRET,
@@ -57,15 +55,15 @@ class ConnectionConstants:
     DOGFOOD_AUTHORITY = "login.windows-ppe.net"
 
     # pylint: disable=unnecessary-lambda-assignment
-    QUANTUM_BASE_URL = \
-        lambda location: f"https://{location}.quantum.azure.com/"
-    QUANTUM_CANARY_BASE_URL = \
-        lambda location: f"https://{location or 'eastus2euap'}.quantum.azure.com/"
-    QUANTUM_DOGFOOD_BASE_URL = \
-        lambda location: f"https://{location}.quantum-test.azure.com/"
+    GET_QUANTUM_PRODUCTION_ENDPOINT = \
+        lambda location: f"https://{location}.quantum.azure.com"
+    GET_QUANTUM_CANARY_ENDPOINT = \
+        lambda location: f"https://{location or 'eastus2euap'}.quantum.azure.com"
+    GET_QUANTUM_DOGFOOD_ENDPOINT = \
+        lambda location: f"https://{location}.quantum-test.azure.com"
 
-    ARM_BASE_URL = "https://management.azure.com/"
-    DOGFOOD_ARM_BASE_URL = "https://api-dogfood.resources.windows-int.net/"
+    ARM_PRODUCTION_ENDPOINT = "https://management.azure.com"
+    ARM_DOGFOOD_ENDPOINT = "https://api-dogfood.resources.windows-int.net"
 
     VALID_RESOURCE_ID = (
         lambda subscription_id, resource_group, workspace_name:

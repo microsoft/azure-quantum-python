@@ -162,7 +162,7 @@ class TestWorkspace(QuantumTestBase):
                 connection_params.tenant_id
             credential = _DefaultAzureCredential(
                 subscription_id=connection_params.subscription_id,
-                arm_base_url=connection_params.arm_base_url)
+                arm_endpoint=connection_params.arm_endpoint)
             workspace = self.create_workspace(credential=credential)
             targets = workspace.get_targets()
             self.assertGreater(len(targets), 1)

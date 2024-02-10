@@ -171,7 +171,7 @@ class Workspace:
             azure_region=connection_params.location,
             user_agent=connection_params.get_full_user_agent(),
             credential_scopes = [ConnectionConstants.DATA_PLANE_CREDENTIAL_SCOPE],
-            endpoint=connection_params.base_url,
+            endpoint=connection_params.quantum_endpoint,
             **kwargs
         )
         return client
