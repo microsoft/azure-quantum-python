@@ -35,7 +35,7 @@ SIMPLE_CONNECTION_STRING = ConnectionConstants.VALID_CONNECTION_STRING(
     resource_group=RESOURCE_GROUP,
     workspace_name=WORKSPACE,
     api_key=API_KEY,
-    quantum_endpoint=ConnectionConstants.QUANTUM_BASE_URL(LOCATION)
+    quantum_endpoint=ConnectionConstants.GET_QUANTUM_PRODUCTION_ENDPOINT(LOCATION)
 )
 
 
@@ -149,7 +149,7 @@ class TestWorkspace(QuantumTestBase):
                 resource_group=wrong_resource_group,
                 workspace_name=wrong_workspace,
                 api_key=API_KEY,
-                quantum_endpoint=ConnectionConstants.QUANTUM_BASE_URL(wrong_location)
+                quantum_endpoint=ConnectionConstants.GET_QUANTUM_PRODUCTION_ENDPOINT(wrong_location)
             )
 
             os.environ[EnvironmentVariables.CONNECTION_STRING] = wrong_connection_string
@@ -180,7 +180,7 @@ class TestWorkspace(QuantumTestBase):
                 resource_group=RESOURCE_GROUP,
                 workspace_name=WORKSPACE,
                 api_key=API_KEY,
-                quantum_endpoint=ConnectionConstants.QUANTUM_BASE_URL(LOCATION)
+                quantum_endpoint=ConnectionConstants.GET_QUANTUM_PRODUCTION_ENDPOINT(LOCATION)
             )
             workspace = Workspace.from_connection_string(connection_string=connection_string)
             self.assertEqual(workspace.location, LOCATION)
@@ -197,7 +197,7 @@ class TestWorkspace(QuantumTestBase):
                 resource_group=RESOURCE_GROUP,
                 workspace_name=WORKSPACE,
                 api_key=API_KEY,
-                quantum_endpoint=ConnectionConstants.QUANTUM_BASE_URL(LOCATION)
+                quantum_endpoint=ConnectionConstants.GET_QUANTUM_PRODUCTION_ENDPOINT(LOCATION)
             )
             workspace = Workspace.from_connection_string(connection_string=connection_string)
             self.assertEqual(workspace.location, LOCATION)

@@ -40,13 +40,13 @@ class WorkspaceConnectionParams:
         re.VERBOSE | re.IGNORECASE)
 
     CONNECTION_STRING_REGEX = re.compile(
-        r"""
+        fr"""
             ^
-            SubscriptionId=(?P<subscription_id>[a-fA-F0-9-]*);
-            ResourceGroupName=(?P<resource_group>[^\s/]*);
-            WorkspaceName=(?P<workspace_name>[^\s/]*);
-            ApiKey=(?P<api_key>[^\s/]*);
-            QuantumEndpoint=(?P<quantum_endpoint>https://(?P<location>[^\s/]*).quantum(?:-test)?.azure.com/);
+            SubscriptionId=(?P<subscription_id>{GUID_REGEX_PATTERN});
+            ResourceGroupName=(?P<resource_group>[^\s;]+);
+            WorkspaceName=(?P<workspace_name>[^\s;]+);
+            ApiKey=(?P<api_key>[^\s;]+);
+            QuantumEndpoint=(?P<quantum_endpoint>https://(?P<location>[^\s\.]+).quantum(?:-test)?.azure.com/);
         """,
         re.VERBOSE | re.IGNORECASE)
 

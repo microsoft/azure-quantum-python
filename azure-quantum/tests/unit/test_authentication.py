@@ -9,7 +9,15 @@ import os
 import time
 import urllib3
 import pytest
-from common import QuantumTestBase
+from common import (
+    QuantumTestBase,
+    SUBSCRIPTION_ID,
+    RESOURCE_GROUP,
+    WORKSPACE,
+    LOCATION,
+    STORAGE,
+    API_KEY,
+)
 from azure.identity import (
     CredentialUnavailableError,
     ClientSecretCredential,
@@ -185,7 +193,7 @@ class TestWorkspace(QuantumTestBase):
         self.pause_recording()
         http = urllib3.PoolManager()
         connection_params = self.connection_params
-        url = (connection_params.arm_base_url.rstrip('/') +
+        url = (connection_params.arm_endpoint +
                f"/subscriptions/{connection_params.subscription_id}" + 
                f"/resourceGroups/{connection_params.resource_group}" +
                "/providers/Microsoft.Quantum" +
@@ -211,13 +219,12 @@ class TestWorkspace(QuantumTestBase):
     def test_workspace_auth_connection_string_api_key(self):
         connection_string = ""
         if self.is_playback:
-            connection_params = self.connection_params
             connection_string = ConnectionConstants.VALID_CONNECTION_STRING(
-                subscription_id=connection_params.subscription_id,
-                resource_group=connection_params.resource_group,
-                workspace_name=connection_params.workspace_name,
-                api_key=connection_params.api_key,
-                quantum_endpoint=connection_params.base_url
+                subscription_id=SUBSCRIPTION_ID,
+                resource_group=RESOURCE_GROUP,
+                workspace_name=WORKSPACE,
+                api_key=API_KEY,
+                quantum_endpoint=ConnectionConstants.GET_QUANTUM_PRODUCTION_ENDPOINT(LOCATION)
             )
         else:
             connection_string = self._get_current_primary_connection_string()
