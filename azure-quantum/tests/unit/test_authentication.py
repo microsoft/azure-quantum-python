@@ -193,7 +193,7 @@ class TestWorkspace(QuantumTestBase):
         self.pause_recording()
         http = urllib3.PoolManager()
         connection_params = self.connection_params
-        url = (connection_params.arm_endpoint +
+        url = (connection_params.arm_endpoint.rstrip('/') +
                f"/subscriptions/{connection_params.subscription_id}" + 
                f"/resourceGroups/{connection_params.resource_group}" +
                "/providers/Microsoft.Quantum" +
