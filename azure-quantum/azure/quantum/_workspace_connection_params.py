@@ -17,6 +17,7 @@ from azure.quantum._constants import (
     EnvironmentKind,
     EnvironmentVariables,
     ConnectionConstants,
+    GUID_REGEX_PATTERN,
 )
 
 class WorkspaceConnectionParams:
@@ -26,12 +27,12 @@ class WorkspaceConnectionParams:
     """
 
     RESOURCE_ID_REGEX = re.compile(
-        r"""
+        fr"""
             ^
-            /subscriptions/(?P<subscription_id>[a-fA-F0-9-]*)
-            /resourceGroups/(?P<resource_group>[^\s/]*)
+            /subscriptions/(?P<subscription_id>{GUID_REGEX_PATTERN})
+            /resourceGroups/(?P<resource_group>[^\s/]+)
             /providers/Microsoft\.Quantum
-            /Workspaces/(?P<workspace_name>[^\s/]*)
+            /Workspaces/(?P<workspace_name>[^\s/]+)
             $
         """,
         re.VERBOSE | re.IGNORECASE)

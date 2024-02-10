@@ -56,14 +56,14 @@ class ConnectionConstants:
 
     # pylint: disable=unnecessary-lambda-assignment
     GET_QUANTUM_PRODUCTION_ENDPOINT = \
-        lambda location: f"https://{location}.quantum.azure.com"
+        lambda location: f"https://{location}.quantum.azure.com/"
     GET_QUANTUM_CANARY_ENDPOINT = \
-        lambda location: f"https://{location or 'eastus2euap'}.quantum.azure.com"
+        lambda location: f"https://{location or 'eastus2euap'}.quantum.azure.com/"
     GET_QUANTUM_DOGFOOD_ENDPOINT = \
-        lambda location: f"https://{location}.quantum-test.azure.com"
+        lambda location: f"https://{location}.quantum-test.azure.com/"
 
-    ARM_PRODUCTION_ENDPOINT = "https://management.azure.com"
-    ARM_DOGFOOD_ENDPOINT = "https://api-dogfood.resources.windows-int.net"
+    ARM_PRODUCTION_ENDPOINT = "https://management.azure.com/"
+    ARM_DOGFOOD_ENDPOINT = "https://api-dogfood.resources.windows-int.net/"
 
     VALID_RESOURCE_ID = (
         lambda subscription_id, resource_group, workspace_name:
@@ -72,3 +72,7 @@ class ConnectionConstants:
         "/providers/Microsoft.Quantum/" +
         f"Workspaces/{workspace_name}"
     )
+
+GUID_REGEX_PATTERN = (
+    r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"
+)
