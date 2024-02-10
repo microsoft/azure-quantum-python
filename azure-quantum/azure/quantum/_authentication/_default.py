@@ -50,43 +50,43 @@ class _DefaultAzureCredential(_ChainedTokenCredential):
        This is a mitigation for bug https://github.com/Azure/azure-sdk-for-python/issues/18975
        We need the following parameters to enable auto-detection of tenant_id
        - subscription_id
-       - arm_base_url (defaults to the production url "https://management.azure.com/")
+       - arm_endpoint (defaults to the production url "https://management.azure.com/")
     3) Add custom TokenFileCredential as first method to attempt,
        which will look for a local access token.
     """
     def __init__(
         self,
-        arm_base_url: str,
+        arm_endpoint: str,
         subscription_id: str,
         client_id: Optional[str] = None,
         tenant_id: Optional[str] = None,
         authority: Optional[str] = None,
     ):
-        if arm_base_url is None:
-            raise ValueError("arm_base_url is mandatory parameter")
+        if arm_endpoint is None:
+            raise ValueError("arm_endpoint is mandatory parameter")
         if subscription_id is None:
             raise ValueError("subscription_id is mandatory parameter")
 
         self.authority = self._authority_or_default(
             authority=authority,
-            arm_base_url=arm_base_url)
+            arm_endpoint=arm_endpoint)
         self.tenant_id = tenant_id
         self.subscription_id = subscription_id
-        self.arm_base_url = arm_base_url
+        self.arm_endpoint = arm_endpoint
         self.client_id = client_id
         # credentials will be created lazy on the first call to get_token
         super(_DefaultAzureCredential, self).__init__()
 
-    def _authority_or_default(self, authority: str, arm_base_url: str):
+    def _authority_or_default(self, authority: str, arm_endpoint: str):
         if authority:
             return AzureIdentityInternals.normalize_authority(authority)
-        if arm_base_url == ConnectionConstants.DOGFOOD_ARM_BASE_URL:
+        if arm_endpoint == ConnectionConstants.ARM_DOGFOOD_ENDPOINT:
             return ConnectionConstants.DOGFOOD_AUTHORITY
         return ConnectionConstants.AUTHORITY
 
     def _initialize_credentials(self):
         self._discover_tenant_id_(
-            arm_base_url=self.arm_base_url,
+            arm_endpoint=self.arm_endpoint,
             subscription_id=self.subscription_id)
         credentials = []
         credentials.append(_TokenFileCredential())
@@ -120,7 +120,7 @@ class _DefaultAzureCredential(_ChainedTokenCredential):
 
         return super(_DefaultAzureCredential, self).get_token(*scopes, **kwargs)
 
-    def _discover_tenant_id_(self, arm_base_url:str, subscription_id:str):
+    def _discover_tenant_id_(self, arm_endpoint:str, subscription_id:str):
         """
         If the tenant_id was not given, try to obtain it
         by calling the management endpoint for the subscription_id,
@@ -131,7 +131,7 @@ class _DefaultAzureCredential(_ChainedTokenCredential):
 
         try:
             url = (
-                f"{arm_base_url.rstrip('/')}/subscriptions/"
+                f"{arm_endpoint.rstrip('/')}/subscriptions/"
                 + f"{subscription_id}?api-version=2018-01-01"
                 + "&discover-tenant-id"  # used by the test recording infrastructure
             )

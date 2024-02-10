@@ -123,7 +123,7 @@ class QuantumTestBase(ReplayableTest):
         )
         regex_replacer.register_regex(
             r"https://[^\.]+.quantum(-test)?.azure.com",
-            f'https://{LOCATION}.quantum.azure.com'
+            ConnectionConstants.GET_QUANTUM_PRODUCTION_ENDPOINT(LOCATION)
         )
         regex_replacer.register_regex(
             r"/workspaces/[a-z0-9-]+/",

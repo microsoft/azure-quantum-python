@@ -45,7 +45,7 @@ class WorkspaceConnectionParams:
             ResourceGroupName=(?P<resource_group>[^\s/]*);
             WorkspaceName=(?P<workspace_name>[^\s/]*);
             ApiKey=(?P<api_key>[^\s/]*);
-            QuantumEndpoint=(?P<base_url>https://(?P<location>[^\s/]*).quantum(?:-test)?.azure.com/);
+            QuantumEndpoint=(?P<quantum_endpoint>https://(?P<location>[^\s/]*).quantum(?:-test)?.azure.com/);
         """,
         re.VERBOSE | re.IGNORECASE)
 
@@ -55,8 +55,8 @@ class WorkspaceConnectionParams:
         resource_group: Optional[str] = None,
         workspace_name: Optional[str] = None,
         location: Optional[str] = None,
-        base_url: Optional[str] = None,
-        arm_base_url: Optional[str] = None,
+        quantum_endpoint: Optional[str] = None,
+        arm_endpoint: Optional[str] = None,
         environment: Union[str, EnvironmentKind, None] = None,
         credential: Optional[object] = None,
         resource_id: Optional[str] = None,
@@ -72,8 +72,8 @@ class WorkspaceConnectionParams:
         # they have special getters/setters
         self._location = None
         self._environment = None
-        self._base_url = None
-        self._arm_base_url = None
+        self._quantum_endpoint = None
+        self._arm_endpoint = None
         # regular connection properties
         self.subscription_id = None
         self.resource_group = None
@@ -93,8 +93,8 @@ class WorkspaceConnectionParams:
         self.apply_connection_string(connection_string)
         self.merge(
             api_version=api_version,
-            arm_base_url=arm_base_url,
-            base_url=base_url,
+            arm_endpoint=arm_endpoint,
+            quantum_endpoint=quantum_endpoint,
             client_id=client_id,
             credential=credential,
             environment=environment,
@@ -138,6 +138,47 @@ class WorkspaceConnectionParams:
                              else value)
 
     @property
+    def quantum_endpoint(self):
+        """
+        The Azure Quantum data plane endpoint.
+        Defaults to well-known endpoint based on the environment.
+        """
+        if self._quantum_endpoint:
+            return self._quantum_endpoint
+        if not self.location:
+            raise ValueError("Location not specified")
+        if self.environment is EnvironmentKind.PRODUCTION:
+            return ConnectionConstants.GET_QUANTUM_PRODUCTION_ENDPOINT(self.location)
+        if self.environment is EnvironmentKind.CANARY:
+            return ConnectionConstants.GET_QUANTUM_CANARY_ENDPOINT(self.location)
+        if self.environment is EnvironmentKind.DOGFOOD:
+            return ConnectionConstants.GET_QUANTUM_DOGFOOD_ENDPOINT(self.location)
+        raise ValueError(f"Unknown environment `{self.environment}`.")
+
+    @quantum_endpoint.setter
+    def quantum_endpoint(self, value: str):
+        self._quantum_endpoint = value
+
+    @property
+    def arm_endpoint(self):
+        """
+        The control plane endpoint.
+        Defaults to well-known arm_endpoint based on the environment.
+        """
+        if self._arm_endpoint:
+            return self._arm_endpoint
+        if self.environment is EnvironmentKind.DOGFOOD:
+            return ConnectionConstants.ARM_DOGFOOD_ENDPOINT
+        if self.environment in [EnvironmentKind.PRODUCTION,
+                                EnvironmentKind.CANARY]:
+            return ConnectionConstants.ARM_PRODUCTION_ENDPOINT
+        raise ValueError(f"Unknown environment `{self.environment}`.")
+
+    @arm_endpoint.setter
+    def arm_endpoint(self, value: str):
+        self._arm_endpoint = value
+
+    @property
     def api_key(self):
         """
         The api-key stored in a AzureKeyCredential.
@@ -151,47 +192,6 @@ class WorkspaceConnectionParams:
         if value:
             self.credential = AzureKeyCredential(value)
         self._api_key = value
-
-    @property
-    def base_url(self):
-        """
-        The data plane base_url.
-        Defaults to well-known base_url based on the environment.
-        """
-        if self._base_url:
-            return self._base_url
-        if not self.location:
-            raise ValueError("Location not specified")
-        if self.environment is EnvironmentKind.PRODUCTION:
-            return ConnectionConstants.QUANTUM_BASE_URL(self.location)
-        if self.environment is EnvironmentKind.CANARY:
-            return ConnectionConstants.QUANTUM_CANARY_BASE_URL(self.location)
-        if self.environment is EnvironmentKind.DOGFOOD:
-            return ConnectionConstants.QUANTUM_DOGFOOD_BASE_URL(self.location)
-        raise ValueError(f"Unknown environment `{self.environment}`.")
-
-    @base_url.setter
-    def base_url(self, value: str):
-        self._base_url = value
-
-    @property
-    def arm_base_url(self):
-        """
-        The control plane base_url.
-        Defaults to well-known arm_base_url based on the environment.
-        """
-        if self._arm_base_url:
-            return self._arm_base_url
-        if self.environment is EnvironmentKind.DOGFOOD:
-            return ConnectionConstants.DOGFOOD_ARM_BASE_URL
-        if self.environment in [EnvironmentKind.PRODUCTION,
-                                EnvironmentKind.CANARY]:
-            return ConnectionConstants.ARM_BASE_URL
-        raise ValueError(f"Unknown environment `{self.environment}`.")
-
-    @arm_base_url.setter
-    def arm_base_url(self, value: str):
-        self._arm_base_url = value
 
     def __repr__(self):
         """
@@ -241,8 +241,8 @@ class WorkspaceConnectionParams:
         resource_group: Optional[str] = None,
         workspace_name: Optional[str] = None,
         location: Optional[str] = None,
-        base_url: Optional[str] = None,
-        arm_base_url: Optional[str] = None,
+        quantum_endpoint: Optional[str] = None,
+        arm_endpoint: Optional[str] = None,
         environment: Union[str, EnvironmentKind, None] = None,
         credential: Optional[object] = None,
         user_agent: Optional[str] = None,
@@ -259,8 +259,8 @@ class WorkspaceConnectionParams:
         """
         self._merge(
             api_version=api_version,
-            arm_base_url=arm_base_url,
-            base_url=base_url,
+            arm_endpoint=arm_endpoint,
+            quantum_endpoint=quantum_endpoint,
             client_id=client_id,
             credential=credential,
             environment=environment,
@@ -282,8 +282,8 @@ class WorkspaceConnectionParams:
         resource_group: Optional[str] = None,
         workspace_name: Optional[str] = None,
         location: Optional[str] = None,
-        base_url: Optional[str] = None,
-        arm_base_url: Optional[str] = None,
+        quantum_endpoint: Optional[str] = None,
+        arm_endpoint: Optional[str] = None,
         environment: Union[str, EnvironmentKind, None] = None,
         credential: Optional[object] = None,
         user_agent: Optional[str] = None,
@@ -301,8 +301,8 @@ class WorkspaceConnectionParams:
         """
         self._merge(
             api_version=api_version,
-            arm_base_url=arm_base_url,
-            base_url=base_url,
+            arm_endpoint=arm_endpoint,
+            quantum_endpoint=quantum_endpoint,
             client_id=client_id,
             credential=credential,
             environment=environment,
@@ -325,8 +325,8 @@ class WorkspaceConnectionParams:
         resource_group: Optional[str] = None,
         workspace_name: Optional[str] = None,
         location: Optional[str] = None,
-        base_url: Optional[str] = None,
-        arm_base_url: Optional[str] = None,
+        quantum_endpoint: Optional[str] = None,
+        arm_endpoint: Optional[str] = None,
         environment: Union[str, EnvironmentKind, None] = None,
         credential: Optional[object] = None,
         user_agent: Optional[str] = None,
@@ -365,8 +365,8 @@ class WorkspaceConnectionParams:
         self.api_key = _get_value_or_default(self.api_key, api_key)
         # for these properties that have a default value in the getter, we use
         # the private field as the old_value
-        self.base_url = _get_value_or_default(self._base_url, base_url)
-        self.arm_base_url = _get_value_or_default(self._arm_base_url, arm_base_url)
+        self.quantum_endpoint = _get_value_or_default(self._quantum_endpoint, quantum_endpoint)
+        self.arm_endpoint = _get_value_or_default(self._arm_endpoint, arm_endpoint)
         return self
 
     def _merge_connection_params(
@@ -394,8 +394,8 @@ class WorkspaceConnectionParams:
             # for these properties that have a default value in the getter,
             # so we use the private field instead
             # pylint: disable=protected-access
-            arm_base_url=connection_params._arm_base_url,
-            base_url=connection_params._base_url,
+            arm_endpoint=connection_params._arm_endpoint,
+            quantum_endpoint=connection_params._quantum_endpoint,
         )
         return self
 
@@ -407,7 +407,7 @@ class WorkspaceConnectionParams:
         return (self.credential
                 or _DefaultAzureCredential(
                     subscription_id=self.subscription_id,
-                    arm_base_url=self.arm_base_url,
+                    arm_endpoint=self.arm_endpoint,
                     tenant_id=self.tenant_id))
 
     def get_auth_policy(self) -> Any:
@@ -506,8 +506,6 @@ class WorkspaceConnectionParams:
         # because the getter return default values
         self.environment = (self._environment
                             or os.environ.get(EnvironmentVariables.QUANTUM_ENV))
-        self.base_url = (self._base_url
-                         or os.environ.get(EnvironmentVariables.QUANTUM_BASE_URL))
         # only try to use the connection string from env var if
         # we really need it
         if (not self.location
@@ -540,7 +538,6 @@ class WorkspaceConnectionParams:
             resource_group=get_value('resource_group'),
             workspace_name=get_value('workspace_name'),
             location=get_value('location'),
-            base_url=get_value('base_url'),
-            arm_base_url=get_value('arm_base_url'),
+            quantum_endpoint=get_value('quantum_endpoint'),
             api_key=get_value('api_key'),
         )
