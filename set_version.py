@@ -53,6 +53,7 @@ def _get_build_version(version_type: str, build_type: str, package_versions: Lis
     if build_type == "stable":
         return next_stable_version
 
+    # in case the build type is not "stable" find last "rc"/"dev" release and bump up it's suffix-number
     for i in range(0, 100):
         next_version = f"{next_stable_version}.{build_type}{i}"
         if next_version not in package_versions:
@@ -63,6 +64,7 @@ def _get_build_version(version_type: str, build_type: str, package_versions: Lis
 
 def get_build_version(version_type: str, build_type: str) -> str:
 
+    # get all releases from PyPi
     with urlopen(PYPI_URL) as response:
         if response.status == 200:
             response_content = response.read()
@@ -83,8 +85,8 @@ if __name__ == "__main__":
 
     print(f"Package version: {build_version}")
 
-    # Set PACKAGE_VERSION variable for steps in same job to reference as $(PACKAGE_VERSION)
-    print(f"##vso[task.setvariable variable=PACKAGE_VERSION;]{build_version}")
+    # Set PYTHON_VERSION variable for steps in same job to reference as $(PYTHON_VERSION)
+    print(f"##vso[task.setvariable variable=PYTHON_VERSION;]{build_version}")
 
     # Set build tags
     print(f"##vso[build.addbuildtag]v{build_version}")

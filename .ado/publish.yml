@@ -60,6 +60,13 @@ jobs:
       displayName: List installed packages
 
     - script: |
+        python set_version.py
+      env:
+        BUILD_TYPE: ${{ parameters.Build_Type }}
+        RELEASE_TYPE: ${{ parameters.Release_Type }}
+      displayName: Set "azure-quantum" package version
+
+    - script: |
         cd $(Build.SourcesDirectory)/azure-quantum
         python setup.py sdist --dist-dir=target/wheels
         python setup.py bdist_wheel --dist-dir=target/wheels
@@ -109,8 +116,10 @@ jobs:
   - "Test_Azure_Quantum_Python"
   pool: server
   timeoutInMinutes: 1440 # job times out in 1 day
+
   steps:
   - task: ManualValidation@0
+    displayName: Manual release approval
     timeoutInMinutes: 1440 # task times out in 1 day
     inputs:
       notifyUsers: ''
@@ -127,6 +136,7 @@ jobs:
   - task: UsePythonVersion@0
     inputs:
       versionSpec: '3.11'
+    displayName: Set Python version
 
   - script: |
       python set_version.py
@@ -159,7 +169,7 @@ jobs:
       repositoryName: Microsoft/azure-quantum-python
       action: create
       tagSource: 'userSpecifiedTag'
-      tag: azure-quantum_v$(PACKAGE_VERSION)
+      tag: azure-quantum_v$(PYTHON_VERSION)
       isDraft: True
       isPreRelease: ${{ ne(parameters.Build_Type, 'stable') }}
       target: $(Build.SourceVersion)
