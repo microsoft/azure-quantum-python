@@ -5,7 +5,7 @@
 
 import os
 from typing import List
-import requests
+from urllib.request import urlopen
 import json
 
 ALLOWED_RELEASE_TYPES = ["major", "minor", "patch"]
@@ -63,12 +63,12 @@ def _get_build_version(version_type: str, build_type: str, package_versions: Lis
 
 def get_build_version(version_type: str, build_type: str) -> str:
 
-    request = requests.get(PYPI_URL)
-    if request.status_code == requests.codes.ok:
-        response = json.loads(request.text.encode(str(request.encoding)))
-    else:
-        print(f"Request \"GET:{PYPI_URL}\" failed. Status code: \"{request.status_code}\"; Response: \"{request.text}\"")
-        exit(1)
+    with urlopen(PYPI_URL) as response:
+        if response.status == 200:
+            response_content = response.read()
+            response = json.loads(response_content.decode("utf-8"))
+        else:
+            raise RuntimeError(f"Request \"GET:{PYPI_URL}\" failed. Status code: \"{response.status}\"")
     
     # assuming versions are SYMVER (major.minor.patch[.dev0|.rc0]) and in chronological order "1.0.0", "1.0.1", "1.1.0", "1.1.0.dev0", "1.1.0.dev1", "1.1.0.rc0"
     # "rc" and "dev" versions don't have to be in order between each other, but both of them must follow the last "stable" version
