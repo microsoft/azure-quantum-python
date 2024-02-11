@@ -2,23 +2,36 @@ trigger: none
 pr: none
 
 parameters:
+- name: Release_Type
+  displayName: Release Type (major.minor.patch)
+  type: string
+  values:
+    - major
+    - minor
+    - patch
+  default: 'patch'
+
 - name: Build_Type
+  displayName: Build Type
   type: string
   values:
     - dev
     - rc
     - stable
   default: 'dev'
-- name: Patch_Number
-  type: number
-  default: 0
+
 - name: Deploy_Azure_Quantum_Package
+  displayName: Deploy Azure Quantum Package
   type: boolean
   default: True
+
 - name: Create_GitHub_Release
+  displayName: Create GitHub-Release
   type: boolean
   default: False
+
 - name: Publish_PyPi_Packages
+  displayName: Publish PyPi Package
   type: boolean
   default: False
 
@@ -28,6 +41,7 @@ variables:
 
 jobs:
 - job: "Build_Azure_Quantum_Python"
+  displayName: Build "azure-quantum" package
   pool:
     vmImage: 'windows-latest'
 
@@ -35,6 +49,7 @@ jobs:
     - task: UsePythonVersion@0
       inputs:
         versionSpec: '3.11'
+      displayName: Set Python version
 
     - script: |
         pip install wheel
@@ -45,23 +60,17 @@ jobs:
       displayName: List installed packages
 
     - script: |
-        python set_version.py
-      env:
-        BUILD_TYPE: ${{ parameters.Build_Type }}
-        PATCH_NUMBER: ${{ parameters.Patch_Number }}
-      displayName: Set version
-
-    - script: |
         cd $(Build.SourcesDirectory)/azure-quantum
         python setup.py sdist --dist-dir=target/wheels
         python setup.py bdist_wheel --dist-dir=target/wheels
-      displayName: Build azure-quantum package
+      displayName: Build "azure-quantum" package
 
     - publish: $(Build.SourcesDirectory)/azure-quantum/target/wheels/
       artifact: azure-quantum-wheels
-      displayName: Upload azure-quantum artifacts
+      displayName: Upload "azure-quantum" artifacts
 
 - job: "Test_Azure_Quantum_Python"
+  displayName: Test "azure-quantum" Python package
   pool:
     vmImage: 'windows-latest'
   
@@ -69,6 +78,7 @@ jobs:
     - task: UsePythonVersion@0
       inputs:
         versionSpec: '3.11'
+      displayName: Set Python version
 
     - script: |
         pip install pytest pytest-azurepipelines pytest-cov
@@ -82,10 +92,10 @@ jobs:
         cd $(Build.SourcesDirectory)/azure-quantum
         pip install .[all]
         pytest --cov-report term --cov=azure.quantum --junitxml test-output-azure-quantum.xml $(Build.SourcesDirectory)/azure-quantum
-      displayName: Run azure-quantum unit tests
+      displayName: Run Unit-tests
     
     - task: PublishTestResults@2
-      displayName: 'Publish tests results (python)'
+      displayName: 'Publish test results (python)'
       condition: succeededOrFailed()
       inputs:
         testResultsFormat: 'JUnit'
@@ -93,6 +103,7 @@ jobs:
         testRunTitle: 'Azure Quantum Python Tests'
 
 - job: "Approval"
+  displayName: Release approval
   dependsOn:
   - "Build_Azure_Quantum_Python"
   - "Test_Azure_Quantum_Python"
@@ -107,6 +118,7 @@ jobs:
       onTimeout: 'reject'
 
 - job: "Publish_Python_Packages"
+  displayName: Publish "azure-quantum" package
   dependsOn: Approval
   pool:
     vmImage: 'windows-latest'
@@ -121,7 +133,7 @@ jobs:
     env:
       BUILD_TYPE: ${{ parameters.Build_Type }}
       PATCH_NUMBER: ${{ parameters.Patch_Number }}
-    displayName: Set version
+    displayName: Set "azure-quantum" package version
 
   - download: current
     artifact: azure-quantum-wheels
@@ -129,7 +141,7 @@ jobs:
 
   - task: CopyFiles@2
     condition: ${{ parameters.Deploy_Azure_Quantum_Package }}
-    displayName: Copy azure-quantum artifacts
+    displayName: Copy built "azure-quantum" package artifacts
     inputs:
       SourceFolder: '$(Pipeline.Workspace)/azure-quantum-wheels'
       Contents: '**'
@@ -147,7 +159,7 @@ jobs:
       repositoryName: Microsoft/azure-quantum-python
       action: create
       tagSource: 'userSpecifiedTag'
-      tag: azure-quantum_v$(PYTHON_VERSION)
+      tag: azure-quantum_v$(PACKAGE_VERSION)
       isDraft: True
       isPreRelease: ${{ ne(parameters.Build_Type, 'stable') }}
       target: $(Build.SourceVersion)
@@ -157,7 +169,7 @@ jobs:
 
   - task: EsrpRelease@4
     condition: ${{ parameters.Publish_PyPi_Packages }}
-    displayName: Publish Py Packages
+    displayName: Publish "azure-quantum" package to PyPi
     inputs:
      ConnectedServiceName: 'ESRP_Release'
      Intent: 'PackageDistribution'
