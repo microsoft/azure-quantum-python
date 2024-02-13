@@ -63,6 +63,16 @@ def _get_build_version(version_type: str, build_type: str, package_versions: Lis
 
 
 def get_build_version(version_type: str, build_type: str) -> str:
+    """Get build version by analysing released versions in PyPi and figuring out the next version.
+    Example: If the last version in PyPi was "1.1.0" and version_type = "major" and build_type = "stable", then returned version will be "2.0.0"
+
+    :param version_type: SYMVER type ("major"/"minor"/"patch")
+    :type version_type: str
+    :param build_type: Build type ("stable", "dev", "rc")
+    :type build_type: str
+    :return: build version
+    :rtype: str
+    """
 
     # get all releases from PyPi
     with urlopen(PYPI_URL) as response:
@@ -72,8 +82,11 @@ def get_build_version(version_type: str, build_type: str) -> str:
         else:
             raise RuntimeError(f"Request \"GET:{PYPI_URL}\" failed. Status code: \"{response.status}\"")
     
-    # assuming versions are SYMVER (major.minor.patch[.dev0|.rc0]) and in chronological order "1.0.0", "1.0.1", "1.1.0", "1.1.0.dev0", "1.1.0.dev1", "1.1.0.rc0"
-    # "rc" and "dev" versions don't have to be in order between each other, but both of them must follow the last "stable" version
+    # Note: assuming versions are SYMVER (major.minor.patch[.dev0|.rc0]) and in chronological order:
+    # "1.0.0", "1.0.1", "1.1.0", "1.1.0.dev0", "1.1.0.dev1", "1.1.0.rc0"
+    # The next "rc" and "dev" version must follow the last "stable" version.
+
+    # sorting by time in reverse order to find the last releases, so we could assume the next version of certain "build_type"
     package_versions_sorted = sorted(response["releases"].items(), key=lambda k: k[1][0]["upload_time_iso_8601"], reverse=True)
     package_versions = [version[0] for version in package_versions_sorted]
 

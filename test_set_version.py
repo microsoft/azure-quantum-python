@@ -1,6 +1,9 @@
+# Tests for "set_version.py" module.
+# !! Don't forget to run this test in case you change "set_version.py" to make sure the asserts still pass !!
+
 from set_version import _get_build_version
 
-def stable_build_versions_test():
+def test_set_version():
     assert "1.0.0" == _get_build_version("major", "stable", [])
     assert "2.0.0" == _get_build_version("major", "stable", ["1.1.0"])
     assert "1.0.0" == _get_build_version("major", "stable", ["0.1.1.rc1", "0.1.1.rc0", "0.1.0", "0.0.1"])
@@ -23,7 +26,3 @@ def stable_build_versions_test():
     assert "0.1.0.dev0" == _get_build_version("minor", "dev", ["0.0.2", "0.0.1"])
     assert "0.1.2.dev0" == _get_build_version("patch", "dev", ["0.1.1", "0.0.1"])
     assert "0.1.1.dev1" == _get_build_version("patch", "dev", ["1.0.0.rc0", "0.1.1.dev0", "0.1.0", "0.0.1"])
-
-
-if __name__ == "__main__":
-    stable_build_versions_test()
