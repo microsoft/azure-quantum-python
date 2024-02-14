@@ -48,16 +48,19 @@ class Job(BaseJob, FilteredJob):
 
     def submit(self):
         """Submit a job to Azure Quantum."""
+        
         _log.debug(f"Submitting job with ID {self.id}")
         job = self.workspace.submit_job(self)
         self.details = job.details
 
     def refresh(self):
         """Refreshes the Job's details by querying the workspace."""
+        
         self.details = self.workspace.get_job(self.id).details
 
     def has_completed(self) -> bool:
         """Check if the job has completed."""
+
         return (
             self.details.status == "Succeeded"
             or self.details.status == "Failed"
@@ -81,6 +84,7 @@ class Job(BaseJob, FilteredJob):
         :type print_progress: bool
         :raises TimeoutError: If the total poll time exceeds timeout, raise
         """
+
         self.refresh()
         poll_wait = Job._default_poll_wait
         start_time = time.time()
@@ -111,6 +115,7 @@ class Job(BaseJob, FilteredJob):
         :raises RuntimeError: Raises RuntimeError if job execution failed
         :return: Results dictionary with histogram shots, or raw results if not a json object.
         """
+
         if self.results is not None:
             return self.results
 
@@ -163,4 +168,5 @@ class Job(BaseJob, FilteredJob):
 
         The default is False.
         """
+        
         return False
