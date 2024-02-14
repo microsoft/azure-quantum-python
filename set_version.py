@@ -64,7 +64,12 @@ def _get_build_version(version_type: str, build_type: str, package_versions: Lis
 
 def get_build_version(version_type: str, build_type: str) -> str:
     """Get build version by analysing released versions in PyPi and figuring out the next version.
-    Example: If the last version in PyPi was "1.1.0" and version_type = "major" and build_type = "stable", then returned version will be "2.0.0"
+    Example: 
+    - If the last stable version in PyPi was "1.1.0" and version_type = "major" and build_type = "stable", then returned version will be "2.0.0".
+    - If the last stable version in PyPi was "1.1.0" and the last dev version was "1.2.0.dev0" and version_type = "patch" and build_type = "dev", 
+    then returned version will be "1.1.1.dev0".
+    - If the last stable version in PyPi was "1.1.0" and the last dev version was "1.2.0.dev0" and version_type = "minor" and build_type = "dev", 
+    then returned version will be "1.2.0.dev1".
 
     :param version_type: SYMVER type ("major"/"minor"/"patch")
     :type version_type: str

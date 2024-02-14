@@ -24,5 +24,7 @@ def test_set_version():
     assert "2.0.0.dev0" == _get_build_version("major", "dev", ["3.0.0.rc0", "1.1.0"])
     assert "3.0.0.dev1" == _get_build_version("major", "dev", ["3.0.0.dev0", "2.1.0", "1.1.0"])
     assert "0.1.0.dev0" == _get_build_version("minor", "dev", ["0.0.2", "0.0.1"])
+    assert "0.2.0.dev0" == _get_build_version("minor", "dev", ["1.0.0.rc0", "1.0.0.dev0", "0.1.0", "0.0.1"])
     assert "0.1.2.dev0" == _get_build_version("patch", "dev", ["0.1.1", "0.0.1"])
+    assert "0.1.1.dev0" == _get_build_version("patch", "dev", ["1.0.0.rc0", "0.1.0.dev0", "0.1.0", "0.0.1"])
     assert "0.1.1.dev1" == _get_build_version("patch", "dev", ["1.0.0.rc0", "0.1.1.dev0", "0.1.0", "0.0.1"])
