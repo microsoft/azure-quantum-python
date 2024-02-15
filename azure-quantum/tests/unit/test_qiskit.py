@@ -888,7 +888,10 @@ class TestQiskit(QuantumTestBase):
         backend = provider.get_backend(name="quantinuum.sim.h1-1e")
         
         shots = 10
-        qiskit_job = backend.run(circuit, count=shots)
+        with pytest.warns(
+            match="Parameter 'count' is subject to change in future versions."
+        ):
+            qiskit_job = backend.run(circuit, count=shots)
         self._qiskit_wait_to_complete(qiskit_job, provider)
         self.assertEqual(qiskit_job._azure_job.details.input_params["count"], shots)
     
@@ -926,7 +929,10 @@ class TestQiskit(QuantumTestBase):
         backend = provider.get_backend(name="quantinuum.sim.h1-1e")
         
         shots = 100
-        qiskit_job = backend.run(circuit, shots=shots, count=10)
+        with pytest.warns(
+            match="Parameter 'shots' conflicts with the 'count' parameter."
+        ):
+            qiskit_job = backend.run(circuit, shots=shots, count=10)
 
         self._qiskit_wait_to_complete(qiskit_job, provider)
         self.assertEqual(qiskit_job._azure_job.details.input_params["count"], shots)
@@ -1075,7 +1081,7 @@ class TestQiskit(QuantumTestBase):
 
         circuit = self._3_qubit_ghz()
 
-        qiskit_job = backend.run(circuit, count=shots)
+        qiskit_job = backend.run(circuit, shots=shots)
 
         # Check job metadata:
         self.assertEqual(qiskit_job._azure_job.details.target, RigettiTarget.QVM.value)
@@ -1170,7 +1176,10 @@ class TestQiskit(QuantumTestBase):
         shots = 100
         circuit = self._3_qubit_ghz()
 
-        qiskit_job = backend.run(circuit, count=shots)
+        with pytest.warns(
+            match="Parameter 'count' is subject to change in future versions. Please, use 'shots' parameter instead."
+        ):
+            qiskit_job = backend.run(circuit, count=shots)
 
         self._qiskit_wait_to_complete(qiskit_job, provider)
         self.assertEqual(qiskit_job._azure_job.details.input_params["count"], shots)

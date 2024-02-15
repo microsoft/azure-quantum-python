@@ -129,6 +129,7 @@ class AzureBackendBase(Backend, SessionHost):
         if self._can_send_shots_input_param():
             options_shots = options.pop(self.__class__._SHOTS_PARAM_NAME, None)
 
+            final_shots = None
             # First we check for the explicitly specified 'shots' parameter, then for a provider-specific
             # field in options, then for a backend's default value. 
 
@@ -142,7 +143,7 @@ class AzureBackendBase(Backend, SessionHost):
             
             elif shots is not None:
                 final_shots = shots
-            else:
+            elif options_shots is not None:
                 warnings.warn(
                     f"Parameter '{self.__class__._SHOTS_PARAM_NAME}' is subject to change in future versions. "
                     "Please, use 'shots' parameter instead."
