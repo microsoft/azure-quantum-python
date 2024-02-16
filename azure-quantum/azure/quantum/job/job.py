@@ -61,7 +61,10 @@ class Job(BaseJob, FilteredJob):
         self.details = self.workspace.get_job(self.id).details
 
     def has_completed(self) -> bool:
-        """Check if the job has completed.
+        """Check if the job has completed
+
+        :return: Has job completed
+        :rtype: bool
         """
 
         return (
