@@ -151,7 +151,7 @@ class TestSession(QuantumTestBase):
         return backend
 
     def _test_session_job_qiskit_circuit(self, target_name):
-        from qiskit.tools.monitor import job_monitor
+        #from qiskit.tools.monitor import job_monitor
 
         workspace = self.create_workspace()
         backend = self._get_qiskit_backend(target_name)
@@ -160,11 +160,9 @@ class TestSession(QuantumTestBase):
         with backend.open_session() as session:
             self.assertEqual(session.details.status, SessionStatus.WAITING)
             session_id = session.id
-            job1 = backend.run(circuit, shots=100, job_name="Job 1")
+            backend.run(circuit, shots=100, job_name="Job 1")
 
             backend.run(circuit, shots=100, job_name="Job 2")
-
-            job_monitor(job1)
 
             session.refresh()
             self.assertEqual(session.details.status, SessionStatus.EXECUTING)
