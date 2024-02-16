@@ -82,7 +82,7 @@ class Job(BaseJob, FilteredJob):
         :type timeout_secs: int
         :param print_progress: Print "." to stdout to display progress
         :type print_progress: bool
-        :raises TimeoutError: If the total poll time exceeds timeout, raise
+        :raises: TimeoutError If the total poll time exceeds timeout, raise
         """
 
         self.refresh()
@@ -114,7 +114,7 @@ class Job(BaseJob, FilteredJob):
         :type timeout_secs: float
         :return: Results dictionary with histogram shots, or raw results if not a json object
         :rtype: Any
-        :raises JobFailedWithResultsError: If job execution failed, but job still produced output.
+        :raises: JobFailedWithResultsError If job execution failed, but job still produced output.
         """
 
         if self.results is not None:
