@@ -8,7 +8,7 @@ import logging
 import time
 import json
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from azure.quantum._client.models import JobDetails
 from azure.quantum.job.job_failed_with_results_error import JobFailedWithResultsError
@@ -106,13 +106,15 @@ class Job(BaseJob, FilteredJob):
                 else poll_wait * 1.5
             )
 
-    def get_results(self, timeout_secs: float = DEFAULT_TIMEOUT):
+    def get_results(self, timeout_secs: float = DEFAULT_TIMEOUT) -> Any:
         """Get job results by downloading the results blob from the
         storage container linked via the workspace.
 
         :param timeout_secs: Timeout in seconds, defaults to 300
-        :type timeout_secs: float
-        :return: Results dictionary with histogram shots, or raw results if not a json object.
+        :type timeout_secs: float, optional
+        :raises JobFailedWithResultsError: if an error occurred during job execution
+        :raises RuntimeError: Raises RuntimeError if job execution failed
+        :return: Results dictionary with histogram shots, or raw results if not a json object
         """
 
         if self.results is not None:
