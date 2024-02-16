@@ -112,8 +112,8 @@ class Job(BaseJob, FilteredJob):
 
         :param timeout_secs: Timeout in seconds, defaults to 300
         :type timeout_secs: float, optional
-        :raises JobFailedWithResultsError: if an error occurred during job execution
-        :raises RuntimeError: Raises RuntimeError if job execution failed
+        :raises JobFailedWithResultsError: If job execution failed, but job still produced output
+        :raises RuntimeError: If job execution failed
         :return: Results dictionary with histogram shots, or raw results if not a json object
         """
 
