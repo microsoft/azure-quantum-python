@@ -27,18 +27,18 @@ _log = logging.getLogger(__name__)
 
 
 class Job(BaseJob, FilteredJob):
-    """Azure Quantum Job that is submitted to a given Workspace.
-
-    :param workspace: Workspace instance to submit job to
-    :type workspace: Workspace
-    :param job_details: Job details model,
-            contains Job ID, name and other details
-    :type job_details: JobDetails
-    """
 
     _default_poll_wait = 0.2
 
     def __init__(self, workspace: "Workspace", job_details: JobDetails, **kwargs):
+        """Azure Quantum Job that is submitted to a given Workspace.
+
+        :param workspace: Workspace instance to submit job to
+        :type workspace: Workspace
+        :param job_details: Job details model,
+                contains Job ID, name and other details
+        :type job_details: JobDetails
+        """
         self.results = None
         super().__init__(
             workspace=workspace,
@@ -47,19 +47,22 @@ class Job(BaseJob, FilteredJob):
         )
 
     def submit(self):
-        """Submit a job to Azure Quantum."""
+        """Submit a job to Azure Quantum.
+        """
         
         _log.debug(f"Submitting job with ID {self.id}")
         job = self.workspace.submit_job(self)
         self.details = job.details
 
     def refresh(self):
-        """Refreshes the Job's details by querying the workspace."""
+        """Refreshes the Job's details by querying the workspace.
+        """
         
         self.details = self.workspace.get_job(self.id).details
 
     def has_completed(self) -> bool:
-        """Check if the job has completed."""
+        """Check if the job has completed.
+        """
 
         return (
             self.details.status == "Succeeded"
@@ -82,7 +85,7 @@ class Job(BaseJob, FilteredJob):
         :type timeout_secs: int
         :param print_progress: Print "." to stdout to display progress
         :type print_progress: bool
-        :raises: TimeoutError If the total poll time exceeds timeout, raise
+        :raises TimeoutError: If the total poll time exceeds timeout, raise
         """
 
         self.refresh()
@@ -112,9 +115,9 @@ class Job(BaseJob, FilteredJob):
 
         :param timeout_secs: Timeout in seconds, defaults to 300
         :type timeout_secs: float
+        :raises JobFailedWithResultsError: If job execution failed, but job still produced output
+        :raises RuntimeError: If job execution failed
         :return: Results dictionary with histogram shots, or raw results if not a json object
-        :rtype: Any
-        :raises: JobFailedWithResultsError If job execution failed, but job still produced output.
         """
 
         if self.results is not None:
