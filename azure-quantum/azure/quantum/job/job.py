@@ -114,8 +114,9 @@ class Job(BaseJob, FilteredJob):
         :type timeout_secs: float
         :raises RuntimeError: Raises RuntimeError if job execution failed
         :return: Results dictionary with histogram shots, or raw results if not a json object.
+        :rtype: Dict
         """
-
+        
         if self.results is not None:
             return self.results
 
