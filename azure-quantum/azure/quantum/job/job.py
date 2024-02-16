@@ -46,7 +46,6 @@ class Job(BaseJob, FilteredJob):
             **kwargs
         )
 
-
     def submit(self):
         """Submit a job to Azure Quantum."""
         
@@ -54,12 +53,10 @@ class Job(BaseJob, FilteredJob):
         job = self.workspace.submit_job(self)
         self.details = job.details
 
-
     def refresh(self):
         """Refreshes the Job's details by querying the workspace."""
         
         self.details = self.workspace.get_job(self.id).details
-
 
     def has_completed(self) -> bool:
         """Check if the job has completed."""
@@ -69,7 +66,6 @@ class Job(BaseJob, FilteredJob):
             or self.details.status == "Failed"
             or self.details.status == "Cancelled"
         )
-
 
     def wait_until_completed(
         self,
@@ -110,14 +106,12 @@ class Job(BaseJob, FilteredJob):
                 else poll_wait * 1.5
             )
 
-
     def get_results(self, timeout_secs: float = DEFAULT_TIMEOUT):
         """Get job results by downloading the results blob from the
         storage container linked via the workspace.
 
         :param timeout_secs: Timeout in seconds, defaults to 300
         :type timeout_secs: float
-        :raises RuntimeError: Raises RuntimeError if job execution failed
         :return: Results dictionary with histogram shots, or raw results if not a json object.
         """
 
