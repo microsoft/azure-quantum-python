@@ -151,8 +151,6 @@ class TestSession(QuantumTestBase):
         return backend
 
     def _test_session_job_qiskit_circuit(self, target_name):
-        #from qiskit.tools.monitor import job_monitor
-
         workspace = self.create_workspace()
         backend = self._get_qiskit_backend(target_name)
         circuit = JobPayloadFactory.get_qiskit_circuit_bell_state()
