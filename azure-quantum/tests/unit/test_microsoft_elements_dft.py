@@ -27,7 +27,7 @@ class TestMicrosoftElementsDftJob(QuantumTestBase):
 
         results = job.get_results(timeout_secs=DEFAULT_TIMEOUT_SECS)
         self.assertIsNotNone(results)
-        self.assertIsNotNone(results[0]["return_result"])
+        self.assertIsNotNone(results["results"][0]["return_result"])
 
     @pytest.mark.microsoft_elements_dft
     def test_dft_failure_invalid_input(self):
