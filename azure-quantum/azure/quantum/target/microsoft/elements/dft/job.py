@@ -27,13 +27,13 @@ class MicrosoftElementsDftJob(Job):
 
         :param timeout_secs: Timeout in seconds, defaults to 300
         :type timeout_secs: float
-        :raises RuntimeError: Raises RuntimeError if job execution failed
+        :raises: :class:`RuntimeError` Raises RuntimeError if job execution failed
         :return: Results dictionary with histogram shots, or raw results if not a json object.
         """
 
         try:
             job_results = super().get_results(timeout_secs)
-            return job_results["results"]
+            return job_results
         except JobFailedWithResultsError as e:
                 failure_results = e.get_failure_results()
                 if MicrosoftElementsDftJob._is_dft_failure_results(failure_results):
