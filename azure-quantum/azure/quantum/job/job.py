@@ -106,6 +106,8 @@ class Job(BaseJob, FilteredJob):
         """Get job results by downloading the results blob from the
         storage container linked via the workspace.
 
+        Raises :class:`RuntimeError` if job execution fails.
+
         :param timeout_secs: Timeout in seconds, defaults to 300
         :type timeout_secs: float
         :return: Results dictionary with histogram shots, or raw results if not a json object.
