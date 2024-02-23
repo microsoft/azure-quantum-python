@@ -4,6 +4,7 @@
 ##
 
 from typing import Dict
+import time
 import pytest
 
 from common import QuantumTestBase, DEFAULT_TIMEOUT_SECS
@@ -162,7 +163,16 @@ class TestSession(QuantumTestBase):
 
             backend.run(circuit, shots=100, job_name="Job 2")
 
+            # Sometimes the Waiting state may be a lottle longer, so we should wait.
+            attempts = 10
             session.refresh()
+            while session.details.status == SessionStatus.WAITING:
+                if attempts == 0:
+                    pytest.fail("Timeout. The session is still in the waiting status.")
+                time.sleep(1)
+                attempts -= 1
+                session.refresh()
+                
             self.assertEqual(session.details.status, SessionStatus.EXECUTING)
 
         session = workspace.get_session(session_id=session_id)
