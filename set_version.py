@@ -4,32 +4,108 @@
 # Licensed under the MIT License.
 
 import os
+from typing import List
+from urllib.request import urlopen
+import json
 
-major_minor = "1.1"
+ALLOWED_RELEASE_TYPES = ["major", "minor", "patch"]
+ALLOWED_BUILD_TYPES = ["stable", "rc", "dev"]
+PACKAGE_NAME = "azure-quantum"
+PYPI_URL = f"https://pypi.python.org/pypi/{PACKAGE_NAME}/json"
 
+
+RELEASE_TYPE = os.environ.get("RELEASE_TYPE") or "patch"
 BUILD_TYPE = os.environ.get("BUILD_TYPE") or "dev"
-PATCH_NUMBER = os.environ.get("PATCH_NUMBER") or "0"
 
-if BUILD_TYPE not in ["dev", "rc", "stable"]:
-    print(f"BUILD_TYPE environment variable must be 'dev', 'rc', or 'stable'. Current value: {BUILD_TYPE}")
+
+if RELEASE_TYPE not in ALLOWED_RELEASE_TYPES:
+    print(f"RELEASE_TYPE environment variable must be {', '.join(ALLOWED_RELEASE_TYPES)}. Current value: {RELEASE_TYPE}")
     exit(1)
 
-try:
-    patch_ver = int(PATCH_NUMBER)
-except:
-    print(f"PATCH_NUMBER environment variable must be set to a valid integer. Current value: {PATCH_NUMBER}")
+if BUILD_TYPE not in ALLOWED_BUILD_TYPES:
+    print(f"BUILD_TYPE environment variable must be {', '.join(ALLOWED_BUILD_TYPES)}. Current value: {BUILD_TYPE}")
     exit(1)
 
-version_triple = "{}.{}".format(major_minor, patch_ver)
 
-pip_suffix = {"stable": "", "rc": "rc0", "dev": ".dev0"}
-pip_version = "{}{}".format(version_triple, pip_suffix.get(BUILD_TYPE))
+def _get_build_version(version_type: str, build_type: str, package_versions: List[str]) -> str:
+    
+    stable_version_parts = None
 
-print("PYTHON_VERSION: {}".format(pip_version))
+    # find last stable version
+    for version in package_versions:
+        version_parts = str(version).split(".")
+        if len(version_parts) == 3:
+            stable_version_parts = version_parts
+            break
 
-# Set PYTHON_VERSION variable for steps in same job to reference as $(PYTHON_VERSION)
-print(f"##vso[task.setvariable variable=PYTHON_VERSION;]{pip_version}")
+    if stable_version_parts is None:
+        stable_version_parts = ["0", "0", "0"]
 
-# Set build tags
-print(f"##vso[build.addbuildtag]v{pip_version}")
-print(f"##vso[build.addbuildtag]{BUILD_TYPE}")
+    if version_type == "major":
+        next_stable_version = f"{int(stable_version_parts[0]) + 1}.0.0"
+    elif version_type == "minor":
+        next_stable_version = f"{stable_version_parts[0]}.{int(stable_version_parts[1]) + 1}.0"
+    elif version_type == "patch":
+        next_stable_version = f"{stable_version_parts[0]}.{stable_version_parts[1]}.{int(stable_version_parts[2]) + 1}"
+    else:
+        raise ValueError(f"Version type \"{version_type}\" is not supported.")
+
+    if build_type == "stable":
+        return next_stable_version
+
+    # in case the build type is not "stable" find last "rc"/"dev" release and bump up it's suffix-number
+    for i in range(0, 100):
+        next_version = f"{next_stable_version}.{build_type}{i}"
+        if next_version not in package_versions:
+            return next_version
+
+    raise RuntimeError(f"Build version could not be determined for version type \"{version_type}\" and build type \"{build_type}\"")
+
+
+def get_build_version(version_type: str, build_type: str) -> str:
+    """Get build version by analysing released versions in PyPi and figuring out the next version.
+    Example: 
+    - If the last stable version in PyPi was "1.1.0" and version_type = "major" and build_type = "stable", then returned version will be "2.0.0".
+    - If the last stable version in PyPi was "1.1.0" and the last dev version was "1.2.0.dev0" and version_type = "patch" and build_type = "dev", 
+    then returned version will be "1.1.1.dev0".
+    - If the last stable version in PyPi was "1.1.0" and the last dev version was "1.2.0.dev0" and version_type = "minor" and build_type = "dev", 
+    then returned version will be "1.2.0.dev1".
+
+    :param version_type: SYMVER type ("major"/"minor"/"patch")
+    :type version_type: str
+    :param build_type: Build type ("stable", "dev", "rc")
+    :type build_type: str
+    :return: build version
+    :rtype: str
+    """
+
+    # get all releases from PyPi
+    with urlopen(PYPI_URL) as response:
+        if response.status == 200:
+            response_content = response.read()
+            response = json.loads(response_content.decode("utf-8"))
+        else:
+            raise RuntimeError(f"Request \"GET:{PYPI_URL}\" failed. Status code: \"{response.status}\"")
+    
+    # Note: assuming versions are SYMVER (major.minor.patch[.dev0|.rc0]) and in chronological order:
+    # "1.0.0", "1.0.1", "1.1.0", "1.1.0.dev0", "1.1.0.dev1", "1.1.0.rc0"
+    # The next "rc" and "dev" version must follow the last "stable" version.
+
+    # sorting by time in reverse order to find the last releases, so we could assume the next version of certain "build_type"
+    package_versions_sorted = sorted(response["releases"].items(), key=lambda k: k[1][0]["upload_time_iso_8601"], reverse=True)
+    package_versions = [version[0] for version in package_versions_sorted]
+
+    return _get_build_version(version_type, build_type, package_versions)
+
+
+if __name__ == "__main__":
+    build_version = get_build_version(RELEASE_TYPE, BUILD_TYPE)
+
+    print(f"Package version: {build_version}")
+
+    # Set PYTHON_VERSION variable for steps in same job to reference as $(PYTHON_VERSION)
+    print(f"##vso[task.setvariable variable=PYTHON_VERSION;]{build_version}")
+
+    # Set build tags
+    print(f"##vso[build.addbuildtag]v{build_version}")
+    print(f"##vso[build.addbuildtag]{BUILD_TYPE}")
