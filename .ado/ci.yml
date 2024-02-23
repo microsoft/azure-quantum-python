@@ -14,6 +14,7 @@ schedules:
 
 jobs:
 - job: "Build_Azure_Quantum_Python"
+  displayName: Build "azure-quantum" package
   pool:
     vmImage: 'windows-latest'
 
@@ -21,6 +22,7 @@ jobs:
     - task: UsePythonVersion@0
       inputs:
         versionSpec: '3.11'
+      displayName: Set Python version
 
     - script: |
         pip install wheel
@@ -33,9 +35,9 @@ jobs:
     - script: |
         python set_version.py
       env:
-        BUILD_TYPE: dev
-        PATCH_NUMBER: 0
-      displayName: Set version
+        RELEASE_TYPE: "patch"
+        BUILD_TYPE: "dev"
+      displayName: Set "azure-quantum" package version
 
     - script: |
         cd $(Build.SourcesDirectory)/azure-quantum
@@ -48,6 +50,7 @@ jobs:
       displayName: Upload azure-quantum artifacts
 
 - job: "Test_Azure_Quantum_Python"
+  displayName: Test "azure-quantum" package
   pool:
     vmImage: 'windows-latest'
   
@@ -55,6 +58,7 @@ jobs:
     - task: UsePythonVersion@0
       inputs:
         versionSpec: '3.11'
+      displayName: Set Python version
 
     - script: |
         pip install pytest pytest-azurepipelines pytest-cov

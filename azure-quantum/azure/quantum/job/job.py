@@ -79,7 +79,7 @@ class Job(BaseJob, FilteredJob):
         :type timeout_secs: int
         :param print_progress: Print "." to stdout to display progress
         :type print_progress: bool
-        :raises TimeoutError: If the total poll time exceeds timeout, raise
+        :raises: :class:`TimeoutError` If the total poll time exceeds timeout, raise.
         """
         self.refresh()
         poll_wait = Job._default_poll_wait
@@ -106,10 +106,12 @@ class Job(BaseJob, FilteredJob):
         """Get job results by downloading the results blob from the
         storage container linked via the workspace.
 
+        Raises :class:`RuntimeError` if job execution fails.
+
         :param timeout_secs: Timeout in seconds, defaults to 300
         :type timeout_secs: float
-        :raises RuntimeError: Raises RuntimeError if job execution failed
         :return: Results dictionary with histogram shots, or raw results if not a json object.
+        :rtype: Any
         """
         if self.results is not None:
             return self.results
