@@ -20,8 +20,8 @@ parameters:
     - stable
   default: 'dev'
 
-- name: Deploy_Azure_Quantum_Package
-  displayName: Deploy Azure Quantum Package
+- name: Publish_Python_Package_To_Build_Artifacts
+  displayName: Publish Python package to Build's Artifacts
   type: boolean
   default: True
 
@@ -30,8 +30,8 @@ parameters:
   type: boolean
   default: False
 
-- name: Publish_PyPi_Packages
-  displayName: Publish PyPi Package
+- name: Publish_Python_Package_To_PyPi
+  displayName: Publish Python package to PyPi
   type: boolean
   default: False
 
@@ -150,7 +150,7 @@ jobs:
     displayName: Download azure-quantum artifacts
 
   - task: CopyFiles@2
-    condition: ${{ parameters.Deploy_Azure_Quantum_Package }}
+    condition: ${{ parameters.Publish_Python_Package_To_Build_Artifacts }}
     displayName: Copy built "azure-quantum" package artifacts
     inputs:
       SourceFolder: '$(Pipeline.Workspace)/azure-quantum-wheels'
@@ -178,7 +178,7 @@ jobs:
         $(Build.ArtifactStagingDirectory)/target/wheels/*
 
   - task: EsrpRelease@4
-    condition: ${{ parameters.Publish_PyPi_Packages }}
+    condition: ${{ parameters.Publish_Python_Package_To_PyPi }}
     displayName: Publish "azure-quantum" package to PyPi
     inputs:
      ConnectedServiceName: 'ESRP_Release'
