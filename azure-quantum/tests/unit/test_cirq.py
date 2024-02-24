@@ -14,8 +14,8 @@ from azure.quantum.job.job import Job
 from azure.quantum.cirq import AzureQuantumService
 from azure.quantum.cirq.targets.target import Target
 
-from common import QuantumTestBase, ONE_UID, DEFAULT_TIMEOUT_SECS
-
+from common import QuantumTestBase, ONE_UID, LOCATION, DEFAULT_TIMEOUT_SECS
+from test_workspace import SIMPLE_RESOURCE_ID
 
 class TestCirq(QuantumTestBase):
     mock_create_job_id_name = "create_job_id"
@@ -50,8 +50,9 @@ class TestCirq(QuantumTestBase):
             "test-user-agent",
             "test-very-very-very-very-very-very-very-very-long-user-agent"
         ]:
-            workspace = self.create_workspace(user_agent=app_id)
+            workspace = self.create_workspace(user_agent_app_id=app_id)
             service = AzureQuantumService(workspace=workspace)
+            # pylint: disable=protected-access
             self.assertIn(app_id, service._workspace.user_agent)
             self.assertIn("-azure-quantum-cirq", service._workspace.user_agent)
 
@@ -63,8 +64,9 @@ class TestCirq(QuantumTestBase):
             # Cause all warnings to always be triggered.
             warnings.simplefilter("always")
             # Try to trigger a warning.
-            workspace = Workspace(resource_id = "/subscriptions/00000000-0000-0000-0000-00000000000/resourceGroups/rg-test/providers/Microsoft.Quantum/Workspaces/test",
-                    location = "<region>")
+            workspace = Workspace(
+                resource_id=SIMPLE_RESOURCE_ID,
+                location=LOCATION)                
             AzureQuantumService(workspace)
 
             # Verify
@@ -79,8 +81,8 @@ class TestCirq(QuantumTestBase):
             warnings.simplefilter("always")
             # Try to trigger a warning.
             AzureQuantumService(
-                    resource_id = "/subscriptions/00000000-0000-0000-0000-00000000000/resourceGroups/rg-test/providers/Microsoft.Quantum/Workspaces/test",
-                    location = "<region>")
+                resource_id=SIMPLE_RESOURCE_ID,
+                location=LOCATION)
             # Verify
             assert len(w) == 1
             assert issubclass(w[-1].category, DeprecationWarning)
@@ -91,12 +93,14 @@ class TestCirq(QuantumTestBase):
             # Cause all warnings to always be triggered.
             warnings.simplefilter("always")
             # Try to trigger a warning.
-            workspace = Workspace(resource_id = "/subscriptions/00000000-0000-0000-0000-00000000000/resourceGroups/rg-test/providers/Microsoft.Quantum/Workspaces/test",
-                    location = "<region>")
+            workspace = Workspace(
+                resource_id=SIMPLE_RESOURCE_ID,
+                location=LOCATION)
+
             AzureQuantumService(
                     workspace=workspace,
-                    resource_id = "/subscriptions/00000000-0000-0000-0000-00000000000/resourceGroups/rg-test/providers/Microsoft.Quantum/Workspaces/test",
-                    location = "<region>")
+                    resource_id=SIMPLE_RESOURCE_ID,
+                    location=LOCATION)
             # Verify
             assert len(w) == 1
             assert issubclass(w[-1].category, DeprecationWarning)
@@ -108,6 +112,7 @@ class TestCirq(QuantumTestBase):
     def test_plugins_cirq_get_targets(self):
         workspace = self.create_workspace()
         service = AzureQuantumService(workspace=workspace)
+        # pylint: disable=protected-access
         self.assertIn("azure-quantum-cirq", service._workspace.user_agent)
         targets = service.targets()
         target_names = [t.name for t in targets]
@@ -247,6 +252,7 @@ class TestCirq(QuantumTestBase):
             job_no_program = service.get_job(self.get_test_job_id())
             job_with_program = service.get_job(
                 self.get_test_job_id(), program=program)
+            # pylint: disable=protected-access
             target = service._target_factory.create_target(
                 provider_id="quantinuum", name="quantinuum.sim.h1-1e")
             job_result1 = target._to_cirq_result(

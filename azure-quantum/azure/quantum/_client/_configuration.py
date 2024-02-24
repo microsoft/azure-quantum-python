@@ -6,30 +6,26 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-import sys
 from typing import Any, TYPE_CHECKING
 
-from azure.core.configuration import Configuration
 from azure.core.pipeline import policies
 
 from ._version import VERSION
-
-if sys.version_info >= (3, 8):
-    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
-else:
-    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
 
 
-class QuantumClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
+class QuantumClientConfiguration:  # pylint: disable=too-many-instance-attributes
     """Configuration for QuantumClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
+    :param azure_region: Supported Azure regions for Azure Quantum Services. For example, "eastus".
+     Required.
+    :type azure_region: str
     :param subscription_id: The Azure subscription ID. This is a GUID-formatted string (e.g.
      00000000-0000-0000-0000-000000000000). Required.
     :type subscription_id: str
@@ -39,22 +35,24 @@ class QuantumClientConfiguration(Configuration):  # pylint: disable=too-many-ins
     :type workspace_name: str
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :keyword api_version: Api Version. Default value is "2022-09-12-preview". Note that overriding
+    :keyword api_version: Api Version. Default value is "2023-11-13-preview". Note that overriding
      this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
     def __init__(
         self,
+        azure_region: str,
         subscription_id: str,
         resource_group_name: str,
         workspace_name: str,
         credential: "TokenCredential",
         **kwargs: Any
     ) -> None:
-        super(QuantumClientConfiguration, self).__init__(**kwargs)
-        api_version: Literal["2022-09-12-preview"] = kwargs.pop("api_version", "2022-09-12-preview")
+        api_version: str = kwargs.pop("api_version", "2022-09-12-preview")
 
+        if azure_region is None:
+            raise ValueError("Parameter 'azure_region' must not be None.")
         if subscription_id is None:
             raise ValueError("Parameter 'subscription_id' must not be None.")
         if resource_group_name is None:
@@ -64,6 +62,7 @@ class QuantumClientConfiguration(Configuration):  # pylint: disable=too-many-ins
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
 
+        self.azure_region = azure_region
         self.subscription_id = subscription_id
         self.resource_group_name = resource_group_name
         self.workspace_name = workspace_name
@@ -71,6 +70,7 @@ class QuantumClientConfiguration(Configuration):  # pylint: disable=too-many-ins
         self.api_version = api_version
         self.credential_scopes = kwargs.pop("credential_scopes", ["https://quantum.microsoft.com/.default"])
         kwargs.setdefault("sdk_moniker", "quantum/{}".format(VERSION))
+        self.polling_interval = kwargs.get("polling_interval", 30)
         self._configure(**kwargs)
 
     def _configure(self, **kwargs: Any) -> None:
@@ -79,9 +79,9 @@ class QuantumClientConfiguration(Configuration):  # pylint: disable=too-many-ins
         self.proxy_policy = kwargs.get("proxy_policy") or policies.ProxyPolicy(**kwargs)
         self.logging_policy = kwargs.get("logging_policy") or policies.NetworkTraceLoggingPolicy(**kwargs)
         self.http_logging_policy = kwargs.get("http_logging_policy") or policies.HttpLoggingPolicy(**kwargs)
-        self.retry_policy = kwargs.get("retry_policy") or policies.RetryPolicy(**kwargs)
         self.custom_hook_policy = kwargs.get("custom_hook_policy") or policies.CustomHookPolicy(**kwargs)
         self.redirect_policy = kwargs.get("redirect_policy") or policies.RedirectPolicy(**kwargs)
+        self.retry_policy = kwargs.get("retry_policy") or policies.RetryPolicy(**kwargs)
         self.authentication_policy = kwargs.get("authentication_policy")
         if self.credential and not self.authentication_policy:
             self.authentication_policy = policies.BearerTokenCredentialPolicy(

@@ -26,7 +26,7 @@ JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 class BlobDetails(_serialization.Model):
     """Blob details.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar container_name: The container name. Required.
     :vartype container_name: str
@@ -98,7 +98,7 @@ class CostEstimate(_serialization.Model):
 class ErrorData(_serialization.Model):
     """An error response from Azure.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar code: An identifier for the error. Codes are invariant and are intended to be consumed
      programmatically. Required.
@@ -140,7 +140,7 @@ class ItemDetails(_serialization.Model):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The id of the item. Required.
     :vartype id: str
@@ -235,7 +235,7 @@ class ItemDetails(_serialization.Model):
 class ItemDetailsList(_serialization.Model):
     """List of item details.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar value: Required.
     :vartype value: list[~azure.quantum._client.models.ItemDetails]
@@ -269,7 +269,7 @@ class JobDetails(ItemDetails):  # pylint: disable=too-many-instance-attributes
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The id of the item. Required.
     :vartype id: str
@@ -488,7 +488,7 @@ class JobDetailsList(_serialization.Model):
 class JsonPatchDocument(_serialization.Model):
     """A JSONPatch document as defined by RFC 6902.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar op: The operation to be performed. Required. Known values are: "add", "remove",
      "replace", "move", "copy", and "test".
@@ -733,7 +733,7 @@ class QuotaList(_serialization.Model):
 class RestError(_serialization.Model):
     """Error information returned by the API.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar error: An error response from Azure. Required.
     :vartype error: ~azure.quantum._client.models.ErrorData
@@ -781,7 +781,7 @@ class SessionDetails(ItemDetails):  # pylint: disable=too-many-instance-attribut
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to server.
 
     :ivar id: The id of the item. Required.
     :vartype id: str
