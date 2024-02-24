@@ -188,7 +188,7 @@ class TestWorkspace(QuantumTestBase):
             self.assertEqual(workspace.resource_group, RESOURCE_GROUP)
             self.assertEqual(workspace.name, WORKSPACE)
 
-            # the connection string in the env var should be parsed if we
+            # the connection string in the env var should not be parsed if we
             # don't really need it
             self.clear_env_vars(os.environ)
             os.environ[EnvironmentVariables.CONNECTION_STRING] = "bad-connection-string"
