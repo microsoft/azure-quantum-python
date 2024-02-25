@@ -24,5 +24,6 @@ __all__ = [
     "SessionHost",
     "SessionDetails",
     "SessionStatus",
-    "SessionJobFailurePolicy"
+    "SessionJobFailurePolicy",
+    "JobFailedWithResultsError"
     ]
