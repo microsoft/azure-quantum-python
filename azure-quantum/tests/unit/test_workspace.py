@@ -209,10 +209,8 @@ class TestWorkspace(QuantumTestBase):
         def assert_value_error(exception):
             self.assertIn("Azure Quantum workspace not fully specified.",
                           exception.args[0])
-
         with mock.patch.dict(os.environ):
             self.clear_env_vars(os.environ)
-
             # missing location
             with self.assertRaises(ValueError) as context:
                 Workspace(
@@ -222,11 +220,53 @@ class TestWorkspace(QuantumTestBase):
                     name=WORKSPACE,
                 )
             assert_value_error(context.exception)
-
             # missing location
             with self.assertRaises(ValueError) as context:
                 Workspace(resource_id=SIMPLE_RESOURCE_ID)
             assert_value_error(context.exception)
+
+            # missing subscription id
+            with self.assertRaises(ValueError) as context:
+                Workspace(
+                    location=LOCATION,
+                    subscription_id=None,
+                    resource_group=RESOURCE_GROUP,
+                    name=WORKSPACE
+                )
+            assert_value_error(context.exception)
+
+            # missing resource group
+            with self.assertRaises(ValueError) as context:
+                Workspace(
+                    location=LOCATION,
+                    subscription_id=SUBSCRIPTION_ID,
+                    resource_group=None,
+                    name=WORKSPACE
+                )
+            assert_value_error(context.exception)
+
+            # missing workspace name
+            with self.assertRaises(ValueError) as context:
+                Workspace(
+                    location=LOCATION,
+                    subscription_id=SUBSCRIPTION_ID,
+                    resource_group=RESOURCE_GROUP,
+                    name=None
+                )
+            assert_value_error(context.exception)
+
+            # missing everything
+            with self.assertRaises(ValueError) as context:
+                Workspace()
+            assert_value_error(context.exception)
+
+            # invalid resource id
+            with self.assertRaises(ValueError) as context:
+                Workspace(
+                    location=LOCATION,
+                    resource_id="invalid/resource/id")
+            self.assertIn("Invalid resource id",
+                          context.exception.args[0])
 
     @pytest.mark.ionq
     @pytest.mark.live_test
