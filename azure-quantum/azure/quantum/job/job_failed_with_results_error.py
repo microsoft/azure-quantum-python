@@ -2,14 +2,22 @@ import json
 from typing import Any, Dict, Union
 
 class JobFailedWithResultsError(RuntimeError):
-    """
-    Error produced when Job completes with status "Failed" and the Job
+    """Error produced when Job completes with status "Failed" and the Job
     supports producing failure results.
 
-    The failure results can be accessed with get_failure_results() method
+    The failure results can be accessed with get_failure_results() method.
     """
-    
+
     def __init__(self, message: str, failure_results: Any, *args: object) -> None:
+        """Initializes error produced when Job completes with status "Failed" and the Job
+        supports producing failure results.
+
+        :param message: Error message.
+        :type message: str
+        :param failure_results: Failure results produced by the job.
+        :type failure_results: Any
+        """
+
         self._set_error_details(message, failure_results)
         super().__init__(message, *args)
 

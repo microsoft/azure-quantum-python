@@ -29,7 +29,7 @@ class MicrosoftElementsDftJob(Job):
         :type timeout_secs: float
         :raises: :class:`RuntimeError` if job execution failed.
         :raises: :class:`azure.quantum.job.JobFailedWithResultsError` if job execution failed,
-        but intermediate results could still be retrieved.
+                but intermediate results could still be retrieved.
         :return: Results dictionary with histogram shots, or raw results if not a json object.
         """
 
