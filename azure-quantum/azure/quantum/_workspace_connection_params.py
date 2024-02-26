@@ -541,4 +541,5 @@ class WorkspaceConnectionParams:
             location=get_value('location'),
             quantum_endpoint=get_value('quantum_endpoint'),
             api_key=get_value('api_key'),
+            arm_endpoint=get_value('arm_endpoint'),
         )

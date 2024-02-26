@@ -18,6 +18,8 @@ from common import (
     STORAGE,
     API_KEY,
 )
+import pytest
+from common import QuantumTestBase
 from azure.identity import (
     CredentialUnavailableError,
     ClientSecretCredential,
