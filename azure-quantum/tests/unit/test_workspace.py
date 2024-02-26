@@ -209,8 +209,10 @@ class TestWorkspace(QuantumTestBase):
         def assert_value_error(exception):
             self.assertIn("Azure Quantum workspace not fully specified.",
                           exception.args[0])
+
         with mock.patch.dict(os.environ):
             self.clear_env_vars(os.environ)
+
             # missing location
             with self.assertRaises(ValueError) as context:
                 Workspace(
@@ -220,6 +222,7 @@ class TestWorkspace(QuantumTestBase):
                     name=WORKSPACE,
                 )
             assert_value_error(context.exception)
+
             # missing location
             with self.assertRaises(ValueError) as context:
                 Workspace(resource_id=SIMPLE_RESOURCE_ID)
