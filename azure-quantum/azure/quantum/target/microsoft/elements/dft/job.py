@@ -27,7 +27,9 @@ class MicrosoftElementsDftJob(Job):
 
         :param timeout_secs: Timeout in seconds, defaults to 300
         :type timeout_secs: float
-        :raises: :class:`RuntimeError` Raises RuntimeError if job execution failed
+        :raises: :class:`RuntimeError` if job execution failed.
+        :raises: :class:`azure.quantum.job.JobFailedWithResultsError` if job execution failed,
+                but failure results could still be retrieved.
         :return: Results dictionary with histogram shots, or raw results if not a json object.
         """
 

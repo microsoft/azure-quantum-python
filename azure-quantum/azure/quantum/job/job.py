@@ -105,8 +105,11 @@ class Job(BaseJob, FilteredJob):
     def get_results(self, timeout_secs: float = DEFAULT_TIMEOUT):
         """Get job results by downloading the results blob from the
         storage container linked via the workspace.
-
+        
         Raises :class:`RuntimeError` if job execution fails.
+        
+        Raises :class:`azure.quantum.job.JobFailedWithResultsError` if job execution fails, 
+                but failure results could still be retrieved (e.g. for jobs submitted against "microsoft.dft" target).
 
         :param timeout_secs: Timeout in seconds, defaults to 300
         :type timeout_secs: float
