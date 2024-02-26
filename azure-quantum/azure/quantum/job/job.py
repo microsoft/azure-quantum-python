@@ -109,7 +109,7 @@ class Job(BaseJob, FilteredJob):
         Raises :class:`RuntimeError` if job execution fails.
         
         Raises :class:`azure.quantum.job.JobFailedWithResultsError` if job execution fails, 
-                but intermediate results could still be retrieved (e.g. for jobs submitted against "microsoft.dft" target).
+                but failure results could still be retrieved (e.g. for jobs submitted against "microsoft.dft" target).
 
         :param timeout_secs: Timeout in seconds, defaults to 300
         :type timeout_secs: float
