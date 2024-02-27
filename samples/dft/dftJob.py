@@ -29,7 +29,7 @@ print("Submitting DFT job.")
 results = None
 try:
     job = target.submit(
-        input_data=Path('./water2.xyz').read_text(),
+        input_data=Path('/workspaces/azure-quantum-python/samples/dft/molecules/water2.xyz').read_text(),
         input_params=dft_input_params,
         name="water2-spe")    
     print(f"Submitted job with id {job.id}.")
