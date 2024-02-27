@@ -99,7 +99,7 @@ class JobPayloadFactory():
         circuit = QuantumCircuit(2, 2)
         circuit.name = "BellState"
         circuit.h(0)
-        circuit.cnot(0, 1)
+        circuit.cx(0, 1)
         circuit.measure([0, 1], [0, 1])
         return circuit
 
