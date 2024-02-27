@@ -2,17 +2,19 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 ##
+
+from __future__ import annotations
 from datetime import datetime
 import logging
-import os
-import re
-
-from typing import Any, Dict, Iterable, List, Optional, TYPE_CHECKING, Tuple, Union
-
-# Temporarily replacing the DefaultAzureCredential with
-# a custom _DefaultAzureCredential
-#   from azure.identity import DefaultAzureCredential
-from azure.quantum._authentication import _DefaultAzureCredential
+from typing import (
+    Any,
+    Dict,
+    Iterable,
+    List,
+    Optional,
+    TYPE_CHECKING,
+    Tuple,
+    Union)
 
 from azure.quantum._client import QuantumClient
 from azure.quantum._client.operations import (
@@ -23,10 +25,18 @@ from azure.quantum._client.operations import (
     TopLevelItemsOperations
 )
 from azure.quantum._client.models import BlobDetails, JobStatus
-from azure.quantum import Job, Session
-from azure.quantum.storage import create_container_using_client, get_container_uri, ContainerClient
-
-from .version import __version__
+from azure.quantum import  Job, Session
+from azure.quantum._workspace_connection_params import (
+    WorkspaceConnectionParams
+)
+from azure.quantum._constants import (
+    ConnectionConstants,
+)
+from azure.quantum.storage import (
+    create_container_using_client,
+    get_container_uri,
+    ContainerClient
+)
 
 if TYPE_CHECKING:
     from azure.quantum._client.models import TargetStatus
@@ -36,65 +46,32 @@ logger = logging.getLogger(__name__)
 
 __all__ = ["Workspace"]
 
-DEFAULT_CONTAINER_NAME_FORMAT = "job-{job_id}"
-USER_AGENT_APPID_ENV_VAR_NAME = "AZURE_QUANTUM_PYTHON_APPID"
-
-
-def sdk_environment(name):
-    return (
-        "AZURE_QUANTUM_ENV" in os.environ
-        and os.environ["AZURE_QUANTUM_ENV"] == name
-    )
-
-
-# Settings based on environment variables:
-BASE_URL_FROM_ENV = (
-    os.environ["AZURE_QUANTUM_BASEURL"]
-    if "AZURE_QUANTUM_BASEURL" in os.environ
-    else None
-)
-if sdk_environment("dogfood"):
-    logger.info("Using DOGFOOD configuration.")
-    BASE_URL = (
-        lambda location: BASE_URL_FROM_ENV
-        or f"https://{location}.quantum-test.azure.com/"
-    )
-    ARM_BASE_URL = "https://api-dogfood.resources.windows-int.net/"
-else:
-    if sdk_environment("canary"):
-        logger.info("Using CANARY configuration.")
-        BASE_URL = (
-            lambda location: BASE_URL_FROM_ENV
-            or f'{"https://eastus2euap.quantum.azure.com/"}'
-        )
-    else:
-        logger.debug("Using production configuration.")
-        BASE_URL = (
-            lambda location: BASE_URL_FROM_ENV
-            or f"https://{location}.quantum.azure.com/"
-        )
-    ARM_BASE_URL = "https://management.azure.com/"
-
 
 class Workspace:
+    DEFAULT_CONTAINER_NAME_FORMAT = "job-{job_id}"
+
     """Represents an Azure Quantum workspace.
 
-    When creating a Workspace object, callers have two options for identifying
-    the Azure Quantum workspace:
-    1. specify a valid resource ID, or
-    2. specify a valid subscription ID, resource group, and workspace name.
+    When creating a Workspace object, callers have two options for
+    identifying the Azure Quantum workspace (in order of precedence):
+    1. specify a valid location and resource ID; or
+    2. specify a valid location, subscription ID,
+       resource group, and workspace name.
 
     If the Azure Quantum workspace does not have linked storage, the caller
     must also pass a valid Azure storage account connection string.
 
     :param subscription_id:
-        The Azure subscription ID. Ignored if resource_id is specified.
+        The Azure subscription ID.
+        Ignored if resource_id is specified.
 
     :param resource_group:
-        The Azure resource group name. Ignored if resource_id is specified.
+        The Azure resource group name.
+        Ignored if resource_id is specified.
 
     :param name:
-        The Azure Quantum workspace name. Ignored if resource_id is specified.
+        The Azure Quantum workspace name.
+        Ignored if resource_id is specified.
 
     :param storage:
         The Azure storage account connection string.
@@ -113,15 +90,12 @@ class Workspace:
         The credential to use to connect to Azure services.
         Normally one of the credential types from Azure.Identity (https://learn.microsoft.com/python/api/overview/azure/identity-readme?view=azure-python#credential-classes).
 
-        Defaults to \"DefaultAzureCredential\", which will attempt multiple 
+        Defaults to \"DefaultAzureCredential\", which will attempt multiple
         forms of authentication.
 
     :param user_agent:
         Add the specified value as a prefix to the HTTP User-Agent header when communicating to the Azure Quantum service.
     """
-
-    credentials = None
-
     def __init__(
         self,
         subscription_id: Optional[str] = None,
@@ -132,110 +106,92 @@ class Workspace:
         location: Optional[str] = None,
         credential: Optional[object] = None,
         user_agent: Optional[str] = None,
+        **kwargs: Any,
     ):
-        if resource_id is not None:
-            # A valid resource ID looks like:
-            # /subscriptions/f846b2bd-d0e2-4a1d-8141-4c6944a9d387/resourceGroups/
-            # RESOURCE_GROUP_NAME/providers/Microsoft.Quantum/Workspaces/WORKSPACE_NAME
-            regex = r"^/subscriptions/([a-fA-F0-9-]*)/resourceGroups/([^\s/]*)/providers/Microsoft\.Quantum/Workspaces/([^\s/]*)$"
-            match = re.search(regex, resource_id, re.IGNORECASE)
-            if match:
-                # match should contain four groups:
-                # -> match.group(0):
-                # The full resource ID for the Azure Quantum workspace
-                # -> match.group(1): The Azure subscription ID
-                # -> match.group(2): The Azure resource group name
-                # -> match.group(3): The Azure Quantum workspace name
-                subscription_id = match.group(1)
-                resource_group = match.group(2)
-                name = match.group(3)
+        connection_params = WorkspaceConnectionParams(
+            location=location,
+            subscription_id=subscription_id,
+            resource_group=resource_group,
+            workspace_name=name,
+            credential=credential,
+            resource_id=resource_id,
+            user_agent=user_agent,
+            **kwargs
+        ).default_from_env_vars()
+        
+        logger.info("Using %s environment.", connection_params.environment)
 
-        if not subscription_id or not resource_group or not name:
-            raise ValueError(
-                "Azure Quantum workspace not fully specified."
-                + "Please specify either a valid resource ID "
-                + "or a valid combination of subscription ID,"
-                + "resource group name, and workspace name."
-            )
+        connection_params.assert_complete()
 
-        if not location:
-            raise ValueError(
-                "Azure Quantum workspace does not have an associated location. " +
-                "Please specify the location associated with your workspace.")
+        connection_params.on_new_client_request = self.on_new_client_request
 
-        # Temporarily using a custom _DefaultAzureCredential
-        # instead of Azure.Identity.DefaultAzureCredential
-        # See _DefaultAzureCredential documentation for more info.
-        if credential is None:
-            credential = _DefaultAzureCredential(exclude_interactive_browser_credential=False,
-                                                 exclude_shared_token_cache_credential=True,
-                                                 subscription_id=subscription_id,
-                                                 arm_base_url=ARM_BASE_URL)
-
-        self.credentials = credential
-        self.name = name
-        self.resource_group = resource_group
-        self.subscription_id = subscription_id
-        self.storage = storage
-        self._user_agent = user_agent
-
-        # Convert user-provided location into names
-        # recognized by Azure resource manager.
-        # For example, a customer-provided value of
-        # "West US" should be converted to "westus".
-        self.location = "".join(location.split()).lower()
+        self._connection_params = connection_params
+        self._storage = storage
 
         # Create QuantumClient
         self._client = self._create_client()
 
-    def _create_client(self) -> QuantumClient:
-        endpoint = BASE_URL(self.location)
-        logger.debug(
-            f"Creating client for: subs:{self.subscription_id},"
-            + f"rg={self.resource_group}, ws={self.name}, frontdoor={endpoint}"
-        )
+    def on_new_client_request(self):
+        self._client = self._create_client()
 
+    @property
+    def location(self):
+        return self._connection_params.location
+
+    @property
+    def subscription_id(self):
+        return self._connection_params.subscription_id
+
+    @property
+    def resource_group(self):
+        return self._connection_params.resource_group
+
+    @property
+    def name(self):
+        return self._connection_params.workspace_name
+
+    @property
+    def credential(self):
+        return self._connection_params.credential
+
+    @property
+    def storage(self):
+        return self._storage
+
+    def _create_client(self) -> QuantumClient:
+        connection_params = self._connection_params
+        kwargs = {}
+        if connection_params.api_version:
+            kwargs["api_version"] = connection_params.api_version
         client = QuantumClient(
-            credential=self.credentials,
-            subscription_id=self.subscription_id,
-            resource_group_name=self.resource_group,
-            workspace_name=self.name,
-            endpoint=endpoint,
-            user_agent=self.user_agent
+            credential=connection_params.get_credential_or_default(),
+            subscription_id=connection_params.subscription_id,
+            resource_group_name=connection_params.resource_group,
+            workspace_name=connection_params.workspace_name,
+            azure_region=connection_params.location,
+            user_agent=connection_params.get_full_user_agent(),
+            credential_scopes = [ConnectionConstants.DATA_PLANE_CREDENTIAL_SCOPE],
+            endpoint=connection_params.quantum_endpoint,
+            **kwargs
         )
         return client
 
     @property
     def user_agent(self):
         """
-        Get the Workspace's UserAgent that is sent to the service via the header.
-        Uses the value specified during initialization and appends the environment
-        variable AZURE_QUANTUM_PYTHON_APPID if specified.
+        Get the Workspace's UserAgent that is sent to
+        the service via the header.
         """
-        full_user_agent = self._user_agent
-        env_app_id = os.environ.get(USER_AGENT_APPID_ENV_VAR_NAME)
-        if env_app_id:
-            full_user_agent = f"{full_user_agent}-{env_app_id}" if full_user_agent else env_app_id
-        return full_user_agent
+        return self._connection_params.get_full_user_agent()
 
-    def append_user_agent(self, value: Union[str, None]):
+    def append_user_agent(self, value: str):
         """
         Append a new value to the Workspace's UserAgent and re-initialize the
         QuantumClient. The values are appended using a dash.
 
         :param value: UserAgent value to add, e.g. "azure-quantum-<plugin>"
         """
-        new_user_agent = None
-
-        if value is not None and value not in (self._user_agent or ""):
-            new_user_agent = f"{self._user_agent}-{value}" if self._user_agent else value
-
-        if new_user_agent != self._user_agent:
-            self._user_agent = new_user_agent
-            # We need to recreate the client for it to
-            # pick the new UserAgent
-            if self._client is not None:
-                self._client = self._create_client()
+        self._connection_params.append_user_agent(value=value)
 
     def _get_top_level_items_client(self) -> TopLevelItemsOperations:
         return self._client.top_level_items
@@ -251,9 +207,6 @@ class Workspace:
 
     def _get_quotas_client(self) -> QuotasOperations:
         return self._client.quotas
-
-    def _custom_headers(self):
-        return {"x-ms-azurequantum-sdk-version": __version__}
 
     def _get_linked_storage_sas_uri(
         self, container_name: str, blob_name: str = None

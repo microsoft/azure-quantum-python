@@ -3,39 +3,45 @@
 # Licensed under the MIT License.
 ##
 
-import os
 import re
+import os
+import json
+import time
 from unittest.mock import patch
-
-import six
-import pytest
 from vcr.request import Request as VcrRequest
-
-from azure.quantum import Workspace
-from azure.identity import ClientSecretCredential
 
 from azure_devtools.scenario_tests.base import ReplayableTest
 from azure_devtools.scenario_tests.recording_processors import (
     RecordingProcessor,
     is_text_payload,
-    AccessTokenReplacer,
-    SubscriptionRecordingProcessor,
-    OAuthRequestResponsesFilter,
-    RequestUrlNormalizer,
 )
-import json
-
+from azure.quantum import Workspace
+from azure.quantum._workspace_connection_params import (
+    WorkspaceConnectionParams,
+)
+from azure.quantum._constants import (
+    EnvironmentVariables,
+    ConnectionConstants,
+    GUID_REGEX_PATTERN,
+)
 from azure.quantum.job.job import Job
+from azure.identity import ClientSecretCredential
+
 
 ZERO_UID = "00000000-0000-0000-0000-000000000000"
 ONE_UID = "00000000-0000-0000-0000-000000000001"
 TENANT_ID = "72f988bf-86f1-41af-91ab-2d7cd011db47"
 PLACEHOLDER = "PLACEHOLDER"
+SUBSCRIPTION_ID = "11111111-2222-3333-4444-555555555555"
 RESOURCE_GROUP = "myresourcegroup"
 WORKSPACE = "myworkspace"
 LOCATION = "eastus"
 STORAGE = "mystorage"
+API_KEY = "myapikey"
+APP_ID = "testapp"
 DEFAULT_TIMEOUT_SECS = 300
+AUTH_URL = "https://login.microsoftonline.com/"
+GUID_REGEX_CAPTURE = f"(?P<guid>{GUID_REGEX_PATTERN})"
 
 class QuantumTestBase(ReplayableTest):
     """QuantumTestBase
@@ -44,36 +50,29 @@ class QuantumTestBase(ReplayableTest):
     Azure Quantum Workspace parameters from OS environment variables.
     """
     def __init__(self, method_name):
-        self._client_id = os.environ.get("AZURE_CLIENT_ID", ZERO_UID)
-        self._client_secret = os.environ.get("AZURE_CLIENT_SECRET", PLACEHOLDER)
-        self._tenant_id = os.environ.get("AZURE_TENANT_ID", TENANT_ID)
-        self._resource_group = os.environ.get("AZURE_QUANTUM_WORKSPACE_RG", os.environ.get("RESOURCE_GROUP", RESOURCE_GROUP))
-        self._subscription_id = os.environ.get("AZURE_QUANTUM_SUBSCRIPTION_ID", os.environ.get("SUBSCRIPTION_ID", ZERO_UID))
-        self._workspace_name = os.environ.get("AZURE_QUANTUM_WORKSPACE_NAME")
-        self._location = os.environ.get("AZURE_QUANTUM_WORKSPACE_LOCATION", os.environ.get("LOCATION", LOCATION))
-        self._user_agent = os.environ.get("AZURE_QUANTUM_PYTHON_APPID")
-
-        # needed to make sure the Default Credential will work
-        os.environ["LOCATION"] = self._location
+        connection_params = WorkspaceConnectionParams.from_env_vars()
+        connection_params.apply_defaults(
+            client_id=ZERO_UID,
+            tenant_id=TENANT_ID,
+            resource_group=RESOURCE_GROUP,
+            subscription_id=SUBSCRIPTION_ID,
+            workspace_name=WORKSPACE,
+            location=LOCATION,
+            user_agent_app_id=APP_ID,
+        )
+        self.connection_params = connection_params
+        self._client_secret = os.environ.get(EnvironmentVariables.AZURE_CLIENT_SECRET, PLACEHOLDER)
 
         regex_replacer = CustomRecordingProcessor(self)
         recording_processors = [
-            regex_replacer,
-            AccessTokenReplacerWithListException(),
-            InteractiveAccessTokenReplacer(),
-            SubscriptionRecordingProcessor(ZERO_UID),
             AuthenticationMetadataFilter(),
-            OAuthRequestResponsesFilter(),
-            RequestUrlNormalizer()
+            regex_replacer,
+            CustomAccessTokenReplacer(),
         ]
 
         replay_processors = [
-            regex_replacer,
             AuthenticationMetadataFilter(),
-            OAuthRequestResponsesFilter(),
-            RequestUrlNormalizer(),
-            OAuthResponsesFilter(),
-            CustomUrlPlaybackProcessor()
+            regex_replacer,
         ]
 
         super(QuantumTestBase, self).__init__(
@@ -86,62 +85,70 @@ class QuantumTestBase(ReplayableTest):
         self.vcr.record_mode = 'once'
         self.vcr.register_matcher('query', self._custom_request_query_matcher)
 
-        if self.is_playback:
-            self._client_id = ZERO_UID
-            self._client_secret = PLACEHOLDER
-            self._tenant_id = TENANT_ID
-            self._resource_group = RESOURCE_GROUP
-            self._subscription_id = ZERO_UID
-            self._workspace_name = WORKSPACE
-            self._location = LOCATION
-
         regex_replacer.register_guid_regex(
-            r"(?:job-|jobs/|session-|sessions/)((?:[a-f0-9]+[-]){4}[a-f0-9]+)")
-        regex_replacer.register_regex(self.client_id, ZERO_UID)
+            f"(?:job-|jobs/|session-|sessions/){GUID_REGEX_CAPTURE}")
+        regex_replacer.register_regex(connection_params.client_id, ZERO_UID)
         regex_replacer.register_regex(
-            self.client_secret, PLACEHOLDER
+            self._client_secret, PLACEHOLDER
         )
-        regex_replacer.register_regex(self.tenant_id, ZERO_UID)
-        regex_replacer.register_regex(self.subscription_id, ZERO_UID)
-        regex_replacer.register_regex(self.workspace_name, WORKSPACE)
-        regex_replacer.register_regex(self.location, LOCATION)
-        regex_replacer.register_regex(self.resource_group, RESOURCE_GROUP)
+        regex_replacer.register_regex(connection_params.tenant_id, ZERO_UID)
+        regex_replacer.register_regex(connection_params.subscription_id, ZERO_UID)
+        regex_replacer.register_regex(connection_params.workspace_name, WORKSPACE)
+        regex_replacer.register_regex(connection_params.location, LOCATION)
+        regex_replacer.register_regex(connection_params.resource_group, RESOURCE_GROUP)
         regex_replacer.register_regex(
-            r"/subscriptions/([a-f0-9]+[-]){4}[a-f0-9]+",
-            "/subscriptions/" + ZERO_UID,
+            f"/subscriptions/{GUID_REGEX_CAPTURE}",
+            f"/subscriptions/{ZERO_UID}",
         )
         regex_replacer.register_regex(
             r"\d{8}-\d{6}", "20210101-000000"
         )
         regex_replacer.register_regex(
-            r'blob.core.windows.net/([a-f0-9]+[-]){4}[a-f0-9]+',
-            'blob.core.windows.net/{}'.format(ZERO_UID),
+            f'blob.core.windows.net/{GUID_REGEX_CAPTURE}',
+            f'blob.core.windows.net/{ZERO_UID}',
         )
         regex_replacer.register_regex(
-            r"/resourceGroups/[a-z0-9-]+/", f'/resourceGroups/{RESOURCE_GROUP}/'
+            r"/resourceGroups/[a-z0-9-]+/",
+            f'/resourceGroups/{RESOURCE_GROUP}/'
         )
         regex_replacer.register_regex(
-            r"/workspaces/[a-z0-9-]+/", f'/workspaces/{WORKSPACE}/'
+            r"/workspaces/[a-z0-9-]+/",
+            f'/workspaces/{WORKSPACE}/'
         )
         regex_replacer.register_regex(
-            r"https://[^\.]+.blob.core.windows.net", f'https://{STORAGE}.blob.core.windows.net'
+            r"https://[^\.]+.blob.core.windows.net",
+            f'https://{STORAGE}.blob.core.windows.net'
         )
         regex_replacer.register_regex(
-            r"https://[^\.]+.quantum.azure.com", f'https://{LOCATION}.quantum.azure.com'
+            r"https://[^\.]+.quantum(-test)?.azure.com/",
+            ConnectionConstants.GET_QUANTUM_PRODUCTION_ENDPOINT(LOCATION)
         )
         regex_replacer.register_regex(
-            r"/workspaces/[a-z0-9-]+/", f'/workspaces/{WORKSPACE}/'
+            r"/workspaces/[a-z0-9-]+/",
+            f'/workspaces/{WORKSPACE}/'
         )
-
-        regex_replacer.register_regex(r"sig=[^&]+\&", "sig=PLACEHOLDER&")
-        regex_replacer.register_regex(r"sv=[^&]+\&", "sv=PLACEHOLDER&")
-        regex_replacer.register_regex(r"se=[^&]+\&", "se=PLACEHOLDER&")
-        regex_replacer.register_regex(r"client_id=[^&]+\&", "client_id=PLACEHOLDER&")
-        regex_replacer.register_regex(r"client_secret=[^&]+\&", "client_secret=PLACEHOLDER&")
-        regex_replacer.register_regex(r"claims=[^&]+\&", "claims=PLACEHOLDER&")
-        regex_replacer.register_regex(r"code_verifier=[^&]+\&", "code_verifier=PLACEHOLDER&")
-        regex_replacer.register_regex(r"code=[^&]+\&", "code_verifier=PLACEHOLDER&")
-        regex_replacer.register_regex(r"code=[^&]+\&", "code_verifier=PLACEHOLDER&")
+        regex_replacer.register_regex(
+            f"https://login.(microsoftonline.com|windows-ppe.net)/{GUID_REGEX_CAPTURE}/oauth2/.*",
+            f'https://login.microsoftonline.com/{ZERO_UID}/oauth2/v2.0/token'
+        )
+        regex_replacer.register_regex(r"sig=[^&]+\&",
+                                      "sig=PLACEHOLDER&")
+        regex_replacer.register_regex(r"sv=[^&]+\&",
+                                      "sv=PLACEHOLDER&")
+        regex_replacer.register_regex(r"se=[^&]+\&",
+                                      "se=PLACEHOLDER&")
+        regex_replacer.register_regex(r"client_id=[^&]+\&",
+                                      "client_id=PLACEHOLDER&")
+        regex_replacer.register_regex(r"client_secret=[^&]+\&",
+                                      "client_secret=PLACEHOLDER&")
+        regex_replacer.register_regex(r"claims=[^&]+\&",
+                                      "claims=PLACEHOLDER&")
+        regex_replacer.register_regex(r"code_verifier=[^&]+\&",
+                                      "code_verifier=PLACEHOLDER&")
+        regex_replacer.register_regex(r"code=[^&]+\&",
+                                      "code_verifier=PLACEHOLDER&")
+        regex_replacer.register_regex(r"code=[^&]+\&",
+                                      "code_verifier=PLACEHOLDER&")
         regex_replacer.register_regex(r"http://", "https://")  # Devskim: ignore DS137138
 
     @classmethod
@@ -202,76 +209,47 @@ class QuantumTestBase(ReplayableTest):
 
     @property
     def is_playback(self):
-        return self.subscription_id == ZERO_UID or \
-               (not (self.in_recording or self.is_live))
+        return (self.connection_params.subscription_id == SUBSCRIPTION_ID
+                and not self.in_recording 
+                and not self.is_live)
 
-    @property
-    def client_id(self):
-        return self._client_id
+    def clear_env_vars(self, os_environ):
+        for env_var in EnvironmentVariables.ALL:
+            if env_var in os_environ:
+                del os_environ[env_var]
 
-    @property
-    def client_secret(self):
-        return self._client_secret
-
-    @property
-    def tenant_id(self):
-        return self._tenant_id
-
-    @property
-    def resource_group(self):
-        return self._resource_group
-
-    @property
-    def location(self):
-        return self._location
-
-    @property
-    def subscription_id(self):
-        return self._subscription_id
-
-    @property
-    def workspace_name(self):
-        return self._workspace_name
-
-    def create_workspace(self, **kwargs) -> Workspace:
-        """Create workspace using credentials passed via OS Environment Variables
+    def create_workspace(
+            self,
+            credential = None,
+            **kwargs) -> Workspace:
+        """
+        Create workspace using credentials passed via OS Environment Variables
         described in the README.md documentation, or when in playback mode use
         a placeholder credential.
-
-        :return: Workspace
-        :rtype: Workspace
         """
 
-        playback_credential = ClientSecretCredential(self.tenant_id,
-                                                     self.client_id,
-                                                     self.client_secret)
-        default_credential = playback_credential if self.is_playback \
-                             else None
+        connection_params = self.connection_params
+
+        if not credential and self.is_playback:
+            credential = ClientSecretCredential(
+                tenant_id=TENANT_ID,
+                client_id=ZERO_UID,
+                client_secret=PLACEHOLDER)
 
         workspace = Workspace(
-            credential=default_credential,
-            subscription_id=self.subscription_id,
-            resource_group=self.resource_group,
-            name=self.workspace_name,
-            location=self.location,
+            credential=credential,
+            subscription_id=connection_params.subscription_id,
+            resource_group=connection_params.resource_group,
+            name=connection_params.workspace_name,
+            location=connection_params.location,
+            user_agent=connection_params.user_agent_app_id,
             **kwargs
         )
-        workspace.append_user_agent("testapp")
 
-        return workspace 
-
-
-class CustomUrlPlaybackProcessor(RecordingProcessor):
-    def process_request(self, request):
-        request.uri = re.sub('https://[^.]+.quantum.azure.com/',
-                        f'https://{LOCATION}.quantum.azure.com/',
-                        request.uri,
-                        flags=re.IGNORECASE)
-        return request
+        return workspace
 
 
 class CustomRecordingProcessor(RecordingProcessor):
-
     ALLOW_HEADERS = [
         "connection",
         "content-length",
@@ -303,6 +281,7 @@ class CustomRecordingProcessor(RecordingProcessor):
         "x-client-sku",
         "x-client-ver",
         "user-agent",
+        "www-authenticate",
     ]
 
     def __init__(self, quantumTest: QuantumTestBase):
@@ -328,8 +307,9 @@ class CustomRecordingProcessor(RecordingProcessor):
         register replacements with an auto-incremented deterministic guid
         to be included in the recordings
         """
-        self._auto_guid_regexes.append(re.compile(pattern=guid_regex,
-                                                  flags=re.IGNORECASE | re.MULTILINE))
+        self._auto_guid_regexes.append(
+            re.compile(pattern=guid_regex,
+                       flags=re.IGNORECASE | re.MULTILINE))
 
     def _search_for_guids(self, value: str):
         """
@@ -341,9 +321,11 @@ class CustomRecordingProcessor(RecordingProcessor):
             for regex in self._auto_guid_regexes:
                 match = regex.search(value)
                 if match:
-                    guid = match.groups(1)[0]
-                    if (guid not in self._guids
-                        and not guid.startswith("00000000-")):
+                    guid = match.groups("guid")[0]
+                    if (
+                        guid not in self._guids
+                        and not guid.startswith("00000000-")
+                    ):
                         i = len(self._guids) + 1
                         new_guid = "00000000-0000-0000-0000-%0.12X" % i
                         self._guids[guid] = new_guid
@@ -375,8 +357,10 @@ class CustomRecordingProcessor(RecordingProcessor):
             # if we are in playback
             # or we are recording and the recording is not suspended
             # we increment the sequence id
-            if (self._quantumTest.is_playback or
-                not self._quantumTest.disable_recording):
+            if (
+                self._quantumTest.is_playback or
+                not self._quantumTest.disable_recording
+            ):
                 # VCR calls this method twice per request
                 # so we need to increment the sequence by 0.5
                 # and use the ceiling
@@ -403,8 +387,10 @@ class CustomRecordingProcessor(RecordingProcessor):
         body = request.body
         encode_body = False
         if body:
-            if ((content_type == "application/x-www-form-urlencoded") and
-                (isinstance(body, bytes) or isinstance(body, bytearray))):
+            if (
+                (content_type == "application/x-www-form-urlencoded") and
+                (isinstance(body, bytes) or isinstance(body, bytearray))
+            ):
                 body = body.decode("utf-8")
                 encode_body = True
             else:
@@ -434,7 +420,8 @@ class CustomRecordingProcessor(RecordingProcessor):
         return request
 
     def _get_content_type(self, entity):
-        # 'headers' is a field of 'request', but it is a dict-key in 'response'
+        # 'headers' is a field of 'request',
+        # but it is a dict-key in 'response'
         if hasattr(entity, "headers"):
             headers = getattr(entity, "headers")
         else:
@@ -444,7 +431,8 @@ class CustomRecordingProcessor(RecordingProcessor):
         if headers is not None:
             content_type = headers.get('content-type')
             if content_type is not None:
-                # content-type could be an array from response, let us extract it out
+                # content-type could be an array from response
+                # so we extract it out if needed
                 if isinstance(content_type, list):
                     content_type = content_type[0]
                 content_type = content_type.split(";")[0].lower()
@@ -462,7 +450,8 @@ class CustomRecordingProcessor(RecordingProcessor):
             if key.lower() in self.ALLOW_HEADERS:
                 new_header_values = []
                 for old_header_value in response["headers"][key]:
-                    new_header_value = self._regex_replace_all(old_header_value)
+                    new_header_value = (
+                        self._regex_replace_all(old_header_value))
                     new_header_values.append(new_header_value)
                 headers[key] = new_header_values
         response["headers"] = headers
@@ -471,11 +460,14 @@ class CustomRecordingProcessor(RecordingProcessor):
             response["url"] = self._regex_replace_all(response["url"])
 
         content_type = self._get_content_type(response)
-        if is_text_payload(response) or "application/octet-stream" == content_type:
+        if (
+            is_text_payload(response)
+            or "application/octet-stream" == content_type
+        ):
             body = response["body"]["string"]
             if body is not None:
                 encode_body = False
-                if not isinstance(body, six.string_types):
+                if not isinstance(body, str):
                     body = body.decode("utf-8")
                     encode_body = True
                 if body:
@@ -488,46 +480,51 @@ class CustomRecordingProcessor(RecordingProcessor):
         return response
 
 
-class OAuthResponsesFilter(RecordingProcessor):
-    def process_request(self, request):
-        request.uri = re.sub('https://login.microsoftonline.com/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})',
-                        f'https://login.microsoftonline.com/{ZERO_UID}',
-                        request.uri,
-                        flags=re.IGNORECASE)
-        return request
-
-
 class AuthenticationMetadataFilter(RecordingProcessor):
-    """Remove authority and tenant discovery requests and responses from recordings.
-    MSAL sends these requests to obtain non-secret metadata about the token authority. Recording them is unnecessary
-    because tests use fake credentials during playback that don't invoke MSAL.
+    """
+    Remove authority and tenant discovery requests
+    and responses from recordings.
+    MSAL sends these requests to obtain non-secret
+    metadata about the token authority.
+    Recording them is unnecessary because tests use
+    fake credentials during playback that don't invoke MSAL.
     """
 
     def process_request(self, request):
-        if "/.well-known/openid-configuration" in request.uri or "/common/discovery/instance" in request.uri:
+        if (
+            "/.well-known/openid-configuration" in request.uri
+            or "/common/discovery/instance" in request.uri
+            or "&discover-tenant-id-and-authority" in request.uri
+        ):
             return None
         return request
 
 
-class AccessTokenReplacerWithListException(AccessTokenReplacer):
+class CustomAccessTokenReplacer(RecordingProcessor):
     """
-    Replace the access token for service principal authentication in a response body.
-
-    This is customized for responses that return lists.
+    Sanitize the access token in the response body.
     """
-
-    def __init__(self, replacement='fake_token'):
-        self._replacement = replacement
-
     def process_response(self, response):
-        import json
         try:
             body = json.loads(response['body']['string'])
-            if not isinstance(body, list):
-                body['access_token'] = self._replacement
+            if not isinstance(body, list) and 'access_token' in body:
+                refresh_in =  365*24*60*60
+                expires_in =  int(time.time()) + refresh_in
+                body['access_token'] = PLACEHOLDER
+                body['expires_in'] = expires_in
+                body['ext_expires_in'] = expires_in
+                body['refresh_in'] = refresh_in
+                for prop in (
+                    'scope', 'refresh_token',
+                    'foci', 'client_info',
+                    'id_token'
+                ):
+                    if prop in body:
+                        del body[prop]
+            response['body']['string'] = json.dumps(body)
+            response['headers']['content-length'] = [f"{len(body)}"]
         except (KeyError, ValueError):
             return response
-        response['body']['string'] = json.dumps(body)
         return response
 
 
@@ -554,17 +551,3 @@ class InteractiveAccessTokenReplacer(RecordingProcessor):
         response['body']['string'] = body
         response['headers']['content-length'] = ["%s" % len(body)]
         return response
-
-
-def expected_terms():
-    expected = json.dumps(
-        {
-            "cost_function": {
-                "version": "1.1",
-                "type": "ising",
-                "terms": [{"c": 3, "ids": [1, 0]}, {"c": 5, "ids": [2, 0]}],
-                "initial_configuration": {"0": -1, "1": 1, "2": -1},
-            }
-        }
-    )
-    return expected

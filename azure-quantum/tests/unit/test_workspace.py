@@ -2,84 +2,145 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 ##
-import pytest
 import os
+from unittest import mock
+import pytest
+from common import (
+    QuantumTestBase,
+    SUBSCRIPTION_ID,
+    RESOURCE_GROUP,
+    WORKSPACE,
+    LOCATION,
+    STORAGE,
+    API_KEY,
+)
 from azure.quantum import Workspace
-from azure.quantum.workspace import USER_AGENT_APPID_ENV_VAR_NAME
-from common import QuantumTestBase
+from azure.quantum._constants import (
+    EnvironmentVariables,
+    ConnectionConstants,
+)
+
+SIMPLE_RESOURCE_ID = ConnectionConstants.VALID_RESOURCE_ID(
+    subscription_id=SUBSCRIPTION_ID,
+    resource_group=RESOURCE_GROUP,
+    workspace_name=WORKSPACE,
+)
+
 
 class TestWorkspace(QuantumTestBase):
-
     def test_create_workspace_instance_valid(self):
-        storage = "strg"
+        ws = Workspace(
+            subscription_id=SUBSCRIPTION_ID,
+            resource_group=RESOURCE_GROUP,
+            name=WORKSPACE,
+            location=LOCATION,
+        )
+        self.assertEqual(ws.subscription_id, SUBSCRIPTION_ID)
+        self.assertEqual(ws.resource_group, RESOURCE_GROUP)
+        self.assertEqual(ws.name, WORKSPACE)
+        self.assertEqual(ws.location, LOCATION)
 
         ws = Workspace(
-            subscription_id=self.subscription_id,
-            resource_group=self.resource_group,
-            name=self.workspace_name,
-            location=self.location
+            subscription_id=SUBSCRIPTION_ID,
+            resource_group=RESOURCE_GROUP,
+            name=WORKSPACE,
+            location=LOCATION,
+            storage=STORAGE,
         )
-        self.assertEqual(ws.subscription_id, self.subscription_id)
-        self.assertEqual(ws.resource_group, self.resource_group)
-        self.assertEqual(ws.name, self.workspace_name)
-        self.assertEqual(ws.location.lower().replace(" ", ""), self.location.lower().replace(" ", ""))
+        self.assertEqual(ws.storage, STORAGE)
 
         ws = Workspace(
-            subscription_id=self.subscription_id,
-            resource_group=self.resource_group,
-            name=self.workspace_name,
-            location=self.location,
-            storage=storage
+            resource_id=SIMPLE_RESOURCE_ID,
+            location=LOCATION,
         )
-        self.assertEqual(ws.storage, storage)
+        self.assertEqual(ws.subscription_id, SUBSCRIPTION_ID)
+        self.assertEqual(ws.resource_group, RESOURCE_GROUP)
+        self.assertEqual(ws.name, WORKSPACE)
+        self.assertEqual(ws.location, LOCATION)
 
-        resource_id = f"/subscriptions/{self.subscription_id}/ResourceGroups/{self.resource_group}/providers/Microsoft.Quantum/Workspaces/{self.workspace_name}"
-        ws = Workspace(resource_id=resource_id, location=self.location)
-        self.assertEqual(ws.subscription_id, self.subscription_id)
-        self.assertEqual(ws.resource_group, self.resource_group)
-        self.assertEqual(ws.name, self.workspace_name)
-
-        ws = Workspace(resource_id=resource_id, storage=storage, location=self.location)
-        self.assertEqual(ws.storage, storage)
+        ws = Workspace(
+            resource_id=SIMPLE_RESOURCE_ID,
+            storage=STORAGE,
+            location=LOCATION,
+        )
+        self.assertEqual(ws.storage, STORAGE)
 
     def test_create_workspace_locations(self):
-        # location is mandatory
-        with self.assertRaises(Exception) as context:
-            Workspace(
-                subscription_id=self.subscription_id,
-                resource_group=self.resource_group,
-                name=self.workspace_name,
-            )
-            self.assertTrue("Azure Quantum workspace does not have an associated location." in context.exception)
-
         # User-provided location name should be normalized
         location = "East US"
         ws = Workspace(
-            subscription_id=self.subscription_id,
-            resource_group=self.resource_group,
-            name=self.workspace_name,
+            subscription_id=SUBSCRIPTION_ID,
+            resource_group=RESOURCE_GROUP,
+            name=WORKSPACE,
             location=location,
         )
         self.assertEqual(ws.location, "eastus")
 
     def test_create_workspace_instance_invalid(self):
-        storage = "invalid_storage"
+        def assert_value_error(exception):
+            self.assertIn("Azure Quantum workspace not fully specified.",
+                          exception.args[0])
 
-        with pytest.raises(ValueError):
-            Workspace()
+        with mock.patch.dict(os.environ):
+            self.clear_env_vars(os.environ)
 
-        with pytest.raises(ValueError):
-            Workspace(
-                subscription_id=self.subscription_id,
-                resource_group=self.resource_group,
-                name="",
-            )
+            # missing location
+            with self.assertRaises(ValueError) as context:
+                Workspace(
+                    location=None,
+                    subscription_id=SUBSCRIPTION_ID,
+                    resource_group=RESOURCE_GROUP,
+                    name=WORKSPACE,
+                )
+            assert_value_error(context.exception)
 
-        with pytest.raises(ValueError):
-            Workspace(resource_id="invalid/resource/id")
+            # missing location
+            with self.assertRaises(ValueError) as context:
+                Workspace(resource_id=SIMPLE_RESOURCE_ID)
+            assert_value_error(context.exception)
 
-        with pytest.raises(ValueError):
-            Workspace(storage=storage)
+            # missing subscription id
+            with self.assertRaises(ValueError) as context:
+                Workspace(
+                    location=LOCATION,
+                    subscription_id=None,
+                    resource_group=RESOURCE_GROUP,
+                    name=WORKSPACE
+                )
+            assert_value_error(context.exception)
+
+            # missing resource group
+            with self.assertRaises(ValueError) as context:
+                Workspace(
+                    location=LOCATION,
+                    subscription_id=SUBSCRIPTION_ID,
+                    resource_group=None,
+                    name=WORKSPACE
+                )
+            assert_value_error(context.exception)
+
+            # missing workspace name
+            with self.assertRaises(ValueError) as context:
+                Workspace(
+                    location=LOCATION,
+                    subscription_id=SUBSCRIPTION_ID,
+                    resource_group=RESOURCE_GROUP,
+                    name=None
+                )
+            assert_value_error(context.exception)
+
+            # missing everything
+            with self.assertRaises(ValueError) as context:
+                Workspace()
+            assert_value_error(context.exception)
+
+            # invalid resource id
+            with self.assertRaises(ValueError) as context:
+                Workspace(
+                    location=LOCATION,
+                    resource_id="invalid/resource/id")
+            self.assertIn("Invalid resource id",
+                          context.exception.args[0])
 
     @pytest.mark.ionq
     @pytest.mark.live_test
@@ -154,95 +215,84 @@ class TestWorkspace(QuantumTestBase):
         self.assertIn("limit", quotas[0])
         self.assertIn("period", quotas[0])
 
+    @pytest.mark.live_test
+    def test_workspace_list_jobs(self):
+        ws = self.create_workspace()
+        jobs = ws.list_jobs()
+        self.assertIsInstance(jobs, list)
+
     def test_workspace_user_agent_appid(self):
-        env_var_app_id = "MyEnvVarAppId"
-        user_agent = "MyUserAgentAppId"
-        very_long_user_agent = "MyVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryVeryLongUserAgentAppId"
-        original_env_app_id = os.environ.get(USER_AGENT_APPID_ENV_VAR_NAME, "")
-        try:
+        app_id = "MyEnvVarAppId"
+        user_agent = "MyUserAgent"
+        with mock.patch.dict(os.environ):
+            self.clear_env_vars(os.environ)
+
             # no UserAgent parameter and no EnvVar AppId
-            os.environ[USER_AGENT_APPID_ENV_VAR_NAME] = ""
+            os.environ[EnvironmentVariables.USER_AGENT_APPID] = ""
             ws = Workspace(
-                subscription_id=self.subscription_id,
-                resource_group=self.resource_group,
-                name=self.workspace_name,
-                location=self.location
+                subscription_id=SUBSCRIPTION_ID,
+                resource_group=RESOURCE_GROUP,
+                name=WORKSPACE,
+                location=LOCATION
             )
             self.assertIsNone(ws.user_agent)
 
             # no UserAgent parameter and with EnvVar AppId
-            os.environ[USER_AGENT_APPID_ENV_VAR_NAME] = env_var_app_id
+            os.environ[EnvironmentVariables.USER_AGENT_APPID] = app_id
             ws = Workspace(
-                subscription_id=self.subscription_id,
-                resource_group=self.resource_group,
-                name=self.workspace_name,
-                location=self.location
+                subscription_id=SUBSCRIPTION_ID,
+                resource_group=RESOURCE_GROUP,
+                name=WORKSPACE,
+                location=LOCATION
             )
-            self.assertEqual(ws.user_agent, env_var_app_id)
+            self.assertEqual(ws.user_agent, app_id)
 
             # with UserAgent parameter and no EnvVar AppId
-            os.environ[USER_AGENT_APPID_ENV_VAR_NAME] = ""
+            os.environ[EnvironmentVariables.USER_AGENT_APPID] = ""
             ws = Workspace(
-                subscription_id=self.subscription_id,
-                resource_group=self.resource_group,
-                name=self.workspace_name,
-                location=self.location,
+                subscription_id=SUBSCRIPTION_ID,
+                resource_group=RESOURCE_GROUP,
+                name=WORKSPACE,
+                location=LOCATION,
                 user_agent=user_agent
             )
             self.assertEqual(ws.user_agent, user_agent)
 
-            # with very long UserAgent parameter and no EnvVar AppId
-            os.environ[USER_AGENT_APPID_ENV_VAR_NAME] = ""
+            # with UserAgent parameter and EnvVar AppId
+            os.environ[EnvironmentVariables.USER_AGENT_APPID] = app_id
             ws = Workspace(
-                subscription_id=self.subscription_id,
-                resource_group=self.resource_group,
-                name=self.workspace_name,
-                location=self.location,
-                user_agent=very_long_user_agent
-            )
-            self.assertEqual(ws.user_agent, very_long_user_agent)
-
-            # with UserAgent parameter and with EnvVar AppId
-            os.environ[USER_AGENT_APPID_ENV_VAR_NAME] = env_var_app_id
-            ws = Workspace(
-                subscription_id=self.subscription_id,
-                resource_group=self.resource_group,
-                name=self.workspace_name,
-                location=self.location,
+                subscription_id=SUBSCRIPTION_ID,
+                resource_group=RESOURCE_GROUP,
+                name=WORKSPACE,
+                location=LOCATION,
                 user_agent=user_agent
             )
-            self.assertEqual(ws.user_agent, f"{user_agent}-{env_var_app_id}")
+            self.assertEqual(ws.user_agent,
+                             f"{app_id} {user_agent}")
 
-            # Append with UserAgent parameter and with EnvVar AppId 
-            os.environ[USER_AGENT_APPID_ENV_VAR_NAME] = env_var_app_id
+            # Append with UserAgent parameter and with EnvVar AppId
+            os.environ[EnvironmentVariables.USER_AGENT_APPID] = app_id
             ws = Workspace(
-                subscription_id=self.subscription_id,
-                resource_group=self.resource_group,
-                name=self.workspace_name,
-                location=self.location,
+                subscription_id=SUBSCRIPTION_ID,
+                resource_group=RESOURCE_GROUP,
+                name=WORKSPACE,
+                location=LOCATION,
                 user_agent=user_agent
             )
             ws.append_user_agent("featurex")
-            self.assertEqual(ws.user_agent, f"{user_agent}-featurex-{env_var_app_id}")
+            self.assertEqual(ws.user_agent,
+                             f"{app_id} {user_agent}-featurex")
 
             ws.append_user_agent(None)
-            self.assertEqual(ws.user_agent, env_var_app_id)
+            self.assertEqual(ws.user_agent, app_id)
 
-            # Append with no UserAgent parameter and no EnvVar AppId 
-            os.environ[USER_AGENT_APPID_ENV_VAR_NAME] = ""
+            # Append with no UserAgent parameter and no EnvVar AppId
+            os.environ[EnvironmentVariables.USER_AGENT_APPID] = ""
             ws = Workspace(
-                subscription_id=self.subscription_id,
-                resource_group=self.resource_group,
-                name=self.workspace_name,
-                location=self.location
+                subscription_id=SUBSCRIPTION_ID,
+                resource_group=RESOURCE_GROUP,
+                name=WORKSPACE,
+                location=LOCATION
             )
             ws.append_user_agent("featurex")
             self.assertEqual(ws.user_agent, "featurex")
-
-            ws.append_user_agent(None)
-            self.assertEqual(ws.user_agent, None)
-        finally:
-            if original_env_app_id:
-                os.environ[USER_AGENT_APPID_ENV_VAR_NAME] = original_env_app_id
-            else:
-                os.environ.pop(USER_AGENT_APPID_ENV_VAR_NAME)

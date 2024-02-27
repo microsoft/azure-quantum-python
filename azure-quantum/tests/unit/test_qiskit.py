@@ -1,7 +1,3 @@
-#!/bin/env python
-# -*- coding: utf-8 -*-
-##
-# test_qiskit.py: Tests for Qiskit plugin
 ##
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
@@ -9,12 +5,9 @@
 from typing import Any, Dict, List, Tuple, Union
 import unittest
 import warnings
-from azure.quantum.workspace import Workspace
-import pytest
-import json
 import random
-import re
-
+import json
+import pytest
 import numpy as np
 
 from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister
@@ -25,7 +18,10 @@ from qiskit.providers.exceptions import QiskitBackendNotFoundError
 from qiskit_ionq.exceptions import IonQGateError
 from qiskit_ionq import GPIGate, GPI2Gate, MSGate
 
-from azure.quantum.job.job import Job
+from common import QuantumTestBase, DEFAULT_TIMEOUT_SECS, LOCATION
+from test_workspace import SIMPLE_RESOURCE_ID
+
+from azure.quantum.workspace import Workspace
 from azure.quantum.qiskit import AzureQuantumProvider
 from azure.quantum.qiskit.job import (
     MICROSOFT_OUTPUT_DATA_FORMAT,
@@ -34,13 +30,10 @@ from azure.quantum.qiskit.job import (
 )
 from azure.quantum.qiskit.backends.backend import (
     AzureBackend,
-    AzureBackendBase,
     AzureQirBackend,
 )
 from azure.quantum.qiskit.backends.quantinuum import QuantinuumEmulatorQirBackend
 from azure.quantum.qiskit.backends.ionq import IonQSimulatorQirBackend
-
-from common import QuantumTestBase, DEFAULT_TIMEOUT_SECS
 
 # This provider is used to stub out calls to the AzureQuantumProvider
 # There are live tests that use the available backends in the workspace
@@ -336,8 +329,9 @@ class TestQiskit(QuantumTestBase):
             # Cause all warnings to always be triggered.
             warnings.simplefilter("always")
             # Try to trigger a warning.
-            workspace = Workspace(resource_id = "/subscriptions/00000000-0000-0000-0000-00000000000/resourceGroups/rg-test/providers/Microsoft.Quantum/Workspaces/test",
-                    location = "<region>")
+            workspace = Workspace(
+                resource_id=SIMPLE_RESOURCE_ID,
+                location=LOCATION)
             AzureQuantumProvider(workspace)
 
             warns = [warn for warn in w if "Consider passing \"workspace\" argument explicitly." in warn.message.args[0]]
@@ -346,17 +340,15 @@ class TestQiskit(QuantumTestBase):
             assert len(warns) == 0
 
     def test_qiskit_provider_init_without_workspace_raises_deprecation(self):
-        # testing warning according to https://docs.python.org/3/library/warnings.html#testing-warnings
-        import warnings
-                
+        # testing warning according to https://docs.python.org/3/library/warnings.html#testing-warnings                
         with warnings.catch_warnings(record=True) as w:
             # Cause all warnings to always be triggered.
             warnings.simplefilter("always")
             # Try to trigger a warning.
             AzureQuantumProvider(
-                    resource_id = "/subscriptions/00000000-0000-0000-0000-00000000000/resourceGroups/rg-test/providers/Microsoft.Quantum/Workspaces/test",
-                    location = "<region>")
-            
+                resource_id=SIMPLE_RESOURCE_ID,
+                location=LOCATION)
+
             warns = [warn for warn in w if "Consider passing \"workspace\" argument explicitly." in warn.message.args[0]]
 
             # Verify
@@ -368,12 +360,14 @@ class TestQiskit(QuantumTestBase):
             # Cause all warnings to always be triggered.
             warnings.simplefilter("always")
             # Try to trigger a warning.
-            workspace = Workspace(resource_id = "/subscriptions/00000000-0000-0000-0000-00000000000/resourceGroups/rg-test/providers/Microsoft.Quantum/Workspaces/test",
-                    location = "<region>")
+            workspace = Workspace(
+                resource_id=SIMPLE_RESOURCE_ID,
+                location=LOCATION)
+
             AzureQuantumProvider(
-                    workspace=workspace,
-                    resource_id = "/subscriptions/00000000-0000-0000-0000-00000000000/resourceGroups/rg-test/providers/Microsoft.Quantum/Workspaces/test",
-                    location = "<region>")
+                workspace=workspace,
+                resource_id=SIMPLE_RESOURCE_ID,
+                location=LOCATION)
             
             warns = [warn for warn in w if "Consider passing \"workspace\" argument explicitly." in warn.message.args[0]]
 
