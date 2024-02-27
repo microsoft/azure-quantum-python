@@ -1,0 +1,27 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/python
+{
+    "name": "Azure Quantum Samples",
+    // Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
+    "image": "mcr.microsoft.com/devcontainers/python:3.12",
+    "features": {
+        "ghcr.io/devcontainers/features/azure-cli:1": {
+            "version": "latest"
+        }
+    },
+    "onCreateCommand": "pip3 install --user -r .devcontainer/samples-requirements.txt",
+    "customizations": {
+        "codespaces": {
+            "openFiles": []
+        },
+        "vscode": {
+            "extensions": [
+                "quantum.qsharp-lang-vscode",
+                "ms-toolsai.jupyter",
+                "ms-python.python"
+            ]
+        }
+    },
+    "secrets": {
+    }
+}
