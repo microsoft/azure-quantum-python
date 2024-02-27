@@ -159,19 +159,12 @@ class TestSession(QuantumTestBase):
         with backend.open_session() as session:
             self.assertEqual(session.details.status, SessionStatus.WAITING)
             session_id = session.id
-            backend.run(circuit, shots=100, job_name="Job 1")
+            job1 = backend.run(circuit, shots=100, job_name="Job 1")  
 
             backend.run(circuit, shots=100, job_name="Job 2")
 
-            # Sometimes the Waiting state may be a lottle longer, so we should wait.
-            attempts = 10
+            job1.wait_for_final_state()
             session.refresh()
-            while session.details.status == SessionStatus.WAITING:
-                if attempts == 0:
-                    pytest.fail("Timeout. The session is still in the waiting status.")
-                time.sleep(1)
-                attempts -= 1
-                session.refresh()
                 
             self.assertEqual(session.details.status, SessionStatus.EXECUTING)
 
