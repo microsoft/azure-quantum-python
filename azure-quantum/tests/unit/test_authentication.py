@@ -7,13 +7,22 @@ from unittest.mock import patch
 import json
 import os
 import time
+import urllib3
 import pytest
-from common import QuantumTestBase
+from common import (
+    QuantumTestBase,
+    SUBSCRIPTION_ID,
+    RESOURCE_GROUP,
+    WORKSPACE,
+    LOCATION,
+    API_KEY,
+)
 from azure.identity import (
     CredentialUnavailableError,
     ClientSecretCredential,
     InteractiveBrowserCredential,
 )
+from azure.quantum import Workspace
 from azure.quantum._authentication import (
     _TokenFileCredential,
     _DefaultAzureCredential,
@@ -176,5 +185,53 @@ class TestWorkspace(QuantumTestBase):
             credential = InteractiveBrowserCredential(
                 tenant_id=connection_params.tenant_id)
             workspace = self.create_workspace(credential=credential)
+            targets = workspace.get_targets()
+            self.assertGreater(len(targets), 1)
+
+    def _get_current_primary_connection_string(self):
+        self.pause_recording()
+        http = urllib3.PoolManager()
+        connection_params = self.connection_params
+        url = (connection_params.arm_endpoint.rstrip('/') +
+               f"/subscriptions/{connection_params.subscription_id}" + 
+               f"/resourceGroups/{connection_params.resource_group}" +
+               "/providers/Microsoft.Quantum" +
+               f"/workspaces/{connection_params.workspace_name}" +
+               "/listKeys?api-version=2023-11-13-preview")
+        credential = self.connection_params.get_credential_or_default()
+        scope = ConnectionConstants.ARM_CREDENTIAL_SCOPE
+        token = credential.get_token(scope).token
+        response = http.request(
+            method="POST",
+            url=url,
+            headers={
+                "Authorization": f"Bearer {token}"
+            }
+        )
+        self.assertEqual(response.status, 200)
+        connection_strings = json.loads(response.data.decode("utf-8"))
+        connection_string = connection_strings['primaryConnectionString']
+        self.resume_recording()
+        return connection_string
+
+    @pytest.mark.live_test
+    def test_workspace_auth_connection_string_api_key(self):
+        connection_string = ""
+        if self.is_playback:
+            connection_string = ConnectionConstants.VALID_CONNECTION_STRING(
+                subscription_id=SUBSCRIPTION_ID,
+                resource_group=RESOURCE_GROUP,
+                workspace_name=WORKSPACE,
+                api_key=API_KEY,
+                quantum_endpoint=ConnectionConstants.GET_QUANTUM_PRODUCTION_ENDPOINT(LOCATION)
+            )
+        else:
+            connection_string = self._get_current_primary_connection_string()
+
+        with patch.dict(os.environ):
+            self.clear_env_vars(os.environ)
+            workspace = Workspace.from_connection_string(
+                connection_string=connection_string,
+            )
             targets = workspace.get_targets()
             self.assertGreater(len(targets), 1)
