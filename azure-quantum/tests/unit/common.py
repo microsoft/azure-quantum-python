@@ -283,6 +283,9 @@ class CustomRecordingProcessor(RecordingProcessor):
         "user-agent",
         "www-authenticate",
     ]
+    ALLOW_SANITIZED_HEADERS = [
+        ConnectionConstants.QUANTUM_API_KEY_HEADER,
+    ]
 
     def __init__(self, quantumTest: QuantumTestBase):
         self._regexes = []
@@ -405,6 +408,8 @@ class CustomRecordingProcessor(RecordingProcessor):
         for key in request.headers:
             if key.lower() in self.ALLOW_HEADERS:
                 headers[key] = self._regex_replace_all(request.headers[key])
+            if key.lower() in self.ALLOW_SANITIZED_HEADERS:
+                headers[key] = PLACEHOLDER
         request.headers = headers
 
         request.uri = self._regex_replace_all(request.uri)
