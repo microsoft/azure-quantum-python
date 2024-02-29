@@ -22,7 +22,7 @@ class Result:
     """Downloads the data of a completed Job and extracts the ``Readout`` for each register.
 
     .. highlight:: python
-    .. code-block::
+    .. code-block::  
        from azure.quantum.job import Job
        from azure.quantum.target.rigetti import Result
        job = Job(...)  # This job should come from a Rigetti target

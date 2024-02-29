@@ -6,6 +6,7 @@
 ##
 
 __all__ = [
+    "Job",
     "InputParams",
     "Readout",
     "Result",
@@ -14,4 +15,4 @@ __all__ = [
 ]
 
 from .result import Readout, Result
-from .target import InputParams, Rigetti, RigettiTarget
+from .target import InputParams, Rigetti, RigettiTarget, Job

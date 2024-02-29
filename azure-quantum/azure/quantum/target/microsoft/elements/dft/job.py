@@ -26,9 +26,9 @@ class MicrosoftElementsDftJob(Job):
         storage container linked via the workspace.
         
         Args:
-            timeout_secs (float): name of the backend, defaults to 300.
+            timeout_secs (float): Timeout in seconds, defaults to 300.
         Returns:
-            Any: Results dictionary.
+            typing.Any: Results dictionary.
         Raises:
             RuntimeError: if job execution fails.
             azure.quantum.job.JobFailedWithResultsError: if job execution fails, 

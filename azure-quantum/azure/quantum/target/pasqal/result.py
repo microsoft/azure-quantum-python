@@ -20,12 +20,12 @@ class Result:
 
     .. highlight:: python
     .. code-block::
+
        from azure.quantum.job import Job
        from azure.quantum.target.pasqal import Result
        job = Job(...)  # This job should come from a Pasqal target
        job.wait_until_completed()
        result = Result(job)
-
     """
 
     def __init__(self, job: Job) -> None:
