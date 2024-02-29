@@ -66,8 +66,8 @@ class Workspace:
     2. specify a valid location, subscription ID, resource group, and workspace name.
 
     You can also use a connection string to specify the connection parameters
-    to an Azure Quantum Workspace by calling:
-        :obj:`~Workspace.from_connection_string`
+    to an Azure Quantum Workspace by calling
+    :obj:`~ Workspace.from_connection_string() <Workspace.from_connection_string>`.
 
     If the Azure Quantum workspace does not have linked storage, the caller
     must also pass a valid Azure storage account connection string.
@@ -646,13 +646,11 @@ class Workspace:
                   for job_details in job_details_list]
         return result
 
-    DEFAULT_CONTAINER_NAME_FORMAT = "job-{job_id}"
-
     def get_container_uri(
         self,
         job_id: str = None,
         container_name: str = None,
-        container_name_format: str = DEFAULT_CONTAINER_NAME_FORMAT
+        container_name_format: str = "job-{job_id}"
     ) -> str:
         """
         Get container URI based on job ID or container name.
