@@ -63,12 +63,11 @@ class Workspace:
     When creating a Workspace object, callers have two options for
     identifying the Azure Quantum workspace (in order of precedence):
     1. specify a valid location and resource ID; or
-    2. specify a valid location, subscription ID,
-       resource group, and workspace name.
+    2. specify a valid location, subscription ID, resource group, and workspace name.
 
     You can also use a connection string to specify the connection parameters
-    to a Azure Quantum Workspace by calling:
-        Workspace.from_connection_string()
+    to an Azure Quantum Workspace by calling:
+        :obj:`~Workspace.from_connection_string`
 
     If the Azure Quantum workspace does not have linked storage, the caller
     must also pass a valid Azure storage account connection string.
@@ -195,12 +194,12 @@ class Workspace:
         return self._connection_params.workspace_name
 
     @property
-    def credential(self) -> object:
+    def credential(self) -> Any:
         """
         Returns the Credential used to connect to the Quantum Workspace.
 
         :return: Azure SDK Credential from [Azure.Identity](https://learn.microsoft.com/python/api/overview/azure/identity-readme?view=azure-python#credential-classes).
-        :rtype: obj
+        :rtype: typing.Any
         """
         return self._connection_params.credential
 
@@ -433,7 +432,7 @@ class Workspace:
             Optional filter by jobs that were created after the given time. Defaults to `None`.
 
         :return: Jobs that matched the search criteria.
-        :rtype: List[Job]
+        :rtype: typing.List[Job]
         """
         client = self._get_jobs_client()
         jobs = client.list()
@@ -462,7 +461,7 @@ class Workspace:
             Optional Provider ID to filter for. Defaults to `None`.
 
         :return: List of tuples containing Provider ID and TargetStatus.
-        :rtype: List[Tuple[str, TargetStatus]]
+        :rtype: typing.List[typing.Tuple[str, TargetStatus]]
         """
         return [
             (provider.id, target)
@@ -489,7 +488,7 @@ class Workspace:
             Optional provider Id to filter by, defaults to `None`.
 
         :return: A single Azure Quantum Target or a iterable/list of Targets.
-        :rtype: Union[Target, Iterable[Target]]
+        :rtype: typing.Union[Target, typing.Iterable[Target]]
         """
         # pylint: disable=import-outside-toplevel
         from azure.quantum.target.target_factory import TargetFactory
@@ -519,7 +518,7 @@ class Workspace:
         - "period": The period that the quota is applied to.
 
         :return: Workspace quotas.
-        :rtype: List[Dict[str, Any]
+        :rtype: typing.List[typing.Dict[str, typing.Any]
         """
         client = self._get_quotas_client()
         return [q.as_dict() for q in client.list()]
@@ -533,7 +532,7 @@ class Workspace:
         or Sessions (which can contain Jobs).
 
         :return: List of Workspace top level Jobs or Sessions.
-        :rtype: List[Union[Job, Session]]
+        :rtype: typing.List[typing.Union[Job, Session]]
         """
         client = self._get_top_level_items_client()
         item_details_list = client.list()
@@ -548,7 +547,7 @@ class Workspace:
         Get the list of sessions in the given workspace.
 
         :return: List of Workspace Sessions.
-        :rtype: List[Session]
+        :rtype: typing.List[Session]
         """
         client = self._get_sessions_client()
         session_details_list = client.list()
@@ -639,7 +638,7 @@ class Workspace:
             The id of session.
 
         :return: List of all jobs associated with a session.
-        :rtype: List[Job]
+        :rtype: typing.List[Job]
         """
         client = self._get_sessions_client()
         job_details_list = client.jobs_list(session_id=session_id)
