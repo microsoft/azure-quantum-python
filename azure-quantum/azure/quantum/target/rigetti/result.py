@@ -21,22 +21,25 @@ RawData = Union[int, float, List[float]]
 class Result:
     """Downloads the data of a completed Job and extracts the ``Readout`` for each register.
 
-    >>> from azure.quantum.job import Job
-    >>> from azure.quantum.target.rigetti import Result
-    >>> job = Job(...)  # This job should come from a Rigetti target
-    >>> job.wait_until_completed()
-    >>> result = Result(job)
-    >>> ro_data = result["ro"]
-    >>> first_shot_data = ro_data[0]
+    .. highlight:: python
+    .. code-block::
+       from azure.quantum.job import Job
+       from azure.quantum.target.rigetti import Result
+       job = Job(...)  # This job should come from a Rigetti target
+       job.wait_until_completed()
+       result = Result(job)
+       ro_data = result["ro"]
+       first_shot_data = ro_data[0]
     """
 
     def __init__(self, job: Job) -> None:
         """
         Decode the results of a Job with output type of "rigetti.quil-results.v1"
 
-        :param job: Azure Quantum Job
-        :type job: Job
-        :raises: RuntimeError if the job has not completed successfully
+        Args:
+            job (Job): Azure Quantum job
+        Raises:
+            RuntimeError: if the job has not completed successfully
         """
 
         if job.details.status != "Succeeded":

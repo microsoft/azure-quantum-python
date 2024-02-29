@@ -20,7 +20,6 @@ class Result:
 
     .. highlight:: python
     .. code-block::
-
        from azure.quantum.job import Job
        from azure.quantum.target.pasqal import Result
        job = Job(...)  # This job should come from a Pasqal target
@@ -33,9 +32,10 @@ class Result:
         """
         Decode the results of a Job with output type of "pasqal.pulser-results.v1"
 
-        :param job: Azure Quantum job
-        :type job: Job
-        :raises: RuntimeError if the job has not completed successfully
+        Args:
+            job (Job): Azure Quantum job
+        Raises:
+            RuntimeError: if the job has not completed successfully
         """
 
         if job.details.status != "Succeeded":

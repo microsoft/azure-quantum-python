@@ -73,13 +73,12 @@ class Job(BaseJob, FilteredJob):
         """Keeps refreshing the Job's details
         until it reaches a finished status.
 
-        :param max_poll_wait_secs: Maximum poll wait time, defaults to 30
-        :type max_poll_wait_secs: int
-        :param timeout_secs: Timeout in seconds, defaults to None
-        :type timeout_secs: int
-        :param print_progress: Print "." to stdout to display progress
-        :type print_progress: bool
-        :raises: :class:`TimeoutError` If the total poll time exceeds timeout, raise.
+        Args:
+            max_poll_wait_secs (int): Maximum poll wait time, defaults to 30
+            timeout_secs (int): Timeout in seconds, defaults to None
+            print_progress (bool): Print "." to stdout to display progress
+        Raises:
+            TimeoutError: If the total poll time exceeds timeout, raise.
         """
         self.refresh()
         poll_wait = Job._default_poll_wait
@@ -106,15 +105,14 @@ class Job(BaseJob, FilteredJob):
         """Get job results by downloading the results blob from the
         storage container linked via the workspace.
         
-        Raises :class:`RuntimeError` if job execution fails.
-        
-        Raises :class:`azure.quantum.job.JobFailedWithResultsError` if job execution fails, 
+        Args:
+            timeout_secs (float): name of the backend, defaults to 300.
+        Returns:
+            typing.Any: Results dictionary with histogram shots, or raw results if not a json object.
+        Raises:
+            RuntimeError: if job execution fails.
+            azure.quantum.job.JobFailedWithResultsError: if job execution fails, 
                 but failure results could still be retrieved (e.g. for jobs submitted against "microsoft.dft" target).
-
-        :param timeout_secs: Timeout in seconds, defaults to 300
-        :type timeout_secs: float
-        :return: Results dictionary with histogram shots, or raw results if not a json object.
-        :rtype: Any
         """
         if self.results is not None:
             return self.results

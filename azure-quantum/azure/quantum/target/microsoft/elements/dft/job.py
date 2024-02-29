@@ -24,13 +24,15 @@ class MicrosoftElementsDftJob(Job):
     def get_results(self, timeout_secs: float = DEFAULT_TIMEOUT) -> Dict[str, Any]:
         """Get job results by downloading the results blob from the
         storage container linked via the workspace.
-
-        :param timeout_secs: Timeout in seconds, defaults to 300
-        :type timeout_secs: float
-        :raises: :class:`RuntimeError` if job execution failed.
-        :raises: :class:`azure.quantum.job.JobFailedWithResultsError` if job execution failed,
-                but failure results could still be retrieved.
-        :return: Results dictionary with histogram shots, or raw results if not a json object.
+        
+        Args:
+            timeout_secs (float): name of the backend, defaults to 300.
+        Returns:
+            Any: Results dictionary.
+        Raises:
+            RuntimeError: if job execution fails.
+            azure.quantum.job.JobFailedWithResultsError: if job execution fails, 
+                but failure results could still be retrieved (e.g. for jobs submitted against "microsoft.dft" target).
         """
 
         try:
