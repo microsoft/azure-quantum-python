@@ -473,8 +473,8 @@ class Workspace:
 
     def get_targets(
         self,
-        name: str = None,
-        provider_id: str = None,
+        name: Optional[str] = None,
+        provider_id: Optional[str] = None,
     ) -> Union[Target, Iterable[Target]]:
         """
         Returns all available targets for this workspace filtered by Target name and Provider ID.
@@ -648,9 +648,9 @@ class Workspace:
 
     def get_container_uri(
         self,
-        job_id: str = None,
-        container_name: str = None,
-        container_name_format: str = "job-{job_id}"
+        job_id: Optional[str] = None,
+        container_name: Optional[str] = None,
+        container_name_format: Optional[str] = "job-{job_id}"
     ) -> str:
         """
         Get container URI based on job ID or container name.
