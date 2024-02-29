@@ -48,8 +48,6 @@ __all__ = ["Workspace"]
 
 
 class Workspace:
-    DEFAULT_CONTAINER_NAME_FORMAT = "job-{job_id}"
-
     """Represents an Azure Quantum workspace.
 
     When creating a Workspace object, callers have two options for
@@ -134,6 +132,8 @@ class Workspace:
 
         # Create QuantumClient
         self._client = self._create_client()
+
+    DEFAULT_CONTAINER_NAME_FORMAT = "job-{job_id}"
 
     def on_new_client_request(self):
         self._client = self._create_client()
