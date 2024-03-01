@@ -6,7 +6,6 @@
 ##
 
 __all__ = [
-    "Job",
     "InputParams",
     "Result",
     "Pasqal",
@@ -14,4 +13,4 @@ __all__ = [
 ]
 
 from .result import Result
-from .target import InputParams, Pasqal, PasqalTarget, Job
+from .target import InputParams, Pasqal, PasqalTarget

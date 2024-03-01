@@ -22,7 +22,8 @@ class Result:
     """Downloads the data of a completed Job and extracts the ``Readout`` for each register.
 
     .. highlight:: python
-    .. code-block::  
+    .. code-block::
+    
        from azure.quantum.job import Job
        from azure.quantum.target.rigetti import Result
        job = Job(...)  # This job should come from a Rigetti target
@@ -56,6 +57,7 @@ class Result:
 
 
 T = TypeVar("T", bound=Union[int, float, complex])
+
 Readout = List[List[T]]
 """Contains the data of a declared "readout" memory region, usually the ``ro`` register.
 

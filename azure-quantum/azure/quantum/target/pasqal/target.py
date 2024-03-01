@@ -25,7 +25,7 @@ class PasqalTarget(str, Enum):
     """
 
     SIM_EMU_TN = "pasqal.sim.emu-tn"
-    """"pasqal.sim.emu-tn" target"""
+    """pasqal.sim.emu-tn target"""
 
     QPU_FRESNEL = "pasqal.qpu.fresnel"
     """A simulator target for Quil. See https://github.com/quil-lang/qvm for more info."""

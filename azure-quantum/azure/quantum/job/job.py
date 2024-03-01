@@ -27,18 +27,18 @@ _log = logging.getLogger(__name__)
 
 
 class Job(BaseJob, FilteredJob):
+    """Azure Quantum Job that is submitted to a given Workspace.
+
+    :param workspace: Workspace instance to submit job to
+    :type workspace: Workspace
+    :param job_details: Job details model,
+            contains Job ID, name and other details
+    :type job_details: JobDetails
+    """
 
     _default_poll_wait = 0.2
 
     def __init__(self, workspace: "Workspace", job_details: JobDetails, **kwargs):
-        """Azure Quantum Job that is submitted to a given Workspace.
-
-        Args:
-            workspace (Workspace): Workspace instance to submit job to
-            job_details (JobDetails): Job details model, 
-                contains Job ID, name and other details
-        """
-        
         self.results = None
         super().__init__(
             workspace=workspace,
@@ -47,23 +47,17 @@ class Job(BaseJob, FilteredJob):
         )
 
     def submit(self):
-        """Submit a job to Azure Quantum.
-        """
-
+        """Submit a job to Azure Quantum."""
         _log.debug(f"Submitting job with ID {self.id}")
         job = self.workspace.submit_job(self)
         self.details = job.details
 
     def refresh(self):
-        """Refreshes the Job's details by querying the workspace.
-        """
-
+        """Refreshes the Job's details by querying the workspace."""
         self.details = self.workspace.get_job(self.id).details
 
     def has_completed(self) -> bool:
-        """Check if the job has completed.
-        """
-
+        """Check if the job has completed."""
         return (
             self.details.status == "Succeeded"
             or self.details.status == "Failed"
@@ -79,14 +73,14 @@ class Job(BaseJob, FilteredJob):
         """Keeps refreshing the Job's details
         until it reaches a finished status.
 
-        Args:
-            max_poll_wait_secs (int): Maximum poll wait time, defaults to 30
-            timeout_secs (int): Timeout in seconds, defaults to None
-            print_progress (bool): Print "." to stdout to display progress
-        Raises:
-            TimeoutError: If the total poll time exceeds timeout, raise.
+        :param max_poll_wait_secs: Maximum poll wait time, defaults to 30
+        :type max_poll_wait_secs: int
+        :param timeout_secs: Timeout in seconds, defaults to None
+        :type timeout_secs: int
+        :param print_progress: Print "." to stdout to display progress
+        :type print_progress: bool
+        :raises: :class:`TimeoutError` If the total poll time exceeds timeout, raise.
         """
-
         self.refresh()
         poll_wait = Job._default_poll_wait
         start_time = time.time()
@@ -112,16 +106,16 @@ class Job(BaseJob, FilteredJob):
         """Get job results by downloading the results blob from the
         storage container linked via the workspace.
         
-        Args:
-            timeout_secs (float): Timeout in seconds, defaults to 300.
-        Returns:
-            typing.Any: Results dictionary with histogram shots, or raw results if not a json object.
-        Raises:
-            RuntimeError: if job execution fails.
-            JobFailedWithResultsError: if job execution fails, 
+        Raises :class:`RuntimeError` if job execution fails.
+        
+        Raises :class:`azure.quantum.job.JobFailedWithResultsError` if job execution fails, 
                 but failure results could still be retrieved (e.g. for jobs submitted against "microsoft.dft" target).
-        """
 
+        :param timeout_secs: Timeout in seconds, defaults to 300
+        :type timeout_secs: float
+        :return: Results dictionary with histogram shots, or raw results if not a json object.
+        :rtype: Any
+        """
         if self.results is not None:
             return self.results
 
@@ -166,7 +160,8 @@ class Job(BaseJob, FilteredJob):
 
     @classmethod
     def _allow_failure_results(cls) -> bool: 
-        """Allow to download job results even if the Job status is "Failed".
+        """
+        Allow to download job results even if the Job status is "Failed".
 
         This method can be overridden in derived classes to alter the default
         behaviour.
