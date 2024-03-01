@@ -8,7 +8,7 @@
 from azure.quantum._client.models import JobDetails
 from .base_job import BaseJob
 from .filtered_job import FilteredJob
-from .job import Job
+from .job import Job, ContentType
 from .job_failed_with_results_error import JobFailedWithResultsError
 from .workspace_item import WorkspaceItem
 from .workspace_item_factory import WorkspaceItemFactory
@@ -17,6 +17,7 @@ from .session import Session, SessionHost, SessionDetails, SessionStatus, Sessio
 __all__ = [
     "Job",
     "JobDetails",
+    "ContentType",
     "BaseJob",
     "FilteredJob",
     "WorkspaceItem",

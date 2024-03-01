@@ -146,6 +146,25 @@ class Rigetti(Target):
         encoding: str = "",
         **kwargs,
     ):
+        """
+        Initializes a new target.
+
+        :param workspace: Associated workspace
+        :type workspace: Workspace
+        :param name: Target name
+        :type name: str
+        :param input_data_format: Format of input data (ex. "rigetti.quil.v1")
+        :type input_data_format: str
+        :param output_data_format: Format of output data (ex. "rigetti.quil-results.v1")
+        :type output_data_format: str
+        :param capability: QIR capability
+        :type capability: str
+        :param provider_id: Id of provider (ex. "rigetti")
+        :type provider_id: str
+        :param encoding: "Content-Encoding" attribute value to set on input blob (ex. "gzip")
+        :type encoding: str
+        """
+                
         super().__init__(
             workspace=workspace,
             name=name,

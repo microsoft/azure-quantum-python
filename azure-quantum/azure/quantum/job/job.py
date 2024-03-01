@@ -114,7 +114,7 @@ class Job(BaseJob, FilteredJob):
         :param timeout_secs: Timeout in seconds, defaults to 300
         :type timeout_secs: float
         :return: Results dictionary with histogram shots, or raw results if not a json object.
-        :rtype: Any
+        :rtype: typing.Any
         """
         if self.results is not None:
             return self.results
