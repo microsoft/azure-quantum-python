@@ -26,16 +26,16 @@ class Result:
        job = Job(...)  # This job should come from a Pasqal target
        job.wait_until_completed()
        result = Result(job)
-
     """
 
     def __init__(self, job: Job) -> None:
         """
         Decode the results of a Job with output type of "pasqal.pulser-results.v1"
 
-        :param job: Azure Quantum job
-        :type job: Job
-        :raises: RuntimeError if the job has not completed successfully
+        Args:
+            job (Job): Azure Quantum job
+        Raises:
+            RuntimeError: if the job has not completed successfully
         """
 
         if job.details.status != "Succeeded":
