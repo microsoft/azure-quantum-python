@@ -115,6 +115,7 @@ class Job(BaseJob, FilteredJob):
         :type timeout_secs: float
         :return: Results dictionary with histogram shots, or raw results if not a json object.
         :rtype: Any
+        :raises: :class:`RuntimeError` if job execution fails.
         """
         if self.results is not None:
             return self.results
@@ -130,10 +131,8 @@ class Job(BaseJob, FilteredJob):
                     raise JobFailedWithResultsError("An error occurred during job execution.", job_failure_data)
 
             raise RuntimeError(
-                f'{"Cannot retrieve results as job execution failed"}'
-                + f"(status: {self.details.status}."
-                + f"error: {self.details.error_data})"
-            )
+                f"Cannot retrieve results as job execution failed\
+(status: {self.details.status}.error: {self.details.error_data})")
 
         payload = self.download_data(self.details.output_data_uri)
         try:
