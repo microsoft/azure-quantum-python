@@ -192,12 +192,13 @@ class TestWorkspace(QuantumTestBase):
         self.pause_recording()
         http = urllib3.PoolManager()
         connection_params = self.connection_params
+        resource_id = ConnectionConstants.VALID_RESOURCE_ID(
+            subscription_id=connection_params.subscription_id,
+            resource_group=connection_params.resource_group,
+            workspace_name=connection_params.workspace_name,
+        )
         url = (connection_params.arm_endpoint.rstrip('/') +
-               f"/subscriptions/{connection_params.subscription_id}" + 
-               f"/resourceGroups/{connection_params.resource_group}" +
-               "/providers/Microsoft.Quantum" +
-               f"/workspaces/{connection_params.workspace_name}" +
-               "/listKeys?api-version=2023-11-13-preview")
+               f"{resource_id}/listKeys?api-version=2023-11-13-preview")
         credential = self.connection_params.get_credential_or_default()
         scope = ConnectionConstants.ARM_CREDENTIAL_SCOPE
         token = credential.get_token(scope).token
@@ -208,9 +209,23 @@ class TestWorkspace(QuantumTestBase):
                 "Authorization": f"Bearer {token}"
             }
         )
-        self.assertEqual(response.status, 200)
+        self.assertEqual(response.status, 200,
+                         f"""
+                         {url} failed with error code {response.status}.
+                         Make sure the environment variables are correctly
+                         set with the workspace connection parameters.
+                         """)
         connection_strings = json.loads(response.data.decode("utf-8"))
+        self.assertTrue(connection_strings['apiKeyEnabled'],
+                        f"""
+                        API-Key is not enabled in workspace {resource_id}
+                        """)
         connection_string = connection_strings['primaryConnectionString']
+        self.assertIsNotNone(connection_string,
+                             f"""
+                             primaryConnectionString is empty or does not exist
+                             in workspace {resource_id}
+                             """)
         self.resume_recording()
         return connection_string
 
