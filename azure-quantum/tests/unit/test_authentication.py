@@ -198,10 +198,51 @@ class TestWorkspace(QuantumTestBase):
             workspace_name=connection_params.workspace_name,
         )
         url = (connection_params.arm_endpoint.rstrip('/') +
-               f"{resource_id}/listKeys?api-version=2023-11-13-preview")
-        credential = self.connection_params.get_credential_or_default()
+               f"{resource_id}?api-version=2023-11-13-preview")
+        # We have to use DefaultAzureCredential to avoid using ApiKeyCredential
+        credential = _DefaultAzureCredential(
+                    subscription_id=connection_params.subscription_id,
+                    arm_endpoint=connection_params.arm_endpoint,
+                    tenant_id=connection_params.tenant_id)
         scope = ConnectionConstants.ARM_CREDENTIAL_SCOPE
         token = credential.get_token(scope).token
+        # Get workspace object
+        response = http.request(
+            method="GET",
+            url=url,
+            headers={
+                "Authorization": f"Bearer {token}"
+            }
+        )
+        self.assertEqual(response.status, 200,
+                         f"""
+                         {url} failed with error code {response.status}.
+                         Make sure the environment variables are correctly
+                         set with the workspace connection parameters.
+                         """)
+        workspace = json.loads(response.data.decode("utf-8"))
+
+        # enable api key
+        workspace["properties"]["apiKeyEnabled"] = True
+        workspace_json = json.dumps(workspace)
+        response = http.request(
+            method="PUT",
+            url=url,
+            headers={
+                "Authorization": f"Bearer {token}",
+                "Content-Type": "application/json"  # Assuming workspace is JSON data
+            },
+            body=workspace_json
+        )
+        self.assertEqual(response.status, 200,
+                         f"""
+                         {url} failed with error code {response.status}.
+                         Failed to enable api key.
+                         """)
+        
+        # list keys
+        url = (connection_params.arm_endpoint.rstrip('/') +
+               f"{resource_id}/listKeys?api-version=2023-11-13-preview")
         response = http.request(
             method="POST",
             url=url,
