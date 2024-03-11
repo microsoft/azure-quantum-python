@@ -77,7 +77,7 @@ class Target(abc.ABC, SessionHost):
         :param provider_id: Id of provider (ex. "microsoft-qc")
         :type provider_id: str
         :param content_type: "Content-Type" attribute value to set on input blob (ex. "application/json")
-        :type content_type: ContentType
+        :type content_type: azure.quantum.job.ContentType
         :param encoding: "Content-Encoding" attribute value to set on input blob (ex. "gzip")
         :type encoding: str
         :param average_queue_time: Set average queue time (for internal use)

@@ -43,3 +43,9 @@ from azure.quantum.qiskit.backends.microsoft import (
     MicrosoftBackend,
     MicrosoftResourceEstimationBackend,
 )
+
+from .backend import AzureBackendBase
+
+__all__ = [
+    "AzureBackendBase"
+]

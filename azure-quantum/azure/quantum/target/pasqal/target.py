@@ -25,6 +25,8 @@ class PasqalTarget(str, Enum):
     """
 
     SIM_EMU_TN = "pasqal.sim.emu-tn"
+    """pasqal.sim.emu-tn target"""
+
     QPU_FRESNEL = "pasqal.qpu.fresnel"
     """A simulator target for Quil. See https://github.com/quil-lang/qvm for more info."""
 
@@ -52,7 +54,11 @@ class PasqalTarget(str, Enum):
 
 @dataclass
 class InputParams:
-    """Input parameters"""
+    """Input parameters
+
+    Args:
+        runs (int): The number of times to run the experiment.
+    """
 
     runs: int = 1
     """The number of times to run the experiment."""
@@ -79,6 +85,25 @@ class Pasqal(Target):
         encoding: str = "",
         **kwargs,
     ):
+        """
+        Initializes a new target.
+
+        :param workspace: Associated workspace
+        :type workspace: Workspace
+        :param name: Target name
+        :type name: str
+        :param input_data_format: Format of input data (ex. "pasqal.pulser.v1")
+        :type input_data_format: str
+        :param output_data_format: Format of output data (ex. "pasqal.pulser-results.v1")
+        :type output_data_format: str
+        :param capability: QIR capability
+        :type capability: str
+        :param provider_id: Id of provider (ex. "pasqal")
+        :type provider_id: str
+        :param encoding: "Content-Encoding" attribute value to set on input blob (ex. "gzip")
+        :type encoding: str
+        """
+
         super().__init__(
             workspace=workspace,
             name=name,
