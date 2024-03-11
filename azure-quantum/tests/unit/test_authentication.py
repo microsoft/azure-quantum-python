@@ -7,13 +7,22 @@ from unittest.mock import patch
 import json
 import os
 import time
+import urllib3
 import pytest
-from common import QuantumTestBase
+from common import (
+    QuantumTestBase,
+    SUBSCRIPTION_ID,
+    RESOURCE_GROUP,
+    WORKSPACE,
+    LOCATION,
+    API_KEY,
+)
 from azure.identity import (
     CredentialUnavailableError,
     ClientSecretCredential,
     InteractiveBrowserCredential,
 )
+from azure.quantum import Workspace
 from azure.quantum._authentication import (
     _TokenFileCredential,
     _DefaultAzureCredential,
@@ -176,5 +185,109 @@ class TestWorkspace(QuantumTestBase):
             credential = InteractiveBrowserCredential(
                 tenant_id=connection_params.tenant_id)
             workspace = self.create_workspace(credential=credential)
+            targets = workspace.get_targets()
+            self.assertGreater(len(targets), 1)
+
+    def _get_current_primary_connection_string(self):
+        self.pause_recording()
+        http = urllib3.PoolManager()
+        connection_params = self.connection_params
+        resource_id = ConnectionConstants.VALID_RESOURCE_ID(
+            subscription_id=connection_params.subscription_id,
+            resource_group=connection_params.resource_group,
+            workspace_name=connection_params.workspace_name,
+        )
+        url = (connection_params.arm_endpoint.rstrip('/') +
+               f"{resource_id}?api-version=2023-11-13-preview")
+        # We have to use DefaultAzureCredential to avoid using ApiKeyCredential
+        credential = _DefaultAzureCredential(
+                    subscription_id=connection_params.subscription_id,
+                    arm_endpoint=connection_params.arm_endpoint,
+                    tenant_id=connection_params.tenant_id)
+        scope = ConnectionConstants.ARM_CREDENTIAL_SCOPE
+        token = credential.get_token(scope).token
+        # Get workspace object
+        response = http.request(
+            method="GET",
+            url=url,
+            headers={
+                "Authorization": f"Bearer {token}"
+            }
+        )
+        self.assertEqual(response.status, 200,
+                         f"""
+                         {url} failed with error code {response.status}.
+                         Make sure the environment variables are correctly
+                         set with the workspace connection parameters.
+                         """)
+        workspace = json.loads(response.data.decode("utf-8"))
+
+        # enable api key
+        workspace["properties"]["apiKeyEnabled"] = True
+        workspace_json = json.dumps(workspace)
+        response = http.request(
+            method="PUT",
+            url=url,
+            headers={
+                "Authorization": f"Bearer {token}",
+                "Content-Type": "application/json"  # Assuming workspace is JSON data
+            },
+            body=workspace_json
+        )
+        self.assertEqual(response.status, 200,
+                         f"""
+                         {url} failed with error code {response.status}.
+                         Failed to enable api key.
+                         """)
+        
+        # list keys
+        url = (connection_params.arm_endpoint.rstrip('/') +
+               f"{resource_id}/listKeys?api-version=2023-11-13-preview")
+        response = http.request(
+            method="POST",
+            url=url,
+            headers={
+                "Authorization": f"Bearer {token}"
+            }
+        )
+        self.assertEqual(response.status, 200,
+                         f"""
+                         {url} failed with error code {response.status}.
+                         Make sure the environment variables are correctly
+                         set with the workspace connection parameters.
+                         """)
+        connection_strings = json.loads(response.data.decode("utf-8"))
+        self.assertTrue(connection_strings['apiKeyEnabled'],
+                        f"""
+                        API-Key is not enabled in workspace {resource_id}
+                        """)
+        connection_string = connection_strings['primaryConnectionString']
+        self.assertIsNotNone(connection_string,
+                             f"""
+                             primaryConnectionString is empty or does not exist
+                             in workspace {resource_id}
+                             """)
+        self.resume_recording()
+        return connection_string
+
+    @pytest.mark.live_test
+    def test_workspace_auth_connection_string_api_key(self):
+        connection_string = ""
+        if self.is_playback:
+            connection_string = ConnectionConstants.VALID_CONNECTION_STRING(
+                subscription_id=SUBSCRIPTION_ID,
+                resource_group=RESOURCE_GROUP,
+                workspace_name=WORKSPACE,
+                api_key=API_KEY,
+                quantum_endpoint=ConnectionConstants.GET_QUANTUM_PRODUCTION_ENDPOINT(LOCATION)
+            )
+        else:
+            connection_string = self._get_current_primary_connection_string()
+
+        with patch.dict(os.environ):
+            self.clear_env_vars(os.environ)
+            workspace = Workspace.from_connection_string(
+                connection_string=connection_string,
+            )
             targets = workspace.get_targets()
             self.assertGreater(len(targets), 1)

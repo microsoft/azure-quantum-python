@@ -30,7 +30,7 @@ class MicrosoftElementsDftJob(Job):
         :raises: :class:`RuntimeError` if job execution failed.
         :raises: :class:`azure.quantum.job.JobFailedWithResultsError` if job execution failed,
                 but failure results could still be retrieved.
-        :return: Results dictionary with histogram shots, or raw results if not a json object.
+        :return: Results dictionary.
         """
 
         try:

@@ -6,7 +6,7 @@
 import warnings
 import inspect
 from itertools import groupby
-from typing import Dict, List, Tuple, Type
+from typing import Dict, List, Optional, Tuple, Type
 from azure.quantum import Workspace
 
 try:
@@ -24,17 +24,13 @@ from azure.quantum.qiskit.backends.backend import AzureBackendBase
 from azure.quantum.qiskit.job import AzureQuantumJob
 from azure.quantum.qiskit.backends import *
 
-
 QISKIT_USER_AGENT = "azure-quantum-qiskit"
 
-
 class AzureQuantumProvider(Provider):
-    """
-    Class for interfacing with the Azure Quantum service
-    using Qiskit quantum circuits
-    """
-    def __init__(self, workspace: Workspace=None, **kwargs):
-        """AzureQuantumService class
+    
+    def __init__(self, workspace: Optional[Workspace]=None, **kwargs):
+        """Class for interfacing with the Azure Quantum service
+        using Qiskit quantum circuits.
 
         :param workspace: Azure Quantum workspace. If missing it will create a new Workspace passing `kwargs` to the constructor. Defaults to None. 
         :type workspace: Workspace
@@ -66,7 +62,7 @@ class AzureQuantumProvider(Provider):
             name (str): name of the backend.
             **kwargs: dict used for filtering.
         Returns:
-            Backend: a backend matching the filtering.
+            azure.quantum.qiskit.backends.AzureBackendBase: a backend matching the filtering.
         Raises:
             QiskitBackendNotFoundError: if no backend could be found or
                 more than one backend matches the filtering criteria.
@@ -110,7 +106,7 @@ see https://aka.ms/AQ/Docs/AddProvider"
             name (str): name of the backend.
             **kwargs: dict used for filtering.
         Returns:
-            typing.List[qiskit.providers.BackendV1]: a list of Backends that match the filtering
+            typing.List[azure.quantum.qiskit.backends.AzureBackendBase]: a list of Backends that match the filtering
                 criteria.
         """
 
@@ -143,7 +139,13 @@ see https://aka.ms/AQ/Docs/AddProvider"
         return backends
 
     def get_job(self, job_id) -> AzureQuantumJob:
-        """Returns the Job instance associated with the given id."""
+        """Returns the Job instance associated with the given id.
+        
+        Args:
+            job_id (str): Id of the Job to return.
+        Returns:
+            AzureQuantumJob: Job instance.
+        """
         azure_job = self._workspace.get_job(job_id)
         backend = self.get_backend(azure_job.details.target)
         return AzureQuantumJob(backend, azure_job)
