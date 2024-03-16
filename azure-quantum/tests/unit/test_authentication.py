@@ -297,12 +297,20 @@ class TestWorkspace(QuantumTestBase):
     def test_workspace_auth_connection_string_api_key(self):
         connection_string = ""
         
-        self.pause_recording()
-        token = self._get_rp_credential()
-        workspace = self._get_workspace(token)
-        self._enable_workspace_api_keys(token, workspace, True)
-        connection_string = self._get_current_primary_connection_string(token)
-        self.resume_recording()
+        if self.is_playback:
+            connection_string = ConnectionConstants.VALID_CONNECTION_STRING(
+                subscription_id=SUBSCRIPTION_ID,
+                resource_group=RESOURCE_GROUP,
+                workspace_name=WORKSPACE,
+                api_key=API_KEY,
+                quantum_endpoint=ConnectionConstants.GET_QUANTUM_PRODUCTION_ENDPOINT(LOCATION))
+        else:
+            self.pause_recording()
+            token = self._get_rp_credential()
+            workspace = self._get_workspace(token)
+            self._enable_workspace_api_keys(token, workspace, True)
+            connection_string = self._get_current_primary_connection_string(token)
+            self.resume_recording()
 
         with patch.dict(os.environ):
             self.clear_env_vars(os.environ)
