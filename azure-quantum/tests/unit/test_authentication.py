@@ -309,8 +309,8 @@ class TestWorkspace(QuantumTestBase):
             workspace = Workspace.from_connection_string(
                 connection_string=connection_string,
             )
-            targets = workspace.get_targets()
-            self.assertGreater(len(targets), 1)
+            jobs = workspace.list_jobs()
+            assert len(jobs) == 0
 
         self.pause_recording()
         token = self._get_rp_credential()
