@@ -320,11 +320,12 @@ class TestWorkspace(QuantumTestBase):
             jobs = workspace.list_jobs()
             assert len(jobs) == 0
 
-        self.pause_recording()
-        token = self._get_rp_credential()
-        workspace = self._get_workspace(token)
-        self._enable_workspace_api_keys(token, workspace, False)
-        self.resume_recording()
+        if not self.is_playback:
+            self.pause_recording()
+            token = self._get_rp_credential()
+            workspace = self._get_workspace(token)
+            self._enable_workspace_api_keys(token, workspace, False)
+            self.resume_recording()
 
         # Sleep 1 min for cache to be cleared
         time.sleep(60)
