@@ -188,8 +188,18 @@ class TestWorkspace(QuantumTestBase):
             targets = workspace.get_targets()
             self.assertGreater(len(targets), 1)
 
-    def _get_current_primary_connection_string(self):
-        self.pause_recording()
+    def _get_rp_credential(self):
+        connection_params = self.connection_params
+        # We have to use DefaultAzureCredential to avoid using ApiKeyCredential
+        credential = _DefaultAzureCredential(
+                    subscription_id=connection_params.subscription_id,
+                    arm_endpoint=connection_params.arm_endpoint,
+                    tenant_id=connection_params.tenant_id)
+        scope = ConnectionConstants.ARM_CREDENTIAL_SCOPE
+        token = credential.get_token(scope).token
+        return token
+    
+    def _get_workspace(self, token: str):
         http = urllib3.PoolManager()
         connection_params = self.connection_params
         resource_id = ConnectionConstants.VALID_RESOURCE_ID(
@@ -199,13 +209,7 @@ class TestWorkspace(QuantumTestBase):
         )
         url = (connection_params.arm_endpoint.rstrip('/') +
                f"{resource_id}?api-version=2023-11-13-preview")
-        # We have to use DefaultAzureCredential to avoid using ApiKeyCredential
-        credential = _DefaultAzureCredential(
-                    subscription_id=connection_params.subscription_id,
-                    arm_endpoint=connection_params.arm_endpoint,
-                    tenant_id=connection_params.tenant_id)
-        scope = ConnectionConstants.ARM_CREDENTIAL_SCOPE
-        token = credential.get_token(scope).token
+        
         # Get workspace object
         response = http.request(
             method="GET",
@@ -221,10 +225,22 @@ class TestWorkspace(QuantumTestBase):
                          set with the workspace connection parameters.
                          """)
         workspace = json.loads(response.data.decode("utf-8"))
-
+        return workspace
+    
+    def _enable_workspace_api_keys(self, token: str, workspace: dict, enable_api_keys: bool):
+        http = urllib3.PoolManager()
         # enable api key
-        workspace["properties"]["apiKeyEnabled"] = True
+        workspace["properties"]["apiKeyEnabled"] = enable_api_keys
         workspace_json = json.dumps(workspace)
+
+        connection_params = self.connection_params
+        resource_id = ConnectionConstants.VALID_RESOURCE_ID(
+            subscription_id=connection_params.subscription_id,
+            resource_group=connection_params.resource_group,
+            workspace_name=connection_params.workspace_name,
+        )
+        url = (connection_params.arm_endpoint.rstrip('/') +
+               f"{resource_id}?api-version=2023-11-13-preview")
         response = http.request(
             method="PUT",
             url=url,
@@ -237,10 +253,18 @@ class TestWorkspace(QuantumTestBase):
         self.assertEqual(response.status, 200,
                          f"""
                          {url} failed with error code {response.status}.
-                         Failed to enable api key.
+                         Failed to enable/disable api key.
                          """)
         
+    def _get_current_primary_connection_string(self, token: str):
         # list keys
+        http = urllib3.PoolManager()
+        connection_params = self.connection_params
+        resource_id = ConnectionConstants.VALID_RESOURCE_ID(
+            subscription_id=connection_params.subscription_id,
+            resource_group=connection_params.resource_group,
+            workspace_name=connection_params.workspace_name,
+        )
         url = (connection_params.arm_endpoint.rstrip('/') +
                f"{resource_id}/listKeys?api-version=2023-11-13-preview")
         response = http.request(
@@ -267,27 +291,50 @@ class TestWorkspace(QuantumTestBase):
                              primaryConnectionString is empty or does not exist
                              in workspace {resource_id}
                              """)
-        self.resume_recording()
         return connection_string
 
     @pytest.mark.live_test
     def test_workspace_auth_connection_string_api_key(self):
         connection_string = ""
+        
         if self.is_playback:
             connection_string = ConnectionConstants.VALID_CONNECTION_STRING(
                 subscription_id=SUBSCRIPTION_ID,
                 resource_group=RESOURCE_GROUP,
                 workspace_name=WORKSPACE,
                 api_key=API_KEY,
-                quantum_endpoint=ConnectionConstants.GET_QUANTUM_PRODUCTION_ENDPOINT(LOCATION)
-            )
+                quantum_endpoint=ConnectionConstants.GET_QUANTUM_PRODUCTION_ENDPOINT(LOCATION))
         else:
-            connection_string = self._get_current_primary_connection_string()
+            self.pause_recording()
+            token = self._get_rp_credential()
+            workspace = self._get_workspace(token)
+            self._enable_workspace_api_keys(token, workspace, True)
+            connection_string = self._get_current_primary_connection_string(token)
+            self.resume_recording()
 
         with patch.dict(os.environ):
             self.clear_env_vars(os.environ)
             workspace = Workspace.from_connection_string(
                 connection_string=connection_string,
             )
-            targets = workspace.get_targets()
-            self.assertGreater(len(targets), 1)
+            jobs = workspace.list_jobs()
+            assert len(jobs) >= 0
+
+        if not self.is_playback:
+            self.pause_recording()
+            token = self._get_rp_credential()
+            workspace = self._get_workspace(token)
+            self._enable_workspace_api_keys(token, workspace, False)
+            self.resume_recording()
+
+        # Sleep 1 min for cache to be cleared
+        time.sleep(60)
+        with patch.dict(os.environ):
+            self.clear_env_vars(os.environ)
+            workspace = Workspace.from_connection_string(
+                connection_string=connection_string,
+            )
+            with self.assertRaises(Exception) as context:
+                workspace.list_jobs()
+
+            self.assertIn("Unauthorized", context.exception.message)
