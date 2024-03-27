@@ -312,6 +312,8 @@ class TestWorkspace(QuantumTestBase):
             connection_string = self._get_current_primary_connection_string(token)
             self.resume_recording()
 
+        # Sleep 1 min for cache to be cleared
+        time.sleep(60)
         with patch.dict(os.environ):
             self.clear_env_vars(os.environ)
             workspace = Workspace.from_connection_string(
