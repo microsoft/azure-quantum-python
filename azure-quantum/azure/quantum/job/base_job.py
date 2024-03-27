@@ -7,7 +7,7 @@ import logging
 import uuid
 
 from enum import Enum
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from urllib.parse import urlparse, parse_qs
 from typing import Any, Dict, Optional, TYPE_CHECKING
 from azure.storage.blob import BlobClient
@@ -382,6 +382,10 @@ class BaseJob(WorkspaceItem):
             token_expire_time = datetime.fromisoformat(
                 token_expire_time_str.replace('Z', '+00:00')
             )
+            
+            # Make an expiration time a little earlier, so there's no case where token is
+            # used a second or so before of its expiration.
+            token_expire_time = token_expire_time - timedelta(minutes=5)
 
         current_utc_time = datetime.now(tz=timezone.utc)
         if token_expire_time is None or current_utc_time >= token_expire_time:
