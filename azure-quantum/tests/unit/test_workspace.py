@@ -349,6 +349,9 @@ class TestWorkspace(QuantumTestBase):
         ws = self.create_workspace()
         jobs = ws.list_jobs()
         self.assertIsInstance(jobs, list)
+        # Also get result of the job in order to verify that it can be obtained.
+        job = jobs[-1]
+        job.get_results()
 
     def test_workspace_user_agent_appid(self):
         app_id = "MyEnvVarAppId"

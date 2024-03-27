@@ -7,7 +7,8 @@ import logging
 import uuid
 
 from enum import Enum
-from urllib.parse import urlparse
+from datetime import datetime, timezone, timedelta
+from urllib.parse import urlparse, parse_qs
 from typing import Any, Dict, Optional, TYPE_CHECKING
 from azure.storage.blob import BlobClient
 
@@ -368,8 +369,27 @@ class BaseJob(WorkspaceItem):
         :rtype: str
         """
         url = urlparse(blob_uri)
-        if url.query.find("se=") == -1:
-            # blob_uri does not contains SAS token,
+        query_params = parse_qs(url.query)
+        token_expire_query_param = query_params.get("se")
+
+        token_expire_time = None
+
+        if token_expire_query_param is not None:
+            token_expire_time_str = token_expire_query_param[0]
+
+            # Since python < 3.11 can not easily parse Z suffixed UTC timestamp and 
+            # assuming that the timestamp is always UTC, we replace that suffix with UTC offset.
+            token_expire_time = datetime.fromisoformat(
+                token_expire_time_str.replace('Z', '+00:00')
+            )
+            
+            # Make an expiration time a little earlier, so there's no case where token is
+            # used a second or so before of its expiration.
+            token_expire_time = token_expire_time - timedelta(minutes=5)
+
+        current_utc_time = datetime.now(tz=timezone.utc)
+        if token_expire_time is None or current_utc_time >= token_expire_time:
+            # blob_uri does not contains SAS token or it is expired,
             # get sas url from service
             blob_client = BlobClient.from_blob_url(
                 blob_uri
