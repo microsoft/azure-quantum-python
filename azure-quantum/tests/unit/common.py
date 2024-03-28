@@ -153,7 +153,7 @@ class QuantumTestBase(ReplayableTest):
         self._regex_replacer.register_scrubbing(RegexScrubbingPatterns.URL_QUERY_SAS_KEY_VALUE,
                                       "sv=PLACEHOLDER&")
         self._regex_replacer.register_scrubbing(RegexScrubbingPatterns.URL_QUERY_SAS_KEY_EXPIRATION,
-                                      "se=PLACEHOLDER&")
+                                      "se=2050-01-01T00%3A00%3A00Z&")
         self._regex_replacer.register_scrubbing(RegexScrubbingPatterns.URL_QUERY_AUTH_CLIENT_ID,
                                       "client_id=PLACEHOLDER&")
         self._regex_replacer.register_scrubbing(RegexScrubbingPatterns.URL_QUERY_AUTH_CLIENT_SECRET,
@@ -379,6 +379,16 @@ class CustomRecordingProcessor(RecordingProcessor):
         that would otherwise be scrubbed by default.
         You disable the scrubbing with `disable_scrubbing()` method
         and then re-enable the scrubbing with this method.
+
+        Example:
+            ```python
+            self.disable_scrubbing(RegexScrubbingPatterns.URL_QUERY_SAS_KEY_EXPIRATION)
+            try:
+                # your testing logic here that relies on the un-scrubbed value
+            finally:
+                self.enable_scrubbing(RegexScrubbingPatterns.URL_QUERY_SAS_KEY_EXPIRATION)
+            ```
+
         :param pattern:
             Pattern to enable scrubbing.
         """
