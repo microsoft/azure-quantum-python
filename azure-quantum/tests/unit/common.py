@@ -43,6 +43,26 @@ DEFAULT_TIMEOUT_SECS = 300
 AUTH_URL = "https://login.microsoftonline.com/"
 GUID_REGEX_CAPTURE = f"(?P<guid>{GUID_REGEX_PATTERN})"
 
+class RegexScrubbingPatterns:
+    URL_PATH_SUBSCRIPTION_ID = f"/subscriptions/{GUID_REGEX_CAPTURE}"
+    DATE_TIME = r"\d{8}-\d{6}"
+    URL_PATH_BLOB_GUID = f'blob.core.windows.net/{GUID_REGEX_CAPTURE}'
+    URL_PATH_RESOURCE_GROUP = r"/resourceGroups/[a-z0-9-]+/"
+    URL_PATH_WORKSPACE_NAME = r"/workspaces/[a-z0-9-]+/"
+    URL_STORAGE_ACCOUNT = r"https://[^\.]+.blob.core.windows.net"
+    URL_QUANTUM_ENDPOINT = r"https://[^\.]+.quantum(-test)?.azure.com/"
+    URL_OAUTH_ENDPOINT = \
+        f"https://login.(microsoftonline.com|windows-ppe.net)/{GUID_REGEX_CAPTURE}/oauth2/.*"
+    URL_QUERY_SAS_KEY_SIGNATURE = r"sig=[^&]+\&"
+    URL_QUERY_SAS_KEY_VALUE = r"sv=[^&]+\&"
+    URL_QUERY_SAS_KEY_EXPIRATION = r"se=[^&]+\&"
+    URL_QUERY_AUTH_CLIENT_ID = r"client_id=[^&]+\&"
+    URL_QUERY_AUTH_CLIENT_SECRET = r"client_secret=[^&]+\&"
+    URL_QUERY_AUTH_CLAIMS = r"claims=[^&]+\&"
+    URL_QUERY_AUTH_CODE_VERIFIER = r"code_verifier=[^&]+\&"
+    URL_QUERY_AUTH_CODE = r"code=[^&]+\&"
+    URL_HTTP = r"http://" # Devskim: ignore DS137138
+
 class QuantumTestBase(ReplayableTest):
     """QuantumTestBase
 
@@ -63,16 +83,16 @@ class QuantumTestBase(ReplayableTest):
         self.connection_params = connection_params
         self._client_secret = os.environ.get(EnvironmentVariables.AZURE_CLIENT_SECRET, PLACEHOLDER)
 
-        regex_replacer = CustomRecordingProcessor(self)
+        self._regex_replacer = CustomRecordingProcessor(self)
         recording_processors = [
             AuthenticationMetadataFilter(),
-            regex_replacer,
+            self._regex_replacer,
             CustomAccessTokenReplacer(),
         ]
 
         replay_processors = [
             AuthenticationMetadataFilter(),
-            regex_replacer,
+            self._regex_replacer,
         ]
 
         super(QuantumTestBase, self).__init__(
@@ -85,71 +105,91 @@ class QuantumTestBase(ReplayableTest):
         self.vcr.record_mode = 'once'
         self.vcr.register_matcher('query', self._custom_request_query_matcher)
 
-        regex_replacer.register_guid_regex(
+        self._regex_replacer.register_guid_regex(
             f"(?:job-|jobs/|session-|sessions/){GUID_REGEX_CAPTURE}")
-        regex_replacer.register_regex(connection_params.client_id, ZERO_UID)
-        regex_replacer.register_regex(
+        self._regex_replacer.register_scrubbing(connection_params.client_id, ZERO_UID)
+        self._regex_replacer.register_scrubbing(
             self._client_secret, PLACEHOLDER
         )
-        regex_replacer.register_regex(connection_params.tenant_id, ZERO_UID)
-        regex_replacer.register_regex(connection_params.subscription_id, ZERO_UID)
-        regex_replacer.register_regex(connection_params.workspace_name, WORKSPACE)
-        regex_replacer.register_regex(connection_params.location, LOCATION)
-        regex_replacer.register_regex(connection_params.resource_group, RESOURCE_GROUP)
-        regex_replacer.register_regex(
-            f"/subscriptions/{GUID_REGEX_CAPTURE}",
+        self._regex_replacer.register_scrubbing(connection_params.tenant_id, ZERO_UID)
+        self._regex_replacer.register_scrubbing(connection_params.subscription_id, ZERO_UID)
+        self._regex_replacer.register_scrubbing(connection_params.workspace_name, WORKSPACE)
+        self._regex_replacer.register_scrubbing(connection_params.location, LOCATION)
+        self._regex_replacer.register_scrubbing(connection_params.resource_group, RESOURCE_GROUP)
+        self._regex_replacer.register_scrubbing(
+            RegexScrubbingPatterns.URL_PATH_SUBSCRIPTION_ID,
             f"/subscriptions/{ZERO_UID}",
         )
-        regex_replacer.register_regex(
-            r"\d{8}-\d{6}", "20210101-000000"
+        self._regex_replacer.register_scrubbing(
+            RegexScrubbingPatterns.DATE_TIME,
+            "20210101-000000"
         )
-        regex_replacer.register_regex(
-            f'blob.core.windows.net/{GUID_REGEX_CAPTURE}',
+        self._regex_replacer.register_scrubbing(
+            RegexScrubbingPatterns.URL_PATH_BLOB_GUID,
             f'blob.core.windows.net/{ZERO_UID}',
         )
-        regex_replacer.register_regex(
-            r"/resourceGroups/[a-z0-9-]+/",
+        self._regex_replacer.register_scrubbing(
+            RegexScrubbingPatterns.URL_PATH_RESOURCE_GROUP,
             f'/resourceGroups/{RESOURCE_GROUP}/'
         )
-        regex_replacer.register_regex(
-            r"/workspaces/[a-z0-9-]+/",
+        self._regex_replacer.register_scrubbing(
+            RegexScrubbingPatterns.URL_PATH_WORKSPACE_NAME,
             f'/workspaces/{WORKSPACE}/'
         )
-        regex_replacer.register_regex(
-            r"https://[^\.]+.blob.core.windows.net",
+        self._regex_replacer.register_scrubbing(
+            RegexScrubbingPatterns.URL_STORAGE_ACCOUNT,
             f'https://{STORAGE}.blob.core.windows.net'
         )
-        regex_replacer.register_regex(
-            r"https://[^\.]+.quantum(-test)?.azure.com/",
+        self._regex_replacer.register_scrubbing(
+            RegexScrubbingPatterns.URL_QUANTUM_ENDPOINT,
             ConnectionConstants.GET_QUANTUM_PRODUCTION_ENDPOINT(LOCATION)
         )
-        regex_replacer.register_regex(
-            r"/workspaces/[a-z0-9-]+/",
-            f'/workspaces/{WORKSPACE}/'
-        )
-        regex_replacer.register_regex(
-            f"https://login.(microsoftonline.com|windows-ppe.net)/{GUID_REGEX_CAPTURE}/oauth2/.*",
+        self._regex_replacer.register_scrubbing(
+            RegexScrubbingPatterns.URL_OAUTH_ENDPOINT,
             f'https://login.microsoftonline.com/{ZERO_UID}/oauth2/v2.0/token'
         )
-        regex_replacer.register_regex(r"sig=[^&]+\&",
+        self._regex_replacer.register_scrubbing(RegexScrubbingPatterns.URL_QUERY_SAS_KEY_SIGNATURE,
                                       "sig=PLACEHOLDER&")
-        regex_replacer.register_regex(r"sv=[^&]+\&",
+        self._regex_replacer.register_scrubbing(RegexScrubbingPatterns.URL_QUERY_SAS_KEY_VALUE,
                                       "sv=PLACEHOLDER&")
-        regex_replacer.register_regex(r"se=[^&]+\&",
-                                      "se=PLACEHOLDER&")
-        regex_replacer.register_regex(r"client_id=[^&]+\&",
+        self._regex_replacer.register_scrubbing(RegexScrubbingPatterns.URL_QUERY_SAS_KEY_EXPIRATION,
+                                      "se=2050-01-01T00%3A00%3A00Z&")
+        self._regex_replacer.register_scrubbing(RegexScrubbingPatterns.URL_QUERY_AUTH_CLIENT_ID,
                                       "client_id=PLACEHOLDER&")
-        regex_replacer.register_regex(r"client_secret=[^&]+\&",
+        self._regex_replacer.register_scrubbing(RegexScrubbingPatterns.URL_QUERY_AUTH_CLIENT_SECRET,
                                       "client_secret=PLACEHOLDER&")
-        regex_replacer.register_regex(r"claims=[^&]+\&",
+        self._regex_replacer.register_scrubbing(RegexScrubbingPatterns.URL_QUERY_AUTH_CLAIMS,
                                       "claims=PLACEHOLDER&")
-        regex_replacer.register_regex(r"code_verifier=[^&]+\&",
+        self._regex_replacer.register_scrubbing(RegexScrubbingPatterns.URL_QUERY_AUTH_CODE_VERIFIER,
                                       "code_verifier=PLACEHOLDER&")
-        regex_replacer.register_regex(r"code=[^&]+\&",
-                                      "code_verifier=PLACEHOLDER&")
-        regex_replacer.register_regex(r"code=[^&]+\&",
-                                      "code_verifier=PLACEHOLDER&")
-        regex_replacer.register_regex(r"http://", "https://")  # Devskim: ignore DS137138
+        self._regex_replacer.register_scrubbing(RegexScrubbingPatterns.URL_QUERY_AUTH_CODE,
+                                      "code=PLACEHOLDER&")
+        self._regex_replacer.register_scrubbing(RegexScrubbingPatterns.URL_HTTP, "https://")
+
+    def disable_scrubbing(self, pattern: str) -> None:
+        """
+        Disable scrubbing of a pattern.
+        This is useful when you need to have a value in the recording
+        that would otherwise be scrubbed by default.
+        Use it carefully not to leak any secrets in the recording.
+        To be used in conjunction with `enable_scrubbing()` method.
+
+        :param pattern:
+            Pattern to disable scrubbing.
+        """
+        self._regex_replacer.disable_scrubbing(pattern)
+
+    def enable_scrubbing(self, pattern: str) -> None:
+        """
+        Enable scrubbing of a pattern.
+        This is useful when you need to have a value in the recording
+        that would otherwise be scrubbed by default.
+        You disable the scrubbing with `disable_scrubbing()` method
+        and then re-enable the scrubbing with this method.
+        :param pattern:
+            Pattern to enable scrubbing.
+        """
+        self._regex_replacer.enable_scrubbing(pattern)
 
     @classmethod
     def _custom_request_query_matcher(cls, r1: VcrRequest, r2: VcrRequest):
@@ -249,6 +289,30 @@ class QuantumTestBase(ReplayableTest):
         return workspace
 
 
+class RegexScrubbingRule:
+    """ A Regex Scrubbing Rule to be applied during test recordings and playbacks."""
+
+    def __init__(
+            self,
+            pattern: str,
+            replacement_text: str,
+    ) -> None:
+        self.pattern = pattern
+        self.replacement_text = replacement_text
+        self._regex = re.compile(pattern=pattern,
+                                    flags=re.IGNORECASE | re.MULTILINE)
+        self.enabled = True
+
+    def replace(self, original_text) -> str:
+        """
+        If enabled, returns the `original_text` with the regex replacement applied to it.
+        Otherwise, returns the unmodified `original_text`.
+        """
+        if self.enabled:
+            return self._regex.sub(self.replacement_text, original_text)
+        return original_text
+
+
 class CustomRecordingProcessor(RecordingProcessor):
     ALLOW_HEADERS = [
         "connection",
@@ -288,20 +352,58 @@ class CustomRecordingProcessor(RecordingProcessor):
     ]
 
     def __init__(self, quantumTest: QuantumTestBase):
-        self._regexes = []
+        self._scrubbingRules = dict[str, RegexScrubbingRule]()
         self._auto_guid_regexes = []
         self._guids = dict[str, int]()
         self._sequence_ids = dict[str, float]()
         self._quantumTest = quantumTest
 
-    def register_regex(self, regex, replacement_text):
+    def disable_scrubbing(self, pattern: str) -> None:
+        """
+        Disable scrubbing of a pattern.
+        This is useful when you need to have a value in the recording
+        that would otherwise be scrubbed by default.
+        Use it carefully not to leak any secrets in the recording.
+        To be used in conjunction with `enable_scrubbing()` method.
+
+        :param pattern:
+            Pattern to disable scrubbing.
+        """
+        if pattern in self._scrubbingRules:
+            self._scrubbingRules[pattern].enabled = False
+
+    def enable_scrubbing(self, pattern: str) -> None:
+        """
+        Enable scrubbing of a pattern.
+        This is useful when you need to have a value in the recording
+        that would otherwise be scrubbed by default.
+        You disable the scrubbing with `disable_scrubbing()` method
+        and then re-enable the scrubbing with this method.
+
+        Example:
+            ```python
+            self.disable_scrubbing(RegexScrubbingPatterns.URL_QUERY_SAS_KEY_EXPIRATION)
+            try:
+                # your testing logic here that relies on the un-scrubbed value
+            finally:
+                self.enable_scrubbing(RegexScrubbingPatterns.URL_QUERY_SAS_KEY_EXPIRATION)
+            ```
+
+        :param pattern:
+            Pattern to enable scrubbing.
+        """
+        if pattern in self._scrubbingRules:
+            self._scrubbingRules[pattern].enabled = True
+
+    def register_scrubbing(self, regex_pattern, replacement_text):
         """
         Registers a regular expression that should be used to replace the
-        HTTP requests' uri, headers and body with a replacement_text
+        HTTP requests' uri, headers and body with a `replacement_text`.
         """
-        self._regexes.append((re.compile(pattern=regex,
-                                         flags=re.IGNORECASE | re.MULTILINE),
-                             replacement_text))
+        self._scrubbingRules[regex_pattern] = RegexScrubbingRule(
+            pattern=regex_pattern,
+            replacement_text=replacement_text
+        )
 
     def register_guid_regex(self, guid_regex):
         """
@@ -332,7 +434,7 @@ class CustomRecordingProcessor(RecordingProcessor):
                         i = len(self._guids) + 1
                         new_guid = "00000000-0000-0000-0000-%0.12X" % i
                         self._guids[guid] = new_guid
-                        self.register_regex(guid, new_guid)
+                        self.register_scrubbing(guid, new_guid)
 
     def _append_sequence_id(self, request: VcrRequest):
         """
@@ -374,9 +476,9 @@ class CustomRecordingProcessor(RecordingProcessor):
             request.uri += SEQUENCE_ID_KEY + "%0.f" % math.ceil(sequence_id)
         return request
 
-    def _regex_replace_all(self, value: str):
-        for regex, replacement_text in self._regexes:
-            value = regex.sub(replacement_text, value)
+    def _apply_scrubbings(self, value: str):
+        for scrubbing_rule in self._scrubbingRules.values():
+            value = scrubbing_rule.replace(value)
         return value
 
     def process_request(self, request):
@@ -407,16 +509,16 @@ class CustomRecordingProcessor(RecordingProcessor):
         headers = {}
         for key in request.headers:
             if key.lower() in self.ALLOW_HEADERS:
-                headers[key] = self._regex_replace_all(request.headers[key])
+                headers[key] = self._apply_scrubbings(request.headers[key])
             if key.lower() in self.ALLOW_SANITIZED_HEADERS:
                 headers[key] = PLACEHOLDER
         request.headers = headers
 
-        request.uri = self._regex_replace_all(request.uri)
+        request.uri = self._apply_scrubbings(request.uri)
         self._append_sequence_id(request)
 
         if body is not None:
-            body = self._regex_replace_all(body)
+            body = self._apply_scrubbings(body)
             if encode_body:
                 body = body.encode("utf-8")
             request.body = body
@@ -456,13 +558,13 @@ class CustomRecordingProcessor(RecordingProcessor):
                 new_header_values = []
                 for old_header_value in response["headers"][key]:
                     new_header_value = (
-                        self._regex_replace_all(old_header_value))
+                        self._apply_scrubbings(old_header_value))
                     new_header_values.append(new_header_value)
                 headers[key] = new_header_values
         response["headers"] = headers
 
         if "url" in response:
-            response["url"] = self._regex_replace_all(response["url"])
+            response["url"] = self._apply_scrubbings(response["url"])
 
         content_type = self._get_content_type(response)
         if (
@@ -476,7 +578,7 @@ class CustomRecordingProcessor(RecordingProcessor):
                     body = body.decode("utf-8")
                     encode_body = True
                 if body:
-                    body = self._regex_replace_all(body)
+                    body = self._apply_scrubbings(body)
                     if encode_body:
                         body = body.encode("utf-8")
                     response["body"]["string"] = body
