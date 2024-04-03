@@ -103,7 +103,6 @@ class QuantinuumSyntaxCheckerQirBackend(QuantinuumQirBackendBase):
     backend_names = (
         # Note: Target names on the same line are equivalent.
         "quantinuum.sim.h1-1sc",
-        "quantinuum.sim.h1-2sc",
         "quantinuum.sim.h2-1sc",
     )
 
@@ -141,7 +140,6 @@ class QuantinuumEmulatorQirBackend(QuantinuumQirBackendBase):
     backend_names = (
         # Note: Target names on the same line are equivalent.
         "quantinuum.sim.h1-1e",
-        "quantinuum.sim.h1-2e",
         "quantinuum.sim.h2-1e",
     )
 
@@ -179,7 +177,6 @@ class QuantinuumQPUQirBackend(QuantinuumQirBackendBase):
     backend_names = (
         # Note: Target names on the same line are equivalent.
         "quantinuum.qpu.h1-1",
-        "quantinuum.qpu.h1-2",
         "quantinuum.qpu.h2-1",
     )
 
@@ -281,7 +278,6 @@ class QuantinuumSyntaxCheckerBackend(QuantinuumBackend):
     backend_names = (
         # Note: Target names on the same line are equivalent.
         "quantinuum.sim.h1-1sc",
-        "quantinuum.sim.h1-2sc",
         "quantinuum.sim.h2-1sc",
     )
 
@@ -319,7 +315,6 @@ class QuantinuumEmulatorBackend(QuantinuumBackend):
     backend_names = (
         # Note: Target names on the same line are equivalent.
         "quantinuum.sim.h1-1e",
-        "quantinuum.sim.h1-2e",
         "quantinuum.sim.h2-1e",
     )
 
@@ -357,7 +352,6 @@ class QuantinuumQPUBackend(QuantinuumBackend):
     backend_names = (
         # Note: Target names on the same line are equivalent.
         "quantinuum.qpu.h1-1",
-        "quantinuum.qpu.h1-2",
         "quantinuum.qpu.h2-1",
     )
 
