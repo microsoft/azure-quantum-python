@@ -1186,8 +1186,8 @@ class TestQiskit(QuantumTestBase):
         workspace = self.create_workspace()
         provider = AzureQuantumProvider(workspace=workspace)
 
-        backend = provider.get_backend(RigettiTarget.ANKAA_9Q_1.value)
-        self.assertEqual(backend.name(), RigettiTarget.ANKAA_9Q_1.value)
+        backend = provider.get_backend(RigettiTarget.ANKAA_2.value)
+        self.assertEqual(backend.name(), RigettiTarget.ANKAA_2.value)
         config = backend.configuration()
         self.assertFalse(config.simulator)
         self.assertEqual(1, config.max_experiments)
