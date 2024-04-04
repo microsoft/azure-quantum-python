@@ -2,19 +2,21 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+from __future__ import annotations
 import logging
-
 import sys
+from typing import Any, Optional
 from azure.core.exceptions import ClientAuthenticationError
-from azure.identity import CredentialUnavailableError
 from azure.core.credentials import AccessToken, TokenCredential
-
+from azure.identity import (
+    CredentialUnavailableError,
+    _internal as AzureIdentityInternals,
+)
 
 _LOGGER = logging.getLogger(__name__)
 
 
-
-def filter_credential_warnings(record):
+def filter_credential_warnings(record) -> bool:
     """Suppress warnings from credentials other than DefaultAzureCredential"""
     if record.levelno == logging.WARNING:
         message = record.getMessage()
@@ -22,7 +24,7 @@ def filter_credential_warnings(record):
     return True
 
 
-def _get_error_message(history):
+def _get_error_message(history) -> str:
     attempts = []
     for credential, error in history:
         if error:
@@ -35,7 +37,7 @@ Attempted credentials:\n\t{}""".format(
     )
 
 
-class _ChainedTokenCredential(object):
+class _ChainedTokenCredential():
     """
     Based on Azure.Identity.ChainedTokenCredential from:
     https://github.com/Azure/azure-sdk-for-python/blob/master/sdk/identity/azure-identity/azure/identity/_credentials/chained.py
@@ -45,24 +47,52 @@ class _ChainedTokenCredential(object):
     We also don't log a warning unless all credential attempts have failed.
     """
 
-    def __init__(self, *credentials: TokenCredential):
-        self._successful_credential = None
+    def __init__(self, *credentials: TokenCredential) -> None:
+        self._successful_credential: TokenCredential = None
         self.credentials = credentials
 
-    def get_token(self, *scopes: str, **kwargs) -> AccessToken:  # pylint:disable=unused-argument
+    def __enter__(self) -> _ChainedTokenCredential:
+        for credential in self.credentials:
+            credential.__enter__()
+        return self
+
+    def __exit__(self, *args: Any) -> None:
+        for credential in self.credentials:
+            credential.__exit__(*args)
+
+    def close(self) -> None:
+        """Close the transport session of each credential in the chain."""
+        self.__exit__()
+
+    def get_token(
+        self,
+        *scopes: str,
+        claims: Optional[str] = None,
+        tenant_id: Optional[str] = None,
+        **kwargs: Any
+    ) -> AccessToken:
         """
         Request a token from each chained credential, in order,
         returning the first token received.
+
         This method is called automatically by Azure SDK clients.
 
         :param str scopes: desired scopes for the access token.
-        This method requires at least one scope.
+            This method requires at least one scope.
+            For more information about scopes, see
+            https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
+        :keyword str claims: additional claims required in the token,
+            such as those returned in a resource provider's
+            claims challenge following an authorization failure.
+        :keyword str tenant_id: optional tenant to include in the token request.
 
-        :raises ~azure.core.exceptions.ClientAuthenticationError:
-        no credential in the chain provided a token
+        :return: An access token with the desired scopes.
+        :rtype: ~azure.core.credentials.AccessToken
+        :raises ~azure.core.exceptions.ClientAuthenticationError:   
+            no credential in the chain provided a token
         """
         history = []
-
+        AzureIdentityInternals.within_credential_chain.set(True)
         # Suppress warnings from credentials in Azure.Identity
         azure_identity_logger = logging.getLogger("azure.identity")
         handler = logging.StreamHandler(stream=sys.stdout)
@@ -71,17 +101,22 @@ class _ChainedTokenCredential(object):
         try:
             for credential in self.credentials:
                 try:
-                    token = credential.get_token(*scopes, **kwargs)
+                    token = credential.get_token(
+                        *scopes,
+                        claims=claims,
+                        tenant_id=tenant_id,
+                        **kwargs)
                     _LOGGER.info(
                         "%s acquired a token from %s",
                         self.__class__.__name__,
-                        credential.__class__.__name__,
+                        credential.__class__.__name__
                     )
                     self._successful_credential = credential
+                    AzureIdentityInternals.within_credential_chain.set(False)
                     return token
                 except CredentialUnavailableError as ex:
-                    # credential didn't attempt authentication because
-                    # it lacks required data or state -> continue
+                    # credential didn't attempt authentication
+                    # because it lacks required data or state -> continue
                     history.append((credential, ex.message))
                     _LOGGER.info(
                         "%s - %s is unavailable",
@@ -89,11 +124,9 @@ class _ChainedTokenCredential(object):
                         credential.__class__.__name__,
                     )
                 except Exception as ex:  # pylint: disable=broad-except
-                    # credential failed to authenticate,
-                    # or something unexpectedly raised -> break
-                    history.append((credential, str(ex)))
                     # instead of logging a warning, we just want to log an info
                     # since other credentials might succeed
+                    history.append((credential, str(ex)))
                     _LOGGER.info(
                         '%s.get_token failed: %s raised unexpected error "%s"',
                         self.__class__.__name__,
@@ -103,8 +136,8 @@ class _ChainedTokenCredential(object):
                     )
                     # here we do NOT want break and
                     # will continue to try other credentials
-
         finally:
+            AzureIdentityInternals.within_credential_chain.set(False)
             # Re-enable warnings from credentials in Azure.Identity
             azure_identity_logger.removeHandler(handler)
 
@@ -114,6 +147,8 @@ class _ChainedTokenCredential(object):
             self.__class__.__name__
             + " failed to retrieve a token from the included credentials."
             + attempts
+            + "\nTo mitigate this issue, please refer to the troubleshooting guidelines here at "
+            "https://aka.ms/azsdk/python/identity/defaultazurecredential/troubleshoot."
         )
         _LOGGER.warning(message)
         raise ClientAuthenticationError(message=message)
