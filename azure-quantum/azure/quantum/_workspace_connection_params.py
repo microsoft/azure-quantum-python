@@ -356,7 +356,6 @@ class WorkspaceConnectionParams:
         self.resource_group = _get_value_or_default(self.resource_group, resource_group)
         self.workspace_name = _get_value_or_default(self.workspace_name, workspace_name)
         self.location = _get_value_or_default(self.location, location)
-        self.environment = _get_value_or_default(self.environment, environment)
         self.credential = _get_value_or_default(self.credential, credential)
         self.user_agent = _get_value_or_default(self.user_agent, user_agent)
         self.user_agent_app_id = _get_value_or_default(self.user_agent_app_id, user_agent_app_id)
@@ -366,6 +365,7 @@ class WorkspaceConnectionParams:
         self.api_key = _get_value_or_default(self.api_key, api_key)
         # for these properties that have a default value in the getter, we use
         # the private field as the old_value
+        self.environment = _get_value_or_default(self._environment, environment)
         self.quantum_endpoint = _get_value_or_default(self._quantum_endpoint, quantum_endpoint)
         self.arm_endpoint = _get_value_or_default(self._arm_endpoint, arm_endpoint)
         return self
