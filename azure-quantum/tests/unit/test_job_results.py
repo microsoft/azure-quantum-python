@@ -5,6 +5,10 @@
 
 import unittest
 from unittest.mock import Mock
+from datetime import datetime, timezone, timedelta
+from urllib.parse import urlparse, parse_qs, urlencode
+
+import pytest
 
 from common import QuantumTestBase
 from azure.quantum import Job
@@ -20,6 +24,30 @@ class TestJobResults(QuantumTestBase):
     def test_job_success(self):
         job_results = self._get_job_results("test_output_data_format","{\"Histogram\": [\"[0]\", 0.50, \"[1]\", 0.50]}")
         self.assertTrue(len(job_results["Histogram"]) == 4)
+
+    @pytest.mark.live_test
+    def test_job_get_results_with_expired_sas_token(self):
+        """
+        Get existing result blob url and replace its sas token with expired one, 
+        so we can test its ability to refresh it.
+        """
+        ws = self.create_workspace()
+        jobs = ws.list_jobs()
+        self.assertIsInstance(jobs, list)
+        job = jobs[-1]
+
+        uri_parts = urlparse(job.details.output_data_uri)
+        query_params = parse_qs(uri_parts.query)
+
+        expired_date = datetime.now(tz=timezone.utc) - timedelta(hours=240)
+        # manually create Z suffixed UTC timestamp, since Python < 3.11 can not handle it. 
+        expired_date_str = expired_date.isoformat().replace("+00:00", "Z")
+
+        query_params["se"] = expired_date_str
+        new_query_param_str = urlencode(query=query_params)
+        new_uri = f"{uri_parts.hostname}{uri_parts.path}?{new_query_param_str}"
+        job.details.output_data_uri = new_uri
+        job.get_results()
         
 
     def test_job_for_microsoft_quantum_results_v1_success(self):

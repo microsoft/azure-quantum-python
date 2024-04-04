@@ -628,8 +628,9 @@ class CustomAccessTokenReplacer(RecordingProcessor):
                 ):
                     if prop in body:
                         del body[prop]
-            response['body']['string'] = json.dumps(body)
-            response['headers']['content-length'] = [f"{len(body)}"]
+            body_bytes = json.dumps(body).encode()
+            response['body']['string'] = body_bytes
+            response['headers']['content-length'] = [str(len(body_bytes))]
         except (KeyError, ValueError):
             return response
         return response
@@ -654,7 +655,7 @@ class InteractiveAccessTokenReplacer(RecordingProcessor):
                         del body[property]
         except (KeyError, ValueError):
             return response
-        body = json.dumps(body)
-        response['body']['string'] = body
-        response['headers']['content-length'] = ["%s" % len(body)]
+        body_bytes = json.dumps(body).encode()
+        response['body']['string'] = body_bytes
+        response['headers']['content-length'] = [str(len(body_bytes))]
         return response
