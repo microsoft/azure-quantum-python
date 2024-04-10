@@ -858,8 +858,8 @@ class TestQiskit(QuantumTestBase):
 
         workspace = self.create_workspace()
         provider = AzureQuantumProvider(workspace=workspace)
-        backend = provider.get_backend("quantinuum.sim.h1-2e")
-        self.assertIn("quantinuum.sim.h1-2e", backend.backend_names)
+        backend = provider.get_backend("quantinuum.sim.h1-1e")
+        self.assertIn("quantinuum.sim.h1-1e", backend.backend_names)
         self.assertIn(backend.backend_names[0], [
             t.name for t in workspace.get_targets(provider_id="quantinuum")
         ])
@@ -1003,7 +1003,7 @@ class TestQiskit(QuantumTestBase):
         workspace = self.create_workspace()
         provider = AzureQuantumProvider(workspace=workspace)
         backend = QuantinuumEmulatorQirBackend(
-            "quantinuum.sim.h1-2e", provider
+            "quantinuum.sim1h1-1e", provider
         )
 
         input_params = backend._get_input_params({})
@@ -1032,10 +1032,7 @@ class TestQiskit(QuantumTestBase):
         for target_name in [
             "quantinuum.qpu.h1-1",
             "quantinuum.sim.h1-1sc",
-            "quantinuum.sim.h1-1e",
-            "quantinuum.qpu.h1-2",
-            "quantinuum.sim.h1-2sc",
-            "quantinuum.sim.h1-2e",
+            "quantinuum.sim.h1-1e"
         ]:
             config = provider.get_backend(target_name).configuration()
             # We check for name so the test log includes it when reporting a failure
