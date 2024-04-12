@@ -21,9 +21,6 @@ class Quantinuum(Target):
         "quantinuum.qpu.h1-1",
         "quantinuum.sim.h1-1sc",
         "quantinuum.sim.h1-1e",
-        "quantinuum.qpu.h1-2",
-        "quantinuum.sim.h1-2sc",
-        "quantinuum.sim.h1-2e"
         "quantinuum.qpu.h2-1",
         "quantinuum.sim.h2-1sc",
         "quantinuum.sim.h2-1e",
