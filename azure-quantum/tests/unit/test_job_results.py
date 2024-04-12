@@ -39,9 +39,8 @@ class TestJobResults(QuantumTestBase):
         uri_parts = urlparse(job.details.output_data_uri)
         query_params = parse_qs(uri_parts.query)
 
-        expired_date = datetime.now(tz=timezone.utc) - timedelta(hours=240)
-        # manually create Z suffixed UTC timestamp, since Python < 3.11 can not handle it. 
-        expired_date_str = expired_date.isoformat().replace("+00:00", "Z")
+        # mocking SAS-token expiration date so that we could always match the recording
+        expired_date_str = '2024-01-01T00:00:00+00:00'
 
         query_params["se"] = expired_date_str
         new_query_param_str = urlencode(query=query_params)
