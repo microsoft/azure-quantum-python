@@ -46,7 +46,7 @@ class TestJobResults(QuantumTestBase):
         new_query_param_str = urlencode(query=query_params)
         new_uri = f"{uri_parts.hostname}{uri_parts.path}?{new_query_param_str}"
         job.details.output_data_uri = new_uri
-        job.get_results()
+        self.assertIsNotNone(job.get_results())
         
 
     def test_job_for_microsoft_quantum_results_v1_success(self):
