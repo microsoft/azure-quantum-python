@@ -290,11 +290,8 @@ class TestWorkspace(QuantumTestBase):
         self.assertNotIn(None, targets)
         test_targets = set([
             'quantinuum.sim.h1-1sc',
-            'quantinuum.sim.h1-2sc',
             'quantinuum.sim.h1-1e',
-            'quantinuum.sim.h1-2e',
             'quantinuum.qpu.h1-1',
-            'quantinuum.qpu.h1-2',
             'quantinuum.sim.h2-1sc',
             'quantinuum.sim.h2-1e',
             'quantinuum.qpu.h2-1'
