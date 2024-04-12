@@ -47,14 +47,6 @@ class TestQuantinuum(QuantumTestBase):
         cost = target.estimate_cost(circuit, shots=100e3)
         self.assertEqual(cost.estimated_total, 845.0)
 
-        target = Quantinuum(workspace=workspace, name="quantinuum.sim.h1-2sc")
-        cost = target.estimate_cost(circuit, shots=100e3)
-        self.assertEqual(cost.estimated_total, 0.0)
-
-        target = Quantinuum(workspace=workspace, name="quantinuum.qpu.h1-2")
-        cost = target.estimate_cost(circuit, shots=100e3)
-        self.assertEqual(cost.estimated_total, 845.0)
-
         target = Quantinuum(workspace=workspace, name="quantinuum.sim.h2-1sc")
         cost = target.estimate_cost(circuit, shots=100e3)
         self.assertEqual(cost.estimated_total, 0.0)
