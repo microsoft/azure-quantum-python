@@ -296,7 +296,7 @@ class TestWorkspace(QuantumTestBase):
     @pytest.mark.live_test
     def test_workspace_auth_connection_string_api_key(self):
         connection_string = ""
-        
+
         if self.is_playback:
             connection_string = ConnectionConstants.VALID_CONNECTION_STRING(
                 subscription_id=SUBSCRIPTION_ID,
@@ -311,9 +311,9 @@ class TestWorkspace(QuantumTestBase):
             self._enable_workspace_api_keys(token, workspace, True)
             connection_string = self._get_current_primary_connection_string(token)
             self.resume_recording()
+            # Sleep 1 min for cache to be cleared
+            time.sleep(60)
 
-        # Sleep 1 min for cache to be cleared
-        time.sleep(60)
         with patch.dict(os.environ):
             self.clear_env_vars(os.environ)
             workspace = Workspace.from_connection_string(
@@ -322,15 +322,15 @@ class TestWorkspace(QuantumTestBase):
             jobs = workspace.list_jobs()
             assert len(jobs) >= 0
 
-        if not self.is_playback:
+        if self.is_live:
             self.pause_recording()
             token = self._get_rp_credential()
             workspace = self._get_workspace(token)
             self._enable_workspace_api_keys(token, workspace, False)
             self.resume_recording()
+            # Sleep 1 min for cache to be cleared
+            time.sleep(60)
 
-        # Sleep 1 min for cache to be cleared
-        time.sleep(60)
         with patch.dict(os.environ):
             self.clear_env_vars(os.environ)
             workspace = Workspace.from_connection_string(
