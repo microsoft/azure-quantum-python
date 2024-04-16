@@ -9,6 +9,7 @@ import random
 import json
 import pytest
 import numpy as np
+import collections 
 
 from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister
 from qiskit.providers import JobStatus
@@ -1457,3 +1458,11 @@ class TestQiskit(QuantumTestBase):
         actual = str(exc.value)
         expected = "The targetCapability parameter has been deprecated"
         self.assertTrue(actual.startswith(expected))
+
+    def test_get_backens_names(self):
+        """Verify that the get_backend_names method returns a unique list"""
+        workspace = self.create_workspace()
+        provider = AzureQuantumProvider(workspace=workspace)
+        backend_names = provider.get_backends_names()
+        counters = collections.Counter(backend_names)
+        assert all([c == 1 for c in counters.values()])

@@ -137,6 +137,13 @@ see https://aka.ms/AQ/Docs/AddProvider"
         )
 
         return backends
+   
+    def get_backends_names(self):
+        """Get list of unique names of all backends."""
+        backends = self.backends()
+        filtered_backend_names = set(b.name() for b in backends)
+        return sorted(filtered_backend_names)
+
 
     def get_job(self, job_id) -> AzureQuantumJob:
         """Returns the Job instance associated with the given id.
