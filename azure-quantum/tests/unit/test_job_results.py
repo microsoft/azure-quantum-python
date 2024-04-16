@@ -3,16 +3,13 @@
 # Licensed under the MIT License.
 ##
 
+import re
 import unittest
 from unittest.mock import Mock
-from datetime import datetime, timezone, timedelta
-from urllib.parse import urlparse, parse_qs, urlencode
-
 import pytest
-
-from common import QuantumTestBase
-from azure.quantum import Job
-from azure.quantum._client.models import JobDetails
+from common import QuantumTestBase, RegexScrubbingPatterns
+from azure.quantum import Job, JobDetails
+from azure.quantum.target import Target
 
 
 class TestJobResults(QuantumTestBase):
@@ -31,23 +28,20 @@ class TestJobResults(QuantumTestBase):
         Get existing result blob url and replace its sas token with expired one, 
         so we can test its ability to refresh it.
         """
-        ws = self.create_workspace()
-        jobs = ws.list_jobs()
-        self.assertIsInstance(jobs, list)
-        job = jobs[-1]
+        target = self.create_echo_target()
+        input_data = "{ input: 'data' }"
+        job = target.submit(input_data=input_data)
+        job.wait_until_completed()
 
-        uri_parts = urlparse(job.details.output_data_uri)
-        query_params = parse_qs(uri_parts.query)
+        # mocking SAS-token expiration date to an expired date
+        job.details.output_data_uri = re.sub(
+            pattern=RegexScrubbingPatterns.URL_QUERY_SAS_KEY_EXPIRATION,
+            repl="se=2024-01-01T00%3A00%3A00Z&",
+            string=job.details.output_data_uri)
 
-        # mocking SAS-token expiration date so that we could always match the recording
-        expired_date_str = '2024-01-01T00:00:00+00:00'
+        job_results = job.get_results()
+        self.assertEqual(job_results, input_data)
 
-        query_params["se"] = expired_date_str
-        new_query_param_str = urlencode(query=query_params)
-        new_uri = f"{uri_parts.hostname}{uri_parts.path}?{new_query_param_str}"
-        job.details.output_data_uri = new_uri
-        self.assertIsNotNone(job.get_results())
-        
 
     def test_job_for_microsoft_quantum_results_v1_success(self):
         job_results = self._get_job_results("microsoft.quantum-results.v1","{\"Histogram\": [\"[0]\", 0.50, \"[1]\", 0.50]}")
