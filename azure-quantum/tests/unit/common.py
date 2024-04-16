@@ -24,7 +24,8 @@ from azure.quantum._constants import (
     ConnectionConstants,
     GUID_REGEX_PATTERN,
 )
-from azure.quantum.job.job import Job
+from azure.quantum import Job
+from azure.quantum.target import Target
 from azure.identity import ClientSecretCredential
 
 
@@ -288,6 +289,24 @@ class QuantumTestBase(ReplayableTest):
 
         return workspace
 
+    def create_echo_target(
+        self,
+        credential = None,
+        **kwargs
+    ) -> Target:
+        """
+        Create a `Microsoft.Test.echo-target` Target for simple job submission tests.
+        Uses the Workspace returned from `create_workspace()` method. 
+        """
+        workspace = self.create_workspace(credential=credential, **kwargs)
+        target = Target(
+            workspace=workspace,
+            name="echo-output",
+            provider_id="Microsoft.Test",
+            input_data_format = "microsoft.quantum-log.v1",
+            output_data_format = "microsoft.quantum-log.v1"
+        )
+        return target
 
 class RegexScrubbingRule:
     """ A Regex Scrubbing Rule to be applied during test recordings and playbacks."""
@@ -628,8 +647,9 @@ class CustomAccessTokenReplacer(RecordingProcessor):
                 ):
                     if prop in body:
                         del body[prop]
-            response['body']['string'] = json.dumps(body)
-            response['headers']['content-length'] = [f"{len(body)}"]
+            body_bytes = json.dumps(body).encode()
+            response['body']['string'] = body_bytes
+            response['headers']['content-length'] = [str(len(body_bytes))]
         except (KeyError, ValueError):
             return response
         return response
@@ -654,7 +674,7 @@ class InteractiveAccessTokenReplacer(RecordingProcessor):
                         del body[property]
         except (KeyError, ValueError):
             return response
-        body = json.dumps(body)
-        response['body']['string'] = body
-        response['headers']['content-length'] = ["%s" % len(body)]
+        body_bytes = json.dumps(body).encode()
+        response['body']['string'] = body_bytes
+        response['headers']['content-length'] = [str(len(body_bytes))]
         return response
