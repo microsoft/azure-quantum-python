@@ -77,14 +77,7 @@ class AzureQuantumProvider(Provider):
 
             # If all backends have the same name, filter for default backend
             if all_same(backend.name() for backend in backends):
-                backends = list(
-                    filter(
-                        lambda backend: self._match_all(
-                            backend.configuration().to_dict(), {"is_default": True}
-                        ),
-                        backends,
-                    )
-                )
+                backends = self._filter_only_default_backends()
 
         if len(backends) > 1:
             raise QiskitBackendNotFoundError(
@@ -131,9 +124,12 @@ see https://aka.ms/AQ/Docs/AddProvider"
         # flatten the available backends
         backend_list = [x for v in self._backends.values() for x in v]
 
+        # keep only default instances
+        default_backends = self._filter_only_default_backends(backends=backend_list)
+
         # filter by properties specified in the kwargs and filter function
         backends: List[Backend] = self._filter_backends(
-            backend_list, filters=workspace_allowed, **kwargs
+            default_backends, filters=workspace_allowed, **kwargs
         )
 
         return backends
@@ -211,6 +207,19 @@ see https://aka.ms/AQ/Docs/AddProvider"
             raise QiskitError(
                 f"Backend {backend_cls} could not be instantiated: {err}"
             ) from err
+    
+    def _filter_only_default_backends(
+            self,
+            backends: List[AzureBackendBase]
+    ) -> List[AzureBackendBase]:
+        return list(
+            filter(
+                lambda backend: self._match_all(
+                    backend.configuration().to_dict(), {"is_default": True}
+                ),
+                backends,
+            )
+        )
 
     def _match_all(self, obj, criteria):
         """Return True if all items in criteria matches items in obj."""

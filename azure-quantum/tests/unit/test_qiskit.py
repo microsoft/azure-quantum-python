@@ -9,6 +9,7 @@ import random
 import json
 import pytest
 import numpy as np
+import collections
 
 from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister
 from qiskit.providers import JobStatus
@@ -533,6 +534,32 @@ class TestQiskit(QuantumTestBase):
             self.assertEqual(counts, result.data()["counts"])
             self.assertTrue(hasattr(result.results[0].header, "num_qubits"))
             self.assertTrue(hasattr(result.results[0].header, "metadata"))
+    
+    @pytest.mark.ionq
+    @pytest.mark.live_test
+    def test_provider_returns_only_default_backends(self):
+        workspace = self.create_workspace()
+        provider = AzureQuantumProvider(workspace=workspace)
+        
+        backends = provider.backends()
+
+        # Check that all names are unique
+        backend_names = [b.name() for b in backends]
+        assert sorted(set(backend_names)) == sorted(backend_names)
+
+        # Also check that all backends are default
+        for b in backends:
+            backend_config = b.configuration().to_dict()
+
+            is_default_key_name = "is_default"
+
+            if is_default_key_name in backend_config:
+                continue
+
+            if is_default_key_name in backend_config["azure"]:
+                continue
+
+            raise AssertionError(f"Backend '{str(b)}' is not default")
 
     @pytest.mark.ionq
     def test_ionq_simulator_has_default(self):
