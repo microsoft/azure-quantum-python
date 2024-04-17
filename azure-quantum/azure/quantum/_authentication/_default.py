@@ -16,6 +16,8 @@ from azure.identity import (
     InteractiveBrowserCredential,
     DeviceCodeCredential,
     _internal as AzureIdentityInternals,
+     TokenCachePersistenceOptions,
+     SharedTokenCacheCredential, 
 )
 from ._chained import _ChainedTokenCredential
 from ._token import _TokenFileCredential
@@ -97,7 +99,18 @@ class _DefaultAzureCredential(_ChainedTokenCredential):
             credentials.append(VisualStudioCodeCredential(authority=self.authority, tenant_id=self.tenant_id))
             credentials.append(AzureCliCredential(tenant_id=self.tenant_id))
             credentials.append(AzurePowerShellCredential(tenant_id=self.tenant_id))
-            credentials.append(InteractiveBrowserCredential(authority=self.authority, tenant_id=self.tenant_id))
+            # Before trying other credential types, try to use already cached token.
+            credentials.append(SharedTokenCacheCredential(authority=self.authority))
+            credentials.append(
+                InteractiveBrowserCredential(
+                    authority=self.authority, 
+                    tenant_id=self.tenant_id,
+                    cache_persistence_options=TokenCachePersistenceOptions(
+                        # Not all linux systems has preinstalled libsecret, which is required for storage encryption. 
+                        allow_unencrypted_storage=True
+                    )
+                )
+            )
             if self.client_id:
                 credentials.append(DeviceCodeCredential(authority=self.authority, client_id=self.client_id, tenant_id=self.tenant_id))
         self.credentials = credentials
