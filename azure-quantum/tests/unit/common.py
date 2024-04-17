@@ -24,7 +24,8 @@ from azure.quantum._constants import (
     ConnectionConstants,
     GUID_REGEX_PATTERN,
 )
-from azure.quantum.job.job import Job
+from azure.quantum import Job
+from azure.quantum.target import Target
 from azure.identity import ClientSecretCredential
 
 
@@ -288,6 +289,24 @@ class QuantumTestBase(ReplayableTest):
 
         return workspace
 
+    def create_echo_target(
+        self,
+        credential = None,
+        **kwargs
+    ) -> Target:
+        """
+        Create a `Microsoft.Test.echo-target` Target for simple job submission tests.
+        Uses the Workspace returned from `create_workspace()` method. 
+        """
+        workspace = self.create_workspace(credential=credential, **kwargs)
+        target = Target(
+            workspace=workspace,
+            name="echo-output",
+            provider_id="Microsoft.Test",
+            input_data_format = "microsoft.quantum-log.v1",
+            output_data_format = "microsoft.quantum-log.v1"
+        )
+        return target
 
 class RegexScrubbingRule:
     """ A Regex Scrubbing Rule to be applied during test recordings and playbacks."""
