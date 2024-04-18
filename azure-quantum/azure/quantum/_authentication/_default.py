@@ -16,8 +16,9 @@ from azure.identity import (
     InteractiveBrowserCredential,
     DeviceCodeCredential,
     _internal as AzureIdentityInternals,
-     TokenCachePersistenceOptions,
-     SharedTokenCacheCredential, 
+    TokenCachePersistenceOptions,
+    SharedTokenCacheCredential,
+    _persistent_cache as AzureIdentityPersistentCache
 )
 from ._chained import _ChainedTokenCredential
 from ._token import _TokenFileCredential
@@ -86,33 +87,70 @@ class _DefaultAzureCredential(_ChainedTokenCredential):
             return ConnectionConstants.DOGFOOD_AUTHORITY
         return ConnectionConstants.AUTHORITY
 
-    def _initialize_credentials(self):
+    def _get_cache_options(self) -> Optional[TokenCachePersistenceOptions]:
+        """
+        Returns a valid TokenCachePersistenceOptions
+        if the AzureIdentity Persistent Cache is accessible.
+        Returns None otherwise.
+        """
+        cache_options = TokenCachePersistenceOptions(
+            allow_unencrypted_storage=True,
+            name="AzureQuantumSDK"
+        )
+        try:
+            # pylint: disable=protected-access
+            cache = AzureIdentityPersistentCache._load_persistent_cache(cache_options)
+            try:
+                _LOGGER.error(
+                    'Using Azure.Identity Token Cache at %s. ',
+                    cache._persistence.get_location()
+                )
+            except: # pylint: disable=bare-except
+                pass
+            return cache_options
+        except Exception as ex: # pylint: disable=broad-except
+            _LOGGER.warning(
+                'Error trying to access Azure.Identity Token Cache at %s. '
+                'Raised unexpected exception:\n%s',
+                self.__class__._get_cache_options.__qualname__,
+                ex,
+                exc_info=_LOGGER.isEnabledFor(logging.DEBUG),
+            )
+            return None
+
+    def _initialize_credentials(self) -> None:
         self._discover_tenant_id_(
             arm_endpoint=self.arm_endpoint,
             subscription_id=self.subscription_id)
+        cache_options = self._get_cache_options()
         credentials = []
         credentials.append(_TokenFileCredential())
         credentials.append(EnvironmentCredential())
         if self.client_id:
             credentials.append(ManagedIdentityCredential(client_id=self.client_id))
         if self.authority and self.tenant_id:
-            credentials.append(VisualStudioCodeCredential(authority=self.authority, tenant_id=self.tenant_id))
+            credentials.append(VisualStudioCodeCredential(
+                authority=self.authority,
+                tenant_id=self.tenant_id))
             credentials.append(AzureCliCredential(tenant_id=self.tenant_id))
             credentials.append(AzurePowerShellCredential(tenant_id=self.tenant_id))
-            # Before trying other credential types, try to use already cached token.
-            credentials.append(SharedTokenCacheCredential(authority=self.authority))
+            # The SharedTokenCacheCredential is used when the token cache
+            # is available to attempt loading a token stored in the cache
+            # by the InteractiveBrowserCredential.
+            if cache_options:
+                credentials.append(SharedTokenCacheCredential(
+                    authority=self.authority,
+                    cache_persistence_options=cache_options))
             credentials.append(
                 InteractiveBrowserCredential(
-                    authority=self.authority, 
+                    authority=self.authority,
                     tenant_id=self.tenant_id,
-                    cache_persistence_options=TokenCachePersistenceOptions(
-                        # Not all linux systems has preinstalled libsecret, which is required for storage encryption. 
-                        allow_unencrypted_storage=True
-                    )
-                )
-            )
+                    cache_persistence_options=cache_options))
             if self.client_id:
-                credentials.append(DeviceCodeCredential(authority=self.authority, client_id=self.client_id, tenant_id=self.tenant_id))
+                credentials.append(DeviceCodeCredential(
+                    authority=self.authority,
+                    client_id=self.client_id,
+                    tenant_id=self.tenant_id))
         self.credentials = credentials
 
     def get_token(self, *scopes: str, **kwargs) -> AccessToken:
