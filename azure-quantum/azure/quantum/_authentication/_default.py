@@ -101,7 +101,7 @@ class _DefaultAzureCredential(_ChainedTokenCredential):
             # pylint: disable=protected-access
             cache = AzureIdentityPersistentCache._load_persistent_cache(cache_options)
             try:
-                _LOGGER.error(
+                _LOGGER.info(
                     'Using Azure.Identity Token Cache at %s. ',
                     cache._persistence.get_location()
                 )
