@@ -20,9 +20,9 @@ from azure.identity import (
     SharedTokenCacheCredential,
     _persistent_cache as AzureIdentityPersistentCache
 )
+from azure.quantum._constants import ConnectionConstants
 from ._chained import _ChainedTokenCredential
 from ._token import _TokenFileCredential
-from azure.quantum._constants import ConnectionConstants
 
 _LOGGER = logging.getLogger(__name__)
 WWW_AUTHENTICATE_REGEX = re.compile(
@@ -64,7 +64,7 @@ class _DefaultAzureCredential(_ChainedTokenCredential):
         client_id: Optional[str] = None,
         tenant_id: Optional[str] = None,
         authority: Optional[str] = None,
-    ):
+    ) -> None:
         if arm_endpoint is None:
             raise ValueError("arm_endpoint is mandatory parameter")
         if subscription_id is None:
@@ -101,22 +101,37 @@ class _DefaultAzureCredential(_ChainedTokenCredential):
             # pylint: disable=protected-access
             cache = AzureIdentityPersistentCache._load_persistent_cache(cache_options)
             try:
+                # Try to get the location of the cache for
+                # tracing purpose.
                 _LOGGER.info(
-                    'Using Azure.Identity Token Cache at %s. ',
+                    "Using Azure.Identity Token Cache at %s.",
                     cache._persistence.get_location()
                 )
             except: # pylint: disable=bare-except
-                pass
+                _LOGGER.info("Using Azure.Identity Token Cache.")
             return cache_options
         except Exception as ex: # pylint: disable=broad-except
-            _LOGGER.warning(
-                'Error trying to access Azure.Identity Token Cache at %s. '
-                'Raised unexpected exception:\n%s',
-                self.__class__._get_cache_options.__qualname__,
-                ex,
-                exc_info=_LOGGER.isEnabledFor(logging.DEBUG),
-            )
-            return None
+            if (isinstance(ex, ValueError)
+                and len(ex.args) > 0
+                and "libsecret dependencies are not installed" in ex.args[0]
+            ):
+                _LOGGER.warning(
+                    "Error trying to access Azure.Identity Token Cache. "
+                    "libsecret dependencies are not installed or are unusable.\n"
+                    "Please install the necessary dependencies as instructed in "
+                    "https://github.com/AzureAD/microsoft-authentication-extensions-for-python/wiki/Encryption-on-Linux" # pylint: disable=line-too-long
+                    "Exception:\n%s",
+                    ex,
+                    exc_info=_LOGGER.isEnabledFor(logging.DEBUG),
+                )
+            else:
+                _LOGGER.warning(
+                    'Error trying to access Azure.Identity Token Cache. '
+                    "Raised unexpected exception:\n%s",
+                    ex,
+                    exc_info=_LOGGER.isEnabledFor(logging.DEBUG),
+                )
+        return None
 
     def _initialize_credentials(self) -> None:
         self._discover_tenant_id_(
@@ -197,8 +212,7 @@ class _DefaultAzureCredential(_ChainedTokenCredential):
                 match = re.search(WWW_AUTHENTICATE_REGEX, www_authenticate)
                 if match:
                     self.tenant_id = match.group("tenant_id")
-        # pylint: disable=broad-exception-caught
-        except Exception as ex:
+        except Exception as ex: # pylint: disable=broad-exception-caught
             _LOGGER.error(ex)
 
         # apply default values
