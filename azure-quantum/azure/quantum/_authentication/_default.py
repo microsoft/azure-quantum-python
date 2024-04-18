@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import sys
 import logging
 import re
 from typing import Optional
@@ -111,27 +112,31 @@ class _DefaultAzureCredential(_ChainedTokenCredential):
                 _LOGGER.info("Using Azure.Identity Token Cache.")
             return cache_options
         except Exception as ex: # pylint: disable=broad-except
-            if (isinstance(ex, ValueError)
-                and len(ex.args) > 0
-                and "libsecret dependencies are not installed" in ex.args[0]
-            ):
-                _LOGGER.warning(
-                    "Error trying to access Azure.Identity Token Cache. "
-                    "libsecret dependencies are not installed or are unusable.\n"
-                    "Please install the necessary dependencies as instructed in "
-                    "https://github.com/AzureAD/microsoft-authentication-extensions-for-python/wiki/Encryption-on-Linux" # pylint: disable=line-too-long
-                    "Exception:\n%s",
-                    ex,
-                    exc_info=_LOGGER.isEnabledFor(logging.DEBUG),
-                )
-            else:
-                _LOGGER.warning(
-                    'Error trying to access Azure.Identity Token Cache. '
-                    "Raised unexpected exception:\n%s",
-                    ex,
-                    exc_info=_LOGGER.isEnabledFor(logging.DEBUG),
-                )
-        return None
+            # Check if the cache issue on linux is due
+            # libsecret not functioning to provider better
+            # information to the user.
+            if sys.platform.startswith("linux"):
+                try:
+                    # pylint: disable=import-outside-toplevel
+                    from msal_extensions.libsecret import trial_run
+                    trial_run()
+                except Exception as libsecret_ex: # pylint: disable=broad-except
+                    _LOGGER.warning(
+                        "libsecret dependencies are not installed or are unusable.\n"
+                        "Please install the necessary dependencies as instructed in "
+                        "https://github.com/AzureAD/microsoft-authentication-extensions-for-python/wiki/Encryption-on-Linux" # pylint: disable=line-too-long
+                        "Exception:\n%s",
+                        libsecret_ex,
+                        exc_info=_LOGGER.isEnabledFor(logging.DEBUG),
+                    )
+
+            _LOGGER.warning(
+                'Error trying to access Azure.Identity Token Cache. '
+                "Raised unexpected exception:\n%s",
+                ex,
+                exc_info=_LOGGER.isEnabledFor(logging.DEBUG),
+            )
+            return None
 
     def _initialize_credentials(self) -> None:
         self._discover_tenant_id_(
