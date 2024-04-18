@@ -140,6 +140,7 @@ class _DefaultAzureCredential(_ChainedTokenCredential):
             if cache_options:
                 credentials.append(SharedTokenCacheCredential(
                     authority=self.authority,
+                    tenant_id=self.tenant_id,
                     cache_persistence_options=cache_options))
             credentials.append(
                 InteractiveBrowserCredential(
