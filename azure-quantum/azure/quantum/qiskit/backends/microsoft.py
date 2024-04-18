@@ -104,6 +104,7 @@ class MicrosoftResourceEstimationBackend(MicrosoftBackend):
                     {"name": "TODO", "parameters": [], "qasm_def": "TODO"}
                 ],  # NOTE: copied from other backends
                 "azure": self._azure_config(),
+                "is_default": True,
             }
         )
         logger.info("Initializing MicrosoftResourceEstimationBackend")

@@ -129,8 +129,8 @@ see https://aka.ms/AQ/Docs/AddProvider"
                 filtered_backends,
             )
         ) 
-        # In some cases, for example due to certain filters, there may be no default backends, 
-        # in this case return previous version of the list.  
+       # If default backends were found - return them, otherwise return the filtered_backends collection.
+       # The latter case could happen where there's no default backend defined for the specified target.  
         if len(default_backends) > 0:
             filtered_backends = default_backends
 
