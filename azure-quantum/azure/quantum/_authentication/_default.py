@@ -94,7 +94,7 @@ class _DefaultAzureCredential(_ChainedTokenCredential):
         Returns None otherwise.
         """
         cache_options = TokenCachePersistenceOptions(
-            allow_unencrypted_storage=True,
+            allow_unencrypted_storage=False,
             name="AzureQuantumSDK"
         )
         try:
