@@ -1178,7 +1178,7 @@ class TestQiskit(QuantumTestBase):
     @pytest.mark.rigetti
     @pytest.mark.live_test
     def test_qiskit_get_rigetti_qpu_targets(self):
-        from azure.quantum.target.rigetti import RigettiTarget        
+        from azure.quantum.target.rigetti import RigettiTarget
 
         workspace = self.create_workspace()
         provider = AzureQuantumProvider(workspace=workspace)
