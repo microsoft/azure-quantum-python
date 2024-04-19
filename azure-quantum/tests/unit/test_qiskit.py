@@ -1178,12 +1178,18 @@ class TestQiskit(QuantumTestBase):
     @pytest.mark.rigetti
     @pytest.mark.live_test
     def test_qiskit_get_rigetti_qpu_targets(self):
-        from azure.quantum.target.rigetti import RigettiTarget
+        from azure.quantum.target.rigetti import RigettiTarget        
 
         workspace = self.create_workspace()
         provider = AzureQuantumProvider(workspace=workspace)
 
-        backend = provider.get_backend(RigettiTarget.ANKAA_2.value)
+        try:
+            backend = provider.get_backend(RigettiTarget.ANKAA_2.value)
+        except QiskitBackendNotFoundError as ex:
+            msg = f"Target {RigettiTarget.ANKAA_2} is not available for workspace {workspace.name}."
+            warnings.warn(f"{msg}\nException:\n{QiskitBackendNotFoundError.__name__}\n{ex}")
+            pytest.skip(msg)
+
         self.assertEqual(backend.name(), RigettiTarget.ANKAA_2.value)
         config = backend.configuration()
         self.assertFalse(config.simulator)
