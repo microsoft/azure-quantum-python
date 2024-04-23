@@ -535,7 +535,6 @@ class TestQiskit(QuantumTestBase):
             self.assertTrue(hasattr(result.results[0].header, "num_qubits"))
             self.assertTrue(hasattr(result.results[0].header, "metadata"))
     
-    @pytest.mark.ionq
     @pytest.mark.live_test
     def test_provider_returns_only_default_backends(self):
         workspace = self.create_workspace()
@@ -560,6 +559,19 @@ class TestQiskit(QuantumTestBase):
                 continue
 
             raise AssertionError(f"Backend '{str(b)}' is not default")
+        
+    @pytest.mark.live_test
+    def test_get_backends_throws_on_more_than_one_backend_found(self):
+        workspace = self.create_workspace()
+        provider = AzureQuantumProvider(workspace=workspace)
+
+        all_backends = provider.backends()
+        if len(all_backends) > 1:
+            with pytest.raises(QiskitBackendNotFoundError):
+                provider.get_backend()
+        else:
+            # if there's 0 or 1 provider registered in the workspace
+            pytest.skip()
 
     @pytest.mark.ionq
     def test_ionq_simulator_has_default(self):
