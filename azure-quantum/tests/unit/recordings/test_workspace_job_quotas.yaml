@@ -26,16 +26,21 @@ interactions:
     uri: https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token
   response:
     body:
-      string: '{"token_type": "Bearer", "expires_in": 1745074166, "ext_expires_in":
-        1745074166, "refresh_in": 31536000, "access_token": "PLACEHOLDER"}'
+      string: '{"error": "invalid_client", "error_description": "AADSTS7000215: Invalid
+        client secret provided. Ensure the secret being sent in the request is the
+        client secret value, not the client secret ID, for a secret added to app ''00000000-0000-0000-0000-000000000000''.
+        Trace ID: f3ac1102-b163-426f-aec0-efe29b764800 Correlation ID: e3a1d507-4156-4f90-8f19-48a7a61447db
+        Timestamp: 2024-04-30 10:30:52Z", "error_codes": [7000215], "timestamp": "2024-04-30
+        10:30:52Z", "trace_id": "f3ac1102-b163-426f-aec0-efe29b764800", "correlation_id":
+        "e3a1d507-4156-4f90-8f19-48a7a61447db", "error_uri": "https://login.microsoftonline.com/error?code=7000215"}'
     headers:
       content-length:
-      - '135'
+      - '636'
       content-type:
       - application/json; charset=utf-8
     status:
-      code: 200
-      message: OK
+      code: 401
+      message: Unauthorized
 - request:
     body: null
     headers:
@@ -60,15 +65,15 @@ interactions:
         "period": "None"}, {"dimension": "qpu_hours", "scope": "Subscription", "providerId":
         "pasqal", "utilization": 0.0, "holds": 0.0, "limit": 0.167, "period": "Infinite"},
         {"dimension": "emulator_hours", "scope": "Subscription", "providerId": "pasqal",
-        "utilization": 0.8941016383333331, "holds": 0.0, "limit": 20.0, "period":
-        "Infinite"}, {"dimension": "provider-credit", "scope": "Subscription", "providerId":
-        "rigetti", "utilization": 3.0, "holds": 0.0, "limit": 25000.0, "period": "Infinite"}],
+        "utilization": 1.028551903333333, "holds": 0.0, "limit": 20.0, "period": "Infinite"},
+        {"dimension": "provider-credit", "scope": "Subscription", "providerId": "rigetti",
+        "utilization": 3.0, "holds": 0.0, "limit": 25000.0, "period": "Infinite"}],
         "nextLink": null}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '987'
+      - '986'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:

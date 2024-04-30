@@ -26,16 +26,21 @@ interactions:
     uri: https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token
   response:
     body:
-      string: '{"token_type": "Bearer", "expires_in": 1745071140, "ext_expires_in":
-        1745071140, "refresh_in": 31536000, "access_token": "PLACEHOLDER"}'
+      string: '{"error": "invalid_client", "error_description": "AADSTS7000215: Invalid
+        client secret provided. Ensure the secret being sent in the request is the
+        client secret value, not the client secret ID, for a secret added to app ''00000000-0000-0000-0000-000000000000''.
+        Trace ID: bda0b294-0405-420f-a5a9-f7e9ff1fa300 Correlation ID: 96652940-0135-40b7-a977-47e54e2c0559
+        Timestamp: 2024-04-30 09:51:57Z", "error_codes": [7000215], "timestamp": "2024-04-30
+        09:51:57Z", "trace_id": "bda0b294-0405-420f-a5a9-f7e9ff1fa300", "correlation_id":
+        "96652940-0135-40b7-a977-47e54e2c0559", "error_uri": "https://login.microsoftonline.com/error?code=7000215"}'
     headers:
       content-length:
-      - '135'
+      - '636'
       content-type:
       - application/json; charset=utf-8
     status:
-      code: 200
-      message: OK
+      code: 401
+      message: Unauthorized
 - request:
     body: 'b''{"containerName": "job-00000000-0000-0000-0000-000000000001"}'''
     headers:
@@ -80,7 +85,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.19.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
       x-ms-date:
-      - Fri, 19 Apr 2024 13:59:01 GMT
+      - Tue, 30 Apr 2024 09:51:58 GMT
       x-ms-version:
       - '2023-11-03'
     method: GET
@@ -88,7 +93,7 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerNotFound</Code><Message>The
-        specified container does not exist.\nRequestId:8c03ef63-d01e-0052-7961-925028000000\nTime:2024-04-19T13:59:02.5852084Z</Message></Error>"
+        specified container does not exist.\nRequestId:317ac0f5-e01e-0076-07e4-9aa688000000\nTime:2024-04-30T09:52:00.0442850Z</Message></Error>"
     headers:
       content-length:
       - '223'
@@ -113,7 +118,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.19.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
       x-ms-date:
-      - Fri, 19 Apr 2024 13:59:02 GMT
+      - Tue, 30 Apr 2024 09:51:59 GMT
       x-ms-version:
       - '2023-11-03'
     method: PUT
@@ -141,7 +146,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.19.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
       x-ms-date:
-      - Fri, 19 Apr 2024 13:59:02 GMT
+      - Tue, 30 Apr 2024 09:51:59 GMT
       x-ms-version:
       - '2023-11-03'
     method: GET
@@ -221,7 +226,7 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-date:
-      - Fri, 19 Apr 2024 13:59:03 GMT
+      - Tue, 30 Apr 2024 09:52:00 GMT
       x-ms-version:
       - '2023-11-03'
     method: PUT
@@ -262,20 +267,20 @@ interactions:
   response:
     body:
       string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
-        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcw",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData",
         "inputDataFormat": "pasqal.pulser.v1", "inputParams": {"count": 150}, "metadata":
         null, "sessionId": null, "status": "Waiting", "jobType": "QuantumComputing",
         "outputDataFormat": "pasqal.pulser-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         null, "errorData": null, "isCancelling": false, "tags": [], "name": "qdk-python-test",
         "id": "00000000-0000-0000-0000-000000000001", "providerId": "pasqal", "target":
-        "pasqal.sim.emu-tn", "creationTime": "2024-04-19T13:59:04.1573912+00:00",
+        "pasqal.sim.emu-tn", "creationTime": "2024-04-30T09:52:01.8333179+00:00",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '1150'
+      - '1079'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -304,15 +309,15 @@ interactions:
         null, "sessionId": null, "status": "Waiting", "jobType": "QuantumComputing",
         "outputDataFormat": "pasqal.pulser-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3Dqdk-python-test-00000000-0000-0000-0000-000000000001.output.json",
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
-        {"count": 1}, "errorData": null, "isCancelling": false, "tags": [], "name":
-        "qdk-python-test", "id": "00000000-0000-0000-0000-000000000001", "providerId":
-        "pasqal", "target": "pasqal.sim.emu-tn", "creationTime": "2024-04-19T13:59:04.1573912+00:00",
+        null, "errorData": null, "isCancelling": false, "tags": [], "name": "qdk-python-test",
+        "id": "00000000-0000-0000-0000-000000000001", "providerId": "pasqal", "target":
+        "pasqal.sim.emu-tn", "creationTime": "2024-04-30T09:52:01.8333179+00:00",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '1326'
+      - '1318'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -343,7 +348,7 @@ interactions:
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         {"count": 1}, "errorData": null, "isCancelling": false, "tags": [], "name":
         "qdk-python-test", "id": "00000000-0000-0000-0000-000000000001", "providerId":
-        "pasqal", "target": "pasqal.sim.emu-tn", "creationTime": "2024-04-19T13:59:04.1573912+00:00",
+        "pasqal", "target": "pasqal.sim.emu-tn", "creationTime": "2024-04-30T09:52:01.8333179+00:00",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
@@ -380,7 +385,7 @@ interactions:
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         {"count": 1}, "errorData": null, "isCancelling": false, "tags": [], "name":
         "qdk-python-test", "id": "00000000-0000-0000-0000-000000000001", "providerId":
-        "pasqal", "target": "pasqal.sim.emu-tn", "creationTime": "2024-04-19T13:59:04.1573912+00:00",
+        "pasqal", "target": "pasqal.sim.emu-tn", "creationTime": "2024-04-30T09:52:01.8333179+00:00",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
@@ -417,7 +422,7 @@ interactions:
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         {"count": 1}, "errorData": null, "isCancelling": false, "tags": [], "name":
         "qdk-python-test", "id": "00000000-0000-0000-0000-000000000001", "providerId":
-        "pasqal", "target": "pasqal.sim.emu-tn", "creationTime": "2024-04-19T13:59:04.1573912+00:00",
+        "pasqal", "target": "pasqal.sim.emu-tn", "creationTime": "2024-04-30T09:52:01.8333179+00:00",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
@@ -454,7 +459,7 @@ interactions:
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         {"count": 1}, "errorData": null, "isCancelling": false, "tags": [], "name":
         "qdk-python-test", "id": "00000000-0000-0000-0000-000000000001", "providerId":
-        "pasqal", "target": "pasqal.sim.emu-tn", "creationTime": "2024-04-19T13:59:04.1573912+00:00",
+        "pasqal", "target": "pasqal.sim.emu-tn", "creationTime": "2024-04-30T09:52:01.8333179+00:00",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
@@ -491,7 +496,7 @@ interactions:
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         {"count": 1}, "errorData": null, "isCancelling": false, "tags": [], "name":
         "qdk-python-test", "id": "00000000-0000-0000-0000-000000000001", "providerId":
-        "pasqal", "target": "pasqal.sim.emu-tn", "creationTime": "2024-04-19T13:59:04.1573912+00:00",
+        "pasqal", "target": "pasqal.sim.emu-tn", "creationTime": "2024-04-30T09:52:01.8333179+00:00",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
@@ -525,16 +530,16 @@ interactions:
         "inputDataFormat": "pasqal.pulser.v1", "inputParams": {"count": 150}, "metadata":
         null, "sessionId": null, "status": "Executing", "jobType": "QuantumComputing",
         "outputDataFormat": "pasqal.pulser-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3Dqdk-python-test-00000000-0000-0000-0000-000000000001.output.json",
-        "beginExecutionTime": "2024-04-19T13:59:08.79352+00:00", "cancellationTime":
+        "beginExecutionTime": "2024-04-30T09:52:07.047274+00:00", "cancellationTime":
         null, "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling":
         false, "tags": [], "name": "qdk-python-test", "id": "00000000-0000-0000-0000-000000000001",
-        "providerId": "pasqal", "target": "pasqal.sim.emu-tn", "creationTime": "2024-04-19T13:59:04.1573912+00:00",
+        "providerId": "pasqal", "target": "pasqal.sim.emu-tn", "creationTime": "2024-04-30T09:52:01.8333179+00:00",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '1357'
+      - '1358'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -562,16 +567,16 @@ interactions:
         "inputDataFormat": "pasqal.pulser.v1", "inputParams": {"count": 150}, "metadata":
         null, "sessionId": null, "status": "Executing", "jobType": "QuantumComputing",
         "outputDataFormat": "pasqal.pulser-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3Dqdk-python-test-00000000-0000-0000-0000-000000000001.output.json",
-        "beginExecutionTime": "2024-04-19T13:59:08.79352+00:00", "cancellationTime":
+        "beginExecutionTime": "2024-04-30T09:52:07.047274+00:00", "cancellationTime":
         null, "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling":
         false, "tags": [], "name": "qdk-python-test", "id": "00000000-0000-0000-0000-000000000001",
-        "providerId": "pasqal", "target": "pasqal.sim.emu-tn", "creationTime": "2024-04-19T13:59:04.1573912+00:00",
+        "providerId": "pasqal", "target": "pasqal.sim.emu-tn", "creationTime": "2024-04-30T09:52:01.8333179+00:00",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '1357'
+      - '1358'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -599,16 +604,16 @@ interactions:
         "inputDataFormat": "pasqal.pulser.v1", "inputParams": {"count": 150}, "metadata":
         null, "sessionId": null, "status": "Executing", "jobType": "QuantumComputing",
         "outputDataFormat": "pasqal.pulser-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3Dqdk-python-test-00000000-0000-0000-0000-000000000001.output.json",
-        "beginExecutionTime": "2024-04-19T13:59:08.79352+00:00", "cancellationTime":
+        "beginExecutionTime": "2024-04-30T09:52:07.047274+00:00", "cancellationTime":
         null, "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling":
         false, "tags": [], "name": "qdk-python-test", "id": "00000000-0000-0000-0000-000000000001",
-        "providerId": "pasqal", "target": "pasqal.sim.emu-tn", "creationTime": "2024-04-19T13:59:04.1573912+00:00",
+        "providerId": "pasqal", "target": "pasqal.sim.emu-tn", "creationTime": "2024-04-30T09:52:01.8333179+00:00",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '1357'
+      - '1358'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -636,16 +641,16 @@ interactions:
         "inputDataFormat": "pasqal.pulser.v1", "inputParams": {"count": 150}, "metadata":
         null, "sessionId": null, "status": "Executing", "jobType": "QuantumComputing",
         "outputDataFormat": "pasqal.pulser-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3Dqdk-python-test-00000000-0000-0000-0000-000000000001.output.json",
-        "beginExecutionTime": "2024-04-19T13:59:08.79352+00:00", "cancellationTime":
+        "beginExecutionTime": "2024-04-30T09:52:07.047274+00:00", "cancellationTime":
         null, "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling":
         false, "tags": [], "name": "qdk-python-test", "id": "00000000-0000-0000-0000-000000000001",
-        "providerId": "pasqal", "target": "pasqal.sim.emu-tn", "creationTime": "2024-04-19T13:59:04.1573912+00:00",
+        "providerId": "pasqal", "target": "pasqal.sim.emu-tn", "creationTime": "2024-04-30T09:52:01.8333179+00:00",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '1357'
+      - '1358'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -673,14 +678,14 @@ interactions:
         "inputDataFormat": "pasqal.pulser.v1", "inputParams": {"count": 150}, "metadata":
         null, "sessionId": null, "status": "Succeeded", "jobType": "QuantumComputing",
         "outputDataFormat": "pasqal.pulser-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3Dqdk-python-test-00000000-0000-0000-0000-000000000001.output.json",
-        "beginExecutionTime": "2024-04-19T13:59:08.79352+00:00", "cancellationTime":
+        "beginExecutionTime": "2024-04-30T09:52:07.047274+00:00", "cancellationTime":
         null, "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling":
         false, "tags": [], "name": "qdk-python-test", "id": "00000000-0000-0000-0000-000000000001",
-        "providerId": "pasqal", "target": "pasqal.sim.emu-tn", "creationTime": "2024-04-19T13:59:04.1573912+00:00",
-        "endExecutionTime": "2024-04-19T13:59:19.843373+00:00", "costEstimate": {"currencyCode":
+        "providerId": "pasqal", "target": "pasqal.sim.emu-tn", "creationTime": "2024-04-30T09:52:01.8333179+00:00",
+        "endExecutionTime": "2024-04-30T09:52:18.99657+00:00", "costEstimate": {"currencyCode":
         "USD", "events": [{"dimensionId": "compute-time-emu", "dimensionName": "Compute
-        Time on HPC-based Emulators", "measureUnit": "per hour", "amountBilled": 0.0031,
-        "amountConsumed": 0.0031, "unitPrice": 0.0}, {"dimensionId": "compute-time-qpu",
+        Time on HPC-based Emulators", "measureUnit": "per hour", "amountBilled": 0.0033,
+        "amountConsumed": 0.0033, "unitPrice": 0.0}, {"dimensionId": "compute-time-qpu",
         "dimensionName": "Compute Time on QPU", "measureUnit": "per hour", "amountBilled":
         0.0, "amountConsumed": 0.0, "unitPrice": 0.0}], "estimatedTotal": 0.0}, "itemType":
         "Job"}'
@@ -716,14 +721,14 @@ interactions:
         "inputDataFormat": "pasqal.pulser.v1", "inputParams": {"count": 150}, "metadata":
         null, "sessionId": null, "status": "Succeeded", "jobType": "QuantumComputing",
         "outputDataFormat": "pasqal.pulser-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3Dqdk-python-test-00000000-0000-0000-0000-000000000001.output.json",
-        "beginExecutionTime": "2024-04-19T13:59:08.79352+00:00", "cancellationTime":
+        "beginExecutionTime": "2024-04-30T09:52:07.047274+00:00", "cancellationTime":
         null, "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling":
         false, "tags": [], "name": "qdk-python-test", "id": "00000000-0000-0000-0000-000000000001",
-        "providerId": "pasqal", "target": "pasqal.sim.emu-tn", "creationTime": "2024-04-19T13:59:04.1573912+00:00",
-        "endExecutionTime": "2024-04-19T13:59:19.843373+00:00", "costEstimate": {"currencyCode":
+        "providerId": "pasqal", "target": "pasqal.sim.emu-tn", "creationTime": "2024-04-30T09:52:01.8333179+00:00",
+        "endExecutionTime": "2024-04-30T09:52:18.99657+00:00", "costEstimate": {"currencyCode":
         "USD", "events": [{"dimensionId": "compute-time-emu", "dimensionName": "Compute
-        Time on HPC-based Emulators", "measureUnit": "per hour", "amountBilled": 0.0031,
-        "amountConsumed": 0.0031, "unitPrice": 0.0}, {"dimensionId": "compute-time-qpu",
+        Time on HPC-based Emulators", "measureUnit": "per hour", "amountBilled": 0.0033,
+        "amountConsumed": 0.0033, "unitPrice": 0.0}, {"dimensionId": "compute-time-qpu",
         "dimensionName": "Compute Time on QPU", "measureUnit": "per hour", "amountBilled":
         0.0, "amountConsumed": 0.0, "unitPrice": 0.0}], "estimatedTotal": 0.0}, "itemType":
         "Job"}'
@@ -759,14 +764,14 @@ interactions:
         "inputDataFormat": "pasqal.pulser.v1", "inputParams": {"count": 150}, "metadata":
         null, "sessionId": null, "status": "Succeeded", "jobType": "QuantumComputing",
         "outputDataFormat": "pasqal.pulser-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3Dqdk-python-test-00000000-0000-0000-0000-000000000001.output.json",
-        "beginExecutionTime": "2024-04-19T13:59:08.79352+00:00", "cancellationTime":
+        "beginExecutionTime": "2024-04-30T09:52:07.047274+00:00", "cancellationTime":
         null, "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling":
         false, "tags": [], "name": "qdk-python-test", "id": "00000000-0000-0000-0000-000000000001",
-        "providerId": "pasqal", "target": "pasqal.sim.emu-tn", "creationTime": "2024-04-19T13:59:04.1573912+00:00",
-        "endExecutionTime": "2024-04-19T13:59:19.843373+00:00", "costEstimate": {"currencyCode":
+        "providerId": "pasqal", "target": "pasqal.sim.emu-tn", "creationTime": "2024-04-30T09:52:01.8333179+00:00",
+        "endExecutionTime": "2024-04-30T09:52:18.99657+00:00", "costEstimate": {"currencyCode":
         "USD", "events": [{"dimensionId": "compute-time-emu", "dimensionName": "Compute
-        Time on HPC-based Emulators", "measureUnit": "per hour", "amountBilled": 0.0031,
-        "amountConsumed": 0.0031, "unitPrice": 0.0}, {"dimensionId": "compute-time-qpu",
+        Time on HPC-based Emulators", "measureUnit": "per hour", "amountBilled": 0.0033,
+        "amountConsumed": 0.0033, "unitPrice": 0.0}, {"dimensionId": "compute-time-qpu",
         "dimensionName": "Compute Time on QPU", "measureUnit": "per hour", "amountBilled":
         0.0, "amountConsumed": 0.0, "unitPrice": 0.0}], "estimatedTotal": 0.0}, "itemType":
         "Job"}'

@@ -26,16 +26,21 @@ interactions:
     uri: https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token
   response:
     body:
-      string: '{"token_type": "Bearer", "expires_in": 1745073311, "ext_expires_in":
-        1745073311, "refresh_in": 31536000, "access_token": "PLACEHOLDER"}'
+      string: '{"error": "invalid_client", "error_description": "AADSTS7000215: Invalid
+        client secret provided. Ensure the secret being sent in the request is the
+        client secret value, not the client secret ID, for a secret added to app ''00000000-0000-0000-0000-000000000000''.
+        Trace ID: d4c574ae-850f-4628-8a54-e83c8dc15500 Correlation ID: 597c474b-49a9-46fb-a157-de883a3bdb05
+        Timestamp: 2024-04-30 10:26:23Z", "error_codes": [7000215], "timestamp": "2024-04-30
+        10:26:23Z", "trace_id": "d4c574ae-850f-4628-8a54-e83c8dc15500", "correlation_id":
+        "597c474b-49a9-46fb-a157-de883a3bdb05", "error_uri": "https://login.microsoftonline.com/error?code=7000215"}'
     headers:
       content-length:
-      - '135'
+      - '636'
       content-type:
       - application/json; charset=utf-8
     status:
-      code: 200
-      message: OK
+      code: 401
+      message: Unauthorized
 - request:
     body: 'b''{"containerName": "job-00000000-0000-0000-0000-000000000001"}'''
     headers:
@@ -80,7 +85,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.19.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
       x-ms-date:
-      - Fri, 19 Apr 2024 14:35:12 GMT
+      - Tue, 30 Apr 2024 10:26:25 GMT
       x-ms-version:
       - '2023-11-03'
     method: GET
@@ -88,7 +93,7 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerNotFound</Code><Message>The
-        specified container does not exist.\nRequestId:fb8842b9-e01e-0014-1566-9264af000000\nTime:2024-04-19T14:35:13.2714235Z</Message></Error>"
+        specified container does not exist.\nRequestId:5be13a0d-701e-0064-09e8-9add58000000\nTime:2024-04-30T10:26:26.4543200Z</Message></Error>"
     headers:
       content-length:
       - '223'
@@ -113,7 +118,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.19.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
       x-ms-date:
-      - Fri, 19 Apr 2024 14:35:13 GMT
+      - Tue, 30 Apr 2024 10:26:25 GMT
       x-ms-version:
       - '2023-11-03'
     method: PUT
@@ -141,7 +146,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.19.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
       x-ms-date:
-      - Fri, 19 Apr 2024 14:35:13 GMT
+      - Tue, 30 Apr 2024 10:26:26 GMT
       x-ms-version:
       - '2023-11-03'
     method: GET
@@ -179,7 +184,7 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-date:
-      - Fri, 19 Apr 2024 14:35:14 GMT
+      - Tue, 30 Apr 2024 10:26:26 GMT
       x-ms-version:
       - '2023-11-03'
     method: PUT
@@ -227,7 +232,7 @@ interactions:
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         null, "errorData": null, "isCancelling": false, "tags": [], "name": "qdk-python-test",
         "id": "00000000-0000-0000-0000-000000000001", "providerId": "rigetti", "target":
-        "rigetti.sim.qvm", "creationTime": "2024-04-19T14:35:14.9245001+00:00", "endExecutionTime":
+        "rigetti.sim.qvm", "creationTime": "2024-04-30T10:26:27.8738205+00:00", "endExecutionTime":
         null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
@@ -264,7 +269,7 @@ interactions:
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         {"count": 1}, "errorData": null, "isCancelling": false, "tags": [], "name":
         "qdk-python-test", "id": "00000000-0000-0000-0000-000000000001", "providerId":
-        "rigetti", "target": "rigetti.sim.qvm", "creationTime": "2024-04-19T14:35:14.9245001+00:00",
+        "rigetti", "target": "rigetti.sim.qvm", "creationTime": "2024-04-30T10:26:27.8738205+00:00",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
@@ -301,7 +306,7 @@ interactions:
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         {"count": 1}, "errorData": null, "isCancelling": false, "tags": [], "name":
         "qdk-python-test", "id": "00000000-0000-0000-0000-000000000001", "providerId":
-        "rigetti", "target": "rigetti.sim.qvm", "creationTime": "2024-04-19T14:35:14.9245001+00:00",
+        "rigetti", "target": "rigetti.sim.qvm", "creationTime": "2024-04-30T10:26:27.8738205+00:00",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
@@ -338,7 +343,7 @@ interactions:
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         {"count": 1}, "errorData": null, "isCancelling": false, "tags": [], "name":
         "qdk-python-test", "id": "00000000-0000-0000-0000-000000000001", "providerId":
-        "rigetti", "target": "rigetti.sim.qvm", "creationTime": "2024-04-19T14:35:14.9245001+00:00",
+        "rigetti", "target": "rigetti.sim.qvm", "creationTime": "2024-04-30T10:26:27.8738205+00:00",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
@@ -375,7 +380,7 @@ interactions:
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         {"count": 1}, "errorData": null, "isCancelling": false, "tags": [], "name":
         "qdk-python-test", "id": "00000000-0000-0000-0000-000000000001", "providerId":
-        "rigetti", "target": "rigetti.sim.qvm", "creationTime": "2024-04-19T14:35:14.9245001+00:00",
+        "rigetti", "target": "rigetti.sim.qvm", "creationTime": "2024-04-30T10:26:27.8738205+00:00",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
@@ -412,7 +417,7 @@ interactions:
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         {"count": 1}, "errorData": null, "isCancelling": false, "tags": [], "name":
         "qdk-python-test", "id": "00000000-0000-0000-0000-000000000001", "providerId":
-        "rigetti", "target": "rigetti.sim.qvm", "creationTime": "2024-04-19T14:35:14.9245001+00:00",
+        "rigetti", "target": "rigetti.sim.qvm", "creationTime": "2024-04-30T10:26:27.8738205+00:00",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
@@ -446,10 +451,10 @@ interactions:
         "inputDataFormat": "rigetti.quil.v1", "inputParams": {"count": 5}, "metadata":
         null, "sessionId": null, "status": "Executing", "jobType": "QuantumComputing",
         "outputDataFormat": "rigetti.quil-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3Dqdk-python-test-00000000-0000-0000-0000-000000000001.output.json",
-        "beginExecutionTime": "2024-04-19T14:35:18.1538441Z", "cancellationTime":
+        "beginExecutionTime": "2024-04-30T10:26:31.0497566Z", "cancellationTime":
         null, "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling":
         false, "tags": [], "name": "qdk-python-test", "id": "00000000-0000-0000-0000-000000000001",
-        "providerId": "rigetti", "target": "rigetti.sim.qvm", "creationTime": "2024-04-19T14:35:14.9245001+00:00",
+        "providerId": "rigetti", "target": "rigetti.sim.qvm", "creationTime": "2024-04-30T10:26:27.8738205+00:00",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
@@ -483,11 +488,11 @@ interactions:
         "inputDataFormat": "rigetti.quil.v1", "inputParams": {"count": 5}, "metadata":
         null, "sessionId": null, "status": "Succeeded", "jobType": "QuantumComputing",
         "outputDataFormat": "rigetti.quil-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3Dqdk-python-test-00000000-0000-0000-0000-000000000001.output.json",
-        "beginExecutionTime": "2024-04-19T14:35:18.1538441Z", "cancellationTime":
+        "beginExecutionTime": "2024-04-30T10:26:31.0497566Z", "cancellationTime":
         null, "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling":
         false, "tags": [], "name": "qdk-python-test", "id": "00000000-0000-0000-0000-000000000001",
-        "providerId": "rigetti", "target": "rigetti.sim.qvm", "creationTime": "2024-04-19T14:35:14.9245001+00:00",
-        "endExecutionTime": "2024-04-19T14:35:19.0817527Z", "costEstimate": {"currencyCode":
+        "providerId": "rigetti", "target": "rigetti.sim.qvm", "creationTime": "2024-04-30T10:26:27.8738205+00:00",
+        "endExecutionTime": "2024-04-30T10:26:32.1974124Z", "costEstimate": {"currencyCode":
         "USD", "events": [{"dimensionId": "qpu_time_centiseconds", "dimensionName":
         "QPU Execution Time", "measureUnit": "10ms (rounded up)", "amountBilled":
         0.0, "amountConsumed": 0.0, "unitPrice": 0.0}], "estimatedTotal": 0.0}, "itemType":
@@ -524,11 +529,11 @@ interactions:
         "inputDataFormat": "rigetti.quil.v1", "inputParams": {"count": 5}, "metadata":
         null, "sessionId": null, "status": "Succeeded", "jobType": "QuantumComputing",
         "outputDataFormat": "rigetti.quil-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3Dqdk-python-test-00000000-0000-0000-0000-000000000001.output.json",
-        "beginExecutionTime": "2024-04-19T14:35:18.1538441Z", "cancellationTime":
+        "beginExecutionTime": "2024-04-30T10:26:31.0497566Z", "cancellationTime":
         null, "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling":
         false, "tags": [], "name": "qdk-python-test", "id": "00000000-0000-0000-0000-000000000001",
-        "providerId": "rigetti", "target": "rigetti.sim.qvm", "creationTime": "2024-04-19T14:35:14.9245001+00:00",
-        "endExecutionTime": "2024-04-19T14:35:19.0817527Z", "costEstimate": {"currencyCode":
+        "providerId": "rigetti", "target": "rigetti.sim.qvm", "creationTime": "2024-04-30T10:26:27.8738205+00:00",
+        "endExecutionTime": "2024-04-30T10:26:32.1974124Z", "costEstimate": {"currencyCode":
         "USD", "events": [{"dimensionId": "qpu_time_centiseconds", "dimensionName":
         "QPU Execution Time", "measureUnit": "10ms (rounded up)", "amountBilled":
         0.0, "amountConsumed": 0.0, "unitPrice": 0.0}], "estimatedTotal": 0.0}, "itemType":
@@ -565,11 +570,11 @@ interactions:
         "inputDataFormat": "rigetti.quil.v1", "inputParams": {"count": 5}, "metadata":
         null, "sessionId": null, "status": "Succeeded", "jobType": "QuantumComputing",
         "outputDataFormat": "rigetti.quil-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3Dqdk-python-test-00000000-0000-0000-0000-000000000001.output.json",
-        "beginExecutionTime": "2024-04-19T14:35:18.1538441Z", "cancellationTime":
+        "beginExecutionTime": "2024-04-30T10:26:31.0497566Z", "cancellationTime":
         null, "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling":
         false, "tags": [], "name": "qdk-python-test", "id": "00000000-0000-0000-0000-000000000001",
-        "providerId": "rigetti", "target": "rigetti.sim.qvm", "creationTime": "2024-04-19T14:35:14.9245001+00:00",
-        "endExecutionTime": "2024-04-19T14:35:19.0817527Z", "costEstimate": {"currencyCode":
+        "providerId": "rigetti", "target": "rigetti.sim.qvm", "creationTime": "2024-04-30T10:26:27.8738205+00:00",
+        "endExecutionTime": "2024-04-30T10:26:32.1974124Z", "costEstimate": {"currencyCode":
         "USD", "events": [{"dimensionId": "qpu_time_centiseconds", "dimensionName":
         "QPU Execution Time", "measureUnit": "10ms (rounded up)", "amountBilled":
         0.0, "amountConsumed": 0.0, "unitPrice": 0.0}], "estimatedTotal": 0.0}, "itemType":
@@ -598,7 +603,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.19.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
       x-ms-date:
-      - Fri, 19 Apr 2024 14:35:20 GMT
+      - Tue, 30 Apr 2024 10:26:33 GMT
       x-ms-range:
       - bytes=0-33554431
       x-ms-version:
@@ -622,7 +627,7 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-creation-time:
-      - Fri, 19 Apr 2024 14:35:15 GMT
+      - Tue, 30 Apr 2024 10:26:28 GMT
       x-ms-lease-state:
       - available
       x-ms-lease-status:

@@ -13,7 +13,7 @@ interactions:
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - azsdk-python-identity/1.15.0 Python/3.9.19 (Windows-10-10.0.22631-SP0)
+      - azsdk-python-identity/1.16.0 Python/3.9.19 (Windows-10-10.0.22631-SP0)
       x-client-current-telemetry:
       - 4|730,2|
       x-client-os:
@@ -26,16 +26,21 @@ interactions:
     uri: https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token
   response:
     body:
-      string: '{"token_type": "Bearer", "expires_in": 1745067001, "ext_expires_in":
-        1745067001, "refresh_in": 31536000, "access_token": "PLACEHOLDER"}'
+      string: '{"error": "invalid_client", "error_description": "AADSTS7000215: Invalid
+        client secret provided. Ensure the secret being sent in the request is the
+        client secret value, not the client secret ID, for a secret added to app ''00000000-0000-0000-0000-000000000000''.
+        Trace ID: 2781c8e0-d158-4ea3-b15e-f903b3fda100 Correlation ID: d5ba370b-598e-4b17-ab8c-dc451aa35211
+        Timestamp: 2024-04-30 10:16:51Z", "error_codes": [7000215], "timestamp": "2024-04-30
+        10:16:51Z", "trace_id": "2781c8e0-d158-4ea3-b15e-f903b3fda100", "correlation_id":
+        "d5ba370b-598e-4b17-ab8c-dc451aa35211", "error_uri": "https://login.microsoftonline.com/error?code=7000215"}'
     headers:
       content-length:
-      - '135'
+      - '636'
       content-type:
       - application/json; charset=utf-8
     status:
-      code: 200
-      message: OK
+      code: 401
+      message: Unauthorized
 - request:
     body: null
     headers:
@@ -54,65 +59,65 @@ interactions:
       string: '{"value": [{"id": "microsoft-elements", "currentAvailability": "Available",
         "targets": [{"id": "microsoft.dft", "currentAvailability": "Available", "averageQueueTime":
         0, "statusPage": null}]}, {"id": "ionq", "currentAvailability": "Degraded",
-        "targets": [{"id": "ionq.qpu", "currentAvailability": "Unavailable", "averageQueueTime":
-        882785, "statusPage": "https://status.ionq.co"}, {"id": "ionq.qpu.aria-1",
-        "currentAvailability": "Available", "averageQueueTime": 378151, "statusPage":
+        "targets": [{"id": "ionq.qpu", "currentAvailability": "Available", "averageQueueTime":
+        373558, "statusPage": "https://status.ionq.co"}, {"id": "ionq.qpu.aria-1",
+        "currentAvailability": "Unavailable", "averageQueueTime": 764917, "statusPage":
         "https://status.ionq.co"}, {"id": "ionq.qpu.aria-2", "currentAvailability":
-        "Unavailable", "averageQueueTime": 2619178, "statusPage": "https://status.ionq.co"},
+        "Unavailable", "averageQueueTime": 0, "statusPage": "https://status.ionq.co"},
         {"id": "ionq.simulator", "currentAvailability": "Available", "averageQueueTime":
-        4, "statusPage": "https://status.ionq.co"}]}, {"id": "microsoft-qc", "currentAvailability":
+        3, "statusPage": "https://status.ionq.co"}]}, {"id": "microsoft-qc", "currentAvailability":
         "Available", "targets": [{"id": "microsoft.estimator", "currentAvailability":
         "Available", "averageQueueTime": 0, "statusPage": null}]}, {"id": "pasqal",
-        "currentAvailability": "Degraded", "targets": [{"id": "pasqal.sim.emu-tn",
-        "currentAvailability": "Available", "averageQueueTime": 318, "statusPage":
+        "currentAvailability": "Available", "targets": [{"id": "pasqal.sim.emu-tn",
+        "currentAvailability": "Available", "averageQueueTime": 278, "statusPage":
         "https://pasqal.com"}, {"id": "pasqal.qpu.fresnel", "currentAvailability":
-        "Degraded", "averageQueueTime": 0, "statusPage": "https://pasqal.com"}]},
+        "Available", "averageQueueTime": 3197, "statusPage": "https://pasqal.com"}]},
         {"id": "rigetti", "currentAvailability": "Available", "targets": [{"id": "rigetti.sim.qvm",
         "currentAvailability": "Available", "averageQueueTime": 5, "statusPage": "https://rigetti.statuspage.io/"},
         {"id": "rigetti.qpu.ankaa-2", "currentAvailability": "Available", "averageQueueTime":
-        5, "statusPage": "https://rigetti.statuspage.io/"}]}, {"id": "Microsoft.Test",
-        "currentAvailability": "Available", "targets": [{"id": "echo-rigetti", "currentAvailability":
-        "Available", "averageQueueTime": 1, "statusPage": ""}, {"id": "echo-quantinuum",
-        "currentAvailability": "Available", "averageQueueTime": 1, "statusPage": ""},
-        {"id": "echo-qci", "currentAvailability": "Available", "averageQueueTime":
-        1, "statusPage": ""}, {"id": "echo-ionq", "currentAvailability": "Available",
-        "averageQueueTime": 1, "statusPage": ""}, {"id": "echo-aquarius", "currentAvailability":
-        "Available", "averageQueueTime": 1, "statusPage": ""}, {"id": "sparse-sim-rigetti",
-        "currentAvailability": "Available", "averageQueueTime": 1, "statusPage": ""},
-        {"id": "sparse-sim-quantinuum", "currentAvailability": "Available", "averageQueueTime":
-        1, "statusPage": ""}, {"id": "sparse-sim-qci", "currentAvailability": "Available",
-        "averageQueueTime": 1, "statusPage": ""}, {"id": "sparse-sim-ionq", "currentAvailability":
-        "Available", "averageQueueTime": 1, "statusPage": ""}, {"id": "echo-output",
-        "currentAvailability": "Available", "averageQueueTime": 1, "statusPage": ""}]},
-        {"id": "qci", "currentAvailability": "Degraded", "targets": [{"id": "qci.simulator",
-        "currentAvailability": "Available", "averageQueueTime": 1, "statusPage": "https://quantumcircuits.com"},
-        {"id": "qci.machine1", "currentAvailability": "Unavailable", "averageQueueTime":
-        1, "statusPage": "https://quantumcircuits.com"}, {"id": "qci.simulator.noisy",
+        5, "statusPage": "https://rigetti.statuspage.io/"}]}, {"id": "qci", "currentAvailability":
+        "Available", "targets": [{"id": "qci.simulator", "currentAvailability": "Available",
+        "averageQueueTime": 1, "statusPage": "https://quantumcircuits.com"}, {"id":
+        "qci.machine1", "currentAvailability": "Available", "averageQueueTime": 1,
+        "statusPage": "https://quantumcircuits.com"}, {"id": "qci.simulator.noisy",
         "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": "https://quantumcircuits.com"}]},
         {"id": "quantinuum", "currentAvailability": "Degraded", "targets": [{"id":
-        "quantinuum.qpu.h1-1", "currentAvailability": "Degraded", "averageQueueTime":
-        0, "statusPage": "https://www.quantinuum.com/hardware/h1"}, {"id": "quantinuum.sim.h1-1sc",
-        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        "quantinuum.qpu.h1-1", "currentAvailability": "Available", "averageQueueTime":
+        597500, "statusPage": "https://www.quantinuum.com/hardware/h1"}, {"id": "quantinuum.sim.h1-1sc",
+        "currentAvailability": "Available", "averageQueueTime": 4, "statusPage": "https://www.quantinuum.com/hardware/h1"},
         {"id": "quantinuum.sim.h1-1e", "currentAvailability": "Available", "averageQueueTime":
-        11526, "statusPage": "https://www.quantinuum.com/hardware/h1"}, {"id": "quantinuum.qpu.h2-1",
+        4, "statusPage": "https://www.quantinuum.com/hardware/h1"}, {"id": "quantinuum.qpu.h2-1",
         "currentAvailability": "Degraded", "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h2"},
         {"id": "quantinuum.sim.h2-1sc", "currentAvailability": "Available", "averageQueueTime":
         2, "statusPage": "https://www.quantinuum.com/hardware/h2"}, {"id": "quantinuum.sim.h2-1e",
-        "currentAvailability": "Available", "averageQueueTime": 293343, "statusPage":
-        "https://www.quantinuum.com/hardware/h2"}, {"id": "quantinuum.sim.h1-1sc-preview",
-        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        "currentAvailability": "Available", "averageQueueTime": 9, "statusPage": "https://www.quantinuum.com/hardware/h2"},
+        {"id": "quantinuum.sim.h1-1sc-preview", "currentAvailability": "Available",
+        "averageQueueTime": 4, "statusPage": "https://www.quantinuum.com/hardware/h1"},
         {"id": "quantinuum.sim.h1-1e-preview", "currentAvailability": "Available",
-        "averageQueueTime": 11526, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        "averageQueueTime": 4, "statusPage": "https://www.quantinuum.com/hardware/h1"},
         {"id": "quantinuum.sim.h1-2e-preview", "currentAvailability": "Available",
-        "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h1"},
-        {"id": "quantinuum.qpu.h1-1-preview", "currentAvailability": "Degraded", "averageQueueTime":
-        0, "statusPage": "https://www.quantinuum.com/hardware/h1"}]}], "nextLink":
-        null}'
+        "averageQueueTime": 28583, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        {"id": "quantinuum.qpu.h1-1-preview", "currentAvailability": "Available",
+        "averageQueueTime": 597500, "statusPage": "https://www.quantinuum.com/hardware/h1"}]},
+        {"id": "Microsoft.Test", "currentAvailability": "Available", "targets": [{"id":
+        "echo-rigetti", "currentAvailability": "Available", "averageQueueTime": 1,
+        "statusPage": ""}, {"id": "echo-quantinuum", "currentAvailability": "Available",
+        "averageQueueTime": 1, "statusPage": ""}, {"id": "echo-qci", "currentAvailability":
+        "Available", "averageQueueTime": 1, "statusPage": ""}, {"id": "echo-ionq",
+        "currentAvailability": "Available", "averageQueueTime": 1, "statusPage": ""},
+        {"id": "echo-aquarius", "currentAvailability": "Available", "averageQueueTime":
+        1, "statusPage": ""}, {"id": "sparse-sim-rigetti", "currentAvailability":
+        "Available", "averageQueueTime": 1, "statusPage": ""}, {"id": "sparse-sim-quantinuum",
+        "currentAvailability": "Available", "averageQueueTime": 1, "statusPage": ""},
+        {"id": "sparse-sim-qci", "currentAvailability": "Available", "averageQueueTime":
+        1, "statusPage": ""}, {"id": "sparse-sim-ionq", "currentAvailability": "Available",
+        "averageQueueTime": 1, "statusPage": ""}, {"id": "echo-output", "currentAvailability":
+        "Available", "averageQueueTime": 1, "statusPage": ""}]}], "nextLink": null}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '4771'
+      - '4772'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -164,7 +169,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.19.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
       x-ms-date:
-      - Fri, 19 Apr 2024 12:50:03 GMT
+      - Tue, 30 Apr 2024 10:16:52 GMT
       x-ms-version:
       - '2023-11-03'
     method: GET
@@ -172,7 +177,7 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerNotFound</Code><Message>The
-        specified container does not exist.\nRequestId:ae23e310-f01e-0027-0158-923b04000000\nTime:2024-04-19T12:50:04.6992334Z</Message></Error>"
+        specified container does not exist.\nRequestId:e6a0978e-901e-006c-1be7-9ac757000000\nTime:2024-04-30T10:16:54.1580269Z</Message></Error>"
     headers:
       content-length:
       - '223'
@@ -197,7 +202,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.19.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
       x-ms-date:
-      - Fri, 19 Apr 2024 12:50:04 GMT
+      - Tue, 30 Apr 2024 10:16:53 GMT
       x-ms-version:
       - '2023-11-03'
     method: PUT
@@ -225,7 +230,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.19.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
       x-ms-date:
-      - Fri, 19 Apr 2024 12:50:04 GMT
+      - Tue, 30 Apr 2024 10:16:53 GMT
       x-ms-version:
       - '2023-11-03'
     method: GET
@@ -261,7 +266,7 @@ interactions:
       \x00\x00\x16\x00\x00\x00\x13\x04A,\x10\x00\x00\x00\x03\x00\x00\x00\xc4%@d\xca\x08#\x00\x00\x00\x00\x00#\x06\x05\x00\x82`P(\xc1\x88A\x01\x80
       \x18\x14\x8a0b`\x00 \x08\x06G\x12\x08#\x06\x05\x00\x82`P \xc2\x88\x81\x01\x80
       \x18\x1cI h8\x10\x02\x00\x00\x00\x07P\x10\xcd\x14a\x00\x00\x00\x00\x00\x00q
-      \x00\x00\x03\x00\x00\x002\x0e\x10"\x84\x00\xf6\x02\x00\x00\x00\x00\x00\x00\x00\x00]\x0c\x00\x00%\x00\x00\x00\x12\x03\x94&\x01\x00\x00\x00circuit-185__quantum__qis__t__body__quantum__qis__cnot__body__quantum__qis__t__adj14.0.6
+      \x00\x00\x03\x00\x00\x002\x0e\x10"\x84\x00\xf6\x02\x00\x00\x00\x00\x00\x00\x00\x00]\x0c\x00\x00%\x00\x00\x00\x12\x03\x94&\x01\x00\x00\x00circuit-194__quantum__qis__t__body__quantum__qis__cnot__body__quantum__qis__t__adj14.0.6
       f28c006a5895fc0e329fe15fead81e37457cb1d1batch\x00\x00\x00\x00\x00\x00'''
     headers:
       Accept:
@@ -279,7 +284,7 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-date:
-      - Fri, 19 Apr 2024 12:50:05 GMT
+      - Tue, 30 Apr 2024 10:16:54 GMT
       x-ms-version:
       - '2023-11-03'
     method: PUT
@@ -296,14 +301,14 @@ interactions:
       code: 201
       message: Created
 - request:
-    body: 'b''{"id": "00000000-0000-0000-0000-000000000001", "name": "circuit-185",
+    body: 'b''{"id": "00000000-0000-0000-0000-000000000001", "name": "circuit-194",
       "providerId": "microsoft-qc", "target": "microsoft.estimator", "itemType": "Job",
       "containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
       "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData",
       "inputDataFormat": "qir.v1", "inputParams": {"errorBudget": 0.001, "qubitParams":
       {"name": "qubit_gate_ns_e3"}, "qecScheme": {"name": "surface_code"}, "items":
-      [{"entryPoint": "circuit-185", "arguments": []}]}, "metadata": {"qiskit": "True",
-      "name": "circuit-185", "num_qubits": "3", "metadata": "{}"}, "outputDataFormat":
+      [{"entryPoint": "circuit-194", "arguments": []}]}, "metadata": {"qiskit": "True",
+      "name": "circuit-194", "num_qubits": "3", "metadata": "{}"}, "outputDataFormat":
       "microsoft.resource-estimates.v1"}'''
     headers:
       Accept:
@@ -326,14 +331,14 @@ interactions:
         "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData",
         "inputDataFormat": "qir.v1", "inputParams": {"errorBudget": 0.001, "qubitParams":
         {"name": "qubit_gate_ns_e3"}, "qecScheme": {"name": "surface_code"}, "items":
-        [{"entryPoint": "circuit-185", "arguments": []}]}, "metadata": {"qiskit":
-        "True", "name": "circuit-185", "num_qubits": "3", "metadata": "{}"}, "sessionId":
+        [{"entryPoint": "circuit-194", "arguments": []}]}, "metadata": {"qiskit":
+        "True", "name": "circuit-194", "num_qubits": "3", "metadata": "{}"}, "sessionId":
         null, "status": "Waiting", "jobType": "QuantumComputing", "outputDataFormat":
         "microsoft.resource-estimates.v1", "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
-        null, "errorData": null, "isCancelling": false, "tags": [], "name": "circuit-185",
+        null, "errorData": null, "isCancelling": false, "tags": [], "name": "circuit-194",
         "id": "00000000-0000-0000-0000-000000000001", "providerId": "microsoft-qc",
-        "target": "microsoft.estimator", "creationTime": "2024-04-19T12:50:06.1027449+00:00",
+        "target": "microsoft.estimator", "creationTime": "2024-04-30T10:16:55.6911145+00:00",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
@@ -363,17 +368,17 @@ interactions:
   response:
     body:
       string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&sr=c&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcwl",
-        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3Dcircuit-185-00000000-0000-0000-0000-000000000001.input.json",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3Dcircuit-194-00000000-0000-0000-0000-000000000001.input.json",
         "inputDataFormat": "qir.v1", "inputParams": {"errorBudget": 0.001, "qubitParams":
         {"name": "qubit_gate_ns_e3"}, "qecScheme": {"name": "surface_code"}, "items":
-        [{"entryPoint": "circuit-185", "arguments": []}]}, "metadata": {"qiskit":
-        "True", "name": "circuit-185", "num_qubits": "3", "metadata": "{}"}, "sessionId":
+        [{"entryPoint": "circuit-194", "arguments": []}]}, "metadata": {"qiskit":
+        "True", "name": "circuit-194", "num_qubits": "3", "metadata": "{}"}, "sessionId":
         null, "status": "Waiting", "jobType": "QuantumComputing", "outputDataFormat":
-        "microsoft.resource-estimates.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3Dcircuit-185-00000000-0000-0000-0000-000000000001.output.json",
+        "microsoft.resource-estimates.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3Dcircuit-194-00000000-0000-0000-0000-000000000001.output.json",
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         {"count": 1}, "errorData": null, "isCancelling": false, "tags": [], "name":
-        "circuit-185", "id": "00000000-0000-0000-0000-000000000001", "providerId":
-        "microsoft-qc", "target": "microsoft.estimator", "creationTime": "2024-04-19T12:50:06.1027449+00:00",
+        "circuit-194", "id": "00000000-0000-0000-0000-000000000001", "providerId":
+        "microsoft-qc", "target": "microsoft.estimator", "creationTime": "2024-04-30T10:16:55.6911145+00:00",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
@@ -403,17 +408,17 @@ interactions:
   response:
     body:
       string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&sr=c&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcwl",
-        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3Dcircuit-185-00000000-0000-0000-0000-000000000001.input.json",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3Dcircuit-194-00000000-0000-0000-0000-000000000001.input.json",
         "inputDataFormat": "qir.v1", "inputParams": {"errorBudget": 0.001, "qubitParams":
         {"name": "qubit_gate_ns_e3"}, "qecScheme": {"name": "surface_code"}, "items":
-        [{"entryPoint": "circuit-185", "arguments": []}]}, "metadata": {"qiskit":
-        "True", "name": "circuit-185", "num_qubits": "3", "metadata": "{}"}, "sessionId":
+        [{"entryPoint": "circuit-194", "arguments": []}]}, "metadata": {"qiskit":
+        "True", "name": "circuit-194", "num_qubits": "3", "metadata": "{}"}, "sessionId":
         null, "status": "Waiting", "jobType": "QuantumComputing", "outputDataFormat":
-        "microsoft.resource-estimates.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3Dcircuit-185-00000000-0000-0000-0000-000000000001.output.json",
+        "microsoft.resource-estimates.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3Dcircuit-194-00000000-0000-0000-0000-000000000001.output.json",
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         {"count": 1}, "errorData": null, "isCancelling": false, "tags": [], "name":
-        "circuit-185", "id": "00000000-0000-0000-0000-000000000001", "providerId":
-        "microsoft-qc", "target": "microsoft.estimator", "creationTime": "2024-04-19T12:50:06.1027449+00:00",
+        "circuit-194", "id": "00000000-0000-0000-0000-000000000001", "providerId":
+        "microsoft-qc", "target": "microsoft.estimator", "creationTime": "2024-04-30T10:16:55.6911145+00:00",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
@@ -443,17 +448,17 @@ interactions:
   response:
     body:
       string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&sr=c&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcwl",
-        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3Dcircuit-185-00000000-0000-0000-0000-000000000001.input.json",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3Dcircuit-194-00000000-0000-0000-0000-000000000001.input.json",
         "inputDataFormat": "qir.v1", "inputParams": {"errorBudget": 0.001, "qubitParams":
         {"name": "qubit_gate_ns_e3"}, "qecScheme": {"name": "surface_code"}, "items":
-        [{"entryPoint": "circuit-185", "arguments": []}]}, "metadata": {"qiskit":
-        "True", "name": "circuit-185", "num_qubits": "3", "metadata": "{}"}, "sessionId":
+        [{"entryPoint": "circuit-194", "arguments": []}]}, "metadata": {"qiskit":
+        "True", "name": "circuit-194", "num_qubits": "3", "metadata": "{}"}, "sessionId":
         null, "status": "Waiting", "jobType": "QuantumComputing", "outputDataFormat":
-        "microsoft.resource-estimates.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3Dcircuit-185-00000000-0000-0000-0000-000000000001.output.json",
+        "microsoft.resource-estimates.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3Dcircuit-194-00000000-0000-0000-0000-000000000001.output.json",
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         {"count": 1}, "errorData": null, "isCancelling": false, "tags": [], "name":
-        "circuit-185", "id": "00000000-0000-0000-0000-000000000001", "providerId":
-        "microsoft-qc", "target": "microsoft.estimator", "creationTime": "2024-04-19T12:50:06.1027449+00:00",
+        "circuit-194", "id": "00000000-0000-0000-0000-000000000001", "providerId":
+        "microsoft-qc", "target": "microsoft.estimator", "creationTime": "2024-04-30T10:16:55.6911145+00:00",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
@@ -483,17 +488,17 @@ interactions:
   response:
     body:
       string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&sr=c&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcwl",
-        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3Dcircuit-185-00000000-0000-0000-0000-000000000001.input.json",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3Dcircuit-194-00000000-0000-0000-0000-000000000001.input.json",
         "inputDataFormat": "qir.v1", "inputParams": {"errorBudget": 0.001, "qubitParams":
         {"name": "qubit_gate_ns_e3"}, "qecScheme": {"name": "surface_code"}, "items":
-        [{"entryPoint": "circuit-185", "arguments": []}]}, "metadata": {"qiskit":
-        "True", "name": "circuit-185", "num_qubits": "3", "metadata": "{}"}, "sessionId":
+        [{"entryPoint": "circuit-194", "arguments": []}]}, "metadata": {"qiskit":
+        "True", "name": "circuit-194", "num_qubits": "3", "metadata": "{}"}, "sessionId":
         null, "status": "Waiting", "jobType": "QuantumComputing", "outputDataFormat":
-        "microsoft.resource-estimates.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3Dcircuit-185-00000000-0000-0000-0000-000000000001.output.json",
+        "microsoft.resource-estimates.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3Dcircuit-194-00000000-0000-0000-0000-000000000001.output.json",
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         {"count": 1}, "errorData": null, "isCancelling": false, "tags": [], "name":
-        "circuit-185", "id": "00000000-0000-0000-0000-000000000001", "providerId":
-        "microsoft-qc", "target": "microsoft.estimator", "creationTime": "2024-04-19T12:50:06.1027449+00:00",
+        "circuit-194", "id": "00000000-0000-0000-0000-000000000001", "providerId":
+        "microsoft-qc", "target": "microsoft.estimator", "creationTime": "2024-04-30T10:16:55.6911145+00:00",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
@@ -523,24 +528,23 @@ interactions:
   response:
     body:
       string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&sr=c&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcwl",
-        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3Dcircuit-185-00000000-0000-0000-0000-000000000001.input.json",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3Dcircuit-194-00000000-0000-0000-0000-000000000001.input.json",
         "inputDataFormat": "qir.v1", "inputParams": {"errorBudget": 0.001, "qubitParams":
         {"name": "qubit_gate_ns_e3"}, "qecScheme": {"name": "surface_code"}, "items":
-        [{"entryPoint": "circuit-185", "arguments": []}]}, "metadata": {"qiskit":
-        "True", "name": "circuit-185", "num_qubits": "3", "metadata": "{}"}, "sessionId":
-        null, "status": "Executing", "jobType": "QuantumComputing", "outputDataFormat":
-        "microsoft.resource-estimates.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3Dcircuit-185-00000000-0000-0000-0000-000000000001.output.json",
-        "beginExecutionTime": "2024-04-19T12:50:06.652086Z", "cancellationTime": null,
-        "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling": false,
-        "tags": [], "name": "circuit-185", "id": "00000000-0000-0000-0000-000000000001",
-        "providerId": "microsoft-qc", "target": "microsoft.estimator", "creationTime":
-        "2024-04-19T12:50:06.1027449+00:00", "endExecutionTime": null, "costEstimate":
-        null, "itemType": "Job"}'
+        [{"entryPoint": "circuit-194", "arguments": []}]}, "metadata": {"qiskit":
+        "True", "name": "circuit-194", "num_qubits": "3", "metadata": "{}"}, "sessionId":
+        null, "status": "Waiting", "jobType": "QuantumComputing", "outputDataFormat":
+        "microsoft.resource-estimates.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3Dcircuit-194-00000000-0000-0000-0000-000000000001.output.json",
+        "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
+        {"count": 1}, "errorData": null, "isCancelling": false, "tags": [], "name":
+        "circuit-194", "id": "00000000-0000-0000-0000-000000000001", "providerId":
+        "microsoft-qc", "target": "microsoft.estimator", "creationTime": "2024-04-30T10:16:55.6911145+00:00",
+        "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '1571'
+      - '1544'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -564,24 +568,23 @@ interactions:
   response:
     body:
       string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&sr=c&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcwl",
-        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3Dcircuit-185-00000000-0000-0000-0000-000000000001.input.json",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3Dcircuit-194-00000000-0000-0000-0000-000000000001.input.json",
         "inputDataFormat": "qir.v1", "inputParams": {"errorBudget": 0.001, "qubitParams":
         {"name": "qubit_gate_ns_e3"}, "qecScheme": {"name": "surface_code"}, "items":
-        [{"entryPoint": "circuit-185", "arguments": []}]}, "metadata": {"qiskit":
-        "True", "name": "circuit-185", "num_qubits": "3", "metadata": "{}"}, "sessionId":
-        null, "status": "Succeeded", "jobType": "QuantumComputing", "outputDataFormat":
-        "microsoft.resource-estimates.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3Dcircuit-185-00000000-0000-0000-0000-000000000001.output.json",
-        "beginExecutionTime": "2024-04-19T12:50:06.8245782Z", "cancellationTime":
-        null, "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling":
-        false, "tags": [], "name": "circuit-185", "id": "00000000-0000-0000-0000-000000000001",
-        "providerId": "microsoft-qc", "target": "microsoft.estimator", "creationTime":
-        "2024-04-19T12:50:06.1027449+00:00", "endExecutionTime": "2024-04-19T12:50:09.4429033Z",
-        "costEstimate": null, "itemType": "Job"}'
+        [{"entryPoint": "circuit-194", "arguments": []}]}, "metadata": {"qiskit":
+        "True", "name": "circuit-194", "num_qubits": "3", "metadata": "{}"}, "sessionId":
+        null, "status": "Waiting", "jobType": "QuantumComputing", "outputDataFormat":
+        "microsoft.resource-estimates.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3Dcircuit-194-00000000-0000-0000-0000-000000000001.output.json",
+        "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
+        {"count": 1}, "errorData": null, "isCancelling": false, "tags": [], "name":
+        "circuit-194", "id": "00000000-0000-0000-0000-000000000001", "providerId":
+        "microsoft-qc", "target": "microsoft.estimator", "creationTime": "2024-04-30T10:16:55.6911145+00:00",
+        "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '1601'
+      - '1544'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -605,18 +608,59 @@ interactions:
   response:
     body:
       string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&sr=c&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcwl",
-        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3Dcircuit-185-00000000-0000-0000-0000-000000000001.input.json",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3Dcircuit-194-00000000-0000-0000-0000-000000000001.input.json",
         "inputDataFormat": "qir.v1", "inputParams": {"errorBudget": 0.001, "qubitParams":
         {"name": "qubit_gate_ns_e3"}, "qecScheme": {"name": "surface_code"}, "items":
-        [{"entryPoint": "circuit-185", "arguments": []}]}, "metadata": {"qiskit":
-        "True", "name": "circuit-185", "num_qubits": "3", "metadata": "{}"}, "sessionId":
-        null, "status": "Succeeded", "jobType": "QuantumComputing", "outputDataFormat":
-        "microsoft.resource-estimates.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3Dcircuit-185-00000000-0000-0000-0000-000000000001.output.json",
-        "beginExecutionTime": "2024-04-19T12:50:06.8245782Z", "cancellationTime":
+        [{"entryPoint": "circuit-194", "arguments": []}]}, "metadata": {"qiskit":
+        "True", "name": "circuit-194", "num_qubits": "3", "metadata": "{}"}, "sessionId":
+        null, "status": "Executing", "jobType": "QuantumComputing", "outputDataFormat":
+        "microsoft.resource-estimates.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3Dcircuit-194-00000000-0000-0000-0000-000000000001.output.json",
+        "beginExecutionTime": "2024-04-30T10:16:56.1123149Z", "cancellationTime":
         null, "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling":
-        false, "tags": [], "name": "circuit-185", "id": "00000000-0000-0000-0000-000000000001",
+        false, "tags": [], "name": "circuit-194", "id": "00000000-0000-0000-0000-000000000001",
         "providerId": "microsoft-qc", "target": "microsoft.estimator", "creationTime":
-        "2024-04-19T12:50:06.1027449+00:00", "endExecutionTime": "2024-04-19T12:50:09.4429033Z",
+        "2024-04-30T10:16:55.6911145+00:00", "endExecutionTime": null, "costEstimate":
+        null, "itemType": "Job"}'
+    headers:
+      connection:
+      - keep-alive
+      content-length:
+      - '1572'
+      content-type:
+      - application/json; charset=utf-8
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - testapp-azure-quantum-qiskit azsdk-python-quantum/0.0.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
+    method: GET
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000001?api-version=2022-09-12-preview&test-sequence-id=8
+  response:
+    body:
+      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&sr=c&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcwl",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3Dcircuit-194-00000000-0000-0000-0000-000000000001.input.json",
+        "inputDataFormat": "qir.v1", "inputParams": {"errorBudget": 0.001, "qubitParams":
+        {"name": "qubit_gate_ns_e3"}, "qecScheme": {"name": "surface_code"}, "items":
+        [{"entryPoint": "circuit-194", "arguments": []}]}, "metadata": {"qiskit":
+        "True", "name": "circuit-194", "num_qubits": "3", "metadata": "{}"}, "sessionId":
+        null, "status": "Succeeded", "jobType": "QuantumComputing", "outputDataFormat":
+        "microsoft.resource-estimates.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3Dcircuit-194-00000000-0000-0000-0000-000000000001.output.json",
+        "beginExecutionTime": "2024-04-30T10:16:58.8341266Z", "cancellationTime":
+        null, "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling":
+        false, "tags": [], "name": "circuit-194", "id": "00000000-0000-0000-0000-000000000001",
+        "providerId": "microsoft-qc", "target": "microsoft.estimator", "creationTime":
+        "2024-04-30T10:16:55.6911145+00:00", "endExecutionTime": "2024-04-30T10:17:01.3579405Z",
         "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
@@ -642,22 +686,63 @@ interactions:
       User-Agent:
       - testapp-azure-quantum-qiskit azsdk-python-quantum/0.0.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
     method: GET
-    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000001?api-version=2022-09-12-preview&test-sequence-id=8
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000001?api-version=2022-09-12-preview&test-sequence-id=9
   response:
     body:
       string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&sr=c&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcwl",
-        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3Dcircuit-185-00000000-0000-0000-0000-000000000001.input.json",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3Dcircuit-194-00000000-0000-0000-0000-000000000001.input.json",
         "inputDataFormat": "qir.v1", "inputParams": {"errorBudget": 0.001, "qubitParams":
         {"name": "qubit_gate_ns_e3"}, "qecScheme": {"name": "surface_code"}, "items":
-        [{"entryPoint": "circuit-185", "arguments": []}]}, "metadata": {"qiskit":
-        "True", "name": "circuit-185", "num_qubits": "3", "metadata": "{}"}, "sessionId":
+        [{"entryPoint": "circuit-194", "arguments": []}]}, "metadata": {"qiskit":
+        "True", "name": "circuit-194", "num_qubits": "3", "metadata": "{}"}, "sessionId":
         null, "status": "Succeeded", "jobType": "QuantumComputing", "outputDataFormat":
-        "microsoft.resource-estimates.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3Dcircuit-185-00000000-0000-0000-0000-000000000001.output.json",
-        "beginExecutionTime": "2024-04-19T12:50:06.8245782Z", "cancellationTime":
+        "microsoft.resource-estimates.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3Dcircuit-194-00000000-0000-0000-0000-000000000001.output.json",
+        "beginExecutionTime": "2024-04-30T10:16:58.8341266Z", "cancellationTime":
         null, "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling":
-        false, "tags": [], "name": "circuit-185", "id": "00000000-0000-0000-0000-000000000001",
+        false, "tags": [], "name": "circuit-194", "id": "00000000-0000-0000-0000-000000000001",
         "providerId": "microsoft-qc", "target": "microsoft.estimator", "creationTime":
-        "2024-04-19T12:50:06.1027449+00:00", "endExecutionTime": "2024-04-19T12:50:09.4429033Z",
+        "2024-04-30T10:16:55.6911145+00:00", "endExecutionTime": "2024-04-30T10:17:01.3579405Z",
+        "costEstimate": null, "itemType": "Job"}'
+    headers:
+      connection:
+      - keep-alive
+      content-length:
+      - '1601'
+      content-type:
+      - application/json; charset=utf-8
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - testapp-azure-quantum-qiskit azsdk-python-quantum/0.0.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
+    method: GET
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000001?api-version=2022-09-12-preview&test-sequence-id=10
+  response:
+    body:
+      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&sr=c&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcwl",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3Dcircuit-194-00000000-0000-0000-0000-000000000001.input.json",
+        "inputDataFormat": "qir.v1", "inputParams": {"errorBudget": 0.001, "qubitParams":
+        {"name": "qubit_gate_ns_e3"}, "qecScheme": {"name": "surface_code"}, "items":
+        [{"entryPoint": "circuit-194", "arguments": []}]}, "metadata": {"qiskit":
+        "True", "name": "circuit-194", "num_qubits": "3", "metadata": "{}"}, "sessionId":
+        null, "status": "Succeeded", "jobType": "QuantumComputing", "outputDataFormat":
+        "microsoft.resource-estimates.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3Dcircuit-194-00000000-0000-0000-0000-000000000001.output.json",
+        "beginExecutionTime": "2024-04-30T10:16:58.8341266Z", "cancellationTime":
+        null, "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling":
+        false, "tags": [], "name": "circuit-194", "id": "00000000-0000-0000-0000-000000000001",
+        "providerId": "microsoft-qc", "target": "microsoft.estimator", "creationTime":
+        "2024-04-30T10:16:55.6911145+00:00", "endExecutionTime": "2024-04-30T10:17:01.3579405Z",
         "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
@@ -689,147 +774,65 @@ interactions:
       string: '{"value": [{"id": "microsoft-elements", "currentAvailability": "Available",
         "targets": [{"id": "microsoft.dft", "currentAvailability": "Available", "averageQueueTime":
         0, "statusPage": null}]}, {"id": "ionq", "currentAvailability": "Degraded",
-        "targets": [{"id": "ionq.qpu", "currentAvailability": "Unavailable", "averageQueueTime":
-        882785, "statusPage": "https://status.ionq.co"}, {"id": "ionq.qpu.aria-1",
-        "currentAvailability": "Available", "averageQueueTime": 378151, "statusPage":
+        "targets": [{"id": "ionq.qpu", "currentAvailability": "Available", "averageQueueTime":
+        373558, "statusPage": "https://status.ionq.co"}, {"id": "ionq.qpu.aria-1",
+        "currentAvailability": "Unavailable", "averageQueueTime": 764917, "statusPage":
         "https://status.ionq.co"}, {"id": "ionq.qpu.aria-2", "currentAvailability":
-        "Unavailable", "averageQueueTime": 2619178, "statusPage": "https://status.ionq.co"},
+        "Unavailable", "averageQueueTime": 0, "statusPage": "https://status.ionq.co"},
         {"id": "ionq.simulator", "currentAvailability": "Available", "averageQueueTime":
-        4, "statusPage": "https://status.ionq.co"}]}, {"id": "microsoft-qc", "currentAvailability":
+        3, "statusPage": "https://status.ionq.co"}]}, {"id": "microsoft-qc", "currentAvailability":
         "Available", "targets": [{"id": "microsoft.estimator", "currentAvailability":
         "Available", "averageQueueTime": 0, "statusPage": null}]}, {"id": "pasqal",
-        "currentAvailability": "Degraded", "targets": [{"id": "pasqal.sim.emu-tn",
-        "currentAvailability": "Available", "averageQueueTime": 318, "statusPage":
+        "currentAvailability": "Available", "targets": [{"id": "pasqal.sim.emu-tn",
+        "currentAvailability": "Available", "averageQueueTime": 278, "statusPage":
         "https://pasqal.com"}, {"id": "pasqal.qpu.fresnel", "currentAvailability":
-        "Degraded", "averageQueueTime": 0, "statusPage": "https://pasqal.com"}]},
+        "Available", "averageQueueTime": 3197, "statusPage": "https://pasqal.com"}]},
         {"id": "rigetti", "currentAvailability": "Available", "targets": [{"id": "rigetti.sim.qvm",
         "currentAvailability": "Available", "averageQueueTime": 5, "statusPage": "https://rigetti.statuspage.io/"},
         {"id": "rigetti.qpu.ankaa-2", "currentAvailability": "Available", "averageQueueTime":
-        5, "statusPage": "https://rigetti.statuspage.io/"}]}, {"id": "Microsoft.Test",
-        "currentAvailability": "Available", "targets": [{"id": "echo-rigetti", "currentAvailability":
-        "Available", "averageQueueTime": 1, "statusPage": ""}, {"id": "echo-quantinuum",
-        "currentAvailability": "Available", "averageQueueTime": 1, "statusPage": ""},
-        {"id": "echo-qci", "currentAvailability": "Available", "averageQueueTime":
-        1, "statusPage": ""}, {"id": "echo-ionq", "currentAvailability": "Available",
-        "averageQueueTime": 1, "statusPage": ""}, {"id": "echo-aquarius", "currentAvailability":
-        "Available", "averageQueueTime": 1, "statusPage": ""}, {"id": "sparse-sim-rigetti",
-        "currentAvailability": "Available", "averageQueueTime": 1, "statusPage": ""},
-        {"id": "sparse-sim-quantinuum", "currentAvailability": "Available", "averageQueueTime":
-        1, "statusPage": ""}, {"id": "sparse-sim-qci", "currentAvailability": "Available",
-        "averageQueueTime": 1, "statusPage": ""}, {"id": "sparse-sim-ionq", "currentAvailability":
-        "Available", "averageQueueTime": 1, "statusPage": ""}, {"id": "echo-output",
-        "currentAvailability": "Available", "averageQueueTime": 1, "statusPage": ""}]},
-        {"id": "qci", "currentAvailability": "Degraded", "targets": [{"id": "qci.simulator",
-        "currentAvailability": "Available", "averageQueueTime": 1, "statusPage": "https://quantumcircuits.com"},
-        {"id": "qci.machine1", "currentAvailability": "Unavailable", "averageQueueTime":
-        1, "statusPage": "https://quantumcircuits.com"}, {"id": "qci.simulator.noisy",
+        5, "statusPage": "https://rigetti.statuspage.io/"}]}, {"id": "qci", "currentAvailability":
+        "Available", "targets": [{"id": "qci.simulator", "currentAvailability": "Available",
+        "averageQueueTime": 1, "statusPage": "https://quantumcircuits.com"}, {"id":
+        "qci.machine1", "currentAvailability": "Available", "averageQueueTime": 1,
+        "statusPage": "https://quantumcircuits.com"}, {"id": "qci.simulator.noisy",
         "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": "https://quantumcircuits.com"}]},
         {"id": "quantinuum", "currentAvailability": "Degraded", "targets": [{"id":
-        "quantinuum.qpu.h1-1", "currentAvailability": "Degraded", "averageQueueTime":
-        0, "statusPage": "https://www.quantinuum.com/hardware/h1"}, {"id": "quantinuum.sim.h1-1sc",
-        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        "quantinuum.qpu.h1-1", "currentAvailability": "Available", "averageQueueTime":
+        597500, "statusPage": "https://www.quantinuum.com/hardware/h1"}, {"id": "quantinuum.sim.h1-1sc",
+        "currentAvailability": "Available", "averageQueueTime": 4, "statusPage": "https://www.quantinuum.com/hardware/h1"},
         {"id": "quantinuum.sim.h1-1e", "currentAvailability": "Available", "averageQueueTime":
-        9620, "statusPage": "https://www.quantinuum.com/hardware/h1"}, {"id": "quantinuum.qpu.h2-1",
+        4, "statusPage": "https://www.quantinuum.com/hardware/h1"}, {"id": "quantinuum.qpu.h2-1",
         "currentAvailability": "Degraded", "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h2"},
         {"id": "quantinuum.sim.h2-1sc", "currentAvailability": "Available", "averageQueueTime":
         2, "statusPage": "https://www.quantinuum.com/hardware/h2"}, {"id": "quantinuum.sim.h2-1e",
-        "currentAvailability": "Available", "averageQueueTime": 292846, "statusPage":
-        "https://www.quantinuum.com/hardware/h2"}, {"id": "quantinuum.sim.h1-1sc-preview",
-        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        "currentAvailability": "Available", "averageQueueTime": 9, "statusPage": "https://www.quantinuum.com/hardware/h2"},
+        {"id": "quantinuum.sim.h1-1sc-preview", "currentAvailability": "Available",
+        "averageQueueTime": 4, "statusPage": "https://www.quantinuum.com/hardware/h1"},
         {"id": "quantinuum.sim.h1-1e-preview", "currentAvailability": "Available",
-        "averageQueueTime": 9620, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        "averageQueueTime": 4, "statusPage": "https://www.quantinuum.com/hardware/h1"},
         {"id": "quantinuum.sim.h1-2e-preview", "currentAvailability": "Available",
-        "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h1"},
-        {"id": "quantinuum.qpu.h1-1-preview", "currentAvailability": "Degraded", "averageQueueTime":
-        0, "statusPage": "https://www.quantinuum.com/hardware/h1"}]}], "nextLink":
-        null}'
+        "averageQueueTime": 28583, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        {"id": "quantinuum.qpu.h1-1-preview", "currentAvailability": "Available",
+        "averageQueueTime": 597500, "statusPage": "https://www.quantinuum.com/hardware/h1"}]},
+        {"id": "Microsoft.Test", "currentAvailability": "Available", "targets": [{"id":
+        "echo-rigetti", "currentAvailability": "Available", "averageQueueTime": 1,
+        "statusPage": ""}, {"id": "echo-quantinuum", "currentAvailability": "Available",
+        "averageQueueTime": 1, "statusPage": ""}, {"id": "echo-qci", "currentAvailability":
+        "Available", "averageQueueTime": 1, "statusPage": ""}, {"id": "echo-ionq",
+        "currentAvailability": "Available", "averageQueueTime": 1, "statusPage": ""},
+        {"id": "echo-aquarius", "currentAvailability": "Available", "averageQueueTime":
+        1, "statusPage": ""}, {"id": "sparse-sim-rigetti", "currentAvailability":
+        "Available", "averageQueueTime": 1, "statusPage": ""}, {"id": "sparse-sim-quantinuum",
+        "currentAvailability": "Available", "averageQueueTime": 1, "statusPage": ""},
+        {"id": "sparse-sim-qci", "currentAvailability": "Available", "averageQueueTime":
+        1, "statusPage": ""}, {"id": "sparse-sim-ionq", "currentAvailability": "Available",
+        "averageQueueTime": 1, "statusPage": ""}, {"id": "echo-output", "currentAvailability":
+        "Available", "averageQueueTime": 1, "statusPage": ""}]}], "nextLink": null}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '4769'
-      content-type:
-      - application/json; charset=utf-8
-      transfer-encoding:
-      - chunked
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - testapp-azure-quantum-qiskit azsdk-python-quantum/0.0.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
-    method: GET
-    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000001?api-version=2022-09-12-preview&test-sequence-id=9
-  response:
-    body:
-      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&sr=c&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcwl",
-        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3Dcircuit-185-00000000-0000-0000-0000-000000000001.input.json",
-        "inputDataFormat": "qir.v1", "inputParams": {"errorBudget": 0.001, "qubitParams":
-        {"name": "qubit_gate_ns_e3"}, "qecScheme": {"name": "surface_code"}, "items":
-        [{"entryPoint": "circuit-185", "arguments": []}]}, "metadata": {"qiskit":
-        "True", "name": "circuit-185", "num_qubits": "3", "metadata": "{}"}, "sessionId":
-        null, "status": "Succeeded", "jobType": "QuantumComputing", "outputDataFormat":
-        "microsoft.resource-estimates.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3Dcircuit-185-00000000-0000-0000-0000-000000000001.output.json",
-        "beginExecutionTime": "2024-04-19T12:50:06.8245782Z", "cancellationTime":
-        null, "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling":
-        false, "tags": [], "name": "circuit-185", "id": "00000000-0000-0000-0000-000000000001",
-        "providerId": "microsoft-qc", "target": "microsoft.estimator", "creationTime":
-        "2024-04-19T12:50:06.1027449+00:00", "endExecutionTime": "2024-04-19T12:50:09.4429033Z",
-        "costEstimate": null, "itemType": "Job"}'
-    headers:
-      connection:
-      - keep-alive
-      content-length:
-      - '1601'
-      content-type:
-      - application/json; charset=utf-8
-      transfer-encoding:
-      - chunked
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - testapp-azure-quantum-qiskit azsdk-python-quantum/0.0.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
-    method: GET
-    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000001?api-version=2022-09-12-preview&test-sequence-id=10
-  response:
-    body:
-      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&sr=c&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcwl",
-        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3Dcircuit-185-00000000-0000-0000-0000-000000000001.input.json",
-        "inputDataFormat": "qir.v1", "inputParams": {"errorBudget": 0.001, "qubitParams":
-        {"name": "qubit_gate_ns_e3"}, "qecScheme": {"name": "surface_code"}, "items":
-        [{"entryPoint": "circuit-185", "arguments": []}]}, "metadata": {"qiskit":
-        "True", "name": "circuit-185", "num_qubits": "3", "metadata": "{}"}, "sessionId":
-        null, "status": "Succeeded", "jobType": "QuantumComputing", "outputDataFormat":
-        "microsoft.resource-estimates.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3Dcircuit-185-00000000-0000-0000-0000-000000000001.output.json",
-        "beginExecutionTime": "2024-04-19T12:50:06.8245782Z", "cancellationTime":
-        null, "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling":
-        false, "tags": [], "name": "circuit-185", "id": "00000000-0000-0000-0000-000000000001",
-        "providerId": "microsoft-qc", "target": "microsoft.estimator", "creationTime":
-        "2024-04-19T12:50:06.1027449+00:00", "endExecutionTime": "2024-04-19T12:50:09.4429033Z",
-        "costEstimate": null, "itemType": "Job"}'
-    headers:
-      connection:
-      - keep-alive
-      content-length:
-      - '1601'
+      - '4772'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -853,18 +856,18 @@ interactions:
   response:
     body:
       string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&sr=c&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcwl",
-        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3Dcircuit-185-00000000-0000-0000-0000-000000000001.input.json",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3Dcircuit-194-00000000-0000-0000-0000-000000000001.input.json",
         "inputDataFormat": "qir.v1", "inputParams": {"errorBudget": 0.001, "qubitParams":
         {"name": "qubit_gate_ns_e3"}, "qecScheme": {"name": "surface_code"}, "items":
-        [{"entryPoint": "circuit-185", "arguments": []}]}, "metadata": {"qiskit":
-        "True", "name": "circuit-185", "num_qubits": "3", "metadata": "{}"}, "sessionId":
+        [{"entryPoint": "circuit-194", "arguments": []}]}, "metadata": {"qiskit":
+        "True", "name": "circuit-194", "num_qubits": "3", "metadata": "{}"}, "sessionId":
         null, "status": "Succeeded", "jobType": "QuantumComputing", "outputDataFormat":
-        "microsoft.resource-estimates.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3Dcircuit-185-00000000-0000-0000-0000-000000000001.output.json",
-        "beginExecutionTime": "2024-04-19T12:50:06.8245782Z", "cancellationTime":
+        "microsoft.resource-estimates.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3Dcircuit-194-00000000-0000-0000-0000-000000000001.output.json",
+        "beginExecutionTime": "2024-04-30T10:16:58.8341266Z", "cancellationTime":
         null, "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling":
-        false, "tags": [], "name": "circuit-185", "id": "00000000-0000-0000-0000-000000000001",
+        false, "tags": [], "name": "circuit-194", "id": "00000000-0000-0000-0000-000000000001",
         "providerId": "microsoft-qc", "target": "microsoft.estimator", "creationTime":
-        "2024-04-19T12:50:06.1027449+00:00", "endExecutionTime": "2024-04-19T12:50:09.4429033Z",
+        "2024-04-30T10:16:55.6911145+00:00", "endExecutionTime": "2024-04-30T10:17:01.3579405Z",
         "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
@@ -894,18 +897,100 @@ interactions:
   response:
     body:
       string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&sr=c&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcwl",
-        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3Dcircuit-185-00000000-0000-0000-0000-000000000001.input.json",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3Dcircuit-194-00000000-0000-0000-0000-000000000001.input.json",
         "inputDataFormat": "qir.v1", "inputParams": {"errorBudget": 0.001, "qubitParams":
         {"name": "qubit_gate_ns_e3"}, "qecScheme": {"name": "surface_code"}, "items":
-        [{"entryPoint": "circuit-185", "arguments": []}]}, "metadata": {"qiskit":
-        "True", "name": "circuit-185", "num_qubits": "3", "metadata": "{}"}, "sessionId":
+        [{"entryPoint": "circuit-194", "arguments": []}]}, "metadata": {"qiskit":
+        "True", "name": "circuit-194", "num_qubits": "3", "metadata": "{}"}, "sessionId":
         null, "status": "Succeeded", "jobType": "QuantumComputing", "outputDataFormat":
-        "microsoft.resource-estimates.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3Dcircuit-185-00000000-0000-0000-0000-000000000001.output.json",
-        "beginExecutionTime": "2024-04-19T12:50:06.8245782Z", "cancellationTime":
+        "microsoft.resource-estimates.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3Dcircuit-194-00000000-0000-0000-0000-000000000001.output.json",
+        "beginExecutionTime": "2024-04-30T10:16:58.8341266Z", "cancellationTime":
         null, "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling":
-        false, "tags": [], "name": "circuit-185", "id": "00000000-0000-0000-0000-000000000001",
+        false, "tags": [], "name": "circuit-194", "id": "00000000-0000-0000-0000-000000000001",
         "providerId": "microsoft-qc", "target": "microsoft.estimator", "creationTime":
-        "2024-04-19T12:50:06.1027449+00:00", "endExecutionTime": "2024-04-19T12:50:09.4429033Z",
+        "2024-04-30T10:16:55.6911145+00:00", "endExecutionTime": "2024-04-30T10:17:01.3579405Z",
+        "costEstimate": null, "itemType": "Job"}'
+    headers:
+      connection:
+      - keep-alive
+      content-length:
+      - '1601'
+      content-type:
+      - application/json; charset=utf-8
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - testapp-azure-quantum-qiskit azsdk-python-quantum/0.0.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
+    method: GET
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000001?api-version=2022-09-12-preview&test-sequence-id=13
+  response:
+    body:
+      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&sr=c&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcwl",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3Dcircuit-194-00000000-0000-0000-0000-000000000001.input.json",
+        "inputDataFormat": "qir.v1", "inputParams": {"errorBudget": 0.001, "qubitParams":
+        {"name": "qubit_gate_ns_e3"}, "qecScheme": {"name": "surface_code"}, "items":
+        [{"entryPoint": "circuit-194", "arguments": []}]}, "metadata": {"qiskit":
+        "True", "name": "circuit-194", "num_qubits": "3", "metadata": "{}"}, "sessionId":
+        null, "status": "Succeeded", "jobType": "QuantumComputing", "outputDataFormat":
+        "microsoft.resource-estimates.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3Dcircuit-194-00000000-0000-0000-0000-000000000001.output.json",
+        "beginExecutionTime": "2024-04-30T10:16:58.8341266Z", "cancellationTime":
+        null, "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling":
+        false, "tags": [], "name": "circuit-194", "id": "00000000-0000-0000-0000-000000000001",
+        "providerId": "microsoft-qc", "target": "microsoft.estimator", "creationTime":
+        "2024-04-30T10:16:55.6911145+00:00", "endExecutionTime": "2024-04-30T10:17:01.3579405Z",
+        "costEstimate": null, "itemType": "Job"}'
+    headers:
+      connection:
+      - keep-alive
+      content-length:
+      - '1601'
+      content-type:
+      - application/json; charset=utf-8
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - testapp-azure-quantum-qiskit azsdk-python-quantum/0.0.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
+    method: GET
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000001?api-version=2022-09-12-preview&test-sequence-id=14
+  response:
+    body:
+      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&sr=c&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcwl",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3Dcircuit-194-00000000-0000-0000-0000-000000000001.input.json",
+        "inputDataFormat": "qir.v1", "inputParams": {"errorBudget": 0.001, "qubitParams":
+        {"name": "qubit_gate_ns_e3"}, "qecScheme": {"name": "surface_code"}, "items":
+        [{"entryPoint": "circuit-194", "arguments": []}]}, "metadata": {"qiskit":
+        "True", "name": "circuit-194", "num_qubits": "3", "metadata": "{}"}, "sessionId":
+        null, "status": "Succeeded", "jobType": "QuantumComputing", "outputDataFormat":
+        "microsoft.resource-estimates.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3Dcircuit-194-00000000-0000-0000-0000-000000000001.output.json",
+        "beginExecutionTime": "2024-04-30T10:16:58.8341266Z", "cancellationTime":
+        null, "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling":
+        false, "tags": [], "name": "circuit-194", "id": "00000000-0000-0000-0000-000000000001",
+        "providerId": "microsoft-qc", "target": "microsoft.estimator", "creationTime":
+        "2024-04-30T10:16:55.6911145+00:00", "endExecutionTime": "2024-04-30T10:17:01.3579405Z",
         "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
@@ -931,13 +1016,13 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.19.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
       x-ms-date:
-      - Fri, 19 Apr 2024 12:50:11 GMT
+      - Tue, 30 Apr 2024 10:17:04 GMT
       x-ms-range:
       - bytes=0-33554431
       x-ms-version:
       - '2023-11-03'
     method: GET
-    uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3Dcircuit-185-00000000-0000-0000-0000-000000000001.output.json
+    uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3Dcircuit-194-00000000-0000-0000-0000-000000000001.output.json
   response:
     body:
       string: '{"status": "success", "jobParams": {"qecScheme": {"name": "surface_code",
@@ -1305,7 +1390,7 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-creation-time:
-      - Fri, 19 Apr 2024 12:50:06 GMT
+      - Tue, 30 Apr 2024 10:16:55 GMT
       x-ms-lease-state:
       - available
       x-ms-lease-status:
