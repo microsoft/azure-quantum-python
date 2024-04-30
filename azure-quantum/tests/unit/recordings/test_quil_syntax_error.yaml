@@ -26,16 +26,21 @@ interactions:
     uri: https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token
   response:
     body:
-      string: '{"token_type": "Bearer", "expires_in": 1745073389, "ext_expires_in":
-        1745073389, "refresh_in": 31536000, "access_token": "PLACEHOLDER"}'
+      string: '{"error": "invalid_client", "error_description": "AADSTS7000215: Invalid
+        client secret provided. Ensure the secret being sent in the request is the
+        client secret value, not the client secret ID, for a secret added to app ''00000000-0000-0000-0000-000000000000''.
+        Trace ID: eac46359-978d-4035-a7a5-b4a3016bd800 Correlation ID: 2a31dec5-a90b-4ba9-a75f-3a8631d27a99
+        Timestamp: 2024-04-30 14:22:36Z", "error_codes": [7000215], "timestamp": "2024-04-30
+        14:22:36Z", "trace_id": "eac46359-978d-4035-a7a5-b4a3016bd800", "correlation_id":
+        "2a31dec5-a90b-4ba9-a75f-3a8631d27a99", "error_uri": "https://login.microsoftonline.com/error?code=7000215"}'
     headers:
       content-length:
-      - '135'
+      - '636'
       content-type:
       - application/json; charset=utf-8
     status:
-      code: 200
-      message: OK
+      code: 401
+      message: Unauthorized
 - request:
     body: 'b''{"containerName": "job-00000000-0000-0000-0000-000000000001"}'''
     headers:
@@ -80,7 +85,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.19.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
       x-ms-date:
-      - Fri, 19 Apr 2024 14:36:30 GMT
+      - Tue, 30 Apr 2024 14:22:37 GMT
       x-ms-version:
       - '2023-11-03'
     method: GET
@@ -88,7 +93,7 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerNotFound</Code><Message>The
-        specified container does not exist.\nRequestId:187782da-301e-0075-3966-9247ec000000\nTime:2024-04-19T14:36:31.1179024Z</Message></Error>"
+        specified container does not exist.\nRequestId:ca24ac4d-301e-0065-4e09-9b8284000000\nTime:2024-04-30T14:22:39.1319397Z</Message></Error>"
     headers:
       content-length:
       - '223'
@@ -113,7 +118,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.19.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
       x-ms-date:
-      - Fri, 19 Apr 2024 14:36:31 GMT
+      - Tue, 30 Apr 2024 14:22:38 GMT
       x-ms-version:
       - '2023-11-03'
     method: PUT
@@ -141,7 +146,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.19.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
       x-ms-date:
-      - Fri, 19 Apr 2024 14:36:31 GMT
+      - Tue, 30 Apr 2024 14:22:38 GMT
       x-ms-version:
       - '2023-11-03'
     method: GET
@@ -180,7 +185,7 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-date:
-      - Fri, 19 Apr 2024 14:36:32 GMT
+      - Tue, 30 Apr 2024 14:22:39 GMT
       x-ms-version:
       - '2023-11-03'
     method: PUT
@@ -228,7 +233,7 @@ interactions:
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         null, "errorData": null, "isCancelling": false, "tags": [], "name": "qdk-python-test",
         "id": "00000000-0000-0000-0000-000000000001", "providerId": "rigetti", "target":
-        "rigetti.sim.qvm", "creationTime": "2024-04-19T14:36:32.5874437+00:00", "endExecutionTime":
+        "rigetti.sim.qvm", "creationTime": "2024-04-30T14:22:40.7237011+00:00", "endExecutionTime":
         null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
@@ -265,7 +270,7 @@ interactions:
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         {"count": 1}, "errorData": null, "isCancelling": false, "tags": [], "name":
         "qdk-python-test", "id": "00000000-0000-0000-0000-000000000001", "providerId":
-        "rigetti", "target": "rigetti.sim.qvm", "creationTime": "2024-04-19T14:36:32.5874437+00:00",
+        "rigetti", "target": "rigetti.sim.qvm", "creationTime": "2024-04-30T14:22:40.7237011+00:00",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
@@ -302,7 +307,7 @@ interactions:
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         {"count": 1}, "errorData": null, "isCancelling": false, "tags": [], "name":
         "qdk-python-test", "id": "00000000-0000-0000-0000-000000000001", "providerId":
-        "rigetti", "target": "rigetti.sim.qvm", "creationTime": "2024-04-19T14:36:32.5874437+00:00",
+        "rigetti", "target": "rigetti.sim.qvm", "creationTime": "2024-04-30T14:22:40.7237011+00:00",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
@@ -339,7 +344,7 @@ interactions:
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         {"count": 1}, "errorData": null, "isCancelling": false, "tags": [], "name":
         "qdk-python-test", "id": "00000000-0000-0000-0000-000000000001", "providerId":
-        "rigetti", "target": "rigetti.sim.qvm", "creationTime": "2024-04-19T14:36:32.5874437+00:00",
+        "rigetti", "target": "rigetti.sim.qvm", "creationTime": "2024-04-30T14:22:40.7237011+00:00",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
@@ -376,7 +381,7 @@ interactions:
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         {"count": 1}, "errorData": null, "isCancelling": false, "tags": [], "name":
         "qdk-python-test", "id": "00000000-0000-0000-0000-000000000001", "providerId":
-        "rigetti", "target": "rigetti.sim.qvm", "creationTime": "2024-04-19T14:36:32.5874437+00:00",
+        "rigetti", "target": "rigetti.sim.qvm", "creationTime": "2024-04-30T14:22:40.7237011+00:00",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
@@ -413,7 +418,7 @@ interactions:
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         {"count": 1}, "errorData": null, "isCancelling": false, "tags": [], "name":
         "qdk-python-test", "id": "00000000-0000-0000-0000-000000000001", "providerId":
-        "rigetti", "target": "rigetti.sim.qvm", "creationTime": "2024-04-19T14:36:32.5874437+00:00",
+        "rigetti", "target": "rigetti.sim.qvm", "creationTime": "2024-04-30T14:22:40.7237011+00:00",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
@@ -447,14 +452,14 @@ interactions:
         "inputDataFormat": "rigetti.quil.v1", "inputParams": {}, "metadata": null,
         "sessionId": null, "status": "Failed", "jobType": "QuantumComputing", "outputDataFormat":
         "rigetti.quil-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3Dqdk-python-test-00000000-0000-0000-0000-000000000001.output.json",
-        "beginExecutionTime": "2024-04-19T14:36:35.6966293Z", "cancellationTime":
+        "beginExecutionTime": "2024-04-30T14:22:43.5599203Z", "cancellationTime":
         null, "quantumComputingData": {"count": 1}, "errorData": {"code": "InvalidInputData",
         "message": "QVM reported a problem running your program: error when calling
         QVM: failed to perform multishot: Encountered the invalid instruction\n\n    a\n\nwhich
         could not be executed because the operator a is not known"}, "isCancelling":
         false, "tags": [], "name": "qdk-python-test", "id": "00000000-0000-0000-0000-000000000001",
-        "providerId": "rigetti", "target": "rigetti.sim.qvm", "creationTime": "2024-04-19T14:36:32.5874437+00:00",
-        "endExecutionTime": "2024-04-19T14:36:36.1873594Z", "costEstimate": null,
+        "providerId": "rigetti", "target": "rigetti.sim.qvm", "creationTime": "2024-04-30T14:22:40.7237011+00:00",
+        "endExecutionTime": "2024-04-30T14:22:44.1469377Z", "costEstimate": null,
         "itemType": "Job"}'
     headers:
       connection:
@@ -488,14 +493,14 @@ interactions:
         "inputDataFormat": "rigetti.quil.v1", "inputParams": {}, "metadata": null,
         "sessionId": null, "status": "Failed", "jobType": "QuantumComputing", "outputDataFormat":
         "rigetti.quil-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3Dqdk-python-test-00000000-0000-0000-0000-000000000001.output.json",
-        "beginExecutionTime": "2024-04-19T14:36:35.6966293Z", "cancellationTime":
+        "beginExecutionTime": "2024-04-30T14:22:43.5599203Z", "cancellationTime":
         null, "quantumComputingData": {"count": 1}, "errorData": {"code": "InvalidInputData",
         "message": "QVM reported a problem running your program: error when calling
         QVM: failed to perform multishot: Encountered the invalid instruction\n\n    a\n\nwhich
         could not be executed because the operator a is not known"}, "isCancelling":
         false, "tags": [], "name": "qdk-python-test", "id": "00000000-0000-0000-0000-000000000001",
-        "providerId": "rigetti", "target": "rigetti.sim.qvm", "creationTime": "2024-04-19T14:36:32.5874437+00:00",
-        "endExecutionTime": "2024-04-19T14:36:36.1873594Z", "costEstimate": null,
+        "providerId": "rigetti", "target": "rigetti.sim.qvm", "creationTime": "2024-04-30T14:22:40.7237011+00:00",
+        "endExecutionTime": "2024-04-30T14:22:44.1469377Z", "costEstimate": null,
         "itemType": "Job"}'
     headers:
       connection:
@@ -529,14 +534,14 @@ interactions:
         "inputDataFormat": "rigetti.quil.v1", "inputParams": {}, "metadata": null,
         "sessionId": null, "status": "Failed", "jobType": "QuantumComputing", "outputDataFormat":
         "rigetti.quil-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3Dqdk-python-test-00000000-0000-0000-0000-000000000001.output.json",
-        "beginExecutionTime": "2024-04-19T14:36:35.6966293Z", "cancellationTime":
+        "beginExecutionTime": "2024-04-30T14:22:43.5599203Z", "cancellationTime":
         null, "quantumComputingData": {"count": 1}, "errorData": {"code": "InvalidInputData",
         "message": "QVM reported a problem running your program: error when calling
         QVM: failed to perform multishot: Encountered the invalid instruction\n\n    a\n\nwhich
         could not be executed because the operator a is not known"}, "isCancelling":
         false, "tags": [], "name": "qdk-python-test", "id": "00000000-0000-0000-0000-000000000001",
-        "providerId": "rigetti", "target": "rigetti.sim.qvm", "creationTime": "2024-04-19T14:36:32.5874437+00:00",
-        "endExecutionTime": "2024-04-19T14:36:36.1873594Z", "costEstimate": null,
+        "providerId": "rigetti", "target": "rigetti.sim.qvm", "creationTime": "2024-04-30T14:22:40.7237011+00:00",
+        "endExecutionTime": "2024-04-30T14:22:44.1469377Z", "costEstimate": null,
         "itemType": "Job"}'
     headers:
       connection:

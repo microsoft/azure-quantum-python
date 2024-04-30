@@ -26,16 +26,21 @@ interactions:
     uri: https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token
   response:
     body:
-      string: '{"token_type": "Bearer", "expires_in": 1745070756, "ext_expires_in":
-        1745070756, "refresh_in": 31536000, "access_token": "PLACEHOLDER"}'
+      string: '{"error": "invalid_client", "error_description": "AADSTS7000215: Invalid
+        client secret provided. Ensure the secret being sent in the request is the
+        client secret value, not the client secret ID, for a secret added to app ''00000000-0000-0000-0000-000000000000''.
+        Trace ID: 16170e86-6a4b-432c-9f56-1abaca3f7400 Correlation ID: f78d4850-bf38-455b-8d45-e720eb11d0ad
+        Timestamp: 2024-04-30 13:59:03Z", "error_codes": [7000215], "timestamp": "2024-04-30
+        13:59:03Z", "trace_id": "16170e86-6a4b-432c-9f56-1abaca3f7400", "correlation_id":
+        "f78d4850-bf38-455b-8d45-e720eb11d0ad", "error_uri": "https://login.microsoftonline.com/error?code=7000215"}'
     headers:
       content-length:
-      - '135'
+      - '636'
       content-type:
       - application/json; charset=utf-8
     status:
-      code: 200
-      message: OK
+      code: 401
+      message: Unauthorized
 - request:
     body: 'b''{"containerName": "job-00000000-0000-0000-0000-000000000001"}'''
     headers:
@@ -80,7 +85,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.19.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
       x-ms-date:
-      - Fri, 19 Apr 2024 13:52:37 GMT
+      - Tue, 30 Apr 2024 13:59:05 GMT
       x-ms-version:
       - '2023-11-03'
     method: GET
@@ -88,7 +93,7 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerNotFound</Code><Message>The
-        specified container does not exist.\nRequestId:a07b71ca-901e-000e-4560-920570000000\nTime:2024-04-19T13:52:38.3633081Z</Message></Error>"
+        specified container does not exist.\nRequestId:126eff9f-e01e-003b-7106-9b6964000000\nTime:2024-04-30T13:59:06.8202923Z</Message></Error>"
     headers:
       content-length:
       - '223'
@@ -113,7 +118,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.19.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
       x-ms-date:
-      - Fri, 19 Apr 2024 13:52:38 GMT
+      - Tue, 30 Apr 2024 13:59:06 GMT
       x-ms-version:
       - '2023-11-03'
     method: PUT
@@ -141,7 +146,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.19.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
       x-ms-date:
-      - Fri, 19 Apr 2024 13:52:38 GMT
+      - Tue, 30 Apr 2024 13:59:06 GMT
       x-ms-version:
       - '2023-11-03'
     method: GET
@@ -234,7 +239,7 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-date:
-      - Fri, 19 Apr 2024 13:52:39 GMT
+      - Tue, 30 Apr 2024 13:59:07 GMT
       x-ms-version:
       - '2023-11-03'
     method: PUT
@@ -282,7 +287,7 @@ interactions:
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         null, "errorData": null, "isCancelling": false, "tags": [], "name": "azure-quantum-job",
         "id": "00000000-0000-0000-0000-000000000001", "providerId": "microsoft-qc",
-        "target": "microsoft.estimator", "creationTime": "2024-04-19T13:52:39.9665887+00:00",
+        "target": "microsoft.estimator", "creationTime": "2024-04-30T13:59:08.4692029+00:00",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
@@ -319,7 +324,7 @@ interactions:
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         {"count": 1}, "errorData": null, "isCancelling": false, "tags": [], "name":
         "azure-quantum-job", "id": "00000000-0000-0000-0000-000000000001", "providerId":
-        "microsoft-qc", "target": "microsoft.estimator", "creationTime": "2024-04-19T13:52:39.9665887+00:00",
+        "microsoft-qc", "target": "microsoft.estimator", "creationTime": "2024-04-30T13:59:08.4692029+00:00",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
@@ -356,7 +361,7 @@ interactions:
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         {"count": 1}, "errorData": null, "isCancelling": false, "tags": [], "name":
         "azure-quantum-job", "id": "00000000-0000-0000-0000-000000000001", "providerId":
-        "microsoft-qc", "target": "microsoft.estimator", "creationTime": "2024-04-19T13:52:39.9665887+00:00",
+        "microsoft-qc", "target": "microsoft.estimator", "creationTime": "2024-04-30T13:59:08.4692029+00:00",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
@@ -393,7 +398,7 @@ interactions:
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         {"count": 1}, "errorData": null, "isCancelling": false, "tags": [], "name":
         "azure-quantum-job", "id": "00000000-0000-0000-0000-000000000001", "providerId":
-        "microsoft-qc", "target": "microsoft.estimator", "creationTime": "2024-04-19T13:52:39.9665887+00:00",
+        "microsoft-qc", "target": "microsoft.estimator", "creationTime": "2024-04-30T13:59:08.4692029+00:00",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
@@ -430,7 +435,7 @@ interactions:
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         {"count": 1}, "errorData": null, "isCancelling": false, "tags": [], "name":
         "azure-quantum-job", "id": "00000000-0000-0000-0000-000000000001", "providerId":
-        "microsoft-qc", "target": "microsoft.estimator", "creationTime": "2024-04-19T13:52:39.9665887+00:00",
+        "microsoft-qc", "target": "microsoft.estimator", "creationTime": "2024-04-30T13:59:08.4692029+00:00",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
@@ -464,11 +469,11 @@ interactions:
         "inputDataFormat": "qir.v1", "inputParams": {"errorBudget": 2}, "metadata":
         null, "sessionId": null, "status": "Executing", "jobType": "QuantumComputing",
         "outputDataFormat": "microsoft.resource-estimates.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3Dazure-quantum-job-00000000-0000-0000-0000-000000000001.output.json",
-        "beginExecutionTime": "2024-04-19T13:52:40.3933754Z", "cancellationTime":
+        "beginExecutionTime": "2024-04-30T13:59:08.8623853Z", "cancellationTime":
         null, "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling":
         false, "tags": [], "name": "azure-quantum-job", "id": "00000000-0000-0000-0000-000000000001",
         "providerId": "microsoft-qc", "target": "microsoft.estimator", "creationTime":
-        "2024-04-19T13:52:39.9665887+00:00", "endExecutionTime": null, "costEstimate":
+        "2024-04-30T13:59:08.4692029+00:00", "endExecutionTime": null, "costEstimate":
         null, "itemType": "Job"}'
     headers:
       connection:
@@ -502,13 +507,13 @@ interactions:
         "inputDataFormat": "qir.v1", "inputParams": {"errorBudget": 2}, "metadata":
         null, "sessionId": null, "status": "Failed", "jobType": "QuantumComputing",
         "outputDataFormat": "microsoft.resource-estimates.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3Dazure-quantum-job-00000000-0000-0000-0000-000000000001.output.json",
-        "beginExecutionTime": "2024-04-19T13:52:40.4980998Z", "cancellationTime":
+        "beginExecutionTime": "2024-04-30T13:59:09.1107386Z", "cancellationTime":
         null, "quantumComputingData": {"count": 1}, "errorData": {"code": "InvalidInputError",
         "message": "The error budget must be between 0.0 and 1.0, provided input was
         `2`"}, "isCancelling": false, "tags": [], "name": "azure-quantum-job", "id":
         "00000000-0000-0000-0000-000000000001", "providerId": "microsoft-qc", "target":
-        "microsoft.estimator", "creationTime": "2024-04-19T13:52:39.9665887+00:00",
-        "endExecutionTime": "2024-04-19T13:52:42.9628051Z", "costEstimate": null,
+        "microsoft.estimator", "creationTime": "2024-04-30T13:59:08.4692029+00:00",
+        "endExecutionTime": "2024-04-30T13:59:11.4415955Z", "costEstimate": null,
         "itemType": "Job"}'
     headers:
       connection:

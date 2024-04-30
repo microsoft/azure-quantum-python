@@ -26,16 +26,21 @@ interactions:
     uri: https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token
   response:
     body:
-      string: '{"token_type": "Bearer", "expires_in": 1745069900, "ext_expires_in":
-        1745069900, "refresh_in": 31536000, "access_token": "PLACEHOLDER"}'
+      string: '{"error": "invalid_client", "error_description": "AADSTS7000215: Invalid
+        client secret provided. Ensure the secret being sent in the request is the
+        client secret value, not the client secret ID, for a secret added to app ''00000000-0000-0000-0000-000000000000''.
+        Trace ID: 3fc11b69-02eb-4fc5-a8cd-d58e911fca00 Correlation ID: 00960684-13cc-416e-bbbb-ce4ff96712df
+        Timestamp: 2024-04-30 13:53:10Z", "error_codes": [7000215], "timestamp": "2024-04-30
+        13:53:10Z", "trace_id": "3fc11b69-02eb-4fc5-a8cd-d58e911fca00", "correlation_id":
+        "00960684-13cc-416e-bbbb-ce4ff96712df", "error_uri": "https://login.microsoftonline.com/error?code=7000215"}'
     headers:
       content-length:
-      - '135'
+      - '636'
       content-type:
       - application/json; charset=utf-8
     status:
-      code: 200
-      message: OK
+      code: 401
+      message: Unauthorized
 - request:
     body: 'b''{"containerName": "job-00000000-0000-0000-0000-000000000001"}'''
     headers:
@@ -80,7 +85,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.19.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
       x-ms-date:
-      - Fri, 19 Apr 2024 13:38:21 GMT
+      - Tue, 30 Apr 2024 13:53:11 GMT
       x-ms-version:
       - '2023-11-03'
     method: GET
@@ -88,7 +93,7 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerNotFound</Code><Message>The
-        specified container does not exist.\nRequestId:dc3bb4da-001e-0033-4d5e-92736b000000\nTime:2024-04-19T13:38:22.2036526Z</Message></Error>"
+        specified container does not exist.\nRequestId:1d835231-201e-0046-0e05-9b1847000000\nTime:2024-04-30T13:53:13.1683556Z</Message></Error>"
     headers:
       content-length:
       - '223'
@@ -113,7 +118,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.19.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
       x-ms-date:
-      - Fri, 19 Apr 2024 13:38:22 GMT
+      - Tue, 30 Apr 2024 13:53:12 GMT
       x-ms-version:
       - '2023-11-03'
     method: PUT
@@ -141,7 +146,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.19.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
       x-ms-date:
-      - Fri, 19 Apr 2024 13:38:22 GMT
+      - Tue, 30 Apr 2024 13:53:12 GMT
       x-ms-version:
       - '2023-11-03'
     method: GET
@@ -180,7 +185,7 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-date:
-      - Fri, 19 Apr 2024 13:38:23 GMT
+      - Tue, 30 Apr 2024 13:53:13 GMT
       x-ms-version:
       - '2023-11-03'
     method: PUT
@@ -221,20 +226,20 @@ interactions:
   response:
     body:
       string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
-        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcw",
         "inputDataFormat": "ionq.circuit.v1", "inputParams": {"shots": 100}, "metadata":
         null, "sessionId": null, "status": "Waiting", "jobType": "QuantumComputing",
         "outputDataFormat": "ionq.quantum-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         null, "errorData": null, "isCancelling": false, "tags": [], "name": "ionq-3ghz-job",
         "id": "00000000-0000-0000-0000-000000000001", "providerId": "ionq", "target":
-        "ionq.simulator", "creationTime": "2024-04-19T13:38:23.6921178+00:00", "endExecutionTime":
+        "ionq.simulator", "creationTime": "2024-04-30T13:53:14.8948113+00:00", "endExecutionTime":
         null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '1070'
+      - '1141'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -265,7 +270,7 @@ interactions:
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         {"count": 1}, "errorData": null, "isCancelling": false, "tags": [], "name":
         "ionq-3ghz-job", "id": "00000000-0000-0000-0000-000000000001", "providerId":
-        "ionq", "target": "ionq.simulator", "creationTime": "2024-04-19T13:38:23.6921178+00:00",
+        "ionq", "target": "ionq.simulator", "creationTime": "2024-04-30T13:53:14.8948113+00:00",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
@@ -302,7 +307,7 @@ interactions:
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         {"count": 1}, "errorData": null, "isCancelling": false, "tags": [], "name":
         "ionq-3ghz-job", "id": "00000000-0000-0000-0000-000000000001", "providerId":
-        "ionq", "target": "ionq.simulator", "creationTime": "2024-04-19T13:38:23.6921178+00:00",
+        "ionq", "target": "ionq.simulator", "creationTime": "2024-04-30T13:53:14.8948113+00:00",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
@@ -339,7 +344,7 @@ interactions:
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         {"count": 1}, "errorData": null, "isCancelling": false, "tags": [], "name":
         "ionq-3ghz-job", "id": "00000000-0000-0000-0000-000000000001", "providerId":
-        "ionq", "target": "ionq.simulator", "creationTime": "2024-04-19T13:38:23.6921178+00:00",
+        "ionq", "target": "ionq.simulator", "creationTime": "2024-04-30T13:53:14.8948113+00:00",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
@@ -376,7 +381,7 @@ interactions:
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         {"count": 1}, "errorData": null, "isCancelling": false, "tags": [], "name":
         "ionq-3ghz-job", "id": "00000000-0000-0000-0000-000000000001", "providerId":
-        "ionq", "target": "ionq.simulator", "creationTime": "2024-04-19T13:38:23.6921178+00:00",
+        "ionq", "target": "ionq.simulator", "creationTime": "2024-04-30T13:53:14.8948113+00:00",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
@@ -413,7 +418,7 @@ interactions:
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         {"count": 1}, "errorData": null, "isCancelling": false, "tags": [], "name":
         "ionq-3ghz-job", "id": "00000000-0000-0000-0000-000000000001", "providerId":
-        "ionq", "target": "ionq.simulator", "creationTime": "2024-04-19T13:38:23.6921178+00:00",
+        "ionq", "target": "ionq.simulator", "creationTime": "2024-04-30T13:53:14.8948113+00:00",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
@@ -450,7 +455,7 @@ interactions:
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         {"count": 1}, "errorData": null, "isCancelling": false, "tags": [], "name":
         "ionq-3ghz-job", "id": "00000000-0000-0000-0000-000000000001", "providerId":
-        "ionq", "target": "ionq.simulator", "creationTime": "2024-04-19T13:38:23.6921178+00:00",
+        "ionq", "target": "ionq.simulator", "creationTime": "2024-04-30T13:53:14.8948113+00:00",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
@@ -484,11 +489,11 @@ interactions:
         "inputDataFormat": "ionq.circuit.v1", "inputParams": {"shots": 100}, "metadata":
         null, "sessionId": null, "status": "Succeeded", "jobType": "QuantumComputing",
         "outputDataFormat": "ionq.quantum-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3Dionq-3ghz-job-00000000-0000-0000-0000-000000000001.output.json",
-        "beginExecutionTime": "2024-04-19T13:38:26.791Z", "cancellationTime": null,
+        "beginExecutionTime": "2024-04-30T13:53:17.991Z", "cancellationTime": null,
         "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling": false,
         "tags": [], "name": "ionq-3ghz-job", "id": "00000000-0000-0000-0000-000000000001",
-        "providerId": "ionq", "target": "ionq.simulator", "creationTime": "2024-04-19T13:38:23.6921178+00:00",
-        "endExecutionTime": "2024-04-19T13:38:26.804Z", "costEstimate": {"currencyCode":
+        "providerId": "ionq", "target": "ionq.simulator", "creationTime": "2024-04-30T13:53:14.8948113+00:00",
+        "endExecutionTime": "2024-04-30T13:53:18.01Z", "costEstimate": {"currencyCode":
         "USD", "events": [{"dimensionId": "gs1q", "dimensionName": "1Q Gate Shot",
         "measureUnit": "1q gate shot", "amountBilled": 0.0, "amountConsumed": 0.0,
         "unitPrice": 0.0}, {"dimensionId": "gs2q", "dimensionName": "2Q Gate Shot",
@@ -498,7 +503,7 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '1718'
+      - '1717'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -526,11 +531,11 @@ interactions:
         "inputDataFormat": "ionq.circuit.v1", "inputParams": {"shots": 100}, "metadata":
         null, "sessionId": null, "status": "Succeeded", "jobType": "QuantumComputing",
         "outputDataFormat": "ionq.quantum-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3Dionq-3ghz-job-00000000-0000-0000-0000-000000000001.output.json",
-        "beginExecutionTime": "2024-04-19T13:38:26.791Z", "cancellationTime": null,
+        "beginExecutionTime": "2024-04-30T13:53:17.991Z", "cancellationTime": null,
         "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling": false,
         "tags": [], "name": "ionq-3ghz-job", "id": "00000000-0000-0000-0000-000000000001",
-        "providerId": "ionq", "target": "ionq.simulator", "creationTime": "2024-04-19T13:38:23.6921178+00:00",
-        "endExecutionTime": "2024-04-19T13:38:26.804Z", "costEstimate": {"currencyCode":
+        "providerId": "ionq", "target": "ionq.simulator", "creationTime": "2024-04-30T13:53:14.8948113+00:00",
+        "endExecutionTime": "2024-04-30T13:53:18.01Z", "costEstimate": {"currencyCode":
         "USD", "events": [{"dimensionId": "gs1q", "dimensionName": "1Q Gate Shot",
         "measureUnit": "1q gate shot", "amountBilled": 0.0, "amountConsumed": 0.0,
         "unitPrice": 0.0}, {"dimensionId": "gs2q", "dimensionName": "2Q Gate Shot",
@@ -540,7 +545,7 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '1718'
+      - '1717'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -568,11 +573,11 @@ interactions:
         "inputDataFormat": "ionq.circuit.v1", "inputParams": {"shots": 100}, "metadata":
         null, "sessionId": null, "status": "Succeeded", "jobType": "QuantumComputing",
         "outputDataFormat": "ionq.quantum-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3Dionq-3ghz-job-00000000-0000-0000-0000-000000000001.output.json",
-        "beginExecutionTime": "2024-04-19T13:38:26.791Z", "cancellationTime": null,
+        "beginExecutionTime": "2024-04-30T13:53:17.991Z", "cancellationTime": null,
         "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling": false,
         "tags": [], "name": "ionq-3ghz-job", "id": "00000000-0000-0000-0000-000000000001",
-        "providerId": "ionq", "target": "ionq.simulator", "creationTime": "2024-04-19T13:38:23.6921178+00:00",
-        "endExecutionTime": "2024-04-19T13:38:26.804Z", "costEstimate": {"currencyCode":
+        "providerId": "ionq", "target": "ionq.simulator", "creationTime": "2024-04-30T13:53:14.8948113+00:00",
+        "endExecutionTime": "2024-04-30T13:53:18.01Z", "costEstimate": {"currencyCode":
         "USD", "events": [{"dimensionId": "gs1q", "dimensionName": "1Q Gate Shot",
         "measureUnit": "1q gate shot", "amountBilled": 0.0, "amountConsumed": 0.0,
         "unitPrice": 0.0}, {"dimensionId": "gs2q", "dimensionName": "2Q Gate Shot",
@@ -582,7 +587,7 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '1718'
+      - '1717'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -602,7 +607,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.19.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
       x-ms-date:
-      - Fri, 19 Apr 2024 13:38:29 GMT
+      - Tue, 30 Apr 2024 13:53:20 GMT
       x-ms-range:
       - bytes=0-33554431
       x-ms-version:
@@ -624,7 +629,7 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-creation-time:
-      - Fri, 19 Apr 2024 13:38:25 GMT
+      - Tue, 30 Apr 2024 13:53:16 GMT
       x-ms-lease-state:
       - available
       x-ms-lease-status:
