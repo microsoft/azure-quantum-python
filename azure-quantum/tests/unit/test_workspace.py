@@ -318,6 +318,7 @@ class TestWorkspace(QuantumTestBase):
             target.name = "foo"
             target.refresh()
 
+    @pytest.mark.ionq
     @pytest.mark.live_test
     def test_workspace_get_targets_result_type(self):
         ws = self.create_workspace()
