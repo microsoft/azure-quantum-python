@@ -62,7 +62,7 @@ See [Sequence ids](#Sequence-ids) and [Non-deterministic Job ids and Session ids
 
 To prevent potentially sensitive information to be checked-in in the repository (like authentication tokens, access keys, etc) inside the recordings, we do several text replacements in the HTTP requests and responses in the VCR pipeline before they end-up persisted in the recorded files.
 
-The [QuantumTestBase.\_\_init\_\_ method](https://github.com/microsoft/azure-quantum-python/blob/0699fa59d73a73a6fe049922349c4d626e7d4a37/azure-quantum/tests/unit/common.py#L73) contains several rules (mostly regular expressions) that are applied in the HTTP requests and reponses via several recording and playback processors that are injected in the VCR HTTP pipeline.
+The [QuantumTestBase.\_\_init\_\_ method](https://github.com/microsoft/azure-quantum-python/blob/main/azure-quantum/tests/unit/common.py#L73) contains several rules (mostly regular expressions) that are applied in the HTTP requests and reponses via several recording and playback processors that are injected in the VCR HTTP pipeline.
 We use some common processors provided by the Azure SDK framework (including AccessTokenReplacer, InteractiveAccessTokenReplacer, RequestUrlNormalizer) but we also apply custom text replacement logic in URLs and HTTP Headers via the `process_request` and `process_response` methods and some other processors/filters found at the end of the file.
 
 ### Ability to Pause Recordings
@@ -88,14 +88,14 @@ if self.in_recording:
 By default, VCR does not allow the same request (identified by URI and HTTP Headers) to have multiple responses associated with it.
 For example, when a job is submitted and we want to fetch the job status, the HTTP request to get the job status is the same, but the response can be different, initially returning Status="In-Progress" and later returning Status="Completed".
 
-This limitation is solved by the test base class automatically injecting a `test-sequence-id` in the query string via the [CustomRecordingProcessor.\_append_sequence_id method](https://github.com/microsoft/azure-quantum-python/blob/0699fa59d73a73a6fe049922349c4d626e7d4a37/azure-quantum/tests/unit/common.py#L458).
+This limitation is solved by the test base class automatically injecting a `test-sequence-id` in the query string via the [CustomRecordingProcessor.\_append_sequence_id method](https://github.com/microsoft/azure-quantum-python/blob/main/azure-quantum/tests/unit/common.py#L458).
 
 ### Non-deterministic Job ids and Session ids
 
 By default, the Azure Quantum Python SDK automatically creates a random guid when creating a new job or session if an id is not specified.
 This non-deterministic behavior can cause problems when the test recordings are played-back and the ids in the recordings won't match the random ids created the by SDK when the tests run again.
 
-To mitigate this problem, the `CustomRecordingProcessor` automatically looks for guids (registered with the `register_guid_regex` method) in the HTTP requests and replace them with a deterministic and sequential guid via the [CustomRecordingProcessor.\_search_for_guids method](https://github.com/microsoft/azure-quantum-python/blob/0699fa59d73a73a6fe049922349c4d626e7d4a37/azure-quantum/tests/unit/common.py#L438) and the same mechanism to sanitize the recordings (regex replacement of URI, Headers and Body).
+To mitigate this problem, the `CustomRecordingProcessor` automatically looks for guids (registered with the `register_guid_regex` method) in the HTTP requests and replace them with a deterministic and sequential guid via the [CustomRecordingProcessor.\_search_for_guids method](https://github.com/microsoft/azure-quantum-python/blob/main/azure-quantum/tests/unit/common.py#L438) and the same mechanism to sanitize the recordings (regex replacement of URI, Headers and Body).
 
 ## Tests
 
