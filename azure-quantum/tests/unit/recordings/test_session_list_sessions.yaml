@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: client_id=PLACEHOLDER&grant_type=client_credentials&client_info=1&client_secret=PLACEHOLDER&scope=https%3A%2F%2Fquantum.microsoft.com%2F.default
+    body: client_id=PLACEHOLDER&grant_type=client_credentials&client_assertion=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsIng1dCI6IjBadFVKR185U3RwVVpmTHlxTDFHWGw0U1k1RT0ifQ.eyJhdWQiOiJodHRwczovL2xvZ2luLm1pY3Jvc29mdG9ubGluZS5jb20vNzJmOTg4YmYtODZmMS00MWFmLTkxYWItMmQ3Y2QwMTFkYjQ3L29hdXRoMi92Mi4wL3Rva2VuIiwiaXNzIjoiMGQyZjg1MTItN2E2ZS00NmI5LThmNmQtYTJiNDdhMTI1YjcxIiwic3ViIjoiMGQyZjg1MTItN2E2ZS00NmI5LThmNmQtYTJiNDdhMTI1YjcxIiwiZXhwIjoxNzE0NTEwMTI4LjEyOTc0OSwiaWF0IjoxNzE0NTA5NTI4LjEyOTc0OSwianRpIjoiOTEwMGEyODUtNGRlMS00YmIyLWEwNjQtZjYyMjFlZTIwMjI3In0.ksCWLfVNjR5yjnUXyuRiP2VwZPXPk4k1rxkEbwRs7GbZXiUyaLeriXoWY4aCg_VlkeXxUXvyi2fJhS1SVEMRBLHyk4IacXMXm-qA3xd5LKl7Igy0Sn9QXfmEdNzsENKLFzbds6he_Pq7aR3BwrIhySfGQm2LgwLRw0mtLrsfPczAdRbeNrga1R5komI-r7DOBpLMBbwiqikZpgFaNH7aY-iZQuEqj5IRUluCez6pPoBzKD3S9gkfluR4UzpK8Mn-S_BcijhsG9IAty9_vTA-QyYBD3B2-Kh1w4yraVKnbr6gQzSUgQ8X-PvlEINUP05GLUhkkbVqAP3A6INTglQWrA&client_info=1&client_assertion_type=urn%3Aietf%3Aparams%3Aoauth%3Aclient-assertion-type%3Ajwt-bearer&scope=https%3A%2F%2Fquantum.microsoft.com%2F.default
     headers:
       Accept:
       - application/json
@@ -9,7 +9,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '144'
+      - '1028'
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
@@ -26,21 +26,16 @@ interactions:
     uri: https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token
   response:
     body:
-      string: '{"error": "invalid_client", "error_description": "AADSTS7000215: Invalid
-        client secret provided. Ensure the secret being sent in the request is the
-        client secret value, not the client secret ID, for a secret added to app ''00000000-0000-0000-0000-000000000000''.
-        Trace ID: cfa16455-b7cf-4c3f-a430-54ef6c62a000 Correlation ID: 443e7582-fceb-4e21-b98f-d6ab5eb43445
-        Timestamp: 2024-04-30 10:30:17Z", "error_codes": [7000215], "timestamp": "2024-04-30
-        10:30:17Z", "trace_id": "cfa16455-b7cf-4c3f-a430-54ef6c62a000", "correlation_id":
-        "443e7582-fceb-4e21-b98f-d6ab5eb43445", "error_uri": "https://login.microsoftonline.com/error?code=7000215"}'
+      string: '{"token_type": "Bearer", "expires_in": 1746045528, "ext_expires_in":
+        1746045528, "refresh_in": 31536000, "access_token": "PLACEHOLDER"}'
     headers:
       content-length:
-      - '636'
+      - '135'
       content-type:
       - application/json; charset=utf-8
     status:
-      code: 401
-      message: Unauthorized
+      code: 200
+      message: OK
 - request:
     body: null
     headers:
@@ -1652,13 +1647,63 @@ interactions:
         "id": "92331889-06dc-11ef-86f0-b07d64eb437f", "providerId": "quantinuum",
         "target": "quantinuum.sim.h1-1e", "creationTime": "2024-04-30T10:29:49.4408364Z",
         "endExecutionTime": "2024-04-30T10:30:14.2873828Z", "costEstimate": {"currencyCode":
+        "USD", "events": [], "estimatedTotal": 0.0}, "itemType": "Session"}, {"status":
+        "Succeeded", "jobFailurePolicy": "Abort", "name": "session-1fdac98c-06fd-11ef-b68b-b07d64eb437f",
+        "id": "1fdac98c-06fd-11ef-b68b-b07d64eb437f", "providerId": "ionq", "target":
+        "ionq.simulator", "creationTime": "2024-04-30T14:22:51.2912502Z", "endExecutionTime":
+        "2024-04-30T14:23:06.3764794Z", "costEstimate": {"currencyCode": "USD", "events":
+        [], "estimatedTotal": 0.0}, "itemType": "Session"}, {"status": "Succeeded",
+        "jobFailurePolicy": "Abort", "name": "session-2b58b8d4-06fd-11ef-ba34-b07d64eb437f",
+        "id": "2b58b8d4-06fd-11ef-ba34-b07d64eb437f", "providerId": "quantinuum",
+        "target": "quantinuum.sim.h1-1e", "creationTime": "2024-04-30T14:23:10.3352163Z",
+        "endExecutionTime": "2024-04-30T14:23:34.2564424Z", "costEstimate": {"currencyCode":
+        "USD", "events": [], "estimatedTotal": 0.0}, "itemType": "Session"}, {"status":
+        "Succeeded", "jobFailurePolicy": "Abort", "name": "session-3f8cf3b8-06fd-11ef-8b9b-b07d64eb437f",
+        "id": "3f8cf3b8-06fd-11ef-8b9b-b07d64eb437f", "providerId": "ionq", "target":
+        "ionq.simulator", "creationTime": "2024-04-30T14:23:44.2377859Z", "endExecutionTime":
+        "2024-04-30T14:23:55.9020879Z", "costEstimate": {"currencyCode": "USD", "events":
+        [], "estimatedTotal": 0.0}, "itemType": "Session"}, {"status": "Succeeded",
+        "jobFailurePolicy": "Abort", "name": "session-4a735790-06fd-11ef-8e9a-b07d64eb437f",
+        "id": "4a735790-06fd-11ef-8e9a-b07d64eb437f", "providerId": "quantinuum",
+        "target": "quantinuum.sim.h1-1e", "creationTime": "2024-04-30T14:24:02.727593Z",
+        "endExecutionTime": "2024-04-30T14:24:24.0332289Z", "costEstimate": {"currencyCode":
+        "USD", "events": [], "estimatedTotal": 0.0}, "itemType": "Session"}, {"status":
+        "Succeeded", "jobFailurePolicy": "Abort", "name": "session-5ccc654e-06fd-11ef-8c57-b07d64eb437f",
+        "id": "5ccc654e-06fd-11ef-8c57-b07d64eb437f", "providerId": "quantinuum",
+        "target": "quantinuum.sim.h1-1e", "creationTime": "2024-04-30T14:24:33.3089827Z",
+        "endExecutionTime": "2024-04-30T14:24:56.9601093Z", "costEstimate": {"currencyCode":
+        "USD", "events": [], "estimatedTotal": 0.0}, "itemType": "Session"}, {"status":
+        "Succeeded", "jobFailurePolicy": "Abort", "name": "session-4b7e4805-0731-11ef-91a4-b07d64eb437f",
+        "id": "4b7e4805-0731-11ef-91a4-b07d64eb437f", "providerId": "ionq", "target":
+        "ionq.simulator", "creationTime": "2024-04-30T20:36:18.2011355Z", "endExecutionTime":
+        "2024-04-30T20:36:31.4398325Z", "costEstimate": {"currencyCode": "USD", "events":
+        [], "estimatedTotal": 0.0}, "itemType": "Session"}, {"status": "Succeeded",
+        "jobFailurePolicy": "Abort", "name": "session-55507a3a-0731-11ef-965a-b07d64eb437f",
+        "id": "55507a3a-0731-11ef-965a-b07d64eb437f", "providerId": "quantinuum",
+        "target": "quantinuum.sim.h1-1e", "creationTime": "2024-04-30T20:36:34.8557609Z",
+        "endExecutionTime": "2024-04-30T20:37:06.9665064Z", "costEstimate": {"currencyCode":
+        "USD", "events": [], "estimatedTotal": 0.0}, "itemType": "Session"}, {"status":
+        "Succeeded", "jobFailurePolicy": "Abort", "name": "session-6e00d288-0731-11ef-9be7-b07d64eb437f",
+        "id": "6e00d288-0731-11ef-9be7-b07d64eb437f", "providerId": "ionq", "target":
+        "ionq.simulator", "creationTime": "2024-04-30T20:37:16.0966668Z", "endExecutionTime":
+        "2024-04-30T20:37:26.9838483Z", "costEstimate": {"currencyCode": "USD", "events":
+        [], "estimatedTotal": 0.0}, "itemType": "Session"}, {"status": "Succeeded",
+        "jobFailurePolicy": "Abort", "name": "session-77457095-0731-11ef-bb51-b07d64eb437f",
+        "id": "77457095-0731-11ef-bb51-b07d64eb437f", "providerId": "quantinuum",
+        "target": "quantinuum.sim.h1-1e", "creationTime": "2024-04-30T20:37:31.9936402Z",
+        "endExecutionTime": "2024-04-30T20:38:05.8464882Z", "costEstimate": {"currencyCode":
+        "USD", "events": [], "estimatedTotal": 0.0}, "itemType": "Session"}, {"status":
+        "Succeeded", "jobFailurePolicy": "Abort", "name": "session-8f0e888d-0731-11ef-8f53-b07d64eb437f",
+        "id": "8f0e888d-0731-11ef-8f53-b07d64eb437f", "providerId": "quantinuum",
+        "target": "quantinuum.sim.h1-1e", "creationTime": "2024-04-30T20:38:11.5554122Z",
+        "endExecutionTime": "2024-04-30T20:38:46.312493Z", "costEstimate": {"currencyCode":
         "USD", "events": [], "estimatedTotal": 0.0}, "itemType": "Session"}], "nextLink":
         null}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '137268'
+      - '141408'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
