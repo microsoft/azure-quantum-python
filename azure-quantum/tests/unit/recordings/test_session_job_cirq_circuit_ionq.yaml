@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: client_id=PLACEHOLDER&grant_type=client_credentials&client_assertion=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsIng1dCI6IjBadFVKR185U3RwVVpmTHlxTDFHWGw0U1k1RT0ifQ.eyJhdWQiOiJodHRwczovL2xvZ2luLm1pY3Jvc29mdG9ubGluZS5jb20vNzJmOTg4YmYtODZmMS00MWFmLTkxYWItMmQ3Y2QwMTFkYjQ3L29hdXRoMi92Mi4wL3Rva2VuIiwiaXNzIjoiMGQyZjg1MTItN2E2ZS00NmI5LThmNmQtYTJiNDdhMTI1YjcxIiwic3ViIjoiMGQyZjg1MTItN2E2ZS00NmI5LThmNmQtYTJiNDdhMTI1YjcxIiwiZXhwIjoxNzE0NTA5OTc2LjA4OTk2NywiaWF0IjoxNzE0NTA5Mzc2LjA4OTk2NywianRpIjoiNzliZWQ5ZmQtODA4Yy00MGNiLWExOWEtOGIzNTNkMThjOWI2In0.OU375xIFYOn_CXpl0fYc7Ov7a3R83SVFMrPuXw9bxUdu3D-dv7ZA3SqZRCkwjdSnGvV2MR3X14s004mH20nJXjzSQsuWXL5G6s-Hpu662O2hdqGVbHukxd7RqAXNKHBP297X8ayV8LCNg_EUKwphg6z8qxtLU0N5NAU7bLCgIR4t0Fj5KSryp_d8LnQH3YZmgXpkFfGemMglMilt94hra4OFaR45sJvoa0RYmI4jv2otJ18Sx09G9nAc9kkG8zaehOY5-YVHeeQyyGfVokbLzVu0vIbicmuvNpzRzlHTOUcsCKT_kU9-S6HuSedt0UIVcQO5kz124rNtfkkn5ctyiw&client_info=1&client_assertion_type=urn%3Aietf%3Aparams%3Aoauth%3Aclient-assertion-type%3Ajwt-bearer&scope=https%3A%2F%2Fquantum.microsoft.com%2F.default
+    body: client_id=PLACEHOLDER&grant_type=client_credentials&client_assertion=PLACEHOLDER&client_info=1&client_assertion_type=PLACEHOLDER&scope=https%3A%2F%2Fquantum.microsoft.com%2F.default
     headers:
       Accept:
       - application/json
@@ -9,7 +9,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '1028'
+      - '181'
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
@@ -26,8 +26,8 @@ interactions:
     uri: https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token
   response:
     body:
-      string: '{"token_type": "Bearer", "expires_in": 1746045376, "ext_expires_in":
-        1746045376, "refresh_in": 31536000, "access_token": "PLACEHOLDER"}'
+      string: '{"token_type": "Bearer", "expires_in": 1746122642, "ext_expires_in":
+        1746122642, "refresh_in": 31536000, "access_token": "PLACEHOLDER"}'
     headers:
       content-length:
       - '135'
@@ -55,18 +55,18 @@ interactions:
         "targets": [{"id": "microsoft.dft", "currentAvailability": "Available", "averageQueueTime":
         0, "statusPage": null}]}, {"id": "ionq", "currentAvailability": "Degraded",
         "targets": [{"id": "ionq.qpu", "currentAvailability": "Available", "averageQueueTime":
-        395764, "statusPage": "https://status.ionq.co"}, {"id": "ionq.qpu.aria-1",
-        "currentAvailability": "Unavailable", "averageQueueTime": 707382, "statusPage":
+        501293, "statusPage": "https://status.ionq.co"}, {"id": "ionq.qpu.aria-1",
+        "currentAvailability": "Unavailable", "averageQueueTime": 737920, "statusPage":
         "https://status.ionq.co"}, {"id": "ionq.qpu.aria-2", "currentAvailability":
         "Unavailable", "averageQueueTime": 0, "statusPage": "https://status.ionq.co"},
         {"id": "ionq.simulator", "currentAvailability": "Available", "averageQueueTime":
-        1, "statusPage": "https://status.ionq.co"}]}, {"id": "microsoft-qc", "currentAvailability":
+        2, "statusPage": "https://status.ionq.co"}]}, {"id": "microsoft-qc", "currentAvailability":
         "Available", "targets": [{"id": "microsoft.estimator", "currentAvailability":
         "Available", "averageQueueTime": 0, "statusPage": null}]}, {"id": "pasqal",
-        "currentAvailability": "Available", "targets": [{"id": "pasqal.sim.emu-tn",
-        "currentAvailability": "Available", "averageQueueTime": 278, "statusPage":
+        "currentAvailability": "Degraded", "targets": [{"id": "pasqal.sim.emu-tn",
+        "currentAvailability": "Available", "averageQueueTime": 256, "statusPage":
         "https://pasqal.com"}, {"id": "pasqal.qpu.fresnel", "currentAvailability":
-        "Available", "averageQueueTime": 19911, "statusPage": "https://pasqal.com"}]},
+        "Degraded", "averageQueueTime": 0, "statusPage": "https://pasqal.com"}]},
         {"id": "rigetti", "currentAvailability": "Degraded", "targets": [{"id": "rigetti.sim.qvm",
         "currentAvailability": "Available", "averageQueueTime": 5, "statusPage": "https://rigetti.statuspage.io/"},
         {"id": "rigetti.qpu.ankaa-2", "currentAvailability": "Degraded", "averageQueueTime":
@@ -76,43 +76,43 @@ interactions:
         "qci.machine1", "currentAvailability": "Available", "averageQueueTime": 1,
         "statusPage": "https://quantumcircuits.com"}, {"id": "qci.simulator.noisy",
         "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": "https://quantumcircuits.com"}]},
-        {"id": "quantinuum", "currentAvailability": "Degraded", "targets": [{"id":
-        "quantinuum.qpu.h1-1", "currentAvailability": "Degraded", "averageQueueTime":
-        0, "statusPage": "https://www.quantinuum.com/hardware/h1"}, {"id": "quantinuum.sim.h1-1sc",
-        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        {"id": "quantinuum", "currentAvailability": "Available", "targets": [{"id":
+        "quantinuum.qpu.h1-1", "currentAvailability": "Available", "averageQueueTime":
+        26106, "statusPage": "https://www.quantinuum.com/hardware/h1"}, {"id": "quantinuum.sim.h1-1sc",
+        "currentAvailability": "Available", "averageQueueTime": 4, "statusPage": "https://www.quantinuum.com/hardware/h1"},
         {"id": "quantinuum.sim.h1-1e", "currentAvailability": "Available", "averageQueueTime":
-        3591, "statusPage": "https://www.quantinuum.com/hardware/h1"}, {"id": "quantinuum.qpu.h2-1",
-        "currentAvailability": "Degraded", "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h2"},
-        {"id": "quantinuum.sim.h2-1sc", "currentAvailability": "Available", "averageQueueTime":
-        1, "statusPage": "https://www.quantinuum.com/hardware/h2"}, {"id": "quantinuum.sim.h2-1e",
-        "currentAvailability": "Available", "averageQueueTime": 678, "statusPage":
-        "https://www.quantinuum.com/hardware/h2"}, {"id": "quantinuum.sim.h1-1sc-preview",
-        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        5, "statusPage": "https://www.quantinuum.com/hardware/h1"}, {"id": "quantinuum.qpu.h2-1",
+        "currentAvailability": "Available", "averageQueueTime": 349980, "statusPage":
+        "https://www.quantinuum.com/hardware/h2"}, {"id": "quantinuum.sim.h2-1sc",
+        "currentAvailability": "Available", "averageQueueTime": 1, "statusPage": "https://www.quantinuum.com/hardware/h2"},
+        {"id": "quantinuum.sim.h2-1e", "currentAvailability": "Available", "averageQueueTime":
+        913, "statusPage": "https://www.quantinuum.com/hardware/h2"}, {"id": "quantinuum.sim.h1-1sc-preview",
+        "currentAvailability": "Available", "averageQueueTime": 4, "statusPage": "https://www.quantinuum.com/hardware/h1"},
         {"id": "quantinuum.sim.h1-1e-preview", "currentAvailability": "Available",
-        "averageQueueTime": 3591, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        "averageQueueTime": 5, "statusPage": "https://www.quantinuum.com/hardware/h1"},
         {"id": "quantinuum.sim.h1-2e-preview", "currentAvailability": "Available",
-        "averageQueueTime": 8176, "statusPage": "https://www.quantinuum.com/hardware/h1"},
-        {"id": "quantinuum.qpu.h1-1-preview", "currentAvailability": "Degraded", "averageQueueTime":
-        0, "statusPage": "https://www.quantinuum.com/hardware/h1"}]}, {"id": "Microsoft.Test",
-        "currentAvailability": "Available", "targets": [{"id": "echo-rigetti", "currentAvailability":
-        "Available", "averageQueueTime": 1, "statusPage": ""}, {"id": "echo-quantinuum",
+        "averageQueueTime": 27901, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        {"id": "quantinuum.qpu.h1-1-preview", "currentAvailability": "Available",
+        "averageQueueTime": 26106, "statusPage": "https://www.quantinuum.com/hardware/h1"}]},
+        {"id": "Microsoft.Test", "currentAvailability": "Available", "targets": [{"id":
+        "echo-rigetti", "currentAvailability": "Available", "averageQueueTime": 1,
+        "statusPage": ""}, {"id": "echo-quantinuum", "currentAvailability": "Available",
+        "averageQueueTime": 1, "statusPage": ""}, {"id": "echo-qci", "currentAvailability":
+        "Available", "averageQueueTime": 1, "statusPage": ""}, {"id": "echo-ionq",
         "currentAvailability": "Available", "averageQueueTime": 1, "statusPage": ""},
-        {"id": "echo-qci", "currentAvailability": "Available", "averageQueueTime":
-        1, "statusPage": ""}, {"id": "echo-ionq", "currentAvailability": "Available",
-        "averageQueueTime": 1, "statusPage": ""}, {"id": "echo-aquarius", "currentAvailability":
-        "Available", "averageQueueTime": 1, "statusPage": ""}, {"id": "sparse-sim-rigetti",
+        {"id": "echo-aquarius", "currentAvailability": "Available", "averageQueueTime":
+        1, "statusPage": ""}, {"id": "sparse-sim-rigetti", "currentAvailability":
+        "Available", "averageQueueTime": 1, "statusPage": ""}, {"id": "sparse-sim-quantinuum",
         "currentAvailability": "Available", "averageQueueTime": 1, "statusPage": ""},
-        {"id": "sparse-sim-quantinuum", "currentAvailability": "Available", "averageQueueTime":
-        1, "statusPage": ""}, {"id": "sparse-sim-qci", "currentAvailability": "Available",
-        "averageQueueTime": 1, "statusPage": ""}, {"id": "sparse-sim-ionq", "currentAvailability":
-        "Available", "averageQueueTime": 1, "statusPage": ""}, {"id": "echo-output",
-        "currentAvailability": "Available", "averageQueueTime": 1, "statusPage": ""}]}],
-        "nextLink": null}'
+        {"id": "sparse-sim-qci", "currentAvailability": "Available", "averageQueueTime":
+        1, "statusPage": ""}, {"id": "sparse-sim-ionq", "currentAvailability": "Available",
+        "averageQueueTime": 1, "statusPage": ""}, {"id": "echo-output", "currentAvailability":
+        "Available", "averageQueueTime": 1, "statusPage": ""}]}], "nextLink": null}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '4766'
+      - '4772'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -142,7 +142,7 @@ interactions:
     body:
       string: '{"status": "Waiting", "jobFailurePolicy": "Abort", "name": "session-00000000-0000-0000-0000-000000000001",
         "id": "00000000-0000-0000-0000-000000000001", "providerId": "ionq", "target":
-        "ionq.simulator", "creationTime": "2024-04-30T20:36:18.2011355Z", "endExecutionTime":
+        "ionq.simulator", "creationTime": "2024-05-01T18:04:05.4262806Z", "endExecutionTime":
         null, "costEstimate": null, "itemType": "Session"}'
     headers:
       connection:
@@ -157,7 +157,7 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: client_id=PLACEHOLDER&grant_type=client_credentials&client_assertion=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsIng1dCI6IjBadFVKR185U3RwVVpmTHlxTDFHWGw0U1k1RT0ifQ.eyJhdWQiOiJodHRwczovL2xvZ2luLm1pY3Jvc29mdG9ubGluZS5jb20vNzJmOTg4YmYtODZmMS00MWFmLTkxYWItMmQ3Y2QwMTFkYjQ3L29hdXRoMi92Mi4wL3Rva2VuIiwiaXNzIjoiMGQyZjg1MTItN2E2ZS00NmI5LThmNmQtYTJiNDdhMTI1YjcxIiwic3ViIjoiMGQyZjg1MTItN2E2ZS00NmI5LThmNmQtYTJiNDdhMTI1YjcxIiwiZXhwIjoxNzE0NTA5OTc4LjE0MTgzNDMsImlhdCI6MTcxNDUwOTM3OC4xNDE4MzQzLCJqdGkiOiJhODM1NjdlZi02YzIxLTQzNTQtODM4ZS1lODkyNmJjMDVlNTgifQ.YMLJK2kDqISf_cwNtP4mnf8N_s-1ITxZHfkvDLcNfIRUhF1HkxVa_mBZZZIQdsIPjct4KmQS-hDlVYzDT5SrIKhVsHWNyQ_nmpcSJQ5Kv-DZ04qb-a_an_rcpEPgJg6E_uJmskq3RgV9rLRiRF0EVW6M0BaRX8aZKGGgBaDW3bw-c2COlAok9Ygq5_KoGZkXgmF5QUcZLAsnYR8Ca0SVJQyg_V8FTzJN5ckDKnEfsEDeORCxZuYYtmwZgJeXCUfLl597fgmeFYJNn1-IxxjWCRPGCbv-nAYCUoHyTRx6iaL8nn79y8Um0-zEq22AIOI5AGhOLAXWqZVWZqvq4vr02A&client_info=1&client_assertion_type=urn%3Aietf%3Aparams%3Aoauth%3Aclient-assertion-type%3Ajwt-bearer&scope=https%3A%2F%2Fquantum.microsoft.com%2F.default
+    body: client_id=PLACEHOLDER&grant_type=client_credentials&client_assertion=PLACEHOLDER&client_info=1&client_assertion_type=PLACEHOLDER&scope=https%3A%2F%2Fquantum.microsoft.com%2F.default
     headers:
       Accept:
       - application/json
@@ -166,7 +166,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '1031'
+      - '181'
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
@@ -183,8 +183,8 @@ interactions:
     uri: https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token
   response:
     body:
-      string: '{"token_type": "Bearer", "expires_in": 1746045378, "ext_expires_in":
-        1746045378, "refresh_in": 31536000, "access_token": "PLACEHOLDER"}'
+      string: '{"token_type": "Bearer", "expires_in": 1746122646, "ext_expires_in":
+        1746122646, "refresh_in": 31536000, "access_token": "PLACEHOLDER"}'
     headers:
       content-length:
       - '135'
@@ -237,7 +237,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.19.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
       x-ms-date:
-      - Tue, 30 Apr 2024 20:36:19 GMT
+      - Wed, 01 May 2024 18:04:07 GMT
       x-ms-version:
       - '2023-11-03'
     method: GET
@@ -245,7 +245,7 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerNotFound</Code><Message>The
-        specified container does not exist.\nRequestId:0df4967b-801e-0002-783e-9b9278000000\nTime:2024-04-30T20:36:20.8579768Z</Message></Error>"
+        specified container does not exist.\nRequestId:b14e2e0c-401e-0022-70f1-9be9df000000\nTime:2024-05-01T18:04:10.0753408Z</Message></Error>"
     headers:
       content-length:
       - '223'
@@ -270,7 +270,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.19.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
       x-ms-date:
-      - Tue, 30 Apr 2024 20:36:20 GMT
+      - Wed, 01 May 2024 18:04:09 GMT
       x-ms-version:
       - '2023-11-03'
     method: PUT
@@ -298,7 +298,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.19.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
       x-ms-date:
-      - Tue, 30 Apr 2024 20:36:20 GMT
+      - Wed, 01 May 2024 18:04:09 GMT
       x-ms-version:
       - '2023-11-03'
     method: GET
@@ -337,7 +337,7 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-date:
-      - Tue, 30 Apr 2024 20:36:21 GMT
+      - Wed, 01 May 2024 18:04:10 GMT
       x-ms-version:
       - '2023-11-03'
     method: PUT
@@ -387,13 +387,13 @@ interactions:
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         null, "errorData": null, "isCancelling": false, "tags": [], "name": "Job 1",
         "id": "00000000-0000-0000-0000-000000000002", "providerId": "ionq", "target":
-        "ionq.simulator", "creationTime": "2024-04-30T20:36:22.350469+00:00", "endExecutionTime":
+        "ionq.simulator", "creationTime": "2024-05-01T18:04:11.7122158+00:00", "endExecutionTime":
         null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '1221'
+      - '1222'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -402,7 +402,7 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: client_id=PLACEHOLDER&grant_type=client_credentials&client_assertion=eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsIng1dCI6IjBadFVKR185U3RwVVpmTHlxTDFHWGw0U1k1RT0ifQ.eyJhdWQiOiJodHRwczovL2xvZ2luLm1pY3Jvc29mdG9ubGluZS5jb20vNzJmOTg4YmYtODZmMS00MWFmLTkxYWItMmQ3Y2QwMTFkYjQ3L29hdXRoMi92Mi4wL3Rva2VuIiwiaXNzIjoiMGQyZjg1MTItN2E2ZS00NmI5LThmNmQtYTJiNDdhMTI1YjcxIiwic3ViIjoiMGQyZjg1MTItN2E2ZS00NmI5LThmNmQtYTJiNDdhMTI1YjcxIiwiZXhwIjoxNzE0NTA5OTgyLjQyMjAxNTcsImlhdCI6MTcxNDUwOTM4Mi40MjIwMTU3LCJqdGkiOiI5NjhhMjI1MC0yNzNjLTQzN2UtYjM4ZS1mMzNmMzM1Mzk3ODYifQ.mp7W5RueGLNKoQ63O-YdUMzWRZLmBOJHXcegdHkgOW6wiht8YxU9bE7vBcDe4mDbCXk5VV2PlSqcOekY5CtRdC8LrmgEvwhX-kG_VteZ4loGRY_JHlA6JTlP40h7er29Cp6q6ltYOmABwjQ9wUHvCny9L9vLbnnCqe9vC2GumPfEYTXp36VaRGVp6f5kwOlPQNz4epYq3Iu74tL8xCAxj3zuYtmKEJ7JoRTu69W9Bmx32DEl8nh7ABe9dYYUHgxo1nAcPk_x6hu7HHCzzdog7yov2ga7bNeFAExE5WT5L2XRF1yTunJax3TDVckv3T9V1EYJNXJHCuPLClhr3IX3Gw&client_info=1&client_assertion_type=urn%3Aietf%3Aparams%3Aoauth%3Aclient-assertion-type%3Ajwt-bearer&scope=https%3A%2F%2Fquantum.microsoft.com%2F.default
+    body: client_id=PLACEHOLDER&grant_type=client_credentials&client_assertion=PLACEHOLDER&client_info=1&client_assertion_type=PLACEHOLDER&scope=https%3A%2F%2Fquantum.microsoft.com%2F.default
     headers:
       Accept:
       - application/json
@@ -411,7 +411,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '1031'
+      - '181'
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
@@ -428,8 +428,8 @@ interactions:
     uri: https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token
   response:
     body:
-      string: '{"token_type": "Bearer", "expires_in": 1746045382, "ext_expires_in":
-        1746045382, "refresh_in": 31536000, "access_token": "PLACEHOLDER"}'
+      string: '{"token_type": "Bearer", "expires_in": 1746122652, "ext_expires_in":
+        1746122652, "refresh_in": 31536000, "access_token": "PLACEHOLDER"}'
     headers:
       content-length:
       - '135'
@@ -462,13 +462,13 @@ interactions:
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         {"count": 1}, "errorData": null, "isCancelling": false, "tags": [], "name":
         "Job 1", "id": "00000000-0000-0000-0000-000000000002", "providerId": "ionq",
-        "target": "ionq.simulator", "creationTime": "2024-04-30T20:36:22.350469+00:00",
+        "target": "ionq.simulator", "creationTime": "2024-05-01T18:04:11.7122158+00:00",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '1381'
+      - '1382'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -520,7 +520,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.19.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
       x-ms-date:
-      - Tue, 30 Apr 2024 20:36:23 GMT
+      - Wed, 01 May 2024 18:04:13 GMT
       x-ms-version:
       - '2023-11-03'
     method: GET
@@ -528,7 +528,7 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerNotFound</Code><Message>The
-        specified container does not exist.\nRequestId:eaf41985-d01e-000f-513e-9b5aac000000\nTime:2024-04-30T20:36:25.4127503Z</Message></Error>"
+        specified container does not exist.\nRequestId:be842e42-301e-0028-03f1-9b4d68000000\nTime:2024-05-01T18:04:15.8613448Z</Message></Error>"
     headers:
       content-length:
       - '223'
@@ -553,7 +553,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.19.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
       x-ms-date:
-      - Tue, 30 Apr 2024 20:36:24 GMT
+      - Wed, 01 May 2024 18:04:14 GMT
       x-ms-version:
       - '2023-11-03'
     method: PUT
@@ -581,7 +581,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.19.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
       x-ms-date:
-      - Tue, 30 Apr 2024 20:36:24 GMT
+      - Wed, 01 May 2024 18:04:15 GMT
       x-ms-version:
       - '2023-11-03'
     method: GET
@@ -620,7 +620,7 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-date:
-      - Tue, 30 Apr 2024 20:36:25 GMT
+      - Wed, 01 May 2024 18:04:16 GMT
       x-ms-version:
       - '2023-11-03'
     method: PUT
@@ -670,13 +670,13 @@ interactions:
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         null, "errorData": null, "isCancelling": false, "tags": [], "name": "Job 2",
         "id": "00000000-0000-0000-0000-000000000003", "providerId": "ionq", "target":
-        "ionq.simulator", "creationTime": "2024-04-30T20:36:26.7355275+00:00", "endExecutionTime":
+        "ionq.simulator", "creationTime": "2024-05-01T18:04:17.914696+00:00", "endExecutionTime":
         null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '1222'
+      - '1221'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -703,52 +703,14 @@ interactions:
         "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000002/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3DJob%2B1-00000000-0000-0000-0000-000000000002.input.json",
         "inputDataFormat": "ionq.circuit.v1", "inputParams": {"shots": 500}, "metadata":
         {"measurement0": "q0\u001f0\u001eq1\u001f1", "qubits": "2"}, "sessionId":
-        "00000000-0000-0000-0000-000000000001", "status": "Waiting", "jobType": "QuantumComputing",
-        "outputDataFormat": "ionq.quantum-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000002/outputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3DJob%2B1-00000000-0000-0000-0000-000000000002.output.json",
-        "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
-        {"count": 1}, "errorData": null, "isCancelling": false, "tags": [], "name":
-        "Job 1", "id": "00000000-0000-0000-0000-000000000002", "providerId": "ionq",
-        "target": "ionq.simulator", "creationTime": "2024-04-30T20:36:22.350469+00:00",
-        "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
-    headers:
-      connection:
-      - keep-alive
-      content-length:
-      - '1381'
-      content-type:
-      - application/json; charset=utf-8
-      transfer-encoding:
-      - chunked
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - testapp azsdk-python-quantum/0.0.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
-    method: GET
-    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000002?api-version=2022-09-12-preview&test-sequence-id=3
-  response:
-    body:
-      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000002?sv=PLACEHOLDER&sr=c&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcwl",
-        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000002/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3DJob%2B1-00000000-0000-0000-0000-000000000002.input.json",
-        "inputDataFormat": "ionq.circuit.v1", "inputParams": {"shots": 500}, "metadata":
-        {"measurement0": "q0\u001f0\u001eq1\u001f1", "qubits": "2"}, "sessionId":
         "00000000-0000-0000-0000-000000000001", "status": "Succeeded", "jobType":
         "QuantumComputing", "outputDataFormat": "ionq.quantum-results.v1", "outputDataUri":
         "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000002/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3DJob%2B1-00000000-0000-0000-0000-000000000002.output.json",
-        "beginExecutionTime": "2024-04-30T20:36:25.649Z", "cancellationTime": null,
+        "beginExecutionTime": "2024-05-01T18:04:15.2Z", "cancellationTime": null,
         "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling": false,
         "tags": [], "name": "Job 1", "id": "00000000-0000-0000-0000-000000000002",
-        "providerId": "ionq", "target": "ionq.simulator", "creationTime": "2024-04-30T20:36:22.350469+00:00",
-        "endExecutionTime": "2024-04-30T20:36:25.669Z", "costEstimate": {"currencyCode":
+        "providerId": "ionq", "target": "ionq.simulator", "creationTime": "2024-05-01T18:04:11.7122158+00:00",
+        "endExecutionTime": "2024-05-01T18:04:15.24Z", "costEstimate": {"currencyCode":
         "USD", "events": [{"dimensionId": "gs1q", "dimensionName": "1Q Gate Shot",
         "measureUnit": "1q gate shot", "amountBilled": 0.0, "amountConsumed": 0.0,
         "unitPrice": 0.0}, {"dimensionId": "gs2q", "dimensionName": "2Q Gate Shot",
@@ -758,7 +720,7 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '1786'
+      - '1784'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -783,7 +745,7 @@ interactions:
     body:
       string: '{"status": "Executing", "jobFailurePolicy": "Abort", "name": "session-00000000-0000-0000-0000-000000000001",
         "id": "00000000-0000-0000-0000-000000000001", "providerId": "ionq", "target":
-        "ionq.simulator", "creationTime": "2024-04-30T20:36:18.2011355Z", "endExecutionTime":
+        "ionq.simulator", "creationTime": "2024-05-01T18:04:05.4262806Z", "endExecutionTime":
         null, "costEstimate": {"currencyCode": "USD", "events": [], "estimatedTotal":
         0.0}, "itemType": "Session"}'
     headers:
@@ -817,7 +779,7 @@ interactions:
     body:
       string: '{"status": "Executing", "jobFailurePolicy": "Abort", "name": "session-00000000-0000-0000-0000-000000000001",
         "id": "00000000-0000-0000-0000-000000000001", "providerId": "ionq", "target":
-        "ionq.simulator", "creationTime": "2024-04-30T20:36:18.2011355Z", "endExecutionTime":
+        "ionq.simulator", "creationTime": "2024-05-01T18:04:05.4262806Z", "endExecutionTime":
         null, "costEstimate": {"currencyCode": "USD", "events": [], "estimatedTotal":
         0.0}, "itemType": "Session"}'
     headers:
@@ -849,7 +811,7 @@ interactions:
     body:
       string: '{"status": "Executing", "jobFailurePolicy": "Abort", "name": "session-00000000-0000-0000-0000-000000000001",
         "id": "00000000-0000-0000-0000-000000000001", "providerId": "ionq", "target":
-        "ionq.simulator", "creationTime": "2024-04-30T20:36:18.2011355Z", "endExecutionTime":
+        "ionq.simulator", "creationTime": "2024-05-01T18:04:05.4262806Z", "endExecutionTime":
         null, "costEstimate": {"currencyCode": "USD", "events": [], "estimatedTotal":
         0.0}, "itemType": "Session"}'
     headers:
@@ -886,11 +848,11 @@ interactions:
         "00000000-0000-0000-0000-000000000001", "status": "Succeeded", "jobType":
         "QuantumComputing", "outputDataFormat": "ionq.quantum-results.v1", "outputDataUri":
         "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000002/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcw",
-        "beginExecutionTime": "2024-04-30T20:36:25.649Z", "cancellationTime": null,
+        "beginExecutionTime": "2024-05-01T18:04:15.2Z", "cancellationTime": null,
         "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling": false,
         "tags": [], "name": "Job 1", "id": "00000000-0000-0000-0000-000000000002",
-        "providerId": "ionq", "target": "ionq.simulator", "creationTime": "2024-04-30T20:36:22.350469Z",
-        "endExecutionTime": "2024-04-30T20:36:25.669Z", "costEstimate": {"currencyCode":
+        "providerId": "ionq", "target": "ionq.simulator", "creationTime": "2024-05-01T18:04:11.7122158Z",
+        "endExecutionTime": "2024-05-01T18:04:15.24Z", "costEstimate": {"currencyCode":
         "USD", "events": [{"dimensionId": "gs1q", "dimensionName": "1Q Gate Shot",
         "measureUnit": "1q gate shot", "amountBilled": 0.0, "amountConsumed": 0.0,
         "unitPrice": 0.0}, {"dimensionId": "gs2q", "dimensionName": "2Q Gate Shot",
@@ -905,14 +867,14 @@ interactions:
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         {"count": 1}, "errorData": null, "isCancelling": false, "tags": [], "name":
         "Job 2", "id": "00000000-0000-0000-0000-000000000003", "providerId": "ionq",
-        "target": "ionq.simulator", "creationTime": "2024-04-30T20:36:26.7355275Z",
+        "target": "ionq.simulator", "creationTime": "2024-05-01T18:04:17.914696Z",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}], "nextLink":
         null}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '2874'
+      - '2871'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -932,7 +894,7 @@ interactions:
       User-Agent:
       - testapp azsdk-python-quantum/0.0.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
     method: GET
-    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000002?api-version=2022-09-12-preview&test-sequence-id=4
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000002?api-version=2022-09-12-preview&test-sequence-id=3
   response:
     body:
       string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000002?sv=PLACEHOLDER&sr=c&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcwl",
@@ -942,11 +904,11 @@ interactions:
         "00000000-0000-0000-0000-000000000001", "status": "Succeeded", "jobType":
         "QuantumComputing", "outputDataFormat": "ionq.quantum-results.v1", "outputDataUri":
         "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000002/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3DJob%2B1-00000000-0000-0000-0000-000000000002.output.json",
-        "beginExecutionTime": "2024-04-30T20:36:25.649Z", "cancellationTime": null,
+        "beginExecutionTime": "2024-05-01T18:04:15.2Z", "cancellationTime": null,
         "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling": false,
         "tags": [], "name": "Job 1", "id": "00000000-0000-0000-0000-000000000002",
-        "providerId": "ionq", "target": "ionq.simulator", "creationTime": "2024-04-30T20:36:22.350469+00:00",
-        "endExecutionTime": "2024-04-30T20:36:25.669Z", "costEstimate": {"currencyCode":
+        "providerId": "ionq", "target": "ionq.simulator", "creationTime": "2024-05-01T18:04:11.7122158+00:00",
+        "endExecutionTime": "2024-05-01T18:04:15.24Z", "costEstimate": {"currencyCode":
         "USD", "events": [{"dimensionId": "gs1q", "dimensionName": "1Q Gate Shot",
         "measureUnit": "1q gate shot", "amountBilled": 0.0, "amountConsumed": 0.0,
         "unitPrice": 0.0}, {"dimensionId": "gs2q", "dimensionName": "2Q Gate Shot",
@@ -956,7 +918,7 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '1786'
+      - '1784'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -988,13 +950,13 @@ interactions:
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         {"count": 1}, "errorData": null, "isCancelling": false, "tags": [], "name":
         "Job 2", "id": "00000000-0000-0000-0000-000000000003", "providerId": "ionq",
-        "target": "ionq.simulator", "creationTime": "2024-04-30T20:36:26.7355275+00:00",
+        "target": "ionq.simulator", "creationTime": "2024-05-01T18:04:17.914696+00:00",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '1382'
+      - '1381'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -1026,13 +988,13 @@ interactions:
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         {"count": 1}, "errorData": null, "isCancelling": false, "tags": [], "name":
         "Job 2", "id": "00000000-0000-0000-0000-000000000003", "providerId": "ionq",
-        "target": "ionq.simulator", "creationTime": "2024-04-30T20:36:26.7355275+00:00",
+        "target": "ionq.simulator", "creationTime": "2024-05-01T18:04:17.914696+00:00",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '1382'
+      - '1381'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -1064,13 +1026,13 @@ interactions:
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         {"count": 1}, "errorData": null, "isCancelling": false, "tags": [], "name":
         "Job 2", "id": "00000000-0000-0000-0000-000000000003", "providerId": "ionq",
-        "target": "ionq.simulator", "creationTime": "2024-04-30T20:36:26.7355275+00:00",
+        "target": "ionq.simulator", "creationTime": "2024-05-01T18:04:17.914696+00:00",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '1382'
+      - '1381'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -1102,13 +1064,13 @@ interactions:
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         {"count": 1}, "errorData": null, "isCancelling": false, "tags": [], "name":
         "Job 2", "id": "00000000-0000-0000-0000-000000000003", "providerId": "ionq",
-        "target": "ionq.simulator", "creationTime": "2024-04-30T20:36:26.7355275+00:00",
+        "target": "ionq.simulator", "creationTime": "2024-05-01T18:04:17.914696+00:00",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '1382'
+      - '1381'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -1135,52 +1097,14 @@ interactions:
         "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000003/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3DJob%2B2-00000000-0000-0000-0000-000000000003.input.json",
         "inputDataFormat": "ionq.circuit.v1", "inputParams": {"shots": 500}, "metadata":
         {"measurement0": "q0\u001f0\u001eq1\u001f1", "qubits": "2"}, "sessionId":
-        "00000000-0000-0000-0000-000000000001", "status": "Waiting", "jobType": "QuantumComputing",
-        "outputDataFormat": "ionq.quantum-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000003/outputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3DJob%2B2-00000000-0000-0000-0000-000000000003.output.json",
-        "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
-        {"count": 1}, "errorData": null, "isCancelling": false, "tags": [], "name":
-        "Job 2", "id": "00000000-0000-0000-0000-000000000003", "providerId": "ionq",
-        "target": "ionq.simulator", "creationTime": "2024-04-30T20:36:26.7355275+00:00",
-        "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
-    headers:
-      connection:
-      - keep-alive
-      content-length:
-      - '1382'
-      content-type:
-      - application/json; charset=utf-8
-      transfer-encoding:
-      - chunked
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - testapp azsdk-python-quantum/0.0.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
-    method: GET
-    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000003?api-version=2022-09-12-preview&test-sequence-id=6
-  response:
-    body:
-      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000003?sv=PLACEHOLDER&sr=c&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcwl",
-        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000003/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3DJob%2B2-00000000-0000-0000-0000-000000000003.input.json",
-        "inputDataFormat": "ionq.circuit.v1", "inputParams": {"shots": 500}, "metadata":
-        {"measurement0": "q0\u001f0\u001eq1\u001f1", "qubits": "2"}, "sessionId":
         "00000000-0000-0000-0000-000000000001", "status": "Succeeded", "jobType":
         "QuantumComputing", "outputDataFormat": "ionq.quantum-results.v1", "outputDataUri":
         "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000003/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3DJob%2B2-00000000-0000-0000-0000-000000000003.output.json",
-        "beginExecutionTime": "2024-04-30T20:36:29.804Z", "cancellationTime": null,
+        "beginExecutionTime": "2024-05-01T18:04:21.051Z", "cancellationTime": null,
         "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling": false,
         "tags": [], "name": "Job 2", "id": "00000000-0000-0000-0000-000000000003",
-        "providerId": "ionq", "target": "ionq.simulator", "creationTime": "2024-04-30T20:36:26.7355275+00:00",
-        "endExecutionTime": "2024-04-30T20:36:29.83Z", "costEstimate": {"currencyCode":
+        "providerId": "ionq", "target": "ionq.simulator", "creationTime": "2024-05-01T18:04:17.914696+00:00",
+        "endExecutionTime": "2024-05-01T18:04:21.111Z", "costEstimate": {"currencyCode":
         "USD", "events": [{"dimensionId": "gs1q", "dimensionName": "1Q Gate Shot",
         "measureUnit": "1q gate shot", "amountBilled": 0.0, "amountConsumed": 0.0,
         "unitPrice": 0.0}, {"dimensionId": "gs2q", "dimensionName": "2Q Gate Shot",
@@ -1215,14 +1139,14 @@ interactions:
     body:
       string: '{"status": "Succeeded", "jobFailurePolicy": "Abort", "name": "session-00000000-0000-0000-0000-000000000001",
         "id": "00000000-0000-0000-0000-000000000001", "providerId": "ionq", "target":
-        "ionq.simulator", "creationTime": "2024-04-30T20:36:18.2011355Z", "endExecutionTime":
-        "2024-04-30T20:36:31.4398325Z", "costEstimate": {"currencyCode": "USD", "events":
+        "ionq.simulator", "creationTime": "2024-05-01T18:04:05.4262806Z", "endExecutionTime":
+        "2024-05-01T18:04:22.637444Z", "costEstimate": {"currencyCode": "USD", "events":
         [], "estimatedTotal": 0.0}, "itemType": "Session"}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '405'
+      - '404'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
