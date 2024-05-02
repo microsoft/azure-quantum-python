@@ -111,8 +111,8 @@ https://github.com/microsoft/qdk-python/issues.")
 
     def get_targets(
         self,
-        name: str,
-        provider_id: str,
+        name: str = None,
+        provider_id: str = None,
         **kwargs
     ) -> Union[Target, List[Target]]:
         """Create targets that are available to this workspace
@@ -129,8 +129,13 @@ https://github.com/microsoft/qdk-python/issues.")
         """
         target_statuses = self._workspace._get_target_status(name, provider_id)
 
+        # TODO: Make this function always return a list in the next major release.
         if len(target_statuses) == 1:
-            return self.from_target_status(*target_statuses[0], **kwargs)
+            result = self.from_target_status(*target_statuses[0], **kwargs)
+            if name is None:
+                return [result]
+            else:
+                return result
 
         else:
             # Don't return redundant targets
