@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: client_id=PLACEHOLDER&grant_type=client_credentials&client_info=1&client_secret=PLACEHOLDER&scope=https%3A%2F%2Fquantum.microsoft.com%2F.default
+    body: client_id=PLACEHOLDER&grant_type=client_credentials&client_assertion=PLACEHOLDER&client_info=1&client_assertion_type=PLACEHOLDER&scope=https%3A%2F%2Fquantum.microsoft.com%2F.default
     headers:
       Accept:
       - application/json
@@ -9,7 +9,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '144'
+      - '181'
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
@@ -26,13 +26,8 @@ interactions:
     uri: https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token
   response:
     body:
-      string: '{"error": "invalid_client", "error_description": "AADSTS7000215: Invalid
-        client secret provided. Ensure the secret being sent in the request is the
-        client secret value, not the client secret ID, for a secret added to app ''00000000-0000-0000-0000-000000000000''.
-        Trace ID: 2d5192e6-cd62-4ac6-90bc-d14b7149ab00 Correlation ID: e6ca66f4-53ea-41ad-b08f-0f07487e9527
-        Timestamp: 2024-04-30 14:11:09Z", "error_codes": [7000215], "timestamp": "2024-04-30
-        14:11:09Z", "trace_id": "2d5192e6-cd62-4ac6-90bc-d14b7149ab00", "correlation_id":
-        "e6ca66f4-53ea-41ad-b08f-0f07487e9527", "error_uri": "https://login.microsoftonline.com/error?code=7000215"}'
+      string: '{"token_type": "Bearer", "expires_in": 1746121989, "ext_expires_in":
+        1746121989, "refresh_in": 31536000, "access_token": "PLACEHOLDER"}'
     headers:
       content-length:
       - '636'
@@ -60,18 +55,18 @@ interactions:
         "targets": [{"id": "microsoft.dft", "currentAvailability": "Available", "averageQueueTime":
         0, "statusPage": null}]}, {"id": "ionq", "currentAvailability": "Degraded",
         "targets": [{"id": "ionq.qpu", "currentAvailability": "Available", "averageQueueTime":
-        384178, "statusPage": "https://status.ionq.co"}, {"id": "ionq.qpu.aria-1",
-        "currentAvailability": "Unavailable", "averageQueueTime": 749084, "statusPage":
+        500482, "statusPage": "https://status.ionq.co"}, {"id": "ionq.qpu.aria-1",
+        "currentAvailability": "Unavailable", "averageQueueTime": 737161, "statusPage":
         "https://status.ionq.co"}, {"id": "ionq.qpu.aria-2", "currentAvailability":
         "Unavailable", "averageQueueTime": 0, "statusPage": "https://status.ionq.co"},
         {"id": "ionq.simulator", "currentAvailability": "Available", "averageQueueTime":
         1, "statusPage": "https://status.ionq.co"}]}, {"id": "microsoft-qc", "currentAvailability":
         "Available", "targets": [{"id": "microsoft.estimator", "currentAvailability":
         "Available", "averageQueueTime": 0, "statusPage": null}]}, {"id": "pasqal",
-        "currentAvailability": "Available", "targets": [{"id": "pasqal.sim.emu-tn",
-        "currentAvailability": "Available", "averageQueueTime": 278, "statusPage":
+        "currentAvailability": "Degraded", "targets": [{"id": "pasqal.sim.emu-tn",
+        "currentAvailability": "Available", "averageQueueTime": 256, "statusPage":
         "https://pasqal.com"}, {"id": "pasqal.qpu.fresnel", "currentAvailability":
-        "Available", "averageQueueTime": 0, "statusPage": "https://pasqal.com"}]},
+        "Degraded", "averageQueueTime": 0, "statusPage": "https://pasqal.com"}]},
         {"id": "rigetti", "currentAvailability": "Degraded", "targets": [{"id": "rigetti.sim.qvm",
         "currentAvailability": "Available", "averageQueueTime": 5, "statusPage": "https://rigetti.statuspage.io/"},
         {"id": "rigetti.qpu.ankaa-2", "currentAvailability": "Degraded", "averageQueueTime":
@@ -81,24 +76,24 @@ interactions:
         "qci.machine1", "currentAvailability": "Available", "averageQueueTime": 1,
         "statusPage": "https://quantumcircuits.com"}, {"id": "qci.simulator.noisy",
         "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": "https://quantumcircuits.com"}]},
-        {"id": "quantinuum", "currentAvailability": "Degraded", "targets": [{"id":
+        {"id": "quantinuum", "currentAvailability": "Available", "targets": [{"id":
         "quantinuum.qpu.h1-1", "currentAvailability": "Available", "averageQueueTime":
-        604232, "statusPage": "https://www.quantinuum.com/hardware/h1"}, {"id": "quantinuum.sim.h1-1sc",
-        "currentAvailability": "Available", "averageQueueTime": 2, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        25016, "statusPage": "https://www.quantinuum.com/hardware/h1"}, {"id": "quantinuum.sim.h1-1sc",
+        "currentAvailability": "Available", "averageQueueTime": 4, "statusPage": "https://www.quantinuum.com/hardware/h1"},
         {"id": "quantinuum.sim.h1-1e", "currentAvailability": "Available", "averageQueueTime":
-        5, "statusPage": "https://www.quantinuum.com/hardware/h1"}, {"id": "quantinuum.qpu.h2-1",
-        "currentAvailability": "Degraded", "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h2"},
-        {"id": "quantinuum.sim.h2-1sc", "currentAvailability": "Available", "averageQueueTime":
-        0, "statusPage": "https://www.quantinuum.com/hardware/h2"}, {"id": "quantinuum.sim.h2-1e",
-        "currentAvailability": "Available", "averageQueueTime": 24, "statusPage":
-        "https://www.quantinuum.com/hardware/h2"}, {"id": "quantinuum.sim.h1-1sc-preview",
-        "currentAvailability": "Available", "averageQueueTime": 2, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        15, "statusPage": "https://www.quantinuum.com/hardware/h1"}, {"id": "quantinuum.qpu.h2-1",
+        "currentAvailability": "Available", "averageQueueTime": 349980, "statusPage":
+        "https://www.quantinuum.com/hardware/h2"}, {"id": "quantinuum.sim.h2-1sc",
+        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h2"},
+        {"id": "quantinuum.sim.h2-1e", "currentAvailability": "Available", "averageQueueTime":
+        845, "statusPage": "https://www.quantinuum.com/hardware/h2"}, {"id": "quantinuum.sim.h1-1sc-preview",
+        "currentAvailability": "Available", "averageQueueTime": 4, "statusPage": "https://www.quantinuum.com/hardware/h1"},
         {"id": "quantinuum.sim.h1-1e-preview", "currentAvailability": "Available",
-        "averageQueueTime": 5, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        "averageQueueTime": 15, "statusPage": "https://www.quantinuum.com/hardware/h1"},
         {"id": "quantinuum.sim.h1-2e-preview", "currentAvailability": "Available",
-        "averageQueueTime": 15089, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        "averageQueueTime": 27901, "statusPage": "https://www.quantinuum.com/hardware/h1"},
         {"id": "quantinuum.qpu.h1-1-preview", "currentAvailability": "Available",
-        "averageQueueTime": 604232, "statusPage": "https://www.quantinuum.com/hardware/h1"}]},
+        "averageQueueTime": 25016, "statusPage": "https://www.quantinuum.com/hardware/h1"}]},
         {"id": "Microsoft.Test", "currentAvailability": "Available", "targets": [{"id":
         "echo-rigetti", "currentAvailability": "Available", "averageQueueTime": 1,
         "statusPage": ""}, {"id": "echo-quantinuum", "currentAvailability": "Available",
@@ -117,7 +112,7 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '4768'
+      - '4774'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:

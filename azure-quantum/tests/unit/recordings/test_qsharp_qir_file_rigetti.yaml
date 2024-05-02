@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: client_id=PLACEHOLDER&grant_type=client_credentials&client_info=1&client_secret=PLACEHOLDER&scope=https%3A%2F%2Fquantum.microsoft.com%2F.default
+    body: client_id=PLACEHOLDER&grant_type=client_credentials&client_assertion=PLACEHOLDER&client_info=1&client_assertion_type=PLACEHOLDER&scope=https%3A%2F%2Fquantum.microsoft.com%2F.default
     headers:
       Accept:
       - application/json
@@ -9,7 +9,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '144'
+      - '181'
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
@@ -26,13 +26,8 @@ interactions:
     uri: https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token
   response:
     body:
-      string: '{"error": "invalid_client", "error_description": "AADSTS7000215: Invalid
-        client secret provided. Ensure the secret being sent in the request is the
-        client secret value, not the client secret ID, for a secret added to app ''00000000-0000-0000-0000-000000000000''.
-        Trace ID: 3570d816-9cf4-4172-8414-727b54de9600 Correlation ID: b15a916a-f8ad-461e-8837-d2d5cbdf0375
-        Timestamp: 2024-04-30 14:14:56Z", "error_codes": [7000215], "timestamp": "2024-04-30
-        14:14:56Z", "trace_id": "3570d816-9cf4-4172-8414-727b54de9600", "correlation_id":
-        "b15a916a-f8ad-461e-8837-d2d5cbdf0375", "error_uri": "https://login.microsoftonline.com/error?code=7000215"}'
+      string: '{"token_type": "Bearer", "expires_in": 1746122196, "ext_expires_in":
+        1746122196, "refresh_in": 31536000, "access_token": "PLACEHOLDER"}'
     headers:
       content-length:
       - '636'
@@ -60,16 +55,16 @@ interactions:
         "targets": [{"id": "microsoft.dft", "currentAvailability": "Available", "averageQueueTime":
         0, "statusPage": null}]}, {"id": "ionq", "currentAvailability": "Degraded",
         "targets": [{"id": "ionq.qpu", "currentAvailability": "Available", "averageQueueTime":
-        384356, "statusPage": "https://status.ionq.co"}, {"id": "ionq.qpu.aria-1",
-        "currentAvailability": "Unavailable", "averageQueueTime": 735378, "statusPage":
+        500482, "statusPage": "https://status.ionq.co"}, {"id": "ionq.qpu.aria-1",
+        "currentAvailability": "Unavailable", "averageQueueTime": 737161, "statusPage":
         "https://status.ionq.co"}, {"id": "ionq.qpu.aria-2", "currentAvailability":
         "Unavailable", "averageQueueTime": 0, "statusPage": "https://status.ionq.co"},
         {"id": "ionq.simulator", "currentAvailability": "Available", "averageQueueTime":
-        1, "statusPage": "https://status.ionq.co"}]}, {"id": "microsoft-qc", "currentAvailability":
+        3, "statusPage": "https://status.ionq.co"}]}, {"id": "microsoft-qc", "currentAvailability":
         "Available", "targets": [{"id": "microsoft.estimator", "currentAvailability":
         "Available", "averageQueueTime": 0, "statusPage": null}]}, {"id": "pasqal",
-        "currentAvailability": "Available", "targets": [{"id": "pasqal.sim.emu-tn",
-        "currentAvailability": "Available", "averageQueueTime": 278, "statusPage":
+        "currentAvailability": "Degraded", "targets": [{"id": "pasqal.sim.emu-tn",
+        "currentAvailability": "Available", "averageQueueTime": 256, "statusPage":
         "https://pasqal.com"}, {"id": "pasqal.qpu.fresnel", "currentAvailability":
         "Available", "averageQueueTime": 0, "statusPage": "https://pasqal.com"}]},
         {"id": "rigetti", "currentAvailability": "Degraded", "targets": [{"id": "rigetti.sim.qvm",
@@ -81,24 +76,24 @@ interactions:
         "qci.machine1", "currentAvailability": "Available", "averageQueueTime": 1,
         "statusPage": "https://quantumcircuits.com"}, {"id": "qci.simulator.noisy",
         "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": "https://quantumcircuits.com"}]},
-        {"id": "quantinuum", "currentAvailability": "Degraded", "targets": [{"id":
+        {"id": "quantinuum", "currentAvailability": "Available", "targets": [{"id":
         "quantinuum.qpu.h1-1", "currentAvailability": "Available", "averageQueueTime":
-        604232, "statusPage": "https://www.quantinuum.com/hardware/h1"}, {"id": "quantinuum.sim.h1-1sc",
-        "currentAvailability": "Available", "averageQueueTime": 2, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        25016, "statusPage": "https://www.quantinuum.com/hardware/h1"}, {"id": "quantinuum.sim.h1-1sc",
+        "currentAvailability": "Available", "averageQueueTime": 4, "statusPage": "https://www.quantinuum.com/hardware/h1"},
         {"id": "quantinuum.sim.h1-1e", "currentAvailability": "Available", "averageQueueTime":
-        5, "statusPage": "https://www.quantinuum.com/hardware/h1"}, {"id": "quantinuum.qpu.h2-1",
-        "currentAvailability": "Degraded", "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h2"},
-        {"id": "quantinuum.sim.h2-1sc", "currentAvailability": "Available", "averageQueueTime":
-        0, "statusPage": "https://www.quantinuum.com/hardware/h2"}, {"id": "quantinuum.sim.h2-1e",
-        "currentAvailability": "Available", "averageQueueTime": 464, "statusPage":
-        "https://www.quantinuum.com/hardware/h2"}, {"id": "quantinuum.sim.h1-1sc-preview",
-        "currentAvailability": "Available", "averageQueueTime": 2, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        4, "statusPage": "https://www.quantinuum.com/hardware/h1"}, {"id": "quantinuum.qpu.h2-1",
+        "currentAvailability": "Available", "averageQueueTime": 349980, "statusPage":
+        "https://www.quantinuum.com/hardware/h2"}, {"id": "quantinuum.sim.h2-1sc",
+        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h2"},
+        {"id": "quantinuum.sim.h2-1e", "currentAvailability": "Available", "averageQueueTime":
+        994, "statusPage": "https://www.quantinuum.com/hardware/h2"}, {"id": "quantinuum.sim.h1-1sc-preview",
+        "currentAvailability": "Available", "averageQueueTime": 4, "statusPage": "https://www.quantinuum.com/hardware/h1"},
         {"id": "quantinuum.sim.h1-1e-preview", "currentAvailability": "Available",
-        "averageQueueTime": 5, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        "averageQueueTime": 4, "statusPage": "https://www.quantinuum.com/hardware/h1"},
         {"id": "quantinuum.sim.h1-2e-preview", "currentAvailability": "Available",
-        "averageQueueTime": 15089, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        "averageQueueTime": 27901, "statusPage": "https://www.quantinuum.com/hardware/h1"},
         {"id": "quantinuum.qpu.h1-1-preview", "currentAvailability": "Available",
-        "averageQueueTime": 604232, "statusPage": "https://www.quantinuum.com/hardware/h1"}]},
+        "averageQueueTime": 25016, "statusPage": "https://www.quantinuum.com/hardware/h1"}]},
         {"id": "Microsoft.Test", "currentAvailability": "Available", "targets": [{"id":
         "echo-rigetti", "currentAvailability": "Available", "averageQueueTime": 1,
         "statusPage": ""}, {"id": "echo-quantinuum", "currentAvailability": "Available",
@@ -117,7 +112,7 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '4769'
+      - '4772'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -126,7 +121,7 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: client_id=PLACEHOLDER&grant_type=client_credentials&client_info=1&client_secret=PLACEHOLDER&scope=https%3A%2F%2Fquantum.microsoft.com%2F.default
+    body: client_id=PLACEHOLDER&grant_type=client_credentials&client_assertion=PLACEHOLDER&client_info=1&client_assertion_type=PLACEHOLDER&scope=https%3A%2F%2Fquantum.microsoft.com%2F.default
     headers:
       Accept:
       - application/json
@@ -135,7 +130,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '144'
+      - '181'
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
@@ -152,13 +147,8 @@ interactions:
     uri: https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token
   response:
     body:
-      string: '{"error": "invalid_client", "error_description": "AADSTS7000215: Invalid
-        client secret provided. Ensure the secret being sent in the request is the
-        client secret value, not the client secret ID, for a secret added to app ''00000000-0000-0000-0000-000000000000''.
-        Trace ID: c96c2747-9ce5-4402-87a1-87e305c2bc00 Correlation ID: 666476fa-5883-4534-8d30-be284bbfdbca
-        Timestamp: 2024-04-30 14:14:58Z", "error_codes": [7000215], "timestamp": "2024-04-30
-        14:14:58Z", "trace_id": "c96c2747-9ce5-4402-87a1-87e305c2bc00", "correlation_id":
-        "666476fa-5883-4534-8d30-be284bbfdbca", "error_uri": "https://login.microsoftonline.com/error?code=7000215"}'
+      string: '{"token_type": "Bearer", "expires_in": 1746122198, "ext_expires_in":
+        1746122198, "refresh_in": 31536000, "access_token": "PLACEHOLDER"}'
     headers:
       content-length:
       - '636'
@@ -211,7 +201,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.19.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
       x-ms-date:
-      - Tue, 30 Apr 2024 14:15:00 GMT
+      - Wed, 01 May 2024 17:56:39 GMT
       x-ms-version:
       - '2023-11-03'
     method: GET
@@ -219,7 +209,7 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerNotFound</Code><Message>The
-        specified container does not exist.\nRequestId:84436e22-d01e-0052-5308-9b5028000000\nTime:2024-04-30T14:15:01.6215591Z</Message></Error>"
+        specified container does not exist.\nRequestId:133d7a1f-401e-0040-68f0-9b2bf8000000\nTime:2024-05-01T17:56:41.8695857Z</Message></Error>"
     headers:
       content-length:
       - '223'
@@ -244,7 +234,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.19.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
       x-ms-date:
-      - Tue, 30 Apr 2024 14:15:01 GMT
+      - Wed, 01 May 2024 17:56:40 GMT
       x-ms-version:
       - '2023-11-03'
     method: PUT
@@ -272,7 +262,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.19.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
       x-ms-date:
-      - Tue, 30 Apr 2024 14:15:01 GMT
+      - Wed, 01 May 2024 17:56:41 GMT
       x-ms-version:
       - '2023-11-03'
     method: GET
@@ -345,7 +335,7 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-date:
-      - Tue, 30 Apr 2024 14:15:01 GMT
+      - Wed, 01 May 2024 17:56:42 GMT
       x-ms-version:
       - '2023-11-03'
     method: PUT
@@ -395,7 +385,7 @@ interactions:
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         null, "errorData": null, "isCancelling": false, "tags": [], "name": "azure-quantum-job",
         "id": "00000000-0000-0000-0000-000000000001", "providerId": "rigetti", "target":
-        "rigetti.sim.qvm", "creationTime": "2024-04-30T14:15:03.1325711+00:00", "endExecutionTime":
+        "rigetti.sim.qvm", "creationTime": "2024-05-01T17:56:43.9088334+00:00", "endExecutionTime":
         null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
@@ -433,7 +423,7 @@ interactions:
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         null, "errorData": null, "isCancelling": false, "tags": [], "name": "azure-quantum-job",
         "id": "00000000-0000-0000-0000-000000000001", "providerId": "rigetti", "target":
-        "rigetti.sim.qvm", "creationTime": "2024-04-30T14:15:03.1325711+00:00", "endExecutionTime":
+        "rigetti.sim.qvm", "creationTime": "2024-05-01T17:56:43.9088334+00:00", "endExecutionTime":
         null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
@@ -471,7 +461,7 @@ interactions:
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         null, "errorData": null, "isCancelling": false, "tags": [], "name": "azure-quantum-job",
         "id": "00000000-0000-0000-0000-000000000001", "providerId": "rigetti", "target":
-        "rigetti.sim.qvm", "creationTime": "2024-04-30T14:15:03.1325711+00:00", "endExecutionTime":
+        "rigetti.sim.qvm", "creationTime": "2024-05-01T17:56:43.9088334+00:00", "endExecutionTime":
         null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
@@ -509,7 +499,7 @@ interactions:
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         null, "errorData": null, "isCancelling": false, "tags": [], "name": "azure-quantum-job",
         "id": "00000000-0000-0000-0000-000000000001", "providerId": "rigetti", "target":
-        "rigetti.sim.qvm", "creationTime": "2024-04-30T14:15:03.1325711+00:00", "endExecutionTime":
+        "rigetti.sim.qvm", "creationTime": "2024-05-01T17:56:43.9088334+00:00", "endExecutionTime":
         null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
@@ -547,7 +537,7 @@ interactions:
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         null, "errorData": null, "isCancelling": false, "tags": [], "name": "azure-quantum-job",
         "id": "00000000-0000-0000-0000-000000000001", "providerId": "rigetti", "target":
-        "rigetti.sim.qvm", "creationTime": "2024-04-30T14:15:03.1325711+00:00", "endExecutionTime":
+        "rigetti.sim.qvm", "creationTime": "2024-05-01T17:56:43.9088334+00:00", "endExecutionTime":
         null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
@@ -583,15 +573,15 @@ interactions:
         "sessionId": null, "status": "Waiting", "jobType": "QuantumComputing", "outputDataFormat":
         "microsoft.quantum-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3Dazure-quantum-job-00000000-0000-0000-0000-000000000001.output.json",
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
-        null, "errorData": null, "isCancelling": false, "tags": [], "name": "azure-quantum-job",
-        "id": "00000000-0000-0000-0000-000000000001", "providerId": "rigetti", "target":
-        "rigetti.sim.qvm", "creationTime": "2024-04-30T14:15:03.1325711+00:00", "endExecutionTime":
-        null, "costEstimate": null, "itemType": "Job"}'
+        {"count": 1}, "errorData": null, "isCancelling": false, "tags": [], "name":
+        "azure-quantum-job", "id": "00000000-0000-0000-0000-000000000001", "providerId":
+        "rigetti", "target": "rigetti.sim.qvm", "creationTime": "2024-05-01T17:56:43.9088334+00:00",
+        "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '1392'
+      - '1400'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -623,7 +613,7 @@ interactions:
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         {"count": 1}, "errorData": null, "isCancelling": false, "tags": [], "name":
         "azure-quantum-job", "id": "00000000-0000-0000-0000-000000000001", "providerId":
-        "rigetti", "target": "rigetti.sim.qvm", "creationTime": "2024-04-30T14:15:03.1325711+00:00",
+        "rigetti", "target": "rigetti.sim.qvm", "creationTime": "2024-05-01T17:56:43.9088334+00:00",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
@@ -661,7 +651,7 @@ interactions:
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         {"count": 1}, "errorData": null, "isCancelling": false, "tags": [], "name":
         "azure-quantum-job", "id": "00000000-0000-0000-0000-000000000001", "providerId":
-        "rigetti", "target": "rigetti.sim.qvm", "creationTime": "2024-04-30T14:15:03.1325711+00:00",
+        "rigetti", "target": "rigetti.sim.qvm", "creationTime": "2024-05-01T17:56:43.9088334+00:00",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
@@ -696,11 +686,11 @@ interactions:
         "arguments": [], "targetCapability": "BasicExecution"}, "metadata": null,
         "sessionId": null, "status": "Succeeded", "jobType": "QuantumComputing", "outputDataFormat":
         "microsoft.quantum-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3Dazure-quantum-job-00000000-0000-0000-0000-000000000001.output.json",
-        "beginExecutionTime": "2024-04-30T14:15:09.2410544Z", "cancellationTime":
+        "beginExecutionTime": "2024-05-01T17:56:49.6336273Z", "cancellationTime":
         null, "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling":
         false, "tags": [], "name": "azure-quantum-job", "id": "00000000-0000-0000-0000-000000000001",
-        "providerId": "rigetti", "target": "rigetti.sim.qvm", "creationTime": "2024-04-30T14:15:03.1325711+00:00",
-        "endExecutionTime": "2024-04-30T14:15:10.401708Z", "costEstimate": {"currencyCode":
+        "providerId": "rigetti", "target": "rigetti.sim.qvm", "creationTime": "2024-05-01T17:56:43.9088334+00:00",
+        "endExecutionTime": "2024-05-01T17:56:50.7881394Z", "costEstimate": {"currencyCode":
         "USD", "events": [{"dimensionId": "qpu_time_centiseconds", "dimensionName":
         "QPU Execution Time", "measureUnit": "10ms (rounded up)", "amountBilled":
         0.0, "amountConsumed": 0.0, "unitPrice": 0.0}], "estimatedTotal": 0.0}, "itemType":
@@ -709,7 +699,7 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '1686'
+      - '1687'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -738,11 +728,11 @@ interactions:
         "arguments": [], "targetCapability": "BasicExecution"}, "metadata": null,
         "sessionId": null, "status": "Succeeded", "jobType": "QuantumComputing", "outputDataFormat":
         "microsoft.quantum-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3Dazure-quantum-job-00000000-0000-0000-0000-000000000001.output.json",
-        "beginExecutionTime": "2024-04-30T14:15:09.2410544Z", "cancellationTime":
+        "beginExecutionTime": "2024-05-01T17:56:49.6336273Z", "cancellationTime":
         null, "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling":
         false, "tags": [], "name": "azure-quantum-job", "id": "00000000-0000-0000-0000-000000000001",
-        "providerId": "rigetti", "target": "rigetti.sim.qvm", "creationTime": "2024-04-30T14:15:03.1325711+00:00",
-        "endExecutionTime": "2024-04-30T14:15:10.401708Z", "costEstimate": {"currencyCode":
+        "providerId": "rigetti", "target": "rigetti.sim.qvm", "creationTime": "2024-05-01T17:56:43.9088334+00:00",
+        "endExecutionTime": "2024-05-01T17:56:50.7881394Z", "costEstimate": {"currencyCode":
         "USD", "events": [{"dimensionId": "qpu_time_centiseconds", "dimensionName":
         "QPU Execution Time", "measureUnit": "10ms (rounded up)", "amountBilled":
         0.0, "amountConsumed": 0.0, "unitPrice": 0.0}], "estimatedTotal": 0.0}, "itemType":
@@ -751,7 +741,7 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '1686'
+      - '1687'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -771,7 +761,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.19.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
       x-ms-date:
-      - Tue, 30 Apr 2024 14:15:11 GMT
+      - Wed, 01 May 2024 17:56:51 GMT
       x-ms-range:
       - bytes=0-33554431
       x-ms-version:
@@ -795,7 +785,7 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-creation-time:
-      - Tue, 30 Apr 2024 14:15:10 GMT
+      - Wed, 01 May 2024 17:56:51 GMT
       x-ms-lease-state:
       - available
       x-ms-lease-status:

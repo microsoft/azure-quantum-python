@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: client_id=PLACEHOLDER&grant_type=client_credentials&client_info=1&client_secret=PLACEHOLDER&scope=https%3A%2F%2Fquantum.microsoft.com%2F.default
+    body: client_id=PLACEHOLDER&grant_type=client_credentials&client_assertion=PLACEHOLDER&client_info=1&client_assertion_type=PLACEHOLDER&scope=https%3A%2F%2Fquantum.microsoft.com%2F.default
     headers:
       Accept:
       - application/json
@@ -9,7 +9,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '144'
+      - '181'
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
@@ -26,13 +26,8 @@ interactions:
     uri: https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token
   response:
     body:
-      string: '{"error": "invalid_client", "error_description": "AADSTS7000215: Invalid
-        client secret provided. Ensure the secret being sent in the request is the
-        client secret value, not the client secret ID, for a secret added to app ''00000000-0000-0000-0000-000000000000''.
-        Trace ID: 041929f9-6660-415e-bcf6-426391728d00 Correlation ID: eca461c4-930b-4f8c-8f52-633ef1b55d18
-        Timestamp: 2024-04-30 14:25:25Z", "error_codes": [7000215], "timestamp": "2024-04-30
-        14:25:25Z", "trace_id": "041929f9-6660-415e-bcf6-426391728d00", "correlation_id":
-        "eca461c4-930b-4f8c-8f52-633ef1b55d18", "error_uri": "https://login.microsoftonline.com/error?code=7000215"}'
+      string: '{"token_type": "Bearer", "expires_in": 1746122803, "ext_expires_in":
+        1746122803, "refresh_in": 31536000, "access_token": "PLACEHOLDER"}'
     headers:
       content-length:
       - '636'
@@ -60,45 +55,45 @@ interactions:
         "targets": [{"id": "microsoft.dft", "currentAvailability": "Available", "averageQueueTime":
         0, "statusPage": null}]}, {"id": "ionq", "currentAvailability": "Degraded",
         "targets": [{"id": "ionq.qpu", "currentAvailability": "Available", "averageQueueTime":
-        385008, "statusPage": "https://status.ionq.co"}, {"id": "ionq.qpu.aria-1",
-        "currentAvailability": "Unavailable", "averageQueueTime": 749417, "statusPage":
+        501293, "statusPage": "https://status.ionq.co"}, {"id": "ionq.qpu.aria-1",
+        "currentAvailability": "Unavailable", "averageQueueTime": 737920, "statusPage":
         "https://status.ionq.co"}, {"id": "ionq.qpu.aria-2", "currentAvailability":
         "Unavailable", "averageQueueTime": 0, "statusPage": "https://status.ionq.co"},
         {"id": "ionq.simulator", "currentAvailability": "Available", "averageQueueTime":
-        1, "statusPage": "https://status.ionq.co"}]}, {"id": "microsoft-qc", "currentAvailability":
+        2, "statusPage": "https://status.ionq.co"}]}, {"id": "microsoft-qc", "currentAvailability":
         "Available", "targets": [{"id": "microsoft.estimator", "currentAvailability":
         "Available", "averageQueueTime": 0, "statusPage": null}]}, {"id": "pasqal",
-        "currentAvailability": "Available", "targets": [{"id": "pasqal.sim.emu-tn",
-        "currentAvailability": "Available", "averageQueueTime": 278, "statusPage":
+        "currentAvailability": "Degraded", "targets": [{"id": "pasqal.sim.emu-tn",
+        "currentAvailability": "Available", "averageQueueTime": 256, "statusPage":
         "https://pasqal.com"}, {"id": "pasqal.qpu.fresnel", "currentAvailability":
-        "Available", "averageQueueTime": 1, "statusPage": "https://pasqal.com"}]},
-        {"id": "rigetti", "currentAvailability": "Degraded", "targets": [{"id": "rigetti.sim.qvm",
+        "Degraded", "averageQueueTime": 0, "statusPage": "https://pasqal.com"}]},
+        {"id": "rigetti", "currentAvailability": "Available", "targets": [{"id": "rigetti.sim.qvm",
         "currentAvailability": "Available", "averageQueueTime": 5, "statusPage": "https://rigetti.statuspage.io/"},
-        {"id": "rigetti.qpu.ankaa-2", "currentAvailability": "Degraded", "averageQueueTime":
+        {"id": "rigetti.qpu.ankaa-2", "currentAvailability": "Available", "averageQueueTime":
         5, "statusPage": "https://rigetti.statuspage.io/"}]}, {"id": "qci", "currentAvailability":
         "Available", "targets": [{"id": "qci.simulator", "currentAvailability": "Available",
         "averageQueueTime": 1, "statusPage": "https://quantumcircuits.com"}, {"id":
         "qci.machine1", "currentAvailability": "Available", "averageQueueTime": 1,
         "statusPage": "https://quantumcircuits.com"}, {"id": "qci.simulator.noisy",
         "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": "https://quantumcircuits.com"}]},
-        {"id": "quantinuum", "currentAvailability": "Degraded", "targets": [{"id":
+        {"id": "quantinuum", "currentAvailability": "Available", "targets": [{"id":
         "quantinuum.qpu.h1-1", "currentAvailability": "Available", "averageQueueTime":
-        591220, "statusPage": "https://www.quantinuum.com/hardware/h1"}, {"id": "quantinuum.sim.h1-1sc",
-        "currentAvailability": "Available", "averageQueueTime": 2, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        26106, "statusPage": "https://www.quantinuum.com/hardware/h1"}, {"id": "quantinuum.sim.h1-1sc",
+        "currentAvailability": "Available", "averageQueueTime": 4, "statusPage": "https://www.quantinuum.com/hardware/h1"},
         {"id": "quantinuum.sim.h1-1e", "currentAvailability": "Available", "averageQueueTime":
-        9, "statusPage": "https://www.quantinuum.com/hardware/h1"}, {"id": "quantinuum.qpu.h2-1",
-        "currentAvailability": "Degraded", "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h2"},
-        {"id": "quantinuum.sim.h2-1sc", "currentAvailability": "Available", "averageQueueTime":
-        0, "statusPage": "https://www.quantinuum.com/hardware/h2"}, {"id": "quantinuum.sim.h2-1e",
-        "currentAvailability": "Available", "averageQueueTime": 469, "statusPage":
-        "https://www.quantinuum.com/hardware/h2"}, {"id": "quantinuum.sim.h1-1sc-preview",
-        "currentAvailability": "Available", "averageQueueTime": 2, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        8, "statusPage": "https://www.quantinuum.com/hardware/h1"}, {"id": "quantinuum.qpu.h2-1",
+        "currentAvailability": "Available", "averageQueueTime": 349980, "statusPage":
+        "https://www.quantinuum.com/hardware/h2"}, {"id": "quantinuum.sim.h2-1sc",
+        "currentAvailability": "Available", "averageQueueTime": 1, "statusPage": "https://www.quantinuum.com/hardware/h2"},
+        {"id": "quantinuum.sim.h2-1e", "currentAvailability": "Available", "averageQueueTime":
+        881, "statusPage": "https://www.quantinuum.com/hardware/h2"}, {"id": "quantinuum.sim.h1-1sc-preview",
+        "currentAvailability": "Available", "averageQueueTime": 4, "statusPage": "https://www.quantinuum.com/hardware/h1"},
         {"id": "quantinuum.sim.h1-1e-preview", "currentAvailability": "Available",
-        "averageQueueTime": 9, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        "averageQueueTime": 8, "statusPage": "https://www.quantinuum.com/hardware/h1"},
         {"id": "quantinuum.sim.h1-2e-preview", "currentAvailability": "Available",
-        "averageQueueTime": 15089, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        "averageQueueTime": 27901, "statusPage": "https://www.quantinuum.com/hardware/h1"},
         {"id": "quantinuum.qpu.h1-1-preview", "currentAvailability": "Available",
-        "averageQueueTime": 591220, "statusPage": "https://www.quantinuum.com/hardware/h1"}]},
+        "averageQueueTime": 26106, "statusPage": "https://www.quantinuum.com/hardware/h1"}]},
         {"id": "Microsoft.Test", "currentAvailability": "Available", "targets": [{"id":
         "echo-rigetti", "currentAvailability": "Available", "averageQueueTime": 1,
         "statusPage": ""}, {"id": "echo-quantinuum", "currentAvailability": "Available",
@@ -117,7 +112,7 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '4769'
+      - '4774'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:

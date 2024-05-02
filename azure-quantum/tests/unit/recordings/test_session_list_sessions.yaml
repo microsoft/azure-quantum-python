@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: client_id=PLACEHOLDER&grant_type=client_credentials&client_info=1&client_secret=PLACEHOLDER&scope=https%3A%2F%2Fquantum.microsoft.com%2F.default
+    body: client_id=PLACEHOLDER&grant_type=client_credentials&client_assertion=PLACEHOLDER&client_info=1&client_assertion_type=PLACEHOLDER&scope=https%3A%2F%2Fquantum.microsoft.com%2F.default
     headers:
       Accept:
       - application/json
@@ -9,7 +9,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '144'
+      - '181'
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
@@ -26,13 +26,8 @@ interactions:
     uri: https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token
   response:
     body:
-      string: '{"error": "invalid_client", "error_description": "AADSTS7000215: Invalid
-        client secret provided. Ensure the secret being sent in the request is the
-        client secret value, not the client secret ID, for a secret added to app ''00000000-0000-0000-0000-000000000000''.
-        Trace ID: c90ee200-417a-41b5-9fba-dce7fb129600 Correlation ID: 9b1ccaf0-acb6-4906-b3e9-3732f887bc01
-        Timestamp: 2024-04-30 14:25:00Z", "error_codes": [7000215], "timestamp": "2024-04-30
-        14:25:00Z", "trace_id": "c90ee200-417a-41b5-9fba-dce7fb129600", "correlation_id":
-        "9b1ccaf0-acb6-4906-b3e9-3732f887bc01", "error_uri": "https://login.microsoftonline.com/error?code=7000215"}'
+      string: '{"token_type": "Bearer", "expires_in": 1746122776, "ext_expires_in":
+        1746122776, "refresh_in": 31536000, "access_token": "PLACEHOLDER"}'
     headers:
       content-length:
       - '636'
@@ -1677,13 +1672,88 @@ interactions:
         "id": "5ccc654e-06fd-11ef-8c57-b07d64eb437f", "providerId": "quantinuum",
         "target": "quantinuum.sim.h1-1e", "creationTime": "2024-04-30T14:24:33.3089827Z",
         "endExecutionTime": "2024-04-30T14:24:56.9601093Z", "costEstimate": {"currencyCode":
+        "USD", "events": [], "estimatedTotal": 0.0}, "itemType": "Session"}, {"status":
+        "Succeeded", "jobFailurePolicy": "Abort", "name": "session-4b7e4805-0731-11ef-91a4-b07d64eb437f",
+        "id": "4b7e4805-0731-11ef-91a4-b07d64eb437f", "providerId": "ionq", "target":
+        "ionq.simulator", "creationTime": "2024-04-30T20:36:18.2011355Z", "endExecutionTime":
+        "2024-04-30T20:36:31.4398325Z", "costEstimate": {"currencyCode": "USD", "events":
+        [], "estimatedTotal": 0.0}, "itemType": "Session"}, {"status": "Succeeded",
+        "jobFailurePolicy": "Abort", "name": "session-55507a3a-0731-11ef-965a-b07d64eb437f",
+        "id": "55507a3a-0731-11ef-965a-b07d64eb437f", "providerId": "quantinuum",
+        "target": "quantinuum.sim.h1-1e", "creationTime": "2024-04-30T20:36:34.8557609Z",
+        "endExecutionTime": "2024-04-30T20:37:06.9665064Z", "costEstimate": {"currencyCode":
+        "USD", "events": [], "estimatedTotal": 0.0}, "itemType": "Session"}, {"status":
+        "Succeeded", "jobFailurePolicy": "Abort", "name": "session-6e00d288-0731-11ef-9be7-b07d64eb437f",
+        "id": "6e00d288-0731-11ef-9be7-b07d64eb437f", "providerId": "ionq", "target":
+        "ionq.simulator", "creationTime": "2024-04-30T20:37:16.0966668Z", "endExecutionTime":
+        "2024-04-30T20:37:26.9838483Z", "costEstimate": {"currencyCode": "USD", "events":
+        [], "estimatedTotal": 0.0}, "itemType": "Session"}, {"status": "Succeeded",
+        "jobFailurePolicy": "Abort", "name": "session-77457095-0731-11ef-bb51-b07d64eb437f",
+        "id": "77457095-0731-11ef-bb51-b07d64eb437f", "providerId": "quantinuum",
+        "target": "quantinuum.sim.h1-1e", "creationTime": "2024-04-30T20:37:31.9936402Z",
+        "endExecutionTime": "2024-04-30T20:38:05.8464882Z", "costEstimate": {"currencyCode":
+        "USD", "events": [], "estimatedTotal": 0.0}, "itemType": "Session"}, {"status":
+        "Succeeded", "jobFailurePolicy": "Abort", "name": "session-8f0e888d-0731-11ef-8f53-b07d64eb437f",
+        "id": "8f0e888d-0731-11ef-8f53-b07d64eb437f", "providerId": "quantinuum",
+        "target": "quantinuum.sim.h1-1e", "creationTime": "2024-04-30T20:38:11.5554122Z",
+        "endExecutionTime": "2024-04-30T20:38:46.312493Z", "costEstimate": {"currencyCode":
+        "USD", "events": [], "estimatedTotal": 0.0}, "itemType": "Session"}, {"status":
+        "Succeeded", "jobFailurePolicy": "Abort", "name": "session-97040771-073c-11ef-9f45-f8e4e3ddcdd5",
+        "id": "97040771-073c-11ef-9f45-f8e4e3ddcdd5", "providerId": "ionq", "target":
+        "ionq.simulator", "creationTime": "2024-04-30T21:57:10.0509942Z", "endExecutionTime":
+        "2024-04-30T21:57:22.1658922Z", "costEstimate": {"currencyCode": "USD", "events":
+        [], "estimatedTotal": 0.0}, "itemType": "Session"}, {"status": "Succeeded",
+        "jobFailurePolicy": "Abort", "name": "session-a094a5fa-073c-11ef-bad9-f8e4e3ddcdd5",
+        "id": "a094a5fa-073c-11ef-bad9-f8e4e3ddcdd5", "providerId": "quantinuum",
+        "target": "quantinuum.sim.h1-1e", "creationTime": "2024-04-30T21:57:25.9320259Z",
+        "endExecutionTime": "2024-04-30T21:57:54.7718659Z", "costEstimate": {"currencyCode":
+        "USD", "events": [], "estimatedTotal": 0.0}, "itemType": "Session"}, {"status":
+        "Succeeded", "jobFailurePolicy": "Abort", "name": "session-b6d3ac65-073c-11ef-b361-f8e4e3ddcdd5",
+        "id": "b6d3ac65-073c-11ef-b361-f8e4e3ddcdd5", "providerId": "ionq", "target":
+        "ionq.simulator", "creationTime": "2024-04-30T21:58:02.9689126Z", "endExecutionTime":
+        "2024-04-30T21:58:12.0242122Z", "costEstimate": {"currencyCode": "USD", "events":
+        [], "estimatedTotal": 0.0}, "itemType": "Session"}, {"status": "Succeeded",
+        "jobFailurePolicy": "Abort", "name": "session-be5529e9-073c-11ef-96f4-f8e4e3ddcdd5",
+        "id": "be5529e9-073c-11ef-96f4-f8e4e3ddcdd5", "providerId": "quantinuum",
+        "target": "quantinuum.sim.h1-1e", "creationTime": "2024-04-30T21:58:16.2438506Z",
+        "endExecutionTime": "2024-04-30T21:58:36.9045575Z", "costEstimate": {"currencyCode":
+        "USD", "events": [], "estimatedTotal": 0.0}, "itemType": "Session"}, {"status":
+        "Succeeded", "jobFailurePolicy": "Abort", "name": "session-cde8f824-073c-11ef-93c5-f8e4e3ddcdd5",
+        "id": "cde8f824-073c-11ef-93c5-f8e4e3ddcdd5", "providerId": "quantinuum",
+        "target": "quantinuum.sim.h1-1e", "creationTime": "2024-04-30T21:58:41.6908371Z",
+        "endExecutionTime": "2024-04-30T21:59:09.8019609Z", "costEstimate": {"currencyCode":
+        "USD", "events": [], "estimatedTotal": 0.0}, "itemType": "Session"}, {"status":
+        "Succeeded", "jobFailurePolicy": "Abort", "name": "session-32035c58-07e5-11ef-8d0a-b07d64eb437f",
+        "id": "32035c58-07e5-11ef-8d0a-b07d64eb437f", "providerId": "ionq", "target":
+        "ionq.simulator", "creationTime": "2024-05-01T18:04:05.4262806Z", "endExecutionTime":
+        "2024-05-01T18:04:22.637444Z", "costEstimate": {"currencyCode": "USD", "events":
+        [], "estimatedTotal": 0.0}, "itemType": "Session"}, {"status": "Succeeded",
+        "jobFailurePolicy": "Abort", "name": "session-3e5d7b4c-07e5-11ef-b83a-b07d64eb437f",
+        "id": "3e5d7b4c-07e5-11ef-b83a-b07d64eb437f", "providerId": "quantinuum",
+        "target": "quantinuum.sim.h1-1e", "creationTime": "2024-05-01T18:04:25.8234135Z",
+        "endExecutionTime": "2024-05-01T18:04:54.0355864Z", "costEstimate": {"currencyCode":
+        "USD", "events": [], "estimatedTotal": 0.0}, "itemType": "Session"}, {"status":
+        "Succeeded", "jobFailurePolicy": "Abort", "name": "session-557ac7d9-07e5-11ef-bc46-b07d64eb437f",
+        "id": "557ac7d9-07e5-11ef-bc46-b07d64eb437f", "providerId": "ionq", "target":
+        "ionq.simulator", "creationTime": "2024-05-01T18:05:04.6011743Z", "endExecutionTime":
+        "2024-05-01T18:05:18.0948946Z", "costEstimate": {"currencyCode": "USD", "events":
+        [], "estimatedTotal": 0.0}, "itemType": "Session"}, {"status": "Succeeded",
+        "jobFailurePolicy": "Abort", "name": "session-614613c2-07e5-11ef-acdc-b07d64eb437f",
+        "id": "614613c2-07e5-11ef-acdc-b07d64eb437f", "providerId": "quantinuum",
+        "target": "quantinuum.sim.h1-1e", "creationTime": "2024-05-01T18:05:25.0658938Z",
+        "endExecutionTime": "2024-05-01T18:05:43.0826567Z", "costEstimate": {"currencyCode":
+        "USD", "events": [], "estimatedTotal": 0.0}, "itemType": "Session"}, {"status":
+        "Succeeded", "jobFailurePolicy": "Abort", "name": "session-71ddd7b5-07e5-11ef-90aa-b07d64eb437f",
+        "id": "71ddd7b5-07e5-11ef-90aa-b07d64eb437f", "providerId": "quantinuum",
+        "target": "quantinuum.sim.h1-1e", "creationTime": "2024-05-01T18:05:52.2237551Z",
+        "endExecutionTime": "2024-05-01T18:06:15.3479079Z", "costEstimate": {"currencyCode":
         "USD", "events": [], "estimatedTotal": 0.0}, "itemType": "Session"}], "nextLink":
         null}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '139338'
+      - '145549'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:

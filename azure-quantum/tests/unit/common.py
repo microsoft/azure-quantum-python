@@ -59,6 +59,8 @@ class RegexScrubbingPatterns:
     URL_QUERY_SAS_KEY_EXPIRATION = r"se=[^&]+\&"
     URL_QUERY_AUTH_CLIENT_ID = r"client_id=[^&]+\&"
     URL_QUERY_AUTH_CLIENT_SECRET = r"client_secret=[^&]+\&"
+    URL_QUERY_AUTH_CLIENT_ASSERTION = r"client_assertion=[^&]+\&"
+    URL_QUERY_AUTH_CLIENT_ASSERTION_TYPE = r"client_assertion_type=[^&]+\&"
     URL_QUERY_AUTH_CLAIMS = r"claims=[^&]+\&"
     URL_QUERY_AUTH_CODE_VERIFIER = r"code_verifier=[^&]+\&"
     URL_QUERY_AUTH_CODE = r"code=[^&]+\&"
@@ -166,6 +168,15 @@ class QuantumTestBase(ReplayableTest):
         self._regex_replacer.register_scrubbing(RegexScrubbingPatterns.URL_QUERY_AUTH_CODE,
                                       "code=PLACEHOLDER&")
         self._regex_replacer.register_scrubbing(RegexScrubbingPatterns.URL_HTTP, "https://")
+
+        self._regex_replacer.register_scrubbing(
+            RegexScrubbingPatterns.URL_QUERY_AUTH_CLIENT_ASSERTION,
+            "client_assertion=PLACEHOLDER&"
+        )
+        self._regex_replacer.register_scrubbing(
+            RegexScrubbingPatterns.URL_QUERY_AUTH_CLIENT_ASSERTION_TYPE,
+            "client_assertion_type=PLACEHOLDER&"
+        )
 
     def disable_scrubbing(self, pattern: str) -> None:
         """

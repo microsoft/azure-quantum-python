@@ -318,6 +318,17 @@ class TestWorkspace(QuantumTestBase):
             target.name = "foo"
             target.refresh()
 
+    @pytest.mark.ionq
+    @pytest.mark.live_test
+    def test_workspace_get_targets_result_type(self):
+        ws = self.create_workspace()
+        targets = ws.get_targets()
+        assert isinstance(targets, list)
+        # For now, we keep a single result as instance instead of list, 
+        # but it has to be changed in the next major release.
+        target = ws.get_targets(name="ionq.qpu")
+        assert not isinstance(target, list)
+
     @pytest.mark.microsoft_qc
     @pytest.mark.live_test
     def test_workspace_get_target_microsoft_qc(self):
