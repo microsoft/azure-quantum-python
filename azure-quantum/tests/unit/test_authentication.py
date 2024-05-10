@@ -20,6 +20,7 @@ from common import (
 from azure.identity import (
     CredentialUnavailableError,
     ClientSecretCredential,
+    CertificateCredential,
     InteractiveBrowserCredential,
 )
 from azure.quantum import Workspace
@@ -123,9 +124,9 @@ class TestWorkspace(QuantumTestBase):
         with patch.dict(os.environ):
             self.clear_env_vars(os.environ)
             connection_params = self.connection_params
-            credential = ClientSecretCredential(connection_params.tenant_id,
+            credential = CertificateCredential(connection_params.tenant_id,
                                                 connection_params.client_id,
-                                                self._client_secret)
+                                                self._client_certificate_path)
             token = credential.get_token(ConnectionConstants.DATA_PLANE_CREDENTIAL_SCOPE)
             content = {
                 "access_token": token.token,
@@ -146,14 +147,14 @@ class TestWorkspace(QuantumTestBase):
                 os.remove(file)
 
     @pytest.mark.live_test
-    def test_workspace_auth_client_secret_credential(self):
+    def test_workspace_auth_client_certificate_credential(self):
         with patch.dict(os.environ):
             self.clear_env_vars(os.environ)
             connection_params = self.connection_params
-            credential = ClientSecretCredential(
+            credential = CertificateCredential(
                 tenant_id=connection_params.tenant_id,
                 client_id=connection_params.client_id,
-                client_secret=self._client_secret)
+                certificate_path=self._client_certificate_path)
             workspace = self.create_workspace(credential=credential)
             targets = workspace.get_targets()
             self.assertGreater(len(targets), 1)
@@ -165,8 +166,8 @@ class TestWorkspace(QuantumTestBase):
             connection_params = self.connection_params
             os.environ[EnvironmentVariables.AZURE_CLIENT_ID] = \
                 connection_params.client_id
-            os.environ[EnvironmentVariables.AZURE_CLIENT_SECRET] = \
-                self._client_secret
+            os.environ[EnvironmentVariables.AZURE_CLIENT_CERTIFICATE_PATH] = \
+                self._client_certificate_path
             os.environ[EnvironmentVariables.AZURE_TENANT_ID] = \
                 connection_params.tenant_id
             credential = _DefaultAzureCredential(

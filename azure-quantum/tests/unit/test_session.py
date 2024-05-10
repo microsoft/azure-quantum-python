@@ -163,7 +163,7 @@ class TestSession(QuantumTestBase):
 
             backend.run(circuit, shots=100, job_name="Job 2")
 
-            job1.wait_for_final_state()
+            self._wait_job_for_final_state(job=job1)
             session.refresh()
                 
             self.assertEqual(session.details.status, SessionStatus.EXECUTING)
@@ -177,6 +177,15 @@ class TestSession(QuantumTestBase):
         [job.wait_until_completed(timeout_secs=DEFAULT_TIMEOUT_SECS) for job in session_jobs]
         session.refresh()
         self.assertEqual(session.details.status, SessionStatus.SUCCEEDED)
+
+    def _wait_job_for_final_state(self, job):
+
+        kwargs = {}
+        # Make wait time zero to speed up tests that run from recordings.
+        if self.is_playback:
+            kwargs["wait"] = 0
+
+        job.wait_for_final_state(**kwargs)
 
     def _get_target(self, target_name):
         workspace = self.create_workspace()

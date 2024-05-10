@@ -4,12 +4,13 @@
 ##
 
 import unittest
-from azure.quantum.workspace import Workspace
+from unittest import mock
+
 import pytest
 import numpy as np
-
 from cirq import ParamResolver
 
+from azure.quantum.workspace import Workspace
 from azure.quantum.job.job import Job
 from azure.quantum.cirq import AzureQuantumService
 from azure.quantum.cirq.targets.target import Target
@@ -167,12 +168,18 @@ class TestCirq(QuantumTestBase):
         ):
             workspace = self.create_workspace()
             service = AzureQuantumService(workspace=workspace)
-            run_result = service.run(
-                program=self._3_qubit_ghz_cirq(),
-                repetitions=500,
-                target="ionq.simulator",
-                timeout_seconds=60
-            )
+            # Make job poll time zero to speed up tests that run from recordings.
+            job_run_poll_wait = AzureQuantumService._job_run_default_poll_wait
+            if self.is_playback:
+                job_run_poll_wait = 0.0
+
+            with mock.patch.object(AzureQuantumService, "_job_run_default_poll_wait", job_run_poll_wait):
+                run_result = service.run(
+                    program=self._3_qubit_ghz_cirq(),
+                    repetitions=500,
+                    target="ionq.simulator",
+                    timeout_seconds=60
+                )
             job = service.get_job(self.get_test_job_id())
             job_result = job.results(timeout_seconds=DEFAULT_TIMEOUT_SECS).to_cirq_result()
             for result in [run_result, job_result]:
