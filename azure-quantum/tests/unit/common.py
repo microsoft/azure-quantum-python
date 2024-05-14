@@ -27,7 +27,7 @@ from azure.quantum._constants import (
 )
 from azure.quantum import Job
 from azure.quantum.target import Target
-from azure.identity import ClientSecretCredential
+from azure.identity import CertificateCredential
 
 
 ZERO_UID = "00000000-0000-0000-0000-000000000000"
@@ -85,8 +85,6 @@ class QuantumTestBase(ReplayableTest):
             user_agent_app_id=APP_ID,
         )
         self.connection_params = connection_params
-        self._client_secret = os.environ.get(EnvironmentVariables.AZURE_CLIENT_SECRET, PLACEHOLDER)
-
         dummy_cert_file = pl.Path(__file__).parent / "fixtures" / "dummy_auth_cert.pfx"
         self._client_certificate_path = os.environ.get(
             EnvironmentVariables.AZURE_CLIENT_CERTIFICATE_PATH, dummy_cert_file
@@ -117,9 +115,6 @@ class QuantumTestBase(ReplayableTest):
         self._regex_replacer.register_guid_regex(
             f"(?:job-|jobs/|session-|sessions/){GUID_REGEX_CAPTURE}")
         self._regex_replacer.register_scrubbing(connection_params.client_id, ZERO_UID)
-        self._regex_replacer.register_scrubbing(
-            self._client_secret, PLACEHOLDER
-        )
         self._regex_replacer.register_scrubbing(connection_params.tenant_id, ZERO_UID)
         self._regex_replacer.register_scrubbing(connection_params.subscription_id, ZERO_UID)
         self._regex_replacer.register_scrubbing(connection_params.workspace_name, WORKSPACE)
@@ -267,7 +262,7 @@ class QuantumTestBase(ReplayableTest):
 
     @property
     def is_playback(self):
-        return not self.in_recording 
+        return not self.in_recording and not self.is_live
 
     def clear_env_vars(self, os_environ):
         for env_var in EnvironmentVariables.ALL:
@@ -287,10 +282,11 @@ class QuantumTestBase(ReplayableTest):
         connection_params = self.connection_params
 
         if not credential and self.is_playback:
-            credential = ClientSecretCredential(
+            credential = CertificateCredential(
                 tenant_id=TENANT_ID,
                 client_id=ZERO_UID,
-                client_secret=PLACEHOLDER)
+                certificate_path=self._client_certificate_path
+            )
 
         workspace = Workspace(
             credential=credential,
@@ -632,8 +628,7 @@ class AuthenticationMetadataFilter(RecordingProcessor):
     """
 
     def process_request(self, request):
-        if (
-            # "/.well-known/openid-configuration" in request.uri
+        if ( 
             "/common/discovery/instance" in request.uri
             or "&discover-tenant-id-and-authority" in request.uri
         ):
