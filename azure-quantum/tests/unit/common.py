@@ -7,6 +7,7 @@ import re
 import os
 import json
 import time
+import pathlib as pl
 from unittest.mock import patch
 from vcr.request import Request as VcrRequest
 
@@ -85,7 +86,11 @@ class QuantumTestBase(ReplayableTest):
         )
         self.connection_params = connection_params
         self._client_secret = os.environ.get(EnvironmentVariables.AZURE_CLIENT_SECRET, PLACEHOLDER)
-        self._client_certificate_path = os.environ.get(EnvironmentVariables.AZURE_CLIENT_CERTIFICATE_PATH, PLACEHOLDER)
+
+        dummy_cert_file = pl.Path(__file__).parent / "fixtures" / "dummy_auth_cert.pfx"
+        self._client_certificate_path = os.environ.get(
+            EnvironmentVariables.AZURE_CLIENT_CERTIFICATE_PATH, dummy_cert_file
+        )
 
         self._regex_replacer = CustomRecordingProcessor(self)
         recording_processors = [
@@ -262,11 +267,7 @@ class QuantumTestBase(ReplayableTest):
 
     @property
     def is_playback(self):
-        return (
-            #self.connection_params.subscription_id == SUBSCRIPTION_ID
-            not self.in_recording 
-            and not self.is_live
-            )
+        return not self.in_recording 
 
     def clear_env_vars(self, os_environ):
         for env_var in EnvironmentVariables.ALL:

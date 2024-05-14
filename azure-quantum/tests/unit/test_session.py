@@ -39,6 +39,7 @@ class TestSession(QuantumTestBase):
     @pytest.mark.live_test
     @pytest.mark.session
     @pytest.mark.echo_targets
+    @pytest.mark.skip(reason="Skip until the microsoft.test provider is fixed")
     def test_session_get_session(self):
         workspace = self.create_workspace()
         session = Session(workspace=workspace,
@@ -60,6 +61,7 @@ class TestSession(QuantumTestBase):
     @pytest.mark.live_test
     @pytest.mark.session
     @pytest.mark.echo_targets
+    @pytest.mark.skip(reason="Skip until the microsoft.test provider is fixed")
     def test_session_open_close(self):
         workspace = self.create_workspace()
         session = Session(workspace=workspace,
@@ -74,6 +76,7 @@ class TestSession(QuantumTestBase):
     @pytest.mark.live_test
     @pytest.mark.session
     @pytest.mark.echo_targets
+    @pytest.mark.skip(reason="Skip until the microsoft.test provider is fixed")
     def test_session_target_open_session(self):
         target = self._get_target("echo-quantinuum")
         self.assertIsNone(target.latest_session)
@@ -88,6 +91,7 @@ class TestSession(QuantumTestBase):
     @pytest.mark.live_test
     @pytest.mark.session
     @pytest.mark.echo_targets
+    @pytest.mark.skip(reason="Skip until the microsoft.test provider is fixed")
     def test_session_with_target_open_session(self):
         target = self._get_target("echo-quantinuum")
         self.assertIsNone(target.latest_session)
@@ -322,6 +326,7 @@ class TestSession(QuantumTestBase):
     @pytest.mark.session
     @pytest.mark.qsharp
     @pytest.mark.echo_targets
+    @pytest.mark.skip(reason="Skip until the microsoft.test provider is fixed")
     @skip_if_no_qsharp
     def test_session_job_failure_policies_echo_quantinuum(self):
         self._test_session_job_failure_policies(target_name="echo-quantinuum")
@@ -370,6 +375,7 @@ class TestSession(QuantumTestBase):
     @pytest.mark.session
     @pytest.mark.qiskit
     @pytest.mark.echo_targets
+    @pytest.mark.skip(reason="Skip until the microsoft.test provider is fixed")
     def test_session_job_qiskit_circuit_echo_quantinuum(self):
         self._test_session_job_qiskit_circuit(target_name="echo-quantinuum")
 
@@ -388,6 +394,7 @@ class TestSession(QuantumTestBase):
     @pytest.mark.qsharp
     @pytest.mark.echo_targets
     @skip_if_no_qsharp
+    @pytest.mark.skip(reason="Skip until the microsoft.test provider is fixed")
     def test_session_job_qsharp_callable_echo_quantinuum(self):
         self._test_session_job_qsharp_callable(target_name="echo-quantinuum")
 

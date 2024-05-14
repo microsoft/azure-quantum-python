@@ -323,7 +323,7 @@ class TestWorkspace(QuantumTestBase):
             jobs = workspace.list_jobs()
             assert len(jobs) >= 0
 
-        if self.is_live:
+        if not self.is_playback:
             self.pause_recording()
             token = self._get_rp_credential()
             workspace = self._get_workspace(token)
