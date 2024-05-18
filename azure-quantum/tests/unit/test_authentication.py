@@ -20,6 +20,7 @@ from common import (
 from azure.identity import (
     CredentialUnavailableError,
     ClientSecretCredential,
+    DefaultAzureCredential,
     InteractiveBrowserCredential,
 )
 from azure.quantum import Workspace
@@ -123,9 +124,7 @@ class TestWorkspace(QuantumTestBase):
         with patch.dict(os.environ):
             self.clear_env_vars(os.environ)
             connection_params = self.connection_params
-            credential = ClientSecretCredential(connection_params.tenant_id,
-                                                connection_params.client_id,
-                                                self._client_secret)
+            credential = DefaultAzureCredential()
             token = credential.get_token(ConnectionConstants.DATA_PLANE_CREDENTIAL_SCOPE)
             content = {
                 "access_token": token.token,
@@ -146,6 +145,7 @@ class TestWorkspace(QuantumTestBase):
                 os.remove(file)
 
     @pytest.mark.live_test
+    @pytest.mark.skip(reason="Only to be used in manual testing when secret is provided")
     def test_workspace_auth_client_secret_credential(self):
         with patch.dict(os.environ):
             self.clear_env_vars(os.environ)
@@ -165,8 +165,6 @@ class TestWorkspace(QuantumTestBase):
             connection_params = self.connection_params
             os.environ[EnvironmentVariables.AZURE_CLIENT_ID] = \
                 connection_params.client_id
-            os.environ[EnvironmentVariables.AZURE_CLIENT_SECRET] = \
-                self._client_secret
             os.environ[EnvironmentVariables.AZURE_TENANT_ID] = \
                 connection_params.tenant_id
             credential = _DefaultAzureCredential(
