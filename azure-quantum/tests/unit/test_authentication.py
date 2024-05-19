@@ -20,7 +20,7 @@ from common import (
 from azure.identity import (
     CredentialUnavailableError,
     ClientSecretCredential,
-    DefaultAzureCredential,
+    CertificateCredential,
     InteractiveBrowserCredential,
 )
 from azure.quantum import Workspace
@@ -121,28 +121,41 @@ class TestWorkspace(QuantumTestBase):
 
     @pytest.mark.live_test
     def test_workspace_auth_token_credential(self):
-        connection_params = self.connection_params
-        credential = _DefaultAzureCredential(            
-            subscription_id=connection_params.subscription_id,
-            arm_endpoint=connection_params.arm_endpoint)
-        token = credential.get_token(ConnectionConstants.DATA_PLANE_CREDENTIAL_SCOPE)
-        content = {
-            "access_token": token.token,
-            "expires_on": token.expires_on * 1000
-        }
-        tmpdir = self.create_temp_dir()
-        file = Path(tmpdir) / "token.json"
-        try:
-            file.write_text(json.dumps(content))
-            with patch.dict(os.environ,
-                            {EnvironmentVariables.QUANTUM_TOKEN_FILE: str(file.resolve())},
-                            clear=True):
-                credential = _TokenFileCredential()
-                workspace = self.create_workspace(credential=credential)
-                targets = workspace.get_targets()
-                self.assertGreater(len(targets), 1)
-        finally:
-            os.remove(file)
+        with patch.dict(os.environ):
+            self.clear_env_vars(os.environ)
+            connection_params = self.connection_params
+            
+            if self.in_recording:
+                credential = CertificateCredential(
+                    tenant_id=connection_params.tenant_id,
+                    client_id=connection_params.client_id,
+                    certificate_path=self._client_certificate_path)
+            else:
+                # Certificate file is not available in PR pipeline,
+                # using ClientSecretCredential for replay
+                credential = ClientSecretCredential(
+                    tenant_id=connection_params.tenant_id,
+                    client_id=connection_params.client_id,
+                    client_secret=self._client_secret)
+            
+            token = credential.get_token(ConnectionConstants.DATA_PLANE_CREDENTIAL_SCOPE)
+            content = {
+                "access_token": token.token,
+                "expires_on": token.expires_on * 1000
+            }
+            tmpdir = self.create_temp_dir()
+            file = Path(tmpdir) / "token.json"
+            try:
+                file.write_text(json.dumps(content))
+                with patch.dict(os.environ,
+                                {EnvironmentVariables.QUANTUM_TOKEN_FILE: str(file.resolve())},
+                                clear=True):
+                    credential = _TokenFileCredential()
+                    workspace = self.create_workspace(credential=credential)
+                    targets = workspace.get_targets()
+                    self.assertGreater(len(targets), 1)
+            finally:
+                os.remove(file)
 
     @pytest.mark.live_test
     @pytest.mark.skip(reason="Only to be used in manual testing when secret is provided")
@@ -160,13 +173,26 @@ class TestWorkspace(QuantumTestBase):
 
     @pytest.mark.live_test
     def test_workspace_auth_default_credential(self):
-        connection_params = self.connection_params
-        credential = _DefaultAzureCredential(
-            subscription_id=connection_params.subscription_id,
-            arm_endpoint=connection_params.arm_endpoint)
-        workspace = self.create_workspace(credential=credential)
-        targets = workspace.get_targets()
-        self.assertGreater(len(targets), 1)
+        with patch.dict(os.environ):
+            self.clear_env_vars(os.environ)
+            connection_params = self.connection_params
+            
+            if self.in_recording:
+                credential = CertificateCredential(
+                    tenant_id=connection_params.tenant_id,
+                    client_id=connection_params.client_id,
+                    certificate_path=self._client_certificate_path)
+            else:
+                # Certificate file is not available in PR pipeline,
+                # using ClientSecretCredential for replay
+                credential = ClientSecretCredential(
+                    tenant_id=connection_params.tenant_id,
+                    client_id=connection_params.client_id,
+                    client_secret=self._client_secret)
+                
+            workspace = self.create_workspace(credential=credential)
+            targets = workspace.get_targets()
+            self.assertGreater(len(targets), 1)
 
     @pytest.mark.skip(reason="Only to be used in manual testing")
     @pytest.mark.live_test
