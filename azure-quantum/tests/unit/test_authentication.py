@@ -172,7 +172,7 @@ class TestWorkspace(QuantumTestBase):
             self.assertGreater(len(targets), 1)
 
     @pytest.mark.live_test
-    def test_workspace_auth_default_credential(self):
+    def test_workspace_auth_override_default_credential(self):
         with patch.dict(os.environ):
             self.clear_env_vars(os.environ)
             connection_params = self.connection_params
