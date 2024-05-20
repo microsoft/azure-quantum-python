@@ -71,22 +71,6 @@ class AzureQuantumProvider(Provider):
         backends = self.backends(name=name, **kwargs)
 
         if len(backends) > 1:
-            def all_same(iterable):
-                group_iter = groupby(iterable)
-                return next(group_iter, True) and not next(group_iter, False)
-
-            # If all backends have the same name, filter for default backend
-            if all_same(backend.name() for backend in backends):
-                backends = list(
-                    filter(
-                        lambda backend: self._match_all(
-                            backend.configuration().to_dict(), {"is_default": True}
-                        ),
-                        backends,
-                    )
-                )
-
-        if len(backends) > 1:
             raise QiskitBackendNotFoundError(
                 "More than one backend matches the criteria"
             )
@@ -132,11 +116,25 @@ see https://aka.ms/AQ/Docs/AddProvider"
         backend_list = [x for v in self._backends.values() for x in v]
 
         # filter by properties specified in the kwargs and filter function
-        backends: List[Backend] = self._filter_backends(
+        filtered_backends: List[Backend] = self._filter_backends(
             backend_list, filters=workspace_allowed, **kwargs
         )
 
-        return backends
+        # Also filter out non-default backends.
+        default_backends = list(
+            filter(
+                lambda backend: self._match_all(
+                    backend.configuration().to_dict(), {"is_default": True}
+                ),
+                filtered_backends,
+            )
+        ) 
+       # If default backends were found - return them, otherwise return the filtered_backends collection.
+       # The latter case could happen where there's no default backend defined for the specified target.  
+        if len(default_backends) > 0:
+            return default_backends
+
+        return filtered_backends
 
     def get_job(self, job_id) -> AzureQuantumJob:
         """Returns the Job instance associated with the given id.
