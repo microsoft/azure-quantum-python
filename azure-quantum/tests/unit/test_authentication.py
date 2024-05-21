@@ -124,19 +124,23 @@ class TestWorkspace(QuantumTestBase):
         with patch.dict(os.environ):
             self.clear_env_vars(os.environ)
             connection_params = self.connection_params
-            
-            if self.in_recording:
-                credential = CertificateCredential(
-                    tenant_id=connection_params.tenant_id,
-                    client_id=connection_params.client_id,
-                    certificate_path=self._client_certificate_path)
+
+            os.environ[EnvironmentVariables.AZURE_CLIENT_ID] = \
+                connection_params.client_id
+            os.environ[EnvironmentVariables.AZURE_TENANT_ID] = \
+                connection_params.tenant_id
+
+            if os.path.exists(self._client_certificate_path):
+                os.environ[EnvironmentVariables.AZURE_CLIENT_CERTIFICATE_PATH] = \
+                    self._client_certificate_path
             else:
-                # Certificate file is not available in PR pipeline,
-                # using ClientSecretCredential for replay
-                credential = ClientSecretCredential(
-                    tenant_id=connection_params.tenant_id,
-                    client_id=connection_params.client_id,
-                    client_secret=self._client_secret)
+                os.environ[EnvironmentVariables.AZURE_CLIENT_SECRET] = \
+                    self._client_secret
+            
+            credential = _DefaultAzureCredential(
+                subscription_id=connection_params.subscription_id,
+                arm_endpoint=connection_params.arm_endpoint,
+                tenant_id=connection_params.tenant_id)
             
             token = credential.get_token(ConnectionConstants.DATA_PLANE_CREDENTIAL_SCOPE)
             content = {
@@ -158,37 +162,44 @@ class TestWorkspace(QuantumTestBase):
                 os.remove(file)
 
     @pytest.mark.live_test
-    @pytest.mark.skip(reason="Only to be used in manual testing when secret is provided")
     def test_workspace_auth_client_secret_credential(self):
+        client_secret = os.environ.get(EnvironmentVariables.AZURE_CLIENT_SECRET)
+        if not client_secret:
+            pytest.skip("Skipping the test as no Client Secret was provided")
+
         with patch.dict(os.environ):
             self.clear_env_vars(os.environ)
             connection_params = self.connection_params
             credential = ClientSecretCredential(
                 tenant_id=connection_params.tenant_id,
                 client_id=connection_params.client_id,
-                client_secret=self._client_secret)
+                client_secret=client_secret)
             workspace = self.create_workspace(credential=credential)
             targets = workspace.get_targets()
             self.assertGreater(len(targets), 1)
 
     @pytest.mark.live_test
-    def test_workspace_auth_override_default_credential(self):
+    def test_workspace_auth_default_credential(self):
         with patch.dict(os.environ):
             self.clear_env_vars(os.environ)
             connection_params = self.connection_params
             
-            if self.in_recording:
-                credential = CertificateCredential(
-                    tenant_id=connection_params.tenant_id,
-                    client_id=connection_params.client_id,
-                    certificate_path=self._client_certificate_path)
+            os.environ[EnvironmentVariables.AZURE_CLIENT_ID] = \
+                connection_params.client_id
+            os.environ[EnvironmentVariables.AZURE_TENANT_ID] = \
+                connection_params.tenant_id
+
+            if os.path.exists(self._client_certificate_path):
+                os.environ[EnvironmentVariables.AZURE_CLIENT_CERTIFICATE_PATH] = \
+                    self._client_certificate_path
             else:
-                # Certificate file is not available in PR pipeline,
-                # using ClientSecretCredential for replay
-                credential = ClientSecretCredential(
-                    tenant_id=connection_params.tenant_id,
-                    client_id=connection_params.client_id,
-                    client_secret=self._client_secret)
+                os.environ[EnvironmentVariables.AZURE_CLIENT_SECRET] = \
+                    self._client_secret
+
+            credential = _DefaultAzureCredential(
+                subscription_id=connection_params.subscription_id,
+                arm_endpoint=connection_params.arm_endpoint,
+                tenant_id=connection_params.tenant_id)
                 
             workspace = self.create_workspace(credential=credential)
             targets = workspace.get_targets()
