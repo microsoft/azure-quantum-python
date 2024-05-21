@@ -20,7 +20,6 @@ from common import (
 from azure.identity import (
     CredentialUnavailableError,
     ClientSecretCredential,
-    CertificateCredential,
     InteractiveBrowserCredential,
 )
 from azure.quantum import Workspace
