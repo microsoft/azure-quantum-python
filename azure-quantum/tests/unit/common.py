@@ -85,7 +85,8 @@ class QuantumTestBase(ReplayableTest):
         )
         self.connection_params = connection_params
         self._client_secret = os.environ.get(EnvironmentVariables.AZURE_CLIENT_SECRET, PLACEHOLDER)
-
+        self._client_certificate_path = os.environ.get(EnvironmentVariables.AZURE_CLIENT_CERTIFICATE_PATH, PLACEHOLDER)
+        
         self._regex_replacer = CustomRecordingProcessor(self)
         recording_processors = [
             AuthenticationMetadataFilter(),
