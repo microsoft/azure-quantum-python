@@ -183,13 +183,13 @@ jobs:
 
   - task: EsrpRelease@7
     condition: ${{ parameters.Publish_Python_Package_To_PyPi }}
-    displayName: Publish "azure-quantum" package to PyPi
+    displayName: Sign and publish "azure-quantum" package to PyPi
     inputs:
       connectedservicename: 'ESRP Signing Connection'
       keyvaultname: 'kv-aqua-esrp-001'
       authcertname: 'EsrpAuthCert'
       signcertname: 'EsrpSignCert'
-      clientid: 'AzureQuantumESRP'
+      clientid: '832c049d-cd07-4c1c-bfa5-c07250d190cb'
       intent: 'PackageDistribution'
       contenttype: 'PyPi'
       contentsource: 'folder'
