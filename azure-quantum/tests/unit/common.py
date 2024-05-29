@@ -53,7 +53,7 @@ class RegexScrubbingPatterns:
     URL_STORAGE_ACCOUNT = r"https://[^\.]+.blob.core.windows.net"
     URL_QUANTUM_ENDPOINT = r"https://[^\.]+.quantum(-test)?.azure.com/"
     URL_OAUTH_ENDPOINT = \
-        f"https://login.(microsoftonline.com|windows-ppe.net)/{GUID_REGEX_CAPTURE}/oauth2/v2.0/token"
+        f"https://login.(microsoftonline.com|windows-ppe.net)/{GUID_REGEX_CAPTURE}/oauth2/v\d+\.\d+/token"
     URL_QUERY_SAS_KEY_SIGNATURE = r"sig=[^&]+\&"
     URL_QUERY_SAS_KEY_VALUE = r"sv=[^&]+\&"
     URL_QUERY_SAS_KEY_EXPIRATION = r"se=[^&]+\&"
