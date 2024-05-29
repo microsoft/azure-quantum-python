@@ -11,7 +11,9 @@ param (
 )
 
 # For debug, print all relevant environment variables:
-Get-ChildItem env:AZURE*, env:*VERSION, env:*OUTDIR | Format-Table | Out-String | Write-Host
+Get-ChildItem env:AZURE*, env:*VERSION, env:*OUTDIR | ForEach-Object {
+    Write-Host $_.Name "=" $_.Value
+}
 
 $PackageDir = Split-Path -parent $PSScriptRoot;
 $PackageName = $PackageDir | Split-Path -Leaf;

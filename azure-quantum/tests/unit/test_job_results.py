@@ -23,7 +23,6 @@ class TestJobResults(QuantumTestBase):
         self.assertTrue(len(job_results["Histogram"]) == 4)
 
     @pytest.mark.live_test
-    @pytest.mark.skip(reason="Skip until the microsoft.test provider is fixed")
     def test_job_get_results_with_expired_sas_token(self):
         """
         Get existing result blob url and replace its sas token with expired one, 

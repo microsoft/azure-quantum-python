@@ -7,7 +7,6 @@ import re
 import os
 import json
 import time
-import pathlib as pl
 from unittest.mock import patch
 from vcr.request import Request as VcrRequest
 
@@ -27,7 +26,7 @@ from azure.quantum._constants import (
 )
 from azure.quantum import Job
 from azure.quantum.target import Target
-from azure.identity import CertificateCredential
+from azure.identity import ClientSecretCredential
 
 
 ZERO_UID = "00000000-0000-0000-0000-000000000000"
@@ -85,11 +84,9 @@ class QuantumTestBase(ReplayableTest):
             user_agent_app_id=APP_ID,
         )
         self.connection_params = connection_params
-        dummy_cert_file = pl.Path(__file__).parent / "fixtures" / "dummy_auth_cert.pfx"
-        self._client_certificate_path = os.environ.get(
-            EnvironmentVariables.AZURE_CLIENT_CERTIFICATE_PATH, dummy_cert_file
-        )
-
+        self._client_secret = os.environ.get(EnvironmentVariables.AZURE_CLIENT_SECRET, PLACEHOLDER)
+        self._client_certificate_path = os.environ.get(EnvironmentVariables.AZURE_CLIENT_CERTIFICATE_PATH, PLACEHOLDER)
+        
         self._regex_replacer = CustomRecordingProcessor(self)
         recording_processors = [
             AuthenticationMetadataFilter(),
@@ -115,6 +112,9 @@ class QuantumTestBase(ReplayableTest):
         self._regex_replacer.register_guid_regex(
             f"(?:job-|jobs/|session-|sessions/){GUID_REGEX_CAPTURE}")
         self._regex_replacer.register_scrubbing(connection_params.client_id, ZERO_UID)
+        self._regex_replacer.register_scrubbing(
+            self._client_secret, PLACEHOLDER
+        )
         self._regex_replacer.register_scrubbing(connection_params.tenant_id, ZERO_UID)
         self._regex_replacer.register_scrubbing(connection_params.subscription_id, ZERO_UID)
         self._regex_replacer.register_scrubbing(connection_params.workspace_name, WORKSPACE)
@@ -282,11 +282,10 @@ class QuantumTestBase(ReplayableTest):
         connection_params = self.connection_params
 
         if not credential and self.is_playback:
-            credential = CertificateCredential(
+            credential = ClientSecretCredential(
                 tenant_id=TENANT_ID,
                 client_id=ZERO_UID,
-                certificate_path=self._client_certificate_path
-            )
+                client_secret=PLACEHOLDER)
 
         workspace = Workspace(
             credential=credential,
