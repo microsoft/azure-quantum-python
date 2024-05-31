@@ -30,6 +30,10 @@ class AzureQuantumService:
     Class for interfacing with the Azure Quantum service
     using Cirq quantum circuits
     """
+
+    # Polling time for a result of a created job.
+    _job_run_default_poll_wait = 1
+
     def __init__(
         self,
         workspace: Workspace = None,
@@ -228,7 +232,10 @@ see https://aka.ms/AQ/Docs/AddProvider")
         )
         # Get raw job results
         try:
-            result = job.results(timeout_seconds=timeout_seconds)
+            result = job.results(
+                timeout_seconds=timeout_seconds, 
+                polling_seconds=self.__class__._job_run_default_poll_wait
+            )
         except RuntimeError as e:
             # Catch errors from cirq_ionq.Job.results
             if "Job was not completed successful. Instead had status: " in str(e):

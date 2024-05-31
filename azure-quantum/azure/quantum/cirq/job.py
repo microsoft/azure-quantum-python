@@ -72,7 +72,10 @@ class Job:
             }
         return self._measurement_dict
 
-    def results(self, timeout_seconds: int = 7200) -> "cirq.Result":
+    def results(
+            self, timeout_seconds: int = 7200,
+            polling_seconds: int = 1
+        ) -> "cirq.Result":
         """Poll the Azure Quantum API for results."""
         return self._azure_job.get_results(timeout_secs=timeout_seconds)
 

@@ -40,6 +40,7 @@ class EnvironmentVariables:
         AZURE_TENANT_ID,
         QUANTUM_TOKEN_FILE,
         CONNECTION_STRING,
+        AZURE_CLIENT_CERTIFICATE_PATH,
     ]
 
 

@@ -53,7 +53,7 @@ class RegexScrubbingPatterns:
     URL_STORAGE_ACCOUNT = r"https://[^\.]+.blob.core.windows.net"
     URL_QUANTUM_ENDPOINT = r"https://[^\.]+.quantum(-test)?.azure.com/"
     URL_OAUTH_ENDPOINT = \
-        f"https://login.(microsoftonline.com|windows-ppe.net)/{GUID_REGEX_CAPTURE}/oauth2/.*"
+        f"https://login.(microsoftonline.com|windows-ppe.net)/{GUID_REGEX_CAPTURE}/oauth2/v\d+\.\d+/token"
     URL_QUERY_SAS_KEY_SIGNATURE = r"sig=[^&]+\&"
     URL_QUERY_SAS_KEY_VALUE = r"sv=[^&]+\&"
     URL_QUERY_SAS_KEY_EXPIRATION = r"se=[^&]+\&"
@@ -262,9 +262,7 @@ class QuantumTestBase(ReplayableTest):
 
     @property
     def is_playback(self):
-        return (self.connection_params.subscription_id == SUBSCRIPTION_ID
-                and not self.in_recording 
-                and not self.is_live)
+        return not self.in_recording and not self.is_live
 
     def clear_env_vars(self, os_environ):
         for env_var in EnvironmentVariables.ALL:
@@ -629,9 +627,8 @@ class AuthenticationMetadataFilter(RecordingProcessor):
     """
 
     def process_request(self, request):
-        if (
-            "/.well-known/openid-configuration" in request.uri
-            or "/common/discovery/instance" in request.uri
+        if ( 
+            "/common/discovery/instance" in request.uri
             or "&discover-tenant-id-and-authority" in request.uri
         ):
             return None
