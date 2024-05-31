@@ -90,7 +90,8 @@ class _DefaultAzureCredential(_ChainedTokenCredential):
             subscription_id=self.subscription_id)
         credentials = []
         credentials.append(_TokenFileCredential())
-        credentials.append(EnvironmentCredential())
+        # we set "send_certificate_chain=True" to specify X5C header required to support SNI authentication
+        credentials.append(EnvironmentCredential(send_certificate_chain=True))
         if self.client_id:
             credentials.append(ManagedIdentityCredential(client_id=self.client_id))
         if self.authority and self.tenant_id:
