@@ -46,8 +46,8 @@ class TestJobResults(QuantumTestBase):
     def test_job_for_microsoft_quantum_results_v1_success(self):
         job_results = self._get_job_results("microsoft.quantum-results.v1","{\"Histogram\": [\"[0]\", 0.50, \"[1]\", 0.50]}")
         self.assertTrue(len(job_results.keys()) == 2)
-        self.assertTrue(job_results["[0]"], 0.50)
-        self.assertTrue(job_results["[1]"], 0.50)
+        self.assertEqual(job_results["[0]"], 0.50)
+        self.assertEqual(job_results["[1]"], 0.50)
 
     
     def test_job_for_microsoft_quantum_results_v1_no_histogram_returns_raw_result(self):
@@ -61,8 +61,93 @@ class TestJobResults(QuantumTestBase):
         job_result = self._get_job_results("microsoft.quantum-results.v1", job_result_raw)
         self.assertTrue(job_result, job_result_raw)
 
+    def test_job_for_microsoft_quantum_results_v2_success(self):
+        job_results = self._get_job_results("microsoft.quantum-results.v2","{\"DataFormat\": \"microsoft.quantum-results.v2\", \"Results\": [{\"TotalCount\": 4, \"Histogram\": [{\"Outcome\": [0], \"Display\": \"[0]\", \"Count\": 2}, {\"Outcome\": [1], \"Display\": \"[1]\", \"Count\": 2}], \"Shots\": [[0], [1], [1], [0]]}]}")
+        self.assertTrue(len(job_results.keys()) == 2)
+        self.assertEqual(job_results["[0]"], 0.50)
+        self.assertEqual(job_results["[1]"], 0.50)
+
+    def test_job_for_microsoft_quantum_results_v2_wrong_type_raises_exception(self):
+        job_result_raw = "{\"DataFormat\": \"microsoft.quantum-results.v1\", \"Results\": [{\"TotalCount\": 4, \"Histogram\": [{\"Outcome\": [0], \"Display\": \"[0]\", \"Count\": 2}, {\"Outcome\": [1], \"Display\": \"[1]\", \"Count\": 2}], \"Shots\": [[0], [1], [1], [0]]}]}"
+        job_result = self._get_job_results("microsoft.quantum-results.v2", job_result_raw)
+        self.assertEqual(job_result, job_result_raw)
+
+
+    def test_job_for_microsoft_quantum_results_v2_invalid_histogram_returns_raw_result(self):
+        job_result_raw = "{\"DataFormat\": \"microsoft.quantum-results.v2\", \"Results\": [{\"TotalCount\": 4, \"Histogram\": [{\"Outcome\": [0], \"Display\": \"[0]\"}, {\"Outcome\": [1], \"Display\": \"[1]\", \"Count\": 2}], \"Shots\": [[0], [1], [1], [0]]}]}"
+        job_result = self._get_job_results("microsoft.quantum-results.v2", job_result_raw)
+        self.assertEqual(job_result, job_result_raw)
+
+    def test_job_for_microsoft_quantum_results_histogram_v2_success(self):
+        job_results = self._get_job_results_histogram("microsoft.quantum-results.v2","{\"DataFormat\": \"microsoft.quantum-results.v2\", \"Results\": [{\"TotalCount\": 4, \"Histogram\": [{\"Outcome\": [0], \"Display\": \"[0]\", \"Count\": 2}, {\"Outcome\": [1], \"Display\": \"[1]\", \"Count\": 2}], \"Shots\": [[0], [1], [1], [0]]}]}")
+        self.assertTrue(len(job_results.keys()) == 2)
+        self.assertEqual(job_results["[0]"]["Count"], 2)
+        self.assertEqual(job_results["[1]"]["Count"], 2)
+        self.assertEqual(job_results["[0]"]["Outcome"], [0])
+        self.assertEqual(job_results["[1]"]["Outcome"], [1])
+
+    def test_job_for_microsoft_quantum_results_histogram_batch_v2_success(self):
+        job_results = self._get_job_results_histogram("microsoft.quantum-results.v2","{\"DataFormat\": \"microsoft.quantum-results.v2\", \"Results\": [{\"TotalCount\": 4, \"Histogram\": [{\"Outcome\": [0], \"Display\": \"[0]\", \"Count\": 2}, {\"Outcome\": [1], \"Display\": \"[1]\", \"Count\": 2}], \"Shots\": [[0], [1], [1], [0]]}, {\"TotalCount\": 4, \"Histogram\": [{\"Outcome\": [0], \"Display\": \"[0]\", \"Count\": 2}, {\"Outcome\": [1], \"Display\": \"[1]\", \"Count\": 2}], \"Shots\": [[0], [1], [1], [0]]}, {\"TotalCount\": 4, \"Histogram\": [{\"Outcome\": [0], \"Display\": \"[0]\", \"Count\": 2}, {\"Outcome\": [1], \"Display\": \"[1]\", \"Count\": 2}], \"Shots\": [[0], [1], [1], [0]]}]}")
+        self.assertTrue(len(job_results) == 3)
+        for i in range(3):
+            self.assertTrue(len(job_results[i].keys()) == 2)
+            self.assertEqual(job_results[i]["[0]"]["Count"], 2)
+            self.assertEqual(job_results[i]["[1]"]["Count"], 2)
+            self.assertEqual(job_results[i]["[0]"]["Outcome"], [0])
+            self.assertEqual(job_results[i]["[1]"]["Outcome"], [1])
+
+    def test_job_for_microsoft_quantum_results_histogram_v2_wrong_type_raises_exception(self):
+        try:
+            job_results = self._get_job_results_histogram("microsoft.quantum-results.v2","{\"Histogram\": [\"[0]\", 0.50, \"[1]\", 0.50]}")
+            # Fail test because we didn't get the error
+            self.assertTrue(False)
+        except:
+            self.assertTrue(True)
+
+    def test_job_for_microsoft_quantum_results_shots_v2_success(self):
+        job_results = self._get_job_results_shots("microsoft.quantum-results.v2","{\"DataFormat\": \"microsoft.quantum-results.v2\", \"Results\": [{\"TotalCount\": 4, \"Histogram\": [{\"Outcome\": [0], \"Display\": \"[0]\", \"Count\": 2}, {\"Outcome\": [1], \"Display\": \"[1]\", \"Count\": 2}], \"Shots\": [[0], [1], [1], [0]]}]}")
+        self.assertTrue(len(job_results) == 4)
+        self.assertEqual(job_results[0], [0])
+        self.assertEqual(job_results[1], [1])
+        self.assertEqual(job_results[2], [1])
+        self.assertEqual(job_results[3], [0])
+    
+    def test_job_for_microsoft_quantum_results_shots_batch_v2_success(self):
+        job_results = self._get_job_results_shots("microsoft.quantum-results.v2","{\"DataFormat\": \"microsoft.quantum-results.v2\", \"Results\": [{\"TotalCount\": 4, \"Histogram\": [{\"Outcome\": [0], \"Display\": \"[0]\", \"Count\": 2}, {\"Outcome\": [1], \"Display\": \"[1]\", \"Count\": 2}], \"Shots\": [[0], [1], [1], [0]]}, {\"TotalCount\": 4, \"Histogram\": [{\"Outcome\": [0], \"Display\": \"[0]\", \"Count\": 2}, {\"Outcome\": [1], \"Display\": \"[1]\", \"Count\": 2}], \"Shots\": [[0], [1], [1], [0]]}, {\"TotalCount\": 4, \"Histogram\": [{\"Outcome\": [0], \"Display\": \"[0]\", \"Count\": 2}, {\"Outcome\": [1], \"Display\": \"[1]\", \"Count\": 2}], \"Shots\": [[0], [1], [1], [0]]}]}")
+        self.assertTrue(len(job_results) == 3)
+        print(job_results)
+        for i in range(3):
+            self.assertTrue(len(job_results[i]) == 4)
+            self.assertEqual(job_results[i][0], [0])
+            self.assertEqual(job_results[i][1], [1])
+            self.assertEqual(job_results[i][2], [1])
+            self.assertEqual(job_results[i][3], [0])
+
+    def test_job_for_microsoft_quantum_results_shots_v2_wrong_type_raises_exception(self):
+        try:
+            job_results = self._get_job_results_shots("microsoft.quantum-results.v2","{\"Histogram\": [\"[0]\", 0.50, \"[1]\", 0.50]}")
+            # Fail test because we didn't get the error
+            self.assertTrue(False)
+        except:
+            self.assertTrue(True)
+
 
     def _get_job_results(self, output_data_format, results_as_json_str):
+        job = self._mock_job(output_data_format, results_as_json_str)
+        
+        return job.get_results()
+    
+    def _get_job_results_histogram(self, output_data_format, results_as_json_str):
+        job = self._mock_job(output_data_format, results_as_json_str)
+        
+        return job.get_results_histogram()
+    
+    def _get_job_results_shots(self, output_data_format, results_as_json_str):
+        job = self._mock_job(output_data_format, results_as_json_str)
+        
+        return job.get_results_shots()
+    
+    def _mock_job(self, output_data_format, results_as_json_str):
         job_details = JobDetails(
             id= "",
             name= "",
@@ -86,8 +171,8 @@ class TestJobResults(QuantumTestBase):
         download_data = DowloadDataMock()
         download_data.decode = Mock(return_value=results_as_json_str)
         job.download_data = Mock(return_value=download_data)
-        
-        return job.get_results()
+
+        return job
 
 
 if __name__ == "__main__":
