@@ -151,11 +151,172 @@ class Job(BaseJob, FilteredJob):
                     return {histogram_values[i]: histogram_values[i + 1] for i in range(0, len(histogram_values), 2)}
                 else: 
                     raise f"\"Histogram\" array has invalid format. Even number of items is expected."
+            elif self.details.output_data_format == "microsoft.quantum-results.v2":
+                if "DataFormat" not in results or results["DataFormat"] != "microsoft.quantum-results.v2":
+                    raise f"\"DataFormat\" was expected to be \"microsoft.quantum-results.v2\" in the Job results for \"{self.details.output_data_format}\" output format."
+
+                if "Results" not in results:
+                    raise f"\"Results\" field was expected to be in the Job results for \"{self.details.output_data_format}\" output format."
+                
+                # TODO: decide how to handle batch results
+                results = results["Results"][0]
+
+                if "Histogram" not in results:
+                    raise f"\"Histogram\" array was expected to be in the Job results for \"{self.details.output_data_format}\" output format."
+
+                histogram_values = results["Histogram"]
+
+                # Re-mapping object {'Histogram': [{"Outcome": [0], "Display": '[0]', "Count": 500}, {"Outcome": [1], "Display": '[1]', "Count": 500}]} to {'[0]': 0.50, '[1]': 0.50}
+                return {outcome["Display"]: outcome["Count"] / results["TotalCount"] for outcome in histogram_values}
             
             return results
         except:
             # If errors decoding the data, return the raw payload:
             return payload
+
+    def get_results_histogram(self, timeout_secs: float = DEFAULT_TIMEOUT):
+        """Get job results histogram (in V2 format) by downloading the results blob from the
+        storage container linked via the workspace.
+        
+        Raises :class:`RuntimeError` if job execution fails.
+        
+        Raises :class:`azure.quantum.job.JobFailedWithResultsError` if job execution fails, 
+                but failure results could still be retrieved (e.g. for jobs submitted against "microsoft.dft" target).
+
+        :param timeout_secs: Timeout in seconds, defaults to 300
+        :type timeout_secs: float
+        :return: Results dictionary with histogram shots, or raw results if not a json object.
+        :rtype: typing.Any
+        """
+        if self.results is not None:
+            return self.results
+
+        if not self.has_completed():
+            self.wait_until_completed(timeout_secs=timeout_secs)
+
+        if not self.details.status == "Succeeded":
+            if self.details.status == "Failed" and self._allow_failure_results():
+                job_blob_properties = self.download_blob_properties(self.details.output_data_uri)
+                if job_blob_properties.size > 0:
+                    job_failure_data = self.download_data(self.details.output_data_uri)
+                    raise JobFailedWithResultsError("An error occurred during job execution.", job_failure_data)
+
+            raise RuntimeError(
+                f'{"Cannot retrieve results as job execution failed"}'
+                + f"(status: {self.details.status}."
+                + f"error: {self.details.error_data})"
+            )
+
+        payload = self.download_data(self.details.output_data_uri)
+        try:
+            payload = payload.decode("utf8")
+            results = json.loads(payload)
+
+            if self.details.output_data_format == "microsoft.quantum-results.v2":
+                if "DataFormat" not in results or results["DataFormat"] != "microsoft.quantum-results.v2":
+                    raise f"\"DataFormat\" was expected to be \"microsoft.quantum-results.v2\" in the Job results for \"{self.details.output_data_format}\" output format."
+                if "Results" not in results:
+                    raise f"\"Results\" field was expected to be in the Job results for \"{self.details.output_data_format}\" output format."
+
+                results = results["Results"]
+
+                if len(results) == 1: 
+                    results = results[0]
+                    if "Histogram" not in results:
+                        raise f"\"Histogram\" array was expected to be in the Job results for \"{self.details.output_data_format}\" output format."
+
+                    histogram_values = results["Histogram"]
+
+                    # Re-mapping object {'Histogram': [{"Outcome": [0], "Display": '[0]', "Count": 500}, {"Outcome": [1], "Display": '[1]', "Count": 500}]} to {'[0]': {"Outcome": [0], "Count": 500}, '[1]': {"Outcome": [1], "Count": 500}}
+                    return {outcome["Display"]: {"Outcome": outcome["Outcome"], "Count": outcome["Count"]} for outcome in histogram_values}
+                else:
+                    print("HERE")
+                    # This is handling the BatchResults edge case
+                    resultsArray = []
+                    for i, result in enumerate(results):
+                        if "Histogram" not in result:
+                            raise f"\"Histogram\" array was expected to be in the Job results for result {i} for \"{self.details.output_data_format}\" output format."
+                        print(i)
+                        histogram_values = result["Histogram"]
+
+                        # Re-mapping object {'Histogram': [{"Outcome": [0], "Display": '[0]', "Count": 500}, {"Outcome": [1], "Display": '[1]', "Count": 500}]} to {'[0]': {"Outcome": [0], "Count": 500}, '[1]': {"Outcome": [1], "Count": 500}}
+                        resultsArray.append({outcome["Display"]: {"Outcome": outcome["Outcome"], "Count": outcome["Count"]} for outcome in histogram_values})
+
+                    return resultsArray
+
+            else:
+                raise f"This method only handles Jobs which are submitted with the \"{self.details.output_data_format}\" output format."
+
+        except:
+            raise f"This method only handles Jobs which are submitted with the \"{self.details.output_data_format}\" output format."
+
+
+    def get_results_shots(self, timeout_secs: float = DEFAULT_TIMEOUT):
+        """Get job results per shot data by downloading the results blob from the
+        storage container linked via the workspace.
+        
+        Raises :class:`RuntimeError` if job execution fails.
+        
+        Raises :class:`azure.quantum.job.JobFailedWithResultsError` if job execution fails, 
+                but failure results could still be retrieved (e.g. for jobs submitted against "microsoft.dft" target).
+
+        :param timeout_secs: Timeout in seconds, defaults to 300
+        :type timeout_secs: float
+        :return: Results dictionary with histogram shots, or raw results if not a json object.
+        :rtype: typing.Any
+        """
+        if self.results is not None:
+            return self.results
+
+        if not self.has_completed():
+            self.wait_until_completed(timeout_secs=timeout_secs)
+
+        if not self.details.status == "Succeeded":
+            if self.details.status == "Failed" and self._allow_failure_results():
+                job_blob_properties = self.download_blob_properties(self.details.output_data_uri)
+                if job_blob_properties.size > 0:
+                    job_failure_data = self.download_data(self.details.output_data_uri)
+                    raise JobFailedWithResultsError("An error occurred during job execution.", job_failure_data)
+
+            raise RuntimeError(
+                f'{"Cannot retrieve results as job execution failed"}'
+                + f"(status: {self.details.status}."
+                + f"error: {self.details.error_data})"
+            )
+
+        payload = self.download_data(self.details.output_data_uri)
+        try:
+            payload = payload.decode("utf8")
+            results = json.loads(payload)
+
+            if self.details.output_data_format == "microsoft.quantum-results.v2":
+                if "DataFormat" not in results or results["DataFormat"] != "microsoft.quantum-results.v2":
+                    raise f"\"DataFormat\" was expected to be \"microsoft.quantum-results.v2\" in the Job results for \"{self.details.output_data_format}\" output format."
+                if "Results" not in results:
+                    raise f"\"Results\" field was expected to be in the Job results for \"{self.details.output_data_format}\" output format."
+
+                results = results["Results"]
+
+                if len(results) == 1: 
+                    results = results[0]
+                    if "Shots" not in results:
+                        raise f"\"Shots\" array was expected to be in the Job results for \"{self.details.output_data_format}\" output format."
+
+                    return results["Shots"]
+                else:
+                    # This is handling the BatchResults edge case
+                    shotsArray = []
+                    for i, result in enumerate(results):
+                        if "Shots" not in result:
+                            raise f"\"Shots\" array was expected to be in the Job results for result {i} of \"{self.details.output_data_format}\" output format."
+                        shotsArray.append(result["Shots"])
+                    
+                    return shotsArray
+            else:   
+                raise f"This method only handles Jobs which are submitted with the \"{self.details.output_data_format}\" output format."
+        except:
+            raise f"This method only handles Jobs which are submitted with the \"{self.details.output_data_format}\" output format."
+
 
 
     @classmethod
