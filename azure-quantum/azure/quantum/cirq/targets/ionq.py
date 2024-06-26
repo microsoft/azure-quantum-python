@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 ##
-from typing import TYPE_CHECKING, Any, Dict, Union
+from typing import TYPE_CHECKING, Any, Dict, Union, Optional
 
 try:
     import cirq
@@ -71,6 +71,14 @@ class _IonQClient:
     def delete_job(self, job_id: str):
         azure_job = self._workspace.get_job(job_id)
         self._workspace.cancel_job(azure_job)
+    
+    def get_results(
+        self, job_id: str, sharpen: Optional[bool] = None, extra_query_params: Optional[dict] = None
+    ):
+        azure_job = self._workspace.get_job(job_id)
+        job_result = azure_job.get_results()
+        return job_result["histogram"]
+        
 
 
 class IonQTarget(IonQ, CirqTarget):

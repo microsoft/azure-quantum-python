@@ -33,13 +33,6 @@ jobs:
       displayName: List installed packages
 
     - script: |
-        python set_version.py
-      env:
-        RELEASE_TYPE: "patch"
-        BUILD_TYPE: "dev"
-      displayName: Set "azure-quantum" package version
-
-    - script: |
         cd $(Build.SourcesDirectory)/azure-quantum
         python setup.py sdist --dist-dir=target/wheels
         python setup.py bdist_wheel --dist-dir=target/wheels
