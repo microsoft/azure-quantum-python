@@ -26,6 +26,7 @@ To be able to run the tests in recording or live mode, make sure:
   - `AZURE_CLIENT_ID` - application (client) ID from Microsoft Entra ID
   - `AZURE_TENANT_ID` - directory (tenant) ID from Microsoft Entra ID
   - `AZURE_CLIENT_CERTIFICATE_PATH` - path to PEM or PKCS12 certificate file (including the private key) that is configured for the client app
+  - `AZURE_CLIENT_SEND_CERTIFICATE_CHAIN=True` - prompts Azure.Identity to set X5C header (specifying certificate chain) required to support SNI authentication
   - `AZURE_QUANTUM_SUBSCRIPTION_ID` - ID of the Subscription where Azure Quantum Workspace is deployed
   - `AZURE_QUANTUM_WORKSPACE_RG` - name of the Resource Group where Azure Quantum Workspace is deployed
   - `AZURE_QUANTUM_WORKSPACE_NAME` - name of the Azure Quantum Workspace

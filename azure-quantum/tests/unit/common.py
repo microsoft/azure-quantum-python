@@ -33,6 +33,8 @@ ZERO_UID = "00000000-0000-0000-0000-000000000000"
 ONE_UID = "00000000-0000-0000-0000-000000000001"
 TENANT_ID = "72f988bf-86f1-41af-91ab-2d7cd011db47"
 PLACEHOLDER = "PLACEHOLDER"
+TRUE = "True"
+FALSE = "False"
 SUBSCRIPTION_ID = "11111111-2222-3333-4444-555555555555"
 RESOURCE_GROUP = "myresourcegroup"
 WORKSPACE = "myworkspace"
@@ -86,6 +88,7 @@ class QuantumTestBase(ReplayableTest):
         self.connection_params = connection_params
         self._client_secret = os.environ.get(EnvironmentVariables.AZURE_CLIENT_SECRET, PLACEHOLDER)
         self._client_certificate_path = os.environ.get(EnvironmentVariables.AZURE_CLIENT_CERTIFICATE_PATH, PLACEHOLDER)
+        self._client_send_certificate_chain = os.environ.get(EnvironmentVariables.AZURE_CLIENT_SEND_CERTIFICATE_CHAIN, TRUE)
         
         self._regex_replacer = CustomRecordingProcessor(self)
         recording_processors = [
