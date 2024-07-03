@@ -59,3 +59,6 @@ class TestQSharpQIRJob(QuantumTestBase):
 
         results = job.get_results(timeout_secs=DEFAULT_TIMEOUT_SECS)
         self.assertIsNotNone(results)
+
+        self.assertIsNotNone(job.get_results_histogram())
+        self.assertIsNotNone(job.get_results_shots())
