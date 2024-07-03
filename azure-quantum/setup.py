@@ -22,7 +22,7 @@ import re
 # To make sure that local builds still work without the same environment
 # variables, we'll default to 0.0.1 as a development version.
 
-version = os.environ.get("PYTHON_VERSION", "0.0.1")
+version = os.environ.get("PYTHON_VERSION", "1.2.4")
 
 with open("./azure/quantum/version.py", "w") as f:
     f.write(

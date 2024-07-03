@@ -330,12 +330,9 @@ class Job(BaseJob, FilteredJob):
                 # Convert the dictionary to a tuple
                 return tuple(self.convert_tuples(data[f"Item{i+1}"]) for i in range(len(data)))
             else:
-                # TODO: make cleaner err
-                raise "Malformed output"
+                raise "Malformed tuple output"
         elif isinstance(data, list):
             # Recursively process list elements
-            #[0]
-
             return tuple(self.convert_tuples(item) for item in data)
         else:
             # Return the data as is (int, string, etc.)
