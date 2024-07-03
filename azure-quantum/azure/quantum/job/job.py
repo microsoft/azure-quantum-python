@@ -232,7 +232,7 @@ class Job(BaseJob, FilteredJob):
                 else:
                     # This is handling the BatchResults edge case
                     resultsArray = []
-                    for result in results:
+                    for i, result in enumerate(results):
                         if "Histogram" not in result:
                             raise f"\"Histogram\" array was expected to be in the Job results for result {i} for \"{self.details.output_data_format}\" output format."
 
