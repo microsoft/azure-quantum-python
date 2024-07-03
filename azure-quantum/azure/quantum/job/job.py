@@ -226,9 +226,10 @@ class Job(BaseJob, FilteredJob):
                         raise f"\"Histogram\" array was expected to be in the Job results for \"{self.details.output_data_format}\" output format."
 
                     histogram_values = results["Histogram"]
+                    outcome_keys = self.process_outcome(histogram_values)
 
                     # Re-mapping object {'Histogram': [{"Outcome": [0], "Display": '[0]', "Count": 500}, {"Outcome": [1], "Display": '[1]', "Count": 500}]} to {'[0]': {"Outcome": [0], "Count": 500}, '[1]': {"Outcome": [1], "Count": 500}}
-                    return {outcome["Display"]: {"Outcome": outcome["Outcome"], "Count": outcome["Count"]} for outcome in histogram_values}
+                    return {outcome: hist_values["Count"] for outcome, hist_values in zip(outcome_keys, histogram_values)}
                 else:
                     # This is handling the BatchResults edge case
                     resultsArray = []
@@ -237,17 +238,18 @@ class Job(BaseJob, FilteredJob):
                             raise f"\"Histogram\" array was expected to be in the Job results for result {i} for \"{self.details.output_data_format}\" output format."
 
                         histogram_values = result["Histogram"]
+                        outcome_keys = self.process_outcome(histogram_values)
 
                         # Re-mapping object {'Histogram': [{"Outcome": [0], "Display": '[0]', "Count": 500}, {"Outcome": [1], "Display": '[1]', "Count": 500}]} to {'[0]': {"Outcome": [0], "Count": 500}, '[1]': {"Outcome": [1], "Count": 500}}
-                        resultsArray.append({outcome["Display"]: {"Outcome": outcome["Outcome"], "Count": outcome["Count"]} for outcome in histogram_values})
+                        resultsArray.append({outcome: hist_values["Count"] for outcome, hist_values in zip(outcome_keys, histogram_values)})
 
                     return resultsArray
 
             else:
-                raise f"This method only handles Jobs which are submitted with the \"{self.details.output_data_format}\" output format."
+                raise f"This method only handles Jobs which are submitted with the V2 output format."
 
         except:
-            raise f"This method only handles Jobs which are submitted with the \"{self.details.output_data_format}\" output format."
+            raise f"This method only handles Jobs which are submitted with the V2 output format."
 
 
     def get_results_shots(self, timeout_secs: float = DEFAULT_TIMEOUT):
@@ -297,25 +299,47 @@ class Job(BaseJob, FilteredJob):
                 results = results["Results"]
 
                 if len(results) == 1: 
-                    results = results[0]
-                    if "Shots" not in results:
+                    result = results[0]
+                    if "Shots" not in result:
                         raise f"\"Shots\" array was expected to be in the Job results for \"{self.details.output_data_format}\" output format."
-
-                    return results["Shots"]
+                    
+                    return [self.convert_tuples(shot) for shot in result["Shots"]]
                 else:
                     # This is handling the BatchResults edge case
                     shotsArray = []
                     for i, result in enumerate(results):
                         if "Shots" not in result:
                             raise f"\"Shots\" array was expected to be in the Job results for result {i} of \"{self.details.output_data_format}\" output format."
-                        shotsArray.append(result["Shots"])
+                        shotsArray.append([self.convert_tuples(shot) for shot in result["Shots"]])
                     
                     return shotsArray
             else:   
-                raise f"This method only handles Jobs which are submitted with the \"{self.details.output_data_format}\" output format."
+                raise f"This method only handles Jobs which are submitted with the V2 output format."
         except:
-            raise f"This method only handles Jobs which are submitted with the \"{self.details.output_data_format}\" output format."
+            raise f"This method only handles Jobs which are submitted with the V2 output format."
 
+
+    def process_outcome(self, histogram_results):
+        return [self.convert_tuples(v['Outcome']) for v in histogram_results]
+
+
+    def convert_tuples(self, data):
+        if isinstance(data, dict):
+            # Check if the dictionary represents a tuple
+            if all(isinstance(k, str) and k.startswith("Item") for k in data.keys()):
+                # Convert the dictionary to a tuple
+                return tuple(self.convert_tuples(data[f"Item{i+1}"]) for i in range(len(data)))
+            else:
+                # TODO: make cleaner err
+                raise "Malformed output"
+        elif isinstance(data, list):
+            # Recursively process list elements
+            #[0]
+
+            return tuple(self.convert_tuples(item) for item in data)
+        else:
+            # Return the data as is (int, string, etc.)
+            return data
 
 
     @classmethod
