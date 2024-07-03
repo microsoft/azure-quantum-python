@@ -230,13 +230,12 @@ class Job(BaseJob, FilteredJob):
                     # Re-mapping object {'Histogram': [{"Outcome": [0], "Display": '[0]', "Count": 500}, {"Outcome": [1], "Display": '[1]', "Count": 500}]} to {'[0]': {"Outcome": [0], "Count": 500}, '[1]': {"Outcome": [1], "Count": 500}}
                     return {outcome["Display"]: {"Outcome": outcome["Outcome"], "Count": outcome["Count"]} for outcome in histogram_values}
                 else:
-                    print("HERE")
                     # This is handling the BatchResults edge case
                     resultsArray = []
-                    for i, result in enumerate(results):
+                    for result in results:
                         if "Histogram" not in result:
                             raise f"\"Histogram\" array was expected to be in the Job results for result {i} for \"{self.details.output_data_format}\" output format."
-                        print(i)
+
                         histogram_values = result["Histogram"]
 
                         # Re-mapping object {'Histogram': [{"Outcome": [0], "Display": '[0]', "Count": 500}, {"Outcome": [1], "Display": '[1]', "Count": 500}]} to {'[0]': {"Outcome": [0], "Count": 500}, '[1]': {"Outcome": [1], "Count": 500}}
