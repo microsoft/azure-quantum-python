@@ -142,7 +142,7 @@ class Job(BaseJob, FilteredJob):
 
             if self.details.output_data_format == "microsoft.quantum-results.v1":
                 if "Histogram" not in results:
-                    raise f"\"Histogram\" array was expected to be in the Job results for \"{self.details.output_data_format}\" output format."
+                    raise ValueError(f"\"Histogram\" array was expected to be in the Job results for \"{self.details.output_data_format}\" output format.")
                 
                 histogram_values = results["Histogram"]
 
@@ -150,19 +150,21 @@ class Job(BaseJob, FilteredJob):
                     # Re-mapping {'Histogram': ['[0]', 0.50, '[1]', 0.50] } to {'[0]': 0.50, '[1]': 0.50}
                     return {histogram_values[i]: histogram_values[i + 1] for i in range(0, len(histogram_values), 2)}
                 else: 
-                    raise f"\"Histogram\" array has invalid format. Even number of items is expected."
+                    raise ValueError(f"\"Histogram\" array has invalid format. Even number of items is expected.")
             elif self.details.output_data_format == "microsoft.quantum-results.v2":
                 if "DataFormat" not in results or results["DataFormat"] != "microsoft.quantum-results.v2":
-                    raise f"\"DataFormat\" was expected to be \"microsoft.quantum-results.v2\" in the Job results for \"{self.details.output_data_format}\" output format."
+                    raise ValueError(f"\"DataFormat\" was expected to be \"microsoft.quantum-results.v2\" in the Job results for \"{self.details.output_data_format}\" output format.")
 
                 if "Results" not in results:
-                    raise f"\"Results\" field was expected to be in the Job results for \"{self.details.output_data_format}\" output format."
+                    raise ValueError(f"\"Results\" field was expected to be in the Job results for \"{self.details.output_data_format}\" output format.")
                 
-                # TODO: decide how to handle batch results
+                if len(results["Results"]) < 1:
+                    raise ValueError("\"Results\" array was expected to contain at least one item")
+                
                 results = results["Results"][0]
 
                 if "Histogram" not in results:
-                    raise f"\"Histogram\" array was expected to be in the Job results for \"{self.details.output_data_format}\" output format."
+                    raise ValueError(f"\"Histogram\" array was expected to be in the Job results for \"{self.details.output_data_format}\" output format.")
 
                 histogram_values = results["Histogram"]
 
@@ -214,19 +216,22 @@ class Job(BaseJob, FilteredJob):
 
             if self.details.output_data_format == "microsoft.quantum-results.v2":
                 if "DataFormat" not in results or results["DataFormat"] != "microsoft.quantum-results.v2":
-                    raise f"\"DataFormat\" was expected to be \"microsoft.quantum-results.v2\" in the Job results for \"{self.details.output_data_format}\" output format."
+                    raise ValueError(f"\"DataFormat\" was expected to be \"microsoft.quantum-results.v2\" in the Job results for \"{self.details.output_data_format}\" output format.")
                 if "Results" not in results:
-                    raise f"\"Results\" field was expected to be in the Job results for \"{self.details.output_data_format}\" output format."
-
+                    raise ValueError(f"\"Results\" field was expected to be in the Job results for \"{self.details.output_data_format}\" output format.")
+                
+                if len(results["Results"]) < 1:
+                    raise ValueError("\"Results\" array was expected to contain at least one item")
+                
                 results = results["Results"]
 
                 if len(results) == 1: 
                     results = results[0]
                     if "Histogram" not in results:
-                        raise f"\"Histogram\" array was expected to be in the Job results for \"{self.details.output_data_format}\" output format."
+                        raise ValueError(f"\"Histogram\" array was expected to be in the Job results for \"{self.details.output_data_format}\" output format.")
 
                     histogram_values = results["Histogram"]
-                    outcome_keys = self.process_outcome(histogram_values)
+                    outcome_keys = self._process_outcome(histogram_values)
 
                     # Re-mapping object {'Histogram': [{"Outcome": [0], "Display": '[0]', "Count": 500}, {"Outcome": [1], "Display": '[1]', "Count": 500}]} to {'[0]': {"Outcome": [0], "Count": 500}, '[1]': {"Outcome": [1], "Count": 500}}
                     return {outcome: hist_values["Count"] for outcome, hist_values in zip(outcome_keys, histogram_values)}
@@ -235,10 +240,10 @@ class Job(BaseJob, FilteredJob):
                     resultsArray = []
                     for i, result in enumerate(results):
                         if "Histogram" not in result:
-                            raise f"\"Histogram\" array was expected to be in the Job results for result {i} for \"{self.details.output_data_format}\" output format."
+                            raise ValueError(f"\"Histogram\" array was expected to be in the Job results for result {i} for \"{self.details.output_data_format}\" output format.")
 
                         histogram_values = result["Histogram"]
-                        outcome_keys = self.process_outcome(histogram_values)
+                        outcome_keys = self._process_outcome(histogram_values)
 
                         # Re-mapping object {'Histogram': [{"Outcome": [0], "Display": '[0]', "Count": 500}, {"Outcome": [1], "Display": '[1]', "Count": 500}]} to {'[0]': {"Outcome": [0], "Count": 500}, '[1]': {"Outcome": [1], "Count": 500}}
                         resultsArray.append({outcome: hist_values["Count"] for outcome, hist_values in zip(outcome_keys, histogram_values)})
@@ -246,10 +251,10 @@ class Job(BaseJob, FilteredJob):
                     return resultsArray
 
             else:
-                raise f"This method only handles Jobs which are submitted with the V2 output format."
+                raise ValueError(f"This method only handles Jobs which are submitted with the V2 output format.")
 
         except:
-            raise f"This method only handles Jobs which are submitted with the V2 output format."
+            raise ValueError(f"This method only handles Jobs which are submitted with the V2 output format.")
 
 
     def get_results_shots(self, timeout_secs: float = DEFAULT_TIMEOUT):
@@ -292,48 +297,51 @@ class Job(BaseJob, FilteredJob):
 
             if self.details.output_data_format == "microsoft.quantum-results.v2":
                 if "DataFormat" not in results or results["DataFormat"] != "microsoft.quantum-results.v2":
-                    raise f"\"DataFormat\" was expected to be \"microsoft.quantum-results.v2\" in the Job results for \"{self.details.output_data_format}\" output format."
+                    raise ValueError(f"\"DataFormat\" was expected to be \"microsoft.quantum-results.v2\" in the Job results for \"{self.details.output_data_format}\" output format.")
                 if "Results" not in results:
-                    raise f"\"Results\" field was expected to be in the Job results for \"{self.details.output_data_format}\" output format."
+                    raise ValueError(f"\"Results\" field was expected to be in the Job results for \"{self.details.output_data_format}\" output format.")
 
                 results = results["Results"]
+
+                if len(results["Results"]) < 1:
+                    raise ValueError("\"Results\" array was expected to contain at least one item")
 
                 if len(results) == 1: 
                     result = results[0]
                     if "Shots" not in result:
-                        raise f"\"Shots\" array was expected to be in the Job results for \"{self.details.output_data_format}\" output format."
+                        raise ValueError(f"\"Shots\" array was expected to be in the Job results for \"{self.details.output_data_format}\" output format.")
                     
-                    return [self.convert_tuples(shot) for shot in result["Shots"]]
+                    return [self._convert_tuples(shot) for shot in result["Shots"]]
                 else:
                     # This is handling the BatchResults edge case
                     shotsArray = []
                     for i, result in enumerate(results):
                         if "Shots" not in result:
-                            raise f"\"Shots\" array was expected to be in the Job results for result {i} of \"{self.details.output_data_format}\" output format."
-                        shotsArray.append([self.convert_tuples(shot) for shot in result["Shots"]])
+                            raise ValueError(f"\"Shots\" array was expected to be in the Job results for result {i} of \"{self.details.output_data_format}\" output format.")
+                        shotsArray.append([self._convert_tuples(shot) for shot in result["Shots"]])
                     
                     return shotsArray
             else:   
-                raise f"This method only handles Jobs which are submitted with the V2 output format."
+                raise ValueError(f"This method only handles Jobs which are submitted with the V2 output format.")
         except:
-            raise f"This method only handles Jobs which are submitted with the V2 output format."
+            raise ValueError(f"This method only handles Jobs which are submitted with the V2 output format.")
 
 
-    def process_outcome(self, histogram_results):
-        return [self.convert_tuples(v['Outcome']) for v in histogram_results]
+    def _process_outcome(self, histogram_results):
+        return [self._convert_tuples(v['Outcome']) for v in histogram_results]
 
 
-    def convert_tuples(self, data):
+    def _convert_tuples(self, data):
         if isinstance(data, dict):
             # Check if the dictionary represents a tuple
             if all(isinstance(k, str) and k.startswith("Item") for k in data.keys()):
                 # Convert the dictionary to a tuple
-                return tuple(self.convert_tuples(data[f"Item{i+1}"]) for i in range(len(data)))
+                return tuple(self._convert_tuples(data[f"Item{i+1}"]) for i in range(len(data)))
             else:
                 raise "Malformed tuple output"
         elif isinstance(data, list):
             # Recursively process list elements
-            return tuple(self.convert_tuples(item) for item in data)
+            return tuple(self._convert_tuples(item) for item in data)
         else:
             # Return the data as is (int, string, etc.)
             return data

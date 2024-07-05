@@ -53,13 +53,13 @@ class TestJobResults(QuantumTestBase):
     def test_job_for_microsoft_quantum_results_v1_no_histogram_returns_raw_result(self):
         job_result_raw = "{\"NotHistogramProperty\": [\"[0]\", 0.50, \"[1]\", 0.50]}"
         job_result = self._get_job_results("microsoft.quantum-results.v1", job_result_raw)
-        self.assertTrue(job_result, job_result_raw)
+        self.assertEqual(job_result, job_result_raw)
 
 
     def test_job_for_microsoft_quantum_results_v1_invalid_histogram_returns_raw_result(self):
         job_result_raw = "{\"NotHistogramProperty\": [\"[0]\", 0.50, \"[1]\"]}"
         job_result = self._get_job_results("microsoft.quantum-results.v1", job_result_raw)
-        self.assertTrue(job_result, job_result_raw)
+        self.assertEqual(job_result, job_result_raw)
 
     def test_job_for_microsoft_quantum_results_v2_success(self):
         job_results = self._get_job_results("microsoft.quantum-results.v2","{\"DataFormat\": \"microsoft.quantum-results.v2\", \"Results\": [{\"TotalCount\": 4, \"Histogram\": [{\"Outcome\": [0], \"Display\": \"[0]\", \"Count\": 2}, {\"Outcome\": [1], \"Display\": \"[1]\", \"Count\": 2}], \"Shots\": [[0], [1], [1], [0]]}]}")
@@ -120,60 +120,74 @@ class TestJobResults(QuantumTestBase):
             self.assertEqual(job_results[i][3], (0,))
 
     def test_job_for_microsoft_quantum_results_histogram_v2_tuple_success(self):
-        output = '''{
-            \"DataFormat\": \"microsoft.quantum-results.v2\",
-            \"Results\": [
-                {
-                \"TotalCount\": 23,
-                \"Histogram\": [
-                    {
-                    \"Outcome\": {
-                        \"Item1\": [
-                        1,
-                        0
-                        ],
-                        \"Item2\": {
-                        \"Item1\": -2.71,
-                        \"Item2\": 67
-                        }
-                    },
-                    \"Display\": \"([1, 0], (-2.71, 67))\",
-                    \"Count\": 1
-                    },
-                    {
-                    \"Outcome\": [1, 0],
-                    \"Display\": \"[1, 0]\",
-                    \"Count\": 1
-                    },
-                    {
-                    \"Outcome\": [1],
-                    \"Display\": \"[1]\",
-                    \"Count\": 1
-                    }
-                ],
-                \"Shots\": [
-                    {
-                    \"Item1\": [
-                        1,
-                        0
-                    ],
-                    \"Item2\": {
-                        \"Item1\": -2.71,
-                        \"Item2\": 67
-                    }
-                    },
-                    [1, 0],
-                    [1]
-                ]
-                }
-            ]
-            }'''
+        output = '''{ 
+    \"DataFormat\": \"microsoft.quantum-results.v2\", 
+    \"Results\": [ 
+        { 
+            \"TotalCount\": 3, 
+            \"Histogram\": [ 
+                { 
+                    \"Outcome\": { 
+                        \"Item1\": [1, 0], 
+                        \"Item2\": { 
+                            \"Item1\": -2.71, 
+                            \"Item2\": 67 
+                        }, 
+                        \"Item3\": [ 
+                            { 
+                                \"Item1\": 6, 
+                                \"Item2\": true 
+                            }, 
+                            { 
+                                \"Item1\": 12, 
+                                \"Item2\": false 
+                            } 
+                        ] 
+                    }, 
+                    \"Display\": \"([1, 0], (-2.71, 67), [(6, true), (12, false)])\", 
+                    \"Count\": 1 
+                }, 
+                { 
+                    \"Outcome\": [1, 0], 
+                    \"Display\": \"[1, 0]\", 
+                    \"Count\": 1 
+                }, 
+                { 
+                    \"Outcome\": [1], 
+                    \"Display\": \"[1]\", 
+                    \"Count\": 1 
+                } 
+            ], 
+            \"Shots\": [ 
+                { 
+                    \"Item1\": [1, 0], 
+                    \"Item2\": { 
+                        \"Item1\": -2.71, 
+                        \"Item2\": 67 
+                    }, 
+                    \"Item3\": [ 
+                        { 
+                            \"Item1\": 6, 
+                            \"Item2\": true 
+                        }, 
+                        { 
+                            \"Item1\": 12, 
+                            \"Item2\": false 
+                        } 
+                    ] 
+                }, 
+                [1, 0], 
+                [1] 
+            ] 
+        } 
+    ] 
+}'''
         job_results = self._get_job_results_histogram("microsoft.quantum-results.v2", output)
     
         self.assertTrue(len(job_results.keys()) == 3)
         self.assertEqual(job_results[(1,0)], 1)
         self.assertEqual(job_results[(1,)], 1)
-        self.assertEqual(job_results[((1, 0), (-2.71, 67))], 1)
+        self.assertEqual(job_results[((1, 0), (-2.71, 67), ((6, True), (12, False)))], 1)
 
     def test_job_for_microsoft_quantum_results_shots_v2_tuple_success(self):
         output = '''{
