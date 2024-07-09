@@ -177,6 +177,7 @@ class Job(BaseJob, FilteredJob):
             return payload
 
     def get_results_histogram(self, timeout_secs: float = DEFAULT_TIMEOUT):
+        print ("SJDBFONSDJL KN JLB DBKH VBJSDKB JF")
         """Get job results histogram (in V2 format) by downloading the results blob from the
         storage container linked via the workspace.
         
@@ -233,9 +234,15 @@ class Job(BaseJob, FilteredJob):
                     histogram_values = results["Histogram"]
                     outcome_keys = self._process_outcome(histogram_values)
 
+                    print (histogram_values)
+                    print (outcome_keys)
+
                     # Re-mapping object {'Histogram': [{"Outcome": [0], "Display": '[0]', "Count": 500}, {"Outcome": [1], "Display": '[1]', "Count": 500}]} to {'[0]': {"Outcome": [0], "Count": 500}, '[1]': {"Outcome": [1], "Count": 500}}
-                    return {outcome: hist_values["Count"] for outcome, hist_values in zip(outcome_keys, histogram_values)}
+                    res = {hist_val["Display"]: {"outcome": outcome, "count": hist_val["Count"]} for outcome, hist_val in zip(outcome_keys, histogram_values)}
+                    print (res)
+                    return {}
                 else:
+                    print ("BAOIHTEOIHTEOAITHEOIH")
                     # This is handling the BatchResults edge case
                     resultsArray = []
                     for i, result in enumerate(results):
@@ -245,10 +252,13 @@ class Job(BaseJob, FilteredJob):
                         histogram_values = result["Histogram"]
                         outcome_keys = self._process_outcome(histogram_values)
 
-                        # Re-mapping object {'Histogram': [{"Outcome": [0], "Display": '[0]', "Count": 500}, {"Outcome": [1], "Display": '[1]', "Count": 500}]} to {'[0]': {"Outcome": [0], "Count": 500}, '[1]': {"Outcome": [1], "Count": 500}}
-                        resultsArray.append({outcome: hist_values["Count"] for outcome, hist_values in zip(outcome_keys, histogram_values)})
+                        print (histogram_values)
+                        print (outcome_keys)
 
-                    return resultsArray
+                        # Re-mapping object {'Histogram': [{"Outcome": [0], "Display": '[0]', "Count": 500}, {"Outcome": [1], "Display": '[1]', "Count": 500}]} to {'[0]': {"Outcome": [0], "Count": 500}, '[1]': {"Outcome": [1], "Count": 500}}
+                        resultsArray.append({hist_val["Display"]: {"outcome": outcome, "count": hist_val["Count"]} for outcome, hist_val in zip(outcome_keys, histogram_values)})
+
+                    return []
 
             else:
                 raise ValueError(f"This method only handles Jobs which are submitted with the V2 output format.")
@@ -333,6 +343,7 @@ class Job(BaseJob, FilteredJob):
 
     def _convert_tuples(self, data):
         if isinstance(data, dict):
+            print (data)
             # Check if the dictionary represents a tuple
             if all(isinstance(k, str) and k.startswith("Item") for k in data.keys()):
                 # Convert the dictionary to a tuple
@@ -340,8 +351,9 @@ class Job(BaseJob, FilteredJob):
             else:
                 raise "Malformed tuple output"
         elif isinstance(data, list):
+            print (data)
             # Recursively process list elements
-            return tuple(self._convert_tuples(item) for item in data)
+            return [self._convert_tuples(item) for item in data]
         else:
             # Return the data as is (int, string, etc.)
             return data
