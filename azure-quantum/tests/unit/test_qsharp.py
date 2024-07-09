@@ -58,7 +58,20 @@ class TestQSharpQIRJob(QuantumTestBase):
         self.assertEqual(job.details.status, JobStatus.SUCCEEDED)
 
         results = job.get_results(timeout_secs=DEFAULT_TIMEOUT_SECS)
-        self.assertIsNotNone(results)
 
-        self.assertIsNotNone(job.get_results_histogram())
-        self.assertIsNotNone(job.get_results_shots())
+        # We assert that the test job outcomes are as expected (with one shot, one of the two outcomes should occur)
+        self.assertTrue(results["(0, 0)"] is not None or results["(1, 1)"] is not None)
+        self.assertTrue(len(results.keys()) == 1)
+
+        results_histogram = job.get_results_histogram()
+        histogram_key = "(0, 0)"  if results_histogram["(0, 0)"] is not None else "(1, 1)"
+
+        self.assertIsNotNone(results_histogram[histogram_key])
+        self.assertEqual(results_histogram[histogram_key]["outcome"], eval(histogram_key))
+        self.assertEqual(results_histogram[histogram_key]["count"], 1)
+        self.assertTrue(len(results_histogram.keys()) == 1)
+
+        results_shots = (job.get_results_shots())
+
+        self.assertEqual(len(results_shots), 1)
+        self.assertEqual(results_shots[0], results_histogram[histogram_key]["outcome"])

@@ -237,7 +237,6 @@ class Job(BaseJob, FilteredJob):
                     return {hist_val["Display"]: {"outcome": outcome, "count": hist_val["Count"]} for outcome, hist_val in zip(outcome_keys, histogram_values)}
 
                 else:
-                    print ("BAOIHTEOIHTEOAITHEOIH")
                     # This is handling the BatchResults edge case
                     resultsArray = []
                     for i, result in enumerate(results):
