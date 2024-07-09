@@ -254,9 +254,8 @@ class Job(BaseJob, FilteredJob):
             else:
                 raise ValueError(f"This method only handles Jobs which are submitted with the V2 output format.")
 
-        except:
-            raise ValueError(f"This method only handles Jobs which are submitted with the V2 output format.")
-
+        except Exception as e:
+            raise e
 
     def get_results_shots(self, timeout_secs: float = DEFAULT_TIMEOUT):
         """Get job results per shot data by downloading the results blob from the
@@ -304,7 +303,7 @@ class Job(BaseJob, FilteredJob):
 
                 results = results["Results"]
 
-                if len(results["Results"]) < 1:
+                if len(results) < 1:
                     raise ValueError("\"Results\" array was expected to contain at least one item")
 
                 if len(results) == 1: 
@@ -324,17 +323,14 @@ class Job(BaseJob, FilteredJob):
                     return shotsArray
             else:   
                 raise ValueError(f"This method only handles Jobs which are submitted with the V2 output format.")
-        except:
-            raise ValueError(f"This method only handles Jobs which are submitted with the V2 output format.")
-
+        except Exception as e:
+            raise e
 
     def _process_outcome(self, histogram_results):
         return [self._convert_tuples(v['Outcome']) for v in histogram_results]
 
-
     def _convert_tuples(self, data):
         if isinstance(data, dict):
-            print (data)
             # Check if the dictionary represents a tuple
             if all(isinstance(k, str) and k.startswith("Item") for k in data.keys()):
                 # Convert the dictionary to a tuple
@@ -342,13 +338,11 @@ class Job(BaseJob, FilteredJob):
             else:
                 raise "Malformed tuple output"
         elif isinstance(data, list):
-            print (data)
             # Recursively process list elements
             return [self._convert_tuples(item) for item in data]
         else:
             # Return the data as is (int, string, etc.)
             return data
-
 
     @classmethod
     def _allow_failure_results(cls) -> bool: 

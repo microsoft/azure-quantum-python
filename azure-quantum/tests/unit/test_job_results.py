@@ -93,9 +93,8 @@ class TestJobResults(QuantumTestBase):
             self.assertTrue(len(result.keys()) == 2)
             self.assertEqual(result["[0]"]["count"], 2)
             self.assertEqual(result["[1]"]["count"], 2)
-            self.assertEqual(job_results["[0]"]["outcome"], [0])
-            self.assertEqual(job_results["[1]"]["outcome"], [1])
-
+            self.assertEqual(result["[0]"]["outcome"], [0])
+            self.assertEqual(result["[1]"]["outcome"], [1])
 
     def test_job_for_microsoft_quantum_results_histogram_v2_wrong_type_raises_exception(self):
         try:
@@ -259,7 +258,6 @@ class TestJobResults(QuantumTestBase):
             self.assertTrue(False)
         except:
             self.assertTrue(True)
-
 
     def _get_job_results(self, output_data_format, results_as_json_str):
         job = self._mock_job(output_data_format, results_as_json_str)
