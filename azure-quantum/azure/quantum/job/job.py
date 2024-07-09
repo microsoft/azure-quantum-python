@@ -177,7 +177,6 @@ class Job(BaseJob, FilteredJob):
             return payload
 
     def get_results_histogram(self, timeout_secs: float = DEFAULT_TIMEOUT):
-        print ("SJDBFONSDJL KN JLB DBKH VBJSDKB JF")
         """Get job results histogram (in V2 format) by downloading the results blob from the
         storage container linked via the workspace.
         
@@ -234,13 +233,9 @@ class Job(BaseJob, FilteredJob):
                     histogram_values = results["Histogram"]
                     outcome_keys = self._process_outcome(histogram_values)
 
-                    print (histogram_values)
-                    print (outcome_keys)
-
                     # Re-mapping object {'Histogram': [{"Outcome": [0], "Display": '[0]', "Count": 500}, {"Outcome": [1], "Display": '[1]', "Count": 500}]} to {'[0]': {"Outcome": [0], "Count": 500}, '[1]': {"Outcome": [1], "Count": 500}}
-                    res = {hist_val["Display"]: {"outcome": outcome, "count": hist_val["Count"]} for outcome, hist_val in zip(outcome_keys, histogram_values)}
-                    print (res)
-                    return {}
+                    return {hist_val["Display"]: {"outcome": outcome, "count": hist_val["Count"]} for outcome, hist_val in zip(outcome_keys, histogram_values)}
+
                 else:
                     print ("BAOIHTEOIHTEOAITHEOIH")
                     # This is handling the BatchResults edge case
@@ -252,13 +247,10 @@ class Job(BaseJob, FilteredJob):
                         histogram_values = result["Histogram"]
                         outcome_keys = self._process_outcome(histogram_values)
 
-                        print (histogram_values)
-                        print (outcome_keys)
-
                         # Re-mapping object {'Histogram': [{"Outcome": [0], "Display": '[0]', "Count": 500}, {"Outcome": [1], "Display": '[1]', "Count": 500}]} to {'[0]': {"Outcome": [0], "Count": 500}, '[1]': {"Outcome": [1], "Count": 500}}
                         resultsArray.append({hist_val["Display"]: {"outcome": outcome, "count": hist_val["Count"]} for outcome, hist_val in zip(outcome_keys, histogram_values)})
 
-                    return []
+                    return resultsArray
 
             else:
                 raise ValueError(f"This method only handles Jobs which are submitted with the V2 output format.")
