@@ -166,10 +166,15 @@ class Job(BaseJob, FilteredJob):
                 if "Histogram" not in results:
                     raise ValueError(f"\"Histogram\" array was expected to be in the Job results for \"{self.details.output_data_format}\" output format.")
 
+                if "Shots" not in results:
+                    raise ValueError(f"\"Shots\" array was expected to be in the Job results for \"{self.details.output_data_format}\" output format.")
+
                 histogram_values = results["Histogram"]
 
+                total_count = len(results["Shots"])
+
                 # Re-mapping object {'Histogram': [{"Outcome": [0], "Display": '[0]', "Count": 500}, {"Outcome": [1], "Display": '[1]', "Count": 500}]} to {'[0]': 0.50, '[1]': 0.50}
-                return {outcome["Display"]: outcome["Count"] / results["TotalCount"] for outcome in histogram_values}
+                return {outcome["Display"]: outcome["Count"] / total_count for outcome in histogram_values}
             
             return results
         except:
