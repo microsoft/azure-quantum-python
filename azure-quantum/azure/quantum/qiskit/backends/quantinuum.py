@@ -99,6 +99,7 @@ class QuantinuumQirBackendBase(AzureQirBackend):
         return _get_n_qubits(name)
 
 
+# TODO: do we want to update memory: True here?
 class QuantinuumSyntaxCheckerQirBackend(QuantinuumQirBackendBase):
     backend_names = (
         # Note: Target names on the same line are equivalent.
