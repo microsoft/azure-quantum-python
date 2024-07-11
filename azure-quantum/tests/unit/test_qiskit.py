@@ -90,7 +90,7 @@ class NoopQirBackend(AzureQirBackend):
                 "coupling_map": None,
                 "description": "Simple backend for testing",
                 "basis_gates": [],
-                "memory": False,
+                "memory": True,
                 "n_qubits": 11,
                 "conditional": False,
                 "max_shots": 10000,

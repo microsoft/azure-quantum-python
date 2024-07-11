@@ -99,6 +99,7 @@ class QuantinuumQirBackendBase(AzureQirBackend):
         return _get_n_qubits(name)
 
 
+# TODO: do we want to update memory: True here?
 class QuantinuumSyntaxCheckerQirBackend(QuantinuumQirBackendBase):
     backend_names = (
         # Note: Target names on the same line are equivalent.
@@ -156,7 +157,7 @@ class QuantinuumEmulatorQirBackend(QuantinuumQirBackendBase):
                 "coupling_map": None,
                 "description": f"Quantinuum emulator on Azure Quantum",
                 "basis_gates": QUANTINUUM_BASIS_GATES,
-                "memory": False,
+                "memory": True,
                 "n_qubits": self._get_n_qubits(name),
                 "conditional": False,
                 "max_shots": None,
@@ -193,7 +194,7 @@ class QuantinuumQPUQirBackend(QuantinuumQirBackendBase):
                 "coupling_map": None,
                 "description": f"Quantinuum QPU on Azure Quantum",
                 "basis_gates": QUANTINUUM_BASIS_GATES,
-                "memory": False,
+                "memory": True,
                 "n_qubits": self._get_n_qubits(name),
                 "conditional": False,
                 "max_shots": 10000,
