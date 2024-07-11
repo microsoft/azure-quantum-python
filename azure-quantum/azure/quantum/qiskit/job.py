@@ -336,9 +336,10 @@ class AzureQuantumJob(JobV1):
             "data": result,
             "success": success,
             "shots": total_count,
+            "memory": shots,
             "name": name,
             "status": status,
             "header": {
                 "name": name
             }
-        } for name, (total_count, result) in zip(entry_point_names, results)]
+        } for name, (total_count, result, shots) in zip(entry_point_names, results)]
