@@ -999,7 +999,7 @@ class TestQiskit(QuantumTestBase):
         workspace = self.create_workspace()
         provider = AzureQuantumProvider(workspace=workspace)
         backend = QuantinuumEmulatorQirBackend(
-            "quantinuum.sim1h1-1e", provider
+            "quantinuum.sim.h1-1e", provider
         )
 
         input_params = backend._get_input_params({})
@@ -1018,11 +1018,11 @@ class TestQiskit(QuantumTestBase):
         self.assertIn("entryPoint", item)
         self.assertIn("arguments", item)
         shots = 100
-        print ("HERE")
+
         qiskit_job = backend.run(circuit, shots=shots)
-        print ("RUNNING")
+
         # Check job metadata:
-        self.assertEqual(qiskit_job._azure_job.details.provider_id, "quantiniuum")
+        self.assertEqual(qiskit_job._azure_job.details.provider_id, "quantinuum")
         self.assertEqual(qiskit_job._azure_job.details.input_data_format, "qir.v1")
         self.assertEqual(qiskit_job._azure_job.details.output_data_format, MICROSOFT_OUTPUT_DATA_FORMAT_V2)
         self.assertEqual(qiskit_job._azure_job.details.input_params["count"], shots)
@@ -1031,7 +1031,7 @@ class TestQiskit(QuantumTestBase):
 
         # Make sure the job is completed before fetching the results
         self._qiskit_wait_to_complete(qiskit_job, provider)
-        print ("COMPLETE")
+
         if JobStatus.DONE == qiskit_job.status():
             result = qiskit_job.result()
             # verify we can get the counts with the circuit and without
