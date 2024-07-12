@@ -992,6 +992,63 @@ class TestQiskit(QuantumTestBase):
         self._qiskit_wait_to_complete(qiskit_job, provider)
         self.assertEqual(qiskit_job._azure_job.details.input_params["count"], shots)
 
+    @pytest.mark.quantinuum
+    @pytest.mark.live_test
+    def test_qiskit_qir_submit_quantinuum(self):
+        circuit = self._3_qubit_ghz()
+        workspace = self.create_workspace()
+        provider = AzureQuantumProvider(workspace=workspace)
+        backend = QuantinuumEmulatorQirBackend(
+            "quantinuum.sim1h1-1e", provider
+        )
+
+        input_params = backend._get_input_params({})
+        payload = backend._translate_input(circuit, input_params)
+
+        config = backend.configuration()
+        input_data_format = config.azure["input_data_format"]
+        output_data_format = backend._get_output_data_format()
+
+        self.assertIsInstance(payload, bytes)
+        self.assertEqual(input_data_format, "qir.v1")
+        self.assertEqual(output_data_format, MICROSOFT_OUTPUT_DATA_FORMAT_V2)
+        self.assertIn("items", input_params)
+        self.assertEqual(len(input_params["items"]), 1)
+        item = input_params["items"][0]
+        self.assertIn("entryPoint", item)
+        self.assertIn("arguments", item)
+        shots = 100
+        print ("HERE")
+        qiskit_job = backend.run(circuit, shots=shots)
+        print ("RUNNING")
+        # Check job metadata:
+        self.assertEqual(qiskit_job._azure_job.details.provider_id, "quantiniuum")
+        self.assertEqual(qiskit_job._azure_job.details.input_data_format, "qir.v1")
+        self.assertEqual(qiskit_job._azure_job.details.output_data_format, MICROSOFT_OUTPUT_DATA_FORMAT_V2)
+        self.assertEqual(qiskit_job._azure_job.details.input_params["count"], shots)
+        self.assertEqual(qiskit_job._azure_job.details.input_params["items"][0]["entryPoint"], circuit.name)
+        self.assertEqual(qiskit_job._azure_job.details.input_params["items"][0]["arguments"], [])
+
+        # Make sure the job is completed before fetching the results
+        self._qiskit_wait_to_complete(qiskit_job, provider)
+        print ("COMPLETE")
+        if JobStatus.DONE == qiskit_job.status():
+            result = qiskit_job.result()
+            # verify we can get the counts with the circuit and without
+            # These will throw if job metadata is incorrect
+            self.assertIsNotNone(result.get_counts(circuit))
+            self.assertIsNotNone(result.get_counts())
+            self.assertIsNotNone(result.get_counts(0))
+            self.assertEqual(sum(result.data()["counts"].values()), shots)
+            self.assertAlmostEqual(result.data()["counts"]["000"], shots // 2, delta=20)
+            self.assertAlmostEqual(result.data()["counts"]["111"], shots // 2, delta=20)
+            counts = result.get_counts()
+            memory = result.get_memory()
+
+            self.assertEqual(len(memory), shots)
+            self.assertTrue(all([shot == "000" or shot == "111" for shot in memory]))
+            self.assertEqual(counts, result.data()["counts"])  
+
     def _test_qiskit_submit_quantinuum(self, circuit, target="quantinuum.sim.h1-1e", **kwargs):
         workspace = self.create_workspace()
         provider = AzureQuantumProvider(workspace=workspace)
@@ -1054,7 +1111,7 @@ class TestQiskit(QuantumTestBase):
 
         self.assertIsInstance(payload, bytes)
         self.assertEqual(input_data_format, "qir.v1")
-        self.assertEqual(output_data_format, MICROSOFT_OUTPUT_DATA_FORMAT)
+        self.assertEqual(output_data_format, MICROSOFT_OUTPUT_DATA_FORMAT_V2)
         self.assertIn("items", input_params)
         self.assertEqual(len(input_params["items"]), 1)
         item = input_params["items"][0]
@@ -1106,7 +1163,7 @@ class TestQiskit(QuantumTestBase):
         self.assertEqual("qir.v1", config.azure["content_type"])
         self.assertEqual("rigetti", config.azure["provider_id"])
         self.assertEqual("qir.v1", config.azure["input_data_format"])
-        self.assertEqual("microsoft.quantum-results.v1", backend._get_output_data_format())
+        self.assertEqual(MICROSOFT_OUTPUT_DATA_FORMAT_V2, backend._get_output_data_format())
         shots = 100
 
         circuit = self._3_qubit_ghz()
@@ -1117,7 +1174,7 @@ class TestQiskit(QuantumTestBase):
         self.assertEqual(qiskit_job._azure_job.details.target, RigettiTarget.QVM.value)
         self.assertEqual(qiskit_job._azure_job.details.provider_id, "rigetti")
         self.assertEqual(qiskit_job._azure_job.details.input_data_format, "qir.v1")
-        self.assertEqual(qiskit_job._azure_job.details.output_data_format, "microsoft.quantum-results.v1")
+        self.assertEqual(qiskit_job._azure_job.details.output_data_format, MICROSOFT_OUTPUT_DATA_FORMAT_V2)
         self.assertEqual(qiskit_job._azure_job.details.input_params["count"], shots)
         self.assertEqual(qiskit_job._azure_job.details.input_params["items"][0]["entryPoint"], circuit.name)
         self.assertEqual(qiskit_job._azure_job.details.input_params["items"][0]["arguments"], [])
@@ -1136,6 +1193,10 @@ class TestQiskit(QuantumTestBase):
             self.assertAlmostEqual(result.data()["counts"]["000"], shots // 2, delta=20)
             self.assertAlmostEqual(result.data()["counts"]["111"], shots // 2, delta=20)
             counts = result.get_counts()
+            memory = result.get_memory()
+
+            self.assertEqual(len(memory), shots)
+            self.assertTrue(all([shot == "000" or shot == "111" for shot in memory]))
             self.assertEqual(counts, result.data()["counts"])  
     
     @pytest.mark.rigetti
@@ -1237,7 +1298,7 @@ class TestQiskit(QuantumTestBase):
         self.assertEqual("qir.v1", config.azure["content_type"])
         self.assertEqual("rigetti", config.azure["provider_id"])
         self.assertEqual("qir.v1", config.azure["input_data_format"])
-        self.assertEqual("microsoft.quantum-results.v1", backend._get_output_data_format())
+        self.assertEqual(MICROSOFT_OUTPUT_DATA_FORMAT_V2, backend._get_output_data_format())
 
     @pytest.mark.qci
     @pytest.mark.live_test

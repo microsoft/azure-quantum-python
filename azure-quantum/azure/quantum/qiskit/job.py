@@ -287,13 +287,12 @@ class AzureQuantumJob(JobV1):
             counts = {}
             probabilities = {}
 
-            if not "TotalCount" in circuit_results:
-                raise ValueError("TotalCount missing from Job results")
+            if not "Shots" in circuit_results:
+                raise ValueError("Shots missing from Job results")
+            
+            shots = circuit_results["Shots"]
 
-            total_count = circuit_results["TotalCount"]
-
-            if total_count <= 0:
-                raise ValueError("TotalCount must be a positive non-zero integer")
+            total_count = len(shots)
 
             if not "Histogram" in circuit_results:
                 raise ValueError("Histogram missing from Job results")
@@ -312,12 +311,9 @@ class AzureQuantumJob(JobV1):
                 counts[bitstring] = count
                 probabilities[bitstring] = probability
             
-            if not "Shots" in circuit_results:
-                raise ValueError("Shots missing from Job results")
-            
-            shots = circuit_results["Shots"]
+            formatted_shots = [AzureQuantumJob._qir_to_qiskit_bitstring(shot) for shot in shots]
 
-            histograms.append((total_count, {"counts": counts, "probabilities": probabilities}, shots))
+            histograms.append((total_count, {"counts": counts, "probabilities": probabilities, "memory": formatted_shots}))
         return histograms
 
     def _get_entry_point_names(self):
@@ -355,10 +351,9 @@ class AzureQuantumJob(JobV1):
             "data": result,
             "success": success,
             "shots": total_count,
-            "memory": shots,
             "name": name,
             "status": status,
             "header": {
                 "name": name
             }
-        } for name, (total_count, result, shots) in zip(entry_point_names, results)]
+        } for name, (total_count, result) in zip(entry_point_names, results)]
