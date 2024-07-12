@@ -439,6 +439,59 @@ class TestQiskit(QuantumTestBase):
         qobj = assemble(circuit)
         self._test_qiskit_submit_ionq(circuit=qobj, shots=1024)
 
+    @pytest.mark.ionq
+    @pytest.mark.live_test
+    def test_qiskit_qir_submit_ionq(self):
+        circuit = self._3_qubit_ghz()
+        workspace = self.create_workspace()
+        provider = AzureQuantumProvider(workspace=workspace)
+        backend = IonQSimulatorQirBackend("ionq.simulator", provider)
+        input_params = backend._get_input_params({})
+
+        payload = backend._translate_input(circuit, input_params)
+        config = backend.configuration()
+        input_data_format = config.azure["input_data_format"]
+        output_data_format = backend._get_output_data_format()
+
+        self.assertIsInstance(payload, bytes)
+        self.assertEqual(input_data_format, "qir.v1")
+        self.assertEqual(output_data_format, MICROSOFT_OUTPUT_DATA_FORMAT_V2)
+        self.assertIn("items", input_params)
+        self.assertEqual(len(input_params["items"]), 1)
+        item = input_params["items"][0]
+        self.assertIn("entryPoint", item)
+        self.assertIn("arguments", item)
+
+        shots = 100
+
+        qiskit_job = backend.run(circuit, shots=shots)
+
+        # Check job metadata:
+        self.assertEqual(qiskit_job._azure_job.details.target, "ionq.simulator")
+        self.assertEqual(qiskit_job._azure_job.details.provider_id, "ionq")
+        self.assertEqual(qiskit_job._azure_job.details.input_data_format, "qir.v1")
+        self.assertEqual(qiskit_job._azure_job.details.output_data_format, MICROSOFT_OUTPUT_DATA_FORMAT_V2)
+        self.assertEqual(qiskit_job._azure_job.details.input_params["shots"], shots)
+        self.assertIn("qiskit", qiskit_job._azure_job.details.metadata)
+        self.assertIn("name", qiskit_job._azure_job.details.metadata)
+        self.assertIn("metadata", qiskit_job._azure_job.details.metadata)
+
+        # Make sure the job is completed before fetching the results
+        self._qiskit_wait_to_complete(qiskit_job, provider)
+
+        if JobStatus.DONE == qiskit_job.status():
+            result = qiskit_job.result()
+            self.assertEqual(sum(result.data()["counts"].values()), shots)
+            self.assertAlmostEqual(result.data()["counts"]["000"], shots // 2, delta=20)
+            self.assertAlmostEqual(result.data()["counts"]["111"], shots // 2, delta=20)
+            self.assertEqual(result.data()["probabilities"], {"000": 0.5, "111": 0.5})
+            counts = result.get_counts()
+            memory = result.get_memory()
+
+            self.assertEqual(len(memory), shots)
+            self.assertTrue(all([shot == "000" or shot == "111" for shot in memory]))
+            self.assertEqual(counts, result.data()["counts"])  
+    
     def _qiskit_wait_to_complete(
             self,
             qiskit_job,
