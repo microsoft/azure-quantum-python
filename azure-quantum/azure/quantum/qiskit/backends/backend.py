@@ -280,6 +280,7 @@ class AzureQirBackend(AzureBackendBase):
             "content_type": "qir.v1",
             "input_data_format": "qir.v1",
             "output_data_format": "microsoft.quantum-results.v2",
+            "is_default": True,
         }
 
     def run(

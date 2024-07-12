@@ -99,7 +99,6 @@ class QuantinuumQirBackendBase(AzureQirBackend):
         return _get_n_qubits(name)
 
 
-# TODO: do we want to update memory: True here?
 class QuantinuumSyntaxCheckerQirBackend(QuantinuumQirBackendBase):
     backend_names = (
         # Note: Target names on the same line are equivalent.
@@ -237,7 +236,7 @@ class QuantinuumBackend(AzureBackend):
             "provider_id": self._provider_id,
             "input_data_format": "honeywell.openqasm.v1",
             "output_data_format": "honeywell.quantum-results.v1",
-            "is_default": True,
+            "is_default": False,
         }
 
     def _translate_input(self, circuit):
