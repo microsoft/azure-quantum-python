@@ -241,7 +241,7 @@ class IonQBackend(AzureBackend):
             "provider_id": "ionq",
             "input_data_format": "ionq.circuit.v1",
             "output_data_format": "ionq.quantum-results.v1",
-            "is_default": True,
+            "is_default": False,
         }
 
     def _prepare_job_metadata(self, circuit, **kwargs):

@@ -94,7 +94,6 @@ class RigettiSimulatorBackend(RigettiBackend):
                 "open_pulse": False,
                 "gates": [{"name": "TODO", "parameters": [], "qasm_def": "TODO"}],
                 "azure": self._azure_config(),
-                "is_default": True,
             }
         )
         logger.info("Initializing RigettiSimulatorBackend")
@@ -126,7 +125,6 @@ class RigettiQPUBackend(RigettiBackend):
                 "open_pulse": False,
                 "gates": [{"name": "TODO", "parameters": [], "qasm_def": "TODO"}],
                 "azure": self._azure_config(),
-                "is_default": True,
             }
         )
         logger.info("Initializing RigettiQPUBackend")
