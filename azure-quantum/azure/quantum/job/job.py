@@ -108,6 +108,8 @@ class Job(BaseJob, FilteredJob):
         
         Raises :class:`RuntimeError` if job execution fails.
         
+        Raises :class:`ValueError` if job output is malformed or output format is not compatible.
+
         Raises :class:`azure.quantum.job.JobFailedWithResultsError` if job execution fails, 
                 but failure results could still be retrieved (e.g. for jobs submitted against "microsoft.dft" target).
 
@@ -182,11 +184,12 @@ class Job(BaseJob, FilteredJob):
             return payload
 
     def get_results_histogram(self, timeout_secs: float = DEFAULT_TIMEOUT):
-        """Get job results histogram (in V2 format) by downloading the results blob from the
-        storage container linked via the workspace.
+        """Get job results histogram by downloading the results blob from the storage container linked via the workspace.
         
         Raises :class:`RuntimeError` if job execution fails.
         
+        Raises :class:`ValueError` if job output is malformed or output format is not compatible.
+
         Raises :class:`azure.quantum.job.JobFailedWithResultsError` if job execution fails, 
                 but failure results could still be retrieved (e.g. for jobs submitted against "microsoft.dft" target).
 
@@ -257,7 +260,7 @@ class Job(BaseJob, FilteredJob):
                     return resultsArray
 
             else:
-                raise ValueError(f"This method only handles Jobs which are submitted with the V2 output format.")
+                raise ValueError(f"Getting a results histogram with counts instead of probabilities is not a supported feature for jobs using the \"{self.details.output_data_format}\" output format.")
 
         except Exception as e:
             raise e
@@ -268,6 +271,8 @@ class Job(BaseJob, FilteredJob):
         
         Raises :class:`RuntimeError` if job execution fails.
         
+        Raises :class:`ValueError` if job output is malformed or output format is not compatible.
+
         Raises :class:`azure.quantum.job.JobFailedWithResultsError` if job execution fails, 
                 but failure results could still be retrieved (e.g. for jobs submitted against "microsoft.dft" target).
 
@@ -327,7 +332,7 @@ class Job(BaseJob, FilteredJob):
                     
                     return shotsArray
             else:   
-                raise ValueError(f"This method only handles Jobs which are submitted with the V2 output format.")
+                raise ValueError(f"Individual shot results are not supported for jobs using the \"{self.details.output_data_format}\" output format.")
         except Exception as e:
             raise e
 
