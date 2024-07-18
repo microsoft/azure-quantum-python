@@ -1368,7 +1368,7 @@ class TestQiskit(QuantumTestBase):
         self.assertEqual("qir.v1", config.azure["content_type"])
         self.assertEqual("qci", config.azure["provider_id"])
         self.assertEqual("qir.v1", config.azure["input_data_format"])
-        self.assertEqual("microsoft.quantum-results.v1", backend._get_output_data_format())
+        self.assertEqual("microsoft.quantum-results.v2", backend._get_output_data_format())
         shots = 100
 
         circuit = self._3_qubit_ghz()
@@ -1445,7 +1445,7 @@ class TestQiskit(QuantumTestBase):
         self.assertEqual("qir.v1", config.azure["content_type"])
         self.assertEqual("qci", config.azure["provider_id"])
         self.assertEqual("qir.v1", config.azure["input_data_format"])
-        self.assertEqual("microsoft.quantum-results.v1", backend._get_output_data_format())
+        self.assertEqual("microsoft.quantum-results.v2", backend._get_output_data_format())
 
     # @pytest.mark.parametrize("endian_pos, expectation",
     #     [(0,"000 000 001"), (1,"000 010 000"), (2,"100 000 000")]
