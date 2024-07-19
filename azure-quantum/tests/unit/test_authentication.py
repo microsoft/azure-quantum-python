@@ -132,6 +132,8 @@ class TestWorkspace(QuantumTestBase):
             if os.path.exists(self._client_certificate_path):
                 os.environ[EnvironmentVariables.AZURE_CLIENT_CERTIFICATE_PATH] = \
                     self._client_certificate_path
+                os.environ[EnvironmentVariables.AZURE_CLIENT_SEND_CERTIFICATE_CHAIN] = \
+                    self._client_send_certificate_chain
             else:
                 os.environ[EnvironmentVariables.AZURE_CLIENT_SECRET] = \
                     self._client_secret
@@ -191,6 +193,8 @@ class TestWorkspace(QuantumTestBase):
             if os.path.exists(self._client_certificate_path):
                 os.environ[EnvironmentVariables.AZURE_CLIENT_CERTIFICATE_PATH] = \
                     self._client_certificate_path
+                os.environ[EnvironmentVariables.AZURE_CLIENT_SEND_CERTIFICATE_CHAIN] = \
+                    self._client_send_certificate_chain
             else:
                 os.environ[EnvironmentVariables.AZURE_CLIENT_SECRET] = \
                     self._client_secret
