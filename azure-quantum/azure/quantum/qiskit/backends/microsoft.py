@@ -15,7 +15,6 @@ from qiskit.providers import Options, Provider
 QIR_BASIS_GATES = [
     "measure",
     "m",
-    "ccx",
     "cx",
     "cz",
     "h",
