@@ -6,7 +6,6 @@ from typing import TYPE_CHECKING, Dict, List, Union
 from azure.quantum import __version__
 from azure.quantum.qiskit.job import AzureQuantumJob
 from azure.quantum.target.ionq import IonQ
-from azure.quantum.qiskit.backends.ionq import QIR_BASIS_GATES 
 from abc import abstractmethod
 
 from qiskit import QuantumCircuit
@@ -21,6 +20,7 @@ from qiskit.providers.models import BackendConfiguration
 from qiskit.providers import Options, Provider
 
 from qiskit_ionq.helpers import (
+    ionq_basis_gates,
     GATESET_MAP,
     qiskit_circ_to_ionq_circ,
 )
@@ -115,8 +115,8 @@ class IonQSimulatorQirBackend(IonQQirBackendBase):
                 "local": False,
                 "coupling_map": None,
                 "description": "IonQ simulator on Azure Quantum",
-                "basis_gates": QIR_BASIS_GATES,
-                "memory": True,
+                "basis_gates": ionq_basis_gates,
+                "memory": False,
                 "n_qubits": 29,
                 "conditional": False,
                 "max_shots": None,
@@ -147,8 +147,8 @@ class IonQQPUQirBackend(IonQQirBackendBase):
                 "local": False,
                 "coupling_map": None,
                 "description": "IonQ QPU on Azure Quantum",
-                "basis_gates": QIR_BASIS_GATES,
-                "memory": True,
+                "basis_gates": ionq_basis_gates,
+                "memory": False,
                 "n_qubits": 11,
                 "conditional": False,
                 "max_shots": 10000,
@@ -179,8 +179,8 @@ class IonQAriaQirBackend(IonQQirBackendBase):
                 "local": False,
                 "coupling_map": None,
                 "description": "IonQ Aria QPU on Azure Quantum",
-                "basis_gates": QIR_BASIS_GATES,
-                "memory": True,
+                "basis_gates": ionq_basis_gates,
+                "memory": False,
                 "n_qubits": 23,
                 "conditional": False,
                 "max_shots": 10000,
@@ -211,8 +211,8 @@ class IonQForteQirBackend(IonQQirBackendBase):
                 "local": False,
                 "coupling_map": None,
                 "description": "IonQ Forte QPU on Azure Quantum",
-                "basis_gates": QIR_BASIS_GATES,
-                "memory": True,
+                "basis_gates": ionq_basis_gates,
+                "memory": False,
                 "n_qubits": 35,
                 "conditional": False,
                 "max_shots": 10000,
