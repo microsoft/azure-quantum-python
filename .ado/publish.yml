@@ -170,7 +170,7 @@ extends:
             )
           displayName: Copy built "azure-quantum" package artifacts
           inputs:
-            SourceFolder: '$(Pipeline.Workspace)/azure-quantum-wheels'
+            SourceFolder: $(Build.SourcesDirectory)/azure-quantum/target/wheels/
             Contents: '**'
             TargetFolder: '$(Build.ArtifactStagingDirectory)/target/wheels'
 
