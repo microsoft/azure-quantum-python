@@ -1379,7 +1379,7 @@ class TestQiskit(QuantumTestBase):
         self.assertEqual(qiskit_job._azure_job.details.target, "qci.simulator")
         self.assertEqual(qiskit_job._azure_job.details.provider_id, "qci")
         self.assertEqual(qiskit_job._azure_job.details.input_data_format, "qir.v1")
-        self.assertEqual(qiskit_job._azure_job.details.output_data_format, "microsoft.quantum-results.v1")
+        self.assertEqual(qiskit_job._azure_job.details.output_data_format, "microsoft.quantum-results.v2")
         self.assertEqual(qiskit_job._azure_job.details.input_params["shots"], shots)
         self.assertEqual(qiskit_job._azure_job.details.input_params["items"][0]["entryPoint"], circuit.name)
         self.assertEqual(qiskit_job._azure_job.details.input_params["items"][0]["arguments"], [])
