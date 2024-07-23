@@ -273,40 +273,25 @@ class AzureQuantumJob(JobV1):
 
     def _translate_microsoft_v2_results(self):
         """ Translate Microsoft's batching job results histograms into a format that can be consumed by qiskit libraries. """
-        az_result = self._azure_job.get_results_raw()
-
-        if not "DataFormat" in az_result:
-            raise ValueError("DataFormat missing from Job results")
-
-        if not "Results" in az_result:
-            raise ValueError("Results missing from Job results")
-
+        az_result_histogram = self._azure_job.get_results_histogram()
+        az_result_shots = self._azure_job.get_results_shots()
+        
+        # If it is a non-batched result, format to be in batch format so we can have one code path
+        if isinstance(az_result_histogram, dict):
+            az_result_histogram = [az_result_histogram]
+            az_result_shots = [az_result_shots]
+        
         histograms = []
-        results = az_result["Results"]
-        for circuit_results in results:
+        
+        for (histogram, shots) in zip(az_result_histogram, az_result_shots):
             counts = {}
             probabilities = {}
 
-            if not "Shots" in circuit_results:
-                raise ValueError("Shots missing from Job results")
-            
-            shots = circuit_results["Shots"]
-
             total_count = len(shots)
 
-            if not "Histogram" in circuit_results:
-                raise ValueError("Histogram missing from Job results")
-        
-            histogram = circuit_results["Histogram"]
-            for result in histogram:
-                if not "Display" in result:
-                    raise ValueError("Display missing from histogram result")
-
-                if not "Count" in result:
-                    raise ValueError("Count missing from histogram result")
-
-                bitstring = AzureQuantumJob._qir_to_qiskit_bitstring(result["Display"])
-                count = result["Count"]
+            for (display, result) in histogram.items():
+                bitstring = AzureQuantumJob._qir_to_qiskit_bitstring(display)
+                count = result["count"]
                 probability = count / total_count
                 counts[bitstring] = count
                 probabilities[bitstring] = probability

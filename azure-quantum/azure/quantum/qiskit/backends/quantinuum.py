@@ -45,7 +45,7 @@ QUANTINUUM_BASIS_GATES = [
     "tdg",
     "v",
     "vdg",
-    "zz",
+    "rzz",
     "measure",
     "reset",
 ]

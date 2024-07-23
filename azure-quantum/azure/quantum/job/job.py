@@ -102,49 +102,6 @@ class Job(BaseJob, FilteredJob):
                 else poll_wait * 1.5
             )
 
-    def get_results_raw(self, timeout_secs: float = DEFAULT_TIMEOUT):
-        """Get job results by downloading the results blob from the
-        storage container linked via the workspace.
-        
-        Raises :class:`RuntimeError` if job execution fails.
-        
-        Raises :class:`azure.quantum.job.JobFailedWithResultsError` if job execution fails, 
-                but failure results could still be retrieved (e.g. for jobs submitted against "microsoft.dft" target).
-
-        :param timeout_secs: Timeout in seconds, defaults to 300
-        :type timeout_secs: float
-        :return: Raw results in a json object from the job.
-        :rtype: typing.Any
-        """
-        if self.results is not None:
-            return self.results
-
-        if not self.has_completed():
-            self.wait_until_completed(timeout_secs=timeout_secs)
-
-        if not self.details.status == "Succeeded":
-            if self.details.status == "Failed" and self._allow_failure_results():
-                job_blob_properties = self.download_blob_properties(self.details.output_data_uri)
-                if job_blob_properties.size > 0:
-                    job_failure_data = self.download_data(self.details.output_data_uri)
-                    raise JobFailedWithResultsError("An error occurred during job execution.", job_failure_data)
-
-            raise RuntimeError(
-                f'{"Cannot retrieve results as job execution failed"}'
-                + f"(status: {self.details.status}."
-                + f"error: {self.details.error_data})"
-            )
-
-        payload = self.download_data(self.details.output_data_uri)
-        try:
-            payload = payload.decode("utf8")
-            results = json.loads(payload)
-
-            return results
-        except:
-            # If errors decoding the data, return the raw payload:
-            return payload
-
     def get_results(self, timeout_secs: float = DEFAULT_TIMEOUT):
         """Get job results by downloading the results blob from the
         storage container linked via the workspace.
