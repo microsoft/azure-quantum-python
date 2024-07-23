@@ -273,7 +273,7 @@ class AzureQuantumJob(JobV1):
 
     def _translate_microsoft_v2_results(self):
         """ Translate Microsoft's batching job results histograms into a format that can be consumed by qiskit libraries. """
-        az_result = self._azure_job.get_results()
+        az_result = self._azure_job.get_results_raw()
 
         if not "DataFormat" in az_result:
             raise ValueError("DataFormat missing from Job results")
