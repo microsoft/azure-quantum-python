@@ -327,6 +327,49 @@ target '{self.name}' of provider '{self.provider_id}' not found."
     def _get_azure_provider_id(self) -> str:
         return self.provider_id
 
+    def _qir_module_to_gates(self, qir_module) -> Dict[str, int]:
+        try:
+            from pyqir import Module, is_qubit_type, is_result_type
+
+        except ImportError:
+            raise ImportError(
+                "Missing optional 'qiskit' dependencies. \
+        To install run: pip install azure-quantum[qiskit]"
+            )
+        
+        module: Module = qir_module
+
+        
+        one_qubit_gates = 0
+        multi_qubit_gates = 0
+        measurement_gates = 0
+
+        # Iterate over the instructions in the first basic block of the first function
+        for instruction in module.functions[0].basic_blocks[0].instructions:
+            qubit_count = 0
+            result_count = 0
+            
+            # If the instruction is to record output, do not include this is the price calculation
+            if len(instruction.operands) > 0 and "__quantum__rt__result_record_output" not in instruction.operands[-1].name:
+                # Check each operand in the instruction
+                for operand in instruction.operands:
+                    value_type = operand.type
+                    
+                    if is_qubit_type(value_type):
+                        qubit_count += 1
+                    elif is_result_type(value_type):
+                        result_count += 1
+
+            # Determine the type of gate based on the counts
+            if qubit_count == 1 and result_count == 0:
+                one_qubit_gates += 1
+            if qubit_count >= 2 and result_count == 0:
+                multi_qubit_gates += 1
+            if result_count > 0:
+                measurement_gates += 1
+
+        return one_qubit_gates, multi_qubit_gates, measurement_gates
+
 
 def _determine_shots_or_deprecated_num_shots(
     shots: int = None,
