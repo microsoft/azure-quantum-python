@@ -10,7 +10,7 @@ import warnings
 
 from .backend import AzureBackend, AzureQirBackend
 from abc import abstractmethod
-from qiskit import QuantumCircuit
+from qiskit import QuantumCircuit, transpile
 from qiskit.providers.models import BackendConfiguration
 from qiskit.providers import Options
 from qiskit.providers import Provider
@@ -30,6 +30,27 @@ __all__ = [
 ]
 
 QUANTINUUM_BASIS_GATES = [
+    "x",
+    "y",
+    "z",
+    "rx",
+    "ry",
+    "rz",
+    "h",
+    "cx",
+    "cz",
+    "s",
+    "sdg",
+    "t",
+    "tdg",
+    "v",
+    "vdg",
+    "zz",
+    "measure",
+    "reset",
+]
+
+QUANTINUUM_BASIS_GATES_QIR = [
     "x",
     "y",
     "z",
@@ -97,6 +118,42 @@ class QuantinuumQirBackendBase(AzureQirBackend):
 
     def _get_n_qubits(self, name):
         return _get_n_qubits(name)
+    
+    # TODO: decide if we want to allow for options passing differently
+    def estimate_cost(self, circuits, shots, options={}):
+        """Estimate the cost for the given circuit."""
+        config = self.configuration()
+        input_params = self._get_input_params(options, shots=shots)
+
+        if not (isinstance(circuits, list)):
+            circuits = [circuits]
+        
+        # TODO: evaluate proper means of use / fetching these values for transpile (could ignore, could use)
+        to_qir_kwargs = input_params.pop(
+            "to_qir_kwargs", config.azure.get("to_qir_kwargs", {"record_output": True})
+        )
+        targetCapability = input_params.pop(
+            "targetCapability",
+            self.options.get("targetCapability", "AdaptiveExecution"),
+        )
+
+        if not input_params.pop("skipTranspile", False):
+            # Set of gates supported by QIR targets.
+            circuits = transpile(
+                circuits, basis_gates=config.basis_gates, optimization_level=0
+            )
+            
+            qir = self._get_qir_str(circuits, targetCapability, **to_qir_kwargs)
+            print (qir)
+        
+
+        (module, _) = self._generate_qir(
+            circuits, targetCapability, **to_qir_kwargs
+        )
+
+        workspace = self.provider().get_workspace()
+        target = workspace.get_targets(self.name())
+        return target.estimate_cost(module, shots=shots)
 
 
 class QuantinuumSyntaxCheckerQirBackend(QuantinuumQirBackendBase):
@@ -118,7 +175,7 @@ class QuantinuumSyntaxCheckerQirBackend(QuantinuumQirBackendBase):
                 "local": False,
                 "coupling_map": None,
                 "description": f"Quantinuum Syntax Checker on Azure Quantum",
-                "basis_gates": QUANTINUUM_BASIS_GATES,
+                "basis_gates": QUANTINUUM_BASIS_GATES_QIR,
                 "memory": True,
                 "n_qubits": self._get_n_qubits(name),
                 "conditional": False,
@@ -155,7 +212,7 @@ class QuantinuumEmulatorQirBackend(QuantinuumQirBackendBase):
                 "local": False,
                 "coupling_map": None,
                 "description": f"Quantinuum emulator on Azure Quantum",
-                "basis_gates": QUANTINUUM_BASIS_GATES,
+                "basis_gates": QUANTINUUM_BASIS_GATES_QIR,
                 "memory": True,
                 "n_qubits": self._get_n_qubits(name),
                 "conditional": False,
@@ -192,7 +249,7 @@ class QuantinuumQPUQirBackend(QuantinuumQirBackendBase):
                 "local": False,
                 "coupling_map": None,
                 "description": f"Quantinuum QPU on Azure Quantum",
-                "basis_gates": QUANTINUUM_BASIS_GATES,
+                "basis_gates": QUANTINUUM_BASIS_GATES_QIR,
                 "memory": True,
                 "n_qubits": self._get_n_qubits(name),
                 "conditional": False,

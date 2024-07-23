@@ -8,7 +8,7 @@ from azure.quantum.qiskit.job import AzureQuantumJob
 from azure.quantum.target.ionq import IonQ
 from abc import abstractmethod
 
-from qiskit import QuantumCircuit
+from qiskit import QuantumCircuit, transpile
 
 from .backend import (
     AzureBackend, 
@@ -22,6 +22,7 @@ from qiskit.providers import Options, Provider
 from qiskit_ionq.helpers import (
     ionq_basis_gates,
     GATESET_MAP,
+    GATESET_MAP_QIR,
     qiskit_circ_to_ionq_circ,
 )
 
@@ -68,6 +69,9 @@ class IonQQirBackendBase(AzureQirBackend):
             },
             targetCapability="BasicExecution",
             )
+    
+    def gateset(self):
+        return self.configuration().gateset
 
     def _azure_config(self) -> Dict[str, str]:
         config = super()._azure_config()
@@ -77,6 +81,42 @@ class IonQQirBackendBase(AzureQirBackend):
             }
         )
         return config
+
+    # TODO: decide if we want to allow for options passing differently
+    def estimate_cost(self, circuits, shots, options={}):
+        """Estimate the cost for the given circuit."""
+        config = self.configuration()
+        input_params = self._get_input_params(options, shots=shots)
+
+        if not (isinstance(circuits, list)):
+            circuits = [circuits]
+        
+        # TODO: evaluate proper means of use / fetching these values for transpile (could ignore, could use)
+        to_qir_kwargs = input_params.pop(
+            "to_qir_kwargs", config.azure.get("to_qir_kwargs", {"record_output": True})
+        )
+        targetCapability = input_params.pop(
+            "targetCapability",
+            self.options.get("targetCapability", "AdaptiveExecution"),
+        )
+
+        if not input_params.pop("skipTranspile", False):
+            # Set of gates supported by QIR targets.
+            circuits = transpile(
+                circuits, basis_gates=config.basis_gates, optimization_level=0
+            )
+            
+            qir = self._get_qir_str(circuits, targetCapability, **to_qir_kwargs)
+            print (qir)
+        
+
+        (module, _) = self._generate_qir(
+            circuits, targetCapability, **to_qir_kwargs
+        )
+
+        workspace = self.provider().get_workspace()
+        target = workspace.get_targets(self.name())
+        return target.estimate_cost(module, shots=shots)
     
     def run(
         self, 
@@ -103,7 +143,7 @@ class IonQSimulatorQirBackend(IonQQirBackendBase):
 
     def __init__(self, name: str, provider: "AzureQuantumProvider", **kwargs):
         """Base class for interfacing with an IonQ QIR Simulator backend"""
-
+        gateset = kwargs.pop("gateset", "qis")
         default_config = BackendConfiguration.from_dict(
             {
                 "backend_name": name,
@@ -121,6 +161,7 @@ class IonQSimulatorQirBackend(IonQQirBackendBase):
                 "open_pulse": False,
                 "gates": [{"name": "TODO", "parameters": [], "qasm_def": "TODO"}],
                 "azure": self._azure_config(),
+                "gateset": gateset
             }
         )
         logger.info("Initializing IonQSimulatorQirBackend")
@@ -135,7 +176,7 @@ class IonQAriaQirBackend(IonQQirBackendBase):
 
     def __init__(self, name: str, provider: "AzureQuantumProvider", **kwargs):
         """Base class for interfacing with an IonQ Aria QPU backend"""
-
+        gateset = kwargs.pop("gateset", "qis")
         default_config = BackendConfiguration.from_dict(
             {
                 "backend_name": name,
@@ -153,6 +194,7 @@ class IonQAriaQirBackend(IonQQirBackendBase):
                 "open_pulse": False,
                 "gates": [{"name": "TODO", "parameters": [], "qasm_def": "TODO"}],
                 "azure": self._azure_config(),
+                "gateset": gateset
             }
         )
         logger.info("Initializing IonQAriaQirBackend")
@@ -167,7 +209,7 @@ class IonQForteQirBackend(IonQQirBackendBase):
 
     def __init__(self, name: str, provider: "AzureQuantumProvider", **kwargs):
         """Base class for interfacing with an IonQ Forte QPU backend"""
-
+        gateset = kwargs.pop("gateset", "qis")
         default_config = BackendConfiguration.from_dict(
             {
                 "backend_name": name,
@@ -185,6 +227,7 @@ class IonQForteQirBackend(IonQQirBackendBase):
                 "open_pulse": False,
                 "gates": [{"name": "TODO", "parameters": [], "qasm_def": "TODO"}],
                 "azure": self._azure_config(),
+                "gateset": gateset
             }
         )
         logger.info("Initializing IonQForteQirBackend")

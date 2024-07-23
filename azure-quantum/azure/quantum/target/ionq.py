@@ -12,6 +12,7 @@ from azure.quantum.target.target import (
 from azure.quantum.job.job import Job
 from azure.quantum.workspace import Workspace
 from azure.quantum._client.models import CostEstimate, UsageEvent
+from typing import Union
 
 COST_1QUBIT_GATE_MAP = {
     "ionq.simulator" : 0.0,
@@ -123,7 +124,7 @@ class IonQ(Target):
 
     def estimate_cost(
         self,
-        circuit: Dict[str, Any],
+        circuit: Union[Dict[str, Any], Any],
         num_shots: int = None,
         price_1q: float = None,
         price_2q: float = None,
@@ -174,20 +175,6 @@ class IonQ(Target):
             )
             shots = num_shots
 
-        def is_1q_gate(gate: Dict[str, Any]):
-            return "controls" not in gate and "control" not in gate
-
-        def is_multi_q_gate(gate):
-            return "controls" in gate or "control" in gate
-
-        def num_2q_gates(gate):
-            controls = gate.get("controls")
-            if controls is None or len(controls) == 1:
-                # Only one control qubit
-                return 1
-            # Multiple control qubits
-            return 6 * (len(controls) - 2)
-
         # Get the costs for the gates depending on the provider if not specified
         if price_1q is None:
             price_1q = COST_1QUBIT_GATE_MAP[self.name]
@@ -198,10 +185,28 @@ class IonQ(Target):
         if min_price is None:
             min_price = MIN_PRICE_MAP[self.name]
 
-        gates = circuit.get("circuit", [])
-        N_1q = sum(map(is_1q_gate, gates))
-        N_2q = sum(map(num_2q_gates, filter(is_multi_q_gate, gates)))
+        if (isinstance(circuit, Dict)):
+            def is_1q_gate(gate: Dict[str, Any]):
+                return "controls" not in gate and "control" not in gate
 
+            def is_multi_q_gate(gate):
+                return "controls" in gate or "control" in gate
+
+            def num_2q_gates(gate):
+                controls = gate.get("controls")
+                if controls is None or len(controls) == 1:
+                    # Only one control qubit
+                    return 1
+                # Multiple control qubits
+                return 6 * (len(controls) - 2)
+            
+            gates = circuit.get("circuit", [])
+            N_1q = sum(map(is_1q_gate, gates))
+            N_2q = sum(map(num_2q_gates, filter(is_multi_q_gate, gates)))
+
+        else:
+            N_1q, N_2q, _ = self._qir_module_to_gates(circuit)
+            
         price = (price_1q * N_1q + price_2q * N_2q) * shots
         price = max(price, min_price)
 
