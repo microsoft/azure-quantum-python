@@ -9,7 +9,6 @@ from azure.quantum.job import JobFailedWithResultsError
 class TestMicrosoftElementsDftJob(QuantumTestBase):
 
     @pytest.mark.microsoft_elements_dft
-    @pytest.mark.skip(reason="TODO: ignoring for now due to undefined failure reason. Possibly, transient dependency update causing this")
     def test_dft_success(self):
         dft_input_params = {
             "tasks": [
@@ -52,7 +51,6 @@ class TestMicrosoftElementsDftJob(QuantumTestBase):
 
 
     @pytest.mark.microsoft_elements_dft
-    @pytest.mark.skip(reason="TODO: ignoring for now due to undefined failure reason. Possibly, transient dependency update causing this")
     def test_dft_failure_algorithm_produces_output(self):
         dft_input_params = {
             "tasks": [

@@ -159,7 +159,6 @@ class TestCirq(QuantumTestBase):
 
     @pytest.mark.ionq
     @pytest.mark.live_test
-    @pytest.mark.skip(reason="TODO: ignoring for now due to undefined failure reason. Possibly, transient dependency update causing this")
     def test_plugins_ionq_cirq(self):
         with unittest.mock.patch.object(
             Job,
