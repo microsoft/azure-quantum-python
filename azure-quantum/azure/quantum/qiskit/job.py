@@ -332,7 +332,6 @@ class AzureQuantumJob(JobV1):
         
         status = self.status()
 
-        # TODO: construction of header is quite minimal compared to passthrough flow - evaluate if we want to add more information
         return [{
             "data": result,
             "success": success,

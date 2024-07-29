@@ -97,7 +97,6 @@ class QuantinuumQirBackendBase(AzureQirBackend):
         return _get_n_qubits(name)
 
 
-# TODO: do we want to update memory: True here?
 class QuantinuumSyntaxCheckerQirBackend(QuantinuumQirBackendBase):
     backend_names = (
         # Note: Target names on the same line are equivalent.
@@ -118,7 +117,7 @@ class QuantinuumSyntaxCheckerQirBackend(QuantinuumQirBackendBase):
                 "coupling_map": None,
                 "description": f"Quantinuum Syntax Checker on Azure Quantum",
                 "basis_gates": QUANTINUUM_BASIS_GATES,
-                "memory": False,
+                "memory": True,
                 "n_qubits": self._get_n_qubits(name),
                 "conditional": False,
                 "max_shots": None,
