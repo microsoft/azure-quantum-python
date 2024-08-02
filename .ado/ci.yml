@@ -62,6 +62,7 @@ jobs:
       displayName: List installed packages
     
     - script: |
+        git config --system core.longpaths true
         cd $(Build.SourcesDirectory)/azure-quantum
         pip install .[all]
         pytest --cov-report term --cov=azure.quantum --junitxml test-output-azure-quantum.xml $(Build.SourcesDirectory)/azure-quantum
