@@ -13,6 +13,7 @@ from qiskit import QuantumCircuit, transpile
 from .backend import (
     AzureBackend, 
     AzureQirBackend, 
+    QIR_BASIS_GATES,
     _get_shots_or_deprecated_count_input_param
 )
 
@@ -22,7 +23,7 @@ from qiskit.providers import Options, Provider
 from qiskit_ionq.helpers import (
     ionq_basis_gates,
     GATESET_MAP,
-    GATESET_MAP_QIR,
+    ionq_native_basis_gates,
     qiskit_circ_to_ionq_circ,
 )
 
@@ -46,6 +47,12 @@ __all__ = [
     "IonQAriaNativeBackend",
     "IonQForteNativeBackend",
 ]
+
+# Each language corresponds to a different set of basis gates.
+GATESET_MAP_QIR = {
+    "qis": QIR_BASIS_GATES,
+    "native": ionq_native_basis_gates,
+}
 
 _IONQ_SHOTS_INPUT_PARAM_NAME = "shots"
 _DEFAULT_SHOTS_COUNT = 500
@@ -82,41 +89,9 @@ class IonQQirBackendBase(AzureQirBackend):
         )
         return config
 
-    # TODO: decide if we want to allow for options passing differently
     def estimate_cost(self, circuits, shots, options={}):
         """Estimate the cost for the given circuit."""
-        config = self.configuration()
-        input_params = self._get_input_params(options, shots=shots)
-
-        if not (isinstance(circuits, list)):
-            circuits = [circuits]
-        
-        # TODO: evaluate proper means of use / fetching these values for transpile (could ignore, could use)
-        to_qir_kwargs = input_params.pop(
-            "to_qir_kwargs", config.azure.get("to_qir_kwargs", {"record_output": True})
-        )
-        targetCapability = input_params.pop(
-            "targetCapability",
-            self.options.get("targetCapability", "AdaptiveExecution"),
-        )
-
-        if not input_params.pop("skipTranspile", False):
-            # Set of gates supported by QIR targets.
-            circuits = transpile(
-                circuits, basis_gates=config.basis_gates, optimization_level=0
-            )
-            
-            qir = self._get_qir_str(circuits, targetCapability, **to_qir_kwargs)
-            print (qir)
-        
-
-        (module, _) = self._generate_qir(
-            circuits, targetCapability, **to_qir_kwargs
-        )
-
-        workspace = self.provider().get_workspace()
-        target = workspace.get_targets(self.name())
-        return target.estimate_cost(module, shots=shots)
+        return self._estimate_cost_qir(circuits, shots, options)
     
     def run(
         self, 
@@ -285,6 +260,7 @@ class IonQBackend(AzureBackend):
             "input_data_format": "ionq.circuit.v1",
             "output_data_format": "ionq.quantum-results.v1",
             "is_default": False,
+            "is_passthrough": True
         }
 
     def _prepare_job_metadata(self, circuit, **kwargs):
@@ -363,7 +339,7 @@ class IonQSimulatorNativeBackend(IonQSimulatorBackend):
         config = super()._azure_config()
         config.update(
             {
-                "is_default": False,
+                "is_default": True,
             }
         )
         return config
@@ -400,6 +376,15 @@ class IonQAriaBackend(IonQBackend):
             "configuration", default_config
         )
         super().__init__(configuration=configuration, provider=provider, **kwargs)
+    
+    def _azure_config(self) -> Dict[str, str]:
+        config = super()._azure_config()
+        config.update(
+            {
+                "is_default": True,
+            }
+        )
+        return config
 
 
 class IonQForteBackend(IonQBackend):
@@ -433,6 +418,15 @@ class IonQForteBackend(IonQBackend):
             "configuration", default_config
         )
         super().__init__(configuration=configuration, provider=provider, **kwargs)
+    
+    def _azure_config(self) -> Dict[str, str]:
+        config = super()._azure_config()
+        config.update(
+            {
+                "is_default": True,
+            }
+        )
+        return config
 
 
 class IonQAriaNativeBackend(IonQAriaBackend):

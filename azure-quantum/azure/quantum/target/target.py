@@ -329,7 +329,7 @@ target '{self.name}' of provider '{self.provider_id}' not found."
 
     def _qir_module_to_gates(self, qir_module) -> Dict[str, int]:
         try:
-            from pyqir import Module, is_qubit_type, is_result_type
+            from pyqir import Module, is_qubit_type, is_result_type, entry_point, is_entry_point, Function
 
         except ImportError:
             raise ImportError(
@@ -339,34 +339,37 @@ target '{self.name}' of provider '{self.provider_id}' not found."
         
         module: Module = qir_module
 
-        
         one_qubit_gates = 0
         multi_qubit_gates = 0
         measurement_gates = 0
 
-        # Iterate over the instructions in the first basic block of the first function
-        for instruction in module.functions[0].basic_blocks[0].instructions:
-            qubit_count = 0
-            result_count = 0
-            
-            # If the instruction is to record output, do not include this is the price calculation
-            if len(instruction.operands) > 0 and "__quantum__rt__result_record_output" not in instruction.operands[-1].name:
-                # Check each operand in the instruction
-                for operand in instruction.operands:
-                    value_type = operand.type
+        function_entry_points: list[Function] = filter(is_entry_point, module.functions)
+        
+        # Iterate over the blocks and their instructions
+        for function in function_entry_points:
+            for block in function.basic_blocks:
+                for instruction in block.instructions:
+                    qubit_count = 0
+                    result_count = 0
                     
-                    if is_qubit_type(value_type):
-                        qubit_count += 1
-                    elif is_result_type(value_type):
-                        result_count += 1
+                    # If the instruction is of type quantum rt, do not include this is the price calculation
+                    if len(instruction.operands) > 0 and "__quantum__rt" not in instruction.operands[-1].name:
+                        # Check each operand in the instruction
+                        for operand in instruction.operands:
+                            value_type = operand.type
+                            
+                            if is_qubit_type(value_type):
+                                qubit_count += 1
+                            elif is_result_type(value_type):
+                                result_count += 1
 
-            # Determine the type of gate based on the counts
-            if qubit_count == 1 and result_count == 0:
-                one_qubit_gates += 1
-            if qubit_count >= 2 and result_count == 0:
-                multi_qubit_gates += 1
-            if result_count > 0:
-                measurement_gates += 1
+                    # Determine the type of gate based on the counts
+                    if qubit_count == 1 and result_count == 0:
+                        one_qubit_gates += 1
+                    if qubit_count >= 2 and result_count == 0:
+                        multi_qubit_gates += 1
+                    if result_count > 0:
+                        measurement_gates += 1
 
         return one_qubit_gates, multi_qubit_gates, measurement_gates
 

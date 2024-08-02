@@ -401,15 +401,15 @@ class TestQiskit(QuantumTestBase):
         workspace = self.create_workspace()
         provider = AzureQuantumProvider(workspace=workspace)
         self.assertIn("azure-quantum-qiskit", provider._workspace.user_agent)
-        backend = provider.get_backend("ionq.simulator", input_data_format="ionq.circuit.v1", output_data_format="ionq.quantum-results.v1", gateset="qis")
+        backend = provider.get_backend("ionq.simulator", is_passthrough=True)
         cost = backend.estimate_cost(circuit, shots=100e3)
         self.assertEqual(cost.estimated_total, 0.0)
 
-        backend = provider.get_backend("ionq.qpu", input_data_format="ionq.circuit.v1", output_data_format="ionq.quantum-results.v1", gateset="qis")
+        backend = provider.get_backend("ionq.qpu", is_passthrough=True)
         cost = backend.estimate_cost(circuit, shots=1024)
         self.assertEqual(np.round(cost.estimated_total), 1.0)
 
-        backend = provider.get_backend("ionq.qpu", input_data_format="ionq.circuit.v1", output_data_format="ionq.quantum-results.v1", gateset="qis")
+        backend = provider.get_backend("ionq.qpu", is_passthrough=True)
         cost = backend.estimate_cost(circuit, shots=100e3)
         self.assertEqual(np.round(cost.estimated_total), 66.0)
 
@@ -422,6 +422,19 @@ class TestQiskit(QuantumTestBase):
         # backend = provider.get_backend("ionq.qpu.aria-1")
         # cost = backend.estimate_cost(circuit, shots=100e3)
         # self.assertEqual(np.round(cost.estimated_total), 240.0)
+
+    @pytest.mark.ionq
+    def test_get_ionq_backends(self):
+        workspace = self.create_workspace()
+        provider = AzureQuantumProvider(workspace=workspace)
+        self.assertIn("azure-quantum-qiskit", provider._workspace.user_agent)
+        provider.get_backend("ionq.simulator", is_passthrough=True)
+        provider.get_backend("ionq.simulator", is_passthrough=True, gateset="native")
+        provider.get_backend("ionq.simulator", input_data_format="ionq.circuit.v1", output_data_format="ionq.quantum-results.v1", gateset="qis")
+        provider.get_backend("ionq.simulator", is_passthrough=False)
+        provider.get_backend("ionq.simulator", is_passthrough=True, input_data_format="ionq.circuit.v1", output_data_format="ionq.quantum-results.v1", gateset="qis")
+        provider.get_backend("ionq.simulator")
+        provider.get_backend("ionq.simulator", input_data_format="qir.v1")
 
     @pytest.mark.ionq
     @pytest.mark.live_test
@@ -612,8 +625,8 @@ class TestQiskit(QuantumTestBase):
         workspace = self.create_workspace()
         provider = AzureQuantumProvider(workspace=workspace)
         self.assertIn("azure-quantum-qiskit", provider._workspace.user_agent)
-        # TODO: see if we can make specifying passthrough simpler
-        backend = provider.get_backend("ionq.simulator", input_data_format="ionq.circuit.v1", output_data_format="ionq.quantum-results.v1", gateset="qis")
+        backend = provider.get_backend("ionq.simulator", is_passthrough=True)
+       
         expected_data_format = (
             kwargs["input_data_format"]
             if "input_data_format" in kwargs
@@ -972,27 +985,27 @@ class TestQiskit(QuantumTestBase):
         provider = AzureQuantumProvider(workspace=workspace)
         self.assertIn("azure-quantum-qiskit", provider._workspace.user_agent)
 
-        backend = provider.get_backend("quantinuum.sim.h1-1sc", input_data_format="honeywell.openqasm.v1", output_data_format="honeywell.quantum-results.v1")
+        backend = provider.get_backend("quantinuum.sim.h1-1sc", is_passthrough=True)
         cost = backend.estimate_cost(circuit, shots=100e3)
         self.assertEqual(cost.estimated_total, 0.0)
 
-        backend = provider.get_backend("quantinuum.sim.h1-1e", input_data_format="honeywell.openqasm.v1", output_data_format="honeywell.quantum-results.v1")
+        backend = provider.get_backend("quantinuum.sim.h1-1e", is_passthrough=True)
         cost = backend.estimate_cost(circuit, shots=100e3)
         self.assertEqual(cost.estimated_total, 745.0)
 
-        backend = provider.get_backend("quantinuum.qpu.h1-1", input_data_format="honeywell.openqasm.v1", output_data_format="honeywell.quantum-results.v1")
+        backend = provider.get_backend("quantinuum.qpu.h1-1", is_passthrough=True)
         cost = backend.estimate_cost(circuit, shots=100e3)
         self.assertEqual(cost.estimated_total, 745.0)
 
-        backend = provider.get_backend("quantinuum.sim.h2-1sc", input_data_format="honeywell.openqasm.v1", output_data_format="honeywell.quantum-results.v1")
+        backend = provider.get_backend("quantinuum.sim.h2-1sc", is_passthrough=True)
         cost = backend.estimate_cost(circuit, shots=100e3)
         self.assertEqual(cost.estimated_total, 0.0)
 
-        backend = provider.get_backend("quantinuum.sim.h2-1e", input_data_format="honeywell.openqasm.v1", output_data_format="honeywell.quantum-results.v1")
+        backend = provider.get_backend("quantinuum.sim.h2-1e", is_passthrough=True)
         cost = backend.estimate_cost(circuit, shots=100e3)
         self.assertEqual(cost.estimated_total, 745.0)
 
-        backend = provider.get_backend("quantinuum.qpu.h2-1", input_data_format="honeywell.openqasm.v1", output_data_format="honeywell.quantum-results.v1")
+        backend = provider.get_backend("quantinuum.qpu.h2-1", is_passthrough=True)
         cost = backend.estimate_cost(circuit, shots=100e3)
         self.assertEqual(cost.estimated_total, 745.0)
 
@@ -1293,6 +1306,28 @@ class TestQiskit(QuantumTestBase):
             "quantinuum.sim.h2-1e",
         ]:
             config = provider.get_backend(target_name).configuration()
+            # We check for name so the test log includes it when reporting a failure
+            self.assertIsNotNone(target_name)
+            self.assertEqual(32, config.num_qubits)
+
+        # The following backends should have 20 qubits
+        for target_name in [
+            "quantinuum.qpu.h1-1",
+            "quantinuum.sim.h1-1sc",
+            "quantinuum.sim.h1-1e"
+        ]:
+            config = provider.get_backend(target_name, is_passthrough=True).configuration()
+            # We check for name so the test log includes it when reporting a failure
+            self.assertIsNotNone(target_name)
+            self.assertEqual(20, config.num_qubits)
+
+        # The following backends should have 32 qubits
+        for target_name in [
+            "quantinuum.qpu.h2-1",
+            "quantinuum.sim.h2-1sc",
+            "quantinuum.sim.h2-1e",
+        ]:
+            config = provider.get_backend(target_name, is_passthrough=True).configuration()
             # We check for name so the test log includes it when reporting a failure
             self.assertIsNotNone(target_name)
             self.assertEqual(32, config.num_qubits)

@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING, Dict
 from azure.quantum.version import __version__
 from azure.quantum.target.rigetti import RigettiTarget
 from abc import abstractmethod
-from .backend import AzureQirBackend
+from .backend import AzureQirBackend, QIR_BASIS_GATES
 
 from qiskit.providers.models import BackendConfiguration
 from qiskit.providers import Options, Provider
