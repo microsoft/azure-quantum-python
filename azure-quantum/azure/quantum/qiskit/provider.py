@@ -71,6 +71,10 @@ class AzureQuantumProvider(Provider):
         backends = self.backends(name=name, **kwargs)
 
         if len(backends) > 1:
+             # By default we don't want to use passthrough backends, but if we have to choose between 2 then we choose non-passthrough
+            if len(backends) == 2 and backends[0].configuration().azure["is_passthrough"] != backends[1].configuration().azure["is_passthrough"]:
+                return backends[0] if not backends[0].configuration().azure["is_passthrough"] else backends[1]
+            
             raise QiskitBackendNotFoundError(
                 "More than one backend matches the criteria"
             )
@@ -277,7 +281,7 @@ see https://aka.ms/AQ/Docs/AddProvider"
             warnings.warn(
                 f"Specified filters {unknown_filters} are not supported by the available backends."
             )
-
+        
         backends = list(filter(filters, backends))
         
         return backends

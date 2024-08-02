@@ -9,6 +9,7 @@ from azure.quantum.qiskit.job import AzureQuantumJob
 from abc import abstractmethod
 from .backend import (
     AzureQirBackend, 
+    QIR_BASIS_GATES,
     _get_shots_or_deprecated_count_input_param,
 )
 
