@@ -23,7 +23,6 @@ from qiskit.providers import Options, Provider
 from qiskit_ionq.helpers import (
     ionq_basis_gates,
     GATESET_MAP,
-    ionq_native_basis_gates,
     qiskit_circ_to_ionq_circ,
 )
 
@@ -47,12 +46,6 @@ __all__ = [
     "IonQAriaNativeBackend",
     "IonQForteNativeBackend",
 ]
-
-# Each language corresponds to a different set of basis gates.
-GATESET_MAP_QIR = {
-    "qis": QIR_BASIS_GATES,
-    "native": ionq_native_basis_gates,
-}
 
 _IONQ_SHOTS_INPUT_PARAM_NAME = "shots"
 _DEFAULT_SHOTS_COUNT = 500

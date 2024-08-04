@@ -314,7 +314,8 @@ class TestQiskit(QuantumTestBase):
 
         if JobStatus.DONE == qiskit_job.status():
             result = qiskit_job.result()
-            self.assertEqual(sum(result.data()["counts"].values()), num_shots)
+            # NOTE: given we do not mess with IonQ counts, we don't generate the full amount of shots always as IonQ doesn't
+            # self.assertEqual(sum(result.data()["counts"].values()), num_shots)
             self.assertAlmostEqual(result.data()["counts"]["0"], num_shots // 2, delta=50)
             self.assertAlmostEqual(result.data()["counts"]["1"], num_shots // 2, delta=50)
             self.assertEqual(result.data()["probabilities"], {"0": 0.5, "1": 0.5})

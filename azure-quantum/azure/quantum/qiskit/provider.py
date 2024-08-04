@@ -71,10 +71,6 @@ class AzureQuantumProvider(Provider):
         backends = self.backends(name=name, **kwargs)
 
         if len(backends) > 1:
-             # By default we don't want to use passthrough backends, but if we have to choose between 2 then we choose non-passthrough
-            if len(backends) == 2 and backends[0].configuration().azure["is_passthrough"] != backends[1].configuration().azure["is_passthrough"]:
-                return backends[0] if not backends[0].configuration().azure["is_passthrough"] else backends[1]
-            
             raise QiskitBackendNotFoundError(
                 "More than one backend matches the criteria"
             )
@@ -124,18 +120,31 @@ see https://aka.ms/AQ/Docs/AddProvider"
             backend_list, filters=workspace_allowed, **kwargs
         )
 
-        # Also filter out non-default backends.
-        default_backends = list(
-            filter(
-                lambda backend: self._match_all(
-                    backend.configuration().to_dict(), {"is_default": True}
-                ),
-                filtered_backends,
-            )
-        ) 
-       # If default backends were found - return them, otherwise return the filtered_backends collection.
-       # The latter case could happen where there's no default backend defined for the specified target.  
-        if len(default_backends) > 0:
+        def filter_non_passthrough_defaults(filtered_backends):
+            filtered_defaults = {}
+
+            for backend in filtered_backends:
+                config = backend.configuration().azure
+                is_default =  config["is_default"]
+                is_passthrough = config["is_passthrough"]
+                name = backend.name()
+
+                # Process only if the backend is marked as default
+                if is_default:
+                    # If the name is not in the dictionary, add the backend
+                    # If the current backend is not passthrough, update it in the dictionary
+                    if name not in filtered_defaults or not is_passthrough:
+                        filtered_defaults[name] = backend
+
+            # Return the filtered default backends as a list
+            return list(filtered_defaults.values())
+
+        # Also filter out non-default backends & passthrough if necessary.
+        default_backends = filter_non_passthrough_defaults(filtered_backends)
+
+        # If default backends were found - return them, otherwise return the filtered_backends collection.
+        # The latter case could happen where there's no default backend defined for the specified target.  
+        if len(default_backends) > 0:            
             return default_backends
 
         return filtered_backends

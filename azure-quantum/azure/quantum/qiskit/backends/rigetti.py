@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING, Dict
 from azure.quantum.version import __version__
 from azure.quantum.target.rigetti import RigettiTarget
 from abc import abstractmethod
-from .backend import AzureQirBackend, QIR_BASIS_GATES
+from .backend import AzureQirBackend
 
 from qiskit.providers.models import BackendConfiguration
 from qiskit.providers import Options, Provider
@@ -41,6 +41,25 @@ logger = logging.getLogger(__name__)
 
 __all__ = ["RigettiSimulatorBackend" "RigettiQPUBackend"]
 
+QIR_BASIS_GATES = [
+    "measure",
+    "m",
+    "cx",
+    "cz",
+    "h",
+    "reset",
+    "rx",
+    "ry",
+    "rz",
+    "s",
+    "sdg",
+    "t",
+    "tdg",
+    "x",
+    "y",
+    "z",
+    "id",
+]
 
 _DEFAULT_SHOTS_COUNT = 500
 
