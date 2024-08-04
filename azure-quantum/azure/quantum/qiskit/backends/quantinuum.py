@@ -8,7 +8,7 @@ from azure.quantum.qiskit.job import AzureQuantumJob
 from azure.quantum.version import __version__
 import warnings
 
-from .backend import AzureBackend, AzureQirBackend, QIR_BASIS_GATES
+from .backend import AzureBackend, AzureQirBackend
 from abc import abstractmethod
 from qiskit import QuantumCircuit, transpile
 from qiskit.providers.models import BackendConfiguration
@@ -143,7 +143,7 @@ class QuantinuumSyntaxCheckerQirBackend(QuantinuumQirBackendBase):
                 "local": False,
                 "coupling_map": None,
                 "description": f"Quantinuum Syntax Checker on Azure Quantum",
-                "basis_gates": QIR_BASIS_GATES,
+                "basis_gates": QUANTINUUM_BASIS_GATES,
                 "memory": True,
                 "n_qubits": self._get_n_qubits(name),
                 "conditional": False,
@@ -180,7 +180,7 @@ class QuantinuumEmulatorQirBackend(QuantinuumQirBackendBase):
                 "local": False,
                 "coupling_map": None,
                 "description": f"Quantinuum emulator on Azure Quantum",
-                "basis_gates": QIR_BASIS_GATES,
+                "basis_gates": QUANTINUUM_BASIS_GATES,
                 "memory": True,
                 "n_qubits": self._get_n_qubits(name),
                 "conditional": False,
@@ -217,7 +217,7 @@ class QuantinuumQPUQirBackend(QuantinuumQirBackendBase):
                 "local": False,
                 "coupling_map": None,
                 "description": f"Quantinuum QPU on Azure Quantum",
-                "basis_gates": QIR_BASIS_GATES,
+                "basis_gates": QUANTINUUM_BASIS_GATES,
                 "memory": True,
                 "n_qubits": self._get_n_qubits(name),
                 "conditional": False,

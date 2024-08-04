@@ -36,26 +36,6 @@ except ImportError:
 To install run: pip install azure-quantum[qiskit]"
     )
 
-QIR_BASIS_GATES = [
-      "cx",
-      "cz",
-      "h",
-      "m",
-      "measure",
-      "reset",
-      "rx",
-      "ry",
-      "rz",
-      "s",
-      "sdg",
-      "swap",
-      "t",
-      "tdg",
-      "x",
-      "y",
-      "z",
-]
-
 class AzureBackendBase(Backend, SessionHost):
 
     # Name of the provider's input parameter which specifies number of shots for a submitted job.
@@ -459,7 +439,6 @@ class AzureQirBackend(AzureBackendBase):
         if not (isinstance(circuits, list)):
             circuits = [circuits]
         
-        # TODO: evaluate proper means of use / fetching these values for transpile (could ignore, could use)
         to_qir_kwargs = input_params.pop(
             "to_qir_kwargs", config.azure.get("to_qir_kwargs", {"record_output": True})
         )
