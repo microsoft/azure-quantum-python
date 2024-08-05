@@ -12,10 +12,9 @@ from .backend import AzureQirBackend
 from qiskit.providers.models import BackendConfiguration
 from qiskit.providers import Options, Provider
 
-QIR_BASIS_GATES = [
+MICROSOFT_BASIS_GATES = [
     "measure",
     "m",
-    "ccx",
     "cx",
     "cz",
     "h",
@@ -24,10 +23,8 @@ QIR_BASIS_GATES = [
     "ry",
     "rz",
     "s",
-    "sdg",
     "swap",
     "t",
-    "tdg",
     "x",
     "y",
     "z",
@@ -93,7 +90,7 @@ class MicrosoftResourceEstimationBackend(MicrosoftBackend):
                 "local": False,
                 "coupling_map": None,
                 "description": "Resource estimator on Azure Quantum",
-                "basis_gates": QIR_BASIS_GATES,
+                "basis_gates": MICROSOFT_BASIS_GATES,
                 "memory": False,
                 "n_qubits": 0xFFFFFFFFFFFFFFFF,  # NOTE: maximum 64-bit unsigned value
                 "conditional": True,
