@@ -40,10 +40,12 @@ QUANTINUUM_BASIS_GATES = [
     "cx",
     "cz",
     "s",
+    "sdg",
     "t",
+    "tdg",
     "v",
     "vdg",
-    "rzz",
+    "zz",
     "measure",
     "reset",
 ]

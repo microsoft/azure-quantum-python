@@ -15,7 +15,7 @@ from .backend import (
 from qiskit.providers.models import BackendConfiguration
 from qiskit.providers import Options, Provider
 
-QCI_BASIS_GATES = [
+QIR_BASIS_GATES  = [
     "measure",
     "m",
     "barrier",
@@ -27,8 +27,10 @@ QCI_BASIS_GATES = [
     "ry",
     "rz",
     "s",
+    "sdg",
     "swap",
     "t",
+    "tdg",
     "x",
     "y",
     "z",
@@ -108,7 +110,7 @@ class QCISimulatorBackend(QCIBackend):
                 "local": False,
                 "coupling_map": None,
                 "description": "QCI simulator on Azure Quantum",
-                "basis_gates": QCI_BASIS_GATES,
+                "basis_gates": QIR_BASIS_GATES,
                 "memory": False,
                 "n_qubits": 29,
                 "conditional": True,
@@ -140,7 +142,7 @@ class QCIQPUBackend(QCIBackend):
                 "local": False,
                 "coupling_map": None,
                 "description": "QCI QPU on Azure Quantum",
-                "basis_gates": QCI_BASIS_GATES,
+                "basis_gates": QIR_BASIS_GATES,
                 "memory": False,
                 "n_qubits": 11,
                 "conditional": True,

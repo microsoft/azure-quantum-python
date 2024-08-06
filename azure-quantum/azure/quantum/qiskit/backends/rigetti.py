@@ -12,7 +12,7 @@ from .backend import AzureQirBackend
 from qiskit.providers.models import BackendConfiguration
 from qiskit.providers import Options, Provider
 
-RIGETTI_BASIS_GATES = [
+QIR_BASIS_GATES = [
     "measure",
     "m",
     "cx",
@@ -23,7 +23,9 @@ RIGETTI_BASIS_GATES = [
     "ry",
     "rz",
     "s",
+    "sdg,"
     "t",
+    "tdg",
     "x",
     "y",
     "z",
@@ -83,7 +85,7 @@ class RigettiSimulatorBackend(RigettiBackend):
                 "local": False,
                 "coupling_map": None,
                 "description": "Rigetti simulator on Azure Quantum",
-                "basis_gates": RIGETTI_BASIS_GATES,
+                "basis_gates": QIR_BASIS_GATES,
                 "memory": True,
                 "n_qubits": RigettiTarget.num_qubits(name),
                 "conditional": False,
@@ -115,7 +117,7 @@ class RigettiQPUBackend(RigettiBackend):
                 "local": False,
                 "coupling_map": None,
                 "description": "Rigetti QPU on Azure Quantum",
-                "basis_gates": RIGETTI_BASIS_GATES,
+                "basis_gates": QIR_BASIS_GATES,
                 "memory": True,
                 "n_qubits": RigettiTarget.num_qubits(name),
                 "conditional": False,
