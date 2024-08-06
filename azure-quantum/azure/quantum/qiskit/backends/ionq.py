@@ -13,7 +13,6 @@ from qiskit import QuantumCircuit, transpile
 from .backend import (
     AzureBackend, 
     AzureQirBackend, 
-    QIR_BASIS_GATES,
     _get_shots_or_deprecated_count_input_param
 )
 
