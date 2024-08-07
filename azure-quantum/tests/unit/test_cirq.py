@@ -134,16 +134,16 @@ class TestCirq(QuantumTestBase):
         cost = service.estimate_cost(
             program=self._3_qubit_ghz_cirq(),
             repetitions=1024,
-            target="ionq.qpu"
+            target="ionq.qpu.aria-1"
         )
-        self.assertEqual(np.round(cost.estimated_total), 1.0)
+        self.assertEqual(np.round(cost.estimated_total), 98.0)
 
         cost = service.estimate_cost(
             program=self._3_qubit_ghz_cirq(),
             repetitions=100e3,
-            target="ionq.qpu"
+            target="ionq.qpu.aria-1"
         )
-        self.assertEqual(np.round(cost.estimated_total), 63.0)
+        self.assertEqual(np.round(cost.estimated_total), 218.0)
 
     @pytest.mark.live_test
     def test_plugins_cirq_nonexistent_target(self):

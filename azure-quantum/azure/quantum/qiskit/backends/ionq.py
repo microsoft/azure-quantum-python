@@ -34,15 +34,12 @@ logger = logging.getLogger(__name__)
 
 __all__ = [
     "IonQBackend",
-    "IonQQPUBackend",
     "IonQSimulatorBackend",
     "IonQAriaBackend",
     "IonQForteBackend",
     "IonQQirBackend",
     "IonQSimulatorQirBackend",
     "IonQSimulatorNativeBackend",
-    "IonQQPUQirBackend",
-    "IonQQPUNativeBackend",
     "IonQAriaQirBackend",
     "IonQForteQirBackend",
     "IonQAriaNativeBackend",
@@ -127,38 +124,6 @@ class IonQSimulatorQirBackend(IonQQirBackendBase):
             }
         )
         logger.info("Initializing IonQSimulatorQirBackend")
-        configuration: BackendConfiguration = kwargs.pop(
-            "configuration", default_config
-        )
-        super().__init__(configuration=configuration, provider=provider, **kwargs)
-
-
-class IonQQPUQirBackend(IonQQirBackendBase):
-    backend_names = ("ionq.qpu",)
-
-    def __init__(self, name: str, provider: "AzureQuantumProvider", **kwargs):
-        """Base class for interfacing with an IonQ QPU backend"""
-
-        default_config = BackendConfiguration.from_dict(
-            {
-                "backend_name": name,
-                "backend_version": __version__,
-                "simulator": False,
-                "local": False,
-                "coupling_map": None,
-                "description": "IonQ QPU on Azure Quantum",
-                "basis_gates": ionq_basis_gates,
-                "memory": False,
-                "n_qubits": 11,
-                "conditional": False,
-                "max_shots": 10000,
-                "max_experiments": 1,
-                "open_pulse": False,
-                "gates": [{"name": "TODO", "parameters": [], "qasm_def": "TODO"}],
-                "azure": self._azure_config(),
-            }
-        )
-        logger.info("Initializing IonQQPUQirBackend")
         configuration: BackendConfiguration = kwargs.pop(
             "configuration", default_config
         )
@@ -346,55 +311,6 @@ class IonQSimulatorBackend(IonQBackend):
 
 
 class IonQSimulatorNativeBackend(IonQSimulatorBackend):
-    def __init__(self, name: str, provider: "AzureQuantumProvider", **kwargs):
-        if "gateset" not in kwargs:
-            kwargs["gateset"] = "native"
-        super().__init__(name, provider, **kwargs)
-
-    def _azure_config(self) -> Dict[str, str]:
-        config = super()._azure_config()
-        config.update(
-            {
-                "is_default": False,
-            }
-        )
-        return config
-
-
-class IonQQPUBackend(IonQBackend):
-    backend_names = ("ionq.qpu",)
-
-    def __init__(self, name: str, provider: "AzureQuantumProvider", **kwargs):
-        """Base class for interfacing with an IonQ QPU backend"""
-        gateset = kwargs.pop("gateset", "qis")
-        default_config = BackendConfiguration.from_dict(
-            {
-                "backend_name": name,
-                "backend_version": __version__,
-                "simulator": False,
-                "local": False,
-                "coupling_map": None,
-                "description": "IonQ QPU on Azure Quantum",
-                "basis_gates": GATESET_MAP[gateset],
-                "memory": False,
-                "n_qubits": 11,
-                "conditional": False,
-                "max_shots": 10000,
-                "max_experiments": 1,
-                "open_pulse": False,
-                "gates": [{"name": "TODO", "parameters": [], "qasm_def": "TODO"}],
-                "azure": self._azure_config(),
-                "gateset": gateset,
-            }
-        )
-        logger.info("Initializing IonQQPUBackend")
-        configuration: BackendConfiguration = kwargs.pop(
-            "configuration", default_config
-        )
-        super().__init__(configuration=configuration, provider=provider, **kwargs)
-
-
-class IonQQPUNativeBackend(IonQQPUBackend):
     def __init__(self, name: str, provider: "AzureQuantumProvider", **kwargs):
         if "gateset" not in kwargs:
             kwargs["gateset"] = "native"

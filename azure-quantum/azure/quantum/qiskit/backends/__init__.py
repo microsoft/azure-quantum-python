@@ -7,10 +7,8 @@
 
 from azure.quantum.qiskit.backends.ionq import (
     IonQBackend,
-    IonQQPUBackend,
     IonQAriaBackend,
     IonQSimulatorBackend,
-    IonQQPUQirBackend,
     IonQAriaQirBackend,
     IonQForteBackend,
     IonQForteQirBackend,

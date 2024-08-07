@@ -386,23 +386,13 @@ class TestQiskit(QuantumTestBase):
         cost = backend.estimate_cost(circuit, shots=100e3)
         self.assertEqual(cost.estimated_total, 0.0)
 
-        backend = provider.get_backend("ionq.qpu")
+        backend = provider.get_backend("ionq.qpu.aria-1")
         cost = backend.estimate_cost(circuit, shots=1024)
-        self.assertEqual(np.round(cost.estimated_total), 1.0)
+        self.assertEqual(np.round(cost.estimated_total), 98.0)
 
-        backend = provider.get_backend("ionq.qpu")
+        backend = provider.get_backend("ionq.qpu.aria-1")
         cost = backend.estimate_cost(circuit, shots=100e3)
-        self.assertEqual(np.round(cost.estimated_total), 66.0)
-
-        ## The following two tests are skipped until we can use a workspace
-        ## with this target available as part of the E2E tests.
-        # backend = provider.get_backend("ionq.qpu.aria-1")
-        # cost = backend.estimate_cost(circuit, shots=1024)
-        # self.assertEqual(np.round(cost.estimated_total), 1.0)
-
-        # backend = provider.get_backend("ionq.qpu.aria-1")
-        # cost = backend.estimate_cost(circuit, shots=100e3)
-        # self.assertEqual(np.round(cost.estimated_total), 240.0)
+        self.assertEqual(np.round(cost.estimated_total), 240.0)
 
     @pytest.mark.ionq
     @pytest.mark.live_test
@@ -664,12 +654,12 @@ class TestQiskit(QuantumTestBase):
     @pytest.mark.ionq
     def test_ionq_qpu_has_default(self):
         provider = DummyProvider()
-        provider.get_backend("ionq.qpu")
+        provider.get_backend("ionq.qpu.aria-1")
 
     @pytest.mark.ionq
     def test_ionq_qpu_has_qir_target(self):
         provider = DummyProvider()
-        backend = provider.get_backend("ionq.qpu", input_data_format="qir.v1")
+        backend = provider.get_backend("ionq.qpu.aria-1", input_data_format="qir.v1")
         config = backend.configuration()
         input_data_format = config.azure["input_data_format"]
         self.assertEqual(input_data_format, "qir.v1")
@@ -677,21 +667,21 @@ class TestQiskit(QuantumTestBase):
     @pytest.mark.ionq
     def test_ionq_qpu_has_native_gateset_target(self):
         provider = DummyProvider()
-        backend = provider.get_backend("ionq.qpu", gateset="native")
+        backend = provider.get_backend("ionq.qpu.aria-1", gateset="native")
         config = backend.configuration()
         self.assertEqual(config.gateset, "native")
 
     @pytest.mark.ionq
     def test_ionq_qpu_has_qis_gateset_target(self):
         provider = DummyProvider()
-        backend = provider.get_backend("ionq.qpu", gateset="qis")
+        backend = provider.get_backend("ionq.qpu.aria-1", gateset="qis")
         config = backend.configuration()
         self.assertEqual(config.gateset, "qis")
 
     @pytest.mark.ionq
     def test_ionq_qpu_default_target_has_qis_gateset(self):
         provider = DummyProvider()
-        backend = provider.get_backend("ionq.qpu")
+        backend = provider.get_backend("ionq.qpu.aria-1")
         config = backend.configuration()
         self.assertEqual(config.gateset, "qis")
 
@@ -723,12 +713,12 @@ class TestQiskit(QuantumTestBase):
         workspace = self.create_workspace()
         provider = AzureQuantumProvider(workspace=workspace)
 
-        backend = provider.get_backend("ionq.qpu")
-        self.assertEqual(backend.name(), "ionq.qpu")
+        backend = provider.get_backend("ionq.qpu.aria-1")
+        self.assertEqual(backend.name(), "ionq.qpu.aria-1")
         config = backend.configuration()
         self.assertFalse(config.simulator)
         self.assertEqual(1, config.max_experiments)
-        self.assertEqual(11, config.num_qubits)
+        self.assertEqual(23, config.num_qubits)
         self.assertEqual("application/json", config.azure["content_type"])
         self.assertEqual("ionq", config.azure["provider_id"])
         self.assertEqual("ionq.circuit.v1", config.azure["input_data_format"])
@@ -842,7 +832,7 @@ class TestQiskit(QuantumTestBase):
         self.assertEqual(2, len(metadata["meas_map"]))
 
         # should also be available with the qpu target
-        backend = provider.get_backend("ionq.qpu", gateset="native")
+        backend = provider.get_backend("ionq.qpu.aria-1", gateset="native")
         config = backend.configuration()
         self.assertEqual("native", backend.gateset())
         payload = backend._translate_input(native_circuit)
