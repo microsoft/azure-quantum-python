@@ -50,27 +50,6 @@ QUANTINUUM_BASIS_GATES = [
     "reset",
 ]
 
-QUANTINUUM_BASIS_GATES_QIR = [
-    "x",
-    "y",
-    "z",
-    "rx",
-    "ry",
-    "rz",
-    "h",
-    "cx",
-    "cz",
-    "s",
-    "sdg",
-    "t",
-    "tdg",
-    "v",
-    "vdg",
-    "zz",
-    "measure",
-    "reset",
-]
-
 QUANTINUUM_PROVIDER_ID = "quantinuum"
 QUANTINUUM_PROVIDER_NAME = "Quantinuum"
 
