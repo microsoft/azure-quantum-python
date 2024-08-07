@@ -290,7 +290,6 @@ class TestQiskit(QuantumTestBase):
         workspace = self.create_workspace()
         provider = AzureQuantumProvider(workspace=workspace)
         self.assertIn("azure-quantum-qiskit", provider._workspace.user_agent)
-        # backend = provider.get_backend("ionq.simulator", input_data_format = "ionq.circuit.v1", output_data_format = "ionq.quantum-results.v1", gateset="qis")
         backend = provider.get_backend("ionq.simulator")
         num_shots = 1000
 
@@ -306,6 +305,7 @@ class TestQiskit(QuantumTestBase):
         self.assertEqual(qiskit_job._azure_job.details.output_data_format, MICROSOFT_OUTPUT_DATA_FORMAT_V2)
         self.assertIn("qiskit", qiskit_job._azure_job.details.metadata)
         self.assertIn("name", qiskit_job._azure_job.details.metadata)
+        # NOTE: this check is no longer required for QIR backends as the `meas_map` metadata field is not needed for QIR
         # self.assertIn("meas_map", qiskit_job._azure_job.details.metadata)
         self.assertIn("metadata", qiskit_job._azure_job.details.metadata)
 
@@ -605,6 +605,7 @@ class TestQiskit(QuantumTestBase):
         self.assertIn("qiskit", qiskit_job._azure_job.details.metadata)
         self.assertIn("name", qiskit_job._azure_job.details.metadata)
         self.assertIn("metadata", qiskit_job._azure_job.details.metadata)
+        # NOTE: this check is no longer required for QIR backends as the `meas_map` metadata field is not needed for QIR
         # self.assertIn("meas_map", qiskit_job._azure_job.details.metadata)
 
         # Make sure the job is completed before fetching the results

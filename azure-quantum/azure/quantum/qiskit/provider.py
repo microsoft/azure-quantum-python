@@ -120,6 +120,12 @@ see https://aka.ms/AQ/Docs/AddProvider"
             backend_list, filters=workspace_allowed, **kwargs
         )
 
+        # The `is_passthrough` flag is used as a more intuitive way to match passthrough backends, and
+        # to allow for us to set default passhtrough backends, while still defaulting to QIR backends
+        # in case we match to both a QIR and a passthrough backend. Without the `is_passthrough`flag 
+        # fetching backends for IonQ require at least 2 input flags to be able to match to a single
+        # backend, those being both `input_data_format` and `gateset` (as there are multiple gateset
+        # versions per passthrough backend) 
         def filter_non_passthrough_defaults(filtered_backends):
             filtered_defaults = {}
 
