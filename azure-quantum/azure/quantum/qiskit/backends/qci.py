@@ -46,28 +46,6 @@ logger = logging.getLogger(__name__)
 
 __all__ = ["QCISimulatorBackend" "QCIQPUBackend"]
 
-QIR_BASIS_GATES = [
-    "measure",
-    "m",
-    "barrier",
-    "cx",
-    "cz",
-    "h",
-    "reset",
-    "rx",
-    "ry",
-    "rz",
-    "s",
-    "sdg",
-    "swap",
-    "t",
-    "tdg",
-    "x",
-    "y",
-    "z",
-    "id",
-]
-
 _DEFAULT_SHOTS_COUNT = 500
 
 class QCIBackend(AzureQirBackend):
