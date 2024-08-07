@@ -317,12 +317,19 @@ class AzureQuantumJob(JobV1):
         # TODO: when multi circuit jobs are possible, confirm metadata field will be a list of metadatas
         if (not isinstance(headers, list)):
             headers = [headers]
+
+        # This function will attempt to parse the header into a JSON object, and if the header is not a JSON object, we return the header itself
+        def tryParseJSON(header):
+            try:
+                json_object = json.loads(header)
+            except ValueError as e:
+                return header
+            return json_object
         
         for header in headers:
             del header['qiskit'] # we throw out the qiskit header as it is implied
             for key in header.keys():
-                if isinstance(header[key], str) and header[key].startswith('{') and header[key].endswith('}'):
-                    header[key] = json.loads(header[key])
+                header[key] = tryParseJSON(header[key])
         return headers
 
 
@@ -346,7 +353,7 @@ class AzureQuantumJob(JobV1):
             raise ValueError("The number of experiment results does not match the number of experiment names")
         
         if len(results) != len(headers):
-            raise ValueError("The number of experiment results does not match the number of experiment names")
+            raise ValueError("The number of experiment results does not match the number of headers")
  
         status = self.status()
 
