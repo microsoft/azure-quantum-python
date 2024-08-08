@@ -349,7 +349,7 @@ class AzureQuantumJob(JobV1):
 
         headers = self._get_headers()
         if len(results) != len(entry_point_names):
-            raise ValueError("The number of experiment results does not match the number of experiment names")
+            raise ValueError("The number of experiment results does not match the number of entry point names")
         
         if len(results) != len(headers):
             raise ValueError("The number of experiment results does not match the number of headers")
