@@ -452,9 +452,6 @@ class AzureQirBackend(AzureBackendBase):
             circuits = transpile(
                 circuits, basis_gates=config.basis_gates, optimization_level=0
             )
-            
-            qir = self._get_qir_str(circuits, targetCapability, **to_qir_kwargs)
-            print (qir)
         
 
         (module, _) = self._generate_qir(
