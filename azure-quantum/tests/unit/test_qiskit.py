@@ -321,7 +321,7 @@ class TestQiskit(QuantumTestBase):
             self.assertEqual(result.data()["probabilities"], {"0": 0.5, "1": 0.5})
             counts = result.get_counts()
             self.assertEqual(counts, result.data()["counts"])
-            self.assertEqual(result.results[0].header.num_qubits, "5")
+            self.assertEqual(result.results[0].header.num_qubits, 5)
             self.assertEqual(result.results[0].header.metadata["some"], "data")
 
     def test_qiskit_provider_init_with_workspace_not_raises_deprecation(self):
