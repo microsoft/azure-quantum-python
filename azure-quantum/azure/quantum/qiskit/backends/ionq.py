@@ -20,7 +20,6 @@ from qiskit.providers.models import BackendConfiguration
 from qiskit.providers import Options, Provider
 
 from qiskit_ionq.helpers import (
-    ionq_basis_gates,
     GATESET_MAP,
     qiskit_circ_to_ionq_circ,
 )
@@ -49,6 +48,24 @@ __all__ = [
     "IonQForteNativeBackend",
 ]
 
+QIR_BASIS_GATES = [
+    "x",
+    "y",
+    "z",
+    "rx",
+    "ry",
+    "rz",
+    "h",
+    "swap",
+    "cx",
+    "cz",
+    "s",
+    "sdg",
+    "t",
+    "tdg",
+    "measure",
+]
+
 _IONQ_SHOTS_INPUT_PARAM_NAME = "shots"
 _DEFAULT_SHOTS_COUNT = 500
 
@@ -71,6 +88,9 @@ class IonQQirBackendBase(AzureQirBackend):
             },
             targetCapability="BasicExecution",
             )
+    
+    def gateset(self):
+        return self.configuration().gateset
 
     def _azure_config(self) -> Dict[str, str]:
         config = super()._azure_config()
@@ -80,6 +100,10 @@ class IonQQirBackendBase(AzureQirBackend):
             }
         )
         return config
+
+    def estimate_cost(self, circuits, shots, options={}):
+        """Estimate the cost for the given circuit."""
+        return self._estimate_cost_qir(circuits, shots, options)
     
     def run(
         self, 
@@ -106,7 +130,7 @@ class IonQSimulatorQirBackend(IonQQirBackendBase):
 
     def __init__(self, name: str, provider: "AzureQuantumProvider", **kwargs):
         """Base class for interfacing with an IonQ QIR Simulator backend"""
-
+        gateset = kwargs.pop("gateset", "qis")
         default_config = BackendConfiguration.from_dict(
             {
                 "backend_name": name,
@@ -115,7 +139,7 @@ class IonQSimulatorQirBackend(IonQQirBackendBase):
                 "local": False,
                 "coupling_map": None,
                 "description": "IonQ simulator on Azure Quantum",
-                "basis_gates": ionq_basis_gates,
+                "basis_gates": QIR_BASIS_GATES,
                 "memory": False,
                 "n_qubits": 29,
                 "conditional": False,
@@ -124,6 +148,7 @@ class IonQSimulatorQirBackend(IonQQirBackendBase):
                 "open_pulse": False,
                 "gates": [{"name": "TODO", "parameters": [], "qasm_def": "TODO"}],
                 "azure": self._azure_config(),
+                "gateset": gateset
             }
         )
         logger.info("Initializing IonQSimulatorQirBackend")
@@ -138,7 +163,7 @@ class IonQQPUQirBackend(IonQQirBackendBase):
 
     def __init__(self, name: str, provider: "AzureQuantumProvider", **kwargs):
         """Base class for interfacing with an IonQ QPU backend"""
-
+        gateset = kwargs.pop("gateset", "qis")
         default_config = BackendConfiguration.from_dict(
             {
                 "backend_name": name,
@@ -147,7 +172,7 @@ class IonQQPUQirBackend(IonQQirBackendBase):
                 "local": False,
                 "coupling_map": None,
                 "description": "IonQ QPU on Azure Quantum",
-                "basis_gates": ionq_basis_gates,
+                "basis_gates": QIR_BASIS_GATES,
                 "memory": False,
                 "n_qubits": 11,
                 "conditional": False,
@@ -156,6 +181,7 @@ class IonQQPUQirBackend(IonQQirBackendBase):
                 "open_pulse": False,
                 "gates": [{"name": "TODO", "parameters": [], "qasm_def": "TODO"}],
                 "azure": self._azure_config(),
+                "gateset": gateset
             }
         )
         logger.info("Initializing IonQQPUQirBackend")
@@ -170,7 +196,7 @@ class IonQAriaQirBackend(IonQQirBackendBase):
 
     def __init__(self, name: str, provider: "AzureQuantumProvider", **kwargs):
         """Base class for interfacing with an IonQ Aria QPU backend"""
-
+        gateset = kwargs.pop("gateset", "qis")
         default_config = BackendConfiguration.from_dict(
             {
                 "backend_name": name,
@@ -179,7 +205,7 @@ class IonQAriaQirBackend(IonQQirBackendBase):
                 "local": False,
                 "coupling_map": None,
                 "description": "IonQ Aria QPU on Azure Quantum",
-                "basis_gates": ionq_basis_gates,
+                "basis_gates": QIR_BASIS_GATES,
                 "memory": False,
                 "n_qubits": 23,
                 "conditional": False,
@@ -188,6 +214,7 @@ class IonQAriaQirBackend(IonQQirBackendBase):
                 "open_pulse": False,
                 "gates": [{"name": "TODO", "parameters": [], "qasm_def": "TODO"}],
                 "azure": self._azure_config(),
+                "gateset": gateset
             }
         )
         logger.info("Initializing IonQAriaQirBackend")
@@ -202,7 +229,7 @@ class IonQForteQirBackend(IonQQirBackendBase):
 
     def __init__(self, name: str, provider: "AzureQuantumProvider", **kwargs):
         """Base class for interfacing with an IonQ Forte QPU backend"""
-
+        gateset = kwargs.pop("gateset", "qis")
         default_config = BackendConfiguration.from_dict(
             {
                 "backend_name": name,
@@ -211,7 +238,7 @@ class IonQForteQirBackend(IonQQirBackendBase):
                 "local": False,
                 "coupling_map": None,
                 "description": "IonQ Forte QPU on Azure Quantum",
-                "basis_gates": ionq_basis_gates,
+                "basis_gates": QIR_BASIS_GATES,
                 "memory": False,
                 "n_qubits": 35,
                 "conditional": False,
@@ -220,6 +247,7 @@ class IonQForteQirBackend(IonQQirBackendBase):
                 "open_pulse": False,
                 "gates": [{"name": "TODO", "parameters": [], "qasm_def": "TODO"}],
                 "azure": self._azure_config(),
+                "gateset": gateset
             }
         )
         logger.info("Initializing IonQForteQirBackend")
@@ -276,7 +304,8 @@ class IonQBackend(AzureBackend):
             "provider_id": "ionq",
             "input_data_format": "ionq.circuit.v1",
             "output_data_format": "ionq.quantum-results.v1",
-            "is_default": True,
+            "is_default": False,
+            "is_passthrough": True
         }
 
     def _prepare_job_metadata(self, circuit, **kwargs):
@@ -343,6 +372,15 @@ class IonQSimulatorBackend(IonQBackend):
             "configuration", default_config
         )
         super().__init__(configuration=configuration, provider=provider, **kwargs)
+    
+    def _azure_config(self) -> Dict[str, str]:
+        config = super()._azure_config()
+        config.update(
+            {
+                "is_default": True,
+            }
+        )
+        return config
 
 
 class IonQSimulatorNativeBackend(IonQSimulatorBackend):
@@ -350,7 +388,7 @@ class IonQSimulatorNativeBackend(IonQSimulatorBackend):
         if "gateset" not in kwargs:
             kwargs["gateset"] = "native"
         super().__init__(name, provider, **kwargs)
-
+    
     def _azure_config(self) -> Dict[str, str]:
         config = super()._azure_config()
         config.update(
@@ -392,6 +430,15 @@ class IonQQPUBackend(IonQBackend):
             "configuration", default_config
         )
         super().__init__(configuration=configuration, provider=provider, **kwargs)
+    
+    def _azure_config(self) -> Dict[str, str]:
+        config = super()._azure_config()
+        config.update(
+            {
+                "is_default": True,
+            }
+        )
+        return config
 
 
 class IonQQPUNativeBackend(IonQQPUBackend):
@@ -441,6 +488,15 @@ class IonQAriaBackend(IonQBackend):
             "configuration", default_config
         )
         super().__init__(configuration=configuration, provider=provider, **kwargs)
+    
+    def _azure_config(self) -> Dict[str, str]:
+        config = super()._azure_config()
+        config.update(
+            {
+                "is_default": True,
+            }
+        )
+        return config
 
 
 class IonQForteBackend(IonQBackend):
@@ -474,6 +530,15 @@ class IonQForteBackend(IonQBackend):
             "configuration", default_config
         )
         super().__init__(configuration=configuration, provider=provider, **kwargs)
+    
+    def _azure_config(self) -> Dict[str, str]:
+        config = super()._azure_config()
+        config.update(
+            {
+                "is_default": True,
+            }
+        )
+        return config
 
 
 class IonQAriaNativeBackend(IonQAriaBackend):

@@ -41,7 +41,6 @@ logger = logging.getLogger(__name__)
 
 __all__ = ["RigettiSimulatorBackend" "RigettiQPUBackend"]
 
-
 _DEFAULT_SHOTS_COUNT = 500
 
 class RigettiBackend(AzureQirBackend):
@@ -94,7 +93,6 @@ class RigettiSimulatorBackend(RigettiBackend):
                 "open_pulse": False,
                 "gates": [{"name": "TODO", "parameters": [], "qasm_def": "TODO"}],
                 "azure": self._azure_config(),
-                "is_default": True,
             }
         )
         logger.info("Initializing RigettiSimulatorBackend")
@@ -126,7 +124,6 @@ class RigettiQPUBackend(RigettiBackend):
                 "open_pulse": False,
                 "gates": [{"name": "TODO", "parameters": [], "qasm_def": "TODO"}],
                 "azure": self._azure_config(),
-                "is_default": True,
             }
         )
         logger.info("Initializing RigettiQPUBackend")
