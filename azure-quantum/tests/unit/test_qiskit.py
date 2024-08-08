@@ -1256,7 +1256,7 @@ class TestQiskit(QuantumTestBase):
         self.assertIn("counts", result.data())
         self.assertIn("probabilities", result.data())
         self.assertTrue(hasattr(result.results[0].header, "num_qubits"))
-        self.assertEqual(result.results[0].header.num_qubits, str(num_qubits))
+        self.assertEqual(result.results[0].header.num_qubits, num_qubits)
         self.assertEqual(result.results[0].header.metadata["some"], "data")
 
     @pytest.mark.quantinuum
