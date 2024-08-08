@@ -523,7 +523,7 @@ class TestQiskit(QuantumTestBase):
 
             self.assertEqual(len(memory), shots)
             self.assertTrue(all([shot == "000" or shot == "111" for shot in memory]))
-            self.assertEqual(counts, result.data()["counts"])  
+            self.assertEqual(counts, result.data()["counts"])
     
     def _qiskit_wait_to_complete(
             self,

@@ -10,7 +10,7 @@ import warnings
 
 from .backend import AzureBackend, AzureQirBackend
 from abc import abstractmethod
-from qiskit import QuantumCircuit, transpile
+from qiskit import QuantumCircuit
 from qiskit.providers.models import BackendConfiguration
 from qiskit.providers import Options
 from qiskit.providers import Provider
