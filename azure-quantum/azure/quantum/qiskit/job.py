@@ -314,7 +314,6 @@ class AzureQuantumJob(JobV1):
 
     def _get_headers(self):
         headers = self._azure_job.details.metadata
-        # TODO: when multi circuit jobs are possible, confirm metadata field will be a list of metadatas
         if (not isinstance(headers, list)):
             headers = [headers]
 

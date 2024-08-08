@@ -430,7 +430,6 @@ class AzureQirBackend(AzureBackendBase):
 
         return module.bitcode
 
-    # TODO: decide if we want to allow for options passing differently
     def _estimate_cost_qir(self, circuits, shots, options={}):
         """Estimate the cost for the given circuit."""
         config = self.configuration()
