@@ -147,7 +147,7 @@ extends:
           inputs:
           - input: pipelineArtifact
             displayName: 'Download azure-quantum artifacts'
-            targetPath: $(System.DefaultWorkingDirectory)/drop
+            targetPath: $(Pipeline.Workspace)/azure-quantum-wheels
             artifactName: azure-quantum-wheels
         steps:
         - task: UsePythonVersion@0
