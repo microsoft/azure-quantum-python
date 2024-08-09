@@ -189,7 +189,7 @@ target '{self.name}' of provider '{self.provider_id}' not found."
         
     def _qir_output_data_format(self) -> str:
         """"Fallback output data format in case of QIR job submission."""
-        return "microsoft.quantum-results.v1"
+        return "microsoft.quantum-results.v2"
 
     def submit(
         self,

@@ -15,7 +15,7 @@ from .backend import (
 from qiskit.providers.models import BackendConfiguration
 from qiskit.providers import Options, Provider
 
-QIR_BASIS_GATES = [
+QIR_BASIS_GATES  = [
     "measure",
     "m",
     "barrier",
