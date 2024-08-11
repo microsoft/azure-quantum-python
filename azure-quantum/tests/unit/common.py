@@ -55,7 +55,9 @@ class RegexScrubbingPatterns:
     URL_STORAGE_ACCOUNT = r"https://[^\.]+.blob.core.windows.net"
     URL_QUANTUM_ENDPOINT = r"https://[^\.]+.quantum(-test)?.azure.com/"
     URL_OAUTH_ENDPOINT = \
-        f"https://login.(microsoftonline.com|windows-ppe.net)/{GUID_REGEX_CAPTURE}/oauth2/.*"
+        f"https://login.(microsoftonline.com|windows-ppe.net)/{GUID_REGEX_CAPTURE}/oauth2/token"
+    URL_OPENID_ENDPOINT = \
+        f"https://login.(microsoftonline.com|windows-ppe.net)/{GUID_REGEX_CAPTURE}/v2.0/.well-known/openid-configuration"
     URL_QUERY_SAS_KEY_SIGNATURE = r"sig=[^&]+\&"
     URL_QUERY_SAS_KEY_VALUE = r"sv=[^&]+\&"
     URL_QUERY_SAS_KEY_EXPIRATION = r"se=[^&]+\&"
@@ -154,6 +156,10 @@ class QuantumTestBase(ReplayableTest):
         self._regex_replacer.register_scrubbing(
             RegexScrubbingPatterns.URL_OAUTH_ENDPOINT,
             f'https://login.microsoftonline.com/{ZERO_UID}/oauth2/v2.0/token'
+        )
+        self._regex_replacer.register_scrubbing(
+            RegexScrubbingPatterns.URL_OPENID_ENDPOINT,
+            f'https://login.microsoftonline.com/{ZERO_UID}/v2.0/.well-known/openid-configuration'
         )
         self._regex_replacer.register_scrubbing(RegexScrubbingPatterns.URL_QUERY_SAS_KEY_SIGNATURE,
                                       "sig=PLACEHOLDER&")
@@ -265,8 +271,7 @@ class QuantumTestBase(ReplayableTest):
 
     @property
     def is_playback(self):
-        return (self.connection_params.subscription_id == SUBSCRIPTION_ID
-                and not self.in_recording 
+        return (not self.in_recording 
                 and not self.is_live)
 
     def clear_env_vars(self, os_environ):
@@ -633,11 +638,10 @@ class AuthenticationMetadataFilter(RecordingProcessor):
 
     def process_request(self, request):
         if (
-            "/.well-known/openid-configuration" in request.uri
-            or "/common/discovery/instance" in request.uri
+            "/common/discovery/instance" in request.uri
             or "&discover-tenant-id-and-authority" in request.uri
         ):
-            return None
+            return request
         return request
 
 

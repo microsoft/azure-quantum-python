@@ -1,6 +1,48 @@
 interactions:
 - request:
-    body: client_id=PLACEHOLDER&grant_type=client_credentials&client_info=1&client_secret=PLACEHOLDER&scope=https%3A%2F%2Fquantum.microsoft.com%2F.default
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-identity/1.17.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
+    method: GET
+    uri: https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/v2.0/.well-known/openid-configuration
+  response:
+    body:
+      string: '{"token_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token",
+        "token_endpoint_auth_methods_supported": ["client_secret_post", "private_key_jwt",
+        "client_secret_basic"], "jwks_uri": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/discovery/v2.0/keys",
+        "response_modes_supported": ["query", "fragment", "form_post"], "subject_types_supported":
+        ["pairwise"], "id_token_signing_alg_values_supported": ["RS256"], "response_types_supported":
+        ["code", "id_token", "code id_token", "id_token token"], "scopes_supported":
+        ["openid", "profile", "email", "offline_access"], "issuer": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/v2.0",
+        "request_uri_parameter_supported": false, "userinfo_endpoint": "https://graph.microsoft.com/oidc/userinfo",
+        "authorization_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/authorize",
+        "device_authorization_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/devicecode",
+        "http_logout_supported": true, "frontchannel_logout_supported": true, "end_session_endpoint":
+        "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/logout",
+        "claims_supported": ["sub", "iss", "cloud_instance_name", "cloud_instance_host_name",
+        "cloud_graph_host_name", "msgraph_host", "aud", "exp", "iat", "auth_time",
+        "acr", "nonce", "preferred_username", "name", "tid", "ver", "at_hash", "c_hash",
+        "email"], "kerberos_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/kerberos",
+        "tenant_region_scope": "WW", "cloud_instance_name": "microsoftonline.com",
+        "cloud_graph_host_name": "graph.windows.net", "msgraph_host": "graph.microsoft.com",
+        "rbac_url": "https://pas.windows.net"}'
+    headers:
+      content-length:
+      - '1826'
+      content-type:
+      - application/json; charset=utf-8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: client_id=PLACEHOLDER&grant_type=client_credentials&client_assertion=PLACEHOLDER&client_info=1&client_assertion_type=PLACEHOLDER&scope=https%3A%2F%2Fquantum.microsoft.com%2F.default
     headers:
       Accept:
       - application/json
@@ -9,11 +51,11 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '144'
+      - '181'
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - azsdk-python-identity/1.16.0 Python/3.9.19 (Windows-10-10.0.22631-SP0)
+      - azsdk-python-identity/1.17.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
       x-client-current-telemetry:
       - 4|730,2|
       x-client-os:
@@ -21,13 +63,13 @@ interactions:
       x-client-sku:
       - MSAL.Python
       x-client-ver:
-      - 1.28.0
+      - 1.30.0
     method: POST
     uri: https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token
   response:
     body:
-      string: '{"token_type": "Bearer", "expires_in": 1745073439, "ext_expires_in":
-        1745073439, "refresh_in": 31536000, "access_token": "PLACEHOLDER"}'
+      string: '{"token_type": "Bearer", "expires_in": 1754879411, "ext_expires_in":
+        1754879411, "refresh_in": 31536000, "access_token": "PLACEHOLDER"}'
     headers:
       content-length:
       - '135'
@@ -59,7 +101,7 @@ interactions:
     body:
       string: '{"status": "Waiting", "jobFailurePolicy": "Abort", "name": "session-00000000-0000-0000-0000-000000000001",
         "id": "00000000-0000-0000-0000-000000000001", "providerId": "microsoft.test",
-        "target": "echo-quantinuum", "creationTime": "2024-04-19T14:37:20.5914732Z",
+        "target": "echo-quantinuum", "creationTime": "2024-08-11T02:30:12.3078461Z",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Session"}'
     headers:
       connection:
@@ -74,7 +116,49 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: client_id=PLACEHOLDER&grant_type=client_credentials&client_info=1&client_secret=PLACEHOLDER&scope=https%3A%2F%2Fquantum.microsoft.com%2F.default
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-identity/1.17.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
+    method: GET
+    uri: https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/v2.0/.well-known/openid-configuration
+  response:
+    body:
+      string: '{"token_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token",
+        "token_endpoint_auth_methods_supported": ["client_secret_post", "private_key_jwt",
+        "client_secret_basic"], "jwks_uri": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/discovery/v2.0/keys",
+        "response_modes_supported": ["query", "fragment", "form_post"], "subject_types_supported":
+        ["pairwise"], "id_token_signing_alg_values_supported": ["RS256"], "response_types_supported":
+        ["code", "id_token", "code id_token", "id_token token"], "scopes_supported":
+        ["openid", "profile", "email", "offline_access"], "issuer": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/v2.0",
+        "request_uri_parameter_supported": false, "userinfo_endpoint": "https://graph.microsoft.com/oidc/userinfo",
+        "authorization_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/authorize",
+        "device_authorization_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/devicecode",
+        "http_logout_supported": true, "frontchannel_logout_supported": true, "end_session_endpoint":
+        "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/logout",
+        "claims_supported": ["sub", "iss", "cloud_instance_name", "cloud_instance_host_name",
+        "cloud_graph_host_name", "msgraph_host", "aud", "exp", "iat", "auth_time",
+        "acr", "nonce", "preferred_username", "name", "tid", "ver", "at_hash", "c_hash",
+        "email"], "kerberos_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/kerberos",
+        "tenant_region_scope": "WW", "cloud_instance_name": "microsoftonline.com",
+        "cloud_graph_host_name": "graph.windows.net", "msgraph_host": "graph.microsoft.com",
+        "rbac_url": "https://pas.windows.net"}'
+    headers:
+      content-length:
+      - '1826'
+      content-type:
+      - application/json; charset=utf-8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: client_id=PLACEHOLDER&grant_type=client_credentials&client_assertion=PLACEHOLDER&client_info=1&client_assertion_type=PLACEHOLDER&scope=https%3A%2F%2Fquantum.microsoft.com%2F.default
     headers:
       Accept:
       - application/json
@@ -83,11 +167,11 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '144'
+      - '181'
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - azsdk-python-identity/1.16.0 Python/3.9.19 (Windows-10-10.0.22631-SP0)
+      - azsdk-python-identity/1.17.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
       x-client-current-telemetry:
       - 4|730,2|
       x-client-os:
@@ -95,13 +179,13 @@ interactions:
       x-client-sku:
       - MSAL.Python
       x-client-ver:
-      - 1.28.0
+      - 1.30.0
     method: POST
     uri: https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token
   response:
     body:
-      string: '{"token_type": "Bearer", "expires_in": 1745073441, "ext_expires_in":
-        1745073441, "refresh_in": 31536000, "access_token": "PLACEHOLDER"}'
+      string: '{"token_type": "Bearer", "expires_in": 1754879411, "ext_expires_in":
+        1754879411, "refresh_in": 31536000, "access_token": "PLACEHOLDER"}'
     headers:
       content-length:
       - '135'
@@ -152,24 +236,24 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-blob/12.19.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
+      - azsdk-python-storage-blob/12.20.0 Python/3.9.19 (Windows-10-10.0.22631-SP0)
       x-ms-date:
-      - Fri, 19 Apr 2024 14:37:22 GMT
+      - Sun, 11 Aug 2024 02:30:12 GMT
       x-ms-version:
-      - '2023-11-03'
+      - '2024-05-04'
     method: GET
     uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000002?restype=container&sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerNotFound</Code><Message>The
-        specified container does not exist.\nRequestId:9a9091b6-701e-0006-1267-921f7f000000\nTime:2024-04-19T14:37:23.2397163Z</Message></Error>"
+        specified container does not exist.\nRequestId:18d8aad2-901e-0013-2996-eb6766000000\nTime:2024-08-11T02:30:13.2846657Z</Message></Error>"
     headers:
       content-length:
       - '223'
       content-type:
       - application/xml
       x-ms-version:
-      - '2023-11-03'
+      - '2024-05-04'
     status:
       code: 404
       message: The specified container does not exist.
@@ -185,11 +269,11 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-blob/12.19.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
+      - azsdk-python-storage-blob/12.20.0 Python/3.9.19 (Windows-10-10.0.22631-SP0)
       x-ms-date:
-      - Fri, 19 Apr 2024 14:37:23 GMT
+      - Sun, 11 Aug 2024 02:30:12 GMT
       x-ms-version:
-      - '2023-11-03'
+      - '2024-05-04'
     method: PUT
     uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000002?restype=container&sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl
   response:
@@ -199,7 +283,7 @@ interactions:
       content-length:
       - '0'
       x-ms-version:
-      - '2023-11-03'
+      - '2024-05-04'
     status:
       code: 201
       message: Created
@@ -213,11 +297,11 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-blob/12.19.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
+      - azsdk-python-storage-blob/12.20.0 Python/3.9.19 (Windows-10-10.0.22631-SP0)
       x-ms-date:
-      - Fri, 19 Apr 2024 14:37:23 GMT
+      - Sun, 11 Aug 2024 02:30:12 GMT
       x-ms-version:
-      - '2023-11-03'
+      - '2024-05-04'
     method: GET
     uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000002?restype=container&sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl
   response:
@@ -231,42 +315,31 @@ interactions:
       x-ms-lease-status:
       - unlocked
       x-ms-version:
-      - '2023-11-03'
+      - '2024-05-04'
     status:
       code: 200
       message: OK
 - request:
     body: 'b''%Result = type opaque\n%Qubit = type opaque\n\ndefine void @ENTRYPOINT__main()
-      #0 {\n  call void @__quantum__qis__h__body(%Qubit* inttoptr (i64 0 to %Qubit*))\n  call
-      void @__quantum__qis__cx__body(%Qubit* inttoptr (i64 0 to %Qubit*), %Qubit*
-      inttoptr (i64 1 to %Qubit*))\n  call void @__quantum__qis__h__body(%Qubit* inttoptr
-      (i64 2 to %Qubit*))\n  call void @__quantum__qis__cz__body(%Qubit* inttoptr
-      (i64 2 to %Qubit*), %Qubit* inttoptr (i64 0 to %Qubit*))\n  call void @__quantum__qis__h__body(%Qubit*
-      inttoptr (i64 2 to %Qubit*))\n  call void @__quantum__qis__h__body(%Qubit* inttoptr
-      (i64 3 to %Qubit*))\n  call void @__quantum__qis__cz__body(%Qubit* inttoptr
-      (i64 3 to %Qubit*), %Qubit* inttoptr (i64 1 to %Qubit*))\n  call void @__quantum__qis__h__body(%Qubit*
-      inttoptr (i64 3 to %Qubit*))\n  call void @__quantum__qis__mz__body(%Qubit*
-      inttoptr (i64 2 to %Qubit*), %Result* inttoptr (i64 0 to %Result*)) #1\n  call
-      void @__quantum__qis__mz__body(%Qubit* inttoptr (i64 3 to %Qubit*), %Result*
-      inttoptr (i64 1 to %Result*)) #1\n  call void @__quantum__rt__tuple_record_output(i64
+      #0 {\nblock_0:\n  call void @__quantum__qis__h__body(%Qubit* inttoptr (i64 0
+      to %Qubit*))\n  call void @__quantum__qis__cx__body(%Qubit* inttoptr (i64 0
+      to %Qubit*), %Qubit* inttoptr (i64 1 to %Qubit*))\n  call void @__quantum__qis__h__body(%Qubit*
+      inttoptr (i64 2 to %Qubit*))\n  call void @__quantum__qis__cz__body(%Qubit*
+      inttoptr (i64 2 to %Qubit*), %Qubit* inttoptr (i64 0 to %Qubit*))\n  call void
+      @__quantum__qis__h__body(%Qubit* inttoptr (i64 2 to %Qubit*))\n  call void @__quantum__qis__h__body(%Qubit*
+      inttoptr (i64 3 to %Qubit*))\n  call void @__quantum__qis__cz__body(%Qubit*
+      inttoptr (i64 3 to %Qubit*), %Qubit* inttoptr (i64 1 to %Qubit*))\n  call void
+      @__quantum__qis__h__body(%Qubit* inttoptr (i64 3 to %Qubit*))\n  call void @__quantum__qis__m__body(%Qubit*
+      inttoptr (i64 2 to %Qubit*), %Result* inttoptr (i64 0 to %Result*))\n  call
+      void @__quantum__qis__m__body(%Qubit* inttoptr (i64 3 to %Qubit*), %Result*
+      inttoptr (i64 1 to %Result*))\n  call void @__quantum__rt__tuple_record_output(i64
       2, i8* null)\n  call void @__quantum__rt__result_record_output(%Result* inttoptr
       (i64 0 to %Result*), i8* null)\n  call void @__quantum__rt__result_record_output(%Result*
-      inttoptr (i64 1 to %Result*), i8* null)\n  ret void\n}\n\ndeclare void @__quantum__qis__ccx__body(%Qubit*,
-      %Qubit*, %Qubit*)\ndeclare void @__quantum__qis__cx__body(%Qubit*, %Qubit*)\ndeclare
-      void @__quantum__qis__cy__body(%Qubit*, %Qubit*)\ndeclare void @__quantum__qis__cz__body(%Qubit*,
-      %Qubit*)\ndeclare void @__quantum__qis__rx__body(double, %Qubit*)\ndeclare void
-      @__quantum__qis__rxx__body(double, %Qubit*, %Qubit*)\ndeclare void @__quantum__qis__ry__body(double,
-      %Qubit*)\ndeclare void @__quantum__qis__ryy__body(double, %Qubit*, %Qubit*)\ndeclare
-      void @__quantum__qis__rz__body(double, %Qubit*)\ndeclare void @__quantum__qis__rzz__body(double,
-      %Qubit*, %Qubit*)\ndeclare void @__quantum__qis__h__body(%Qubit*)\ndeclare void
-      @__quantum__qis__s__body(%Qubit*)\ndeclare void @__quantum__qis__s__adj(%Qubit*)\ndeclare
-      void @__quantum__qis__t__body(%Qubit*)\ndeclare void @__quantum__qis__t__adj(%Qubit*)\ndeclare
-      void @__quantum__qis__x__body(%Qubit*)\ndeclare void @__quantum__qis__y__body(%Qubit*)\ndeclare
-      void @__quantum__qis__z__body(%Qubit*)\ndeclare void @__quantum__qis__swap__body(%Qubit*,
-      %Qubit*)\ndeclare void @__quantum__qis__mz__body(%Qubit*, %Result* writeonly)
-      #1\ndeclare void @__quantum__rt__result_record_output(%Result*, i8*)\ndeclare
-      void @__quantum__rt__array_record_output(i64, i8*)\ndeclare void @__quantum__rt__tuple_record_output(i64,
-      i8*)\n\nattributes #0 = { "entry_point" "output_labeling_schema" "qir_profiles"="base_profile"
+      inttoptr (i64 1 to %Result*), i8* null)\n  ret void\n}\n\ndeclare void @__quantum__qis__h__body(%Qubit*)\n\ndeclare
+      void @__quantum__qis__cx__body(%Qubit*, %Qubit*)\n\ndeclare void @__quantum__qis__cz__body(%Qubit*,
+      %Qubit*)\n\ndeclare void @__quantum__rt__tuple_record_output(i64, i8*)\n\ndeclare
+      void @__quantum__rt__result_record_output(%Result*, i8*)\n\ndeclare void @__quantum__qis__m__body(%Qubit*,
+      %Result*) #1\n\nattributes #0 = { "entry_point" "output_labeling_schema" "qir_profiles"="base_profile"
       "required_num_qubits"="4" "required_num_results"="2" }\nattributes #1 = { "irreversible"
       }\n\n; module flags\n\n!llvm.module.flags = !{!0, !1, !2, !3}\n\n!0 = !{i32
       1, !"qir_major_version", i32 1}\n!1 = !{i32 7, !"qir_minor_version", i32 0}\n!2
@@ -280,17 +353,17 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '3073'
+      - '2122'
       Content-Type:
       - application/octet-stream
       User-Agent:
-      - azsdk-python-storage-blob/12.19.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
+      - azsdk-python-storage-blob/12.20.0 Python/3.9.19 (Windows-10-10.0.22631-SP0)
       x-ms-blob-type:
       - BlockBlob
       x-ms-date:
-      - Fri, 19 Apr 2024 14:37:24 GMT
+      - Sun, 11 Aug 2024 02:30:12 GMT
       x-ms-version:
-      - '2023-11-03'
+      - '2024-05-04'
     method: PUT
     uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000002/inputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl
   response:
@@ -300,7 +373,7 @@ interactions:
       content-length:
       - '0'
       x-ms-version:
-      - '2023-11-03'
+      - '2024-05-04'
     status:
       code: 201
       message: Created
@@ -339,7 +412,7 @@ interactions:
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         null, "errorData": null, "isCancelling": false, "tags": [], "name": "Bad Job
         1", "id": "00000000-0000-0000-0000-000000000002", "providerId": "microsoft.test",
-        "target": "echo-quantinuum", "creationTime": "2024-04-19T14:37:24.5554222+00:00",
+        "target": "echo-quantinuum", "creationTime": "2024-08-11T02:30:13.8020004+00:00",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
@@ -378,7 +451,7 @@ interactions:
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         null, "errorData": null, "isCancelling": false, "tags": [], "name": "Bad Job
         1", "id": "00000000-0000-0000-0000-000000000002", "providerId": "microsoft.test",
-        "target": "echo-quantinuum", "creationTime": "2024-04-19T14:37:24.5554222+00:00",
+        "target": "echo-quantinuum", "creationTime": "2024-08-11T02:30:13.8020004+00:00",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
@@ -417,7 +490,7 @@ interactions:
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         null, "errorData": null, "isCancelling": false, "tags": [], "name": "Bad Job
         1", "id": "00000000-0000-0000-0000-000000000002", "providerId": "microsoft.test",
-        "target": "echo-quantinuum", "creationTime": "2024-04-19T14:37:24.5554222+00:00",
+        "target": "echo-quantinuum", "creationTime": "2024-08-11T02:30:13.8020004+00:00",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
@@ -456,7 +529,7 @@ interactions:
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         null, "errorData": null, "isCancelling": false, "tags": [], "name": "Bad Job
         1", "id": "00000000-0000-0000-0000-000000000002", "providerId": "microsoft.test",
-        "target": "echo-quantinuum", "creationTime": "2024-04-19T14:37:24.5554222+00:00",
+        "target": "echo-quantinuum", "creationTime": "2024-08-11T02:30:13.8020004+00:00",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
@@ -495,7 +568,7 @@ interactions:
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         null, "errorData": null, "isCancelling": false, "tags": [], "name": "Bad Job
         1", "id": "00000000-0000-0000-0000-000000000002", "providerId": "microsoft.test",
-        "target": "echo-quantinuum", "creationTime": "2024-04-19T14:37:24.5554222+00:00",
+        "target": "echo-quantinuum", "creationTime": "2024-08-11T02:30:13.8020004+00:00",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
@@ -534,7 +607,7 @@ interactions:
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         null, "errorData": null, "isCancelling": false, "tags": [], "name": "Bad Job
         1", "id": "00000000-0000-0000-0000-000000000002", "providerId": "microsoft.test",
-        "target": "echo-quantinuum", "creationTime": "2024-04-19T14:37:24.5554222+00:00",
+        "target": "echo-quantinuum", "creationTime": "2024-08-11T02:30:13.8020004+00:00",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
@@ -573,7 +646,7 @@ interactions:
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         {"count": 1}, "errorData": null, "isCancelling": false, "tags": [], "name":
         "Bad Job 1", "id": "00000000-0000-0000-0000-000000000002", "providerId": "microsoft.test",
-        "target": "echo-quantinuum", "creationTime": "2024-04-19T14:37:24.5554222+00:00",
+        "target": "echo-quantinuum", "creationTime": "2024-08-11T02:30:13.8020004+00:00",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
@@ -609,11 +682,11 @@ interactions:
         "sessionId": "00000000-0000-0000-0000-000000000001", "status": "Executing",
         "jobType": "QuantumComputing", "outputDataFormat": "invalid_output_format",
         "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000002/outputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3DBad%2BJob%2B1-00000000-0000-0000-0000-000000000002.output.json",
-        "beginExecutionTime": "2024-04-19T14:37:28.634Z", "cancellationTime": null,
+        "beginExecutionTime": "2024-08-11T02:30:17.473Z", "cancellationTime": null,
         "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling": false,
         "tags": [], "name": "Bad Job 1", "id": "00000000-0000-0000-0000-000000000002",
         "providerId": "microsoft.test", "target": "echo-quantinuum", "creationTime":
-        "2024-04-19T14:37:24.5554222+00:00", "endExecutionTime": null, "costEstimate":
+        "2024-08-11T02:30:13.8020004+00:00", "endExecutionTime": null, "costEstimate":
         null, "itemType": "Job"}'
     headers:
       connection:
@@ -649,11 +722,11 @@ interactions:
         "sessionId": "00000000-0000-0000-0000-000000000001", "status": "Executing",
         "jobType": "QuantumComputing", "outputDataFormat": "invalid_output_format",
         "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000002/outputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3DBad%2BJob%2B1-00000000-0000-0000-0000-000000000002.output.json",
-        "beginExecutionTime": "2024-04-19T14:37:28.634Z", "cancellationTime": null,
+        "beginExecutionTime": "2024-08-11T02:30:17.473Z", "cancellationTime": null,
         "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling": false,
         "tags": [], "name": "Bad Job 1", "id": "00000000-0000-0000-0000-000000000002",
         "providerId": "microsoft.test", "target": "echo-quantinuum", "creationTime":
-        "2024-04-19T14:37:24.5554222+00:00", "endExecutionTime": null, "costEstimate":
+        "2024-08-11T02:30:13.8020004+00:00", "endExecutionTime": null, "costEstimate":
         null, "itemType": "Job"}'
     headers:
       connection:
@@ -689,11 +762,11 @@ interactions:
         "sessionId": "00000000-0000-0000-0000-000000000001", "status": "Executing",
         "jobType": "QuantumComputing", "outputDataFormat": "invalid_output_format",
         "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000002/outputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3DBad%2BJob%2B1-00000000-0000-0000-0000-000000000002.output.json",
-        "beginExecutionTime": "2024-04-19T14:37:28.634Z", "cancellationTime": null,
+        "beginExecutionTime": "2024-08-11T02:30:17.473Z", "cancellationTime": null,
         "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling": false,
         "tags": [], "name": "Bad Job 1", "id": "00000000-0000-0000-0000-000000000002",
         "providerId": "microsoft.test", "target": "echo-quantinuum", "creationTime":
-        "2024-04-19T14:37:24.5554222+00:00", "endExecutionTime": null, "costEstimate":
+        "2024-08-11T02:30:13.8020004+00:00", "endExecutionTime": null, "costEstimate":
         null, "itemType": "Job"}'
     headers:
       connection:
@@ -729,11 +802,11 @@ interactions:
         "sessionId": "00000000-0000-0000-0000-000000000001", "status": "Executing",
         "jobType": "QuantumComputing", "outputDataFormat": "invalid_output_format",
         "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000002/outputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3DBad%2BJob%2B1-00000000-0000-0000-0000-000000000002.output.json",
-        "beginExecutionTime": "2024-04-19T14:37:28.634Z", "cancellationTime": null,
+        "beginExecutionTime": "2024-08-11T02:30:17.473Z", "cancellationTime": null,
         "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling": false,
         "tags": [], "name": "Bad Job 1", "id": "00000000-0000-0000-0000-000000000002",
         "providerId": "microsoft.test", "target": "echo-quantinuum", "creationTime":
-        "2024-04-19T14:37:24.5554222+00:00", "endExecutionTime": null, "costEstimate":
+        "2024-08-11T02:30:13.8020004+00:00", "endExecutionTime": null, "costEstimate":
         null, "itemType": "Job"}'
     headers:
       connection:
@@ -766,17 +839,97 @@ interactions:
         "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000002/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3DBad%2BJob%2B1-00000000-0000-0000-0000-000000000002.input.json",
         "inputDataFormat": "qir.v1", "inputParams": {"entryPoint": "ENTRYPOINT__main",
         "arguments": [], "targetCapability": "AdaptiveExecution"}, "metadata": null,
+        "sessionId": "00000000-0000-0000-0000-000000000001", "status": "Executing",
+        "jobType": "QuantumComputing", "outputDataFormat": "invalid_output_format",
+        "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000002/outputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3DBad%2BJob%2B1-00000000-0000-0000-0000-000000000002.output.json",
+        "beginExecutionTime": "2024-08-11T02:30:17.473Z", "cancellationTime": null,
+        "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling": false,
+        "tags": [], "name": "Bad Job 1", "id": "00000000-0000-0000-0000-000000000002",
+        "providerId": "microsoft.test", "target": "echo-quantinuum", "creationTime":
+        "2024-08-11T02:30:13.8020004+00:00", "endExecutionTime": null, "costEstimate":
+        null, "itemType": "Job"}'
+    headers:
+      connection:
+      - keep-alive
+      content-length:
+      - '1445'
+      content-type:
+      - application/json; charset=utf-8
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - testapp-azure-quantum-qsharp azsdk-python-quantum/0.0.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
+    method: GET
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000002?api-version=2022-09-12-preview&test-sequence-id=12
+  response:
+    body:
+      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000002?sv=PLACEHOLDER&sr=c&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcwl",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000002/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3DBad%2BJob%2B1-00000000-0000-0000-0000-000000000002.input.json",
+        "inputDataFormat": "qir.v1", "inputParams": {"entryPoint": "ENTRYPOINT__main",
+        "arguments": [], "targetCapability": "AdaptiveExecution"}, "metadata": null,
+        "sessionId": "00000000-0000-0000-0000-000000000001", "status": "Executing",
+        "jobType": "QuantumComputing", "outputDataFormat": "invalid_output_format",
+        "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000002/outputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3DBad%2BJob%2B1-00000000-0000-0000-0000-000000000002.output.json",
+        "beginExecutionTime": "2024-08-11T02:30:17.473Z", "cancellationTime": null,
+        "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling": false,
+        "tags": [], "name": "Bad Job 1", "id": "00000000-0000-0000-0000-000000000002",
+        "providerId": "microsoft.test", "target": "echo-quantinuum", "creationTime":
+        "2024-08-11T02:30:13.8020004+00:00", "endExecutionTime": null, "costEstimate":
+        null, "itemType": "Job"}'
+    headers:
+      connection:
+      - keep-alive
+      content-length:
+      - '1445'
+      content-type:
+      - application/json; charset=utf-8
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - testapp-azure-quantum-qsharp azsdk-python-quantum/0.0.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
+    method: GET
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000002?api-version=2022-09-12-preview&test-sequence-id=13
+  response:
+    body:
+      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000002?sv=PLACEHOLDER&sr=c&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcwl",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000002/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3DBad%2BJob%2B1-00000000-0000-0000-0000-000000000002.input.json",
+        "inputDataFormat": "qir.v1", "inputParams": {"entryPoint": "ENTRYPOINT__main",
+        "arguments": [], "targetCapability": "AdaptiveExecution"}, "metadata": null,
         "sessionId": "00000000-0000-0000-0000-000000000001", "status": "Failed", "jobType":
         "QuantumComputing", "outputDataFormat": "invalid_output_format", "outputDataUri":
         "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000002/outputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3DBad%2BJob%2B1-00000000-0000-0000-0000-000000000002.output.json",
-        "beginExecutionTime": "2024-04-19T14:37:28.634Z", "cancellationTime": null,
+        "beginExecutionTime": "2024-08-11T02:30:17.473Z", "cancellationTime": null,
         "quantumComputingData": {"count": 1}, "errorData": {"code": "CannotTranslateOutputData",
         "message": "The output returned by ''microsoft.test'' cannot be translated
         as specified by ''outputDataFormat''. Please ensure that ''outputDataFormat''
         is correct."}, "isCancelling": false, "tags": [], "name": "Bad Job 1", "id":
         "00000000-0000-0000-0000-000000000002", "providerId": "microsoft.test", "target":
-        "echo-quantinuum", "creationTime": "2024-04-19T14:37:24.5554222+00:00", "endExecutionTime":
-        "2024-04-19T14:37:47.743Z", "costEstimate": null, "itemType": "Job"}'
+        "echo-quantinuum", "creationTime": "2024-08-11T02:30:13.8020004+00:00", "endExecutionTime":
+        "2024-08-11T02:30:53.326Z", "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
       - keep-alive
@@ -806,8 +959,8 @@ interactions:
     body:
       string: '{"status": "Failed", "jobFailurePolicy": "Abort", "name": "session-00000000-0000-0000-0000-000000000001",
         "id": "00000000-0000-0000-0000-000000000001", "providerId": "microsoft.test",
-        "target": "echo-quantinuum", "creationTime": "2024-04-19T14:37:20.5914732Z",
-        "endExecutionTime": "2024-04-19T14:37:48.8457092Z", "costEstimate": null,
+        "target": "echo-quantinuum", "creationTime": "2024-08-11T02:30:12.3078461Z",
+        "endExecutionTime": "2024-08-11T02:30:53.9038202Z", "costEstimate": null,
         "itemType": "Session"}'
     headers:
       connection:
@@ -822,7 +975,49 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: client_id=PLACEHOLDER&grant_type=client_credentials&client_info=1&client_secret=PLACEHOLDER&scope=https%3A%2F%2Fquantum.microsoft.com%2F.default
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-identity/1.17.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
+    method: GET
+    uri: https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/v2.0/.well-known/openid-configuration
+  response:
+    body:
+      string: '{"token_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token",
+        "token_endpoint_auth_methods_supported": ["client_secret_post", "private_key_jwt",
+        "client_secret_basic"], "jwks_uri": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/discovery/v2.0/keys",
+        "response_modes_supported": ["query", "fragment", "form_post"], "subject_types_supported":
+        ["pairwise"], "id_token_signing_alg_values_supported": ["RS256"], "response_types_supported":
+        ["code", "id_token", "code id_token", "id_token token"], "scopes_supported":
+        ["openid", "profile", "email", "offline_access"], "issuer": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/v2.0",
+        "request_uri_parameter_supported": false, "userinfo_endpoint": "https://graph.microsoft.com/oidc/userinfo",
+        "authorization_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/authorize",
+        "device_authorization_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/devicecode",
+        "http_logout_supported": true, "frontchannel_logout_supported": true, "end_session_endpoint":
+        "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/logout",
+        "claims_supported": ["sub", "iss", "cloud_instance_name", "cloud_instance_host_name",
+        "cloud_graph_host_name", "msgraph_host", "aud", "exp", "iat", "auth_time",
+        "acr", "nonce", "preferred_username", "name", "tid", "ver", "at_hash", "c_hash",
+        "email"], "kerberos_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/kerberos",
+        "tenant_region_scope": "WW", "cloud_instance_name": "microsoftonline.com",
+        "cloud_graph_host_name": "graph.windows.net", "msgraph_host": "graph.microsoft.com",
+        "rbac_url": "https://pas.windows.net"}'
+    headers:
+      content-length:
+      - '1826'
+      content-type:
+      - application/json; charset=utf-8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: client_id=PLACEHOLDER&grant_type=client_credentials&client_assertion=PLACEHOLDER&client_info=1&client_assertion_type=PLACEHOLDER&scope=https%3A%2F%2Fquantum.microsoft.com%2F.default
     headers:
       Accept:
       - application/json
@@ -831,11 +1026,11 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '144'
+      - '181'
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - azsdk-python-identity/1.16.0 Python/3.9.19 (Windows-10-10.0.22631-SP0)
+      - azsdk-python-identity/1.17.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
       x-client-current-telemetry:
       - 4|730,2|
       x-client-os:
@@ -843,13 +1038,13 @@ interactions:
       x-client-sku:
       - MSAL.Python
       x-client-ver:
-      - 1.28.0
+      - 1.30.0
     method: POST
     uri: https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token
   response:
     body:
-      string: '{"token_type": "Bearer", "expires_in": 1745073470, "ext_expires_in":
-        1745073470, "refresh_in": 31536000, "access_token": "PLACEHOLDER"}'
+      string: '{"token_type": "Bearer", "expires_in": 1754879465, "ext_expires_in":
+        1754879465, "refresh_in": 31536000, "access_token": "PLACEHOLDER"}'
     headers:
       content-length:
       - '135'
@@ -900,24 +1095,24 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-blob/12.19.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
+      - azsdk-python-storage-blob/12.20.0 Python/3.9.19 (Windows-10-10.0.22631-SP0)
       x-ms-date:
-      - Fri, 19 Apr 2024 14:37:51 GMT
+      - Sun, 11 Aug 2024 02:31:05 GMT
       x-ms-version:
-      - '2023-11-03'
+      - '2024-05-04'
     method: GET
     uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000003?restype=container&sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerNotFound</Code><Message>The
-        specified container does not exist.\nRequestId:a6318e86-501e-004c-6a67-92bcf0000000\nTime:2024-04-19T14:37:52.3915610Z</Message></Error>"
+        specified container does not exist.\nRequestId:d25e9c31-501e-0033-4896-eb1cc1000000\nTime:2024-08-11T02:31:07.1538016Z</Message></Error>"
     headers:
       content-length:
       - '223'
       content-type:
       - application/xml
       x-ms-version:
-      - '2023-11-03'
+      - '2024-05-04'
     status:
       code: 404
       message: The specified container does not exist.
@@ -933,11 +1128,11 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-blob/12.19.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
+      - azsdk-python-storage-blob/12.20.0 Python/3.9.19 (Windows-10-10.0.22631-SP0)
       x-ms-date:
-      - Fri, 19 Apr 2024 14:37:52 GMT
+      - Sun, 11 Aug 2024 02:31:06 GMT
       x-ms-version:
-      - '2023-11-03'
+      - '2024-05-04'
     method: PUT
     uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000003?restype=container&sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl
   response:
@@ -947,7 +1142,7 @@ interactions:
       content-length:
       - '0'
       x-ms-version:
-      - '2023-11-03'
+      - '2024-05-04'
     status:
       code: 201
       message: Created
@@ -961,11 +1156,11 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-blob/12.19.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
+      - azsdk-python-storage-blob/12.20.0 Python/3.9.19 (Windows-10-10.0.22631-SP0)
       x-ms-date:
-      - Fri, 19 Apr 2024 14:37:52 GMT
+      - Sun, 11 Aug 2024 02:31:06 GMT
       x-ms-version:
-      - '2023-11-03'
+      - '2024-05-04'
     method: GET
     uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000003?restype=container&sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl
   response:
@@ -979,42 +1174,31 @@ interactions:
       x-ms-lease-status:
       - unlocked
       x-ms-version:
-      - '2023-11-03'
+      - '2024-05-04'
     status:
       code: 200
       message: OK
 - request:
     body: 'b''%Result = type opaque\n%Qubit = type opaque\n\ndefine void @ENTRYPOINT__main()
-      #0 {\n  call void @__quantum__qis__h__body(%Qubit* inttoptr (i64 0 to %Qubit*))\n  call
-      void @__quantum__qis__cx__body(%Qubit* inttoptr (i64 0 to %Qubit*), %Qubit*
-      inttoptr (i64 1 to %Qubit*))\n  call void @__quantum__qis__h__body(%Qubit* inttoptr
-      (i64 2 to %Qubit*))\n  call void @__quantum__qis__cz__body(%Qubit* inttoptr
-      (i64 2 to %Qubit*), %Qubit* inttoptr (i64 0 to %Qubit*))\n  call void @__quantum__qis__h__body(%Qubit*
-      inttoptr (i64 2 to %Qubit*))\n  call void @__quantum__qis__h__body(%Qubit* inttoptr
-      (i64 3 to %Qubit*))\n  call void @__quantum__qis__cz__body(%Qubit* inttoptr
-      (i64 3 to %Qubit*), %Qubit* inttoptr (i64 1 to %Qubit*))\n  call void @__quantum__qis__h__body(%Qubit*
-      inttoptr (i64 3 to %Qubit*))\n  call void @__quantum__qis__mz__body(%Qubit*
-      inttoptr (i64 2 to %Qubit*), %Result* inttoptr (i64 0 to %Result*)) #1\n  call
-      void @__quantum__qis__mz__body(%Qubit* inttoptr (i64 3 to %Qubit*), %Result*
-      inttoptr (i64 1 to %Result*)) #1\n  call void @__quantum__rt__tuple_record_output(i64
+      #0 {\nblock_0:\n  call void @__quantum__qis__h__body(%Qubit* inttoptr (i64 0
+      to %Qubit*))\n  call void @__quantum__qis__cx__body(%Qubit* inttoptr (i64 0
+      to %Qubit*), %Qubit* inttoptr (i64 1 to %Qubit*))\n  call void @__quantum__qis__h__body(%Qubit*
+      inttoptr (i64 2 to %Qubit*))\n  call void @__quantum__qis__cz__body(%Qubit*
+      inttoptr (i64 2 to %Qubit*), %Qubit* inttoptr (i64 0 to %Qubit*))\n  call void
+      @__quantum__qis__h__body(%Qubit* inttoptr (i64 2 to %Qubit*))\n  call void @__quantum__qis__h__body(%Qubit*
+      inttoptr (i64 3 to %Qubit*))\n  call void @__quantum__qis__cz__body(%Qubit*
+      inttoptr (i64 3 to %Qubit*), %Qubit* inttoptr (i64 1 to %Qubit*))\n  call void
+      @__quantum__qis__h__body(%Qubit* inttoptr (i64 3 to %Qubit*))\n  call void @__quantum__qis__m__body(%Qubit*
+      inttoptr (i64 2 to %Qubit*), %Result* inttoptr (i64 0 to %Result*))\n  call
+      void @__quantum__qis__m__body(%Qubit* inttoptr (i64 3 to %Qubit*), %Result*
+      inttoptr (i64 1 to %Result*))\n  call void @__quantum__rt__tuple_record_output(i64
       2, i8* null)\n  call void @__quantum__rt__result_record_output(%Result* inttoptr
       (i64 0 to %Result*), i8* null)\n  call void @__quantum__rt__result_record_output(%Result*
-      inttoptr (i64 1 to %Result*), i8* null)\n  ret void\n}\n\ndeclare void @__quantum__qis__ccx__body(%Qubit*,
-      %Qubit*, %Qubit*)\ndeclare void @__quantum__qis__cx__body(%Qubit*, %Qubit*)\ndeclare
-      void @__quantum__qis__cy__body(%Qubit*, %Qubit*)\ndeclare void @__quantum__qis__cz__body(%Qubit*,
-      %Qubit*)\ndeclare void @__quantum__qis__rx__body(double, %Qubit*)\ndeclare void
-      @__quantum__qis__rxx__body(double, %Qubit*, %Qubit*)\ndeclare void @__quantum__qis__ry__body(double,
-      %Qubit*)\ndeclare void @__quantum__qis__ryy__body(double, %Qubit*, %Qubit*)\ndeclare
-      void @__quantum__qis__rz__body(double, %Qubit*)\ndeclare void @__quantum__qis__rzz__body(double,
-      %Qubit*, %Qubit*)\ndeclare void @__quantum__qis__h__body(%Qubit*)\ndeclare void
-      @__quantum__qis__s__body(%Qubit*)\ndeclare void @__quantum__qis__s__adj(%Qubit*)\ndeclare
-      void @__quantum__qis__t__body(%Qubit*)\ndeclare void @__quantum__qis__t__adj(%Qubit*)\ndeclare
-      void @__quantum__qis__x__body(%Qubit*)\ndeclare void @__quantum__qis__y__body(%Qubit*)\ndeclare
-      void @__quantum__qis__z__body(%Qubit*)\ndeclare void @__quantum__qis__swap__body(%Qubit*,
-      %Qubit*)\ndeclare void @__quantum__qis__mz__body(%Qubit*, %Result* writeonly)
-      #1\ndeclare void @__quantum__rt__result_record_output(%Result*, i8*)\ndeclare
-      void @__quantum__rt__array_record_output(i64, i8*)\ndeclare void @__quantum__rt__tuple_record_output(i64,
-      i8*)\n\nattributes #0 = { "entry_point" "output_labeling_schema" "qir_profiles"="base_profile"
+      inttoptr (i64 1 to %Result*), i8* null)\n  ret void\n}\n\ndeclare void @__quantum__qis__h__body(%Qubit*)\n\ndeclare
+      void @__quantum__qis__cx__body(%Qubit*, %Qubit*)\n\ndeclare void @__quantum__qis__cz__body(%Qubit*,
+      %Qubit*)\n\ndeclare void @__quantum__rt__tuple_record_output(i64, i8*)\n\ndeclare
+      void @__quantum__rt__result_record_output(%Result*, i8*)\n\ndeclare void @__quantum__qis__m__body(%Qubit*,
+      %Result*) #1\n\nattributes #0 = { "entry_point" "output_labeling_schema" "qir_profiles"="base_profile"
       "required_num_qubits"="4" "required_num_results"="2" }\nattributes #1 = { "irreversible"
       }\n\n; module flags\n\n!llvm.module.flags = !{!0, !1, !2, !3}\n\n!0 = !{i32
       1, !"qir_major_version", i32 1}\n!1 = !{i32 7, !"qir_minor_version", i32 0}\n!2
@@ -1028,17 +1212,17 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '3073'
+      - '2122'
       Content-Type:
       - application/octet-stream
       User-Agent:
-      - azsdk-python-storage-blob/12.19.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
+      - azsdk-python-storage-blob/12.20.0 Python/3.9.19 (Windows-10-10.0.22631-SP0)
       x-ms-blob-type:
       - BlockBlob
       x-ms-date:
-      - Fri, 19 Apr 2024 14:37:53 GMT
+      - Sun, 11 Aug 2024 02:31:06 GMT
       x-ms-version:
-      - '2023-11-03'
+      - '2024-05-04'
     method: PUT
     uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000003/inputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl
   response:
@@ -1048,7 +1232,7 @@ interactions:
       content-length:
       - '0'
       x-ms-version:
-      - '2023-11-03'
+      - '2024-05-04'
     status:
       code: 201
       message: Created
@@ -1112,14 +1296,14 @@ interactions:
         "sessionId": "00000000-0000-0000-0000-000000000001", "status": "Failed", "jobType":
         "QuantumComputing", "outputDataFormat": "invalid_output_format", "outputDataUri":
         "https://mystorage.blob.core.windows.net:443/job-00000000-0000-0000-0000-000000000002/outputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
-        "beginExecutionTime": "2024-04-19T14:37:28.634Z", "cancellationTime": null,
+        "beginExecutionTime": "2024-08-11T02:30:17.473Z", "cancellationTime": null,
         "quantumComputingData": {"count": 1}, "errorData": {"code": "CannotTranslateOutputData",
         "message": "The output returned by ''microsoft.test'' cannot be translated
         as specified by ''outputDataFormat''. Please ensure that ''outputDataFormat''
         is correct."}, "isCancelling": false, "tags": [], "name": "Bad Job 1", "id":
         "00000000-0000-0000-0000-000000000002", "providerId": "microsoft.test", "target":
-        "echo-quantinuum", "creationTime": "2024-04-19T14:37:24.5554222Z", "endExecutionTime":
-        "2024-04-19T14:37:47.743Z", "costEstimate": null, "itemType": "Job"}], "nextLink":
+        "echo-quantinuum", "creationTime": "2024-08-11T02:30:13.8020004Z", "endExecutionTime":
+        "2024-08-11T02:30:53.326Z", "costEstimate": null, "itemType": "Job"}], "nextLink":
         null}'
     headers:
       connection:
@@ -1150,8 +1334,8 @@ interactions:
     body:
       string: '{"status": "Failed", "jobFailurePolicy": "Abort", "name": "session-00000000-0000-0000-0000-000000000001",
         "id": "00000000-0000-0000-0000-000000000001", "providerId": "microsoft.test",
-        "target": "echo-quantinuum", "creationTime": "2024-04-19T14:37:20.5914732Z",
-        "endExecutionTime": "2024-04-19T14:37:48.8457092Z", "costEstimate": null,
+        "target": "echo-quantinuum", "creationTime": "2024-08-11T02:30:12.3078461Z",
+        "endExecutionTime": "2024-08-11T02:30:53.9038202Z", "costEstimate": null,
         "itemType": "Session"}'
     headers:
       connection:
@@ -1182,8 +1366,8 @@ interactions:
     body:
       string: '{"status": "Failed", "jobFailurePolicy": "Abort", "name": "session-00000000-0000-0000-0000-000000000001",
         "id": "00000000-0000-0000-0000-000000000001", "providerId": "microsoft.test",
-        "target": "echo-quantinuum", "creationTime": "2024-04-19T14:37:20.5914732Z",
-        "endExecutionTime": "2024-04-19T14:37:48.8457092Z", "costEstimate": null,
+        "target": "echo-quantinuum", "creationTime": "2024-08-11T02:30:12.3078461Z",
+        "endExecutionTime": "2024-08-11T02:30:53.9038202Z", "costEstimate": null,
         "itemType": "Session"}'
     headers:
       connection:
@@ -1220,7 +1404,7 @@ interactions:
     body:
       string: '{"status": "Waiting", "jobFailurePolicy": "Continue", "name": "session-00000000-0000-0000-0000-000000000004",
         "id": "00000000-0000-0000-0000-000000000004", "providerId": "microsoft.test",
-        "target": "echo-quantinuum", "creationTime": "2024-04-19T14:37:54.7630082Z",
+        "target": "echo-quantinuum", "creationTime": "2024-08-11T02:31:08.0147276Z",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Session"}'
     headers:
       connection:
@@ -1235,7 +1419,49 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: client_id=PLACEHOLDER&grant_type=client_credentials&client_info=1&client_secret=PLACEHOLDER&scope=https%3A%2F%2Fquantum.microsoft.com%2F.default
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-identity/1.17.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
+    method: GET
+    uri: https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/v2.0/.well-known/openid-configuration
+  response:
+    body:
+      string: '{"token_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token",
+        "token_endpoint_auth_methods_supported": ["client_secret_post", "private_key_jwt",
+        "client_secret_basic"], "jwks_uri": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/discovery/v2.0/keys",
+        "response_modes_supported": ["query", "fragment", "form_post"], "subject_types_supported":
+        ["pairwise"], "id_token_signing_alg_values_supported": ["RS256"], "response_types_supported":
+        ["code", "id_token", "code id_token", "id_token token"], "scopes_supported":
+        ["openid", "profile", "email", "offline_access"], "issuer": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/v2.0",
+        "request_uri_parameter_supported": false, "userinfo_endpoint": "https://graph.microsoft.com/oidc/userinfo",
+        "authorization_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/authorize",
+        "device_authorization_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/devicecode",
+        "http_logout_supported": true, "frontchannel_logout_supported": true, "end_session_endpoint":
+        "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/logout",
+        "claims_supported": ["sub", "iss", "cloud_instance_name", "cloud_instance_host_name",
+        "cloud_graph_host_name", "msgraph_host", "aud", "exp", "iat", "auth_time",
+        "acr", "nonce", "preferred_username", "name", "tid", "ver", "at_hash", "c_hash",
+        "email"], "kerberos_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/kerberos",
+        "tenant_region_scope": "WW", "cloud_instance_name": "microsoftonline.com",
+        "cloud_graph_host_name": "graph.windows.net", "msgraph_host": "graph.microsoft.com",
+        "rbac_url": "https://pas.windows.net"}'
+    headers:
+      content-length:
+      - '1826'
+      content-type:
+      - application/json; charset=utf-8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: client_id=PLACEHOLDER&grant_type=client_credentials&client_assertion=PLACEHOLDER&client_info=1&client_assertion_type=PLACEHOLDER&scope=https%3A%2F%2Fquantum.microsoft.com%2F.default
     headers:
       Accept:
       - application/json
@@ -1244,11 +1470,11 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '144'
+      - '181'
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - azsdk-python-identity/1.16.0 Python/3.9.19 (Windows-10-10.0.22631-SP0)
+      - azsdk-python-identity/1.17.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
       x-client-current-telemetry:
       - 4|730,2|
       x-client-os:
@@ -1256,13 +1482,13 @@ interactions:
       x-client-sku:
       - MSAL.Python
       x-client-ver:
-      - 1.28.0
+      - 1.30.0
     method: POST
     uri: https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token
   response:
     body:
-      string: '{"token_type": "Bearer", "expires_in": 1745073475, "ext_expires_in":
-        1745073475, "refresh_in": 31536000, "access_token": "PLACEHOLDER"}'
+      string: '{"token_type": "Bearer", "expires_in": 1754879467, "ext_expires_in":
+        1754879467, "refresh_in": 31536000, "access_token": "PLACEHOLDER"}'
     headers:
       content-length:
       - '135'
@@ -1313,24 +1539,24 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-blob/12.19.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
+      - azsdk-python-storage-blob/12.20.0 Python/3.9.19 (Windows-10-10.0.22631-SP0)
       x-ms-date:
-      - Fri, 19 Apr 2024 14:37:56 GMT
+      - Sun, 11 Aug 2024 02:31:07 GMT
       x-ms-version:
-      - '2023-11-03'
+      - '2024-05-04'
     method: GET
     uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000005?restype=container&sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerNotFound</Code><Message>The
-        specified container does not exist.\nRequestId:ea96fb79-b01e-006b-6867-92ab34000000\nTime:2024-04-19T14:37:57.3639112Z</Message></Error>"
+        specified container does not exist.\nRequestId:a203b6c5-201e-004b-3696-ebbf39000000\nTime:2024-08-11T02:31:08.9311699Z</Message></Error>"
     headers:
       content-length:
       - '223'
       content-type:
       - application/xml
       x-ms-version:
-      - '2023-11-03'
+      - '2024-05-04'
     status:
       code: 404
       message: The specified container does not exist.
@@ -1346,11 +1572,11 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-blob/12.19.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
+      - azsdk-python-storage-blob/12.20.0 Python/3.9.19 (Windows-10-10.0.22631-SP0)
       x-ms-date:
-      - Fri, 19 Apr 2024 14:37:57 GMT
+      - Sun, 11 Aug 2024 02:31:08 GMT
       x-ms-version:
-      - '2023-11-03'
+      - '2024-05-04'
     method: PUT
     uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000005?restype=container&sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl
   response:
@@ -1360,7 +1586,7 @@ interactions:
       content-length:
       - '0'
       x-ms-version:
-      - '2023-11-03'
+      - '2024-05-04'
     status:
       code: 201
       message: Created
@@ -1374,11 +1600,11 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-blob/12.19.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
+      - azsdk-python-storage-blob/12.20.0 Python/3.9.19 (Windows-10-10.0.22631-SP0)
       x-ms-date:
-      - Fri, 19 Apr 2024 14:37:57 GMT
+      - Sun, 11 Aug 2024 02:31:08 GMT
       x-ms-version:
-      - '2023-11-03'
+      - '2024-05-04'
     method: GET
     uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000005?restype=container&sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl
   response:
@@ -1392,42 +1618,31 @@ interactions:
       x-ms-lease-status:
       - unlocked
       x-ms-version:
-      - '2023-11-03'
+      - '2024-05-04'
     status:
       code: 200
       message: OK
 - request:
     body: 'b''%Result = type opaque\n%Qubit = type opaque\n\ndefine void @ENTRYPOINT__main()
-      #0 {\n  call void @__quantum__qis__h__body(%Qubit* inttoptr (i64 0 to %Qubit*))\n  call
-      void @__quantum__qis__cx__body(%Qubit* inttoptr (i64 0 to %Qubit*), %Qubit*
-      inttoptr (i64 1 to %Qubit*))\n  call void @__quantum__qis__h__body(%Qubit* inttoptr
-      (i64 2 to %Qubit*))\n  call void @__quantum__qis__cz__body(%Qubit* inttoptr
-      (i64 2 to %Qubit*), %Qubit* inttoptr (i64 0 to %Qubit*))\n  call void @__quantum__qis__h__body(%Qubit*
-      inttoptr (i64 2 to %Qubit*))\n  call void @__quantum__qis__h__body(%Qubit* inttoptr
-      (i64 3 to %Qubit*))\n  call void @__quantum__qis__cz__body(%Qubit* inttoptr
-      (i64 3 to %Qubit*), %Qubit* inttoptr (i64 1 to %Qubit*))\n  call void @__quantum__qis__h__body(%Qubit*
-      inttoptr (i64 3 to %Qubit*))\n  call void @__quantum__qis__mz__body(%Qubit*
-      inttoptr (i64 2 to %Qubit*), %Result* inttoptr (i64 0 to %Result*)) #1\n  call
-      void @__quantum__qis__mz__body(%Qubit* inttoptr (i64 3 to %Qubit*), %Result*
-      inttoptr (i64 1 to %Result*)) #1\n  call void @__quantum__rt__tuple_record_output(i64
+      #0 {\nblock_0:\n  call void @__quantum__qis__h__body(%Qubit* inttoptr (i64 0
+      to %Qubit*))\n  call void @__quantum__qis__cx__body(%Qubit* inttoptr (i64 0
+      to %Qubit*), %Qubit* inttoptr (i64 1 to %Qubit*))\n  call void @__quantum__qis__h__body(%Qubit*
+      inttoptr (i64 2 to %Qubit*))\n  call void @__quantum__qis__cz__body(%Qubit*
+      inttoptr (i64 2 to %Qubit*), %Qubit* inttoptr (i64 0 to %Qubit*))\n  call void
+      @__quantum__qis__h__body(%Qubit* inttoptr (i64 2 to %Qubit*))\n  call void @__quantum__qis__h__body(%Qubit*
+      inttoptr (i64 3 to %Qubit*))\n  call void @__quantum__qis__cz__body(%Qubit*
+      inttoptr (i64 3 to %Qubit*), %Qubit* inttoptr (i64 1 to %Qubit*))\n  call void
+      @__quantum__qis__h__body(%Qubit* inttoptr (i64 3 to %Qubit*))\n  call void @__quantum__qis__m__body(%Qubit*
+      inttoptr (i64 2 to %Qubit*), %Result* inttoptr (i64 0 to %Result*))\n  call
+      void @__quantum__qis__m__body(%Qubit* inttoptr (i64 3 to %Qubit*), %Result*
+      inttoptr (i64 1 to %Result*))\n  call void @__quantum__rt__tuple_record_output(i64
       2, i8* null)\n  call void @__quantum__rt__result_record_output(%Result* inttoptr
       (i64 0 to %Result*), i8* null)\n  call void @__quantum__rt__result_record_output(%Result*
-      inttoptr (i64 1 to %Result*), i8* null)\n  ret void\n}\n\ndeclare void @__quantum__qis__ccx__body(%Qubit*,
-      %Qubit*, %Qubit*)\ndeclare void @__quantum__qis__cx__body(%Qubit*, %Qubit*)\ndeclare
-      void @__quantum__qis__cy__body(%Qubit*, %Qubit*)\ndeclare void @__quantum__qis__cz__body(%Qubit*,
-      %Qubit*)\ndeclare void @__quantum__qis__rx__body(double, %Qubit*)\ndeclare void
-      @__quantum__qis__rxx__body(double, %Qubit*, %Qubit*)\ndeclare void @__quantum__qis__ry__body(double,
-      %Qubit*)\ndeclare void @__quantum__qis__ryy__body(double, %Qubit*, %Qubit*)\ndeclare
-      void @__quantum__qis__rz__body(double, %Qubit*)\ndeclare void @__quantum__qis__rzz__body(double,
-      %Qubit*, %Qubit*)\ndeclare void @__quantum__qis__h__body(%Qubit*)\ndeclare void
-      @__quantum__qis__s__body(%Qubit*)\ndeclare void @__quantum__qis__s__adj(%Qubit*)\ndeclare
-      void @__quantum__qis__t__body(%Qubit*)\ndeclare void @__quantum__qis__t__adj(%Qubit*)\ndeclare
-      void @__quantum__qis__x__body(%Qubit*)\ndeclare void @__quantum__qis__y__body(%Qubit*)\ndeclare
-      void @__quantum__qis__z__body(%Qubit*)\ndeclare void @__quantum__qis__swap__body(%Qubit*,
-      %Qubit*)\ndeclare void @__quantum__qis__mz__body(%Qubit*, %Result* writeonly)
-      #1\ndeclare void @__quantum__rt__result_record_output(%Result*, i8*)\ndeclare
-      void @__quantum__rt__array_record_output(i64, i8*)\ndeclare void @__quantum__rt__tuple_record_output(i64,
-      i8*)\n\nattributes #0 = { "entry_point" "output_labeling_schema" "qir_profiles"="base_profile"
+      inttoptr (i64 1 to %Result*), i8* null)\n  ret void\n}\n\ndeclare void @__quantum__qis__h__body(%Qubit*)\n\ndeclare
+      void @__quantum__qis__cx__body(%Qubit*, %Qubit*)\n\ndeclare void @__quantum__qis__cz__body(%Qubit*,
+      %Qubit*)\n\ndeclare void @__quantum__rt__tuple_record_output(i64, i8*)\n\ndeclare
+      void @__quantum__rt__result_record_output(%Result*, i8*)\n\ndeclare void @__quantum__qis__m__body(%Qubit*,
+      %Result*) #1\n\nattributes #0 = { "entry_point" "output_labeling_schema" "qir_profiles"="base_profile"
       "required_num_qubits"="4" "required_num_results"="2" }\nattributes #1 = { "irreversible"
       }\n\n; module flags\n\n!llvm.module.flags = !{!0, !1, !2, !3}\n\n!0 = !{i32
       1, !"qir_major_version", i32 1}\n!1 = !{i32 7, !"qir_minor_version", i32 0}\n!2
@@ -1441,17 +1656,17 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '3073'
+      - '2122'
       Content-Type:
       - application/octet-stream
       User-Agent:
-      - azsdk-python-storage-blob/12.19.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
+      - azsdk-python-storage-blob/12.20.0 Python/3.9.19 (Windows-10-10.0.22631-SP0)
       x-ms-blob-type:
       - BlockBlob
       x-ms-date:
-      - Fri, 19 Apr 2024 14:37:58 GMT
+      - Sun, 11 Aug 2024 02:31:08 GMT
       x-ms-version:
-      - '2023-11-03'
+      - '2024-05-04'
     method: PUT
     uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000005/inputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl
   response:
@@ -1461,7 +1676,7 @@ interactions:
       content-length:
       - '0'
       x-ms-version:
-      - '2023-11-03'
+      - '2024-05-04'
     status:
       code: 201
       message: Created
@@ -1500,7 +1715,7 @@ interactions:
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         null, "errorData": null, "isCancelling": false, "tags": [], "name": "Good
         Job 1", "id": "00000000-0000-0000-0000-000000000005", "providerId": "microsoft.test",
-        "target": "echo-quantinuum", "creationTime": "2024-04-19T14:37:58.7117425+00:00",
+        "target": "echo-quantinuum", "creationTime": "2024-08-11T02:31:09.4516317+00:00",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
@@ -1539,7 +1754,7 @@ interactions:
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         null, "errorData": null, "isCancelling": false, "tags": [], "name": "Good
         Job 1", "id": "00000000-0000-0000-0000-000000000005", "providerId": "microsoft.test",
-        "target": "echo-quantinuum", "creationTime": "2024-04-19T14:37:58.7117425+00:00",
+        "target": "echo-quantinuum", "creationTime": "2024-08-11T02:31:09.4516317+00:00",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
@@ -1578,7 +1793,7 @@ interactions:
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         null, "errorData": null, "isCancelling": false, "tags": [], "name": "Good
         Job 1", "id": "00000000-0000-0000-0000-000000000005", "providerId": "microsoft.test",
-        "target": "echo-quantinuum", "creationTime": "2024-04-19T14:37:58.7117425+00:00",
+        "target": "echo-quantinuum", "creationTime": "2024-08-11T02:31:09.4516317+00:00",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
@@ -1617,7 +1832,7 @@ interactions:
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         null, "errorData": null, "isCancelling": false, "tags": [], "name": "Good
         Job 1", "id": "00000000-0000-0000-0000-000000000005", "providerId": "microsoft.test",
-        "target": "echo-quantinuum", "creationTime": "2024-04-19T14:37:58.7117425+00:00",
+        "target": "echo-quantinuum", "creationTime": "2024-08-11T02:31:09.4516317+00:00",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
@@ -1656,7 +1871,7 @@ interactions:
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         null, "errorData": null, "isCancelling": false, "tags": [], "name": "Good
         Job 1", "id": "00000000-0000-0000-0000-000000000005", "providerId": "microsoft.test",
-        "target": "echo-quantinuum", "creationTime": "2024-04-19T14:37:58.7117425+00:00",
+        "target": "echo-quantinuum", "creationTime": "2024-08-11T02:31:09.4516317+00:00",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
@@ -1693,15 +1908,15 @@ interactions:
         "jobType": "QuantumComputing", "outputDataFormat": "honeywell.qir.v1", "outputDataUri":
         "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000005/outputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3DGood%2BJob%2B1-00000000-0000-0000-0000-000000000005.output.json",
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
-        {"count": 1}, "errorData": null, "isCancelling": false, "tags": [], "name":
-        "Good Job 1", "id": "00000000-0000-0000-0000-000000000005", "providerId":
-        "microsoft.test", "target": "echo-quantinuum", "creationTime": "2024-04-19T14:37:58.7117425+00:00",
+        null, "errorData": null, "isCancelling": false, "tags": [], "name": "Good
+        Job 1", "id": "00000000-0000-0000-0000-000000000005", "providerId": "microsoft.test",
+        "target": "echo-quantinuum", "creationTime": "2024-08-11T02:31:09.4516317+00:00",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '1419'
+      - '1411'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -1734,7 +1949,7 @@ interactions:
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         {"count": 1}, "errorData": null, "isCancelling": false, "tags": [], "name":
         "Good Job 1", "id": "00000000-0000-0000-0000-000000000005", "providerId":
-        "microsoft.test", "target": "echo-quantinuum", "creationTime": "2024-04-19T14:37:58.7117425+00:00",
+        "microsoft.test", "target": "echo-quantinuum", "creationTime": "2024-08-11T02:31:09.4516317+00:00",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
@@ -1767,14 +1982,94 @@ interactions:
         "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000005/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3DGood%2BJob%2B1-00000000-0000-0000-0000-000000000005.input.json",
         "inputDataFormat": "qir.v1", "inputParams": {"entryPoint": "ENTRYPOINT__main",
         "arguments": [], "targetCapability": "AdaptiveExecution"}, "metadata": null,
-        "sessionId": "00000000-0000-0000-0000-000000000004", "status": "Succeeded",
+        "sessionId": "00000000-0000-0000-0000-000000000004", "status": "Executing",
         "jobType": "QuantumComputing", "outputDataFormat": "honeywell.qir.v1", "outputDataUri":
-        "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000005/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3DGood%2BJob%2B1-00000000-0000-0000-0000-000000000005.output.json",
-        "beginExecutionTime": "2024-04-19T14:38:01.92Z", "cancellationTime": null,
+        "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000005/outputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3DGood%2BJob%2B1-00000000-0000-0000-0000-000000000005.output.json",
+        "beginExecutionTime": "2024-08-11T02:31:12.638Z", "cancellationTime": null,
         "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling": false,
         "tags": [], "name": "Good Job 1", "id": "00000000-0000-0000-0000-000000000005",
         "providerId": "microsoft.test", "target": "echo-quantinuum", "creationTime":
-        "2024-04-19T14:37:58.7117425+00:00", "endExecutionTime": "2024-04-19T14:38:02.522Z",
+        "2024-08-11T02:31:09.4516317+00:00", "endExecutionTime": null, "costEstimate":
+        null, "itemType": "Job"}'
+    headers:
+      connection:
+      - keep-alive
+      content-length:
+      - '1443'
+      content-type:
+      - application/json; charset=utf-8
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azure-quantum-qsharp azsdk-python-quantum/0.0.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
+    method: GET
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000005?api-version=2022-09-12-preview&test-sequence-id=8
+  response:
+    body:
+      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000005?sv=PLACEHOLDER&sr=c&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcwl",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000005/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3DGood%2BJob%2B1-00000000-0000-0000-0000-000000000005.input.json",
+        "inputDataFormat": "qir.v1", "inputParams": {"entryPoint": "ENTRYPOINT__main",
+        "arguments": [], "targetCapability": "AdaptiveExecution"}, "metadata": null,
+        "sessionId": "00000000-0000-0000-0000-000000000004", "status": "Executing",
+        "jobType": "QuantumComputing", "outputDataFormat": "honeywell.qir.v1", "outputDataUri":
+        "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000005/outputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3DGood%2BJob%2B1-00000000-0000-0000-0000-000000000005.output.json",
+        "beginExecutionTime": "2024-08-11T02:31:12.638Z", "cancellationTime": null,
+        "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling": false,
+        "tags": [], "name": "Good Job 1", "id": "00000000-0000-0000-0000-000000000005",
+        "providerId": "microsoft.test", "target": "echo-quantinuum", "creationTime":
+        "2024-08-11T02:31:09.4516317+00:00", "endExecutionTime": null, "costEstimate":
+        null, "itemType": "Job"}'
+    headers:
+      connection:
+      - keep-alive
+      content-length:
+      - '1443'
+      content-type:
+      - application/json; charset=utf-8
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azure-quantum-qsharp azsdk-python-quantum/0.0.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
+    method: GET
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000005?api-version=2022-09-12-preview&test-sequence-id=9
+  response:
+    body:
+      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000005?sv=PLACEHOLDER&sr=c&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcwl",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000005/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3DGood%2BJob%2B1-00000000-0000-0000-0000-000000000005.input.json",
+        "inputDataFormat": "qir.v1", "inputParams": {"entryPoint": "ENTRYPOINT__main",
+        "arguments": [], "targetCapability": "AdaptiveExecution"}, "metadata": null,
+        "sessionId": "00000000-0000-0000-0000-000000000004", "status": "Succeeded",
+        "jobType": "QuantumComputing", "outputDataFormat": "honeywell.qir.v1", "outputDataUri":
+        "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000005/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3DGood%2BJob%2B1-00000000-0000-0000-0000-000000000005.output.json",
+        "beginExecutionTime": "2024-08-11T02:31:12.638Z", "cancellationTime": null,
+        "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling": false,
+        "tags": [], "name": "Good Job 1", "id": "00000000-0000-0000-0000-000000000005",
+        "providerId": "microsoft.test", "target": "echo-quantinuum", "creationTime":
+        "2024-08-11T02:31:09.4516317+00:00", "endExecutionTime": "2024-08-11T02:31:18.09Z",
         "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
@@ -1805,7 +2100,7 @@ interactions:
     body:
       string: '{"status": "Executing", "jobFailurePolicy": "Continue", "name": "session-00000000-0000-0000-0000-000000000004",
         "id": "00000000-0000-0000-0000-000000000004", "providerId": "microsoft.test",
-        "target": "echo-quantinuum", "creationTime": "2024-04-19T14:37:54.7630082Z",
+        "target": "echo-quantinuum", "creationTime": "2024-08-11T02:31:08.0147276Z",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Session"}'
     headers:
       connection:
@@ -1820,7 +2115,49 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: client_id=PLACEHOLDER&grant_type=client_credentials&client_info=1&client_secret=PLACEHOLDER&scope=https%3A%2F%2Fquantum.microsoft.com%2F.default
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-identity/1.17.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
+    method: GET
+    uri: https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/v2.0/.well-known/openid-configuration
+  response:
+    body:
+      string: '{"token_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token",
+        "token_endpoint_auth_methods_supported": ["client_secret_post", "private_key_jwt",
+        "client_secret_basic"], "jwks_uri": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/discovery/v2.0/keys",
+        "response_modes_supported": ["query", "fragment", "form_post"], "subject_types_supported":
+        ["pairwise"], "id_token_signing_alg_values_supported": ["RS256"], "response_types_supported":
+        ["code", "id_token", "code id_token", "id_token token"], "scopes_supported":
+        ["openid", "profile", "email", "offline_access"], "issuer": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/v2.0",
+        "request_uri_parameter_supported": false, "userinfo_endpoint": "https://graph.microsoft.com/oidc/userinfo",
+        "authorization_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/authorize",
+        "device_authorization_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/devicecode",
+        "http_logout_supported": true, "frontchannel_logout_supported": true, "end_session_endpoint":
+        "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/logout",
+        "claims_supported": ["sub", "iss", "cloud_instance_name", "cloud_instance_host_name",
+        "cloud_graph_host_name", "msgraph_host", "aud", "exp", "iat", "auth_time",
+        "acr", "nonce", "preferred_username", "name", "tid", "ver", "at_hash", "c_hash",
+        "email"], "kerberos_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/kerberos",
+        "tenant_region_scope": "WW", "cloud_instance_name": "microsoftonline.com",
+        "cloud_graph_host_name": "graph.windows.net", "msgraph_host": "graph.microsoft.com",
+        "rbac_url": "https://pas.windows.net"}'
+    headers:
+      content-length:
+      - '1826'
+      content-type:
+      - application/json; charset=utf-8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: client_id=PLACEHOLDER&grant_type=client_credentials&client_assertion=PLACEHOLDER&client_info=1&client_assertion_type=PLACEHOLDER&scope=https%3A%2F%2Fquantum.microsoft.com%2F.default
     headers:
       Accept:
       - application/json
@@ -1829,11 +2166,11 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '144'
+      - '181'
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - azsdk-python-identity/1.16.0 Python/3.9.19 (Windows-10-10.0.22631-SP0)
+      - azsdk-python-identity/1.17.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
       x-client-current-telemetry:
       - 4|730,2|
       x-client-os:
@@ -1841,13 +2178,13 @@ interactions:
       x-client-sku:
       - MSAL.Python
       x-client-ver:
-      - 1.28.0
+      - 1.30.0
     method: POST
     uri: https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token
   response:
     body:
-      string: '{"token_type": "Bearer", "expires_in": 1745073485, "ext_expires_in":
-        1745073485, "refresh_in": 31536000, "access_token": "PLACEHOLDER"}'
+      string: '{"token_type": "Bearer", "expires_in": 1754879479, "ext_expires_in":
+        1754879479, "refresh_in": 31536000, "access_token": "PLACEHOLDER"}'
     headers:
       content-length:
       - '135'
@@ -1898,24 +2235,24 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-blob/12.19.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
+      - azsdk-python-storage-blob/12.20.0 Python/3.9.19 (Windows-10-10.0.22631-SP0)
       x-ms-date:
-      - Fri, 19 Apr 2024 14:38:06 GMT
+      - Sun, 11 Aug 2024 02:31:19 GMT
       x-ms-version:
-      - '2023-11-03'
+      - '2024-05-04'
     method: GET
     uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000006?restype=container&sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerNotFound</Code><Message>The
-        specified container does not exist.\nRequestId:71d77dfd-101e-003f-4667-92e463000000\nTime:2024-04-19T14:38:07.2050178Z</Message></Error>"
+        specified container does not exist.\nRequestId:67bbac4a-701e-0056-2e96-ebb285000000\nTime:2024-08-11T02:31:21.0475204Z</Message></Error>"
     headers:
       content-length:
       - '223'
       content-type:
       - application/xml
       x-ms-version:
-      - '2023-11-03'
+      - '2024-05-04'
     status:
       code: 404
       message: The specified container does not exist.
@@ -1931,11 +2268,11 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-blob/12.19.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
+      - azsdk-python-storage-blob/12.20.0 Python/3.9.19 (Windows-10-10.0.22631-SP0)
       x-ms-date:
-      - Fri, 19 Apr 2024 14:38:07 GMT
+      - Sun, 11 Aug 2024 02:31:20 GMT
       x-ms-version:
-      - '2023-11-03'
+      - '2024-05-04'
     method: PUT
     uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000006?restype=container&sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl
   response:
@@ -1945,7 +2282,7 @@ interactions:
       content-length:
       - '0'
       x-ms-version:
-      - '2023-11-03'
+      - '2024-05-04'
     status:
       code: 201
       message: Created
@@ -1959,11 +2296,11 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-blob/12.19.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
+      - azsdk-python-storage-blob/12.20.0 Python/3.9.19 (Windows-10-10.0.22631-SP0)
       x-ms-date:
-      - Fri, 19 Apr 2024 14:38:07 GMT
+      - Sun, 11 Aug 2024 02:31:20 GMT
       x-ms-version:
-      - '2023-11-03'
+      - '2024-05-04'
     method: GET
     uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000006?restype=container&sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl
   response:
@@ -1977,42 +2314,31 @@ interactions:
       x-ms-lease-status:
       - unlocked
       x-ms-version:
-      - '2023-11-03'
+      - '2024-05-04'
     status:
       code: 200
       message: OK
 - request:
     body: 'b''%Result = type opaque\n%Qubit = type opaque\n\ndefine void @ENTRYPOINT__main()
-      #0 {\n  call void @__quantum__qis__h__body(%Qubit* inttoptr (i64 0 to %Qubit*))\n  call
-      void @__quantum__qis__cx__body(%Qubit* inttoptr (i64 0 to %Qubit*), %Qubit*
-      inttoptr (i64 1 to %Qubit*))\n  call void @__quantum__qis__h__body(%Qubit* inttoptr
-      (i64 2 to %Qubit*))\n  call void @__quantum__qis__cz__body(%Qubit* inttoptr
-      (i64 2 to %Qubit*), %Qubit* inttoptr (i64 0 to %Qubit*))\n  call void @__quantum__qis__h__body(%Qubit*
-      inttoptr (i64 2 to %Qubit*))\n  call void @__quantum__qis__h__body(%Qubit* inttoptr
-      (i64 3 to %Qubit*))\n  call void @__quantum__qis__cz__body(%Qubit* inttoptr
-      (i64 3 to %Qubit*), %Qubit* inttoptr (i64 1 to %Qubit*))\n  call void @__quantum__qis__h__body(%Qubit*
-      inttoptr (i64 3 to %Qubit*))\n  call void @__quantum__qis__mz__body(%Qubit*
-      inttoptr (i64 2 to %Qubit*), %Result* inttoptr (i64 0 to %Result*)) #1\n  call
-      void @__quantum__qis__mz__body(%Qubit* inttoptr (i64 3 to %Qubit*), %Result*
-      inttoptr (i64 1 to %Result*)) #1\n  call void @__quantum__rt__tuple_record_output(i64
+      #0 {\nblock_0:\n  call void @__quantum__qis__h__body(%Qubit* inttoptr (i64 0
+      to %Qubit*))\n  call void @__quantum__qis__cx__body(%Qubit* inttoptr (i64 0
+      to %Qubit*), %Qubit* inttoptr (i64 1 to %Qubit*))\n  call void @__quantum__qis__h__body(%Qubit*
+      inttoptr (i64 2 to %Qubit*))\n  call void @__quantum__qis__cz__body(%Qubit*
+      inttoptr (i64 2 to %Qubit*), %Qubit* inttoptr (i64 0 to %Qubit*))\n  call void
+      @__quantum__qis__h__body(%Qubit* inttoptr (i64 2 to %Qubit*))\n  call void @__quantum__qis__h__body(%Qubit*
+      inttoptr (i64 3 to %Qubit*))\n  call void @__quantum__qis__cz__body(%Qubit*
+      inttoptr (i64 3 to %Qubit*), %Qubit* inttoptr (i64 1 to %Qubit*))\n  call void
+      @__quantum__qis__h__body(%Qubit* inttoptr (i64 3 to %Qubit*))\n  call void @__quantum__qis__m__body(%Qubit*
+      inttoptr (i64 2 to %Qubit*), %Result* inttoptr (i64 0 to %Result*))\n  call
+      void @__quantum__qis__m__body(%Qubit* inttoptr (i64 3 to %Qubit*), %Result*
+      inttoptr (i64 1 to %Result*))\n  call void @__quantum__rt__tuple_record_output(i64
       2, i8* null)\n  call void @__quantum__rt__result_record_output(%Result* inttoptr
       (i64 0 to %Result*), i8* null)\n  call void @__quantum__rt__result_record_output(%Result*
-      inttoptr (i64 1 to %Result*), i8* null)\n  ret void\n}\n\ndeclare void @__quantum__qis__ccx__body(%Qubit*,
-      %Qubit*, %Qubit*)\ndeclare void @__quantum__qis__cx__body(%Qubit*, %Qubit*)\ndeclare
-      void @__quantum__qis__cy__body(%Qubit*, %Qubit*)\ndeclare void @__quantum__qis__cz__body(%Qubit*,
-      %Qubit*)\ndeclare void @__quantum__qis__rx__body(double, %Qubit*)\ndeclare void
-      @__quantum__qis__rxx__body(double, %Qubit*, %Qubit*)\ndeclare void @__quantum__qis__ry__body(double,
-      %Qubit*)\ndeclare void @__quantum__qis__ryy__body(double, %Qubit*, %Qubit*)\ndeclare
-      void @__quantum__qis__rz__body(double, %Qubit*)\ndeclare void @__quantum__qis__rzz__body(double,
-      %Qubit*, %Qubit*)\ndeclare void @__quantum__qis__h__body(%Qubit*)\ndeclare void
-      @__quantum__qis__s__body(%Qubit*)\ndeclare void @__quantum__qis__s__adj(%Qubit*)\ndeclare
-      void @__quantum__qis__t__body(%Qubit*)\ndeclare void @__quantum__qis__t__adj(%Qubit*)\ndeclare
-      void @__quantum__qis__x__body(%Qubit*)\ndeclare void @__quantum__qis__y__body(%Qubit*)\ndeclare
-      void @__quantum__qis__z__body(%Qubit*)\ndeclare void @__quantum__qis__swap__body(%Qubit*,
-      %Qubit*)\ndeclare void @__quantum__qis__mz__body(%Qubit*, %Result* writeonly)
-      #1\ndeclare void @__quantum__rt__result_record_output(%Result*, i8*)\ndeclare
-      void @__quantum__rt__array_record_output(i64, i8*)\ndeclare void @__quantum__rt__tuple_record_output(i64,
-      i8*)\n\nattributes #0 = { "entry_point" "output_labeling_schema" "qir_profiles"="base_profile"
+      inttoptr (i64 1 to %Result*), i8* null)\n  ret void\n}\n\ndeclare void @__quantum__qis__h__body(%Qubit*)\n\ndeclare
+      void @__quantum__qis__cx__body(%Qubit*, %Qubit*)\n\ndeclare void @__quantum__qis__cz__body(%Qubit*,
+      %Qubit*)\n\ndeclare void @__quantum__rt__tuple_record_output(i64, i8*)\n\ndeclare
+      void @__quantum__rt__result_record_output(%Result*, i8*)\n\ndeclare void @__quantum__qis__m__body(%Qubit*,
+      %Result*) #1\n\nattributes #0 = { "entry_point" "output_labeling_schema" "qir_profiles"="base_profile"
       "required_num_qubits"="4" "required_num_results"="2" }\nattributes #1 = { "irreversible"
       }\n\n; module flags\n\n!llvm.module.flags = !{!0, !1, !2, !3}\n\n!0 = !{i32
       1, !"qir_major_version", i32 1}\n!1 = !{i32 7, !"qir_minor_version", i32 0}\n!2
@@ -2026,17 +2352,17 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '3073'
+      - '2122'
       Content-Type:
       - application/octet-stream
       User-Agent:
-      - azsdk-python-storage-blob/12.19.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
+      - azsdk-python-storage-blob/12.20.0 Python/3.9.19 (Windows-10-10.0.22631-SP0)
       x-ms-blob-type:
       - BlockBlob
       x-ms-date:
-      - Fri, 19 Apr 2024 14:38:08 GMT
+      - Sun, 11 Aug 2024 02:31:20 GMT
       x-ms-version:
-      - '2023-11-03'
+      - '2024-05-04'
     method: PUT
     uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000006/inputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl
   response:
@@ -2046,7 +2372,7 @@ interactions:
       content-length:
       - '0'
       x-ms-version:
-      - '2023-11-03'
+      - '2024-05-04'
     status:
       code: 201
       message: Created
@@ -2085,7 +2411,7 @@ interactions:
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         null, "errorData": null, "isCancelling": false, "tags": [], "name": "Bad Job
         2", "id": "00000000-0000-0000-0000-000000000006", "providerId": "microsoft.test",
-        "target": "echo-quantinuum", "creationTime": "2024-04-19T14:38:08.7194259+00:00",
+        "target": "echo-quantinuum", "creationTime": "2024-08-11T02:31:21.6662252+00:00",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
@@ -2124,7 +2450,7 @@ interactions:
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         null, "errorData": null, "isCancelling": false, "tags": [], "name": "Bad Job
         2", "id": "00000000-0000-0000-0000-000000000006", "providerId": "microsoft.test",
-        "target": "echo-quantinuum", "creationTime": "2024-04-19T14:38:08.7194259+00:00",
+        "target": "echo-quantinuum", "creationTime": "2024-08-11T02:31:21.6662252+00:00",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
@@ -2163,7 +2489,7 @@ interactions:
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         null, "errorData": null, "isCancelling": false, "tags": [], "name": "Bad Job
         2", "id": "00000000-0000-0000-0000-000000000006", "providerId": "microsoft.test",
-        "target": "echo-quantinuum", "creationTime": "2024-04-19T14:38:08.7194259+00:00",
+        "target": "echo-quantinuum", "creationTime": "2024-08-11T02:31:21.6662252+00:00",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
@@ -2202,7 +2528,7 @@ interactions:
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         null, "errorData": null, "isCancelling": false, "tags": [], "name": "Bad Job
         2", "id": "00000000-0000-0000-0000-000000000006", "providerId": "microsoft.test",
-        "target": "echo-quantinuum", "creationTime": "2024-04-19T14:38:08.7194259+00:00",
+        "target": "echo-quantinuum", "creationTime": "2024-08-11T02:31:21.6662252+00:00",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
@@ -2241,7 +2567,7 @@ interactions:
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         null, "errorData": null, "isCancelling": false, "tags": [], "name": "Bad Job
         2", "id": "00000000-0000-0000-0000-000000000006", "providerId": "microsoft.test",
-        "target": "echo-quantinuum", "creationTime": "2024-04-19T14:38:08.7194259+00:00",
+        "target": "echo-quantinuum", "creationTime": "2024-08-11T02:31:21.6662252+00:00",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
@@ -2278,15 +2604,15 @@ interactions:
         "jobType": "QuantumComputing", "outputDataFormat": "invalid_output_format",
         "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000006/outputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3DBad%2BJob%2B2-00000000-0000-0000-0000-000000000006.output.json",
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
-        {"count": 1}, "errorData": null, "isCancelling": false, "tags": [], "name":
-        "Bad Job 2", "id": "00000000-0000-0000-0000-000000000006", "providerId": "microsoft.test",
-        "target": "echo-quantinuum", "creationTime": "2024-04-19T14:38:08.7194259+00:00",
+        null, "errorData": null, "isCancelling": false, "tags": [], "name": "Bad Job
+        2", "id": "00000000-0000-0000-0000-000000000006", "providerId": "microsoft.test",
+        "target": "echo-quantinuum", "creationTime": "2024-08-11T02:31:21.6662252+00:00",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '1421'
+      - '1413'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -2313,17 +2639,255 @@ interactions:
         "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000006/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3DBad%2BJob%2B2-00000000-0000-0000-0000-000000000006.input.json",
         "inputDataFormat": "qir.v1", "inputParams": {"entryPoint": "ENTRYPOINT__main",
         "arguments": [], "targetCapability": "AdaptiveExecution"}, "metadata": null,
+        "sessionId": "00000000-0000-0000-0000-000000000004", "status": "Waiting",
+        "jobType": "QuantumComputing", "outputDataFormat": "invalid_output_format",
+        "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000006/outputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3DBad%2BJob%2B2-00000000-0000-0000-0000-000000000006.output.json",
+        "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
+        {"count": 1}, "errorData": null, "isCancelling": false, "tags": [], "name":
+        "Bad Job 2", "id": "00000000-0000-0000-0000-000000000006", "providerId": "microsoft.test",
+        "target": "echo-quantinuum", "creationTime": "2024-08-11T02:31:21.6662252+00:00",
+        "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
+    headers:
+      connection:
+      - keep-alive
+      content-length:
+      - '1421'
+      content-type:
+      - application/json; charset=utf-8
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-quantum/0.0.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
+    method: GET
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000006?api-version=2022-09-12-preview&test-sequence-id=7
+  response:
+    body:
+      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000006?sv=PLACEHOLDER&sr=c&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcwl",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000006/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3DBad%2BJob%2B2-00000000-0000-0000-0000-000000000006.input.json",
+        "inputDataFormat": "qir.v1", "inputParams": {"entryPoint": "ENTRYPOINT__main",
+        "arguments": [], "targetCapability": "AdaptiveExecution"}, "metadata": null,
+        "sessionId": "00000000-0000-0000-0000-000000000004", "status": "Waiting",
+        "jobType": "QuantumComputing", "outputDataFormat": "invalid_output_format",
+        "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000006/outputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3DBad%2BJob%2B2-00000000-0000-0000-0000-000000000006.output.json",
+        "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
+        {"count": 1}, "errorData": null, "isCancelling": false, "tags": [], "name":
+        "Bad Job 2", "id": "00000000-0000-0000-0000-000000000006", "providerId": "microsoft.test",
+        "target": "echo-quantinuum", "creationTime": "2024-08-11T02:31:21.6662252+00:00",
+        "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
+    headers:
+      connection:
+      - keep-alive
+      content-length:
+      - '1421'
+      content-type:
+      - application/json; charset=utf-8
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-quantum/0.0.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
+    method: GET
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000006?api-version=2022-09-12-preview&test-sequence-id=8
+  response:
+    body:
+      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000006?sv=PLACEHOLDER&sr=c&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcwl",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000006/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3DBad%2BJob%2B2-00000000-0000-0000-0000-000000000006.input.json",
+        "inputDataFormat": "qir.v1", "inputParams": {"entryPoint": "ENTRYPOINT__main",
+        "arguments": [], "targetCapability": "AdaptiveExecution"}, "metadata": null,
+        "sessionId": "00000000-0000-0000-0000-000000000004", "status": "Executing",
+        "jobType": "QuantumComputing", "outputDataFormat": "invalid_output_format",
+        "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000006/outputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3DBad%2BJob%2B2-00000000-0000-0000-0000-000000000006.output.json",
+        "beginExecutionTime": "2024-08-11T02:31:24.862Z", "cancellationTime": null,
+        "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling": false,
+        "tags": [], "name": "Bad Job 2", "id": "00000000-0000-0000-0000-000000000006",
+        "providerId": "microsoft.test", "target": "echo-quantinuum", "creationTime":
+        "2024-08-11T02:31:21.6662252+00:00", "endExecutionTime": null, "costEstimate":
+        null, "itemType": "Job"}'
+    headers:
+      connection:
+      - keep-alive
+      content-length:
+      - '1445'
+      content-type:
+      - application/json; charset=utf-8
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-quantum/0.0.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
+    method: GET
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000006?api-version=2022-09-12-preview&test-sequence-id=9
+  response:
+    body:
+      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000006?sv=PLACEHOLDER&sr=c&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcwl",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000006/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3DBad%2BJob%2B2-00000000-0000-0000-0000-000000000006.input.json",
+        "inputDataFormat": "qir.v1", "inputParams": {"entryPoint": "ENTRYPOINT__main",
+        "arguments": [], "targetCapability": "AdaptiveExecution"}, "metadata": null,
+        "sessionId": "00000000-0000-0000-0000-000000000004", "status": "Executing",
+        "jobType": "QuantumComputing", "outputDataFormat": "invalid_output_format",
+        "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000006/outputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3DBad%2BJob%2B2-00000000-0000-0000-0000-000000000006.output.json",
+        "beginExecutionTime": "2024-08-11T02:31:24.862Z", "cancellationTime": null,
+        "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling": false,
+        "tags": [], "name": "Bad Job 2", "id": "00000000-0000-0000-0000-000000000006",
+        "providerId": "microsoft.test", "target": "echo-quantinuum", "creationTime":
+        "2024-08-11T02:31:21.6662252+00:00", "endExecutionTime": null, "costEstimate":
+        null, "itemType": "Job"}'
+    headers:
+      connection:
+      - keep-alive
+      content-length:
+      - '1445'
+      content-type:
+      - application/json; charset=utf-8
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-quantum/0.0.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
+    method: GET
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000006?api-version=2022-09-12-preview&test-sequence-id=10
+  response:
+    body:
+      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000006?sv=PLACEHOLDER&sr=c&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcwl",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000006/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3DBad%2BJob%2B2-00000000-0000-0000-0000-000000000006.input.json",
+        "inputDataFormat": "qir.v1", "inputParams": {"entryPoint": "ENTRYPOINT__main",
+        "arguments": [], "targetCapability": "AdaptiveExecution"}, "metadata": null,
+        "sessionId": "00000000-0000-0000-0000-000000000004", "status": "Executing",
+        "jobType": "QuantumComputing", "outputDataFormat": "invalid_output_format",
+        "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000006/outputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3DBad%2BJob%2B2-00000000-0000-0000-0000-000000000006.output.json",
+        "beginExecutionTime": "2024-08-11T02:31:24.862Z", "cancellationTime": null,
+        "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling": false,
+        "tags": [], "name": "Bad Job 2", "id": "00000000-0000-0000-0000-000000000006",
+        "providerId": "microsoft.test", "target": "echo-quantinuum", "creationTime":
+        "2024-08-11T02:31:21.6662252+00:00", "endExecutionTime": null, "costEstimate":
+        null, "itemType": "Job"}'
+    headers:
+      connection:
+      - keep-alive
+      content-length:
+      - '1445'
+      content-type:
+      - application/json; charset=utf-8
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-quantum/0.0.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
+    method: GET
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000006?api-version=2022-09-12-preview&test-sequence-id=11
+  response:
+    body:
+      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000006?sv=PLACEHOLDER&sr=c&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcwl",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000006/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3DBad%2BJob%2B2-00000000-0000-0000-0000-000000000006.input.json",
+        "inputDataFormat": "qir.v1", "inputParams": {"entryPoint": "ENTRYPOINT__main",
+        "arguments": [], "targetCapability": "AdaptiveExecution"}, "metadata": null,
+        "sessionId": "00000000-0000-0000-0000-000000000004", "status": "Executing",
+        "jobType": "QuantumComputing", "outputDataFormat": "invalid_output_format",
+        "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000006/outputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3DBad%2BJob%2B2-00000000-0000-0000-0000-000000000006.output.json",
+        "beginExecutionTime": "2024-08-11T02:31:24.862Z", "cancellationTime": null,
+        "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling": false,
+        "tags": [], "name": "Bad Job 2", "id": "00000000-0000-0000-0000-000000000006",
+        "providerId": "microsoft.test", "target": "echo-quantinuum", "creationTime":
+        "2024-08-11T02:31:21.6662252+00:00", "endExecutionTime": null, "costEstimate":
+        null, "itemType": "Job"}'
+    headers:
+      connection:
+      - keep-alive
+      content-length:
+      - '1445'
+      content-type:
+      - application/json; charset=utf-8
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-quantum/0.0.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
+    method: GET
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000006?api-version=2022-09-12-preview&test-sequence-id=12
+  response:
+    body:
+      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000006?sv=PLACEHOLDER&sr=c&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcwl",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000006/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3DBad%2BJob%2B2-00000000-0000-0000-0000-000000000006.input.json",
+        "inputDataFormat": "qir.v1", "inputParams": {"entryPoint": "ENTRYPOINT__main",
+        "arguments": [], "targetCapability": "AdaptiveExecution"}, "metadata": null,
         "sessionId": "00000000-0000-0000-0000-000000000004", "status": "Failed", "jobType":
         "QuantumComputing", "outputDataFormat": "invalid_output_format", "outputDataUri":
         "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000006/outputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3DBad%2BJob%2B2-00000000-0000-0000-0000-000000000006.output.json",
-        "beginExecutionTime": "2024-04-19T14:38:11.997Z", "cancellationTime": null,
+        "beginExecutionTime": "2024-08-11T02:31:24.862Z", "cancellationTime": null,
         "quantumComputingData": {"count": 1}, "errorData": {"code": "CannotTranslateOutputData",
         "message": "The output returned by ''microsoft.test'' cannot be translated
         as specified by ''outputDataFormat''. Please ensure that ''outputDataFormat''
         is correct."}, "isCancelling": false, "tags": [], "name": "Bad Job 2", "id":
         "00000000-0000-0000-0000-000000000006", "providerId": "microsoft.test", "target":
-        "echo-quantinuum", "creationTime": "2024-04-19T14:38:08.7194259+00:00", "endExecutionTime":
-        "2024-04-19T14:38:12.565Z", "costEstimate": null, "itemType": "Job"}'
+        "echo-quantinuum", "creationTime": "2024-08-11T02:31:21.6662252+00:00", "endExecutionTime":
+        "2024-08-11T02:31:46.312Z", "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
       - keep-alive
@@ -2353,7 +2917,7 @@ interactions:
     body:
       string: '{"status": "Failure(s)", "jobFailurePolicy": "Continue", "name": "session-00000000-0000-0000-0000-000000000004",
         "id": "00000000-0000-0000-0000-000000000004", "providerId": "microsoft.test",
-        "target": "echo-quantinuum", "creationTime": "2024-04-19T14:37:54.7630082Z",
+        "target": "echo-quantinuum", "creationTime": "2024-08-11T02:31:08.0147276Z",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Session"}'
     headers:
       connection:
@@ -2368,7 +2932,49 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: client_id=PLACEHOLDER&grant_type=client_credentials&client_info=1&client_secret=PLACEHOLDER&scope=https%3A%2F%2Fquantum.microsoft.com%2F.default
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-identity/1.17.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
+    method: GET
+    uri: https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/v2.0/.well-known/openid-configuration
+  response:
+    body:
+      string: '{"token_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token",
+        "token_endpoint_auth_methods_supported": ["client_secret_post", "private_key_jwt",
+        "client_secret_basic"], "jwks_uri": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/discovery/v2.0/keys",
+        "response_modes_supported": ["query", "fragment", "form_post"], "subject_types_supported":
+        ["pairwise"], "id_token_signing_alg_values_supported": ["RS256"], "response_types_supported":
+        ["code", "id_token", "code id_token", "id_token token"], "scopes_supported":
+        ["openid", "profile", "email", "offline_access"], "issuer": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/v2.0",
+        "request_uri_parameter_supported": false, "userinfo_endpoint": "https://graph.microsoft.com/oidc/userinfo",
+        "authorization_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/authorize",
+        "device_authorization_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/devicecode",
+        "http_logout_supported": true, "frontchannel_logout_supported": true, "end_session_endpoint":
+        "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/logout",
+        "claims_supported": ["sub", "iss", "cloud_instance_name", "cloud_instance_host_name",
+        "cloud_graph_host_name", "msgraph_host", "aud", "exp", "iat", "auth_time",
+        "acr", "nonce", "preferred_username", "name", "tid", "ver", "at_hash", "c_hash",
+        "email"], "kerberos_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/kerberos",
+        "tenant_region_scope": "WW", "cloud_instance_name": "microsoftonline.com",
+        "cloud_graph_host_name": "graph.windows.net", "msgraph_host": "graph.microsoft.com",
+        "rbac_url": "https://pas.windows.net"}'
+    headers:
+      content-length:
+      - '1826'
+      content-type:
+      - application/json; charset=utf-8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: client_id=PLACEHOLDER&grant_type=client_credentials&client_assertion=PLACEHOLDER&client_info=1&client_assertion_type=PLACEHOLDER&scope=https%3A%2F%2Fquantum.microsoft.com%2F.default
     headers:
       Accept:
       - application/json
@@ -2377,11 +2983,11 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '144'
+      - '181'
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - azsdk-python-identity/1.16.0 Python/3.9.19 (Windows-10-10.0.22631-SP0)
+      - azsdk-python-identity/1.17.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
       x-client-current-telemetry:
       - 4|730,2|
       x-client-os:
@@ -2389,13 +2995,13 @@ interactions:
       x-client-sku:
       - MSAL.Python
       x-client-ver:
-      - 1.28.0
+      - 1.30.0
     method: POST
     uri: https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token
   response:
     body:
-      string: '{"token_type": "Bearer", "expires_in": 1745073494, "ext_expires_in":
-        1745073494, "refresh_in": 31536000, "access_token": "PLACEHOLDER"}'
+      string: '{"token_type": "Bearer", "expires_in": 1754879516, "ext_expires_in":
+        1754879516, "refresh_in": 31536000, "access_token": "PLACEHOLDER"}'
     headers:
       content-length:
       - '135'
@@ -2446,24 +3052,24 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-blob/12.19.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
+      - azsdk-python-storage-blob/12.20.0 Python/3.9.19 (Windows-10-10.0.22631-SP0)
       x-ms-date:
-      - Fri, 19 Apr 2024 14:38:15 GMT
+      - Sun, 11 Aug 2024 02:31:56 GMT
       x-ms-version:
-      - '2023-11-03'
+      - '2024-05-04'
     method: GET
     uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000007?restype=container&sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerNotFound</Code><Message>The
-        specified container does not exist.\nRequestId:6cef325a-301e-0038-0567-928800000000\nTime:2024-04-19T14:38:16.0080726Z</Message></Error>"
+        specified container does not exist.\nRequestId:a67fe033-a01e-0055-3696-eb53e1000000\nTime:2024-08-11T02:31:57.7881800Z</Message></Error>"
     headers:
       content-length:
       - '223'
       content-type:
       - application/xml
       x-ms-version:
-      - '2023-11-03'
+      - '2024-05-04'
     status:
       code: 404
       message: The specified container does not exist.
@@ -2479,11 +3085,11 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-blob/12.19.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
+      - azsdk-python-storage-blob/12.20.0 Python/3.9.19 (Windows-10-10.0.22631-SP0)
       x-ms-date:
-      - Fri, 19 Apr 2024 14:38:15 GMT
+      - Sun, 11 Aug 2024 02:31:56 GMT
       x-ms-version:
-      - '2023-11-03'
+      - '2024-05-04'
     method: PUT
     uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000007?restype=container&sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl
   response:
@@ -2493,7 +3099,7 @@ interactions:
       content-length:
       - '0'
       x-ms-version:
-      - '2023-11-03'
+      - '2024-05-04'
     status:
       code: 201
       message: Created
@@ -2507,11 +3113,11 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-blob/12.19.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
+      - azsdk-python-storage-blob/12.20.0 Python/3.9.19 (Windows-10-10.0.22631-SP0)
       x-ms-date:
-      - Fri, 19 Apr 2024 14:38:16 GMT
+      - Sun, 11 Aug 2024 02:31:56 GMT
       x-ms-version:
-      - '2023-11-03'
+      - '2024-05-04'
     method: GET
     uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000007?restype=container&sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl
   response:
@@ -2525,42 +3131,31 @@ interactions:
       x-ms-lease-status:
       - unlocked
       x-ms-version:
-      - '2023-11-03'
+      - '2024-05-04'
     status:
       code: 200
       message: OK
 - request:
     body: 'b''%Result = type opaque\n%Qubit = type opaque\n\ndefine void @ENTRYPOINT__main()
-      #0 {\n  call void @__quantum__qis__h__body(%Qubit* inttoptr (i64 0 to %Qubit*))\n  call
-      void @__quantum__qis__cx__body(%Qubit* inttoptr (i64 0 to %Qubit*), %Qubit*
-      inttoptr (i64 1 to %Qubit*))\n  call void @__quantum__qis__h__body(%Qubit* inttoptr
-      (i64 2 to %Qubit*))\n  call void @__quantum__qis__cz__body(%Qubit* inttoptr
-      (i64 2 to %Qubit*), %Qubit* inttoptr (i64 0 to %Qubit*))\n  call void @__quantum__qis__h__body(%Qubit*
-      inttoptr (i64 2 to %Qubit*))\n  call void @__quantum__qis__h__body(%Qubit* inttoptr
-      (i64 3 to %Qubit*))\n  call void @__quantum__qis__cz__body(%Qubit* inttoptr
-      (i64 3 to %Qubit*), %Qubit* inttoptr (i64 1 to %Qubit*))\n  call void @__quantum__qis__h__body(%Qubit*
-      inttoptr (i64 3 to %Qubit*))\n  call void @__quantum__qis__mz__body(%Qubit*
-      inttoptr (i64 2 to %Qubit*), %Result* inttoptr (i64 0 to %Result*)) #1\n  call
-      void @__quantum__qis__mz__body(%Qubit* inttoptr (i64 3 to %Qubit*), %Result*
-      inttoptr (i64 1 to %Result*)) #1\n  call void @__quantum__rt__tuple_record_output(i64
+      #0 {\nblock_0:\n  call void @__quantum__qis__h__body(%Qubit* inttoptr (i64 0
+      to %Qubit*))\n  call void @__quantum__qis__cx__body(%Qubit* inttoptr (i64 0
+      to %Qubit*), %Qubit* inttoptr (i64 1 to %Qubit*))\n  call void @__quantum__qis__h__body(%Qubit*
+      inttoptr (i64 2 to %Qubit*))\n  call void @__quantum__qis__cz__body(%Qubit*
+      inttoptr (i64 2 to %Qubit*), %Qubit* inttoptr (i64 0 to %Qubit*))\n  call void
+      @__quantum__qis__h__body(%Qubit* inttoptr (i64 2 to %Qubit*))\n  call void @__quantum__qis__h__body(%Qubit*
+      inttoptr (i64 3 to %Qubit*))\n  call void @__quantum__qis__cz__body(%Qubit*
+      inttoptr (i64 3 to %Qubit*), %Qubit* inttoptr (i64 1 to %Qubit*))\n  call void
+      @__quantum__qis__h__body(%Qubit* inttoptr (i64 3 to %Qubit*))\n  call void @__quantum__qis__m__body(%Qubit*
+      inttoptr (i64 2 to %Qubit*), %Result* inttoptr (i64 0 to %Result*))\n  call
+      void @__quantum__qis__m__body(%Qubit* inttoptr (i64 3 to %Qubit*), %Result*
+      inttoptr (i64 1 to %Result*))\n  call void @__quantum__rt__tuple_record_output(i64
       2, i8* null)\n  call void @__quantum__rt__result_record_output(%Result* inttoptr
       (i64 0 to %Result*), i8* null)\n  call void @__quantum__rt__result_record_output(%Result*
-      inttoptr (i64 1 to %Result*), i8* null)\n  ret void\n}\n\ndeclare void @__quantum__qis__ccx__body(%Qubit*,
-      %Qubit*, %Qubit*)\ndeclare void @__quantum__qis__cx__body(%Qubit*, %Qubit*)\ndeclare
-      void @__quantum__qis__cy__body(%Qubit*, %Qubit*)\ndeclare void @__quantum__qis__cz__body(%Qubit*,
-      %Qubit*)\ndeclare void @__quantum__qis__rx__body(double, %Qubit*)\ndeclare void
-      @__quantum__qis__rxx__body(double, %Qubit*, %Qubit*)\ndeclare void @__quantum__qis__ry__body(double,
-      %Qubit*)\ndeclare void @__quantum__qis__ryy__body(double, %Qubit*, %Qubit*)\ndeclare
-      void @__quantum__qis__rz__body(double, %Qubit*)\ndeclare void @__quantum__qis__rzz__body(double,
-      %Qubit*, %Qubit*)\ndeclare void @__quantum__qis__h__body(%Qubit*)\ndeclare void
-      @__quantum__qis__s__body(%Qubit*)\ndeclare void @__quantum__qis__s__adj(%Qubit*)\ndeclare
-      void @__quantum__qis__t__body(%Qubit*)\ndeclare void @__quantum__qis__t__adj(%Qubit*)\ndeclare
-      void @__quantum__qis__x__body(%Qubit*)\ndeclare void @__quantum__qis__y__body(%Qubit*)\ndeclare
-      void @__quantum__qis__z__body(%Qubit*)\ndeclare void @__quantum__qis__swap__body(%Qubit*,
-      %Qubit*)\ndeclare void @__quantum__qis__mz__body(%Qubit*, %Result* writeonly)
-      #1\ndeclare void @__quantum__rt__result_record_output(%Result*, i8*)\ndeclare
-      void @__quantum__rt__array_record_output(i64, i8*)\ndeclare void @__quantum__rt__tuple_record_output(i64,
-      i8*)\n\nattributes #0 = { "entry_point" "output_labeling_schema" "qir_profiles"="base_profile"
+      inttoptr (i64 1 to %Result*), i8* null)\n  ret void\n}\n\ndeclare void @__quantum__qis__h__body(%Qubit*)\n\ndeclare
+      void @__quantum__qis__cx__body(%Qubit*, %Qubit*)\n\ndeclare void @__quantum__qis__cz__body(%Qubit*,
+      %Qubit*)\n\ndeclare void @__quantum__rt__tuple_record_output(i64, i8*)\n\ndeclare
+      void @__quantum__rt__result_record_output(%Result*, i8*)\n\ndeclare void @__quantum__qis__m__body(%Qubit*,
+      %Result*) #1\n\nattributes #0 = { "entry_point" "output_labeling_schema" "qir_profiles"="base_profile"
       "required_num_qubits"="4" "required_num_results"="2" }\nattributes #1 = { "irreversible"
       }\n\n; module flags\n\n!llvm.module.flags = !{!0, !1, !2, !3}\n\n!0 = !{i32
       1, !"qir_major_version", i32 1}\n!1 = !{i32 7, !"qir_minor_version", i32 0}\n!2
@@ -2574,17 +3169,17 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '3073'
+      - '2122'
       Content-Type:
       - application/octet-stream
       User-Agent:
-      - azsdk-python-storage-blob/12.19.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
+      - azsdk-python-storage-blob/12.20.0 Python/3.9.19 (Windows-10-10.0.22631-SP0)
       x-ms-blob-type:
       - BlockBlob
       x-ms-date:
-      - Fri, 19 Apr 2024 14:38:17 GMT
+      - Sun, 11 Aug 2024 02:31:57 GMT
       x-ms-version:
-      - '2023-11-03'
+      - '2024-05-04'
     method: PUT
     uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000007/inputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl
   response:
@@ -2594,7 +3189,7 @@ interactions:
       content-length:
       - '0'
       x-ms-version:
-      - '2023-11-03'
+      - '2024-05-04'
     status:
       code: 201
       message: Created
@@ -2633,13 +3228,13 @@ interactions:
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         null, "errorData": null, "isCancelling": false, "tags": [], "name": "Good
         Job 3", "id": "00000000-0000-0000-0000-000000000007", "providerId": "microsoft.test",
-        "target": "echo-quantinuum", "creationTime": "2024-04-19T14:38:17.5588825+00:00",
+        "target": "echo-quantinuum", "creationTime": "2024-08-11T02:31:58.598087+00:00",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '1245'
+      - '1244'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -2672,13 +3267,13 @@ interactions:
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         null, "errorData": null, "isCancelling": false, "tags": [], "name": "Good
         Job 3", "id": "00000000-0000-0000-0000-000000000007", "providerId": "microsoft.test",
-        "target": "echo-quantinuum", "creationTime": "2024-04-19T14:38:17.5588825+00:00",
+        "target": "echo-quantinuum", "creationTime": "2024-08-11T02:31:58.598087+00:00",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '1411'
+      - '1410'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -2711,13 +3306,13 @@ interactions:
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         null, "errorData": null, "isCancelling": false, "tags": [], "name": "Good
         Job 3", "id": "00000000-0000-0000-0000-000000000007", "providerId": "microsoft.test",
-        "target": "echo-quantinuum", "creationTime": "2024-04-19T14:38:17.5588825+00:00",
+        "target": "echo-quantinuum", "creationTime": "2024-08-11T02:31:58.598087+00:00",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '1411'
+      - '1410'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -2750,13 +3345,13 @@ interactions:
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         null, "errorData": null, "isCancelling": false, "tags": [], "name": "Good
         Job 3", "id": "00000000-0000-0000-0000-000000000007", "providerId": "microsoft.test",
-        "target": "echo-quantinuum", "creationTime": "2024-04-19T14:38:17.5588825+00:00",
+        "target": "echo-quantinuum", "creationTime": "2024-08-11T02:31:58.598087+00:00",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '1411'
+      - '1410'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -2789,13 +3384,13 @@ interactions:
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         null, "errorData": null, "isCancelling": false, "tags": [], "name": "Good
         Job 3", "id": "00000000-0000-0000-0000-000000000007", "providerId": "microsoft.test",
-        "target": "echo-quantinuum", "creationTime": "2024-04-19T14:38:17.5588825+00:00",
+        "target": "echo-quantinuum", "creationTime": "2024-08-11T02:31:58.598087+00:00",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '1411'
+      - '1410'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -2826,15 +3421,15 @@ interactions:
         "jobType": "QuantumComputing", "outputDataFormat": "honeywell.qir.v1", "outputDataUri":
         "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000007/outputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3DGood%2BJob%2B3-00000000-0000-0000-0000-000000000007.output.json",
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
-        {"count": 1}, "errorData": null, "isCancelling": false, "tags": [], "name":
-        "Good Job 3", "id": "00000000-0000-0000-0000-000000000007", "providerId":
-        "microsoft.test", "target": "echo-quantinuum", "creationTime": "2024-04-19T14:38:17.5588825+00:00",
+        null, "errorData": null, "isCancelling": false, "tags": [], "name": "Good
+        Job 3", "id": "00000000-0000-0000-0000-000000000007", "providerId": "microsoft.test",
+        "target": "echo-quantinuum", "creationTime": "2024-08-11T02:31:58.598087+00:00",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '1419'
+      - '1410'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -2861,20 +3456,19 @@ interactions:
         "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000007/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3DGood%2BJob%2B3-00000000-0000-0000-0000-000000000007.input.json",
         "inputDataFormat": "qir.v1", "inputParams": {"entryPoint": "ENTRYPOINT__main",
         "arguments": [], "targetCapability": "AdaptiveExecution"}, "metadata": null,
-        "sessionId": "00000000-0000-0000-0000-000000000004", "status": "Executing",
+        "sessionId": "00000000-0000-0000-0000-000000000004", "status": "Waiting",
         "jobType": "QuantumComputing", "outputDataFormat": "honeywell.qir.v1", "outputDataUri":
         "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000007/outputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3DGood%2BJob%2B3-00000000-0000-0000-0000-000000000007.output.json",
-        "beginExecutionTime": "2024-04-19T14:38:21.037Z", "cancellationTime": null,
-        "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling": false,
-        "tags": [], "name": "Good Job 3", "id": "00000000-0000-0000-0000-000000000007",
-        "providerId": "microsoft.test", "target": "echo-quantinuum", "creationTime":
-        "2024-04-19T14:38:17.5588825+00:00", "endExecutionTime": null, "costEstimate":
-        null, "itemType": "Job"}'
+        "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
+        {"count": 1}, "errorData": null, "isCancelling": false, "tags": [], "name":
+        "Good Job 3", "id": "00000000-0000-0000-0000-000000000007", "providerId":
+        "microsoft.test", "target": "echo-quantinuum", "creationTime": "2024-08-11T02:31:58.598087+00:00",
+        "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '1443'
+      - '1418'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -2901,100 +3495,20 @@ interactions:
         "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000007/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3DGood%2BJob%2B3-00000000-0000-0000-0000-000000000007.input.json",
         "inputDataFormat": "qir.v1", "inputParams": {"entryPoint": "ENTRYPOINT__main",
         "arguments": [], "targetCapability": "AdaptiveExecution"}, "metadata": null,
-        "sessionId": "00000000-0000-0000-0000-000000000004", "status": "Executing",
-        "jobType": "QuantumComputing", "outputDataFormat": "honeywell.qir.v1", "outputDataUri":
-        "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000007/outputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3DGood%2BJob%2B3-00000000-0000-0000-0000-000000000007.output.json",
-        "beginExecutionTime": "2024-04-19T14:38:21.037Z", "cancellationTime": null,
-        "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling": false,
-        "tags": [], "name": "Good Job 3", "id": "00000000-0000-0000-0000-000000000007",
-        "providerId": "microsoft.test", "target": "echo-quantinuum", "creationTime":
-        "2024-04-19T14:38:17.5588825+00:00", "endExecutionTime": null, "costEstimate":
-        null, "itemType": "Job"}'
-    headers:
-      connection:
-      - keep-alive
-      content-length:
-      - '1443'
-      content-type:
-      - application/json; charset=utf-8
-      transfer-encoding:
-      - chunked
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azure-quantum-qsharp azsdk-python-quantum/0.0.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
-    method: GET
-    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000007?api-version=2022-09-12-preview&test-sequence-id=8
-  response:
-    body:
-      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000007?sv=PLACEHOLDER&sr=c&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcwl",
-        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000007/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3DGood%2BJob%2B3-00000000-0000-0000-0000-000000000007.input.json",
-        "inputDataFormat": "qir.v1", "inputParams": {"entryPoint": "ENTRYPOINT__main",
-        "arguments": [], "targetCapability": "AdaptiveExecution"}, "metadata": null,
-        "sessionId": "00000000-0000-0000-0000-000000000004", "status": "Executing",
-        "jobType": "QuantumComputing", "outputDataFormat": "honeywell.qir.v1", "outputDataUri":
-        "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000007/outputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3DGood%2BJob%2B3-00000000-0000-0000-0000-000000000007.output.json",
-        "beginExecutionTime": "2024-04-19T14:38:21.037Z", "cancellationTime": null,
-        "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling": false,
-        "tags": [], "name": "Good Job 3", "id": "00000000-0000-0000-0000-000000000007",
-        "providerId": "microsoft.test", "target": "echo-quantinuum", "creationTime":
-        "2024-04-19T14:38:17.5588825+00:00", "endExecutionTime": null, "costEstimate":
-        null, "itemType": "Job"}'
-    headers:
-      connection:
-      - keep-alive
-      content-length:
-      - '1443'
-      content-type:
-      - application/json; charset=utf-8
-      transfer-encoding:
-      - chunked
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azure-quantum-qsharp azsdk-python-quantum/0.0.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
-    method: GET
-    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000007?api-version=2022-09-12-preview&test-sequence-id=9
-  response:
-    body:
-      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000007?sv=PLACEHOLDER&sr=c&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcwl",
-        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000007/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3DGood%2BJob%2B3-00000000-0000-0000-0000-000000000007.input.json",
-        "inputDataFormat": "qir.v1", "inputParams": {"entryPoint": "ENTRYPOINT__main",
-        "arguments": [], "targetCapability": "AdaptiveExecution"}, "metadata": null,
         "sessionId": "00000000-0000-0000-0000-000000000004", "status": "Succeeded",
         "jobType": "QuantumComputing", "outputDataFormat": "honeywell.qir.v1", "outputDataUri":
         "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000007/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=r&rscd=attachment%3B%20filename%3DGood%2BJob%2B3-00000000-0000-0000-0000-000000000007.output.json",
-        "beginExecutionTime": "2024-04-19T14:38:21.037Z", "cancellationTime": null,
+        "beginExecutionTime": "2024-08-11T02:32:01.138Z", "cancellationTime": null,
         "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling": false,
         "tags": [], "name": "Good Job 3", "id": "00000000-0000-0000-0000-000000000007",
         "providerId": "microsoft.test", "target": "echo-quantinuum", "creationTime":
-        "2024-04-19T14:38:17.5588825+00:00", "endExecutionTime": "2024-04-19T14:38:26.529Z",
+        "2024-08-11T02:31:58.598087+00:00", "endExecutionTime": "2024-08-11T02:32:02.079Z",
         "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '1468'
+      - '1467'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -3019,7 +3533,7 @@ interactions:
     body:
       string: '{"status": "Failure(s)", "jobFailurePolicy": "Continue", "name": "session-00000000-0000-0000-0000-000000000004",
         "id": "00000000-0000-0000-0000-000000000004", "providerId": "microsoft.test",
-        "target": "echo-quantinuum", "creationTime": "2024-04-19T14:37:54.7630082Z",
+        "target": "echo-quantinuum", "creationTime": "2024-08-11T02:31:08.0147276Z",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Session"}'
     headers:
       connection:
@@ -3055,11 +3569,11 @@ interactions:
         "sessionId": "00000000-0000-0000-0000-000000000004", "status": "Succeeded",
         "jobType": "QuantumComputing", "outputDataFormat": "honeywell.qir.v1", "outputDataUri":
         "https://mystorage.blob.core.windows.net:443/job-00000000-0000-0000-0000-000000000005/rawOutputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
-        "beginExecutionTime": "2024-04-19T14:38:01.92Z", "cancellationTime": null,
+        "beginExecutionTime": "2024-08-11T02:31:12.638Z", "cancellationTime": null,
         "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling": false,
         "tags": [], "name": "Good Job 1", "id": "00000000-0000-0000-0000-000000000005",
         "providerId": "microsoft.test", "target": "echo-quantinuum", "creationTime":
-        "2024-04-19T14:37:58.7117425Z", "endExecutionTime": "2024-04-19T14:38:02.522Z",
+        "2024-08-11T02:31:09.4516317Z", "endExecutionTime": "2024-08-11T02:31:18.09Z",
         "costEstimate": null, "itemType": "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000006?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
         "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000006/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcw",
         "inputDataFormat": "qir.v1", "inputParams": {"entryPoint": "ENTRYPOINT__main",
@@ -3067,14 +3581,14 @@ interactions:
         "sessionId": "00000000-0000-0000-0000-000000000004", "status": "Failed", "jobType":
         "QuantumComputing", "outputDataFormat": "invalid_output_format", "outputDataUri":
         "https://mystorage.blob.core.windows.net:443/job-00000000-0000-0000-0000-000000000006/outputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
-        "beginExecutionTime": "2024-04-19T14:38:11.997Z", "cancellationTime": null,
+        "beginExecutionTime": "2024-08-11T02:31:24.862Z", "cancellationTime": null,
         "quantumComputingData": {"count": 1}, "errorData": {"code": "CannotTranslateOutputData",
         "message": "The output returned by ''microsoft.test'' cannot be translated
         as specified by ''outputDataFormat''. Please ensure that ''outputDataFormat''
         is correct."}, "isCancelling": false, "tags": [], "name": "Bad Job 2", "id":
         "00000000-0000-0000-0000-000000000006", "providerId": "microsoft.test", "target":
-        "echo-quantinuum", "creationTime": "2024-04-19T14:38:08.7194259Z", "endExecutionTime":
-        "2024-04-19T14:38:12.565Z", "costEstimate": null, "itemType": "Job"}, {"containerUri":
+        "echo-quantinuum", "creationTime": "2024-08-11T02:31:21.6662252Z", "endExecutionTime":
+        "2024-08-11T02:31:46.312Z", "costEstimate": null, "itemType": "Job"}, {"containerUri":
         "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000007?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
         "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000007/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcw",
         "inputDataFormat": "qir.v1", "inputParams": {"entryPoint": "ENTRYPOINT__main",
@@ -3082,17 +3596,17 @@ interactions:
         "sessionId": "00000000-0000-0000-0000-000000000004", "status": "Succeeded",
         "jobType": "QuantumComputing", "outputDataFormat": "honeywell.qir.v1", "outputDataUri":
         "https://mystorage.blob.core.windows.net:443/job-00000000-0000-0000-0000-000000000007/rawOutputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
-        "beginExecutionTime": "2024-04-19T14:38:21.037Z", "cancellationTime": null,
+        "beginExecutionTime": "2024-08-11T02:32:01.138Z", "cancellationTime": null,
         "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling": false,
         "tags": [], "name": "Good Job 3", "id": "00000000-0000-0000-0000-000000000007",
         "providerId": "microsoft.test", "target": "echo-quantinuum", "creationTime":
-        "2024-04-19T14:38:17.5588825Z", "endExecutionTime": "2024-04-19T14:38:26.529Z",
+        "2024-08-11T02:31:58.598087Z", "endExecutionTime": "2024-08-11T02:32:02.079Z",
         "costEstimate": null, "itemType": "Job"}], "nextLink": null}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '4117'
+      - '4116'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -3119,8 +3633,8 @@ interactions:
     body:
       string: '{"status": "Failed", "jobFailurePolicy": "Continue", "name": "session-00000000-0000-0000-0000-000000000004",
         "id": "00000000-0000-0000-0000-000000000004", "providerId": "microsoft.test",
-        "target": "echo-quantinuum", "creationTime": "2024-04-19T14:37:54.7630082Z",
-        "endExecutionTime": "2024-04-19T14:38:30.1579207Z", "costEstimate": null,
+        "target": "echo-quantinuum", "creationTime": "2024-08-11T02:31:08.0147276Z",
+        "endExecutionTime": "2024-08-11T02:32:03.3681947Z", "costEstimate": null,
         "itemType": "Session"}'
     headers:
       connection:
