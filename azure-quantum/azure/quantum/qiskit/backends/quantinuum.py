@@ -59,7 +59,7 @@ def _get_n_qubits(name):
     if ".h1-" in name or "hqs-lt" in name:
         return 20
     if ".h2-" in name:
-        return 32
+        return 56
     warnings.warn(
         UserWarning(f"Number of qubits not known for target {name}. Defaulting to 20."))
     return 20
