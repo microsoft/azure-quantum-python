@@ -327,7 +327,7 @@ target '{self.name}' of provider '{self.provider_id}' not found."
     def _get_azure_provider_id(self) -> str:
         return self.provider_id
 
-    def _qir_module_to_gates(self, qir_module) -> List[int, int, int]:
+    def _qir_module_to_gates(self, qir_module) -> List[int]:
         try:
             from pyqir import Module, is_qubit_type, is_result_type, entry_point, is_entry_point, Function
 
