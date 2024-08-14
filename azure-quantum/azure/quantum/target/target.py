@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 ##
-from typing import TYPE_CHECKING, Any, Dict, Optional, Union, Type,  Protocol, runtime_checkable
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union, Type,  Protocol, runtime_checkable
 import io
 import json
 import abc
@@ -327,7 +327,7 @@ target '{self.name}' of provider '{self.provider_id}' not found."
     def _get_azure_provider_id(self) -> str:
         return self.provider_id
 
-    def _qir_module_to_gates(self, qir_module) -> Dict[str, int]:
+    def _qir_module_to_gates(self, qir_module) -> List[int, int, int]:
         try:
             from pyqir import Module, is_qubit_type, is_result_type, entry_point, is_entry_point, Function
 
