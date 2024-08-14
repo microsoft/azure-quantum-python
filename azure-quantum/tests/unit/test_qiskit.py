@@ -442,23 +442,13 @@ class TestQiskit(QuantumTestBase):
         cost = backend.estimate_cost(circuit, shots=100e3)
         self.assertEqual(cost.estimated_total, 0.0)
 
-        backend = provider.get_backend("ionq.qpu", is_passthrough=True)
+        backend = provider.get_backend("ionq.qpu.aria-1", is_passthrough=True)
         cost = backend.estimate_cost(circuit, shots=1024)
-        self.assertEqual(np.round(cost.estimated_total), 1.0)
+        self.assertEqual(np.round(cost.estimated_total), 98.0)
 
-        backend = provider.get_backend("ionq.qpu", is_passthrough=True)
+        backend = provider.get_backend("ionq.qpu.aria-1", is_passthrough=True)
         cost = backend.estimate_cost(circuit, shots=100e3)
-        self.assertEqual(np.round(cost.estimated_total), 66.0)
-
-        ## The following two tests are skipped until we can use a workspace
-        ## with this target available as part of the E2E tests.
-        # backend = provider.get_backend("ionq.qpu.aria-1")
-        # cost = backend.estimate_cost(circuit, shots=1024)
-        # self.assertEqual(np.round(cost.estimated_total), 1.0)
-
-        # backend = provider.get_backend("ionq.qpu.aria-1")
-        # cost = backend.estimate_cost(circuit, shots=100e3)
-        # self.assertEqual(np.round(cost.estimated_total), 240.0)
+        self.assertEqual(np.round(cost.estimated_total), 240.0)
 
     @pytest.mark.ionq
     def test_get_ionq_backends(self):
@@ -917,7 +907,7 @@ class TestQiskit(QuantumTestBase):
         self.assertFalse(config.simulator)
         self.assertEqual(1, config.max_experiments)
         self.assertEqual(23, config.num_qubits)
-        self.assertEqual("application/json", config.azure["content_type"])
+        self.assertEqual("qir.v1", config.azure["content_type"])
         self.assertEqual("ionq", config.azure["provider_id"])
         self.assertEqual("qir.v1", config.azure["input_data_format"])
         self.assertEqual(MICROSOFT_OUTPUT_DATA_FORMAT_V2, config.azure["output_data_format"])

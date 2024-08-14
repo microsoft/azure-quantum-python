@@ -85,7 +85,7 @@ class Job(BaseJob, FilteredJob):
         poll_wait = Job._default_poll_wait
         start_time = time.time()
         while not self.has_completed():
-            if timeout_secs is not None and (time.time() - start_time) >= timeout_secs:
+            if (time.time() - start_time) >= 30:
                 raise TimeoutError(f"The wait time has exceeded {timeout_secs} seconds.")
 
             logger.debug(

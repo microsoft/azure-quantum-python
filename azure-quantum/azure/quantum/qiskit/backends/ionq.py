@@ -337,13 +337,6 @@ class IonQSimulatorBackend(IonQBackend):
         )
         super().__init__(configuration=configuration, provider=provider, **kwargs)
 
-
-class IonQSimulatorNativeBackend(IonQSimulatorBackend):
-    def __init__(self, name: str, provider: "AzureQuantumProvider", **kwargs):
-        if "gateset" not in kwargs:
-            kwargs["gateset"] = "native"
-        super().__init__(name, provider, **kwargs)
-
     def _azure_config(self) -> Dict[str, str]:
         config = super()._azure_config()
         config.update(
@@ -352,6 +345,13 @@ class IonQSimulatorNativeBackend(IonQSimulatorBackend):
             }
         )
         return config
+
+
+class IonQSimulatorNativeBackend(IonQSimulatorBackend):
+    def __init__(self, name: str, provider: "AzureQuantumProvider", **kwargs):
+        if "gateset" not in kwargs:
+            kwargs["gateset"] = "native"
+        super().__init__(name, provider, **kwargs)
 
 
 class IonQAriaBackend(IonQBackend):
@@ -444,27 +444,9 @@ class IonQAriaNativeBackend(IonQAriaBackend):
             kwargs["gateset"] = "native"
         super().__init__(name, provider, **kwargs)
 
-    def _azure_config(self) -> Dict[str, str]:
-        config = super()._azure_config()
-        config.update(
-            {
-                "is_default": False,
-            }
-        )
-        return config
-
 
 class IonQForteNativeBackend(IonQForteBackend):
     def __init__(self, name: str, provider: "AzureQuantumProvider", **kwargs):
         if "gateset" not in kwargs:
             kwargs["gateset"] = "native"
         super().__init__(name, provider, **kwargs)
-
-    def _azure_config(self) -> Dict[str, str]:
-        config = super()._azure_config()
-        config.update(
-            {
-                "is_default": False,
-            }
-        )
-        return config
