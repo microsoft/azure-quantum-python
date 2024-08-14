@@ -46,6 +46,7 @@ logger = logging.getLogger(__name__)
 
 __all__ = ["QCISimulatorBackend" "QCIQPUBackend"]
 
+
 _DEFAULT_SHOTS_COUNT = 500
 
 class QCIBackend(AzureQirBackend):
@@ -118,6 +119,7 @@ class QCISimulatorBackend(QCIBackend):
                 "open_pulse": False,
                 "gates": [{"name": "TODO", "parameters": [], "qasm_def": "TODO"}],
                 "azure": self._azure_config(),
+                "is_default": True,
             }
         )
         logger.info("Initializing QCISimulatorBackend")
@@ -149,6 +151,7 @@ class QCIQPUBackend(QCIBackend):
                 "open_pulse": False,
                 "gates": [{"name": "TODO", "parameters": [], "qasm_def": "TODO"}],
                 "azure": self._azure_config(),
+                "is_default": True,
             }
         )
         logger.info("Initializing QCIQPUBackend")
