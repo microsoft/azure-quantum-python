@@ -120,37 +120,19 @@ see https://aka.ms/AQ/Docs/AddProvider"
             backend_list, filters=workspace_allowed, **kwargs
         )
 
-        # The `is_passthrough` flag is used as a more intuitive way to match passthrough backends, and
-        # to allow for us to set default passhtrough backends, while still defaulting to QIR backends
-        # in case we match to both a QIR and a passthrough backend. Without the `is_passthrough` flag 
-        # fetching backends for IonQ require at least 2 input flags to be able to match to a single
-        # backend, those being both `input_data_format` and `gateset` (as there are multiple gateset
-        # versions per passthrough backend) 
-        def filter_non_passthrough_defaults(filtered_backends):
-            filtered_defaults = {}
-
-            for backend in filtered_backends:
-                config = backend.configuration().azure
-                is_default =  config["is_default"]
-                is_passthrough = config["is_passthrough"]
-                name = backend.name()
-
-                # Process only if the backend is marked as default
-                if is_default:
-                    # If the name is not in the dictionary, add the backend
-                    # If the current backend is not passthrough, update it in the dictionary
-                    if name not in filtered_defaults or not is_passthrough:
-                        filtered_defaults[name] = backend
-
-            # Return the filtered default backends as a list
-            return list(filtered_defaults.values())
-
-        # Also filter out non-default backends & passthrough if necessary.
-        default_backends = filter_non_passthrough_defaults(filtered_backends)
+        # Also filter out non-default backends.
+        default_backends = list(
+            filter(
+                lambda backend: self._match_all(
+                    backend.configuration().to_dict(), {"is_default": True}
+                ),
+                filtered_backends,
+            )
+        ) 
 
         # If default backends were found - return them, otherwise return the filtered_backends collection.
         # The latter case could happen where there's no default backend defined for the specified target.  
-        if len(default_backends) > 0:            
+        if len(default_backends) > 0:          
             return default_backends
 
         return filtered_backends

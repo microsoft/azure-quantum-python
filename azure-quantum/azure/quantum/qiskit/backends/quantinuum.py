@@ -241,7 +241,6 @@ class QuantinuumBackend(AzureBackend):
             "input_data_format": "honeywell.openqasm.v1",
             "output_data_format": "honeywell.quantum-results.v1",
             "is_default": False,
-            "is_passthrough": True
         }
 
     def _translate_input(self, circuit):

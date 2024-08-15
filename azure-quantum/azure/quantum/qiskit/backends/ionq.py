@@ -269,7 +269,6 @@ class IonQBackend(AzureBackend):
             "input_data_format": "ionq.circuit.v1",
             "output_data_format": "ionq.quantum-results.v1",
             "is_default": False,
-            "is_passthrough": True
         }
 
     def _prepare_job_metadata(self, circuit, **kwargs):
@@ -337,15 +336,6 @@ class IonQSimulatorBackend(IonQBackend):
         )
         super().__init__(configuration=configuration, provider=provider, **kwargs)
 
-    def _azure_config(self) -> Dict[str, str]:
-        config = super()._azure_config()
-        config.update(
-            {
-                "is_default": True,
-            }
-        )
-        return config
-
 
 class IonQSimulatorNativeBackend(IonQSimulatorBackend):
     def __init__(self, name: str, provider: "AzureQuantumProvider", **kwargs):
@@ -385,15 +375,6 @@ class IonQAriaBackend(IonQBackend):
             "configuration", default_config
         )
         super().__init__(configuration=configuration, provider=provider, **kwargs)
-    
-    def _azure_config(self) -> Dict[str, str]:
-        config = super()._azure_config()
-        config.update(
-            {
-                "is_default": True,
-            }
-        )
-        return config
 
 
 class IonQForteBackend(IonQBackend):
@@ -427,15 +408,6 @@ class IonQForteBackend(IonQBackend):
             "configuration", default_config
         )
         super().__init__(configuration=configuration, provider=provider, **kwargs)
-    
-    def _azure_config(self) -> Dict[str, str]:
-        config = super()._azure_config()
-        config.update(
-            {
-                "is_default": True,
-            }
-        )
-        return config
 
 
 class IonQAriaNativeBackend(IonQAriaBackend):
