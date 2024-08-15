@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 ##
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union, Type,  Protocol, runtime_checkable
+from dataclasses import dataclass
 import io
 import json
 import abc
@@ -26,6 +27,14 @@ class QirRepresentable(Protocol):
     def _repr_qir_(self, **kwargs: Any) -> bytes:
         raise NotImplementedError
 
+@dataclass
+class GateStats:
+    one_qubit_gates: int
+    multi_qubit_gates: int
+    measurement_gates: int
+
+    def __iter__(self):
+        return iter((self.one_qubit_gates, self.multi_qubit_gates, self.measurement_gates))
 
 class Target(abc.ABC, SessionHost):
 
@@ -327,7 +336,8 @@ target '{self.name}' of provider '{self.provider_id}' not found."
     def _get_azure_provider_id(self) -> str:
         return self.provider_id
 
-    def _qir_module_to_gates(self, qir_module) -> List[int]:
+    @classmethod
+    def _calculate_qir_module_gate_stats(self, qir_module) -> GateStats:
         try:
             from pyqir import Module, is_qubit_type, is_result_type, entry_point, is_entry_point, Function
 
@@ -371,7 +381,11 @@ target '{self.name}' of provider '{self.provider_id}' not found."
                     if result_count > 0:
                         measurement_gates += 1
 
-        return one_qubit_gates, multi_qubit_gates, measurement_gates
+        return GateStats (
+            one_qubit_gates, 
+            multi_qubit_gates, 
+            measurement_gates
+        )
 
 
 def _determine_shots_or_deprecated_num_shots(

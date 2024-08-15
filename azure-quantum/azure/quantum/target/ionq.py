@@ -205,7 +205,7 @@ class IonQ(Target):
             N_2q = sum(map(num_2q_gates, filter(is_multi_q_gate, gates)))
 
         else:
-            N_1q, N_2q, _ = self._qir_module_to_gates(circuit)
+            N_1q, N_2q, _ = Target._calculate_qir_module_gate_stats(circuit)
             
         price = (price_1q * N_1q + price_2q * N_2q) * shots
         price = max(price, min_price)

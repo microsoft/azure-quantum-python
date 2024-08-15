@@ -36,6 +36,26 @@ except ImportError:
 To install run: pip install azure-quantum[qiskit]"
     )
 
+QIR_BASIS_GATES = [
+    "x",
+    "y",
+    "z",
+    "rx",
+    "ry",
+    "rz",
+    "h",
+    "swap",
+    "cx",
+    "cz",
+    "reset",
+    "s",
+    "sdg",
+    "t",
+    "tdg",
+    "measure",
+]
+
+
 class AzureBackendBase(Backend, SessionHost):
 
     # Name of the provider's input parameter which specifies number of shots for a submitted job.
@@ -281,6 +301,9 @@ class AzureQirBackend(AzureBackendBase):
             "output_data_format": "microsoft.quantum-results.v2",
             "is_default": True,
         }
+    
+    def _basis_gates(self) -> List[str]:
+        return QIR_BASIS_GATES
 
     def run(
         self,

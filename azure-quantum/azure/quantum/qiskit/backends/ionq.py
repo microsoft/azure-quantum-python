@@ -45,23 +45,6 @@ __all__ = [
     "IonQForteNativeBackend",
 ]
 
-QIR_BASIS_GATES = [
-    "x",
-    "y",
-    "z",
-    "rx",
-    "ry",
-    "rz",
-    "h",
-    "swap",
-    "cx",
-    "cz",
-    "s",
-    "sdg",
-    "t",
-    "tdg",
-    "measure",
-]
 
 _IONQ_SHOTS_INPUT_PARAM_NAME = "shots"
 _DEFAULT_SHOTS_COUNT = 500
@@ -136,7 +119,7 @@ class IonQSimulatorQirBackend(IonQQirBackendBase):
                 "local": False,
                 "coupling_map": None,
                 "description": "IonQ simulator on Azure Quantum",
-                "basis_gates": QIR_BASIS_GATES,
+                "basis_gates": self._basis_gates(),
                 "memory": False,
                 "n_qubits": 29,
                 "conditional": False,
@@ -169,7 +152,7 @@ class IonQAriaQirBackend(IonQQirBackendBase):
                 "local": False,
                 "coupling_map": None,
                 "description": "IonQ Aria QPU on Azure Quantum",
-                "basis_gates": QIR_BASIS_GATES,
+                "basis_gates": self._basis_gates(),
                 "memory": False,
                 "n_qubits": 23,
                 "conditional": False,
@@ -202,7 +185,7 @@ class IonQForteQirBackend(IonQQirBackendBase):
                 "local": False,
                 "coupling_map": None,
                 "description": "IonQ Forte QPU on Azure Quantum",
-                "basis_gates": QIR_BASIS_GATES,
+                "basis_gates": self._basis_gates(),
                 "memory": False,
                 "n_qubits": 35,
                 "conditional": False,

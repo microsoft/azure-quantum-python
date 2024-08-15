@@ -172,7 +172,7 @@ class Quantinuum(Target):
                             else:
                                 N_2q += 1
         else:
-            N_1q, N_2q, N_m = self._qir_module_to_gates(circuit)
+            N_1q, N_2q, N_m = Target._calculate_qir_module_gate_stats(circuit)
             
 
         import re
