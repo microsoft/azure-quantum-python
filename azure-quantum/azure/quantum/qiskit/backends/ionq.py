@@ -67,9 +67,6 @@ class IonQQirBackendBase(AzureQirBackend):
             },
             targetCapability="BasicExecution",
             )
-    
-    def gateset(self):
-        return self.configuration().gateset
 
     def _azure_config(self) -> Dict[str, str]:
         config = super()._azure_config()
@@ -109,7 +106,6 @@ class IonQSimulatorQirBackend(IonQQirBackendBase):
 
     def __init__(self, name: str, provider: "AzureQuantumProvider", **kwargs):
         """Base class for interfacing with an IonQ QIR Simulator backend"""
-        gateset = kwargs.pop("gateset", "qis")
         default_config = BackendConfiguration.from_dict(
             {
                 "backend_name": name,
@@ -127,7 +123,6 @@ class IonQSimulatorQirBackend(IonQQirBackendBase):
                 "open_pulse": False,
                 "gates": [{"name": "TODO", "parameters": [], "qasm_def": "TODO"}],
                 "azure": self._azure_config(),
-                "gateset": gateset
             }
         )
         logger.info("Initializing IonQSimulatorQirBackend")
@@ -142,7 +137,6 @@ class IonQAriaQirBackend(IonQQirBackendBase):
 
     def __init__(self, name: str, provider: "AzureQuantumProvider", **kwargs):
         """Base class for interfacing with an IonQ Aria QPU backend"""
-        gateset = kwargs.pop("gateset", "qis")
         default_config = BackendConfiguration.from_dict(
             {
                 "backend_name": name,
@@ -160,7 +154,6 @@ class IonQAriaQirBackend(IonQQirBackendBase):
                 "open_pulse": False,
                 "gates": [{"name": "TODO", "parameters": [], "qasm_def": "TODO"}],
                 "azure": self._azure_config(),
-                "gateset": gateset
             }
         )
         logger.info("Initializing IonQAriaQirBackend")
@@ -175,7 +168,6 @@ class IonQForteQirBackend(IonQQirBackendBase):
 
     def __init__(self, name: str, provider: "AzureQuantumProvider", **kwargs):
         """Base class for interfacing with an IonQ Forte QPU backend"""
-        gateset = kwargs.pop("gateset", "qis")
         default_config = BackendConfiguration.from_dict(
             {
                 "backend_name": name,
@@ -193,7 +185,6 @@ class IonQForteQirBackend(IonQQirBackendBase):
                 "open_pulse": False,
                 "gates": [{"name": "TODO", "parameters": [], "qasm_def": "TODO"}],
                 "azure": self._azure_config(),
-                "gateset": gateset
             }
         )
         logger.info("Initializing IonQForteQirBackend")

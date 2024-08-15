@@ -94,6 +94,13 @@ class QuantinuumQirBackendBase(AzureQirBackend):
             }
         )
         return config
+    
+    def _basis_gates(self) -> List[str]:
+        # We use all normal QIR basis gates, with the exception of `swap`
+        quantinuum_qir_basis_gates = list(super()._basis_gates())
+        quantinuum_qir_basis_gates.remove("swap")
+        
+        return quantinuum_qir_basis_gates
 
     def _get_n_qubits(self, name):
         return _get_n_qubits(name)
@@ -122,7 +129,7 @@ class QuantinuumSyntaxCheckerQirBackend(QuantinuumQirBackendBase):
                 "local": False,
                 "coupling_map": None,
                 "description": f"Quantinuum Syntax Checker on Azure Quantum",
-                "basis_gates": QUANTINUUM_BASIS_GATES,
+                "basis_gates": self._basis_gates(),
                 "memory": True,
                 "n_qubits": self._get_n_qubits(name),
                 "conditional": False,
@@ -159,7 +166,7 @@ class QuantinuumEmulatorQirBackend(QuantinuumQirBackendBase):
                 "local": False,
                 "coupling_map": None,
                 "description": f"Quantinuum emulator on Azure Quantum",
-                "basis_gates": QUANTINUUM_BASIS_GATES,
+                "basis_gates": self._basis_gates(),
                 "memory": True,
                 "n_qubits": self._get_n_qubits(name),
                 "conditional": False,
@@ -196,7 +203,7 @@ class QuantinuumQPUQirBackend(QuantinuumQirBackendBase):
                 "local": False,
                 "coupling_map": None,
                 "description": f"Quantinuum QPU on Azure Quantum",
-                "basis_gates": QUANTINUUM_BASIS_GATES,
+                "basis_gates": self._basis_gates(),
                 "memory": True,
                 "n_qubits": self._get_n_qubits(name),
                 "conditional": False,
