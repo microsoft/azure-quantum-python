@@ -45,7 +45,6 @@ __all__ = [
     "IonQForteNativeBackend",
 ]
 
-
 _IONQ_SHOTS_INPUT_PARAM_NAME = "shots"
 _DEFAULT_SHOTS_COUNT = 500
 
