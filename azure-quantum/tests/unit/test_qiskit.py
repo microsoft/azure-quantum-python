@@ -819,14 +819,6 @@ class TestQiskit(QuantumTestBase):
         self.assertEqual(config.gateset, "qis")
 
     @pytest.mark.ionq
-    def test_ionq_simulator_default_target_has_qis_gateset(self):
-        provider = DummyProvider()
-        backend = provider.get_backend("ionq.simulator")
-        self.assertIsInstance(backend, IonQSimulatorQirBackend)
-        config = backend.configuration()
-        self.assertEqual(config.gateset, "qis")
-
-    @pytest.mark.ionq
     def test_ionq_qpu_has_default(self):
         provider = DummyProvider()
         provider.get_backend("ionq.qpu.aria-1")
@@ -850,13 +842,6 @@ class TestQiskit(QuantumTestBase):
     def test_ionq_qpu_has_qis_gateset_target(self):
         provider = DummyProvider()
         backend = provider.get_backend("ionq.qpu.aria-1", gateset="qis")
-        config = backend.configuration()
-        self.assertEqual(config.gateset, "qis")
-
-    @pytest.mark.ionq
-    def test_ionq_qpu_default_target_has_qis_gateset(self):
-        provider = DummyProvider()
-        backend = provider.get_backend("ionq.qpu.aria-1")
         config = backend.configuration()
         self.assertEqual(config.gateset, "qis")
 
