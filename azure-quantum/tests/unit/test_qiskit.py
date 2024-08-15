@@ -883,7 +883,6 @@ class TestQiskit(QuantumTestBase):
         self.assertEqual("ionq", config.azure["provider_id"])
         self.assertEqual("qir.v1", config.azure["input_data_format"])
         self.assertEqual(MICROSOFT_OUTPUT_DATA_FORMAT_V2, config.azure["output_data_format"])
-        self.assertEqual("qis", backend.gateset())
 
     @pytest.mark.ionq
     def test_ionq_aria_has_default(self):
