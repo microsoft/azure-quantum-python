@@ -50,6 +50,24 @@ QUANTINUUM_BASIS_GATES = [
     "reset",
 ]
 
+QUANTINUUM_QIR_BASIS_GATES = [
+    "x",
+    "y",
+    "z",
+    "rx",
+    "ry",
+    "rz",
+    "h",
+    "cx",
+    "cz",
+    "reset",
+    "s",
+    "sdg",
+    "t",
+    "tdg",
+    "measure",
+]
+
 QUANTINUUM_PROVIDER_ID = "quantinuum"
 QUANTINUUM_PROVIDER_NAME = "Quantinuum"
 
@@ -96,11 +114,7 @@ class QuantinuumQirBackendBase(AzureQirBackend):
         return config
     
     def _basis_gates(self) -> List[str]:
-        # We use all normal QIR basis gates, with the exception of `swap`
-        quantinuum_qir_basis_gates = list(super()._basis_gates())
-        quantinuum_qir_basis_gates.remove("swap")
-        
-        return quantinuum_qir_basis_gates
+        return QUANTINUUM_QIR_BASIS_GATES
 
     def _get_n_qubits(self, name):
         return _get_n_qubits(name)
