@@ -58,16 +58,17 @@ class RegexScrubbingPatterns:
         f"https://login.(microsoftonline.com|windows-ppe.net)/{GUID_REGEX_CAPTURE}/oauth2/token"
     URL_OPENID_ENDPOINT = \
         f"https://login.(microsoftonline.com|windows-ppe.net)/{GUID_REGEX_CAPTURE}/v2.0/.well-known/openid-configuration"
-    URL_QUERY_SAS_KEY_SIGNATURE = r"sig=[^&]+\&"
-    URL_QUERY_SAS_KEY_VALUE = r"sv=[^&]+\&"
-    URL_QUERY_SAS_KEY_EXPIRATION = r"se=[^&]+\&"
-    URL_QUERY_AUTH_CLIENT_ID = r"client_id=[^&]+\&"
-    URL_QUERY_AUTH_CLIENT_SECRET = r"client_secret=[^&]+\&"
-    URL_QUERY_AUTH_CLIENT_ASSERTION = r"client_assertion=[^&]+\&"
-    URL_QUERY_AUTH_CLIENT_ASSERTION_TYPE = r"client_assertion_type=[^&]+\&"
-    URL_QUERY_AUTH_CLAIMS = r"claims=[^&]+\&"
-    URL_QUERY_AUTH_CODE_VERIFIER = r"code_verifier=[^&]+\&"
-    URL_QUERY_AUTH_CODE = r"code=[^&]+\&"
+    URL_QUERY_SAS_KEY_SIGNATURE = r"sig=[\w\%\-\.]+"
+    URL_QUERY_SAS_KEY_VALUE = r"sv=[\w\%\-\.]+"
+    URL_QUERY_SAS_KEY_START_DATE = r"st=[\w\%\-\.]+"
+    URL_QUERY_SAS_KEY_EXPIRATION = r"se=[\w\%\-\.]+"
+    URL_QUERY_AUTH_CLIENT_ID = r"client_id=[\w\%\-\.]+"
+    URL_QUERY_AUTH_CLIENT_SECRET = r"client_secret=[\w\%\-\.]+"
+    URL_QUERY_AUTH_CLIENT_ASSERTION = r"client_assertion=[\w\%\-\.]+"
+    URL_QUERY_AUTH_CLIENT_ASSERTION_TYPE = r"client_assertion_type=[\w\%\-\.]+"
+    URL_QUERY_AUTH_CLAIMS = r"claims=[\w\%\-\.]+"
+    URL_QUERY_AUTH_CODE_VERIFIER = r"code_verifier=[\w\%\-\.]+"
+    URL_QUERY_AUTH_CODE = r"code=[\w\%\-\.]+"
     URL_HTTP = r"http://" # Devskim: ignore DS137138
 
 class QuantumTestBase(ReplayableTest):
@@ -162,30 +163,32 @@ class QuantumTestBase(ReplayableTest):
             f'https://login.microsoftonline.com/{ZERO_UID}/v2.0/.well-known/openid-configuration'
         )
         self._regex_replacer.register_scrubbing(RegexScrubbingPatterns.URL_QUERY_SAS_KEY_SIGNATURE,
-                                      "sig=PLACEHOLDER&")
+                                      "sig=PLACEHOLDER")
         self._regex_replacer.register_scrubbing(RegexScrubbingPatterns.URL_QUERY_SAS_KEY_VALUE,
-                                      "sv=PLACEHOLDER&")
+                                      "sv=PLACEHOLDER")
+        self._regex_replacer.register_scrubbing(RegexScrubbingPatterns.URL_QUERY_SAS_KEY_START_DATE,
+                                      "st=2000-01-01T00%3A00%3A00Z")
         self._regex_replacer.register_scrubbing(RegexScrubbingPatterns.URL_QUERY_SAS_KEY_EXPIRATION,
-                                      "se=2050-01-01T00%3A00%3A00Z&")
+                                      "se=2050-01-01T00%3A00%3A00Z")
         self._regex_replacer.register_scrubbing(RegexScrubbingPatterns.URL_QUERY_AUTH_CLIENT_ID,
-                                      "client_id=PLACEHOLDER&")
+                                      "client_id=PLACEHOLDER")
         self._regex_replacer.register_scrubbing(RegexScrubbingPatterns.URL_QUERY_AUTH_CLIENT_SECRET,
-                                      "client_secret=PLACEHOLDER&")
+                                      "client_secret=PLACEHOLDER")
         self._regex_replacer.register_scrubbing(RegexScrubbingPatterns.URL_QUERY_AUTH_CLAIMS,
-                                      "claims=PLACEHOLDER&")
+                                      "claims=PLACEHOLDER")
         self._regex_replacer.register_scrubbing(RegexScrubbingPatterns.URL_QUERY_AUTH_CODE_VERIFIER,
-                                      "code_verifier=PLACEHOLDER&")
+                                      "code_verifier=PLACEHOLDER")
         self._regex_replacer.register_scrubbing(RegexScrubbingPatterns.URL_QUERY_AUTH_CODE,
-                                      "code=PLACEHOLDER&")
+                                      "code=PLACEHOLDER")
         self._regex_replacer.register_scrubbing(RegexScrubbingPatterns.URL_HTTP, "https://")
 
         self._regex_replacer.register_scrubbing(
             RegexScrubbingPatterns.URL_QUERY_AUTH_CLIENT_ASSERTION,
-            "client_assertion=PLACEHOLDER&"
+            "client_assertion=PLACEHOLDER"
         )
         self._regex_replacer.register_scrubbing(
             RegexScrubbingPatterns.URL_QUERY_AUTH_CLIENT_ASSERTION_TYPE,
-            "client_assertion_type=PLACEHOLDER&"
+            "client_assertion_type=PLACEHOLDER"
         )
 
     def disable_scrubbing(self, pattern: str) -> None:

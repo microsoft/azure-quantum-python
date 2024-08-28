@@ -68,8 +68,8 @@ interactions:
     uri: https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token
   response:
     body:
-      string: '{"token_type": "Bearer", "expires_in": 1754790750, "ext_expires_in":
-        1754790750, "refresh_in": 31536000, "access_token": "PLACEHOLDER"}'
+      string: '{"token_type": "Bearer", "expires_in": 1756414174, "ext_expires_in":
+        1756414174, "refresh_in": 31536000, "access_token": "PLACEHOLDER"}'
     headers:
       content-length:
       - '135'
@@ -93,16 +93,22 @@ interactions:
     uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/quotas?api-version=2022-09-12-preview&test-sequence-id=1
   response:
     body:
-      string: '{"value": [{"dimension": "concurrent_dft_jobs", "scope": "Subscription",
-        "providerId": "microsoft-elements", "utilization": 0.0, "holds": 0.0, "limit":
-        5.0, "period": "None"}, {"dimension": "concurrent_resource_estimator_jobs",
-        "scope": "Workspace", "providerId": "microsoft-qc", "utilization": 0.0, "holds":
-        0.0, "limit": 10.0, "period": "None"}], "nextLink": null}'
+      string: '{"value": [{"dimension": "concurrent_resource_estimator_jobs", "scope":
+        "Workspace", "providerId": "microsoft-qc", "utilization": 0.0, "holds": 0.0,
+        "limit": 10.0, "period": "None"}, {"dimension": "hqc", "scope": "Subscription",
+        "providerId": "quantinuum", "utilization": 0.0, "holds": 0.0, "limit": 40.0,
+        "period": "Infinite"}, {"dimension": "ehqc", "scope": "Subscription", "providerId":
+        "quantinuum", "utilization": 975.3200000000004, "holds": 0.0, "limit": 8000.0,
+        "period": "Infinite"}, {"dimension": "provider-credit", "scope": "Subscription",
+        "providerId": "rigetti", "utilization": 0.0, "holds": 0.0, "limit": 25000.0,
+        "period": "Infinite"}, {"dimension": "jobcount", "scope": "Workspace", "providerId":
+        "qci", "utilization": 12.0, "holds": 0.0, "limit": 1000.0, "period": "Monthly"}],
+        "nextLink": null}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '366'
+      - '811'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
