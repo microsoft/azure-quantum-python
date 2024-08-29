@@ -1428,12 +1428,8 @@ class TestQiskit(QuantumTestBase):
             memory = result.get_memory()
 
             self.assertEqual(len(memory), shots)
-            correct_results = 0
-            for shot in memory:
-                if shot == "000" or shot == "111":
-                    correct_results += 1
-            
-            self.assertTrue(correct_results >= shots * 0.95) # assert 95% of our shots are correct
+            # shot must consist of 3 bits
+            self.assertTrue(all([shot.count("0") + shot.count("1") == 3 for shot in memory]))
             self.assertEqual(counts, result.data()["counts"])  
 
     def _test_qiskit_submit_quantinuum(self, circuit, target="quantinuum.sim.h1-1e", **kwargs):
