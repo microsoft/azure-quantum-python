@@ -33,8 +33,8 @@ from azure.quantum.qiskit.backends.backend import (
     AzureBackend,
     AzureQirBackend,
 )
-from azure.quantum.qiskit.backends.quantinuum import QuantinuumEmulatorQirBackend
-from azure.quantum.qiskit.backends.ionq import IonQSimulatorQirBackend
+from azure.quantum.qiskit.backends.quantinuum import QuantinuumEmulatorQirBackend, QuantinuumQirBackendBase
+from azure.quantum.qiskit.backends.ionq import IonQSimulatorQirBackend, IonQAriaQirBackend
 
 # This provider is used to stub out calls to the AzureQuantumProvider
 # There are live tests that use the available backends in the workspace
@@ -291,6 +291,41 @@ class TestQiskit(QuantumTestBase):
         provider = AzureQuantumProvider(workspace=workspace)
         self.assertIn("azure-quantum-qiskit", provider._workspace.user_agent)
         backend = provider.get_backend("ionq.simulator")
+        self.assertIsInstance(backend, IonQSimulatorQirBackend)
+        num_shots = 1000
+
+        circuit = self._5_qubit_superposition()
+        circuit.metadata = {"some": "data"}
+
+        qiskit_job = backend.run(circuit, shots=num_shots)
+
+        # Check job metadata:
+        self.assertEqual(qiskit_job._azure_job.details.target, "ionq.simulator")
+        self.assertEqual(qiskit_job._azure_job.details.provider_id, "ionq")
+        self.assertEqual(qiskit_job._azure_job.details.input_data_format, "qir.v1")
+        self.assertEqual(qiskit_job._azure_job.details.output_data_format, MICROSOFT_OUTPUT_DATA_FORMAT_V2)
+        self.assertIn("qiskit", qiskit_job._azure_job.details.metadata)
+        self.assertIn("name", qiskit_job._azure_job.details.metadata)
+        self.assertIn("metadata", qiskit_job._azure_job.details.metadata)
+
+        # Make sure the job is completed before fetching the results
+        self._qiskit_wait_to_complete(qiskit_job, provider)
+
+        if JobStatus.DONE == qiskit_job.status():
+            result = qiskit_job.result()
+            self.assertAlmostEqual(result.data()["counts"]["0"], num_shots // 2, delta=50)
+            self.assertAlmostEqual(result.data()["counts"]["1"], num_shots // 2, delta=50)
+            self.assertEqual(result.data()["probabilities"], {"0": 0.5, "1": 0.5})
+            counts = result.get_counts()
+            self.assertEqual(counts, result.data()["counts"])
+            self.assertEqual(result.results[0].header.num_qubits, 5)
+            self.assertEqual(result.results[0].header.metadata["some"], "data")
+
+    def test_qiskit_submit_ionq_5_qubit_superposition_passthrough(self):
+        workspace = self.create_workspace()
+        provider = AzureQuantumProvider(workspace=workspace)
+        self.assertIn("azure-quantum-qiskit", provider._workspace.user_agent)
+        backend = provider.get_backend("ionq.simulator", input_data_format="ionq.circuit.v1", gateset="qis")
         num_shots = 1000
 
         circuit = self._5_qubit_superposition()
@@ -319,7 +354,7 @@ class TestQiskit(QuantumTestBase):
             self.assertEqual(result.data()["probabilities"], {"0": 0.5, "1": 0.5})
             counts = result.get_counts()
             self.assertEqual(counts, result.data()["counts"])
-            self.assertEqual(result.results[0].header.num_qubits, "5")
+            self.assertEqual(result.results[0].header.num_qubits, '5')
             self.assertEqual(result.results[0].header.metadata["some"], "data")
 
     def test_qiskit_provider_init_with_workspace_not_raises_deprecation(self):
@@ -383,14 +418,35 @@ class TestQiskit(QuantumTestBase):
         provider = AzureQuantumProvider(workspace=workspace)
         self.assertIn("azure-quantum-qiskit", provider._workspace.user_agent)
         backend = provider.get_backend("ionq.simulator")
+        self.assertIsInstance(backend, IonQSimulatorQirBackend)
         cost = backend.estimate_cost(circuit, shots=100e3)
         self.assertEqual(cost.estimated_total, 0.0)
 
         backend = provider.get_backend("ionq.qpu.aria-1")
+        self.assertIsInstance(backend, IonQAriaQirBackend)
         cost = backend.estimate_cost(circuit, shots=1024)
         self.assertEqual(np.round(cost.estimated_total), 98.0)
 
         backend = provider.get_backend("ionq.qpu.aria-1")
+        self.assertIsInstance(backend, IonQAriaQirBackend)
+        cost = backend.estimate_cost(circuit, shots=100e3)
+        self.assertEqual(np.round(cost.estimated_total), 240.0)
+
+    @pytest.mark.ionq
+    def test_plugins_estimate_cost_qiskit_ionq_passthrough(self):
+        circuit = self._3_qubit_ghz()
+        workspace = self.create_workspace()
+        provider = AzureQuantumProvider(workspace=workspace)
+        self.assertIn("azure-quantum-qiskit", provider._workspace.user_agent)
+        backend = provider.get_backend("ionq.simulator", input_data_format="ionq.circuit.v1", gateset="qis")
+        cost = backend.estimate_cost(circuit, shots=100e3)
+        self.assertEqual(cost.estimated_total, 0.0)
+
+        backend = provider.get_backend("ionq.qpu.aria-1", input_data_format="ionq.circuit.v1", gateset="qis")
+        cost = backend.estimate_cost(circuit, shots=1024)
+        self.assertEqual(np.round(cost.estimated_total), 98.0)
+
+        backend = provider.get_backend("ionq.qpu.aria-1", input_data_format="ionq.circuit.v1", gateset="qis")
         cost = backend.estimate_cost(circuit, shots=100e3)
         self.assertEqual(np.round(cost.estimated_total), 240.0)
 
@@ -418,7 +474,7 @@ class TestQiskit(QuantumTestBase):
 
         with pytest.raises(NotImplementedError) as exc:
             backend.run(circuit=[circuit, circuit], shots=500)
-        self.assertEqual(str(exc.value), "Multi-experiment jobs are not supported!")
+        self.assertEqual(str(exc.value), "This backend only supports running a maximum of 1 circuits per job.")
 
     @pytest.mark.ionq
     @pytest.mark.live_test
@@ -427,7 +483,7 @@ class TestQiskit(QuantumTestBase):
 
         circuit = self._3_qubit_ghz()
         qobj = assemble(circuit)
-        self._test_qiskit_submit_ionq(circuit=qobj, shots=1024)
+        self._test_qiskit_submit_ionq_passthrough(circuit=qobj, shots=1024)
 
     @pytest.mark.ionq
     @pytest.mark.live_test
@@ -480,8 +536,34 @@ class TestQiskit(QuantumTestBase):
 
             self.assertEqual(len(memory), shots)
             self.assertTrue(all([shot == "000" or shot == "111" for shot in memory]))
-            self.assertEqual(counts, result.data()["counts"])  
+            self.assertEqual(counts, result.data()["counts"])
     
+    @pytest.mark.ionq
+    @pytest.mark.live_test
+    def test_plugins_submit_qiskit_to_ionq_passthrough(self):
+        circuit = self._3_qubit_ghz()
+        self._test_qiskit_submit_ionq_passthrough(circuit)
+
+    @pytest.mark.ionq
+    @pytest.mark.live_test
+    def test_plugins_submit_qiskit_circuit_as_list_to_ionq_passthrough(self):
+        circuit = self._3_qubit_ghz()
+        self._test_qiskit_submit_ionq_passthrough([circuit])
+
+    @pytest.mark.ionq
+    @pytest.mark.live_test
+    def test_plugins_submit_qiskit_multi_circuit_experiment_to_ionq_passthrough(self):
+        circuit = self._3_qubit_ghz()
+
+        workspace = self.create_workspace()
+        provider = AzureQuantumProvider(workspace=workspace)
+        self.assertIn("azure-quantum-qiskit", provider._workspace.user_agent)
+        backend = provider.get_backend("ionq.simulator", input_data_format="ionq.circuit.v1", gateset="qis")
+
+        with pytest.raises(NotImplementedError) as exc:
+            backend.run(circuit=[circuit, circuit], shots=500)
+        self.assertEqual(str(exc.value), "Multi-experiment jobs are not supported!")
+
     def _qiskit_wait_to_complete(
             self,
             qiskit_job,
@@ -499,7 +581,8 @@ class TestQiskit(QuantumTestBase):
         workspace = self.create_workspace()
         provider = AzureQuantumProvider(workspace=workspace)
         backend = provider.get_backend("ionq.simulator")
-        
+        self.assertIsInstance(backend, IonQSimulatorQirBackend)
+
         shots = 10
         qiskit_job = backend.run(circuit, shots=shots)
         self._qiskit_wait_to_complete(qiskit_job, provider)
@@ -511,7 +594,8 @@ class TestQiskit(QuantumTestBase):
         workspace = self.create_workspace()
         provider = AzureQuantumProvider(workspace=workspace)
         backend = provider.get_backend("ionq.simulator")
-        
+        self.assertIsInstance(backend, IonQSimulatorQirBackend)
+
         qiskit_job = backend.run(circuit)
         self._qiskit_wait_to_complete(qiskit_job, provider)
         self.assertEqual(qiskit_job._azure_job.details.input_params["shots"], 500)
@@ -527,7 +611,53 @@ class TestQiskit(QuantumTestBase):
         workspace = self.create_workspace()
         provider = AzureQuantumProvider(workspace=workspace)
         backend = provider.get_backend("ionq.simulator")
-        
+        self.assertIsInstance(backend, IonQSimulatorQirBackend)
+
+        shots = 10
+
+        with pytest.warns(
+            DeprecationWarning, 
+            match="The 'count' parameter will be deprecated. Please, use 'shots' parameter instead."
+        ):
+            qiskit_job = backend.run(circuit, count=shots)
+        self._qiskit_wait_to_complete(qiskit_job, provider)
+        self.assertEqual(qiskit_job._azure_job.details.input_params["shots"], shots)
+
+    def test_plugins_submit_qiskit_to_ionq_with_shots_param_passthrough(self):
+        circuit = self._3_qubit_ghz()
+
+        workspace = self.create_workspace()
+        provider = AzureQuantumProvider(workspace=workspace)
+        backend = provider.get_backend("ionq.simulator", input_data_format="ionq.circuit.v1", gateset="qis")
+
+        shots = 10
+        qiskit_job = backend.run(circuit, shots=shots)
+        self._qiskit_wait_to_complete(qiskit_job, provider)
+        self.assertEqual(qiskit_job._azure_job.details.input_params["shots"], shots)
+    
+    def test_plugins_submit_qiskit_to_ionq_with_default_shots_passthrough(self):
+        circuit = self._3_qubit_ghz()
+
+        workspace = self.create_workspace()
+        provider = AzureQuantumProvider(workspace=workspace)
+        backend = provider.get_backend("ionq.simulator", input_data_format="ionq.circuit.v1", gateset="qis")
+
+        qiskit_job = backend.run(circuit)
+        self._qiskit_wait_to_complete(qiskit_job, provider)
+        self.assertEqual(qiskit_job._azure_job.details.input_params["shots"], 500)
+
+    def test_plugins_submit_qiskit_to_ionq_with_deprecated_count_param_passthrough(self):
+        """
+        Verify that a warning message is printed when the 'count' option is specified.
+        This option was allowed in earlier versions, but now it is accepted only to keep existing 
+        user codebase compatible.
+        """
+        circuit = self._3_qubit_ghz()
+
+        workspace = self.create_workspace()
+        provider = AzureQuantumProvider(workspace=workspace)
+        backend = provider.get_backend("ionq.simulator", input_data_format="ionq.circuit.v1", gateset="qis")
+
         shots = 10
 
         with pytest.warns(
@@ -543,6 +673,47 @@ class TestQiskit(QuantumTestBase):
         provider = AzureQuantumProvider(workspace=workspace)
         self.assertIn("azure-quantum-qiskit", provider._workspace.user_agent)
         backend = provider.get_backend("ionq.simulator")
+        self.assertIsInstance(backend, IonQSimulatorQirBackend)
+        expected_data_format = (
+            kwargs["input_data_format"]
+            if "input_data_format" in kwargs
+            else "qir.v1"
+        )
+
+        shots = kwargs.get("shots", backend.options.shots)
+
+        qiskit_job = backend.run(circuit, **kwargs)
+
+        # Check job metadata:
+        self.assertEqual(qiskit_job._azure_job.details.target, "ionq.simulator")
+        self.assertEqual(qiskit_job._azure_job.details.provider_id, "ionq")
+        self.assertEqual(qiskit_job._azure_job.details.input_data_format, expected_data_format)
+        self.assertEqual(qiskit_job._azure_job.details.output_data_format, MICROSOFT_OUTPUT_DATA_FORMAT_V2)
+        self.assertEqual(qiskit_job._azure_job.details.input_params["shots"], shots)
+        self.assertIn("qiskit", qiskit_job._azure_job.details.metadata)
+        self.assertIn("name", qiskit_job._azure_job.details.metadata)
+        self.assertIn("metadata", qiskit_job._azure_job.details.metadata)
+
+        # Make sure the job is completed before fetching the results
+        self._qiskit_wait_to_complete(qiskit_job, provider)
+
+        if JobStatus.DONE == qiskit_job.status():
+            result = qiskit_job.result()
+            self.assertEqual(sum(result.data()["counts"].values()), shots)
+            self.assertAlmostEqual(result.data()["counts"]["000"], shots // 2, delta=50)
+            self.assertAlmostEqual(result.data()["counts"]["111"], shots // 2, delta=50)
+            self.assertEqual(result.data()["probabilities"], {"000": 0.5, "111": 0.5})
+            counts = result.get_counts()
+            self.assertEqual(counts, result.data()["counts"])
+            self.assertTrue(hasattr(result.results[0].header, "num_qubits"))
+            self.assertTrue(hasattr(result.results[0].header, "metadata"))
+    
+    def _test_qiskit_submit_ionq_passthrough(self, circuit, **kwargs):
+        workspace = self.create_workspace()
+        provider = AzureQuantumProvider(workspace=workspace)
+        self.assertIn("azure-quantum-qiskit", provider._workspace.user_agent)
+        backend = provider.get_backend("ionq.simulator", input_data_format="ionq.circuit.v1", gateset="qis")
+       
         expected_data_format = (
             kwargs["input_data_format"]
             if "input_data_format" in kwargs
@@ -578,6 +749,7 @@ class TestQiskit(QuantumTestBase):
             self.assertTrue(hasattr(result.results[0].header, "num_qubits"))
             self.assertTrue(hasattr(result.results[0].header, "metadata"))
     
+
     @pytest.mark.live_test
     def test_provider_returns_only_default_backends(self):
         workspace = self.create_workspace()
@@ -620,12 +792,14 @@ class TestQiskit(QuantumTestBase):
     def test_ionq_simulator_has_default(self):
         workspace = self.create_workspace()
         provider = DummyProvider(workspace=workspace)
-        provider.get_backend("ionq.simulator")
+        backend = provider.get_backend("ionq.simulator")
+        self.assertIsInstance(backend, IonQSimulatorQirBackend)
 
     @pytest.mark.ionq
     def test_ionq_simulator_has_qir_target(self):
         provider = DummyProvider()
         backend = provider.get_backend("ionq.simulator", input_data_format="qir.v1")
+        self.assertIsInstance(backend, IonQSimulatorQirBackend)
         config = backend.configuration()
         input_data_format = config.azure["input_data_format"]
         self.assertEqual(input_data_format, "qir.v1")
@@ -641,13 +815,6 @@ class TestQiskit(QuantumTestBase):
     def test_ionq_simulator_has_qis_gateset_target(self):
         provider = DummyProvider()
         backend = provider.get_backend("ionq.simulator", gateset="qis")
-        config = backend.configuration()
-        self.assertEqual(config.gateset, "qis")
-
-    @pytest.mark.ionq
-    def test_ionq_simulator_default_target_has_qis_gateset(self):
-        provider = DummyProvider()
-        backend = provider.get_backend("ionq.simulator")
         config = backend.configuration()
         self.assertEqual(config.gateset, "qis")
 
@@ -679,18 +846,11 @@ class TestQiskit(QuantumTestBase):
         self.assertEqual(config.gateset, "qis")
 
     @pytest.mark.ionq
-    def test_ionq_qpu_default_target_has_qis_gateset(self):
-        provider = DummyProvider()
-        backend = provider.get_backend("ionq.qpu.aria-1")
-        config = backend.configuration()
-        self.assertEqual(config.gateset, "qis")
-
-    @pytest.mark.ionq
     def test_translate_ionq_qir(self):
         circuit = self._3_qubit_ghz()
         workspace = self.create_workspace()
         provider = AzureQuantumProvider(workspace=workspace)
-        backend = IonQSimulatorQirBackend("ionq.simulator", provider)
+        backend = provider.get_backend("ionq.simulator")
         input_params = backend._get_input_params({})
 
         payload = backend._translate_input(circuit, input_params)
@@ -719,11 +879,10 @@ class TestQiskit(QuantumTestBase):
         self.assertFalse(config.simulator)
         self.assertEqual(1, config.max_experiments)
         self.assertEqual(23, config.num_qubits)
-        self.assertEqual("application/json", config.azure["content_type"])
+        self.assertEqual("qir.v1", config.azure["content_type"])
         self.assertEqual("ionq", config.azure["provider_id"])
-        self.assertEqual("ionq.circuit.v1", config.azure["input_data_format"])
-        self.assertEqual("ionq.quantum-results.v1", config.azure["output_data_format"])
-        self.assertEqual("qis", backend.gateset())
+        self.assertEqual("qir.v1", config.azure["input_data_format"])
+        self.assertEqual(MICROSOFT_OUTPUT_DATA_FORMAT_V2, config.azure["output_data_format"])
 
     @pytest.mark.ionq
     def test_ionq_aria_has_default(self):
@@ -800,8 +959,8 @@ class TestQiskit(QuantumTestBase):
     #     self.assertEqual(1, config.max_experiments)
     #     self.assertEqual(23, config.num_qubits)
     #     self.assertEqual("ionq", config.azure["provider_id"])
-    #     self.assertEqual("ionq.circuit.v1", config.azure["input_data_format"])
-    #     self.assertEqual("ionq.quantum-results.v1", config.azure["output_data_format"])
+    #     self.assertEqual("qir.v1", config.azure["input_data_format"])
+    #     self.assertEqual(MICROSOFT_OUTPUT_DATA_FORMAT_V2, config.azure["output_data_format"])
 
     @pytest.mark.ionq
     @pytest.mark.live_test
@@ -847,6 +1006,7 @@ class TestQiskit(QuantumTestBase):
         workspace = self.create_workspace()
         provider = AzureQuantumProvider(workspace=workspace)
         backend = provider.get_backend("ionq.simulator")
+        self.assertIsInstance(backend, IonQSimulatorQirBackend)
         circuit = self._3_qubit_ghz()
         qiskit_job = backend.run(circuit, shots=100)
 
@@ -870,26 +1030,64 @@ class TestQiskit(QuantumTestBase):
         self.assertIn("azure-quantum-qiskit", provider._workspace.user_agent)
 
         backend = provider.get_backend("quantinuum.sim.h1-1sc")
+        self.assertIsInstance(backend, QuantinuumQirBackendBase)
+
         cost = backend.estimate_cost(circuit, shots=100e3)
         self.assertEqual(cost.estimated_total, 0.0)
 
         backend = provider.get_backend("quantinuum.sim.h1-1e")
+        self.assertIsInstance(backend, QuantinuumQirBackendBase)
         cost = backend.estimate_cost(circuit, shots=100e3)
         self.assertEqual(cost.estimated_total, 745.0)
 
         backend = provider.get_backend("quantinuum.qpu.h1-1")
+        self.assertIsInstance(backend, QuantinuumQirBackendBase)
         cost = backend.estimate_cost(circuit, shots=100e3)
         self.assertEqual(cost.estimated_total, 745.0)
 
         backend = provider.get_backend("quantinuum.sim.h2-1sc")
+        self.assertIsInstance(backend, QuantinuumQirBackendBase)
         cost = backend.estimate_cost(circuit, shots=100e3)
         self.assertEqual(cost.estimated_total, 0.0)
 
         backend = provider.get_backend("quantinuum.sim.h2-1e")
+        self.assertIsInstance(backend, QuantinuumQirBackendBase)
         cost = backend.estimate_cost(circuit, shots=100e3)
         self.assertEqual(cost.estimated_total, 745.0)
 
         backend = provider.get_backend("quantinuum.qpu.h2-1")
+        self.assertIsInstance(backend, QuantinuumQirBackendBase)
+        cost = backend.estimate_cost(circuit, shots=100e3)
+        self.assertEqual(cost.estimated_total, 745.0)
+
+    @pytest.mark.quantinuum
+    def test_plugins_estimate_cost_qiskit_quantinuum_passthrough(self):
+        circuit = self._3_qubit_ghz()
+        workspace = self.create_workspace()
+        provider = AzureQuantumProvider(workspace=workspace)
+        self.assertIn("azure-quantum-qiskit", provider._workspace.user_agent)
+
+        backend = provider.get_backend("quantinuum.sim.h1-1sc", input_data_format="honeywell.openqasm.v1")
+        cost = backend.estimate_cost(circuit, shots=100e3)
+        self.assertEqual(cost.estimated_total, 0.0)
+
+        backend = provider.get_backend("quantinuum.sim.h1-1e", input_data_format="honeywell.openqasm.v1")
+        cost = backend.estimate_cost(circuit, shots=100e3)
+        self.assertEqual(cost.estimated_total, 745.0)
+
+        backend = provider.get_backend("quantinuum.qpu.h1-1", input_data_format="honeywell.openqasm.v1")
+        cost = backend.estimate_cost(circuit, shots=100e3)
+        self.assertEqual(cost.estimated_total, 745.0)
+
+        backend = provider.get_backend("quantinuum.sim.h2-1sc", input_data_format="honeywell.openqasm.v1")
+        cost = backend.estimate_cost(circuit, shots=100e3)
+        self.assertEqual(cost.estimated_total, 0.0)
+
+        backend = provider.get_backend("quantinuum.sim.h2-1e", input_data_format="honeywell.openqasm.v1")
+        cost = backend.estimate_cost(circuit, shots=100e3)
+        self.assertEqual(cost.estimated_total, 745.0)
+
+        backend = provider.get_backend("quantinuum.qpu.h2-1", input_data_format="honeywell.openqasm.v1")
         cost = backend.estimate_cost(circuit, shots=100e3)
         self.assertEqual(cost.estimated_total, 745.0)
 
@@ -935,12 +1133,46 @@ class TestQiskit(QuantumTestBase):
 
     @pytest.mark.quantinuum
     @pytest.mark.live_test
+    def test_plugins_submit_qiskit_to_quantinuum_passthrough(self):
+        circuit = self._3_qubit_ghz()
+        self._test_qiskit_submit_quantinuum_passthrough(circuit)
+
+    @pytest.mark.quantinuum
+    @pytest.mark.live_test
+    def test_plugins_submit_qiskit_to_quantinuum_h2_1e_passthrough(self):
+        circuit = self._3_qubit_ghz()
+        self._test_qiskit_submit_quantinuum_passthrough(circuit,
+                                            target="quantinuum.sim.h2-1e")
+
+    @pytest.mark.quantinuum
+    @pytest.mark.live_test
+    def test_plugins_submit_qiskit_to_quantinuum_h2_1sc_passthrough(self):
+        circuit = self._3_qubit_ghz()
+        self._test_qiskit_submit_quantinuum_passthrough(circuit,
+                                            target="quantinuum.sim.h2-1sc")
+
+    @pytest.mark.quantinuum
+    @pytest.mark.skip("Target was unavailable at the moment of the recording")
+    def test_plugins_submit_qiskit_to_quantinuum_h2_1qpu_passthrough(self):
+        circuit = self._3_qubit_ghz()
+        self._test_qiskit_submit_quantinuum_passthrough(circuit,
+                                            target="quantinuum.qpu.h2-1")
+
+    @pytest.mark.quantinuum
+    @pytest.mark.live_test
+    def test_plugins_submit_qiskit_circuit_as_list_to_quantinuum_passthrough(self):
+        circuit = self._3_qubit_ghz()
+        self._test_qiskit_submit_quantinuum_passthrough([circuit])
+
+    @pytest.mark.quantinuum
+    @pytest.mark.live_test
     def test_plugins_submit_qiskit_multi_circuit_experiment_to_quantinuum(self):
         circuit = self._3_qubit_ghz()
 
         workspace = self.create_workspace()
         provider = AzureQuantumProvider(workspace=workspace)
         backend = provider.get_backend("quantinuum.sim.h1-1e")
+        self.assertIsInstance(backend, QuantinuumQirBackendBase)
         self.assertIn("quantinuum.sim.h1-1e", backend.backend_names)
         self.assertIn(backend.backend_names[0], [
             t.name for t in workspace.get_targets(provider_id="quantinuum")
@@ -948,7 +1180,7 @@ class TestQiskit(QuantumTestBase):
 
         with self.assertRaises(NotImplementedError) as context:
             backend.run(circuit=[circuit, circuit], shots=None)
-        self.assertEqual(str(context.exception), "Multi-experiment jobs are not supported!")
+        self.assertEqual(str(context.exception), "This backend only supports running a maximum of 1 circuits per job.")
     
     @pytest.mark.quantinuum
     @pytest.mark.live_test
@@ -962,6 +1194,7 @@ class TestQiskit(QuantumTestBase):
         workspace = self.create_workspace()
         provider = AzureQuantumProvider(workspace=workspace)
         backend = provider.get_backend(name="quantinuum.sim.h1-1e")
+        self.assertIsInstance(backend, QuantinuumQirBackendBase)
         
         shots = 10
         with pytest.warns(
@@ -978,6 +1211,7 @@ class TestQiskit(QuantumTestBase):
         workspace = self.create_workspace()
         provider = AzureQuantumProvider(workspace=workspace)
         backend = provider.get_backend(name="quantinuum.sim.h1-1e")
+        self.assertIsInstance(backend, QuantinuumQirBackendBase)
         
         shots = 10
         qiskit_job = backend.run(circuit, shots=shots)
@@ -991,6 +1225,7 @@ class TestQiskit(QuantumTestBase):
         workspace = self.create_workspace()
         provider = AzureQuantumProvider(workspace=workspace)
         backend = provider.get_backend(name="quantinuum.sim.h1-1e")
+        self.assertIsInstance(backend, QuantinuumQirBackendBase)
         
         qiskit_job = backend.run(circuit)
         self._qiskit_wait_to_complete(qiskit_job, provider)
@@ -1003,6 +1238,7 @@ class TestQiskit(QuantumTestBase):
         workspace = self.create_workspace()
         provider = AzureQuantumProvider(workspace=workspace)
         backend = provider.get_backend(name="quantinuum.sim.h1-1e")
+        self.assertIsInstance(backend, QuantinuumQirBackendBase)
         
         shots = 100
         with pytest.warns(
@@ -1024,6 +1260,109 @@ class TestQiskit(QuantumTestBase):
         workspace = self.create_workspace()
         provider = AzureQuantumProvider(workspace=workspace)
         backend = provider.get_backend(name="quantinuum.sim.h1-1e")
+        self.assertIsInstance(backend, QuantinuumQirBackendBase)
+        
+        shots = 100
+
+        with pytest.warns(
+            match="Parameter 'count' is subject to change in future versions. Please, use 'shots' parameter instead."
+        ):
+            qiskit_job = backend.run(circuit, count=shots)
+
+        self._qiskit_wait_to_complete(qiskit_job, provider)
+        self.assertEqual(qiskit_job._azure_job.details.input_params["count"], shots)
+
+    @pytest.mark.quantinuum
+    @pytest.mark.live_test
+    def test_plugins_submit_qiskit_multi_circuit_experiment_to_quantinuum_passthrough(self):
+        circuit = self._3_qubit_ghz()
+
+        workspace = self.create_workspace()
+        provider = AzureQuantumProvider(workspace=workspace)
+        backend = provider.get_backend("quantinuum.sim.h1-1e", input_data_format="honeywell.openqasm.v1")
+        self.assertIn("quantinuum.sim.h1-1e", backend.backend_names)
+        self.assertIn(backend.backend_names[0], [
+            t.name for t in workspace.get_targets(provider_id="quantinuum")
+        ])
+
+        with self.assertRaises(NotImplementedError) as context:
+            backend.run(circuit=[circuit, circuit], shots=None)
+        self.assertEqual(str(context.exception), "Multi-experiment jobs are not supported!")
+    
+    @pytest.mark.quantinuum
+    @pytest.mark.live_test
+    def test_plugins_submit_qiskit_to_quantinuum_with_counts_param_passthrough(self):
+        """
+        This test verifies that we can pass a "provider-specific" shots number option.
+        Even if the usage of the 'shots' option is encouraged, we should also be able to specify provider's 
+        native option ('count' in this case).
+        """
+        circuit = self._3_qubit_ghz()
+        workspace = self.create_workspace()
+        provider = AzureQuantumProvider(workspace=workspace)
+        backend = provider.get_backend(name="quantinuum.sim.h1-1e", input_data_format="honeywell.openqasm.v1")
+        
+        shots = 10
+        with pytest.warns(
+            match="Parameter 'count' is subject to change in future versions."
+        ):
+            qiskit_job = backend.run(circuit, count=shots)
+        self._qiskit_wait_to_complete(qiskit_job, provider)
+        self.assertEqual(qiskit_job._azure_job.details.input_params["count"], shots)
+    
+    @pytest.mark.quantinuum
+    @pytest.mark.live_test
+    def test_plugins_submit_qiskit_to_quantinuum_with_explicit_shots_param_passthrough(self):
+        circuit = self._3_qubit_ghz()
+        workspace = self.create_workspace()
+        provider = AzureQuantumProvider(workspace=workspace)
+        backend = provider.get_backend(name="quantinuum.sim.h1-1e", input_data_format="honeywell.openqasm.v1")
+        
+        shots = 10
+        qiskit_job = backend.run(circuit, shots=shots)
+        self._qiskit_wait_to_complete(qiskit_job, provider)
+        self.assertEqual(qiskit_job._azure_job.details.input_params["count"], shots)
+
+    @pytest.mark.quantinuum
+    @pytest.mark.live_test
+    def test_plugins_submit_qiskit_to_quantinuum_with_default_shots_param_passthrough(self):
+        circuit = self._3_qubit_ghz()
+        workspace = self.create_workspace()
+        provider = AzureQuantumProvider(workspace=workspace)
+        backend = provider.get_backend(name="quantinuum.sim.h1-1e", input_data_format="honeywell.openqasm.v1")
+        
+        qiskit_job = backend.run(circuit)
+        self._qiskit_wait_to_complete(qiskit_job, provider)
+        self.assertEqual(qiskit_job._azure_job.details.input_params["count"], 500)
+
+    @pytest.mark.quantinuum
+    @pytest.mark.live_test
+    def test_plugins_submit_qiskit_to_quantinuum_with_conflicting_shots_and_count_from_options_passthrough(self):
+        circuit = self._3_qubit_ghz()
+        workspace = self.create_workspace()
+        provider = AzureQuantumProvider(workspace=workspace)
+        backend = provider.get_backend(name="quantinuum.sim.h1-1e", input_data_format="honeywell.openqasm.v1")
+        
+        shots = 100
+        with pytest.warns(
+            match="Parameter 'shots' conflicts with the 'count' parameter."
+        ):
+            qiskit_job = backend.run(circuit, shots=shots, count=10)
+
+        self._qiskit_wait_to_complete(qiskit_job, provider)
+        self.assertEqual(qiskit_job._azure_job.details.input_params["count"], shots)
+
+    @pytest.mark.quantinuum
+    @pytest.mark.live_test
+    def test_plugins_submit_qiskit_to_quantinuum_with_count_from_options_passthrough(self):
+        """
+        Check that backend also allows to specify shots by using a provider-specific option,
+        but also throws warning with recommndation to use 'shots'
+        """
+        circuit = self._3_qubit_ghz()
+        workspace = self.create_workspace()
+        provider = AzureQuantumProvider(workspace=workspace)
+        backend = provider.get_backend(name="quantinuum.sim.h1-1e", input_data_format="honeywell.openqasm.v1")
         
         shots = 100
 
@@ -1097,10 +1436,11 @@ class TestQiskit(QuantumTestBase):
         workspace = self.create_workspace()
         provider = AzureQuantumProvider(workspace=workspace)
         backend = provider.get_backend(target)
+        self.assertIsInstance(backend, QuantinuumQirBackendBase)
         expected_data_format = (
             kwargs["input_data_format"]
             if "input_data_format" in kwargs
-            else "honeywell.openqasm.v1"
+            else "qir.v1"
         )
         self.assertIn(target, backend.backend_names)
         self.assertIn(backend.backend_names[0], [
@@ -1120,6 +1460,51 @@ class TestQiskit(QuantumTestBase):
         self.assertEqual(qiskit_job._azure_job.details.target, target)
         self.assertEqual(qiskit_job._azure_job.details.provider_id, "quantinuum")
         self.assertEqual(qiskit_job._azure_job.details.input_data_format, expected_data_format)
+        self.assertEqual(qiskit_job._azure_job.details.output_data_format, MICROSOFT_OUTPUT_DATA_FORMAT_V2)
+        self.assertIn("count", qiskit_job._azure_job.details.input_params)
+        self.assertIn("qiskit", qiskit_job._azure_job.details.metadata)
+        self.assertIn("name", qiskit_job._azure_job.details.metadata)
+        self.assertIn("metadata", qiskit_job._azure_job.details.metadata)
+
+        # Make sure the job is completed before fetching the results
+        self._qiskit_wait_to_complete(qiskit_job, provider)
+
+        self.assertEqual(JobStatus.DONE, qiskit_job.status())
+        result = qiskit_job.result()
+        self.assertIn("counts", result.data())
+        self.assertIn("probabilities", result.data())
+        self.assertTrue(hasattr(result.results[0].header, "num_qubits"))
+        self.assertEqual(result.results[0].header.num_qubits, num_qubits)
+        self.assertEqual(result.results[0].header.metadata["some"], "data")
+
+    def _test_qiskit_submit_quantinuum_passthrough(self, circuit, target="quantinuum.sim.h1-1e", **kwargs):
+        workspace = self.create_workspace()
+        provider = AzureQuantumProvider(workspace=workspace)
+        backend = provider.get_backend(target, input_data_format="honeywell.openqasm.v1")
+
+        expected_data_format = (
+            kwargs["input_data_format"]
+            if "input_data_format" in kwargs
+            else "qir.v1"
+        )
+        self.assertIn(target, backend.backend_names)
+        self.assertIn(backend.backend_names[0], [
+            t.name for t in workspace.get_targets(provider_id="quantinuum")
+        ])
+
+        if isinstance(circuit, list):
+            num_qubits = circuit[0].num_qubits
+            circuit[0].metadata = {"some": "data"}
+        else:
+            num_qubits = circuit.num_qubits
+            circuit.metadata = {"some": "data"}
+
+        qiskit_job = backend.run(circuit, **kwargs)
+
+        # Check job metadata:
+        self.assertEqual(qiskit_job._azure_job.details.target, target)
+        self.assertEqual(qiskit_job._azure_job.details.provider_id, "quantinuum")
+        self.assertEqual(qiskit_job._azure_job.details.input_data_format, "honeywell.openqasm.v1")
         self.assertEqual(qiskit_job._azure_job.details.output_data_format, "honeywell.quantum-results.v1")
         self.assertIn("count", qiskit_job._azure_job.details.input_params)
         self.assertIn("qiskit", qiskit_job._azure_job.details.metadata)
@@ -1186,6 +1571,28 @@ class TestQiskit(QuantumTestBase):
             "quantinuum.sim.h2-1e",
         ]:
             config = provider.get_backend(target_name).configuration()
+            # We check for name so the test log includes it when reporting a failure
+            self.assertIsNotNone(target_name)
+            self.assertEqual(32, config.num_qubits)
+
+        # The following backends should have 20 qubits
+        for target_name in [
+            "quantinuum.qpu.h1-1",
+            "quantinuum.sim.h1-1sc",
+            "quantinuum.sim.h1-1e"
+        ]:
+            config = provider.get_backend(target_name, input_data_format="honeywell.openqasm.v1").configuration()
+            # We check for name so the test log includes it when reporting a failure
+            self.assertIsNotNone(target_name)
+            self.assertEqual(20, config.num_qubits)
+
+        # The following backends should have 32 qubits
+        for target_name in [
+            "quantinuum.qpu.h2-1",
+            "quantinuum.sim.h2-1sc",
+            "quantinuum.sim.h2-1e",
+        ]:
+            config = provider.get_backend(target_name, input_data_format="honeywell.openqasm.v1").configuration()
             # We check for name so the test log includes it when reporting a failure
             self.assertIsNotNone(target_name)
             self.assertEqual(32, config.num_qubits)
@@ -1370,7 +1777,7 @@ class TestQiskit(QuantumTestBase):
         self.assertEqual(qiskit_job._azure_job.details.target, "qci.simulator")
         self.assertEqual(qiskit_job._azure_job.details.provider_id, "qci")
         self.assertEqual(qiskit_job._azure_job.details.input_data_format, "qir.v1")
-        self.assertEqual(qiskit_job._azure_job.details.output_data_format, "microsoft.quantum-results.v2")
+        self.assertEqual(qiskit_job._azure_job.details.output_data_format, MICROSOFT_OUTPUT_DATA_FORMAT_V2)
         self.assertEqual(qiskit_job._azure_job.details.input_params["shots"], shots)
         self.assertEqual(qiskit_job._azure_job.details.input_params["items"][0]["entryPoint"], circuit.name)
         self.assertEqual(qiskit_job._azure_job.details.input_params["items"][0]["arguments"], [])

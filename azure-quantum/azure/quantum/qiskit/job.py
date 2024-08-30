@@ -312,6 +312,26 @@ class AzureQuantumJob(JobV1):
             entry_point_names.append(entry_point["entryPoint"])
         return entry_point_names if len(entry_point_names) > 0 else ["main"]
 
+    def _get_headers(self):
+        headers = self._azure_job.details.metadata
+        if (not isinstance(headers, list)):
+            headers = [headers]
+
+        # This function will attempt to parse the header into a JSON object, and if the header is not a JSON object, we return the header itself
+        def tryParseJSON(header):
+            try:
+                json_object = json.loads(header)
+            except ValueError as e:
+                return header
+            return json_object
+        
+        for header in headers:
+            del header['qiskit'] # we throw out the qiskit header as it is implied
+            for key in header.keys():
+                header[key] = tryParseJSON(header[key])
+        return headers
+
+
     def _format_microsoft_v2_results(self) -> List[Dict[str, Any]]:
         success = self._azure_job.details.status == "Succeeded"
 
@@ -326,10 +346,15 @@ class AzureQuantumJob(JobV1):
         entry_point_names = self._get_entry_point_names()
 
         results = self._translate_microsoft_v2_results()
-        
+
         if len(results) != len(entry_point_names):
-            raise ValueError("The number of experiment results does not match the number of experiment names")
+            raise ValueError("The number of experiment results does not match the number of entry point names")
         
+        headers = self._get_headers()
+        
+        if len(results) != len(headers):
+            raise ValueError("The number of experiment results does not match the number of headers")
+ 
         status = self.status()
 
         return [{
@@ -338,7 +363,5 @@ class AzureQuantumJob(JobV1):
             "shots": total_count,
             "name": name,
             "status": status,
-            "header": {
-                "name": name
-            }
-        } for name, (total_count, result) in zip(entry_point_names, results)]
+            "header": header 
+        } for name, (total_count, result), header in zip(entry_point_names, results, headers)]
