@@ -63,7 +63,7 @@ extends:
           outputs:
           - output: pipelineArtifact
             displayName: 'Upload "azure-quantum" artifacts'
-            targetPath: $(Build.SourcesDirectory)/azure-quantum/target/wheels/
+            targetPath: $(Build.SourcesDirectory)/azure-quantum/artifacts/
             artifactName: azure-quantum-wheels
 
         steps:
@@ -89,12 +89,12 @@ extends:
 
         - script: |
             cd $(Build.SourcesDirectory)/azure-quantum
-            python setup.py sdist --dist-dir=target/wheels
-            python setup.py bdist_wheel --dist-dir=target/wheels
+            python setup.py sdist --dist-dir=artifacts/wheels
+            python setup.py bdist_wheel --dist-dir=artifacts/wheels
           displayName: Build "azure-quantum" package
 
         - script: |
-            copy set_version.py $(Build.SourcesDirectory)/azure-quantum/target/wheels
+            copy set_version.py "$(Build.SourcesDirectory)/azure-quantum/artifacts"
           displayName: Copy "set_version.py" to artifacts
 
       - job: "Test_Azure_Quantum_Python"
@@ -175,12 +175,12 @@ extends:
             )
           displayName: Copy built "azure-quantum" package artifacts
           inputs:
-            SourceFolder: '$(Pipeline.Workspace)/azure-quantum-wheels'
+            SourceFolder: '$(Pipeline.Workspace)/azure-quantum-wheels/wheels'
             Contents: '**'
-            TargetFolder: '$(Build.ArtifactStagingDirectory)/target/wheels'
+            TargetFolder: '$(Build.ArtifactStagingDirectory)/artifacts/wheels'
 
         - script: |
-            ls $(Build.ArtifactStagingDirectory)/target/wheels/*
+            ls $(Build.ArtifactStagingDirectory)/artifacts/wheels/*
           displayName: List Py Artifacts to publish
 
         - task: GitHubRelease@1
@@ -197,7 +197,7 @@ extends:
             target: $(Build.SourceVersion)
             addChangeLog: False
             assets: |
-              $(Build.ArtifactStagingDirectory)/target/wheels/*
+              $(Build.ArtifactStagingDirectory)/artifacts/wheels/*
 
         - task: EsrpRelease@7
           condition: ${{ parameters.Publish_Python_Package_To_PyPi }}
@@ -210,7 +210,7 @@ extends:
             ClientId: '832c049d-cd07-4c1c-bfa5-c07250d190cb'
             Intent: 'PackageDistribution'
             ContentType: 'PyPi'
-            FolderLocation: '$(Build.ArtifactStagingDirectory)/target/wheels'
+            FolderLocation: '$(Build.ArtifactStagingDirectory)/artifacts/wheels'
             WaitForReleaseCompletion: true
             Owners: '$(OwnerPersonalAlias)@microsoft.com'                             # Group email here fails the task with non-actionable output.
             Approvers: 'billti@microsoft.com'
