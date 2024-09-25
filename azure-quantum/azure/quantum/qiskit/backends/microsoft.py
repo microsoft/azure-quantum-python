@@ -3,36 +3,17 @@
 # Licensed under the MIT License.
 ##
 
-from typing import TYPE_CHECKING, Any, Dict, List
+from typing import TYPE_CHECKING, Dict, List
 from azure.quantum.version import __version__
 from qiskit import QuantumCircuit
 from abc import abstractmethod
-from .backend import AzureQirBackend
+from .backend import AzureQirBackend, QIR_BASIS_GATES
 
 from qiskit.providers.models import BackendConfiguration
 from qiskit.providers import Options, Provider
-
-QIR_BASIS_GATES = [
-    "measure",
-    "m",
-    "ccx",
-    "cx",
-    "cz",
-    "h",
-    "reset",
-    "rx",
-    "ry",
-    "rz",
-    "s",
-    "sdg",
-    "swap",
-    "t",
-    "tdg",
-    "x",
-    "y",
-    "z",
-    "id",
-]
+from qsharp import TargetProfile
+from qsharp.interop.qiskit import ResourceEstimatorBackend
+import pyqir as pyqir
 
 if TYPE_CHECKING:
     from azure.quantum.qiskit import AzureQuantumProvider
@@ -55,7 +36,7 @@ class MicrosoftBackend(AzureQirBackend):
 
     @classmethod
     def _default_options(cls):
-        return Options(targetCapability="AdaptiveExecution")
+        return Options(target_profile=TargetProfile.Adaptive_RI)
 
     def _azure_config(self) -> Dict[str, str]:
         config = super()._azure_config()
@@ -63,10 +44,59 @@ class MicrosoftBackend(AzureQirBackend):
             {
                 "provider_id": "microsoft-qc",
                 "output_data_format": "microsoft.resource-estimates.v1",
-                "to_qir_kwargs": {"record_output": False},
             }
         )
         return config
+
+    def _generate_qir(
+        self, circuits: List[QuantumCircuit], target_profile: TargetProfile, **kwargs
+    ) -> pyqir.Module:
+        if len(circuits) == 0:
+            raise ValueError("No QuantumCircuits provided")
+
+        name = "circuits"
+        if isinstance(circuits, QuantumCircuit):
+            name = circuits.name
+            circuits = [circuits]
+        elif isinstance(circuits, list):
+            for value in circuits:
+                if not isinstance(value, QuantumCircuit):
+                    raise ValueError(
+                        "Input must be Union[QuantumCircuit, List[QuantumCircuit]]"
+                    )
+        else:
+            raise ValueError(
+                "Input must be Union[QuantumCircuit, List[QuantumCircuit]]"
+            )
+
+        skip_transpilation = kwargs.pop("skip_transpilation", False)
+        backend = ResourceEstimatorBackend(
+            skip_transpilation=skip_transpilation, **kwargs
+        )
+        context = pyqir.Context()
+        llvm_module = pyqir.qir_module(context, name)
+        for circuit in circuits:
+            qir_str = backend.qir(circuit, target_profile=target_profile)
+            module = pyqir.Module.from_ir(context, qir_str)
+            llvm_module.link(module)
+
+        # Add NOOP for recording output tuples
+        # the service isn't set up to handle any output recording calls
+        # and the Q# compiler will always emit them.
+        noop_tuple_record_output = """; NOOP the extern calls to recording output tuples
+define void @__quantum__rt__tuple_record_output(i64, i8*) {
+  ret void
+}"""
+        noop_tuple_record_output_module = pyqir.Module.from_ir(
+            context, noop_tuple_record_output
+        )
+        llvm_module.link(noop_tuple_record_output_module)
+
+        err = llvm_module.verify()
+        if err is not None:
+            raise Exception(err)
+
+        return llvm_module
 
 
 class MicrosoftResourceEstimationBackend(MicrosoftBackend):
@@ -77,7 +107,7 @@ class MicrosoftResourceEstimationBackend(MicrosoftBackend):
     @classmethod
     def _default_options(cls):
         return Options(
-            targetCapability="AdaptiveExecution",
+            target_profile=TargetProfile.Adaptive_RI,
             errorBudget=1e-3,
             qubitParams={"name": "qubit_gate_ns_e3"},
             qecScheme={"name": "surface_code"}

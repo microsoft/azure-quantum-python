@@ -11,6 +11,7 @@ from .backend import AzureQirBackend
 
 from qiskit.providers.models import BackendConfiguration
 from qiskit.providers import Options, Provider
+from qsharp import TargetProfile
 
 if TYPE_CHECKING:
     from azure.quantum.qiskit import AzureQuantumProvider
@@ -40,7 +41,7 @@ class RigettiBackend(AzureQirBackend):
         other_options = {
             cls._SHOTS_PARAM_NAME: _DEFAULT_SHOTS_COUNT,
         }
-        return Options(targetCapability="BasicExecution", **other_options)
+        return Options(target_profile=TargetProfile.Base, **other_options)
 
     def _azure_config(self) -> Dict[str, str]:
         config = super()._azure_config()

@@ -392,6 +392,7 @@ class MicrosoftEstimator(Target):
             output_data_format="microsoft.resource-estimates.v1",
             provider_id="microsoft-qc",
             content_type=ContentType.json,
+            target_profile="Adaptive_RI",
             **kwargs
         )
 
@@ -422,14 +423,32 @@ class MicrosoftEstimator(Target):
             warnings.warn("The 'shots' parameter is ignored in resource estimation job.")
 
         try:
-            from qiskit import QuantumCircuit, transpile
-            from qiskit_qir import to_qir_module
-            from qiskit_qir.visitor import SUPPORTED_INSTRUCTIONS
+            from qiskit import QuantumCircuit
+            from qsharp import TargetProfile
+            from qsharp.interop.qiskit import ResourceEstimatorBackend
+            from pyqir import Context, Module
+
             if isinstance(input_data, QuantumCircuit):
-                input_data = transpile(input_data,
-                                       basis_gates=SUPPORTED_INSTRUCTIONS,
-                                       optimization_level=0)
-                (module, _) = to_qir_module(input_data, record_output=False)
+                backend = ResourceEstimatorBackend()
+                target_profile = TargetProfile.from_str(self.target_profile)
+                qir_str = backend.qir(input_data, target_profile=target_profile)
+                context = Context()
+                module = Module.from_ir(context, qir_str)
+                # Add NOOP for recording output tuples
+                # the service isn't set up to handle any output recording calls
+                # and the Q# compiler will always emit them.
+                noop_tuple_record_output = """; NOOP the extern calls to recording output tuples
+define void @__quantum__rt__tuple_record_output(i64, i8*) {
+ret void
+}"""
+                noop_tuple_record_output_module = Module.from_ir(
+                    context, noop_tuple_record_output
+                )
+                module.link(noop_tuple_record_output_module)
+
+                err = module.verify()
+                if err is not None:
+                    raise Exception(err)
                 input_data = module.bitcode
         finally:
             return super().submit(
