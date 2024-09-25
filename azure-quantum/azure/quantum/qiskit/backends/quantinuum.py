@@ -15,7 +15,7 @@ from qiskit.providers.models import BackendConfiguration
 from qiskit.providers import Options
 from qiskit.providers import Provider
 from qiskit.qasm2 import dumps
-
+from qsharp import TargetProfile
 import logging
 
 logger = logging.getLogger(__name__)
@@ -50,23 +50,6 @@ QUANTINUUM_BASIS_GATES = [
     "reset",
 ]
 
-QUANTINUUM_QIR_BASIS_GATES = [
-    "x",
-    "y",
-    "z",
-    "rx",
-    "ry",
-    "rz",
-    "h",
-    "cx",
-    "cz",
-    "reset",
-    "s",
-    "sdg",
-    "t",
-    "tdg",
-    "measure",
-]
 
 QUANTINUUM_PROVIDER_ID = "quantinuum"
 QUANTINUUM_PROVIDER_NAME = "Quantinuum"
@@ -101,7 +84,7 @@ class QuantinuumQirBackendBase(AzureQirBackend):
             **{
                 cls._SHOTS_PARAM_NAME: _DEFAULT_SHOTS_COUNT
             },
-            targetCapability="BasicExecution",
+            target_profile=TargetProfile.Adaptive_RI,
         )
 
     def _azure_config(self) -> Dict[str, str]:
@@ -112,9 +95,6 @@ class QuantinuumQirBackendBase(AzureQirBackend):
             }
         )
         return config
-    
-    def _basis_gates(self) -> List[str]:
-        return QUANTINUUM_QIR_BASIS_GATES
 
     def _get_n_qubits(self, name):
         return _get_n_qubits(name)
