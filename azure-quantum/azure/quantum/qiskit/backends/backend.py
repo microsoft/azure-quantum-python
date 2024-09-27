@@ -496,7 +496,7 @@ class AzureQirBackend(AzureBackendBase):
                 {"entryPoint": name, "arguments": arguments} for name in entry_points
             ]
 
-        return module.bitcode
+        return str(module).encode("utf-8")
 
     def _estimate_cost_qir(
         self, circuits: Union[QuantumCircuit, List[QuantumCircuit]], shots, options={}
