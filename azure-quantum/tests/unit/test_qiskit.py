@@ -1836,14 +1836,14 @@ class TestQiskit(QuantumTestBase):
         self.assertEqual("qir.v1", config.azure["input_data_format"])
         self.assertEqual("microsoft.quantum-results.v2", backend._get_output_data_format())
 
-    @pytest.mark.quantinuum
+    @pytest.mark.rigetti
     @pytest.mark.live_test
-    def test_qiskit_endianness_submit_to_quantinuum(
+    def test_qiskit_endianness_submit_to_rigetti(
         self, expectation="000 000 001"
     ):
         workspace = self.create_workspace()
         provider = AzureQuantumProvider(workspace=workspace)
-        backend = provider.get_backend("quantinuum.sim.h1-1e")
+        backend = provider.get_backend("rigetti.sim.qvm")
         shots = 100
 
         qr = QuantumRegister(3)

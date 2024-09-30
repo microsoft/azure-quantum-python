@@ -68,8 +68,8 @@ interactions:
     uri: https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token
   response:
     body:
-      string: '{"token_type": "Bearer", "expires_in": 1759268989, "ext_expires_in":
-        1759268989, "refresh_in": 31536000, "access_token": "PLACEHOLDER"}'
+      string: '{"token_type": "Bearer", "expires_in": 1759273587, "ext_expires_in":
+        1759273587, "refresh_in": 31536000, "access_token": "PLACEHOLDER"}'
     headers:
       content-length:
       - '135'
@@ -95,10 +95,10 @@ interactions:
     body:
       string: '{"value": [{"id": "ionq", "currentAvailability": "Degraded", "targets":
         [{"id": "ionq.qpu.aria-1", "currentAvailability": "Unavailable", "averageQueueTime":
-        381266, "statusPage": "https://status.ionq.co"}, {"id": "ionq.qpu.aria-2",
-        "currentAvailability": "Unavailable", "averageQueueTime": 5030263, "statusPage":
+        385766, "statusPage": "https://status.ionq.co"}, {"id": "ionq.qpu.aria-2",
+        "currentAvailability": "Unavailable", "averageQueueTime": 5034763, "statusPage":
         "https://status.ionq.co"}, {"id": "ionq.simulator", "currentAvailability":
-        "Available", "averageQueueTime": 6125, "statusPage": "https://status.ionq.co"}]},
+        "Available", "averageQueueTime": 5741, "statusPage": "https://status.ionq.co"}]},
         {"id": "microsoft-qc", "currentAvailability": "Available", "targets": [{"id":
         "microsoft.estimator", "currentAvailability": "Available", "averageQueueTime":
         0, "statusPage": null}]}, {"id": "pasqal", "currentAvailability": "Degraded",
@@ -108,9 +108,9 @@ interactions:
         {"id": "quantinuum", "currentAvailability": "Degraded", "targets": [{"id":
         "quantinuum.qpu.h1-1", "currentAvailability": "Degraded", "averageQueueTime":
         0, "statusPage": "https://www.quantinuum.com/hardware/h1"}, {"id": "quantinuum.sim.h1-1sc",
-        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        "currentAvailability": "Available", "averageQueueTime": 1, "statusPage": "https://www.quantinuum.com/hardware/h1"},
         {"id": "quantinuum.sim.h1-1e", "currentAvailability": "Available", "averageQueueTime":
-        14, "statusPage": "https://www.quantinuum.com/hardware/h1"}]}, {"id": "rigetti",
+        5, "statusPage": "https://www.quantinuum.com/hardware/h1"}]}, {"id": "rigetti",
         "currentAvailability": "Available", "targets": [{"id": "rigetti.sim.qvm",
         "currentAvailability": "Available", "averageQueueTime": 5, "statusPage": "https://rigetti.statuspage.io/"},
         {"id": "rigetti.qpu.ankaa-2", "currentAvailability": "Available", "averageQueueTime":
@@ -140,7 +140,7 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '3588'
+      - '3587'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -192,7 +192,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.20.0 Python/3.9.20 (Windows-10-10.0.22631-SP0)
       x-ms-date:
-      - Mon, 30 Sep 2024 21:49:51 GMT
+      - Mon, 30 Sep 2024 23:06:29 GMT
       x-ms-version:
       - '2024-05-04'
     method: GET
@@ -200,7 +200,7 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerNotFound</Code><Message>The
-        specified container does not exist.\nRequestId:82348e79-201e-005b-2d82-137a51000000\nTime:2024-09-30T21:49:51.8372134Z</Message></Error>"
+        specified container does not exist.\nRequestId:422acb1e-301e-0057-778d-13ed59000000\nTime:2024-09-30T23:06:29.4097791Z</Message></Error>"
     headers:
       content-length:
       - '223'
@@ -225,7 +225,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.20.0 Python/3.9.20 (Windows-10-10.0.22631-SP0)
       x-ms-date:
-      - Mon, 30 Sep 2024 21:49:51 GMT
+      - Mon, 30 Sep 2024 23:06:29 GMT
       x-ms-version:
       - '2024-05-04'
     method: PUT
@@ -253,7 +253,7 @@ interactions:
       User-Agent:
       - azsdk-python-storage-blob/12.20.0 Python/3.9.20 (Windows-10-10.0.22631-SP0)
       x-ms-date:
-      - Mon, 30 Sep 2024 21:49:51 GMT
+      - Mon, 30 Sep 2024 23:06:29 GMT
       x-ms-version:
       - '2024-05-04'
     method: GET
@@ -276,19 +276,27 @@ interactions:
 - request:
     body: 'b''; ModuleID = \''endian0cr3\''\nsource_filename = "endian0cr3"\n\n%Qubit
       = type opaque\n%Result = type opaque\n\ndefine void @ENTRYPOINT__main() #0 {\nblock_0:\n  call
-      void @__quantum__qis__x__body(%Qubit* null)\n  call void @__quantum__qis__m__body(%Qubit*
+      void @__quantum__qis__x__body(%Qubit* null)\n  call void @__quantum__qis__cx__body(%Qubit*
+      inttoptr (i64 1 to %Qubit*), %Qubit* inttoptr (i64 3 to %Qubit*))\n  call void
+      @__quantum__qis__cx__body(%Qubit* inttoptr (i64 3 to %Qubit*), %Qubit* inttoptr
+      (i64 4 to %Qubit*))\n  call void @__quantum__qis__cx__body(%Qubit* inttoptr
+      (i64 4 to %Qubit*), %Qubit* inttoptr (i64 5 to %Qubit*))\n  call void @__quantum__qis__cx__body(%Qubit*
+      inttoptr (i64 5 to %Qubit*), %Qubit* inttoptr (i64 6 to %Qubit*))\n  call void
+      @__quantum__qis__cx__body(%Qubit* inttoptr (i64 2 to %Qubit*), %Qubit* inttoptr
+      (i64 7 to %Qubit*))\n  call void @__quantum__qis__cx__body(%Qubit* inttoptr
+      (i64 7 to %Qubit*), %Qubit* inttoptr (i64 8 to %Qubit*))\n  call void @__quantum__qis__m__body(%Qubit*
       null, %Result* null)\n  call void @__quantum__qis__m__body(%Qubit* inttoptr
       (i64 1 to %Qubit*), %Result* inttoptr (i64 1 to %Result*))\n  call void @__quantum__qis__m__body(%Qubit*
-      inttoptr (i64 1 to %Qubit*), %Result* inttoptr (i64 2 to %Result*))\n  call
-      void @__quantum__qis__m__body(%Qubit* inttoptr (i64 1 to %Qubit*), %Result*
+      inttoptr (i64 3 to %Qubit*), %Result* inttoptr (i64 2 to %Result*))\n  call
+      void @__quantum__qis__m__body(%Qubit* inttoptr (i64 4 to %Qubit*), %Result*
       inttoptr (i64 3 to %Result*))\n  call void @__quantum__qis__m__body(%Qubit*
-      inttoptr (i64 1 to %Qubit*), %Result* inttoptr (i64 4 to %Result*))\n  call
-      void @__quantum__qis__m__body(%Qubit* inttoptr (i64 1 to %Qubit*), %Result*
+      inttoptr (i64 5 to %Qubit*), %Result* inttoptr (i64 4 to %Result*))\n  call
+      void @__quantum__qis__m__body(%Qubit* inttoptr (i64 6 to %Qubit*), %Result*
       inttoptr (i64 5 to %Result*))\n  call void @__quantum__qis__m__body(%Qubit*
       inttoptr (i64 2 to %Qubit*), %Result* inttoptr (i64 6 to %Result*))\n  call
-      void @__quantum__qis__m__body(%Qubit* inttoptr (i64 2 to %Qubit*), %Result*
+      void @__quantum__qis__m__body(%Qubit* inttoptr (i64 7 to %Qubit*), %Result*
       inttoptr (i64 7 to %Result*))\n  call void @__quantum__qis__m__body(%Qubit*
-      inttoptr (i64 2 to %Qubit*), %Result* inttoptr (i64 8 to %Result*))\n  call
+      inttoptr (i64 8 to %Qubit*), %Result* inttoptr (i64 8 to %Result*))\n  call
       void @__quantum__rt__tuple_record_output(i64 3, i8* null)\n  call void @__quantum__rt__array_record_output(i64
       3, i8* null)\n  call void @__quantum__rt__result_record_output(%Result* inttoptr
       (i64 8 to %Result*), i8* null)\n  call void @__quantum__rt__result_record_output(%Result*
@@ -302,19 +310,14 @@ interactions:
       (i64 2 to %Result*), i8* null)\n  call void @__quantum__rt__result_record_output(%Result*
       inttoptr (i64 1 to %Result*), i8* null)\n  call void @__quantum__rt__result_record_output(%Result*
       null, i8* null)\n  ret void\n}\n\ndeclare void @__quantum__qis__x__body(%Qubit*)\n\ndeclare
-      void @__quantum__qis__m__body(%Qubit*, %Result*) #1\n\ndeclare void @__quantum__rt__tuple_record_output(i64,
-      i8*)\n\ndeclare void @__quantum__rt__array_record_output(i64, i8*)\n\ndeclare
-      void @__quantum__rt__result_record_output(%Result*, i8*)\n\nattributes #0 =
-      { "entry_point" "output_labeling_schema" "qir_profiles"="adaptive_profile" "required_num_qubits"="3"
-      "required_num_results"="9" }\nattributes #1 = { "irreversible" }\n\n!llvm.module.flags
-      = !{!0, !1, !2, !3, !4, !5, !6, !7, !8, !9, !10}\n\n!0 = !{i32 1, !"qir_major_version",
+      void @__quantum__qis__cx__body(%Qubit*, %Qubit*)\n\ndeclare void @__quantum__qis__m__body(%Qubit*,
+      %Result*) #1\n\ndeclare void @__quantum__rt__tuple_record_output(i64, i8*)\n\ndeclare
+      void @__quantum__rt__array_record_output(i64, i8*)\n\ndeclare void @__quantum__rt__result_record_output(%Result*,
+      i8*)\n\nattributes #0 = { "entry_point" "output_labeling_schema" "qir_profiles"="base_profile"
+      "required_num_qubits"="9" "required_num_results"="9" }\nattributes #1 = { "irreversible"
+      }\n\n!llvm.module.flags = !{!0, !1, !2, !3}\n\n!0 = !{i32 1, !"qir_major_version",
       i32 1}\n!1 = !{i32 7, !"qir_minor_version", i32 0}\n!2 = !{i32 1, !"dynamic_qubit_management",
-      i1 false}\n!3 = !{i32 1, !"dynamic_result_management", i1 false}\n!4 = !{i32
-      1, !"classical_ints", i1 true}\n!5 = !{i32 1, !"qubit_resetting", i1 true}\n!6
-      = !{i32 1, !"classical_floats", i1 false}\n!7 = !{i32 1, !"backwards_branching",
-      i1 false}\n!8 = !{i32 1, !"classical_fixed_points", i1 false}\n!9 = !{i32 1,
-      !"user_functions", i1 false}\n!10 = !{i32 1, !"multiple_target_branching", i1
-      false}\n'''
+      i1 false}\n!3 = !{i32 1, !"dynamic_result_management", i1 false}\n'''
     headers:
       Accept:
       - application/xml
@@ -323,7 +326,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '3432'
+      - '3803'
       Content-Type:
       - application/octet-stream
       User-Agent:
@@ -331,7 +334,7 @@ interactions:
       x-ms-blob-type:
       - BlockBlob
       x-ms-date:
-      - Mon, 30 Sep 2024 21:49:52 GMT
+      - Mon, 30 Sep 2024 23:06:29 GMT
       x-ms-version:
       - '2024-05-04'
     method: PUT
@@ -349,8 +352,8 @@ interactions:
       message: Created
 - request:
     body: 'b''{"id": "00000000-0000-0000-0000-000000000001", "name": "endian0cr3",
-      "providerId": "quantinuum", "target": "quantinuum.sim.h1-1e", "itemType": "Job",
-      "containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&ss=b&srt=co&spr=https&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sp=rwlac&sig=PLACEHOLDER",
+      "providerId": "rigetti", "target": "rigetti.sim.qvm", "itemType": "Job", "containerUri":
+      "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&ss=b&srt=co&spr=https&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sp=rwlac&sig=PLACEHOLDER",
       "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData",
       "inputDataFormat": "qir.v1", "inputParams": {"count": 100, "shots": 100, "items":
       [{"entryPoint": "ENTRYPOINT__main", "arguments": []}]}, "metadata": {"qiskit":
@@ -364,7 +367,7 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '783'
+      - '775'
       Content-Type:
       - application/json
       User-Agent:
@@ -382,14 +385,14 @@ interactions:
         "microsoft.quantum-results.v2", "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&ss=b&srt=co&spr=https&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sp=rwlac&sig=PLACEHOLDER",
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         null, "errorData": null, "isCancelling": false, "tags": [], "name": "endian0cr3",
-        "id": "00000000-0000-0000-0000-000000000001", "providerId": "quantinuum",
-        "target": "quantinuum.sim.h1-1e", "creationTime": "2024-09-30T21:49:52.3305167+00:00",
-        "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
+        "id": "00000000-0000-0000-0000-000000000001", "providerId": "rigetti", "target":
+        "rigetti.sim.qvm", "creationTime": "2024-09-30T23:06:29.8415657+00:00", "endExecutionTime":
+        null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '1320'
+      - '1312'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -421,14 +424,14 @@ interactions:
         "microsoft.quantum-results.v2", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=b&sp=r&rscd=attachment%3B+filename%3Dendian0cr3-00000000-0000-0000-0000-000000000001.output.json&sig=PLACEHOLDER",
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         null, "errorData": null, "isCancelling": false, "tags": [], "name": "endian0cr3",
-        "id": "00000000-0000-0000-0000-000000000001", "providerId": "quantinuum",
-        "target": "quantinuum.sim.h1-1e", "creationTime": "2024-09-30T21:49:52.3305167+00:00",
-        "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
+        "id": "00000000-0000-0000-0000-000000000001", "providerId": "rigetti", "target":
+        "rigetti.sim.qvm", "creationTime": "2024-09-30T23:06:29.8415657+00:00", "endExecutionTime":
+        null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '1553'
+      - '1545'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -460,14 +463,14 @@ interactions:
         "microsoft.quantum-results.v2", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=b&sp=r&rscd=attachment%3B+filename%3Dendian0cr3-00000000-0000-0000-0000-000000000001.output.json&sig=PLACEHOLDER",
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         null, "errorData": null, "isCancelling": false, "tags": [], "name": "endian0cr3",
-        "id": "00000000-0000-0000-0000-000000000001", "providerId": "quantinuum",
-        "target": "quantinuum.sim.h1-1e", "creationTime": "2024-09-30T21:49:52.3305167+00:00",
-        "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
+        "id": "00000000-0000-0000-0000-000000000001", "providerId": "rigetti", "target":
+        "rigetti.sim.qvm", "creationTime": "2024-09-30T23:06:29.8415657+00:00", "endExecutionTime":
+        null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '1553'
+      - '1545'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -499,14 +502,14 @@ interactions:
         "microsoft.quantum-results.v2", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=b&sp=r&rscd=attachment%3B+filename%3Dendian0cr3-00000000-0000-0000-0000-000000000001.output.json&sig=PLACEHOLDER",
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         null, "errorData": null, "isCancelling": false, "tags": [], "name": "endian0cr3",
-        "id": "00000000-0000-0000-0000-000000000001", "providerId": "quantinuum",
-        "target": "quantinuum.sim.h1-1e", "creationTime": "2024-09-30T21:49:52.3305167+00:00",
-        "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
+        "id": "00000000-0000-0000-0000-000000000001", "providerId": "rigetti", "target":
+        "rigetti.sim.qvm", "creationTime": "2024-09-30T23:06:29.8415657+00:00", "endExecutionTime":
+        null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '1553'
+      - '1545'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -538,14 +541,14 @@ interactions:
         "microsoft.quantum-results.v2", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=b&sp=r&rscd=attachment%3B+filename%3Dendian0cr3-00000000-0000-0000-0000-000000000001.output.json&sig=PLACEHOLDER",
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         null, "errorData": null, "isCancelling": false, "tags": [], "name": "endian0cr3",
-        "id": "00000000-0000-0000-0000-000000000001", "providerId": "quantinuum",
-        "target": "quantinuum.sim.h1-1e", "creationTime": "2024-09-30T21:49:52.3305167+00:00",
-        "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
+        "id": "00000000-0000-0000-0000-000000000001", "providerId": "rigetti", "target":
+        "rigetti.sim.qvm", "creationTime": "2024-09-30T23:06:29.8415657+00:00", "endExecutionTime":
+        null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '1553'
+      - '1545'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -577,14 +580,14 @@ interactions:
         "microsoft.quantum-results.v2", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=b&sp=r&rscd=attachment%3B+filename%3Dendian0cr3-00000000-0000-0000-0000-000000000001.output.json&sig=PLACEHOLDER",
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         null, "errorData": null, "isCancelling": false, "tags": [], "name": "endian0cr3",
-        "id": "00000000-0000-0000-0000-000000000001", "providerId": "quantinuum",
-        "target": "quantinuum.sim.h1-1e", "creationTime": "2024-09-30T21:49:52.3305167+00:00",
-        "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
+        "id": "00000000-0000-0000-0000-000000000001", "providerId": "rigetti", "target":
+        "rigetti.sim.qvm", "creationTime": "2024-09-30T23:06:29.8415657+00:00", "endExecutionTime":
+        null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '1553'
+      - '1545'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -616,14 +619,14 @@ interactions:
         "microsoft.quantum-results.v2", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=b&sp=r&rscd=attachment%3B+filename%3Dendian0cr3-00000000-0000-0000-0000-000000000001.output.json&sig=PLACEHOLDER",
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         null, "errorData": null, "isCancelling": false, "tags": [], "name": "endian0cr3",
-        "id": "00000000-0000-0000-0000-000000000001", "providerId": "quantinuum",
-        "target": "quantinuum.sim.h1-1e", "creationTime": "2024-09-30T21:49:52.3305167+00:00",
-        "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
+        "id": "00000000-0000-0000-0000-000000000001", "providerId": "rigetti", "target":
+        "rigetti.sim.qvm", "creationTime": "2024-09-30T23:06:29.8415657+00:00", "endExecutionTime":
+        null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '1553'
+      - '1545'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -654,15 +657,15 @@ interactions:
         "sessionId": null, "status": "Waiting", "jobType": "QuantumComputing", "outputDataFormat":
         "microsoft.quantum-results.v2", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=b&sp=r&rscd=attachment%3B+filename%3Dendian0cr3-00000000-0000-0000-0000-000000000001.output.json&sig=PLACEHOLDER",
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
-        {"count": 1}, "errorData": null, "isCancelling": false, "tags": [], "name":
-        "endian0cr3", "id": "00000000-0000-0000-0000-000000000001", "providerId":
-        "quantinuum", "target": "quantinuum.sim.h1-1e", "creationTime": "2024-09-30T21:49:52.3305167+00:00",
-        "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
+        null, "errorData": null, "isCancelling": false, "tags": [], "name": "endian0cr3",
+        "id": "00000000-0000-0000-0000-000000000001", "providerId": "rigetti", "target":
+        "rigetti.sim.qvm", "creationTime": "2024-09-30T23:06:29.8415657+00:00", "endExecutionTime":
+        null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '1561'
+      - '1545'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -695,13 +698,13 @@ interactions:
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         {"count": 1}, "errorData": null, "isCancelling": false, "tags": [], "name":
         "endian0cr3", "id": "00000000-0000-0000-0000-000000000001", "providerId":
-        "quantinuum", "target": "quantinuum.sim.h1-1e", "creationTime": "2024-09-30T21:49:52.3305167+00:00",
+        "rigetti", "target": "rigetti.sim.qvm", "creationTime": "2024-09-30T23:06:29.8415657+00:00",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '1561'
+      - '1553'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -729,18 +732,19 @@ interactions:
         "inputDataFormat": "qir.v1", "inputParams": {"count": 100, "shots": 100, "items":
         [{"entryPoint": "ENTRYPOINT__main", "arguments": []}]}, "metadata": {"qiskit":
         "True", "name": "endian0cr3", "num_qubits": "3", "metadata": "{\"some\": \"data\"}"},
-        "sessionId": null, "status": "Waiting", "jobType": "QuantumComputing", "outputDataFormat":
+        "sessionId": null, "status": "Finishing", "jobType": "QuantumComputing", "outputDataFormat":
         "microsoft.quantum-results.v2", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=b&sp=r&rscd=attachment%3B+filename%3Dendian0cr3-00000000-0000-0000-0000-000000000001.output.json&sig=PLACEHOLDER",
-        "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
-        {"count": 1}, "errorData": null, "isCancelling": false, "tags": [], "name":
-        "endian0cr3", "id": "00000000-0000-0000-0000-000000000001", "providerId":
-        "quantinuum", "target": "quantinuum.sim.h1-1e", "creationTime": "2024-09-30T21:49:52.3305167+00:00",
-        "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
+        "beginExecutionTime": "2024-09-30T23:06:38.1817472Z", "cancellationTime":
+        null, "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling":
+        false, "tags": [], "name": "endian0cr3", "id": "00000000-0000-0000-0000-000000000001",
+        "providerId": "rigetti", "target": "rigetti.sim.qvm", "creationTime": "2024-09-30T23:06:29.8415657+00:00",
+        "endExecutionTime": "2024-09-30T23:06:39.0453013Z", "costEstimate": null,
+        "itemType": "Job"}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '1561'
+      - '1607'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -768,18 +772,22 @@ interactions:
         "inputDataFormat": "qir.v1", "inputParams": {"count": 100, "shots": 100, "items":
         [{"entryPoint": "ENTRYPOINT__main", "arguments": []}]}, "metadata": {"qiskit":
         "True", "name": "endian0cr3", "num_qubits": "3", "metadata": "{\"some\": \"data\"}"},
-        "sessionId": null, "status": "Waiting", "jobType": "QuantumComputing", "outputDataFormat":
+        "sessionId": null, "status": "Succeeded", "jobType": "QuantumComputing", "outputDataFormat":
         "microsoft.quantum-results.v2", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=b&sp=r&rscd=attachment%3B+filename%3Dendian0cr3-00000000-0000-0000-0000-000000000001.output.json&sig=PLACEHOLDER",
-        "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
-        {"count": 1}, "errorData": null, "isCancelling": false, "tags": [], "name":
-        "endian0cr3", "id": "00000000-0000-0000-0000-000000000001", "providerId":
-        "quantinuum", "target": "quantinuum.sim.h1-1e", "creationTime": "2024-09-30T21:49:52.3305167+00:00",
-        "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
+        "beginExecutionTime": "2024-09-30T23:06:38.1817472Z", "cancellationTime":
+        null, "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling":
+        false, "tags": [], "name": "endian0cr3", "id": "00000000-0000-0000-0000-000000000001",
+        "providerId": "rigetti", "target": "rigetti.sim.qvm", "creationTime": "2024-09-30T23:06:29.8415657+00:00",
+        "endExecutionTime": "2024-09-30T23:06:39.0453013Z", "costEstimate": {"currencyCode":
+        "USD", "events": [{"dimensionId": "qpu_time_centiseconds", "dimensionName":
+        "QPU Execution Time", "measureUnit": "10ms (rounded up)", "amountBilled":
+        0.0, "amountConsumed": 0.0, "unitPrice": 0.0}], "estimatedTotal": 0.0}, "itemType":
+        "Job"}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '1561'
+      - '1840'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -809,19 +817,20 @@ interactions:
         "True", "name": "endian0cr3", "num_qubits": "3", "metadata": "{\"some\": \"data\"}"},
         "sessionId": null, "status": "Succeeded", "jobType": "QuantumComputing", "outputDataFormat":
         "microsoft.quantum-results.v2", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=b&sp=r&rscd=attachment%3B+filename%3Dendian0cr3-00000000-0000-0000-0000-000000000001.output.json&sig=PLACEHOLDER",
-        "beginExecutionTime": "2024-09-30T21:50:09.279047+00:00", "cancellationTime":
+        "beginExecutionTime": "2024-09-30T23:06:38.1817472Z", "cancellationTime":
         null, "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling":
         false, "tags": [], "name": "endian0cr3", "id": "00000000-0000-0000-0000-000000000001",
-        "providerId": "quantinuum", "target": "quantinuum.sim.h1-1e", "creationTime":
-        "2024-09-30T21:49:52.3305167+00:00", "endExecutionTime": "2024-09-30T21:50:09.691512+00:00",
-        "costEstimate": {"currencyCode": "USD", "events": [{"dimensionId": "ehqc",
-        "dimensionName": "EHQC", "measureUnit": "hqc", "amountBilled": 7.3, "amountConsumed":
-        7.3, "unitPrice": 0.0}], "estimatedTotal": 0.0}, "itemType": "Job"}'
+        "providerId": "rigetti", "target": "rigetti.sim.qvm", "creationTime": "2024-09-30T23:06:29.8415657+00:00",
+        "endExecutionTime": "2024-09-30T23:06:39.0453013Z", "costEstimate": {"currencyCode":
+        "USD", "events": [{"dimensionId": "qpu_time_centiseconds", "dimensionName":
+        "QPU Execution Time", "measureUnit": "10ms (rounded up)", "amountBilled":
+        0.0, "amountConsumed": 0.0, "unitPrice": 0.0}], "estimatedTotal": 0.0}, "itemType":
+        "Job"}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '1811'
+      - '1840'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -851,61 +860,20 @@ interactions:
         "True", "name": "endian0cr3", "num_qubits": "3", "metadata": "{\"some\": \"data\"}"},
         "sessionId": null, "status": "Succeeded", "jobType": "QuantumComputing", "outputDataFormat":
         "microsoft.quantum-results.v2", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=b&sp=r&rscd=attachment%3B+filename%3Dendian0cr3-00000000-0000-0000-0000-000000000001.output.json&sig=PLACEHOLDER",
-        "beginExecutionTime": "2024-09-30T21:50:09.279047+00:00", "cancellationTime":
+        "beginExecutionTime": "2024-09-30T23:06:38.1817472Z", "cancellationTime":
         null, "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling":
         false, "tags": [], "name": "endian0cr3", "id": "00000000-0000-0000-0000-000000000001",
-        "providerId": "quantinuum", "target": "quantinuum.sim.h1-1e", "creationTime":
-        "2024-09-30T21:49:52.3305167+00:00", "endExecutionTime": "2024-09-30T21:50:09.691512+00:00",
-        "costEstimate": {"currencyCode": "USD", "events": [{"dimensionId": "ehqc",
-        "dimensionName": "EHQC", "measureUnit": "hqc", "amountBilled": 7.3, "amountConsumed":
-        7.3, "unitPrice": 0.0}], "estimatedTotal": 0.0}, "itemType": "Job"}'
+        "providerId": "rigetti", "target": "rigetti.sim.qvm", "creationTime": "2024-09-30T23:06:29.8415657+00:00",
+        "endExecutionTime": "2024-09-30T23:06:39.0453013Z", "costEstimate": {"currencyCode":
+        "USD", "events": [{"dimensionId": "qpu_time_centiseconds", "dimensionName":
+        "QPU Execution Time", "measureUnit": "10ms (rounded up)", "amountBilled":
+        0.0, "amountConsumed": 0.0, "unitPrice": 0.0}], "estimatedTotal": 0.0}, "itemType":
+        "Job"}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '1811'
-      content-type:
-      - application/json; charset=utf-8
-      transfer-encoding:
-      - chunked
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - testapp-azure-quantum-qiskit azsdk-python-quantum/0.0.1 Python/3.9.20 (Windows-10-10.0.22631-SP0)
-    method: GET
-    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000001?api-version=2022-09-12-preview&test-sequence-id=13
-  response:
-    body:
-      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=c&sp=rcwl&sig=PLACEHOLDER",
-        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=b&sp=r&rscd=attachment%3B+filename%3Dendian0cr3-00000000-0000-0000-0000-000000000001.input.json&sig=PLACEHOLDER",
-        "inputDataFormat": "qir.v1", "inputParams": {"count": 100, "shots": 100, "items":
-        [{"entryPoint": "ENTRYPOINT__main", "arguments": []}]}, "metadata": {"qiskit":
-        "True", "name": "endian0cr3", "num_qubits": "3", "metadata": "{\"some\": \"data\"}"},
-        "sessionId": null, "status": "Succeeded", "jobType": "QuantumComputing", "outputDataFormat":
-        "microsoft.quantum-results.v2", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=b&sp=r&rscd=attachment%3B+filename%3Dendian0cr3-00000000-0000-0000-0000-000000000001.output.json&sig=PLACEHOLDER",
-        "beginExecutionTime": "2024-09-30T21:50:09.279047+00:00", "cancellationTime":
-        null, "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling":
-        false, "tags": [], "name": "endian0cr3", "id": "00000000-0000-0000-0000-000000000001",
-        "providerId": "quantinuum", "target": "quantinuum.sim.h1-1e", "creationTime":
-        "2024-09-30T21:49:52.3305167+00:00", "endExecutionTime": "2024-09-30T21:50:09.691512+00:00",
-        "costEstimate": {"currencyCode": "USD", "events": [{"dimensionId": "ehqc",
-        "dimensionName": "EHQC", "measureUnit": "hqc", "amountBilled": 7.3, "amountConsumed":
-        7.3, "unitPrice": 0.0}], "estimatedTotal": 0.0}, "itemType": "Job"}'
-    headers:
-      connection:
-      - keep-alive
-      content-length:
-      - '1811'
+      - '1840'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -930,10 +898,10 @@ interactions:
     body:
       string: '{"value": [{"id": "ionq", "currentAvailability": "Degraded", "targets":
         [{"id": "ionq.qpu.aria-1", "currentAvailability": "Unavailable", "averageQueueTime":
-        381266, "statusPage": "https://status.ionq.co"}, {"id": "ionq.qpu.aria-2",
-        "currentAvailability": "Unavailable", "averageQueueTime": 5030263, "statusPage":
+        385766, "statusPage": "https://status.ionq.co"}, {"id": "ionq.qpu.aria-2",
+        "currentAvailability": "Unavailable", "averageQueueTime": 5034763, "statusPage":
         "https://status.ionq.co"}, {"id": "ionq.simulator", "currentAvailability":
-        "Available", "averageQueueTime": 6125, "statusPage": "https://status.ionq.co"}]},
+        "Available", "averageQueueTime": 5741, "statusPage": "https://status.ionq.co"}]},
         {"id": "microsoft-qc", "currentAvailability": "Available", "targets": [{"id":
         "microsoft.estimator", "currentAvailability": "Available", "averageQueueTime":
         0, "statusPage": null}]}, {"id": "pasqal", "currentAvailability": "Degraded",
@@ -943,9 +911,9 @@ interactions:
         {"id": "quantinuum", "currentAvailability": "Degraded", "targets": [{"id":
         "quantinuum.qpu.h1-1", "currentAvailability": "Degraded", "averageQueueTime":
         0, "statusPage": "https://www.quantinuum.com/hardware/h1"}, {"id": "quantinuum.sim.h1-1sc",
-        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        "currentAvailability": "Available", "averageQueueTime": 1, "statusPage": "https://www.quantinuum.com/hardware/h1"},
         {"id": "quantinuum.sim.h1-1e", "currentAvailability": "Available", "averageQueueTime":
-        14, "statusPage": "https://www.quantinuum.com/hardware/h1"}]}, {"id": "rigetti",
+        5, "statusPage": "https://www.quantinuum.com/hardware/h1"}]}, {"id": "rigetti",
         "currentAvailability": "Available", "targets": [{"id": "rigetti.sim.qvm",
         "currentAvailability": "Available", "averageQueueTime": 5, "statusPage": "https://rigetti.statuspage.io/"},
         {"id": "rigetti.qpu.ankaa-2", "currentAvailability": "Available", "averageQueueTime":
@@ -975,7 +943,50 @@ interactions:
       connection:
       - keep-alive
       content-length:
-      - '3588'
+      - '3587'
+      content-type:
+      - application/json; charset=utf-8
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - testapp-azure-quantum-qiskit azsdk-python-quantum/0.0.1 Python/3.9.20 (Windows-10-10.0.22631-SP0)
+    method: GET
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000001?api-version=2022-09-12-preview&test-sequence-id=13
+  response:
+    body:
+      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=c&sp=rcwl&sig=PLACEHOLDER",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=b&sp=r&rscd=attachment%3B+filename%3Dendian0cr3-00000000-0000-0000-0000-000000000001.input.json&sig=PLACEHOLDER",
+        "inputDataFormat": "qir.v1", "inputParams": {"count": 100, "shots": 100, "items":
+        [{"entryPoint": "ENTRYPOINT__main", "arguments": []}]}, "metadata": {"qiskit":
+        "True", "name": "endian0cr3", "num_qubits": "3", "metadata": "{\"some\": \"data\"}"},
+        "sessionId": null, "status": "Succeeded", "jobType": "QuantumComputing", "outputDataFormat":
+        "microsoft.quantum-results.v2", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=b&sp=r&rscd=attachment%3B+filename%3Dendian0cr3-00000000-0000-0000-0000-000000000001.output.json&sig=PLACEHOLDER",
+        "beginExecutionTime": "2024-09-30T23:06:38.1817472Z", "cancellationTime":
+        null, "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling":
+        false, "tags": [], "name": "endian0cr3", "id": "00000000-0000-0000-0000-000000000001",
+        "providerId": "rigetti", "target": "rigetti.sim.qvm", "creationTime": "2024-09-30T23:06:29.8415657+00:00",
+        "endExecutionTime": "2024-09-30T23:06:39.0453013Z", "costEstimate": {"currencyCode":
+        "USD", "events": [{"dimensionId": "qpu_time_centiseconds", "dimensionName":
+        "QPU Execution Time", "measureUnit": "10ms (rounded up)", "amountBilled":
+        0.0, "amountConsumed": 0.0, "unitPrice": 0.0}], "estimatedTotal": 0.0}, "itemType":
+        "Job"}'
+    headers:
+      connection:
+      - keep-alive
+      content-length:
+      - '1840'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -1005,19 +1016,20 @@ interactions:
         "True", "name": "endian0cr3", "num_qubits": "3", "metadata": "{\"some\": \"data\"}"},
         "sessionId": null, "status": "Succeeded", "jobType": "QuantumComputing", "outputDataFormat":
         "microsoft.quantum-results.v2", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=b&sp=r&rscd=attachment%3B+filename%3Dendian0cr3-00000000-0000-0000-0000-000000000001.output.json&sig=PLACEHOLDER",
-        "beginExecutionTime": "2024-09-30T21:50:09.279047+00:00", "cancellationTime":
+        "beginExecutionTime": "2024-09-30T23:06:38.1817472Z", "cancellationTime":
         null, "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling":
         false, "tags": [], "name": "endian0cr3", "id": "00000000-0000-0000-0000-000000000001",
-        "providerId": "quantinuum", "target": "quantinuum.sim.h1-1e", "creationTime":
-        "2024-09-30T21:49:52.3305167+00:00", "endExecutionTime": "2024-09-30T21:50:09.691512+00:00",
-        "costEstimate": {"currencyCode": "USD", "events": [{"dimensionId": "ehqc",
-        "dimensionName": "EHQC", "measureUnit": "hqc", "amountBilled": 7.3, "amountConsumed":
-        7.3, "unitPrice": 0.0}], "estimatedTotal": 0.0}, "itemType": "Job"}'
+        "providerId": "rigetti", "target": "rigetti.sim.qvm", "creationTime": "2024-09-30T23:06:29.8415657+00:00",
+        "endExecutionTime": "2024-09-30T23:06:39.0453013Z", "costEstimate": {"currencyCode":
+        "USD", "events": [{"dimensionId": "qpu_time_centiseconds", "dimensionName":
+        "QPU Execution Time", "measureUnit": "10ms (rounded up)", "amountBilled":
+        0.0, "amountConsumed": 0.0, "unitPrice": 0.0}], "estimatedTotal": 0.0}, "itemType":
+        "Job"}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '1811'
+      - '1840'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -1025,6 +1037,309 @@ interactions:
     status:
       code: 200
       message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - testapp-azure-quantum-qiskit azsdk-python-quantum/0.0.1 Python/3.9.20 (Windows-10-10.0.22631-SP0)
+    method: GET
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000001?api-version=2022-09-12-preview&test-sequence-id=15
+  response:
+    body:
+      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=c&sp=rcwl&sig=PLACEHOLDER",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=b&sp=r&rscd=attachment%3B+filename%3Dendian0cr3-00000000-0000-0000-0000-000000000001.input.json&sig=PLACEHOLDER",
+        "inputDataFormat": "qir.v1", "inputParams": {"count": 100, "shots": 100, "items":
+        [{"entryPoint": "ENTRYPOINT__main", "arguments": []}]}, "metadata": {"qiskit":
+        "True", "name": "endian0cr3", "num_qubits": "3", "metadata": "{\"some\": \"data\"}"},
+        "sessionId": null, "status": "Succeeded", "jobType": "QuantumComputing", "outputDataFormat":
+        "microsoft.quantum-results.v2", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=b&sp=r&rscd=attachment%3B+filename%3Dendian0cr3-00000000-0000-0000-0000-000000000001.output.json&sig=PLACEHOLDER",
+        "beginExecutionTime": "2024-09-30T23:06:38.1817472Z", "cancellationTime":
+        null, "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling":
+        false, "tags": [], "name": "endian0cr3", "id": "00000000-0000-0000-0000-000000000001",
+        "providerId": "rigetti", "target": "rigetti.sim.qvm", "creationTime": "2024-09-30T23:06:29.8415657+00:00",
+        "endExecutionTime": "2024-09-30T23:06:39.0453013Z", "costEstimate": {"currencyCode":
+        "USD", "events": [{"dimensionId": "qpu_time_centiseconds", "dimensionName":
+        "QPU Execution Time", "measureUnit": "10ms (rounded up)", "amountBilled":
+        0.0, "amountConsumed": 0.0, "unitPrice": 0.0}], "estimatedTotal": 0.0}, "itemType":
+        "Job"}'
+    headers:
+      connection:
+      - keep-alive
+      content-length:
+      - '1840'
+      content-type:
+      - application/json; charset=utf-8
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-blob/12.20.0 Python/3.9.20 (Windows-10-10.0.22631-SP0)
+      x-ms-date:
+      - Mon, 30 Sep 2024 23:06:45 GMT
+      x-ms-range:
+      - bytes=0-33554431
+      x-ms-version:
+      - '2024-05-04'
+    method: GET
+    uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=b&sp=r&rscd=attachment%3B%20filename%3Dendian0cr3-00000000-0000-0000-0000-000000000001.output.json&sig=PLACEHOLDER
+  response:
+    body:
+      string: '{"DataFormat": "microsoft.quantum-results.v2", "Results": [{"Histogram":
+        [{"Outcome": {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]},
+        "Display": "([0, 0, 0], [0, 0, 0], [0, 0, 1])", "Count": 100}], "Shots": [{"Item1":
+        [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2":
+        [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3":
+        [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]},
+        {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0,
+        0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2":
+        [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3":
+        [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]},
+        {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0,
+        0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2":
+        [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3":
+        [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]},
+        {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0,
+        0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2":
+        [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3":
+        [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]},
+        {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0,
+        0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2":
+        [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3":
+        [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]},
+        {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0,
+        0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2":
+        [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3":
+        [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]},
+        {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0,
+        0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2":
+        [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3":
+        [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]},
+        {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0,
+        0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2":
+        [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3":
+        [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]},
+        {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0,
+        0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2":
+        [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3":
+        [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]},
+        {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0,
+        0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2":
+        [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3":
+        [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]},
+        {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0,
+        0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2":
+        [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3":
+        [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]},
+        {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0,
+        0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2":
+        [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3":
+        [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]},
+        {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0,
+        0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2":
+        [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3":
+        [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]},
+        {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0,
+        0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2":
+        [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3":
+        [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]},
+        {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0,
+        0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2":
+        [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3":
+        [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]},
+        {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0,
+        0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2":
+        [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3":
+        [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]},
+        {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0,
+        0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2":
+        [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3":
+        [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]},
+        {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0,
+        0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2":
+        [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3":
+        [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]},
+        {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0,
+        0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2":
+        [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3":
+        [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]},
+        {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0,
+        0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2":
+        [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3":
+        [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]},
+        {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}]}]}'
+    headers:
+      accept-ranges:
+      - bytes
+      content-length:
+      - '6424'
+      content-range:
+      - bytes 0-5202/5203
+      content-type:
+      - application/octet-stream
+      x-ms-blob-content-md5:
+      - Q5jjlyuwyuJUDFjOdOjo8g==
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-creation-time:
+      - Mon, 30 Sep 2024 23:06:40 GMT
+      x-ms-lease-state:
+      - available
+      x-ms-lease-status:
+      - unlocked
+      x-ms-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2024-05-04'
+    status:
+      code: 206
+      message: Partial Content
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-blob/12.20.0 Python/3.9.20 (Windows-10-10.0.22631-SP0)
+      x-ms-date:
+      - Mon, 30 Sep 2024 23:06:45 GMT
+      x-ms-range:
+      - bytes=0-33554431
+      x-ms-version:
+      - '2024-05-04'
+    method: GET
+    uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=b&sp=r&rscd=attachment%3B%20filename%3Dendian0cr3-00000000-0000-0000-0000-000000000001.output.json&sig=PLACEHOLDER
+  response:
+    body:
+      string: '{"DataFormat": "microsoft.quantum-results.v2", "Results": [{"Histogram":
+        [{"Outcome": {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]},
+        "Display": "([0, 0, 0], [0, 0, 0], [0, 0, 1])", "Count": 100}], "Shots": [{"Item1":
+        [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2":
+        [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3":
+        [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]},
+        {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0,
+        0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2":
+        [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3":
+        [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]},
+        {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0,
+        0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2":
+        [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3":
+        [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]},
+        {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0,
+        0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2":
+        [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3":
+        [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]},
+        {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0,
+        0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2":
+        [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3":
+        [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]},
+        {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0,
+        0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2":
+        [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3":
+        [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]},
+        {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0,
+        0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2":
+        [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3":
+        [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]},
+        {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0,
+        0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2":
+        [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3":
+        [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]},
+        {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0,
+        0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2":
+        [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3":
+        [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]},
+        {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0,
+        0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2":
+        [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3":
+        [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]},
+        {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0,
+        0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2":
+        [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3":
+        [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]},
+        {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0,
+        0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2":
+        [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3":
+        [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]},
+        {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0,
+        0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2":
+        [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3":
+        [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]},
+        {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0,
+        0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2":
+        [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3":
+        [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]},
+        {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0,
+        0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2":
+        [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3":
+        [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]},
+        {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0,
+        0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2":
+        [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3":
+        [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]},
+        {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0,
+        0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2":
+        [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3":
+        [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]},
+        {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0,
+        0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2":
+        [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3":
+        [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]},
+        {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0,
+        0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2":
+        [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3":
+        [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]},
+        {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0,
+        0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2":
+        [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3":
+        [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]},
+        {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}]}]}'
+    headers:
+      accept-ranges:
+      - bytes
+      content-length:
+      - '6424'
+      content-range:
+      - bytes 0-5202/5203
+      content-type:
+      - application/octet-stream
+      x-ms-blob-content-md5:
+      - Q5jjlyuwyuJUDFjOdOjo8g==
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-creation-time:
+      - Mon, 30 Sep 2024 23:06:40 GMT
+      x-ms-lease-state:
+      - available
+      x-ms-lease-status:
+      - unlocked
+      x-ms-server-encrypted:
+      - 'true'
+      x-ms-version:
+      - '2024-05-04'
+    status:
+      code: 206
+      message: Partial Content
 - request:
     body: null
     headers:
@@ -1047,375 +1362,20 @@ interactions:
         "True", "name": "endian0cr3", "num_qubits": "3", "metadata": "{\"some\": \"data\"}"},
         "sessionId": null, "status": "Succeeded", "jobType": "QuantumComputing", "outputDataFormat":
         "microsoft.quantum-results.v2", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=b&sp=r&rscd=attachment%3B+filename%3Dendian0cr3-00000000-0000-0000-0000-000000000001.output.json&sig=PLACEHOLDER",
-        "beginExecutionTime": "2024-09-30T21:50:09.279047+00:00", "cancellationTime":
+        "beginExecutionTime": "2024-09-30T23:06:38.1817472Z", "cancellationTime":
         null, "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling":
         false, "tags": [], "name": "endian0cr3", "id": "00000000-0000-0000-0000-000000000001",
-        "providerId": "quantinuum", "target": "quantinuum.sim.h1-1e", "creationTime":
-        "2024-09-30T21:49:52.3305167+00:00", "endExecutionTime": "2024-09-30T21:50:09.691512+00:00",
-        "costEstimate": {"currencyCode": "USD", "events": [{"dimensionId": "ehqc",
-        "dimensionName": "EHQC", "measureUnit": "hqc", "amountBilled": 7.3, "amountConsumed":
-        7.3, "unitPrice": 0.0}], "estimatedTotal": 0.0}, "itemType": "Job"}'
+        "providerId": "rigetti", "target": "rigetti.sim.qvm", "creationTime": "2024-09-30T23:06:29.8415657+00:00",
+        "endExecutionTime": "2024-09-30T23:06:39.0453013Z", "costEstimate": {"currencyCode":
+        "USD", "events": [{"dimensionId": "qpu_time_centiseconds", "dimensionName":
+        "QPU Execution Time", "measureUnit": "10ms (rounded up)", "amountBilled":
+        0.0, "amountConsumed": 0.0, "unitPrice": 0.0}], "estimatedTotal": 0.0}, "itemType":
+        "Job"}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '1811'
-      content-type:
-      - application/json; charset=utf-8
-      transfer-encoding:
-      - chunked
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - testapp-azure-quantum-qiskit azsdk-python-quantum/0.0.1 Python/3.9.20 (Windows-10-10.0.22631-SP0)
-    method: GET
-    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000001?api-version=2022-09-12-preview&test-sequence-id=17
-  response:
-    body:
-      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=c&sp=rcwl&sig=PLACEHOLDER",
-        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=b&sp=r&rscd=attachment%3B+filename%3Dendian0cr3-00000000-0000-0000-0000-000000000001.input.json&sig=PLACEHOLDER",
-        "inputDataFormat": "qir.v1", "inputParams": {"count": 100, "shots": 100, "items":
-        [{"entryPoint": "ENTRYPOINT__main", "arguments": []}]}, "metadata": {"qiskit":
-        "True", "name": "endian0cr3", "num_qubits": "3", "metadata": "{\"some\": \"data\"}"},
-        "sessionId": null, "status": "Succeeded", "jobType": "QuantumComputing", "outputDataFormat":
-        "microsoft.quantum-results.v2", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=b&sp=r&rscd=attachment%3B+filename%3Dendian0cr3-00000000-0000-0000-0000-000000000001.output.json&sig=PLACEHOLDER",
-        "beginExecutionTime": "2024-09-30T21:50:09.279047+00:00", "cancellationTime":
-        null, "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling":
-        false, "tags": [], "name": "endian0cr3", "id": "00000000-0000-0000-0000-000000000001",
-        "providerId": "quantinuum", "target": "quantinuum.sim.h1-1e", "creationTime":
-        "2024-09-30T21:49:52.3305167+00:00", "endExecutionTime": "2024-09-30T21:50:09.691512+00:00",
-        "costEstimate": {"currencyCode": "USD", "events": [{"dimensionId": "ehqc",
-        "dimensionName": "EHQC", "measureUnit": "hqc", "amountBilled": 7.3, "amountConsumed":
-        7.3, "unitPrice": 0.0}], "estimatedTotal": 0.0}, "itemType": "Job"}'
-    headers:
-      connection:
-      - keep-alive
-      content-length:
-      - '1811'
-      content-type:
-      - application/json; charset=utf-8
-      transfer-encoding:
-      - chunked
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/xml
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-storage-blob/12.20.0 Python/3.9.20 (Windows-10-10.0.22631-SP0)
-      x-ms-date:
-      - Mon, 30 Sep 2024 22:00:11 GMT
-      x-ms-range:
-      - bytes=0-33554431
-      x-ms-version:
-      - '2024-05-04'
-    method: GET
-    uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=b&sp=r&rscd=attachment%3B%20filename%3Dendian0cr3-00000000-0000-0000-0000-000000000001.output.json&sig=PLACEHOLDER
-  response:
-    body:
-      string: '{"DataFormat": "microsoft.quantum-results.v2", "Results": [{"Histogram":
-        [{"Outcome": {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]},
-        "Display": "([0, 0, 0], [0, 0, 0], [0, 0, 1])", "Count": 97}, {"Outcome":
-        {"Item1": [0, 0, 0], "Item2": [1, 1, 1], "Item3": [1, 0, 1]}, "Display": "([0,
-        0, 0], [1, 1, 1], [1, 0, 1])", "Count": 1}, {"Outcome": {"Item1": [0, 0, 0],
-        "Item2": [0, 0, 0], "Item3": [0, 0, 0]}, "Display": "([0, 0, 0], [0, 0, 0],
-        [0, 0, 0])", "Count": 1}, {"Outcome": {"Item1": [0, 0, 0], "Item2": [1, 1,
-        1], "Item3": [1, 1, 1]}, "Display": "([0, 0, 0], [1, 1, 1], [1, 1, 1])", "Count":
-        1}], "Shots": [{"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]},
-        {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0,
-        0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2":
-        [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3":
-        [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]},
-        {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0,
-        0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2":
-        [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3":
-        [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]},
-        {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0,
-        0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2":
-        [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3":
-        [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]},
-        {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0,
-        0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2":
-        [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3":
-        [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]},
-        {"Item1": [0, 0, 0], "Item2": [1, 1, 1], "Item3": [1, 0, 1]}, {"Item1": [0,
-        0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2":
-        [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3":
-        [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]},
-        {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0,
-        0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2":
-        [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3":
-        [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]},
-        {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0,
-        0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2":
-        [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3":
-        [0, 0, 0]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]},
-        {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0,
-        0, 0], "Item2": [1, 1, 1], "Item3": [1, 1, 1]}, {"Item1": [0, 0, 0], "Item2":
-        [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3":
-        [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]},
-        {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0,
-        0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2":
-        [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3":
-        [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]},
-        {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0,
-        0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2":
-        [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3":
-        [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]},
-        {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0,
-        0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2":
-        [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3":
-        [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]},
-        {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0,
-        0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2":
-        [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3":
-        [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]},
-        {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0,
-        0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2":
-        [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3":
-        [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]},
-        {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0,
-        0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2":
-        [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3":
-        [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]},
-        {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0,
-        0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2":
-        [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3":
-        [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]},
-        {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0,
-        0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2":
-        [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3":
-        [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]},
-        {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0,
-        0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2":
-        [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3":
-        [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]},
-        {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0,
-        0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2":
-        [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3":
-        [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]},
-        {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0,
-        0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2":
-        [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3":
-        [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]},
-        {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0,
-        0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2":
-        [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3":
-        [0, 0, 1]}]}]}'
-    headers:
-      accept-ranges:
-      - bytes
-      content-length:
-      - '6828'
-      content-range:
-      - bytes 0-5555/5556
-      content-type:
-      - application/octet-stream
-      x-ms-blob-content-md5:
-      - bt2RQ2byB3Ot/LPopP/02g==
-      x-ms-blob-type:
-      - BlockBlob
-      x-ms-creation-time:
-      - Mon, 30 Sep 2024 21:50:10 GMT
-      x-ms-lease-state:
-      - available
-      x-ms-lease-status:
-      - unlocked
-      x-ms-server-encrypted:
-      - 'true'
-      x-ms-version:
-      - '2024-05-04'
-    status:
-      code: 206
-      message: Partial Content
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/xml
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-storage-blob/12.20.0 Python/3.9.20 (Windows-10-10.0.22631-SP0)
-      x-ms-date:
-      - Mon, 30 Sep 2024 22:00:11 GMT
-      x-ms-range:
-      - bytes=0-33554431
-      x-ms-version:
-      - '2024-05-04'
-    method: GET
-    uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=b&sp=r&rscd=attachment%3B%20filename%3Dendian0cr3-00000000-0000-0000-0000-000000000001.output.json&sig=PLACEHOLDER
-  response:
-    body:
-      string: '{"DataFormat": "microsoft.quantum-results.v2", "Results": [{"Histogram":
-        [{"Outcome": {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]},
-        "Display": "([0, 0, 0], [0, 0, 0], [0, 0, 1])", "Count": 97}, {"Outcome":
-        {"Item1": [0, 0, 0], "Item2": [1, 1, 1], "Item3": [1, 0, 1]}, "Display": "([0,
-        0, 0], [1, 1, 1], [1, 0, 1])", "Count": 1}, {"Outcome": {"Item1": [0, 0, 0],
-        "Item2": [0, 0, 0], "Item3": [0, 0, 0]}, "Display": "([0, 0, 0], [0, 0, 0],
-        [0, 0, 0])", "Count": 1}, {"Outcome": {"Item1": [0, 0, 0], "Item2": [1, 1,
-        1], "Item3": [1, 1, 1]}, "Display": "([0, 0, 0], [1, 1, 1], [1, 1, 1])", "Count":
-        1}], "Shots": [{"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]},
-        {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0,
-        0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2":
-        [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3":
-        [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]},
-        {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0,
-        0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2":
-        [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3":
-        [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]},
-        {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0,
-        0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2":
-        [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3":
-        [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]},
-        {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0,
-        0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2":
-        [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3":
-        [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]},
-        {"Item1": [0, 0, 0], "Item2": [1, 1, 1], "Item3": [1, 0, 1]}, {"Item1": [0,
-        0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2":
-        [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3":
-        [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]},
-        {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0,
-        0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2":
-        [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3":
-        [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]},
-        {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0,
-        0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2":
-        [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3":
-        [0, 0, 0]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]},
-        {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0,
-        0, 0], "Item2": [1, 1, 1], "Item3": [1, 1, 1]}, {"Item1": [0, 0, 0], "Item2":
-        [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3":
-        [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]},
-        {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0,
-        0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2":
-        [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3":
-        [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]},
-        {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0,
-        0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2":
-        [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3":
-        [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]},
-        {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0,
-        0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2":
-        [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3":
-        [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]},
-        {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0,
-        0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2":
-        [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3":
-        [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]},
-        {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0,
-        0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2":
-        [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3":
-        [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]},
-        {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0,
-        0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2":
-        [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3":
-        [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]},
-        {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0,
-        0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2":
-        [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3":
-        [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]},
-        {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0,
-        0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2":
-        [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3":
-        [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]},
-        {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0,
-        0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2":
-        [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3":
-        [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]},
-        {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0,
-        0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2":
-        [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3":
-        [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]},
-        {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0,
-        0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2":
-        [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3":
-        [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]},
-        {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0,
-        0, 0], "Item2": [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2":
-        [0, 0, 0], "Item3": [0, 0, 1]}, {"Item1": [0, 0, 0], "Item2": [0, 0, 0], "Item3":
-        [0, 0, 1]}]}]}'
-    headers:
-      accept-ranges:
-      - bytes
-      content-length:
-      - '6828'
-      content-range:
-      - bytes 0-5555/5556
-      content-type:
-      - application/octet-stream
-      x-ms-blob-content-md5:
-      - bt2RQ2byB3Ot/LPopP/02g==
-      x-ms-blob-type:
-      - BlockBlob
-      x-ms-creation-time:
-      - Mon, 30 Sep 2024 21:50:10 GMT
-      x-ms-lease-state:
-      - available
-      x-ms-lease-status:
-      - unlocked
-      x-ms-server-encrypted:
-      - 'true'
-      x-ms-version:
-      - '2024-05-04'
-    status:
-      code: 206
-      message: Partial Content
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - testapp-azure-quantum-qiskit azsdk-python-quantum/0.0.1 Python/3.9.20 (Windows-10-10.0.22631-SP0)
-    method: GET
-    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000001?api-version=2022-09-12-preview&test-sequence-id=18
-  response:
-    body:
-      string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=c&sp=rcwl&sig=PLACEHOLDER",
-        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=b&sp=r&rscd=attachment%3B+filename%3Dendian0cr3-00000000-0000-0000-0000-000000000001.input.json&sig=PLACEHOLDER",
-        "inputDataFormat": "qir.v1", "inputParams": {"count": 100, "shots": 100, "items":
-        [{"entryPoint": "ENTRYPOINT__main", "arguments": []}]}, "metadata": {"qiskit":
-        "True", "name": "endian0cr3", "num_qubits": "3", "metadata": "{\"some\": \"data\"}"},
-        "sessionId": null, "status": "Succeeded", "jobType": "QuantumComputing", "outputDataFormat":
-        "microsoft.quantum-results.v2", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=b&sp=r&rscd=attachment%3B+filename%3Dendian0cr3-00000000-0000-0000-0000-000000000001.output.json&sig=PLACEHOLDER",
-        "beginExecutionTime": "2024-09-30T21:50:09.279047+00:00", "cancellationTime":
-        null, "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling":
-        false, "tags": [], "name": "endian0cr3", "id": "00000000-0000-0000-0000-000000000001",
-        "providerId": "quantinuum", "target": "quantinuum.sim.h1-1e", "creationTime":
-        "2024-09-30T21:49:52.3305167+00:00", "endExecutionTime": "2024-09-30T21:50:09.691512+00:00",
-        "costEstimate": {"currencyCode": "USD", "events": [{"dimensionId": "ehqc",
-        "dimensionName": "EHQC", "measureUnit": "hqc", "amountBilled": 7.3, "amountConsumed":
-        7.3, "unitPrice": 0.0}], "estimatedTotal": 0.0}, "itemType": "Job"}'
-    headers:
-      connection:
-      - keep-alive
-      content-length:
-      - '1811'
+      - '1840'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
