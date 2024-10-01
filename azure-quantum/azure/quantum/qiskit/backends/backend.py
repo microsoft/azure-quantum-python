@@ -36,6 +36,25 @@ except ImportError:
 To install run: pip install azure-quantum[qiskit]"
     )
 
+QIR_BASIS_GATES = [
+    "x",
+    "y",
+    "z",
+    "rx",
+    "ry",
+    "rz",
+    "h",
+    "swap",
+    "cx",
+    "cz",
+    "reset",
+    "s",
+    "sdg",
+    "t",
+    "tdg",
+    "measure",
+]
+
 
 class AzureBackendBase(Backend, SessionHost):
 
@@ -280,7 +299,11 @@ class AzureQirBackend(AzureBackendBase):
             "content_type": "qir.v1",
             "input_data_format": "qir.v1",
             "output_data_format": "microsoft.quantum-results.v2",
+            "is_default": True,
         }
+    
+    def _basis_gates(self) -> List[str]:
+        return QIR_BASIS_GATES
 
     def run(
         self,
@@ -428,6 +451,37 @@ class AzureQirBackend(AzureBackendBase):
             ]
 
         return module.bitcode
+
+    def _estimate_cost_qir(self, circuits, shots, options={}):
+        """Estimate the cost for the given circuit."""
+        config = self.configuration()
+        input_params = self._get_input_params(options, shots=shots)
+
+        if not (isinstance(circuits, list)):
+            circuits = [circuits]
+        
+        to_qir_kwargs = input_params.pop(
+            "to_qir_kwargs", config.azure.get("to_qir_kwargs", {"record_output": True})
+        )
+        targetCapability = input_params.pop(
+            "targetCapability",
+            self.options.get("targetCapability", "AdaptiveExecution"),
+        )
+
+        if not input_params.pop("skipTranspile", False):
+            # Set of gates supported by QIR targets.
+            circuits = transpile(
+                circuits, basis_gates=config.basis_gates, optimization_level=0
+            )
+        
+
+        (module, _) = self._generate_qir(
+            circuits, targetCapability, **to_qir_kwargs
+        )
+        
+        workspace = self.provider().get_workspace()
+        target = workspace.get_targets(self.name())
+        return target.estimate_cost(module, shots=shots)
 
 
 class AzureBackend(AzureBackendBase):
