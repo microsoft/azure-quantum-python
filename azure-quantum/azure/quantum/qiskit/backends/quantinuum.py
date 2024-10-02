@@ -50,6 +50,24 @@ QUANTINUUM_BASIS_GATES = [
     "reset",
 ]
 
+QUANTINUUM_QIR_BASIS_GATES = [
+    "x",
+    "y",
+    "z",
+    "rx",
+    "ry",
+    "rz",
+    "h",
+    "cx",
+    "cz",
+    "reset",
+    "s",
+    "sdg",
+    "t",
+    "tdg",
+    "measure",
+]
+
 QUANTINUUM_PROVIDER_ID = "quantinuum"
 QUANTINUUM_PROVIDER_NAME = "Quantinuum"
 
@@ -94,9 +112,16 @@ class QuantinuumQirBackendBase(AzureQirBackend):
             }
         )
         return config
+    
+    def _basis_gates(self) -> List[str]:
+        return QUANTINUUM_QIR_BASIS_GATES
 
     def _get_n_qubits(self, name):
         return _get_n_qubits(name)
+    
+    def estimate_cost(self, circuits, shots, options={}):
+        """Estimate the cost for the given circuit."""
+        return self._estimate_cost_qir(circuits, shots, options)
 
 
 class QuantinuumSyntaxCheckerQirBackend(QuantinuumQirBackendBase):
@@ -118,8 +143,8 @@ class QuantinuumSyntaxCheckerQirBackend(QuantinuumQirBackendBase):
                 "local": False,
                 "coupling_map": None,
                 "description": f"Quantinuum Syntax Checker on Azure Quantum",
-                "basis_gates": QUANTINUUM_BASIS_GATES,
-                "memory": False,
+                "basis_gates": self._basis_gates(),
+                "memory": True,
                 "n_qubits": self._get_n_qubits(name),
                 "conditional": False,
                 "max_shots": None,
@@ -155,8 +180,8 @@ class QuantinuumEmulatorQirBackend(QuantinuumQirBackendBase):
                 "local": False,
                 "coupling_map": None,
                 "description": f"Quantinuum emulator on Azure Quantum",
-                "basis_gates": QUANTINUUM_BASIS_GATES,
-                "memory": False,
+                "basis_gates": self._basis_gates(),
+                "memory": True,
                 "n_qubits": self._get_n_qubits(name),
                 "conditional": False,
                 "max_shots": None,
@@ -192,8 +217,8 @@ class QuantinuumQPUQirBackend(QuantinuumQirBackendBase):
                 "local": False,
                 "coupling_map": None,
                 "description": f"Quantinuum QPU on Azure Quantum",
-                "basis_gates": QUANTINUUM_BASIS_GATES,
-                "memory": False,
+                "basis_gates": self._basis_gates(),
+                "memory": True,
                 "n_qubits": self._get_n_qubits(name),
                 "conditional": False,
                 "max_shots": 10000,
@@ -236,7 +261,7 @@ class QuantinuumBackend(AzureBackend):
             "provider_id": self._provider_id,
             "input_data_format": "honeywell.openqasm.v1",
             "output_data_format": "honeywell.quantum-results.v1",
-            "is_default": True,
+            "is_default": False,
         }
 
     def _translate_input(self, circuit):

@@ -12,10 +12,10 @@ from azure.quantum.target.target import (
 from azure.quantum.job.job import Job
 from azure.quantum.workspace import Workspace
 from azure.quantum._client.models import CostEstimate, UsageEvent
+from typing import Union
 
 COST_1QUBIT_GATE_MAP = {
     "ionq.simulator" : 0.0,
-    "ionq.qpu" : 0.00003,
     "ionq.qpu.aria-1" : 0.0002205,
     "ionq.qpu.aria-2" : 0.0002205,
     "ionq.qpu.forte-1" : 0.0002205
@@ -23,7 +23,6 @@ COST_1QUBIT_GATE_MAP = {
 
 COST_2QUBIT_GATE_MAP = {
     "ionq.simulator" : 0.0,
-    "ionq.qpu" : 0.0003,
     "ionq.qpu.aria-1" : 0.00098,
     "ionq.qpu.aria-2" : 0.00098,
     "ionq.qpu.forte-1" : 0.00098
@@ -31,7 +30,6 @@ COST_2QUBIT_GATE_MAP = {
 
 MIN_PRICE_MAP = {
     "ionq.simulator" : 0.0,
-    "ionq.qpu" : 1.0,
     "ionq.qpu.aria-1" : 97.5,
     "ionq.qpu.aria-2" : 97.5,
     "ionq.qpu.forte-1" : 97.5
@@ -47,7 +45,6 @@ def int_to_bitstring(k: int, num_qubits: int, measured_qubit_ids: List[int]):
 class IonQ(Target):
     """IonQ target."""
     target_names = (
-        "ionq.qpu",
         "ionq.simulator",
         "ionq.qpu.aria-1",
         "ionq.qpu.aria-2",
@@ -127,7 +124,7 @@ class IonQ(Target):
 
     def estimate_cost(
         self,
-        circuit: Dict[str, Any],
+        circuit: Union[Dict[str, Any], Any],
         num_shots: int = None,
         price_1q: float = None,
         price_2q: float = None,
@@ -141,10 +138,6 @@ class IonQ(Target):
         
         Specify pricing details for your area to get most accurate results.
         By default, this function charges depending on the target:
-            ionq.qpu:
-                price_1q = 0.00003 USD for a single-qubit gate.
-                price_2q = 0.0003  USD for a two-qubit gate.
-                min_price = 1 USD, total minimum price per circuit.
             ionq.qpu.aria-1:
                 price_1q = 0.00022 USD for a single-qubit gate.
                 price_2q = 0.00098 USD for a two-qubit gate.
@@ -182,20 +175,6 @@ class IonQ(Target):
             )
             shots = num_shots
 
-        def is_1q_gate(gate: Dict[str, Any]):
-            return "controls" not in gate and "control" not in gate
-
-        def is_multi_q_gate(gate):
-            return "controls" in gate or "control" in gate
-
-        def num_2q_gates(gate):
-            controls = gate.get("controls")
-            if controls is None or len(controls) == 1:
-                # Only one control qubit
-                return 1
-            # Multiple control qubits
-            return 6 * (len(controls) - 2)
-
         # Get the costs for the gates depending on the provider if not specified
         if price_1q is None:
             price_1q = COST_1QUBIT_GATE_MAP[self.name]
@@ -206,10 +185,28 @@ class IonQ(Target):
         if min_price is None:
             min_price = MIN_PRICE_MAP[self.name]
 
-        gates = circuit.get("circuit", [])
-        N_1q = sum(map(is_1q_gate, gates))
-        N_2q = sum(map(num_2q_gates, filter(is_multi_q_gate, gates)))
+        if (isinstance(circuit, Dict)):
+            def is_1q_gate(gate: Dict[str, Any]):
+                return "controls" not in gate and "control" not in gate
 
+            def is_multi_q_gate(gate):
+                return "controls" in gate or "control" in gate
+
+            def num_2q_gates(gate):
+                controls = gate.get("controls")
+                if controls is None or len(controls) == 1:
+                    # Only one control qubit
+                    return 1
+                # Multiple control qubits
+                return 6 * (len(controls) - 2)
+            
+            gates = circuit.get("circuit", [])
+            N_1q = sum(map(is_1q_gate, gates))
+            N_2q = sum(map(num_2q_gates, filter(is_multi_q_gate, gates)))
+
+        else:
+            N_1q, N_2q, _ = Target._calculate_qir_module_gate_stats(circuit)
+            
         price = (price_1q * N_1q + price_2q * N_2q) * shots
         price = max(price, min_price)
 

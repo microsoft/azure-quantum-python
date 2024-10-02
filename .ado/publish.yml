@@ -54,7 +54,8 @@ extends:
       image: windows-latest
       os: windows
     stages:
-    - stage: stage
+    - stage: PublishToPyPi
+      displayName: "\U0001F6EB Build and Publish to PyPi"
       jobs:
       - job: "Build_Azure_Quantum_Python"
         displayName: Build "azure-quantum" package
@@ -62,7 +63,7 @@ extends:
           outputs:
           - output: pipelineArtifact
             displayName: 'Upload "azure-quantum" artifacts'
-            targetPath: $(Build.SourcesDirectory)/azure-quantum/target/wheels/
+            targetPath: $(Build.SourcesDirectory)/azure-quantum/artifacts/
             artifactName: azure-quantum-wheels
 
         steps:
@@ -88,9 +89,13 @@ extends:
 
         - script: |
             cd $(Build.SourcesDirectory)/azure-quantum
-            python setup.py sdist --dist-dir=target/wheels
-            python setup.py bdist_wheel --dist-dir=target/wheels
+            python setup.py sdist --dist-dir=artifacts/wheels
+            python setup.py bdist_wheel --dist-dir=artifacts/wheels
           displayName: Build "azure-quantum" package
+
+        - script: |
+            copy set_version.py "$(Build.SourcesDirectory)/azure-quantum/artifacts"
+          displayName: Copy "set_version.py" to artifacts
 
       - job: "Test_Azure_Quantum_Python"
         displayName: Test "azure-quantum" package
@@ -147,7 +152,7 @@ extends:
           inputs:
           - input: pipelineArtifact
             displayName: 'Download azure-quantum artifacts'
-            targetPath: $(System.DefaultWorkingDirectory)/drop
+            targetPath: $(Pipeline.Workspace)/azure-quantum-wheels
             artifactName: azure-quantum-wheels
         steps:
         - task: UsePythonVersion@0
@@ -156,7 +161,7 @@ extends:
           displayName: Set Python version
 
         - script: |
-            python set_version.py
+            python $(Pipeline.Workspace)/azure-quantum-wheels/set_version.py
           env:
             BUILD_TYPE: ${{ parameters.Build_Type }}
             RELEASE_TYPE: ${{ parameters.Release_Type }}
@@ -170,12 +175,12 @@ extends:
             )
           displayName: Copy built "azure-quantum" package artifacts
           inputs:
-            SourceFolder: '$(Pipeline.Workspace)/azure-quantum-wheels'
+            SourceFolder: '$(Pipeline.Workspace)/azure-quantum-wheels/wheels'
             Contents: '**'
-            TargetFolder: '$(Build.ArtifactStagingDirectory)/target/wheels'
+            TargetFolder: '$(Build.ArtifactStagingDirectory)/artifacts/wheels'
 
         - script: |
-            ls $(Build.ArtifactStagingDirectory)/target/wheels/*
+            ls $(Build.ArtifactStagingDirectory)/artifacts/wheels/*
           displayName: List Py Artifacts to publish
 
         - task: GitHubRelease@1
@@ -192,18 +197,23 @@ extends:
             target: $(Build.SourceVersion)
             addChangeLog: False
             assets: |
-              $(Build.ArtifactStagingDirectory)/target/wheels/*
+              $(Build.ArtifactStagingDirectory)/artifacts/wheels/*
 
-        - task: EsrpRelease@4
+        - task: EsrpRelease@7
           condition: ${{ parameters.Publish_Python_Package_To_PyPi }}
-          displayName: Publish "azure-quantum" package to PyPi
+          displayName: Sign and publish "azure-quantum" package to PyPi
           inputs:
-            ConnectedServiceName: 'ESRP_Release'
+            ConnectedServiceName: 'ESRP Signing Connection'
+            KeyVaultName: 'kv-aqua-esrp-001'
+            AuthCertName: 'EsrpAuthCert'
+            SignCertName: 'EsrpSignCert'
+            ClientId: '832c049d-cd07-4c1c-bfa5-c07250d190cb'
             Intent: 'PackageDistribution'
             ContentType: 'PyPi'
-            FolderLocation: '$(Build.ArtifactStagingDirectory)/target/wheels'
-            Owners: '$(OwnerPersonalAlias)@microsoft.com' # NB: Group email here fails the task with non-actionable output.
+            FolderLocation: '$(Build.ArtifactStagingDirectory)/artifacts/wheels'
+            WaitForReleaseCompletion: true
+            Owners: '$(OwnerPersonalAlias)@microsoft.com'                             # Group email here fails the task with non-actionable output.
             Approvers: 'billti@microsoft.com'
             ServiceEndpointUrl: 'https://api.esrp.microsoft.com'
-            MainPublisher: 'QuantumDevelpmentKit'
+            MainPublisher: 'ESRPRELPACMAN'                                            # Default ESRP v7 publisher. Do not change.
             DomainTenantId: '72f988bf-86f1-41af-91ab-2d7cd011db47'

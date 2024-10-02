@@ -273,45 +273,32 @@ class AzureQuantumJob(JobV1):
 
     def _translate_microsoft_v2_results(self):
         """ Translate Microsoft's batching job results histograms into a format that can be consumed by qiskit libraries. """
-        az_result = self._azure_job.get_results()
-
-        if not "DataFormat" in az_result:
-            raise ValueError("DataFormat missing from Job results")
-
-        if not "Results" in az_result:
-            raise ValueError("Results missing from Job results")
-
+        az_result_histogram = self._azure_job.get_results_histogram()
+        az_result_shots = self._azure_job.get_results_shots()
+        
+        # If it is a non-batched result, format to be in batch format so we can have one code path
+        if isinstance(az_result_histogram, dict):
+            az_result_histogram = [az_result_histogram]
+            az_result_shots = [az_result_shots]
+        
         histograms = []
-        results = az_result["Results"]
-        for circuit_results in results:
+        
+        for (histogram, shots) in zip(az_result_histogram, az_result_shots):
             counts = {}
             probabilities = {}
 
-            if not "TotalCount" in circuit_results:
-                raise ValueError("TotalCount missing from Job results")
+            total_count = len(shots)
 
-            total_count = circuit_results["TotalCount"]
-
-            if total_count <= 0:
-                raise ValueError("TotalCount must be a positive non-zero integer")
-
-            if not "Histogram" in circuit_results:
-                raise ValueError("Histogram missing from Job results")
-        
-            histogram = circuit_results["Histogram"]
-            for result in histogram:
-                if not "Display" in result:
-                    raise ValueError("Dispaly missing from histogram result")
-
-                if not "Count" in result:
-                    raise ValueError("Count missing from histogram result")
-
-                bitstring = AzureQuantumJob._qir_to_qiskit_bitstring(result["Display"])
-                count = result["Count"]
+            for (display, result) in histogram.items():
+                bitstring = AzureQuantumJob._qir_to_qiskit_bitstring(display)
+                count = result["count"]
                 probability = count / total_count
                 counts[bitstring] = count
                 probabilities[bitstring] = probability
-            histograms.append((total_count, {"counts": counts, "probabilities": probabilities}))
+            
+            formatted_shots = [AzureQuantumJob._qir_to_qiskit_bitstring(shot) for shot in shots]
+
+            histograms.append((total_count, {"counts": counts, "probabilities": probabilities, "memory": formatted_shots}))
         return histograms
 
     def _get_entry_point_names(self):
@@ -324,6 +311,26 @@ class AzureQuantumJob(JobV1):
                 raise ValueError("Entry point input_param is missing an 'entryPoint' field")
             entry_point_names.append(entry_point["entryPoint"])
         return entry_point_names if len(entry_point_names) > 0 else ["main"]
+
+    def _get_headers(self):
+        headers = self._azure_job.details.metadata
+        if (not isinstance(headers, list)):
+            headers = [headers]
+
+        # This function will attempt to parse the header into a JSON object, and if the header is not a JSON object, we return the header itself
+        def tryParseJSON(header):
+            try:
+                json_object = json.loads(header)
+            except ValueError as e:
+                return header
+            return json_object
+        
+        for header in headers:
+            del header['qiskit'] # we throw out the qiskit header as it is implied
+            for key in header.keys():
+                header[key] = tryParseJSON(header[key])
+        return headers
+
 
     def _format_microsoft_v2_results(self) -> List[Dict[str, Any]]:
         success = self._azure_job.details.status == "Succeeded"
@@ -339,10 +346,15 @@ class AzureQuantumJob(JobV1):
         entry_point_names = self._get_entry_point_names()
 
         results = self._translate_microsoft_v2_results()
-        
+
         if len(results) != len(entry_point_names):
-            raise ValueError("The number of experiment results does not match the number of experiment names")
+            raise ValueError("The number of experiment results does not match the number of entry point names")
         
+        headers = self._get_headers()
+        
+        if len(results) != len(headers):
+            raise ValueError("The number of experiment results does not match the number of headers")
+ 
         status = self.status()
 
         return [{
@@ -351,7 +363,5 @@ class AzureQuantumJob(JobV1):
             "shots": total_count,
             "name": name,
             "status": status,
-            "header": {
-                "name": name
-            }
-        } for name, (total_count, result) in zip(entry_point_names, results)]
+            "header": header 
+        } for name, (total_count, result), header in zip(entry_point_names, results, headers)]

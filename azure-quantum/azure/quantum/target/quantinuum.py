@@ -12,6 +12,7 @@ from azure.quantum.target.target import (
 from azure.quantum.job.job import Job
 from azure.quantum.workspace import Workspace
 from azure.quantum._client.models import CostEstimate, UsageEvent
+from typing import Union
 
 
 class Quantinuum(Target):
@@ -98,7 +99,7 @@ class Quantinuum(Target):
 
     def estimate_cost(
         self,
-        circuit: str = None,
+        circuit: Union[str, Any] = None,
         num_shots: int = None,
         N_1q: int = None,
         N_2q: int = None,
@@ -144,30 +145,35 @@ class Quantinuum(Target):
             )
             shots = num_shots
 
-        if circuit is not None and (N_1q is None or N_2q is None or N_m is None):
-            try:
-                from qiskit.qasm2 import loads
-                from qiskit.converters.circuit_to_dag import circuit_to_dag
+        # If we use passthrough, else assume QIR
+        if (isinstance(circuit, str)):
+            if circuit is not None and (N_1q is None or N_2q is None or N_m is None):
+                try:
+                    from qiskit.qasm2 import loads
+                    from qiskit.converters.circuit_to_dag import circuit_to_dag
 
-            except ImportError:
-                raise ImportError(
-                    "Missing dependency qiskit. Please run `pip install azure-quantum[qiskit]` " \
-"to estimate the circuit cost. Alternatively, specify the number of one-qubit and two-qubit " \
-"gates in the method input arguments.")
+                except ImportError:
+                    raise ImportError(
+                        "Missing dependency qiskit. Please run `pip install azure-quantum[qiskit]` " \
+    "to estimate the circuit cost. Alternatively, specify the number of one-qubit and two-qubit " \
+    "gates in the method input arguments.")
 
-            else:
-                from qiskit.dagcircuit.dagnode import DAGOpNode
-                circuit_obj = loads(string=circuit)
-                dag = circuit_to_dag(circuit=circuit_obj)
-                N_1q, N_2q, N_m = 0, 0, 0
-                for node in dag._multi_graph.nodes():
-                    if isinstance(node, DAGOpNode):
-                        if node.op.name in ["measure", "reset"]:
-                            N_m += 1
-                        elif node.op.num_qubits == 1:
-                            N_1q += 1
-                        else:
-                            N_2q += 1
+                else:
+                    from qiskit.dagcircuit.dagnode import DAGOpNode
+                    circuit_obj = loads(string=circuit)
+                    dag = circuit_to_dag(circuit=circuit_obj)
+                    N_1q, N_2q, N_m = 0, 0, 0
+                    for node in dag._multi_graph.nodes():
+                        if isinstance(node, DAGOpNode):
+                            if node.op.name in ["measure", "reset"]:
+                                N_m += 1
+                            elif node.op.num_qubits == 1:
+                                N_1q += 1
+                            else:
+                                N_2q += 1
+        else:
+            N_1q, N_2q, N_m = Target._calculate_qir_module_gate_stats(circuit)
+            
 
         import re
         is_emulator_regex = re.compile("^.*(-sim|-[0-9]*e)$")
