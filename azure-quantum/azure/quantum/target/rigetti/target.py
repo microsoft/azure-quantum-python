@@ -30,7 +30,6 @@ class RigettiTarget(str, Enum):
     """A simulator target for Quil. See https://github.com/quil-lang/qvm for more info."""
 
     ANKAA_2 = "rigetti.qpu.ankaa-2"
-    ANKAA_9Q_3 = "rigetti.qpu.ankaa-9q-3"
 
     ANKAA_9Q_3 = "rigetti.qpu.ankaa-9q-3"
 
