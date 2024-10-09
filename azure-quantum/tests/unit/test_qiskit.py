@@ -199,15 +199,6 @@ class TestQiskit(QuantumTestBase):
         circuit.measure([0], [0])
         return circuit
 
-    def _endianness(self, pos=0):
-        self.assertLess(pos, 3)
-        qr = QuantumRegister(3)
-        cr = [ClassicalRegister(3) for _ in range(3)]
-        circuit = QuantumCircuit(qr, *cr, name=f"endian{pos}cr3")
-        circuit.x(pos)
-        circuit.measure(qr[pos], cr[pos][pos])
-        return circuit
-
     def _controlled_s(self):
         circuit = QuantumCircuit(3)
         circuit.t(0)
@@ -282,7 +273,7 @@ class TestQiskit(QuantumTestBase):
 
         self.assertEqual(AzureQuantumJob._qir_to_qiskit_bitstring(azure_register), bitstring)
         self.assertEqual(AzureQuantumJob._qir_to_qiskit_bitstring(azure_registers), " ".join(
-            f"{bit}10" for bit in reversed(bits)
+            f"{bit}10" for bit in bits
         ))
         self.assertEqual(AzureQuantumJob._qir_to_qiskit_bitstring(bitstring), bitstring)
 
@@ -1845,20 +1836,29 @@ class TestQiskit(QuantumTestBase):
         self.assertEqual("qir.v1", config.azure["input_data_format"])
         self.assertEqual("microsoft.quantum-results.v2", backend._get_output_data_format())
 
-    # @pytest.mark.parametrize("endian_pos, expectation",
-    #     [(0,"000 000 001"), (1,"000 010 000"), (2,"100 000 000")]
-    # )
-    @pytest.mark.qci
+    @pytest.mark.rigetti
     @pytest.mark.live_test
-    def test_qiskit_endianness_submit_to_qci(
-        self, endian_pos=0, expectation="000 000 001"
+    def test_qiskit_endianness_submit_to_rigetti(
+        self, expectation="000 000 001"
     ):
         workspace = self.create_workspace()
         provider = AzureQuantumProvider(workspace=workspace)
-        backend = provider.get_backend("qci.simulator")
+        backend = provider.get_backend("rigetti.sim.qvm")
         shots = 100
 
-        circuit = self._endianness(pos=endian_pos)
+        qr = QuantumRegister(3)
+        cr = [ClassicalRegister(3) for _ in range(3)]
+        circuit = QuantumCircuit(qr, *cr, name="endian0cr3")
+        circuit.x(0)
+        circuit.measure(qr[0], cr[0][0])
+        circuit.measure(qr[1], cr[0][1])
+        circuit.measure(qr[1], cr[0][2])
+        circuit.measure(qr[1], cr[1][0])
+        circuit.measure(qr[1], cr[1][1])
+        circuit.measure(qr[1], cr[1][2])
+        circuit.measure(qr[2], cr[2][0])
+        circuit.measure(qr[2], cr[2][1])
+        circuit.measure(qr[2], cr[2][2])
         circuit.metadata = {"some": "data"}
 
         qiskit_job = backend.run(circuit, shots=shots)

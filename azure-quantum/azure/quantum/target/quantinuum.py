@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 ##
-from typing import Any, Dict
+from typing import Any, Dict, Union
 from warnings import warn
 
 from azure.quantum.target.target import (
@@ -12,7 +12,6 @@ from azure.quantum.target.target import (
 from azure.quantum.job.job import Job
 from azure.quantum.workspace import Workspace
 from azure.quantum._client.models import CostEstimate, UsageEvent
-from typing import Union
 
 
 class Quantinuum(Target):
@@ -35,12 +34,16 @@ class Quantinuum(Target):
         name: str = "quantinuum.sim.h1-1sc",
         input_data_format: str = "honeywell.openqasm.v1",
         output_data_format: str = "honeywell.quantum-results.v1",
-        capability: str = "AdaptiveExecution",
+        capability: str = "",
         provider_id: str = "quantinuum",
         content_type: str = "application/qasm",
         encoding: str = "",
+        target_profile: Union[str, "TargetProfile"] = "Adaptive_RI",
         **kwargs
     ):
+        if capability:
+            msg = "The 'capability' parameter is not used for the Quantinuum target."
+            warn(msg, DeprecationWarning)
         super().__init__(
             workspace=workspace,
             name=name,
@@ -50,6 +53,7 @@ class Quantinuum(Target):
             provider_id=provider_id,
             content_type=content_type,
             encoding=encoding,
+            target_profile=target_profile,
             **kwargs
         )
 

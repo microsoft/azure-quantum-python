@@ -7,7 +7,7 @@ from azure.quantum import __version__
 from azure.quantum.qiskit.job import AzureQuantumJob
 from azure.quantum.target.ionq import IonQ
 from abc import abstractmethod
-
+from qsharp import TargetProfile
 from qiskit import QuantumCircuit
 
 from .backend import (
@@ -65,7 +65,7 @@ class IonQQirBackendBase(AzureQirBackend):
             **{
                 cls._SHOTS_PARAM_NAME: _DEFAULT_SHOTS_COUNT,
             },
-            targetCapability="BasicExecution",
+            target_profile=TargetProfile.Base,
             )
 
     def _azure_config(self) -> Dict[str, str]:
