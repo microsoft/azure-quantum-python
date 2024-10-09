@@ -218,8 +218,7 @@ class AzureQuantumJob(JobV1):
 
         if isinstance(obj, tuple):
             # the outermost implied container is a tuple, and each item is
-            # associated with a classical register. Azure and Qiskit order the
-            # registers in opposite directions, so reverse here to match.
+            # associated with a classical register.
             return " ".join(
                 [
                     AzureQuantumJob._qir_to_qiskit_bitstring(term)
