@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 ##
 
-from typing import TYPE_CHECKING, Dict, List
+from typing import TYPE_CHECKING, Any, Dict, List, Union
 from azure.quantum.version import __version__
 from qiskit import QuantumCircuit
 from abc import abstractmethod
@@ -47,6 +47,23 @@ class MicrosoftBackend(AzureQirBackend):
             }
         )
         return config
+
+    def _translate_input(
+        self,
+        circuits: Union[QuantumCircuit, List[QuantumCircuit]],
+        input_params: Dict[str, Any],
+    ) -> bytes:
+        """Translates the input values to the QIR expected by the Backend."""
+        # All the logic is in the base class, but we need to override
+        # this method to ensure that the bitcode QIR format is used for RE.
+
+        # normal translation is to QIR text format in utf-8 encoded bytes
+        ir_byte_str = super()._translate_input(circuits, input_params)
+        # decode the utf-8 encoded bytes to a string
+        ir_str = ir_byte_str.decode('utf-8')
+        # convert the QIR text format to QIR bitcode format
+        module = pyqir.Module.from_ir(pyqir.Context(), ir_str)
+        return module.bitcode
 
     def _generate_qir(
         self, circuits: List[QuantumCircuit], target_profile: TargetProfile, **kwargs
