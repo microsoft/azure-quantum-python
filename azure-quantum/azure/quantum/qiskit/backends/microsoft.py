@@ -97,18 +97,6 @@ class MicrosoftBackend(AzureQirBackend):
             module = pyqir.Module.from_ir(context, qir_str)
             llvm_module.link(module)
 
-        # Add NOOP for recording output tuples
-        # the service isn't set up to handle any output recording calls
-        # and the Q# compiler will always emit them.
-        noop_tuple_record_output = """; NOOP the extern calls to recording output tuples
-define void @__quantum__rt__tuple_record_output(i64, i8*) {
-  ret void
-}"""
-        noop_tuple_record_output_module = pyqir.Module.from_ir(
-            context, noop_tuple_record_output
-        )
-        llvm_module.link(noop_tuple_record_output_module)
-
         err = llvm_module.verify()
         if err is not None:
             raise Exception(err)
