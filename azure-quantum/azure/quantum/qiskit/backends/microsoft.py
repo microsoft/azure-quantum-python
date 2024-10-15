@@ -3,36 +3,17 @@
 # Licensed under the MIT License.
 ##
 
-from typing import TYPE_CHECKING, Any, Dict, List
+from typing import TYPE_CHECKING, Any, Dict, List, Union
 from azure.quantum.version import __version__
 from qiskit import QuantumCircuit
 from abc import abstractmethod
-from .backend import AzureQirBackend
+from .backend import AzureQirBackend, QIR_BASIS_GATES
 
 from qiskit.providers.models import BackendConfiguration
 from qiskit.providers import Options, Provider
-
-QIR_BASIS_GATES = [
-    "measure",
-    "m",
-    "ccx",
-    "cx",
-    "cz",
-    "h",
-    "reset",
-    "rx",
-    "ry",
-    "rz",
-    "s",
-    "sdg",
-    "swap",
-    "t",
-    "tdg",
-    "x",
-    "y",
-    "z",
-    "id",
-]
+from qsharp import TargetProfile
+from qsharp.interop.qiskit import ResourceEstimatorBackend
+import pyqir as pyqir
 
 if TYPE_CHECKING:
     from azure.quantum.qiskit import AzureQuantumProvider
@@ -55,7 +36,7 @@ class MicrosoftBackend(AzureQirBackend):
 
     @classmethod
     def _default_options(cls):
-        return Options(targetCapability="AdaptiveExecution")
+        return Options(target_profile=TargetProfile.Adaptive_RI)
 
     def _azure_config(self) -> Dict[str, str]:
         config = super()._azure_config()
@@ -63,10 +44,64 @@ class MicrosoftBackend(AzureQirBackend):
             {
                 "provider_id": "microsoft-qc",
                 "output_data_format": "microsoft.resource-estimates.v1",
-                "to_qir_kwargs": {"record_output": False},
             }
         )
         return config
+
+    def _translate_input(
+        self,
+        circuits: Union[QuantumCircuit, List[QuantumCircuit]],
+        input_params: Dict[str, Any],
+    ) -> bytes:
+        """Translates the input values to the QIR expected by the Backend."""
+        # All the logic is in the base class, but we need to override
+        # this method to ensure that the bitcode QIR format is used for RE.
+
+        # normal translation is to QIR text format in utf-8 encoded bytes
+        ir_byte_str = super()._translate_input(circuits, input_params)
+        # decode the utf-8 encoded bytes to a string
+        ir_str = ir_byte_str.decode('utf-8')
+        # convert the QIR text format to QIR bitcode format
+        module = pyqir.Module.from_ir(pyqir.Context(), ir_str)
+        return module.bitcode
+
+    def _generate_qir(
+        self, circuits: List[QuantumCircuit], target_profile: TargetProfile, **kwargs
+    ) -> pyqir.Module:
+        if len(circuits) == 0:
+            raise ValueError("No QuantumCircuits provided")
+
+        name = "circuits"
+        if isinstance(circuits, QuantumCircuit):
+            name = circuits.name
+            circuits = [circuits]
+        elif isinstance(circuits, list):
+            for value in circuits:
+                if not isinstance(value, QuantumCircuit):
+                    raise ValueError(
+                        "Input must be Union[QuantumCircuit, List[QuantumCircuit]]"
+                    )
+        else:
+            raise ValueError(
+                "Input must be Union[QuantumCircuit, List[QuantumCircuit]]"
+            )
+
+        skip_transpilation = kwargs.pop("skip_transpilation", False)
+        backend = ResourceEstimatorBackend(
+            skip_transpilation=skip_transpilation, **kwargs
+        )
+        context = pyqir.Context()
+        llvm_module = pyqir.qir_module(context, name)
+        for circuit in circuits:
+            qir_str = backend.qir(circuit, target_profile=target_profile)
+            module = pyqir.Module.from_ir(context, qir_str)
+            llvm_module.link(module)
+
+        err = llvm_module.verify()
+        if err is not None:
+            raise Exception(err)
+
+        return llvm_module
 
 
 class MicrosoftResourceEstimationBackend(MicrosoftBackend):
@@ -77,7 +112,7 @@ class MicrosoftResourceEstimationBackend(MicrosoftBackend):
     @classmethod
     def _default_options(cls):
         return Options(
-            targetCapability="AdaptiveExecution",
+            target_profile=TargetProfile.Adaptive_RI,
             errorBudget=1e-3,
             qubitParams={"name": "qubit_gate_ns_e3"},
             qecScheme={"name": "surface_code"}

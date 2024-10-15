@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 ##
 
-from typing import TYPE_CHECKING, Dict
+from typing import TYPE_CHECKING, Dict, List
 from azure.quantum.version import __version__
 from azure.quantum.qiskit.job import AzureQuantumJob
 from abc import abstractmethod
@@ -14,6 +14,8 @@ from .backend import (
 
 from qiskit.providers.models import BackendConfiguration
 from qiskit.providers import Options, Provider
+from qsharp import TargetProfile
+
 
 if TYPE_CHECKING:
     from azure.quantum.qiskit import AzureQuantumProvider
@@ -43,7 +45,7 @@ class QCIBackend(AzureQirBackend):
             **{
                 cls._SHOTS_PARAM_NAME: _DEFAULT_SHOTS_COUNT, 
             },
-            targetCapability="AdaptiveExecution",
+            target_profile=TargetProfile.Adaptive_RI,
         )
 
     def _azure_config(self) -> Dict[str, str]:
@@ -54,9 +56,12 @@ class QCIBackend(AzureQirBackend):
             }
         )
         return config
-    
+
+    def _basis_gates(self) -> List[str]:
+        return super()._basis_gates() + ["barrier"]
+
     def run(
-        self, 
+        self,
         run_input=None,
         shots: int = None,
         **options,
