@@ -440,6 +440,8 @@ class AzureQirBackend(AzureBackendBase):
         for circuit in circuits:
             qir_str = backend.qir(circuit)
             module = pyqir.Module.from_ir(context, qir_str)
+            entry_point = next(filter(pyqir.is_entry_point, module.functions))
+            entry_point.name = circuit.name
             llvm_module.link(module)
         err = llvm_module.verify()
         if err is not None:
