@@ -150,6 +150,96 @@ class BaseJob(WorkspaceItem):
         )
 
     @classmethod
+    def from_input_data_container(
+        cls,
+        workspace: "Workspace",
+        name: str,
+        target: str,
+        input_data: Dict[str, bytes],
+        content_type: ContentType = ContentType.json,
+        blob_name: str = "inputData",
+        encoding: str = "",
+        job_id: str = None,
+        container_name: str = None,
+        provider_id: str = None,
+        input_data_format: str = None,
+        output_data_format: str = None,
+        input_params: Dict[str, Any] = None,
+        session_id: Optional[str] = None,
+        **kwargs
+    ) -> "BaseJob":
+        """Create a new Azure Quantum job based on a list of input_data.
+
+        :param workspace: Azure Quantum workspace to submit the input_data to
+        :type workspace: Workspace
+        :param name: Name of the job
+        :type name: str
+        :param target: Azure Quantum target
+        :type target: str
+        :param input_data: Raw input data to submit
+        :type input_data: Dict
+        :param blob_name: Dict of Input data where the key is the blob name
+        :type blob_name: str
+        :param content_type: Content type, e.g. "application/json"
+        :type content_type: ContentType
+        :param encoding: input_data encoding, e.g. "gzip", defaults to empty string
+        :type encoding: str
+        :param job_id: Job ID, defaults to None
+        :type job_id: str
+        :param container_name: Container name, defaults to None
+        :type container_name: str
+        :param provider_id: Provider ID, defaults to None
+        :type provider_id: str
+        :param input_data_format: Input data format, defaults to None
+        :type input_data_format: str
+        :param output_data_format: Output data format, defaults to None
+        :type output_data_format: str
+        :param input_params: Input parameters, defaults to None
+        :type input_params: Dict[str, Any]
+        :param input_params: Input params for job
+        :type input_params: Dict[str, Any]
+        :return: Azure Quantum Job
+        :rtype: Job
+        """
+        # Generate job ID if not specified
+        if job_id is None:
+            job_id = cls.create_job_id()
+
+        # Create container if it does not yet exist
+        container_uri = workspace.get_container_uri(
+            job_id=job_id,
+            container_name=container_name
+        )
+        logger.debug(f"Container URI: {container_uri}")
+
+        # Upload data to container
+        for blob_name, input_data_item in input_data.items():
+            input_data_uri = cls.upload_input_data(
+                container_uri=container_uri,
+                input_data=input_data_item,
+                content_type=content_type,
+                blob_name=blob_name,
+                encoding=encoding,
+            )
+        #input_data_uri = None
+
+        # Create and submit job
+        return cls.from_storage_uri(
+            workspace=workspace,
+            job_id=job_id,
+            target=target,
+            input_data_uri=container_uri,
+            container_uri=container_uri,
+            name=name,
+            input_data_format=input_data_format,
+            output_data_format=output_data_format,
+            provider_id=provider_id,
+            input_params=input_params,
+            session_id=session_id,
+            **kwargs
+        )
+
+    @classmethod
     def from_storage_uri(
         cls,
         workspace: "Workspace",
