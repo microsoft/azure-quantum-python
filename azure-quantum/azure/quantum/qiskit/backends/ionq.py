@@ -147,7 +147,7 @@ class IonQAriaQirBackend(IonQQirBackendBase):
                 "description": "IonQ Aria QPU on Azure Quantum",
                 "basis_gates": self._basis_gates(),
                 "memory": False,
-                "n_qubits": 23,
+                "n_qubits": 25,
                 "conditional": False,
                 "max_shots": 10000,
                 "max_experiments": 1,

@@ -29,7 +29,7 @@ class RigettiTarget(str, Enum):
     QVM = "rigetti.sim.qvm"
     """A simulator target for Quil. See https://github.com/quil-lang/qvm for more info."""
 
-    ANKAA_2 = "rigetti.qpu.ankaa-2"
+    ANKAA_9Q_3 = "rigetti.qpu.ankaa-9q-3"
 
     def simulators() -> List[str]:
         """Returns a list of simulator targets"""
@@ -40,7 +40,7 @@ class RigettiTarget(str, Enum):
     def qpus() -> List[str]:
         """Returns a list of QPU targets"""
         return [
-            RigettiTarget.ANKAA_2.value,
+            RigettiTarget.ANKAA_9Q_3.value,
         ]
 
     def num_qubits(target_name) -> int:
@@ -48,8 +48,8 @@ class RigettiTarget(str, Enum):
 
         if target_name == RigettiTarget.QVM.value:
             return 20
-        elif target_name == RigettiTarget.ANKAA_2.value:
-            return 84
+        elif target_name == RigettiTarget.ANKAA_9Q_3.value:
+            return 9
         else:
             raise ValueError(f"Unknown target {target_name}")
 

@@ -878,7 +878,7 @@ class TestQiskit(QuantumTestBase):
         config = backend.configuration()
         self.assertFalse(config.simulator)
         self.assertEqual(1, config.max_experiments)
-        self.assertEqual(23, config.num_qubits)
+        self.assertEqual(25, config.num_qubits)
         self.assertEqual("qir.v1", config.azure["content_type"])
         self.assertEqual("ionq", config.azure["provider_id"])
         self.assertEqual("qir.v1", config.azure["input_data_format"])
@@ -1735,17 +1735,17 @@ class TestQiskit(QuantumTestBase):
         provider = AzureQuantumProvider(workspace=workspace)
 
         try:
-            backend = provider.get_backend(RigettiTarget.ANKAA_2.value)
+            backend = provider.get_backend(RigettiTarget.ANKAA_9Q_3.value)
         except QiskitBackendNotFoundError as ex:
-            msg = f"Target {RigettiTarget.ANKAA_2} is not available for workspace {workspace.name}."
+            msg = f"Target {RigettiTarget.ANKAA_9Q_3} is not available for workspace {workspace.name}."
             warnings.warn(f"{msg}\nException:\n{QiskitBackendNotFoundError.__name__}\n{ex}")
             pytest.skip(msg)
 
-        self.assertEqual(backend.name(), RigettiTarget.ANKAA_2.value)
+        self.assertEqual(backend.name(), RigettiTarget.ANKAA_9Q_3.value)
         config = backend.configuration()
         self.assertFalse(config.simulator)
         self.assertEqual(1, config.max_experiments)
-        self.assertEqual(84, config.num_qubits)
+        self.assertEqual(9, config.num_qubits)
         self.assertEqual("qir.v1", config.azure["content_type"])
         self.assertEqual("rigetti", config.azure["provider_id"])
         self.assertEqual("qir.v1", config.azure["input_data_format"])
