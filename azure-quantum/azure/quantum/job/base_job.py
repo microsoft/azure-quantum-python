@@ -221,14 +221,13 @@ class BaseJob(WorkspaceItem):
                 blob_name=blob_name,
                 encoding=encoding,
             )
-        #input_data_uri = None
 
         # Create and submit job
         return cls.from_storage_uri(
             workspace=workspace,
             job_id=job_id,
             target=target,
-            input_data_uri=container_uri,
+            input_data_uri=input_data_uri,
             container_uri=container_uri,
             name=name,
             input_data_format=input_data_format,
