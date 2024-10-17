@@ -317,16 +317,6 @@ target '{self.name}' of provider '{self.provider_id}' not found."
         """
         return InputParams()
 
-    def estimate_cost(
-        self,
-        input_data: Any,
-        input_params: Union[Dict[str, Any], None] = None
-    ):
-        """
-        Estimate the cost for a given circuit.
-        """
-        return NotImplementedError("Price estimation is not implemented yet for this target.")
-
     def _get_azure_workspace(self) -> "Workspace":
         return self.workspace
 
