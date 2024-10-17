@@ -241,17 +241,6 @@ class IonQBackend(AzureBackend):
     def gateset(self):
         return self.configuration().gateset
 
-    def estimate_cost(self, circuit, shots):
-        """Estimate the cost for the given circuit."""
-        ionq_circ, _, _ = qiskit_circ_to_ionq_circ(circuit, gateset=self.gateset())
-        input_data = {
-            "qubits": circuit.num_qubits,
-            "circuit": ionq_circ,
-        }
-        workspace = self.provider().get_workspace()
-        target = workspace.get_targets(self.name())
-        return target.estimate_cost(input_data, shots=shots)
-
 
 class IonQSimulatorBackend(IonQBackend):
     backend_names = ("ionq.simulator",)
