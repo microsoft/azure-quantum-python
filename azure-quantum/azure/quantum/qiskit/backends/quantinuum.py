@@ -119,10 +119,6 @@ class QuantinuumQirBackendBase(AzureQirBackend):
     def _get_n_qubits(self, name):
         return _get_n_qubits(name)
     
-    def estimate_cost(self, circuits, shots, options={}):
-        """Estimate the cost for the given circuit."""
-        return self._estimate_cost_qir(circuits, shots, options)
-
 
 class QuantinuumSyntaxCheckerQirBackend(QuantinuumQirBackendBase):
     backend_names = (
