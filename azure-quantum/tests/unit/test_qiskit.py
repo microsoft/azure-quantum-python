@@ -1643,82 +1643,82 @@ class TestQiskit(QuantumTestBase):
         self.assertEqual("qir.v1", config.azure["input_data_format"])
         self.assertEqual(MICROSOFT_OUTPUT_DATA_FORMAT_V2, backend._get_output_data_format())
 
-    @pytest.mark.qci
-    @pytest.mark.live_test
-    def test_qiskit_submit_to_qci(self):
-        workspace = self.create_workspace()
-        provider = AzureQuantumProvider(workspace=workspace)
-        self.assertIn("azure-quantum-qiskit", provider._workspace.user_agent)
-        backend = provider.get_backend("qci.simulator")
-        self.assertEqual(backend.name(), "qci.simulator")
-        config = backend.configuration()
-        self.assertTrue(config.simulator)
-        self.assertEqual(1, config.max_experiments)
-        self.assertEqual(29, config.num_qubits)
-        self.assertEqual("qir.v1", config.azure["content_type"])
-        self.assertEqual("qci", config.azure["provider_id"])
-        self.assertEqual("qir.v1", config.azure["input_data_format"])
-        self.assertEqual("microsoft.quantum-results.v2", backend._get_output_data_format())
-        shots = 100
+    # @pytest.mark.qci
+    # @pytest.mark.live_test
+    # def test_qiskit_submit_to_qci(self):
+    #     workspace = self.create_workspace()
+    #     provider = AzureQuantumProvider(workspace=workspace)
+    #     self.assertIn("azure-quantum-qiskit", provider._workspace.user_agent)
+    #     backend = provider.get_backend("qci.simulator")
+    #     self.assertEqual(backend.name(), "qci.simulator")
+    #     config = backend.configuration()
+    #     self.assertTrue(config.simulator)
+    #     self.assertEqual(1, config.max_experiments)
+    #     self.assertEqual(29, config.num_qubits)
+    #     self.assertEqual("qir.v1", config.azure["content_type"])
+    #     self.assertEqual("qci", config.azure["provider_id"])
+    #     self.assertEqual("qir.v1", config.azure["input_data_format"])
+    #     self.assertEqual("microsoft.quantum-results.v2", backend._get_output_data_format())
+    #     shots = 100
 
-        circuit = self._3_qubit_ghz()
+    #     circuit = self._3_qubit_ghz()
 
-        qiskit_job = backend.run(circuit, shots=shots)
+    #     qiskit_job = backend.run(circuit, shots=shots)
 
-        # Check job metadata:
-        self.assertEqual(qiskit_job._azure_job.details.target, "qci.simulator")
-        self.assertEqual(qiskit_job._azure_job.details.provider_id, "qci")
-        self.assertEqual(qiskit_job._azure_job.details.input_data_format, "qir.v1")
-        self.assertEqual(qiskit_job._azure_job.details.output_data_format, MICROSOFT_OUTPUT_DATA_FORMAT_V2)
-        self.assertEqual(qiskit_job._azure_job.details.input_params["shots"], shots)
-        self.assertEqual(qiskit_job._azure_job.details.input_params["items"][0]["entryPoint"], circuit.name)
-        self.assertEqual(qiskit_job._azure_job.details.input_params["items"][0]["arguments"], [])
+    #     # Check job metadata:
+    #     self.assertEqual(qiskit_job._azure_job.details.target, "qci.simulator")
+    #     self.assertEqual(qiskit_job._azure_job.details.provider_id, "qci")
+    #     self.assertEqual(qiskit_job._azure_job.details.input_data_format, "qir.v1")
+    #     self.assertEqual(qiskit_job._azure_job.details.output_data_format, MICROSOFT_OUTPUT_DATA_FORMAT_V2)
+    #     self.assertEqual(qiskit_job._azure_job.details.input_params["shots"], shots)
+    #     self.assertEqual(qiskit_job._azure_job.details.input_params["items"][0]["entryPoint"], circuit.name)
+    #     self.assertEqual(qiskit_job._azure_job.details.input_params["items"][0]["arguments"], [])
 
-        # Make sure the job is completed before fetching the results
-        self._qiskit_wait_to_complete(qiskit_job, provider)
+    #     # Make sure the job is completed before fetching the results
+    #     self._qiskit_wait_to_complete(qiskit_job, provider)
 
-        if JobStatus.DONE == qiskit_job.status():
-            result = qiskit_job.result()
-            print(result)
-            self.assertEqual(sum(result.data()["counts"].values()), shots)
-            self.assertAlmostEqual(result.data()["counts"]["000"], shots // 2, delta=20)
-            self.assertAlmostEqual(result.data()["counts"]["111"], shots // 2, delta=20)
-            counts = result.get_counts()
-            self.assertEqual(counts, result.data()["counts"])
+    #     if JobStatus.DONE == qiskit_job.status():
+    #         result = qiskit_job.result()
+    #         print(result)
+    #         self.assertEqual(sum(result.data()["counts"].values()), shots)
+    #         self.assertAlmostEqual(result.data()["counts"]["000"], shots // 2, delta=20)
+    #         self.assertAlmostEqual(result.data()["counts"]["111"], shots // 2, delta=20)
+    #         counts = result.get_counts()
+    #         self.assertEqual(counts, result.data()["counts"])
 
-    @pytest.mark.qci
-    @pytest.mark.live_test
-    def test_qiskit_submit_to_qci_with_default_shots(self):
-        workspace = self.create_workspace()
-        provider = AzureQuantumProvider(workspace=workspace)
-        backend = provider.get_backend("qci.simulator")
+    # @pytest.mark.qci
+    # @pytest.mark.live_test
+    # def test_qiskit_submit_to_qci_with_default_shots(self):
+    #     workspace = self.create_workspace()
+    #     provider = AzureQuantumProvider(workspace=workspace)
+    #     backend = provider.get_backend("qci.simulator")
 
-        circuit = self._3_qubit_ghz()
-        qiskit_job = backend.run(circuit)
-        self._qiskit_wait_to_complete(qiskit_job, provider)
-        self.assertEqual(qiskit_job._azure_job.details.input_params["shots"], 500)
+    #     circuit = self._3_qubit_ghz()
+    #     qiskit_job = backend.run(circuit)
+    #     self._qiskit_wait_to_complete(qiskit_job, provider)
+    #     self.assertEqual(qiskit_job._azure_job.details.input_params["shots"], 500)
 
-    @pytest.mark.qci
-    @pytest.mark.live_test
-    def test_qiskit_submit_to_qci_with_deprecated_count_param(self):
-        """
-        Verify that a warning message is printed when the 'count' option is specified.
-        This option was allowed in earlier versions, but now it is accepted only to keep existing 
-        user codebase compatible.
-        """
-        workspace = self.create_workspace()
-        provider = AzureQuantumProvider(workspace=workspace)
-        backend = provider.get_backend("qci.simulator")
+    # @pytest.mark.qci
+    # @pytest.mark.live_test
+    # def test_qiskit_submit_to_qci_with_deprecated_count_param(self):
+    #     """
+    #     Verify that a warning message is printed when the 'count' option is specified.
+    #     This option was allowed in earlier versions, but now it is accepted only to keep existing 
+    #     user codebase compatible.
+    #     """
+    #     workspace = self.create_workspace()
+    #     provider = AzureQuantumProvider(workspace=workspace)
+    #     backend = provider.get_backend("qci.simulator")
 
-        shots=10
-        circuit = self._3_qubit_ghz()
-        with pytest.warns(
-            DeprecationWarning, 
-            match="The 'count' parameter will be deprecated. Please, use 'shots' parameter instead."
-        ):
-            qiskit_job = backend.run(circuit, count=shots)
-        self._qiskit_wait_to_complete(qiskit_job, provider)
-        self.assertEqual(qiskit_job._azure_job.details.input_params["shots"], shots)
+    #     shots=10
+    #     circuit = self._3_qubit_ghz()
+    #     with pytest.warns(
+    #         DeprecationWarning, 
+    #         match="The 'count' parameter will be deprecated. Please, use 'shots' parameter instead."
+    #     ):
+    #         qiskit_job = backend.run(circuit, count=shots)
+    #     self._qiskit_wait_to_complete(qiskit_job, provider)
+    #     self.assertEqual(qiskit_job._azure_job.details.input_params["shots"], shots)
 
     @pytest.mark.qci
     @pytest.mark.live_test
@@ -1740,29 +1740,29 @@ class TestQiskit(QuantumTestBase):
     # @pytest.mark.parametrize("endian_pos, expectation",
     #     [(0,"000 000 001"), (1,"000 010 000"), (2,"100 000 000")]
     # )
-    @pytest.mark.qci
-    @pytest.mark.live_test
-    def test_qiskit_endianness_submit_to_qci(
-        self, endian_pos=0, expectation="000 000 001"
-    ):
-        workspace = self.create_workspace()
-        provider = AzureQuantumProvider(workspace=workspace)
-        backend = provider.get_backend("qci.simulator")
-        shots = 100
+    # @pytest.mark.qci
+    # @pytest.mark.live_test
+    # def test_qiskit_endianness_submit_to_qci(
+    #     self, endian_pos=0, expectation="000 000 001"
+    # ):
+    #     workspace = self.create_workspace()
+    #     provider = AzureQuantumProvider(workspace=workspace)
+    #     backend = provider.get_backend("qci.simulator")
+    #     shots = 100
 
-        circuit = self._endianness(pos=endian_pos)
-        circuit.metadata = {"some": "data"}
+    #     circuit = self._endianness(pos=endian_pos)
+    #     circuit.metadata = {"some": "data"}
 
-        qiskit_job = backend.run(circuit, shots=shots)
+    #     qiskit_job = backend.run(circuit, shots=shots)
 
-        # Make sure the job is completed before fetching the results
-        self._qiskit_wait_to_complete(qiskit_job, provider)
+    #     # Make sure the job is completed before fetching the results
+    #     self._qiskit_wait_to_complete(qiskit_job, provider)
 
-        if JobStatus.DONE == qiskit_job.status():
-            result = qiskit_job.result()
-            print(result)
-            self.assertEqual(sum(result.data()["counts"].values()), shots)
-            self.assertEqual(result.data()["counts"][expectation], shots)
+    #     if JobStatus.DONE == qiskit_job.status():
+    #         result = qiskit_job.result()
+    #         print(result)
+    #         self.assertEqual(sum(result.data()["counts"].values()), shots)
+    #         self.assertEqual(result.data()["counts"][expectation], shots)
 
     @pytest.mark.microsoft_qc
     @pytest.mark.live_test

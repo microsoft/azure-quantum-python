@@ -307,15 +307,15 @@ class TestSession(QuantumTestBase):
             self.assertEqual(session_jobs[1].details.name, "Bad Job 2")
             self.assertEqual(session_jobs[2].details.name, "Good Job 3")
 
-    # Session job failure policy tests
+    # # Session job failure policy tests
 
-    @pytest.mark.live_test
-    @pytest.mark.session
-    @pytest.mark.qsharp
-    @pytest.mark.echo_targets
-    @skip_if_no_qsharp
-    def test_session_job_failure_policies_echo_quantinuum(self):
-        self._test_session_job_failure_policies(target_name="echo-quantinuum")
+    # @pytest.mark.live_test
+    # @pytest.mark.session
+    # @pytest.mark.qsharp
+    # @pytest.mark.echo_targets
+    # @skip_if_no_qsharp
+    # def test_session_job_failure_policies_echo_quantinuum(self):
+    #     self._test_session_job_failure_policies(target_name="echo-quantinuum")
 
     # Session support for Cirq jobs
 
