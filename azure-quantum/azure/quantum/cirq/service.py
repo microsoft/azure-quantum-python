@@ -160,36 +160,6 @@ see https://aka.ms/AQ/Docs/AddProvider")
             name=name
         )
 
-    def estimate_cost(
-        self,
-        program: cirq.Circuit,
-        repetitions: int,
-        target: str = None,
-        param_resolver: cirq.ParamResolverOrSimilarType = cirq.ParamResolver({}),
-        **kwargs
-    ):
-        """
-        Estimate the cost for a given circuit.
-
-        :param program: Cirq program or circuit
-        :type program: cirq.Circuit
-        :param repetitions: Number of measurement repetitions
-        :type repetitions: int
-        :param target: Target name, defaults to default_target
-        :type target: str
-        :param param_resolver: Cirq parameters, defaults to `cirq.ParamResolver({})`
-        :type param_resolver: cirq.ParamResolverOrSimilarType
-        """
-        
-        # Resolve parameters
-        resolved_circuit = cirq.resolve_parameters(program, param_resolver)
-        target = self.get_target(name=target)
-        return target.estimate_cost(
-            program=resolved_circuit,
-            repetitions=repetitions,
-            **kwargs
-        )
-
     def run(
         self,
         program: cirq.Circuit,
