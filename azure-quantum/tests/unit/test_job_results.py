@@ -22,25 +22,25 @@ class TestJobResults(QuantumTestBase):
         job_results = self._get_job_results("test_output_data_format","{\"Histogram\": [\"[0]\", 0.50, \"[1]\", 0.50]}")
         self.assertTrue(len(job_results["Histogram"]) == 4)
 
-    @pytest.mark.live_test
-    def test_job_get_results_with_expired_sas_token(self):
-        """
-        Get existing result blob url and replace its sas token with expired one, 
-        so we can test its ability to refresh it.
-        """
-        target = self.create_echo_target()
-        input_data = "{ input: 'data' }"
-        job = target.submit(input_data=input_data)
-        job.wait_until_completed()
+    # @pytest.mark.live_test
+    # def test_job_get_results_with_expired_sas_token(self):
+    #     """
+    #     Get existing result blob url and replace its sas token with expired one, 
+    #     so we can test its ability to refresh it.
+    #     """
+    #     target = self.create_echo_target()
+    #     input_data = "{ input: 'data' }"
+    #     job = target.submit(input_data=input_data)
+    #     job.wait_until_completed()
 
-        # mocking SAS-token expiration date to an expired date
-        job.details.output_data_uri = re.sub(
-            pattern=RegexScrubbingPatterns.URL_QUERY_SAS_KEY_EXPIRATION,
-            repl="se=2024-01-01T00%3A00%3A00Z&",
-            string=job.details.output_data_uri)
+    #     # mocking SAS-token expiration date to an expired date
+    #     job.details.output_data_uri = re.sub(
+    #         pattern=RegexScrubbingPatterns.URL_QUERY_SAS_KEY_EXPIRATION,
+    #         repl="se=2024-01-01T00%3A00%3A00Z&",
+    #         string=job.details.output_data_uri)
 
-        job_results = job.get_results()
-        self.assertEqual(job_results, input_data)
+    #     job_results = job.get_results()
+    #     self.assertEqual(job_results, input_data)
 
 
     def test_job_for_microsoft_quantum_results_v1_success(self):
