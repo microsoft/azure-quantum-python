@@ -1564,7 +1564,7 @@ class TestQiskit(QuantumTestBase):
             self.assertIsNotNone(target_name)
             self.assertEqual(20, config.num_qubits)
 
-        # The following backends should have 32 qubits
+        # The following backends should have 56 qubits
         for target_name in [
             "quantinuum.qpu.h2-1",
             "quantinuum.sim.h2-1sc",
@@ -1573,7 +1573,7 @@ class TestQiskit(QuantumTestBase):
             config = provider.get_backend(target_name).configuration()
             # We check for name so the test log includes it when reporting a failure
             self.assertIsNotNone(target_name)
-            self.assertEqual(32, config.num_qubits)
+            self.assertEqual(56, config.num_qubits)
 
         # The following backends should have 20 qubits
         for target_name in [
@@ -1586,7 +1586,7 @@ class TestQiskit(QuantumTestBase):
             self.assertIsNotNone(target_name)
             self.assertEqual(20, config.num_qubits)
 
-        # The following backends should have 32 qubits
+        # The following backends should have 56 qubits
         for target_name in [
             "quantinuum.qpu.h2-1",
             "quantinuum.sim.h2-1sc",
@@ -1595,7 +1595,7 @@ class TestQiskit(QuantumTestBase):
             config = provider.get_backend(target_name, input_data_format="honeywell.openqasm.v1").configuration()
             # We check for name so the test log includes it when reporting a failure
             self.assertIsNotNone(target_name)
-            self.assertEqual(32, config.num_qubits)
+            self.assertEqual(56, config.num_qubits)
 
     @pytest.mark.rigetti
     @pytest.mark.live_test
