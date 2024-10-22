@@ -59,12 +59,16 @@ class IonQ(Target):
         name: str = "ionq.simulator",
         input_data_format: str = "ionq.circuit.v1",
         output_data_format: str = "ionq.quantum-results.v1",
-        capability: str = "BasicExecution",
+        capability: str = "",
         provider_id: str = "IonQ",
         content_type: str = "application/json",
         encoding: str = "",
-        **kwargs
+        target_profile: Union[str, "TargetProfile"] = "Base",
+        **kwargs,
     ):
+        if capability:
+            msg = "The 'capability' parameter is not used for the Quantinuum target."
+            warn(msg, DeprecationWarning)
         super().__init__(
             workspace=workspace,
             name=name,
@@ -74,7 +78,8 @@ class IonQ(Target):
             provider_id=provider_id,
             content_type=content_type,
             encoding=encoding,
-            **kwargs
+            target_profile=target_profile,
+            **kwargs,
         )
 
     def submit(
