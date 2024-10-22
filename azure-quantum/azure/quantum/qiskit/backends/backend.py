@@ -500,6 +500,29 @@ class AzureQirBackend(AzureBackendBase):
 
         return str(module).encode("utf-8")
 
+    def _get_target_profile(self, input_params) -> TargetProfile:
+        # Default to Adaptive_RI if not specified on the backend
+        # this is really just a safeguard in case the backend doesn't have a default
+        default_profile = self.options.get("target_profile", TargetProfile.Adaptive_RI)
+
+        # If the user is using the old targetCapability parameter, we'll warn them
+        # and use that value for now. This will be removed in the future.
+        if "targetCapability" in input_params:
+            warnings.warn(
+                "The 'targetCapability' parameter is deprecated and will be ignored in the future. "
+                "Please, use 'target_profile' parameter instead.",
+                category=DeprecationWarning,
+            )
+            cap = input_params.pop("targetCapability")
+            if cap == "AdaptiveExecution":
+                default_profile = TargetProfile.Adaptive_RI
+            else:
+                default_profile = TargetProfile.Base
+        # If the user specifies a target profile, use that.
+        # Otherwise, use the profile we got from the backend/targetCapability.
+        return input_params.pop("target_profile", default_profile)
+
+
 class AzureBackend(AzureBackendBase):
     """Base class for interfacing with a backend in Azure Quantum"""
 
