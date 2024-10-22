@@ -14,6 +14,7 @@ __all__ = [
 from dataclasses import dataclass
 from enum import Enum
 from typing import Union, Any, Dict, List, Optional
+from warnings import warn
 
 from ..target import Target
 from ... import Job
@@ -137,9 +138,10 @@ class Rigetti(Target):
         name: Union[RigettiTarget, str] = RigettiTarget.QVM,
         input_data_format: str = "rigetti.quil.v1",
         output_data_format: str = "rigetti.quil-results.v1",
-        capability: str = "BasicExecution",
+        capability: str = "",
         provider_id: str = "rigetti",
         encoding: str = "",
+        target_profile: Union[str, "TargetProfile"] = "Base",
         **kwargs,
     ):
         """
@@ -159,8 +161,12 @@ class Rigetti(Target):
         :type provider_id: str
         :param encoding: "Content-Encoding" attribute value to set on input blob (ex. "gzip")
         :type encoding: str
+        :param target_profile: Target QIR profile.
+        :type target_profile: str | TargetProfile
         """
-                
+        if capability:
+            msg = "The 'capability' parameter is not used for the Quantinuum target."
+            warn(msg, DeprecationWarning)
         super().__init__(
             workspace=workspace,
             name=name,
@@ -170,6 +176,7 @@ class Rigetti(Target):
             provider_id=provider_id,
             content_type="text/plain",
             encoding=encoding,
+            target_profile=target_profile,
             **kwargs,
         )
 

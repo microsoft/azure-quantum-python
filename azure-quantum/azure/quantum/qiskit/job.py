@@ -212,15 +212,19 @@ class AzureQuantumJob(JobV1):
 
     @staticmethod
     def _qir_to_qiskit_bitstring(obj):
-        """Convert the data structure from Azure into the "schema" used by Qiskit """
+        """Convert the data structure from Azure into the "schema" used by Qiskit"""
         if isinstance(obj, str) and not re.match(r"[\d\s]+$", obj):
             obj = ast.literal_eval(obj)
 
         if isinstance(obj, tuple):
             # the outermost implied container is a tuple, and each item is
-            # associated with a classical register. Azure and Qiskit order the
-            # registers in opposite directions, so reverse here to match.
-            return " ".join([AzureQuantumJob._qir_to_qiskit_bitstring(term) for term in reversed(obj)])
+            # associated with a classical register.
+            return " ".join(
+                [
+                    AzureQuantumJob._qir_to_qiskit_bitstring(term)
+                    for term in obj
+                ]
+            )
         elif isinstance(obj, list):
             # a list is for an individual classical register
             return "".join([str(bit) for bit in obj])
