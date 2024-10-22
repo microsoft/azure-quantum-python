@@ -77,6 +77,26 @@ class IonQQirBackendBase(AzureQirBackend):
         )
         return config
 
+    def run(
+        self, 
+        run_input: Union[QuantumCircuit, List[QuantumCircuit]] = [],
+        shots: int = None,
+        **options,
+    ) -> AzureQuantumJob:
+        
+        # In earlier versions, backends for all providers accepted the 'count' option,
+        # but now we accept it only for a compatibility reasons and do not recommend using it.
+        count = options.pop("count", None)
+
+        final_shots = _get_shots_or_deprecated_count_input_param(
+            param_name=self.__class__._SHOTS_PARAM_NAME,
+            shots=shots,
+            count=count,
+        )
+        
+        return super().run(run_input, shots=final_shots, **options)
+
+
 class IonQSimulatorQirBackend(IonQQirBackendBase):
     backend_names = ("ionq.simulator",)
 
