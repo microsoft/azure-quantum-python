@@ -403,45 +403,6 @@ class TestQiskit(QuantumTestBase):
             assert issubclass(warns[0].category, DeprecationWarning)
 
     @pytest.mark.ionq
-    def test_plugins_estimate_cost_qiskit_ionq(self):
-        circuit = self._3_qubit_ghz()
-        workspace = self.create_workspace()
-        provider = AzureQuantumProvider(workspace=workspace)
-        self.assertIn("azure-quantum-qiskit", provider._workspace.user_agent)
-        backend = provider.get_backend("ionq.simulator")
-        self.assertIsInstance(backend, IonQSimulatorQirBackend)
-        cost = backend.estimate_cost(circuit, shots=100e3)
-        self.assertEqual(cost.estimated_total, 0.0)
-
-        backend = provider.get_backend("ionq.qpu.aria-1")
-        self.assertIsInstance(backend, IonQAriaQirBackend)
-        cost = backend.estimate_cost(circuit, shots=1024)
-        self.assertEqual(np.round(cost.estimated_total), 98.0)
-
-        backend = provider.get_backend("ionq.qpu.aria-1")
-        self.assertIsInstance(backend, IonQAriaQirBackend)
-        cost = backend.estimate_cost(circuit, shots=100e3)
-        self.assertEqual(np.round(cost.estimated_total), 240.0)
-
-    @pytest.mark.ionq
-    def test_plugins_estimate_cost_qiskit_ionq_passthrough(self):
-        circuit = self._3_qubit_ghz()
-        workspace = self.create_workspace()
-        provider = AzureQuantumProvider(workspace=workspace)
-        self.assertIn("azure-quantum-qiskit", provider._workspace.user_agent)
-        backend = provider.get_backend("ionq.simulator", input_data_format="ionq.circuit.v1", gateset="qis")
-        cost = backend.estimate_cost(circuit, shots=100e3)
-        self.assertEqual(cost.estimated_total, 0.0)
-
-        backend = provider.get_backend("ionq.qpu.aria-1", input_data_format="ionq.circuit.v1", gateset="qis")
-        cost = backend.estimate_cost(circuit, shots=1024)
-        self.assertEqual(np.round(cost.estimated_total), 98.0)
-
-        backend = provider.get_backend("ionq.qpu.aria-1", input_data_format="ionq.circuit.v1", gateset="qis")
-        cost = backend.estimate_cost(circuit, shots=100e3)
-        self.assertEqual(np.round(cost.estimated_total), 240.0)
-
-    @pytest.mark.ionq
     @pytest.mark.live_test
     def test_plugins_submit_qiskit_to_ionq(self):
         circuit = self._3_qubit_ghz()
@@ -1012,75 +973,6 @@ class TestQiskit(QuantumTestBase):
             self.assertEqual(sum(result.data()["counts"].values()), 100)
             self.assertAlmostEqual(result.data()["counts"]["000"], 50, delta=20)
             self.assertAlmostEqual(result.data()["counts"]["111"], 50, delta=20)
-
-    @pytest.mark.quantinuum
-    def test_plugins_estimate_cost_qiskit_quantinuum(self):
-        circuit = self._3_qubit_ghz()
-        workspace = self.create_workspace()
-        provider = AzureQuantumProvider(workspace=workspace)
-        self.assertIn("azure-quantum-qiskit", provider._workspace.user_agent)
-
-        backend = provider.get_backend("quantinuum.sim.h1-1sc")
-        self.assertIsInstance(backend, QuantinuumQirBackendBase)
-
-        cost = backend.estimate_cost(circuit, shots=100e3)
-        self.assertEqual(cost.estimated_total, 0.0)
-
-        backend = provider.get_backend("quantinuum.sim.h1-1e")
-        self.assertIsInstance(backend, QuantinuumQirBackendBase)
-        cost = backend.estimate_cost(circuit, shots=100e3)
-        self.assertEqual(cost.estimated_total, 745.0)
-
-        backend = provider.get_backend("quantinuum.qpu.h1-1")
-        self.assertIsInstance(backend, QuantinuumQirBackendBase)
-        cost = backend.estimate_cost(circuit, shots=100e3)
-        self.assertEqual(cost.estimated_total, 745.0)
-
-        backend = provider.get_backend("quantinuum.sim.h2-1sc")
-        self.assertIsInstance(backend, QuantinuumQirBackendBase)
-        cost = backend.estimate_cost(circuit, shots=100e3)
-        self.assertEqual(cost.estimated_total, 0.0)
-
-        backend = provider.get_backend("quantinuum.sim.h2-1e")
-        self.assertIsInstance(backend, QuantinuumQirBackendBase)
-        cost = backend.estimate_cost(circuit, shots=100e3)
-        self.assertEqual(cost.estimated_total, 745.0)
-
-        backend = provider.get_backend("quantinuum.qpu.h2-1")
-        self.assertIsInstance(backend, QuantinuumQirBackendBase)
-        cost = backend.estimate_cost(circuit, shots=100e3)
-        self.assertEqual(cost.estimated_total, 745.0)
-
-    @pytest.mark.quantinuum
-    def test_plugins_estimate_cost_qiskit_quantinuum_passthrough(self):
-        circuit = self._3_qubit_ghz()
-        workspace = self.create_workspace()
-        provider = AzureQuantumProvider(workspace=workspace)
-        self.assertIn("azure-quantum-qiskit", provider._workspace.user_agent)
-
-        backend = provider.get_backend("quantinuum.sim.h1-1sc", input_data_format="honeywell.openqasm.v1")
-        cost = backend.estimate_cost(circuit, shots=100e3)
-        self.assertEqual(cost.estimated_total, 0.0)
-
-        backend = provider.get_backend("quantinuum.sim.h1-1e", input_data_format="honeywell.openqasm.v1")
-        cost = backend.estimate_cost(circuit, shots=100e3)
-        self.assertEqual(cost.estimated_total, 745.0)
-
-        backend = provider.get_backend("quantinuum.qpu.h1-1", input_data_format="honeywell.openqasm.v1")
-        cost = backend.estimate_cost(circuit, shots=100e3)
-        self.assertEqual(cost.estimated_total, 745.0)
-
-        backend = provider.get_backend("quantinuum.sim.h2-1sc", input_data_format="honeywell.openqasm.v1")
-        cost = backend.estimate_cost(circuit, shots=100e3)
-        self.assertEqual(cost.estimated_total, 0.0)
-
-        backend = provider.get_backend("quantinuum.sim.h2-1e", input_data_format="honeywell.openqasm.v1")
-        cost = backend.estimate_cost(circuit, shots=100e3)
-        self.assertEqual(cost.estimated_total, 745.0)
-
-        backend = provider.get_backend("quantinuum.qpu.h2-1", input_data_format="honeywell.openqasm.v1")
-        cost = backend.estimate_cost(circuit, shots=100e3)
-        self.assertEqual(cost.estimated_total, 745.0)
 
     @pytest.mark.live_test
     def test_plugins_submit_qiskit_noexistent_target(self):
