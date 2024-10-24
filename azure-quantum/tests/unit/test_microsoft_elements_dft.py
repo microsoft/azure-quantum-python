@@ -4,6 +4,10 @@ from azure.quantum import Job
 from common import QuantumTestBase, DEFAULT_TIMEOUT_SECS
 from azure.quantum import JobStatus
 from azure.quantum.job import JobFailedWithResultsError
+from azure.quantum.target.microsoft.elements.dft import MicrosoftElementsDft
+from pytest_regressions import data_regression
+from pathlib import Path
+
 
 @pytest.mark.live_test
 class TestMicrosoftElementsDftJob(QuantumTestBase):
@@ -83,3 +87,112 @@ class TestMicrosoftElementsDftJob(QuantumTestBase):
             job.refresh()
 
             return job
+
+test_file = Path(__file__).parent / "molecule.xyz"
+
+@pytest.mark.parametrize(
+        'input_params', [
+        {
+            "driver": "energy",
+            "model": { "method": "m06-2x", "basis": "def2-svp" },
+        },
+        {
+            "driver": "gradient",
+            "model": { "method": "m06-2x", "basis": "def2-svp" },
+        },
+        {
+            "driver": "hessian",
+            "model": { "method": "m06-2x", "basis": "def2-svp" },
+        },
+        {
+            "driver": "energy",
+            "model": { "method": "m06-2x", "basis": "def2-svp" },
+            "keywords": {
+                "scf": { "method": "rks", "maxSteps": 100, "convergeThreshold": 1e-8, "requireWaveFunction": True},
+                "xcFunctional": { "gridLevel": 3 }
+            },
+        },
+        {
+            "driver": "gradient",
+            "model": { "method": "m06-2x", "basis": "def2-svp" },
+            "keywords": {
+                "scf": { "method": "rks", "maxSteps": 100, "convergeThreshold": 1e-8, "requireWaveFunction": True},
+                "xcFunctional": { "gridLevel": 3 }
+            },
+        },
+        {
+            "driver": "hessian",
+            "model": { "method": "m06-2x", "basis": "def2-svp" },
+            "keywords": {
+                "scf": { "method": "rks", "maxSteps": 100, "convergeThreshold": 1e-8, "requireWaveFunction": True},
+                "xcFunctional": { "gridLevel": 3 }
+            },
+        },
+    ]
+)
+@pytest.mark.parametrize(
+    'input_data', [
+        [ test_file ],
+        [ test_file, test_file ],
+    ]
+)
+def test_assemble_true_qcschema_from_files_success(data_regression, input_params, input_data):
+    target = MicrosoftElementsDft
+    qcschema_data = target._assemble_qcshema_from_files(input_data, input_params)
+    data_regression.check(qcschema_data)
+
+@pytest.mark.parametrize(
+    'input_params', [
+        {
+            "driver": "go",
+            "model": { "method": "m06-2x", "basis": "def2-svp" },
+        },
+        {
+            "driver": "go",
+            "model": { "method": "m06-2x", "basis": "def2-svp" },
+            "keywords": {
+                "scf": { "method": "rks", "maxSteps": 100, "convergeThreshold": 1e-8, "requireWaveFunction": True},
+                "xcFunctional": { "gridLevel": 3 },
+                "geometryOptimization": {"convergence_grms": 0.001667, "convergence_gmax": 0.0025, "convergence_drms": 0.006667, "convergence_dmax":0.01 }
+            },
+        },
+    ]
+)
+@pytest.mark.parametrize(
+    'input_data', [
+        [ test_file ],
+        [ test_file, test_file ],
+    ]
+)
+def test_assemble_go_qcschema_from_files_success(data_regression, input_params, input_data):
+    target = MicrosoftElementsDft
+    qcschema_data = target._assemble_qcshema_from_files(input_data, input_params)
+    data_regression.check(qcschema_data)
+
+@pytest.mark.parametrize(
+    'input_params', [
+        {
+            "driver": "bomd",
+            "model": { "method": "m06-2x", "basis": "def2-svp" },
+        },
+        {
+            "driver": "bomd",
+            "model": { "method": "m06-2x", "basis": "def2-svp" },
+            "keywords": {
+                "scf": { "method": "rks", "maxSteps": 100, "convergeThreshold": 1e-8, "requireWaveFunction": True},
+                "xcFunctional": { "gridLevel": 3 },
+                "molecularDynamics":{"steps": 5, "temperature": 298, "timeStep": 1, "thermostat": {"type": "berendsen", "timeSmoothingFactor": 0.05 } }
+            },
+        },
+    ]
+)
+@pytest.mark.parametrize(
+    'input_data', [
+        [ test_file ],
+        [ test_file, test_file ],
+    ]
+)
+def test_assemble_bomd_qcschema_from_files_success(data_regression, input_params, input_data):
+    target = MicrosoftElementsDft
+    qcschema_data = target._assemble_qcshema_from_files(input_data, input_params)
+    data_regression.check(qcschema_data)
