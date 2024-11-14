@@ -1634,8 +1634,9 @@ class TestQiskit(QuantumTestBase):
         self.assertEqual("qir.v1", config.azure["input_data_format"])
         self.assertEqual(MICROSOFT_OUTPUT_DATA_FORMAT_V2, backend._get_output_data_format())
 
-    #@pytest.mark.qci
-    #@pytest.mark.live_test
+    @pytest.mark.skip("Skipping tests against QCI's unavailable targets")
+    @pytest.mark.qci
+    @pytest.mark.live_test
     def test_qiskit_submit_to_qci(self):
         workspace = self.create_workspace()
         provider = AzureQuantumProvider(workspace=workspace)
@@ -1677,8 +1678,9 @@ class TestQiskit(QuantumTestBase):
             counts = result.get_counts()
             self.assertEqual(counts, result.data()["counts"])
 
-    #@pytest.mark.qci
-    #@pytest.mark.live_test
+    @pytest.mark.skip("Skipping tests against QCI's unavailable targets")
+    @pytest.mark.qci
+    @pytest.mark.live_test
     def test_qiskit_submit_to_qci_with_default_shots(self):
         workspace = self.create_workspace()
         provider = AzureQuantumProvider(workspace=workspace)
@@ -1689,8 +1691,9 @@ class TestQiskit(QuantumTestBase):
         self._qiskit_wait_to_complete(qiskit_job, provider)
         self.assertEqual(qiskit_job._azure_job.details.input_params["shots"], 500)
 
-    #@pytest.mark.qci
-    #@pytest.mark.live_test
+    @pytest.mark.skip("Skipping tests against QCI's unavailable targets")
+    @pytest.mark.qci
+    @pytest.mark.live_test
     def test_qiskit_submit_to_qci_with_deprecated_count_param(self):
         """
         Verify that a warning message is printed when the 'count' option is specified.
@@ -1711,8 +1714,9 @@ class TestQiskit(QuantumTestBase):
         self._qiskit_wait_to_complete(qiskit_job, provider)
         self.assertEqual(qiskit_job._azure_job.details.input_params["shots"], shots)
 
-    #@pytest.mark.qci
-    #@pytest.mark.live_test
+    @pytest.mark.skip("Skipping tests against QCI's unavailable targets")
+    @pytest.mark.qci
+    @pytest.mark.live_test
     def test_qiskit_get_qci_qpu_targets(self):
         workspace = self.create_workspace()
         provider = AzureQuantumProvider(workspace=workspace)
