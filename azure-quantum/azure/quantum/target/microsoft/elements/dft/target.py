@@ -193,7 +193,7 @@ class MicrosoftElementsDft(Target):
                     raise ValueError("Invalid xyz format.")
                 symbol, x, y, z = elements
                 mol["symbols"].append(symbol)
-                mol["geometry"].append([float(x), float(y), float(z)])
+                mol["geometry"] += [float(x), float(y), float(z)]
             else:
                 break
         
