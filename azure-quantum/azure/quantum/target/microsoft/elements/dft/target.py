@@ -81,14 +81,18 @@ class MicrosoftElementsDft(Target):
 
             qcschema_blobs = {}
             for i in range(len(qcschema_data)):
-                qcschema_blobs[f"input_data_{i}.json"] = self._encode_input_data(qcschema_data[i])
+                qcschema_blobs[f"inputData_{i}"] = self._encode_input_data(qcschema_data[i])
+
+            toc_str = self._create_table_of_contents(input_data, list(qcschema_blobs.keys()))
+            toc = self._encode_input_data(toc_str)
 
             return self._get_job_class().from_input_data_container(
                 workspace=self.workspace,
                 name=name,
                 target=self.name,
-                input_data=qcschema_blobs,
-                input_params={ 'number_of_molecules': len(qcschema_data), "input_files": list(qcschema_blobs.keys()), **input_params },
+                input_data=toc,
+                batch_input_blobs=qcschema_blobs,
+                input_params={ 'numberOfFiles': len(qcschema_data), "inputFiles": list(qcschema_blobs.keys()), **input_params },
                 content_type=kwargs.pop('content_type', self.content_type),
                 encoding=kwargs.pop('encoding', self.encoding),
                 provider_id=self.provider_id,
@@ -194,3 +198,23 @@ class MicrosoftElementsDft(Target):
     @classmethod
     def _get_job_class(cls) -> Type[Job]:
         return MicrosoftElementsDftJob
+
+    @classmethod
+    def _create_table_of_contents(cls, input_files: List[str], input_blobs: List[str]) -> Dict[str,Any]:
+        """Create the table of contents for a batched job that contains a description of file and the mapping between the file names and the blob names"""
+
+        assert len(input_files) == len(input_blobs), "Internal error: number of blobs is not that same as the number of files."
+
+        toc = []
+        for i in range(len(input_files)):
+            toc.append( 
+                {
+                    "xyzFileName": input_files[i],
+                    "qcschemaFileName": input_blobs[i],
+                }
+            )
+
+        return {
+            "description": "This files contains the mapping between the xyz file name that were submitted and the qcschema blobs that are used for the calculation.",
+            "tableOfContents": toc,
+        }

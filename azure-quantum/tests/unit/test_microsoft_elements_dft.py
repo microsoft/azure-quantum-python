@@ -196,3 +196,21 @@ def test_assemble_bomd_qcschema_from_files_success(data_regression, input_params
     target = MicrosoftElementsDft
     qcschema_data = target._assemble_qcshema_from_files(input_data, input_params)
     data_regression.check(qcschema_data)
+
+
+@pytest.mark.parametrize(
+    'inputs', [
+        {
+            'input_files': ["molecule_1.xyz"],
+            'input_blobs': ["inputData0"],
+        },
+        {
+            'input_files': ["molecule_1.xyz","molecule_2.xyz"],
+            'input_blobs': ["inputData0","inputData1"],
+        },
+    ]
+)
+def test_create_toc_data(data_regression, inputs):
+    target = MicrosoftElementsDft
+    toc_data = target._create_table_of_contents(inputs["input_files"], inputs["input_blobs"])
+    data_regression.check(toc_data)
