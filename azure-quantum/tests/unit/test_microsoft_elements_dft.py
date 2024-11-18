@@ -214,3 +214,65 @@ def test_create_toc_data(data_regression, inputs):
     target = MicrosoftElementsDft
     toc_data = target._create_table_of_contents(inputs["input_files"], inputs["input_blobs"])
     data_regression.check(toc_data)
+
+@pytest.mark.parametrize(
+    "xyz_str", [
+        """3
+water
+O   0.00   0.00   0.00
+H   1.00   0.00   0.00
+H  -1.00   1.00   1.00
+""",
+        """3
+water
+O   0.00   0.00   0.00
+H   1.00   0.00   0.00
+H  -1.00   1.00   1.00
+
+""",
+        """3
+water
+O   0.00   0.00   0.00  
+H   1.00   0.00   0.00  
+H  -1.00   1.00   1.00  
+
+""",
+    ]
+)
+def test_xyz_parsing_correct_xyz_files(data_regression, xyz_str):
+    target = MicrosoftElementsDft
+    mol = target._xyz_to_qcschema_mol(xyz_str)
+    data_regression.check(mol)
+
+@pytest.mark.parametrize(
+    "xyz_str", [
+        """3
+water
+O   0.00   0.00   0.00
+H   1.00   0.00   0.00
+""",
+        """3
+water
+O   0.00   0.00   0.00
+H   1.00   0.00   0.00 H -1.00   1.00   1.00
+""",
+        """3
+water
+O   0.00   0.00   0.00
+
+H   1.00   0.00   0.00
+H  -1.00   1.00   1.00
+""",
+        """3
+water
+O   0.00   0.00   0.00
+H   1.00   0.00   0.00
+H  -1.00   1.00   1.00
+H  -1.00   1.00   1.00
+""",
+    ]
+)
+def test_xyz_raises_for_bad_input(xyz_str):
+    target = MicrosoftElementsDft
+    with pytest.raises(ValueError):
+        mol_data = target._xyz_to_qcschema_mol(xyz_str)

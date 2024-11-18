@@ -178,7 +178,8 @@ class MicrosoftElementsDft(Target):
         """
 
         lines = file_data.split("\n")
-        assert len(lines) >= 3, "Invalid xyz format."
+        if len(lines) < 3:
+            raise ValueError("Invalid xyz format.")
         n_atoms = int(lines.pop(0))
         comment = lines.pop(0)
         mol = {
@@ -186,12 +187,18 @@ class MicrosoftElementsDft(Target):
             "symbols": [],
         }
         for line in lines:
-            elements = line.split()
-            if len(elements) != 4:
-                raise ValueError("Invalid xyz format.")
-            symbol, x, y, z = elements
-            mol["symbols"].append(symbol)
-            mol["geometry"].append([float(x), float(y), float(z)])
+            if line:
+                elements = line.split()
+                if len(elements) < 4:
+                    raise ValueError("Invalid xyz format.")
+                symbol, x, y, z = elements
+                mol["symbols"].append(symbol)
+                mol["geometry"].append([float(x), float(y), float(z)])
+            else:
+                break
+        
+        if len(mol["symbols"]) != n_atoms:
+            raise ValueError("Number of inputs does not match the number of atoms in xyz file.")
 
         return mol
 
