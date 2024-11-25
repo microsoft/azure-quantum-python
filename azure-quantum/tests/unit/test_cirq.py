@@ -121,30 +121,6 @@ class TestCirq(QuantumTestBase):
         self.assertIn("ionq.simulator", target_names)
         self.assertIn("quantinuum.sim.h1-1sc", target_names)
 
-    def test_plugins_estimate_cost_cirq_ionq(self):
-        workspace = self.create_workspace()
-        service = AzureQuantumService(workspace=workspace)
-        cost = service.estimate_cost(
-            program=self._3_qubit_ghz_cirq(),
-            repetitions=100e3,
-            target="ionq.simulator"
-        )
-        self.assertEqual(cost.estimated_total, 0.0)
-
-        cost = service.estimate_cost(
-            program=self._3_qubit_ghz_cirq(),
-            repetitions=1024,
-            target="ionq.qpu.aria-1"
-        )
-        self.assertEqual(np.round(cost.estimated_total), 98.0)
-
-        cost = service.estimate_cost(
-            program=self._3_qubit_ghz_cirq(),
-            repetitions=100e3,
-            target="ionq.qpu.aria-1"
-        )
-        self.assertEqual(np.round(cost.estimated_total), 218.0)
-
     @pytest.mark.live_test
     def test_plugins_cirq_nonexistent_target(self):
         workspace = self.create_workspace()
@@ -184,38 +160,6 @@ class TestCirq(QuantumTestBase):
                 self.assertEqual(len(result.measurements["q2"]), 500)
                 self.assertEqual(result.measurements["q0"].sum(), result.measurements["q1"].sum())
                 self.assertEqual(result.measurements["q1"].sum(), result.measurements["q2"].sum())
-
-    @pytest.mark.quantinuum
-    def test_plugins_estimate_cost_cirq_quantinuum(self):
-        workspace = self.create_workspace()
-        service = AzureQuantumService(workspace=workspace)
-        cost = service.estimate_cost(
-            program=self._3_qubit_ghz_cirq(),
-            repetitions=100e3,
-            target="quantinuum.sim.h1-1sc"
-        )
-        self.assertEqual(cost.estimated_total, 0.0)
-
-        cost = service.estimate_cost(
-            program=self._3_qubit_ghz_cirq(),
-            repetitions=100e3,
-            target="quantinuum.sim.h1-1sc"
-        )
-        self.assertEqual(cost.estimated_total, 0.0)
-
-        cost = service.estimate_cost(
-            program=self._3_qubit_ghz_cirq(),
-            repetitions=100e3,
-            target="quantinuum.sim.h1-1e"
-        )
-        self.assertEqual(np.round(cost.estimated_total), 725.0)
-
-        cost = service.estimate_cost(
-            program=self._3_qubit_ghz_cirq(),
-            repetitions=100e3,
-            target="quantinuum.qpu.h1-1"
-        )
-        self.assertEqual(np.round(cost.estimated_total), 725.0)
 
     @pytest.mark.quantinuum
     @pytest.mark.live_test

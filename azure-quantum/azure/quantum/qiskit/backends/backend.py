@@ -500,25 +500,6 @@ class AzureQirBackend(AzureBackendBase):
 
         return str(module).encode("utf-8")
 
-    def _estimate_cost_qir(
-        self, circuits: Union[QuantumCircuit, List[QuantumCircuit]], shots, options={}
-    ):
-        """Estimate the cost for the given circuit."""
-        input_params = self._get_input_params(options, shots=shots)
-
-        if not (isinstance(circuits, list)):
-            circuits = [circuits]
-
-        skip_transpilation = input_params.pop("skipTranspile", False)
-        target_profile = self._get_target_profile(input_params)
-        module = self._generate_qir(
-            circuits, target_profile, skip_transpilation=skip_transpilation
-        )
-
-        workspace = self.provider().get_workspace()
-        target = workspace.get_targets(self.name())
-        return target.estimate_cost(module, shots=shots)
-
     def _get_target_profile(self, input_params) -> TargetProfile:
         # Default to Adaptive_RI if not specified on the backend
         # this is really just a safeguard in case the backend doesn't have a default
