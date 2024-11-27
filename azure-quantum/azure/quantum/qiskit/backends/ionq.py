@@ -7,7 +7,7 @@ from azure.quantum import __version__
 from azure.quantum.qiskit.job import AzureQuantumJob
 from azure.quantum.target.ionq import IonQ
 from abc import abstractmethod
-
+from qsharp import TargetProfile
 from qiskit import QuantumCircuit
 
 from .backend import (
@@ -20,7 +20,6 @@ from qiskit.providers.models import BackendConfiguration
 from qiskit.providers import Options, Provider
 
 from qiskit_ionq.helpers import (
-    ionq_basis_gates,
     GATESET_MAP,
     qiskit_circ_to_ionq_circ,
 )
@@ -66,7 +65,7 @@ class IonQQirBackendBase(AzureQirBackend):
             **{
                 cls._SHOTS_PARAM_NAME: _DEFAULT_SHOTS_COUNT,
             },
-            targetCapability="BasicExecution",
+            target_profile=TargetProfile.Base,
             )
 
     def _azure_config(self) -> Dict[str, str]:
@@ -77,7 +76,7 @@ class IonQQirBackendBase(AzureQirBackend):
             }
         )
         return config
-    
+
     def run(
         self, 
         run_input: Union[QuantumCircuit, List[QuantumCircuit]] = [],
@@ -103,7 +102,6 @@ class IonQSimulatorQirBackend(IonQQirBackendBase):
 
     def __init__(self, name: str, provider: "AzureQuantumProvider", **kwargs):
         """Base class for interfacing with an IonQ QIR Simulator backend"""
-
         default_config = BackendConfiguration.from_dict(
             {
                 "backend_name": name,
@@ -112,7 +110,7 @@ class IonQSimulatorQirBackend(IonQQirBackendBase):
                 "local": False,
                 "coupling_map": None,
                 "description": "IonQ simulator on Azure Quantum",
-                "basis_gates": ionq_basis_gates,
+                "basis_gates": self._basis_gates(),
                 "memory": False,
                 "n_qubits": 29,
                 "conditional": False,
@@ -135,7 +133,6 @@ class IonQAriaQirBackend(IonQQirBackendBase):
 
     def __init__(self, name: str, provider: "AzureQuantumProvider", **kwargs):
         """Base class for interfacing with an IonQ Aria QPU backend"""
-
         default_config = BackendConfiguration.from_dict(
             {
                 "backend_name": name,
@@ -144,9 +141,9 @@ class IonQAriaQirBackend(IonQQirBackendBase):
                 "local": False,
                 "coupling_map": None,
                 "description": "IonQ Aria QPU on Azure Quantum",
-                "basis_gates": ionq_basis_gates,
+                "basis_gates": self._basis_gates(),
                 "memory": False,
-                "n_qubits": 23,
+                "n_qubits": 25,
                 "conditional": False,
                 "max_shots": 10000,
                 "max_experiments": 1,
@@ -167,7 +164,6 @@ class IonQForteQirBackend(IonQQirBackendBase):
 
     def __init__(self, name: str, provider: "AzureQuantumProvider", **kwargs):
         """Base class for interfacing with an IonQ Forte QPU backend"""
-
         default_config = BackendConfiguration.from_dict(
             {
                 "backend_name": name,
@@ -176,7 +172,7 @@ class IonQForteQirBackend(IonQQirBackendBase):
                 "local": False,
                 "coupling_map": None,
                 "description": "IonQ Forte QPU on Azure Quantum",
-                "basis_gates": ionq_basis_gates,
+                "basis_gates": self._basis_gates(),
                 "memory": False,
                 "n_qubits": 35,
                 "conditional": False,
@@ -241,7 +237,7 @@ class IonQBackend(AzureBackend):
             "provider_id": "ionq",
             "input_data_format": "ionq.circuit.v1",
             "output_data_format": "ionq.quantum-results.v1",
-            "is_default": True,
+            "is_default": False,
         }
 
     def _prepare_job_metadata(self, circuit, **kwargs):
@@ -264,17 +260,6 @@ class IonQBackend(AzureBackend):
 
     def gateset(self):
         return self.configuration().gateset
-
-    def estimate_cost(self, circuit, shots):
-        """Estimate the cost for the given circuit."""
-        ionq_circ, _, _ = qiskit_circ_to_ionq_circ(circuit, gateset=self.gateset())
-        input_data = {
-            "qubits": circuit.num_qubits,
-            "circuit": ionq_circ,
-        }
-        workspace = self.provider().get_workspace()
-        target = workspace.get_targets(self.name())
-        return target.estimate_cost(input_data, shots=shots)
 
 
 class IonQSimulatorBackend(IonQBackend):
@@ -315,15 +300,6 @@ class IonQSimulatorNativeBackend(IonQSimulatorBackend):
         if "gateset" not in kwargs:
             kwargs["gateset"] = "native"
         super().__init__(name, provider, **kwargs)
-
-    def _azure_config(self) -> Dict[str, str]:
-        config = super()._azure_config()
-        config.update(
-            {
-                "is_default": False,
-            }
-        )
-        return config
 
 
 class IonQAriaBackend(IonQBackend):
@@ -398,27 +374,9 @@ class IonQAriaNativeBackend(IonQAriaBackend):
             kwargs["gateset"] = "native"
         super().__init__(name, provider, **kwargs)
 
-    def _azure_config(self) -> Dict[str, str]:
-        config = super()._azure_config()
-        config.update(
-            {
-                "is_default": False,
-            }
-        )
-        return config
-
 
 class IonQForteNativeBackend(IonQForteBackend):
     def __init__(self, name: str, provider: "AzureQuantumProvider", **kwargs):
         if "gateset" not in kwargs:
             kwargs["gateset"] = "native"
         super().__init__(name, provider, **kwargs)
-
-    def _azure_config(self) -> Dict[str, str]:
-        config = super()._azure_config()
-        config.update(
-            {
-                "is_default": False,
-            }
-        )
-        return config

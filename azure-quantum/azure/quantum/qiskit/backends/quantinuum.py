@@ -15,7 +15,7 @@ from qiskit.providers.models import BackendConfiguration
 from qiskit.providers import Options
 from qiskit.providers import Provider
 from qiskit.qasm2 import dumps
-
+from qsharp import TargetProfile
 import logging
 
 logger = logging.getLogger(__name__)
@@ -50,6 +50,7 @@ QUANTINUUM_BASIS_GATES = [
     "reset",
 ]
 
+
 QUANTINUUM_PROVIDER_ID = "quantinuum"
 QUANTINUUM_PROVIDER_NAME = "Quantinuum"
 
@@ -59,7 +60,7 @@ def _get_n_qubits(name):
     if ".h1-" in name or "hqs-lt" in name:
         return 20
     if ".h2-" in name:
-        return 32
+        return 56
     warnings.warn(
         UserWarning(f"Number of qubits not known for target {name}. Defaulting to 20."))
     return 20
@@ -83,7 +84,7 @@ class QuantinuumQirBackendBase(AzureQirBackend):
             **{
                 cls._SHOTS_PARAM_NAME: _DEFAULT_SHOTS_COUNT
             },
-            targetCapability="BasicExecution",
+            target_profile=TargetProfile.Adaptive_RI,
         )
 
     def _azure_config(self) -> Dict[str, str]:
@@ -97,7 +98,7 @@ class QuantinuumQirBackendBase(AzureQirBackend):
 
     def _get_n_qubits(self, name):
         return _get_n_qubits(name)
-
+    
 
 class QuantinuumSyntaxCheckerQirBackend(QuantinuumQirBackendBase):
     backend_names = (
@@ -118,7 +119,7 @@ class QuantinuumSyntaxCheckerQirBackend(QuantinuumQirBackendBase):
                 "local": False,
                 "coupling_map": None,
                 "description": f"Quantinuum Syntax Checker on Azure Quantum",
-                "basis_gates": QUANTINUUM_BASIS_GATES,
+                "basis_gates": self._basis_gates(),
                 "memory": True,
                 "n_qubits": self._get_n_qubits(name),
                 "conditional": False,
@@ -155,7 +156,7 @@ class QuantinuumEmulatorQirBackend(QuantinuumQirBackendBase):
                 "local": False,
                 "coupling_map": None,
                 "description": f"Quantinuum emulator on Azure Quantum",
-                "basis_gates": QUANTINUUM_BASIS_GATES,
+                "basis_gates": self._basis_gates(),
                 "memory": True,
                 "n_qubits": self._get_n_qubits(name),
                 "conditional": False,
@@ -192,7 +193,7 @@ class QuantinuumQPUQirBackend(QuantinuumQirBackendBase):
                 "local": False,
                 "coupling_map": None,
                 "description": f"Quantinuum QPU on Azure Quantum",
-                "basis_gates": QUANTINUUM_BASIS_GATES,
+                "basis_gates": self._basis_gates(),
                 "memory": True,
                 "n_qubits": self._get_n_qubits(name),
                 "conditional": False,
@@ -236,39 +237,12 @@ class QuantinuumBackend(AzureBackend):
             "provider_id": self._provider_id,
             "input_data_format": "honeywell.openqasm.v1",
             "output_data_format": "honeywell.quantum-results.v1",
-            "is_default": True,
+            "is_default": False,
         }
 
     def _translate_input(self, circuit):
         """Translates the input values to the format expected by the AzureBackend."""
         return dumps(circuit)
-
-    def estimate_cost(
-        self, circuit: QuantumCircuit, shots: int = None, count: int = None
-    ):
-        """Estimate cost for running this circuit
-
-        :param circuit: Qiskit quantum circuit
-        :type circuit: QuantumCircuit
-        :param shots: Shot count
-        :type shots: int
-        :param count: Shot count (alternative to 'shots')
-        :type count: int
-        """
-        if count is not None:
-            warnings.warn(
-                "The 'count' parameter will be deprecated. Please, use 'shots' parameter instead.",
-                category=DeprecationWarning,
-            )
-            shots = count
-
-        if shots is None:
-            raise ValueError("Missing input argument 'shots'.")
-
-        input_data = dumps(circuit)
-        workspace = self.provider().get_workspace()
-        target = workspace.get_targets(self.name())
-        return target.estimate_cost(input_data, shots=shots)
 
     def _get_n_qubits(self, name):
         return _get_n_qubits(name)

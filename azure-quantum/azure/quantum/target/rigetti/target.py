@@ -14,6 +14,7 @@ __all__ = [
 from dataclasses import dataclass
 from enum import Enum
 from typing import Union, Any, Dict, List, Optional
+from warnings import warn
 
 from ..target import Target
 from ... import Job
@@ -29,7 +30,7 @@ class RigettiTarget(str, Enum):
     QVM = "rigetti.sim.qvm"
     """A simulator target for Quil. See https://github.com/quil-lang/qvm for more info."""
 
-    ANKAA_2 = "rigetti.qpu.ankaa-2"
+    ANKAA_9Q_3 = "rigetti.qpu.ankaa-9q-3"
 
     def simulators() -> List[str]:
         """Returns a list of simulator targets"""
@@ -40,7 +41,7 @@ class RigettiTarget(str, Enum):
     def qpus() -> List[str]:
         """Returns a list of QPU targets"""
         return [
-            RigettiTarget.ANKAA_2.value,
+            RigettiTarget.ANKAA_9Q_3.value,
         ]
 
     def num_qubits(target_name) -> int:
@@ -48,8 +49,8 @@ class RigettiTarget(str, Enum):
 
         if target_name == RigettiTarget.QVM.value:
             return 20
-        elif target_name == RigettiTarget.ANKAA_2.value:
-            return 84
+        elif target_name == RigettiTarget.ANKAA_9Q_3.value:
+            return 9
         else:
             raise ValueError(f"Unknown target {target_name}")
 
@@ -137,9 +138,10 @@ class Rigetti(Target):
         name: Union[RigettiTarget, str] = RigettiTarget.QVM,
         input_data_format: str = "rigetti.quil.v1",
         output_data_format: str = "rigetti.quil-results.v1",
-        capability: str = "BasicExecution",
+        capability: str = "",
         provider_id: str = "rigetti",
         encoding: str = "",
+        target_profile: Union[str, "TargetProfile"] = "Base",
         **kwargs,
     ):
         """
@@ -159,8 +161,12 @@ class Rigetti(Target):
         :type provider_id: str
         :param encoding: "Content-Encoding" attribute value to set on input blob (ex. "gzip")
         :type encoding: str
+        :param target_profile: Target QIR profile.
+        :type target_profile: str | TargetProfile
         """
-                
+        if capability:
+            msg = "The 'capability' parameter is not used for the Quantinuum target."
+            warn(msg, DeprecationWarning)
         super().__init__(
             workspace=workspace,
             name=name,
@@ -170,6 +176,7 @@ class Rigetti(Target):
             provider_id=provider_id,
             content_type="text/plain",
             encoding=encoding,
+            target_profile=target_profile,
             **kwargs,
         )
 

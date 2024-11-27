@@ -11,26 +11,7 @@ from .backend import AzureQirBackend
 
 from qiskit.providers.models import BackendConfiguration
 from qiskit.providers import Options, Provider
-
-QIR_BASIS_GATES = [
-    "measure",
-    "m",
-    "cx",
-    "cz",
-    "h",
-    "reset",
-    "rx",
-    "ry",
-    "rz",
-    "s",
-    "sdg,"
-    "t",
-    "tdg",
-    "x",
-    "y",
-    "z",
-    "id",
-]
+from qsharp import TargetProfile
 
 if TYPE_CHECKING:
     from azure.quantum.qiskit import AzureQuantumProvider
@@ -60,7 +41,7 @@ class RigettiBackend(AzureQirBackend):
         other_options = {
             cls._SHOTS_PARAM_NAME: _DEFAULT_SHOTS_COUNT,
         }
-        return Options(targetCapability="BasicExecution", **other_options)
+        return Options(target_profile=TargetProfile.Base, **other_options)
 
     def _azure_config(self) -> Dict[str, str]:
         config = super()._azure_config()
@@ -85,7 +66,7 @@ class RigettiSimulatorBackend(RigettiBackend):
                 "local": False,
                 "coupling_map": None,
                 "description": "Rigetti simulator on Azure Quantum",
-                "basis_gates": QIR_BASIS_GATES,
+                "basis_gates": self._basis_gates(),
                 "memory": True,
                 "n_qubits": RigettiTarget.num_qubits(name),
                 "conditional": False,
@@ -117,7 +98,7 @@ class RigettiQPUBackend(RigettiBackend):
                 "local": False,
                 "coupling_map": None,
                 "description": "Rigetti QPU on Azure Quantum",
-                "basis_gates": QIR_BASIS_GATES,
+                "basis_gates": self._basis_gates(),
                 "memory": True,
                 "n_qubits": RigettiTarget.num_qubits(name),
                 "conditional": False,

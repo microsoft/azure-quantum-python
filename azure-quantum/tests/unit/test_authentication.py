@@ -129,7 +129,7 @@ class TestWorkspace(QuantumTestBase):
             os.environ[EnvironmentVariables.AZURE_TENANT_ID] = \
                 connection_params.tenant_id
 
-            if os.path.exists(self._client_certificate_path):
+            if self.in_recording and os.path.exists(self._client_certificate_path):
                 os.environ[EnvironmentVariables.AZURE_CLIENT_CERTIFICATE_PATH] = \
                     self._client_certificate_path
                 os.environ[EnvironmentVariables.AZURE_CLIENT_SEND_CERTIFICATE_CHAIN] = \
@@ -190,7 +190,7 @@ class TestWorkspace(QuantumTestBase):
             os.environ[EnvironmentVariables.AZURE_TENANT_ID] = \
                 connection_params.tenant_id
 
-            if os.path.exists(self._client_certificate_path):
+            if self.in_recording and os.path.exists(self._client_certificate_path):
                 os.environ[EnvironmentVariables.AZURE_CLIENT_CERTIFICATE_PATH] = \
                     self._client_certificate_path
                 os.environ[EnvironmentVariables.AZURE_CLIENT_SEND_CERTIFICATE_CHAIN] = \
@@ -354,7 +354,7 @@ class TestWorkspace(QuantumTestBase):
             jobs = workspace.list_jobs()
             assert len(jobs) >= 0
 
-        if self.is_live:
+        if not self.is_playback:
             self.pause_recording()
             token = self._get_rp_credential()
             workspace = self._get_workspace(token)
