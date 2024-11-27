@@ -2,7 +2,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 ##
-from typing import TYPE_CHECKING, Any, Dict, Optional, Union, Type,  Protocol, runtime_checkable
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union, Type,  Protocol, runtime_checkable
+from dataclasses import dataclass
 import io
 import json
 import abc
@@ -26,6 +27,14 @@ class QirRepresentable(Protocol):
     def _repr_qir_(self, **kwargs: Any) -> bytes:
         raise NotImplementedError
 
+@dataclass
+class GateStats:
+    one_qubit_gates: int
+    multi_qubit_gates: int
+    measurement_gates: int
+
+    def __iter__(self):
+        return iter((self.one_qubit_gates, self.multi_qubit_gates, self.measurement_gates))
 
 class Target(abc.ABC, SessionHost):
 
@@ -59,7 +68,8 @@ class Target(abc.ABC, SessionHost):
         content_type: ContentType = ContentType.json,
         encoding: str = "",
         average_queue_time: Union[float, None] = None,
-        current_availability: str = ""
+        current_availability: str = "",
+        target_profile: Union[str, "TargetProfile"] = "Base",
     ):
         """
         Initializes a new target.
@@ -72,7 +82,7 @@ class Target(abc.ABC, SessionHost):
         :type input_data_format: str
         :param output_data_format: Format of output data (ex. "microsoft.resource-estimates.v1")
         :type output_data_format: str
-        :param capability: QIR capability
+        :param capability: QIR capability. Deprecated, use `target_profile`
         :type capability: str
         :param provider_id: Id of provider (ex. "microsoft-qc")
         :type provider_id: str
@@ -84,6 +94,8 @@ class Target(abc.ABC, SessionHost):
         :type average_queue_time: float
         :param current_availability: Set current availability (for internal use)
         :type current_availability: str
+        :param target_profile: Target QIR profile.
+        :type target_profile: str | TargetProfile
         """
         if not provider_id and "." in name:
             provider_id = name.split(".")[0]
@@ -97,6 +109,7 @@ class Target(abc.ABC, SessionHost):
         self.encoding = encoding
         self._average_queue_time = average_queue_time
         self._current_availability = current_availability
+        self.target_profile = target_profile
 
     def __repr__(self):
         return f"<Target name=\"{self.name}\", \
@@ -189,7 +202,7 @@ target '{self.name}' of provider '{self.provider_id}' not found."
         
     def _qir_output_data_format(self) -> str:
         """"Fallback output data format in case of QIR job submission."""
-        return "microsoft.quantum-results.v1"
+        return "microsoft.quantum-results.v2"
 
     def submit(
         self,
@@ -246,8 +259,17 @@ target '{self.name}' of provider '{self.provider_id}' not found."
             input_params["arguments"] = input_params.get("arguments", [])
             targetCapability = input_params.get("targetCapability", kwargs.pop("target_capability", self.capability))
             if targetCapability:
+                warnings.warn(
+                    "The 'targetCapability' parameter is deprecated and will be ignored in the future. "
+                    "Please, use 'target_profile' parameter instead.",
+                    category=DeprecationWarning,
+                )
                 input_params["targetCapability"] = targetCapability
-            input_data = input_data._repr_qir_(target=self.name, target_capability=targetCapability)
+            if target_profile := input_params.get(
+                "target_profile", kwargs.pop("target_profile", self.target_profile)
+            ):
+                input_params["target_profile"] = target_profile
+            input_data = input_data._repr_qir_(target=self.name)
         else:
             input_data_format = kwargs.pop("input_data_format", self.input_data_format)
             output_data_format = kwargs.pop("output_data_format", self.output_data_format)
@@ -308,16 +330,6 @@ target '{self.name}' of provider '{self.provider_id}' not found."
         """
         return InputParams()
 
-    def estimate_cost(
-        self,
-        input_data: Any,
-        input_params: Union[Dict[str, Any], None] = None
-    ):
-        """
-        Estimate the cost for a given circuit.
-        """
-        return NotImplementedError("Price estimation is not implemented yet for this target.")
-
     def _get_azure_workspace(self) -> "Workspace":
         return self.workspace
 
@@ -326,6 +338,57 @@ target '{self.name}' of provider '{self.provider_id}' not found."
 
     def _get_azure_provider_id(self) -> str:
         return self.provider_id
+
+    @classmethod
+    def _calculate_qir_module_gate_stats(self, qir_module) -> GateStats:
+        try:
+            from pyqir import Module, is_qubit_type, is_result_type, entry_point, is_entry_point, Function
+
+        except ImportError:
+            raise ImportError(
+                "Missing optional 'qiskit' dependencies. \
+        To install run: pip install azure-quantum[qiskit]"
+            )
+        
+        module: Module = qir_module
+
+        one_qubit_gates = 0
+        multi_qubit_gates = 0
+        measurement_gates = 0
+
+        function_entry_points: list[Function] = filter(is_entry_point, module.functions)
+        
+        # Iterate over the blocks and their instructions
+        for function in function_entry_points:
+            for block in function.basic_blocks:
+                for instruction in block.instructions:
+                    qubit_count = 0
+                    result_count = 0
+                    
+                    # If the instruction is of type quantum rt, do not include this is the price calculation
+                    if len(instruction.operands) > 0 and "__quantum__rt" not in instruction.operands[-1].name:
+                        # Check each operand in the instruction
+                        for operand in instruction.operands:
+                            value_type = operand.type
+                            
+                            if is_qubit_type(value_type):
+                                qubit_count += 1
+                            elif is_result_type(value_type):
+                                result_count += 1
+
+                    # Determine the type of gate based on the counts
+                    if qubit_count == 1 and result_count == 0:
+                        one_qubit_gates += 1
+                    if qubit_count >= 2 and result_count == 0:
+                        multi_qubit_gates += 1
+                    if result_count > 0:
+                        measurement_gates += 1
+
+        return GateStats (
+            one_qubit_gates, 
+            multi_qubit_gates, 
+            measurement_gates
+        )
 
 
 def _determine_shots_or_deprecated_num_shots(

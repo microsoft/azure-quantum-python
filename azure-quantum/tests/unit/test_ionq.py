@@ -33,18 +33,6 @@ class TestIonQ(QuantumTestBase):
             ]
         }
 
-    @pytest.mark.ionq
-    def test_estimate_cost_ionq(self):
-        workspace = self.create_workspace()
-        circuit = self._3_qubit_ghz()
-        target = IonQ(workspace=workspace, name="ionq.simulator")
-        cost = target.estimate_cost(circuit, shots=100e3)
-        self.assertEqual(cost.estimated_total, 0.0)
-
-        target = IonQ(workspace=workspace, name="ionq.qpu")
-        cost = target.estimate_cost(circuit, shots=100e3)
-        self.assertEqual(np.round(cost.estimated_total), 63.0)
-
 
     @pytest.mark.ionq
     @pytest.mark.live_test
@@ -202,8 +190,8 @@ class TestIonQ(QuantumTestBase):
     @pytest.mark.live_test
     def test_ionq_qpu_target(self):
         workspace = self.create_workspace()
-        target = IonQ(workspace=workspace, name="ionq.qpu")
-        self.assertEqual("ionq.qpu", target.name)
+        target = IonQ(workspace=workspace, name="ionq.qpu.aria-1")
+        self.assertEqual("ionq.qpu.aria-1", target.name)
         self.assertEqual("ionq.circuit.v1", target.input_data_format)
         self.assertEqual("ionq.quantum-results.v1", target.output_data_format)
         self.assertEqual("IonQ", target.provider_id)

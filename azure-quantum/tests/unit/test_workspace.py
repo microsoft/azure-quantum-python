@@ -303,15 +303,15 @@ class TestWorkspace(QuantumTestBase):
     @pytest.mark.live_test
     def test_workspace_get_target_ionq(self):
         ws = self.create_workspace()
-        target = ws.get_targets("ionq.qpu")
+        target = ws.get_targets("ionq.qpu.aria-1")
         self.assertIsNotNone(target.average_queue_time)
         self.assertIsNotNone(target.current_availability)
-        self.assertEqual(target.name, "ionq.qpu")
+        self.assertEqual(target.name, "ionq.qpu.aria-1")
         target.refresh()
         self.assertIsNotNone(target.average_queue_time)
         self.assertIsNotNone(target.current_availability)
         # target lookup is case insensitive
-        target1 = ws.get_targets("IonQ.QPU")
+        target1 = ws.get_targets("IonQ.QPU.Aria-1")
         self.assertEqual(target.name, target1.name)
 
         with pytest.raises(ValueError):
@@ -326,7 +326,7 @@ class TestWorkspace(QuantumTestBase):
         assert isinstance(targets, list)
         # For now, we keep a single result as instance instead of list, 
         # but it has to be changed in the next major release.
-        target = ws.get_targets(name="ionq.qpu")
+        target = ws.get_targets(name="ionq.qpu.aria-1")
         assert not isinstance(target, list)
 
     @pytest.mark.microsoft_qc
