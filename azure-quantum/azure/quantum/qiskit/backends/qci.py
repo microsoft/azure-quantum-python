@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 ##
 
-from typing import TYPE_CHECKING, Dict
+from typing import TYPE_CHECKING, Dict, List
 from azure.quantum.version import __version__
 from azure.quantum.qiskit.job import AzureQuantumJob
 from abc import abstractmethod
@@ -14,28 +14,8 @@ from .backend import (
 
 from qiskit.providers.models import BackendConfiguration
 from qiskit.providers import Options, Provider
+from qsharp import TargetProfile
 
-QIR_BASIS_GATES = [
-    "measure",
-    "m",
-    "barrier",
-    "cx",
-    "cz",
-    "h",
-    "reset",
-    "rx",
-    "ry",
-    "rz",
-    "s",
-    "sdg",
-    "swap",
-    "t",
-    "tdg",
-    "x",
-    "y",
-    "z",
-    "id",
-]
 
 if TYPE_CHECKING:
     from azure.quantum.qiskit import AzureQuantumProvider
@@ -65,7 +45,7 @@ class QCIBackend(AzureQirBackend):
             **{
                 cls._SHOTS_PARAM_NAME: _DEFAULT_SHOTS_COUNT, 
             },
-            targetCapability="AdaptiveExecution",
+            target_profile=TargetProfile.Adaptive_RI,
         )
 
     def _azure_config(self) -> Dict[str, str]:
@@ -76,9 +56,12 @@ class QCIBackend(AzureQirBackend):
             }
         )
         return config
-    
+
+    def _basis_gates(self) -> List[str]:
+        return super()._basis_gates() + ["barrier"]
+
     def run(
-        self, 
+        self,
         run_input=None,
         shots: int = None,
         **options,
@@ -110,7 +93,7 @@ class QCISimulatorBackend(QCIBackend):
                 "local": False,
                 "coupling_map": None,
                 "description": "QCI simulator on Azure Quantum",
-                "basis_gates": QIR_BASIS_GATES,
+                "basis_gates": self._basis_gates(),
                 "memory": False,
                 "n_qubits": 29,
                 "conditional": True,
@@ -142,7 +125,7 @@ class QCIQPUBackend(QCIBackend):
                 "local": False,
                 "coupling_map": None,
                 "description": "QCI QPU on Azure Quantum",
-                "basis_gates": QIR_BASIS_GATES,
+                "basis_gates": self._basis_gates(),
                 "memory": False,
                 "n_qubits": 11,
                 "conditional": True,

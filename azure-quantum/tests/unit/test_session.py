@@ -163,7 +163,7 @@ class TestSession(QuantumTestBase):
 
             backend.run(circuit, shots=100, job_name="Job 2")
 
-            job1.wait_for_final_state()
+            job1.wait_for_final_state(wait=5 if not self.is_playback else 0)
             session.refresh()
                 
             self.assertEqual(session.details.status, SessionStatus.EXECUTING)

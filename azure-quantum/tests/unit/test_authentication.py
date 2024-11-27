@@ -123,9 +123,26 @@ class TestWorkspace(QuantumTestBase):
         with patch.dict(os.environ):
             self.clear_env_vars(os.environ)
             connection_params = self.connection_params
-            credential = ClientSecretCredential(connection_params.tenant_id,
-                                                connection_params.client_id,
-                                                self._client_secret)
+
+            os.environ[EnvironmentVariables.AZURE_CLIENT_ID] = \
+                connection_params.client_id
+            os.environ[EnvironmentVariables.AZURE_TENANT_ID] = \
+                connection_params.tenant_id
+
+            if self.in_recording and os.path.exists(self._client_certificate_path):
+                os.environ[EnvironmentVariables.AZURE_CLIENT_CERTIFICATE_PATH] = \
+                    self._client_certificate_path
+                os.environ[EnvironmentVariables.AZURE_CLIENT_SEND_CERTIFICATE_CHAIN] = \
+                    self._client_send_certificate_chain
+            else:
+                os.environ[EnvironmentVariables.AZURE_CLIENT_SECRET] = \
+                    self._client_secret
+            
+            credential = _DefaultAzureCredential(
+                subscription_id=connection_params.subscription_id,
+                arm_endpoint=connection_params.arm_endpoint,
+                tenant_id=connection_params.tenant_id)
+            
             token = credential.get_token(ConnectionConstants.DATA_PLANE_CREDENTIAL_SCOPE)
             content = {
                 "access_token": token.token,
@@ -147,13 +164,17 @@ class TestWorkspace(QuantumTestBase):
 
     @pytest.mark.live_test
     def test_workspace_auth_client_secret_credential(self):
+        client_secret = os.environ.get(EnvironmentVariables.AZURE_CLIENT_SECRET)
+        if not client_secret:
+            pytest.skip("Skipping the test as no Client Secret was provided")
+
         with patch.dict(os.environ):
             self.clear_env_vars(os.environ)
             connection_params = self.connection_params
             credential = ClientSecretCredential(
                 tenant_id=connection_params.tenant_id,
                 client_id=connection_params.client_id,
-                client_secret=self._client_secret)
+                client_secret=client_secret)
             workspace = self.create_workspace(credential=credential)
             targets = workspace.get_targets()
             self.assertGreater(len(targets), 1)
@@ -163,15 +184,26 @@ class TestWorkspace(QuantumTestBase):
         with patch.dict(os.environ):
             self.clear_env_vars(os.environ)
             connection_params = self.connection_params
+            
             os.environ[EnvironmentVariables.AZURE_CLIENT_ID] = \
                 connection_params.client_id
-            os.environ[EnvironmentVariables.AZURE_CLIENT_SECRET] = \
-                self._client_secret
             os.environ[EnvironmentVariables.AZURE_TENANT_ID] = \
                 connection_params.tenant_id
+
+            if self.in_recording and os.path.exists(self._client_certificate_path):
+                os.environ[EnvironmentVariables.AZURE_CLIENT_CERTIFICATE_PATH] = \
+                    self._client_certificate_path
+                os.environ[EnvironmentVariables.AZURE_CLIENT_SEND_CERTIFICATE_CHAIN] = \
+                    self._client_send_certificate_chain
+            else:
+                os.environ[EnvironmentVariables.AZURE_CLIENT_SECRET] = \
+                    self._client_secret
+
             credential = _DefaultAzureCredential(
                 subscription_id=connection_params.subscription_id,
-                arm_endpoint=connection_params.arm_endpoint)
+                arm_endpoint=connection_params.arm_endpoint,
+                tenant_id=connection_params.tenant_id)
+                
             workspace = self.create_workspace(credential=credential)
             targets = workspace.get_targets()
             self.assertGreater(len(targets), 1)
@@ -322,7 +354,7 @@ class TestWorkspace(QuantumTestBase):
             jobs = workspace.list_jobs()
             assert len(jobs) >= 0
 
-        if self.is_live:
+        if not self.is_playback:
             self.pause_recording()
             token = self._get_rp_credential()
             workspace = self._get_workspace(token)

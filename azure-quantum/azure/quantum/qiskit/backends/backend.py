@@ -21,20 +21,54 @@ from abc import abstractmethod
 from azure.quantum.job.session import SessionHost
 
 try:
-    from qiskit import QuantumCircuit, transpile
+    from qiskit import QuantumCircuit
     from qiskit.providers import BackendV1 as Backend
     from qiskit.providers import Options
     from qiskit.providers import Provider
     from qiskit.providers.models import BackendConfiguration
     from qiskit.qobj import QasmQobj, PulseQobj
-    from pyqir import Module
-    from qiskit_qir import to_qir_module
+    import pyqir as pyqir
+    from qsharp.interop.qiskit import QSharpBackend
+    from qsharp import TargetProfile
 
 except ImportError:
     raise ImportError(
         "Missing optional 'qiskit' dependencies. \
 To install run: pip install azure-quantum[qiskit]"
     )
+
+# barrier is handled by an extra flag which will transpile
+# them away if the backend doesn't support them. This has
+# to be done as a special pass as the transpiler will not
+# remove barriers by default.
+QIR_BASIS_GATES = [
+    "measure",
+    "reset",
+    "ccx",
+    "cx",
+    "cy",
+    "cz",
+    "rx",
+    "rxx",
+    "crx",
+    "ry",
+    "ryy",
+    "cry",
+    "rz",
+    "rzz",
+    "crz",
+    "h",
+    "s",
+    "sdg",
+    "swap",
+    "t",
+    "tdg",
+    "x",
+    "y",
+    "z",
+    "id",
+    "ch",
+]
 
 
 class AzureBackendBase(Backend, SessionHost):
@@ -279,7 +313,12 @@ class AzureQirBackend(AzureBackendBase):
             "blob_name": "inputData",
             "content_type": "qir.v1",
             "input_data_format": "qir.v1",
+            "output_data_format": "microsoft.quantum-results.v2",
+            "is_default": True,
         }
+    
+    def _basis_gates(self) -> List[str]:
+        return QIR_BASIS_GATES
 
     def run(
         self,
@@ -367,66 +406,121 @@ class AzureQirBackend(AzureBackendBase):
         return {}
 
     def _generate_qir(
-        self, circuits, targetCapability, **to_qir_kwargs
-    ) -> Tuple[Module, List[str]]:
+        self, circuits: List[QuantumCircuit], target_profile: TargetProfile, **kwargs
+    ) -> pyqir.Module:
+
+        if len(circuits) == 0:
+            raise ValueError("No QuantumCircuits provided")
 
         config = self.configuration()
         # Barriers aren't removed by transpilation and must be explicitly removed in the Qiskit to QIR translation.
-        emit_barrier_calls = "barrier" in config.basis_gates
-        return to_qir_module(
-            circuits,
-            targetCapability,
-            emit_barrier_calls=emit_barrier_calls,
-            **to_qir_kwargs,
+        supports_barrier = "barrier" in config.basis_gates
+        skip_transpilation = kwargs.pop("skip_transpilation", False)
+
+        backend = QSharpBackend(
+            qiskit_pass_options={"supports_barrier": supports_barrier},
+            target_profile=target_profile,
+            skip_transpilation=skip_transpilation,
+            **kwargs,
         )
 
-    def _get_qir_str(self, circuits, targetCapability, **to_qir_kwargs) -> str:
-        module, _ = self._generate_qir(circuits, targetCapability, **to_qir_kwargs)
+        name = "batch"
+        if len(circuits) == 1:
+            name = circuits[0].name
+
+        if isinstance(circuits, list):
+            for value in circuits:
+                if not isinstance(value, QuantumCircuit):
+                    raise ValueError("Input must be List[QuantumCircuit]")
+        else:
+            raise ValueError("Input must be List[QuantumCircuit]")
+
+        context = pyqir.Context()
+        llvm_module = pyqir.qir_module(context, name)
+        for circuit in circuits:
+            qir_str = backend.qir(circuit)
+            module = pyqir.Module.from_ir(context, qir_str)
+            entry_point = next(filter(pyqir.is_entry_point, module.functions))
+            entry_point.name = circuit.name
+            llvm_module.link(module)
+        err = llvm_module.verify()
+        if err is not None:
+            raise Exception(err)
+
+        return llvm_module
+
+    def _get_qir_str(
+        self,
+        circuits: List[QuantumCircuit],
+        target_profile: TargetProfile,
+        **to_qir_kwargs,
+    ) -> str:
+        module = self._generate_qir(circuits, target_profile, **to_qir_kwargs)
         return str(module)
 
     def _translate_input(
-        self, circuits: List[QuantumCircuit], input_params: Dict[str, Any]
+        self, circuits: Union[QuantumCircuit, List[QuantumCircuit]], input_params: Dict[str, Any]
     ) -> bytes:
         """Translates the input values to the QIR expected by the Backend."""
         logger.info(f"Using QIR as the job's payload format.")
-        config = self.configuration()
+        if not (isinstance(circuits, list)):
+            circuits = [circuits]
 
-        # Override QIR translation parameters
-        # We will record the output by default, but allow the backend to override this, and allow the user to override the backend.
-        to_qir_kwargs = input_params.pop(
-            "to_qir_kwargs", config.azure.get("to_qir_kwargs", {"record_output": True})
-        )
-        targetCapability = input_params.pop(
-            "targetCapability",
-            self.options.get("targetCapability", "AdaptiveExecution"),
-        )
+        target_profile = self._get_target_profile(input_params)
 
         if logger.isEnabledFor(logging.DEBUG):
-            qir = self._get_qir_str(circuits, targetCapability, **to_qir_kwargs)
+            qir = self._get_qir_str(circuits, target_profile, skip_transpilation=True)
             logger.debug(f"QIR:\n{qir}")
 
         # We'll transpile automatically to the supported gates in QIR unless explicitly skipped.
-        if not input_params.pop("skipTranspile", False):
-            # Set of gates supported by QIR targets.
-            circuits = transpile(
-                circuits, basis_gates=config.basis_gates, optimization_level=0
-            )
-            # We'll only log the QIR again if we performed a transpilation.
-            if logger.isEnabledFor(logging.DEBUG):
-                qir = self._get_qir_str(circuits, targetCapability, **to_qir_kwargs)
-                logger.debug(f"QIR (Post-transpilation):\n{qir}")
+        skip_transpilation = input_params.pop("skipTranspile", False)
 
-        (module, entry_points) = self._generate_qir(
-            circuits, targetCapability, **to_qir_kwargs
+        module = self._generate_qir(
+            circuits, target_profile, skip_transpilation=skip_transpilation
         )
 
-        if not "items" in input_params:
+        def get_func_name(func: pyqir.Function) -> str:
+            return func.name
+
+        entry_points = list(
+            map(get_func_name, filter(pyqir.is_entry_point, module.functions))
+        )
+
+        if not skip_transpilation:
+            # We'll only log the QIR again if we performed a transpilation.
+            if logger.isEnabledFor(logging.DEBUG):
+                qir = str(module)
+                logger.debug(f"QIR (Post-transpilation):\n{qir}")
+
+        if "items" not in input_params:
             arguments = input_params.pop("arguments", [])
             input_params["items"] = [
                 {"entryPoint": name, "arguments": arguments} for name in entry_points
             ]
 
-        return module.bitcode
+        return str(module).encode("utf-8")
+
+    def _get_target_profile(self, input_params) -> TargetProfile:
+        # Default to Adaptive_RI if not specified on the backend
+        # this is really just a safeguard in case the backend doesn't have a default
+        default_profile = self.options.get("target_profile", TargetProfile.Adaptive_RI)
+
+        # If the user is using the old targetCapability parameter, we'll warn them
+        # and use that value for now. This will be removed in the future.
+        if "targetCapability" in input_params:
+            warnings.warn(
+                "The 'targetCapability' parameter is deprecated and will be ignored in the future. "
+                "Please, use 'target_profile' parameter instead.",
+                category=DeprecationWarning,
+            )
+            cap = input_params.pop("targetCapability")
+            if cap == "AdaptiveExecution":
+                default_profile = TargetProfile.Adaptive_RI
+            else:
+                default_profile = TargetProfile.Base
+        # If the user specifies a target profile, use that.
+        # Otherwise, use the profile we got from the backend/targetCapability.
+        return input_params.pop("target_profile", default_profile)
 
 
 class AzureBackend(AzureBackendBase):

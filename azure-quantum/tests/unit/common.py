@@ -33,6 +33,8 @@ ZERO_UID = "00000000-0000-0000-0000-000000000000"
 ONE_UID = "00000000-0000-0000-0000-000000000001"
 TENANT_ID = "72f988bf-86f1-41af-91ab-2d7cd011db47"
 PLACEHOLDER = "PLACEHOLDER"
+TRUE = "True"
+FALSE = "False"
 SUBSCRIPTION_ID = "11111111-2222-3333-4444-555555555555"
 RESOURCE_GROUP = "myresourcegroup"
 WORKSPACE = "myworkspace"
@@ -53,17 +55,20 @@ class RegexScrubbingPatterns:
     URL_STORAGE_ACCOUNT = r"https://[^\.]+.blob.core.windows.net"
     URL_QUANTUM_ENDPOINT = r"https://[^\.]+.quantum(-test)?.azure.com/"
     URL_OAUTH_ENDPOINT = \
-        f"https://login.(microsoftonline.com|windows-ppe.net)/{GUID_REGEX_CAPTURE}/oauth2/.*"
-    URL_QUERY_SAS_KEY_SIGNATURE = r"sig=[^&]+\&"
-    URL_QUERY_SAS_KEY_VALUE = r"sv=[^&]+\&"
-    URL_QUERY_SAS_KEY_EXPIRATION = r"se=[^&]+\&"
-    URL_QUERY_AUTH_CLIENT_ID = r"client_id=[^&]+\&"
-    URL_QUERY_AUTH_CLIENT_SECRET = r"client_secret=[^&]+\&"
-    URL_QUERY_AUTH_CLIENT_ASSERTION = r"client_assertion=[^&]+\&"
-    URL_QUERY_AUTH_CLIENT_ASSERTION_TYPE = r"client_assertion_type=[^&]+\&"
-    URL_QUERY_AUTH_CLAIMS = r"claims=[^&]+\&"
-    URL_QUERY_AUTH_CODE_VERIFIER = r"code_verifier=[^&]+\&"
-    URL_QUERY_AUTH_CODE = r"code=[^&]+\&"
+        f"https://login.(microsoftonline.com|windows-ppe.net)/{GUID_REGEX_CAPTURE}/oauth2/token"
+    URL_OPENID_ENDPOINT = \
+        f"https://login.(microsoftonline.com|windows-ppe.net)/{GUID_REGEX_CAPTURE}/v2.0/.well-known/openid-configuration"
+    URL_QUERY_SAS_KEY_SIGNATURE = r"sig=[\w\%\-\.]+"
+    URL_QUERY_SAS_KEY_VALUE = r"sv=[\w\%\-\.]+"
+    URL_QUERY_SAS_KEY_START_DATE = r"st=[\w\%\-\.]+"
+    URL_QUERY_SAS_KEY_EXPIRATION = r"se=[\w\%\-\.]+"
+    URL_QUERY_AUTH_CLIENT_ID = r"client_id=[\w\%\-\.]+"
+    URL_QUERY_AUTH_CLIENT_SECRET = r"client_secret=[\w\%\-\.]+"
+    URL_QUERY_AUTH_CLIENT_ASSERTION = r"client_assertion=[\w\%\-\.]+"
+    URL_QUERY_AUTH_CLIENT_ASSERTION_TYPE = r"client_assertion_type=[\w\%\-\.]+"
+    URL_QUERY_AUTH_CLAIMS = r"claims=[\w\%\-\.]+"
+    URL_QUERY_AUTH_CODE_VERIFIER = r"code_verifier=[\w\%\-\.]+"
+    URL_QUERY_AUTH_CODE = r"code=[\w\%\-\.]+"
     URL_HTTP = r"http://" # Devskim: ignore DS137138
 
 class QuantumTestBase(ReplayableTest):
@@ -85,7 +90,9 @@ class QuantumTestBase(ReplayableTest):
         )
         self.connection_params = connection_params
         self._client_secret = os.environ.get(EnvironmentVariables.AZURE_CLIENT_SECRET, PLACEHOLDER)
-
+        self._client_certificate_path = os.environ.get(EnvironmentVariables.AZURE_CLIENT_CERTIFICATE_PATH, PLACEHOLDER)
+        self._client_send_certificate_chain = os.environ.get(EnvironmentVariables.AZURE_CLIENT_SEND_CERTIFICATE_CHAIN, TRUE)
+        
         self._regex_replacer = CustomRecordingProcessor(self)
         recording_processors = [
             AuthenticationMetadataFilter(),
@@ -151,31 +158,37 @@ class QuantumTestBase(ReplayableTest):
             RegexScrubbingPatterns.URL_OAUTH_ENDPOINT,
             f'https://login.microsoftonline.com/{ZERO_UID}/oauth2/v2.0/token'
         )
+        self._regex_replacer.register_scrubbing(
+            RegexScrubbingPatterns.URL_OPENID_ENDPOINT,
+            f'https://login.microsoftonline.com/{ZERO_UID}/v2.0/.well-known/openid-configuration'
+        )
         self._regex_replacer.register_scrubbing(RegexScrubbingPatterns.URL_QUERY_SAS_KEY_SIGNATURE,
-                                      "sig=PLACEHOLDER&")
+                                      "sig=PLACEHOLDER")
         self._regex_replacer.register_scrubbing(RegexScrubbingPatterns.URL_QUERY_SAS_KEY_VALUE,
-                                      "sv=PLACEHOLDER&")
+                                      "sv=PLACEHOLDER")
+        self._regex_replacer.register_scrubbing(RegexScrubbingPatterns.URL_QUERY_SAS_KEY_START_DATE,
+                                      "st=2000-01-01T00%3A00%3A00Z")
         self._regex_replacer.register_scrubbing(RegexScrubbingPatterns.URL_QUERY_SAS_KEY_EXPIRATION,
-                                      "se=2050-01-01T00%3A00%3A00Z&")
+                                      "se=2050-01-01T00%3A00%3A00Z")
         self._regex_replacer.register_scrubbing(RegexScrubbingPatterns.URL_QUERY_AUTH_CLIENT_ID,
-                                      "client_id=PLACEHOLDER&")
+                                      "client_id=PLACEHOLDER")
         self._regex_replacer.register_scrubbing(RegexScrubbingPatterns.URL_QUERY_AUTH_CLIENT_SECRET,
-                                      "client_secret=PLACEHOLDER&")
+                                      "client_secret=PLACEHOLDER")
         self._regex_replacer.register_scrubbing(RegexScrubbingPatterns.URL_QUERY_AUTH_CLAIMS,
-                                      "claims=PLACEHOLDER&")
+                                      "claims=PLACEHOLDER")
         self._regex_replacer.register_scrubbing(RegexScrubbingPatterns.URL_QUERY_AUTH_CODE_VERIFIER,
-                                      "code_verifier=PLACEHOLDER&")
+                                      "code_verifier=PLACEHOLDER")
         self._regex_replacer.register_scrubbing(RegexScrubbingPatterns.URL_QUERY_AUTH_CODE,
-                                      "code=PLACEHOLDER&")
+                                      "code=PLACEHOLDER")
         self._regex_replacer.register_scrubbing(RegexScrubbingPatterns.URL_HTTP, "https://")
 
         self._regex_replacer.register_scrubbing(
             RegexScrubbingPatterns.URL_QUERY_AUTH_CLIENT_ASSERTION,
-            "client_assertion=PLACEHOLDER&"
+            "client_assertion=PLACEHOLDER"
         )
         self._regex_replacer.register_scrubbing(
             RegexScrubbingPatterns.URL_QUERY_AUTH_CLIENT_ASSERTION_TYPE,
-            "client_assertion_type=PLACEHOLDER&"
+            "client_assertion_type=PLACEHOLDER"
         )
 
     def disable_scrubbing(self, pattern: str) -> None:
@@ -261,8 +274,7 @@ class QuantumTestBase(ReplayableTest):
 
     @property
     def is_playback(self):
-        return (self.connection_params.subscription_id == SUBSCRIPTION_ID
-                and not self.in_recording 
+        return (not self.in_recording 
                 and not self.is_live)
 
     def clear_env_vars(self, os_environ):
@@ -629,11 +641,10 @@ class AuthenticationMetadataFilter(RecordingProcessor):
 
     def process_request(self, request):
         if (
-            "/.well-known/openid-configuration" in request.uri
-            or "/common/discovery/instance" in request.uri
+            "/common/discovery/instance" in request.uri
             or "&discover-tenant-id-and-authority" in request.uri
         ):
-            return None
+            return request
         return request
 
 

@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 ##
-from typing import TYPE_CHECKING, Any, Dict, Union
+from typing import TYPE_CHECKING, Any, Dict, Union, Optional
 
 try:
     import cirq
@@ -71,6 +71,14 @@ class _IonQClient:
     def delete_job(self, job_id: str):
         azure_job = self._workspace.get_job(job_id)
         self._workspace.cancel_job(azure_job)
+    
+    def get_results(
+        self, job_id: str, sharpen: Optional[bool] = None, extra_query_params: Optional[dict] = None
+    ):
+        azure_job = self._workspace.get_job(job_id)
+        job_result = azure_job.get_results()
+        return job_result["histogram"]
+        
 
 
 class IonQTarget(IonQ, CirqTarget):
@@ -110,37 +118,6 @@ are not installed, throw error with installation instructions."""
         """Convert Azure job to Cirq job"""
         job_dict = self._client._create_job_dict(azure_job)
         return CirqIonqJob(client=self._client, job_dict=job_dict)
-
-    def estimate_cost(
-        self,
-        program: "cirq.Circuit",
-        repetitions: int,
-        price_1q: float = None,
-        price_2q: float = None,
-        min_price: float = None) -> float:
-        """Estimate cost for running this program
-
-        :param program: Cirq quantum program
-        :type program: cirq.Circuit
-        :param repetitions: Number of repetitions
-        :type repetitions: int
-        :param price_1q: The price of running a single-qubit gate.
-        :type price_1q: float, optional
-        :param price_2q: The price of running a double-qubit gate.
-        :type price_2q: float, optional
-        :param min_price: The minimum price for running a job.
-        :type min_price: float, optional
-        :return: Price estimate
-        :rtype: float
-        """
-        serialized_program = self._translate_cirq_circuit(program)
-        return super().estimate_cost(
-            serialized_program.body,
-            repetitions,
-            price_1q=price_1q,
-            price_2q=price_2q,
-            min_price=min_price
-        )
 
     def submit(
         self,
