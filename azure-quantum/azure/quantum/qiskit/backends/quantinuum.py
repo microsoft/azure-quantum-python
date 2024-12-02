@@ -99,10 +99,6 @@ class QuantinuumQirBackendBase(AzureQirBackend):
     def _get_n_qubits(self, name):
         return _get_n_qubits(name)
     
-    def estimate_cost(self, circuits, shots, options={}):
-        """Estimate the cost for the given circuit."""
-        return self._estimate_cost_qir(circuits, shots, options)
-
 
 class QuantinuumSyntaxCheckerQirBackend(QuantinuumQirBackendBase):
     backend_names = (
@@ -247,33 +243,6 @@ class QuantinuumBackend(AzureBackend):
     def _translate_input(self, circuit):
         """Translates the input values to the format expected by the AzureBackend."""
         return dumps(circuit)
-
-    def estimate_cost(
-        self, circuit: QuantumCircuit, shots: int = None, count: int = None
-    ):
-        """Estimate cost for running this circuit
-
-        :param circuit: Qiskit quantum circuit
-        :type circuit: QuantumCircuit
-        :param shots: Shot count
-        :type shots: int
-        :param count: Shot count (alternative to 'shots')
-        :type count: int
-        """
-        if count is not None:
-            warnings.warn(
-                "The 'count' parameter will be deprecated. Please, use 'shots' parameter instead.",
-                category=DeprecationWarning,
-            )
-            shots = count
-
-        if shots is None:
-            raise ValueError("Missing input argument 'shots'.")
-
-        input_data = dumps(circuit)
-        workspace = self.provider().get_workspace()
-        target = workspace.get_targets(self.name())
-        return target.estimate_cost(input_data, shots=shots)
 
     def _get_n_qubits(self, name):
         return _get_n_qubits(name)
