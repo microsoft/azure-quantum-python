@@ -1,5 +1,6 @@
 import os
 import pytest
+from tempfile import TemporaryFile
 from azure.quantum import Job
 from common import QuantumTestBase, DEFAULT_TIMEOUT_SECS
 from azure.quantum import JobStatus
@@ -88,7 +89,7 @@ class TestMicrosoftElementsDftJob(QuantumTestBase):
 
             return job
 
-test_file = Path(__file__).parent / "molecule.xyz"
+test_xyz_file = Path(__file__).parent / "molecule.xyz"
 
 @pytest.mark.parametrize(
         'input_params', [
@@ -132,8 +133,8 @@ test_file = Path(__file__).parent / "molecule.xyz"
 )
 @pytest.mark.parametrize(
     'input_data', [
-        [ test_file ],
-        [ test_file, test_file ],
+        [ test_xyz_file ],
+        [ test_xyz_file, test_xyz_file ],
     ]
 )
 def test_assemble_true_qcschema_from_files_success(data_regression, input_params, input_data):
@@ -160,8 +161,8 @@ def test_assemble_true_qcschema_from_files_success(data_regression, input_params
 )
 @pytest.mark.parametrize(
     'input_data', [
-        [ test_file ],
-        [ test_file, test_file ],
+        [ test_xyz_file ],
+        [ test_xyz_file, test_xyz_file ],
     ]
 )
 def test_assemble_go_qcschema_from_files_success(data_regression, input_params, input_data):
@@ -188,8 +189,8 @@ def test_assemble_go_qcschema_from_files_success(data_regression, input_params, 
 )
 @pytest.mark.parametrize(
     'input_data', [
-        [ test_file ],
-        [ test_file, test_file ],
+        [ test_xyz_file ],
+        [ test_xyz_file, test_xyz_file ],
     ]
 )
 def test_assemble_bomd_qcschema_from_files_success(data_regression, input_params, input_data):
@@ -276,3 +277,59 @@ def test_xyz_raises_for_bad_input(xyz_str):
     target = MicrosoftElementsDft
     with pytest.raises(ValueError):
         mol_data = target._xyz_to_qcschema_mol(xyz_str)
+
+
+
+test_qcschema_file = Path(__file__).parent / "molecule.json"
+
+@pytest.mark.parametrize(
+    'input_data', [
+        [ test_qcschema_file ],
+        [ test_qcschema_file, test_qcschema_file ],
+    ]
+)
+def test_assemble_qcschema_from_qcschema_files_success(data_regression, input_data):
+    target = MicrosoftElementsDft
+    qcschema_data = target._assemble_qcshema_from_files(input_data, {})
+    data_regression.check(qcschema_data)
+
+
+@pytest.mark.parametrize(
+    'unsupported_extension',[
+        '',
+        '.cif',
+        '.pdb',
+    ]
+)
+def test_assemble_qcschema_raise_value_error_for_unsupported_file_types(unsupported_extension):
+    target = MicrosoftElementsDft
+    with TemporaryFile(suffix=unsupported_extension, delete=False) as fp:
+        file_name = fp.name
+        fp.write("Hello World!".encode())
+        fp.close()
+
+        with pytest.raises(ValueError):
+            qcschema_data = target._assemble_qcshema_from_files([file_name], {})
+
+    os.remove(file_name) 
+
+@pytest.mark.parametrize(
+    'input_params', [
+        {'method': 'm062x'},
+    ]
+)
+def test_assemble_qcschema_issues_warning_for_params_with_qcschema(input_params):
+    target = MicrosoftElementsDft
+    with pytest.warns(UserWarning):
+        qcschema_data = target._assemble_qcshema_from_files([ test_qcschema_file ], input_params)
+
+@pytest.mark.parametrize(
+    'input_params', [
+        {},
+        None,
+    ]
+)
+def test_assemble_qcschema_issues_no_warnings_for_empty_params_with_qcschema(recwarn, input_params):
+    target = MicrosoftElementsDft
+    qcschema_data = target._assemble_qcshema_from_files([ test_qcschema_file ], input_params)
+    assert len(recwarn) == 0

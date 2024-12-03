@@ -9,6 +9,7 @@ from typing import Any, Dict, Type, Union, List
 from .job import MicrosoftElementsDftJob
 from pathlib import Path
 import copy
+import json
 
 
 class MicrosoftElementsDft(Target):
@@ -125,9 +126,17 @@ class MicrosoftElementsDft(Target):
                 raise FileNotFoundError(f"File {file} does not exist.")
             
             file_data = file_path.read_text()
-            mol = self._xyz_to_qcschema_mol(file_data)
-            new_qcschema = self._new_qcshema( input_params, mol )
-            qcshema_objects.append(new_qcschema)
+            if file_path.suffix == '.xyz':
+                mol = self._xyz_to_qcschema_mol(file_data)
+                new_qcschema = self._new_qcshema( input_params, mol )
+                qcshema_objects.append(new_qcschema)
+            elif file_path.suffix == '.json':
+                if input_params is not None and len(input_params.keys()) > 0:
+                    warnings.warn('Input parameters were given along with a QcSchema file which contains parameters, using QcSchema parameters as is.')
+                with open(file_path, 'r') as f:
+                    qcshema_objects.append( json.load(f) )
+            else:
+                raise ValueError(f"File type '{file_path.suffix}' for file '{file_path}' is not supported. Please use xyz or QcSchema file formats.")
 
         return qcshema_objects
 
@@ -216,8 +225,8 @@ class MicrosoftElementsDft(Target):
         for i in range(len(input_files)):
             toc.append( 
                 {
-                    "xyzFileName": input_files[i],
-                    "qcschemaFileName": input_blobs[i],
+                    "inputFileName": input_files[i],
+                    "qcschemaBlobName": input_blobs[i],
                 }
             )
 
