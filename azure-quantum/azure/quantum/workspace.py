@@ -20,7 +20,7 @@ from typing import (
     Tuple,
     Union,
 )
-from azure.quantum._client import QuantumClient
+from azure.quantum._client import ServicesClient
 from azure.quantum._client.operations import (
     JobsOperations,
     StorageOperations,
@@ -139,6 +139,9 @@ class Workspace:
 
         self._connection_params = connection_params
         self._storage = storage
+        self._subscription_id = connection_params.subscription_id
+        self._resource_group = connection_params.resource_group
+        self._workspace_name = connection_params.workspace_name
 
         # Create QuantumClient
         self._client = self._create_client()
@@ -213,7 +216,7 @@ class Workspace:
         """
         return self._storage
 
-    def _create_client(self) -> QuantumClient:
+    def _create_client(self) -> ServicesClient:
         """"
         An internal method to (re)create the underlying Azure SDK REST API client.
 
@@ -224,7 +227,7 @@ class Workspace:
         kwargs = {}
         if connection_params.api_version:
             kwargs["api_version"] = connection_params.api_version
-        client = QuantumClient(
+        client = ServicesClient(
             credential=connection_params.get_credential_or_default(),
             subscription_id=connection_params.subscription_id,
             resource_group_name=connection_params.resource_group,
@@ -352,7 +355,11 @@ class Workspace:
         blob_details = BlobDetails(
             container_name=container_name, blob_name=blob_name
         )
-        container_uri = client.sas_uri(blob_details=blob_details)
+        container_uri = client.get_sas_uri(
+            self._subscription_id,
+            self._resource_group,
+            self._workspace_name, 
+            blob_details=blob_details)
 
         logger.debug("Container URI from service: %s", container_uri)
         return container_uri.sas_uri
@@ -368,8 +375,12 @@ class Workspace:
         :rtype: Job
         """
         client = self._get_jobs_client()
-        details = client.create(
-            job.details.id, job.details
+        details = client.create_or_replace(
+            self._subscription_id,
+            self._resource_group,
+            self._workspace_name,
+            job.details.id, 
+            job.details
         )
         return Job(self, details)
 
@@ -385,8 +396,16 @@ class Workspace:
         :rtype: Job
         """
         client = self._get_jobs_client()
-        client.cancel(job.details.id)
-        details = client.get(job.id)
+        client.delete(
+            self._subscription_id,
+            self._resource_group,
+            self._workspace_name,
+            job.details.id)
+        details = client.get(
+            self._subscription_id,
+            self._resource_group,
+            self._workspace_name,
+            job.id)
         return Job(self, details)
 
     def get_job(self, job_id: str) -> Job:
@@ -404,7 +423,11 @@ class Workspace:
         from azure.quantum.target import Target
 
         client = self._get_jobs_client()
-        details = client.get(job_id)
+        details = client.get(
+            self._subscription_id,
+            self._resource_group,
+            self._workspace_name,
+            job_id)
         target_factory = TargetFactory(base_cls=Target, workspace=self)
         # pylint: disable=protected-access
         target_cls = target_factory._target_cls(
@@ -435,7 +458,11 @@ class Workspace:
         :rtype: typing.List[Job]
         """
         client = self._get_jobs_client()
-        jobs = client.list()
+        jobs = client.list(
+            self._subscription_id,
+            self._resource_group,
+            self._workspace_name
+        )
 
         result = []
         for j in jobs:
@@ -465,7 +492,10 @@ class Workspace:
         """
         return [
             (provider.id, target)
-            for provider in self._client.providers.get_status()
+            for provider in self._client.providers.list(
+                self._subscription_id,
+                self._resource_group,
+                self._workspace_name)
             for target in provider.targets
             if (provider_id is None or provider.id.lower() == provider_id.lower())
                 and (name is None or target.id.lower() == name.lower())
@@ -521,7 +551,11 @@ class Workspace:
         :rtype: typing.List[typing.Dict[str, typing.Any]
         """
         client = self._get_quotas_client()
-        return [q.as_dict() for q in client.list()]
+        return [q.as_dict() for q in client.list(
+            self._subscription_id,
+            self._resource_group,
+            self._workspace_name
+        )]
 
     def list_top_level_items(
         self
@@ -535,7 +569,11 @@ class Workspace:
         :rtype: typing.List[typing.Union[Job, Session]]
         """
         client = self._get_top_level_items_client()
-        item_details_list = client.list()
+        item_details_list = client.list(
+            self._subscription_id,
+            self._resource_group,
+            self._workspace_name
+        )
         result = [WorkspaceItemFactory.__new__(workspace=self, item_details=item_details)
                   for item_details in item_details_list]
         return result
@@ -550,7 +588,11 @@ class Workspace:
         :rtype: typing.List[Session]
         """
         client = self._get_sessions_client()
-        session_details_list = client.list()
+        session_details_list = client.list(
+            self._subscription_id,
+            self._resource_group,
+            self._workspace_name
+        )
         result = [Session(workspace=self,details=session_details)
                   for session_details in session_details_list]
         return result
@@ -569,9 +611,12 @@ class Workspace:
         :rtype: Session
         """
         client = self._get_sessions_client()
-        session.details = client.open(
-            session_id=session.id,
-            session=session.details)
+        session.details = client.create_or_replace(
+            self._subscription_id,
+            self._resource_group,
+            self._workspace_name,
+            session.id,
+            session.details)
 
     def close_session(
         self,
@@ -587,9 +632,17 @@ class Workspace:
         """
         client = self._get_sessions_client()
         if not session.is_in_terminal_state():
-            session.details = client.close(session_id=session.id)
+            session.details = client.close(
+                self._subscription_id,
+                self._resource_group,
+                self._workspace_name,
+                session_id=session.id)
         else:
-            session.details = client.get(session_id=session.id)
+            session.details = client.get(
+                self._subscription_id,
+                self._resource_group,
+                self._workspace_name,
+                session_id=session.id)
 
         if session.target:
             if (session.target.latest_session
@@ -623,7 +676,11 @@ class Workspace:
         :rtype: Session
         """
         client = self._get_sessions_client()
-        session_details = client.get(session_id=session_id)
+        session_details = client.get(
+            self._subscription_id,
+            self._resource_group,
+            self._workspace_name,
+            session_id=session_id)
         result = Session(workspace=self, details=session_details)
         return result
 
@@ -641,7 +698,11 @@ class Workspace:
         :rtype: typing.List[Job]
         """
         client = self._get_sessions_client()
-        job_details_list = client.jobs_list(session_id=session_id)
+        job_details_list = client.jobs_list(
+            self._subscription_id,
+            self._resource_group,
+            self._workspace_name,
+            session_id=session_id)
         result = [Job(workspace=self, job_details=job_details)
                   for job_details in job_details_list]
         return result
