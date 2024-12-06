@@ -46,9 +46,12 @@ from azure.quantum.storage import (
     get_container_uri,
     ContainerClient
 )
+from azure.quantum.paginator import Paginator
 if TYPE_CHECKING:
     from azure.quantum.target import Target
 
+from typing import List, Optional
+from datetime import datetime
 
 logger = logging.getLogger(__name__)
 
@@ -438,9 +441,13 @@ class Workspace:
 
     def list_jobs(
         self,
-        name_match: Optional[str] = None,
-        status: Optional[JobStatus] = None,
-        created_after: Optional[datetime] = None
+        name_match: Optional[str] = None, 
+        job_type: Optional[str]= None, 
+        provider: Optional[list[str]]= None, 
+        target: Optional[list[str]]= None, 
+        status: Optional[list[JobStatus]] = None, 
+        created_after: Optional[datetime] = None,
+        created_before: Optional[datetime] = None, 
     ) -> List[Job]:
         """
         Returns list of jobs that meet optional (limited) filter criteria.
@@ -458,19 +465,124 @@ class Workspace:
         :rtype: typing.List[Job]
         """
         client = self._get_jobs_client()
-        jobs = client.list(
-            self._subscription_id,
-            self._resource_group,
-            self._workspace_name
+
+        job_filter = self._create_filter(
+            job_name=name_match,
+            job_type=job_type,
+            provider_ids=provider,
+            target=target,
+            status=status,
+            created_after=created_after,
+            created_before=created_before
         )
 
+        paginator = Paginator(client.list, filter = job_filter)
+
         result = []
-        for j in jobs:
-            deserialized_job = Job(self, j)
-            if deserialized_job.matches_filter(name_match, status, created_after):
-                result.append(deserialized_job)
+
+        while paginator.has_next:  # The loop runs as long as the condition is True
+            data = paginator.fetch_data()
+            result.append(data)
 
         return result
+
+    def _create_filter(self,
+            job_name: Optional[str] = None,
+            item_type: Optional[List[str]] = None,
+            job_type: Optional[List[str]] = None,
+            provider_ids: Optional[List[str]] = None,
+            target: Optional[List[str]] = None,
+            status: Optional[List[str]] = None,
+            created_after: Optional[datetime] = None,
+            created_before: Optional[datetime] = None,) -> str:
+        filters = []
+
+        # Job Name: startswith
+        if job_name:
+            filters.append(f"startswith(Name, '{job_name}')")
+
+        # Item Type: eq or or
+        if item_type:
+            filters.append(
+                " or ".join([f"ItemType eq '{item}'" for item in item_type])
+            )
+
+        # Job Type: eq or or
+        if job_type:
+            filters.append(
+                " or ".join([f"JobType eq '{job}'" for job in job_type])
+            )
+
+        # Provider IDs: eq or or
+        if provider_ids:
+            filters.append(
+                " or ".join([f"ProviderId eq '{provider}'" for provider in provider_ids])
+            )
+
+        # Target: eq or or
+        if target:
+            filters.append(
+                " or ".join([f"Target eq '{t}'" for t in target])
+            )
+
+        # Status: eq or or
+        if status:
+            filters.append(
+                " or ".join([f"Status eq '{s}'" for s in status])
+            )
+
+        # Created After: gt
+        if created_after:
+            filters.append(f"CreatedAfter gt {created_after.isoformat()}")
+
+        # Created Before: lt
+        if created_before:
+            filters.append(f"CreatedBefore lt {created_before.isoformat()}")
+
+        # Combine all filters with 'and'
+        return " and ".join(filters)
+
+    def _create_orderby(self, orderby_property: str, is_asc: bool) -> str:
+        if orderby_property is None:
+            orderby = None
+        else:
+            orderby = f"{orderby_property} asc" if is_asc else f"{orderby_property} desc"
+
+        return orderby
+
+    def list_jobs_paginated( 
+        self,
+        name_match: Optional[str] = None, 
+        job_type: Optional[str]= None, 
+        provider: Optional[list[str]]= None, 
+        target: Optional[list[str]]= None, 
+        status: Optional[list[JobStatus]] = None, 
+        created_after: Optional[datetime] = None,
+        created_before: Optional[datetime] = None, 
+        skip: Optional[int] = 0, 
+        page_size: Optional[int]=100, 
+        orderby_property: Optional[str] = None,
+        is_asc: Optional[bool] = True
+    ) -> Paginator:
+        client = self._get_jobs_client()
+
+        job_filter = self._create_filter(
+            job_name=name_match,
+            job_type=job_type,
+            provider_ids=provider,
+            target=target,
+            status=status,
+            created_after=created_after,
+            created_before=created_before
+        )
+        orderby = self._create_orderby(orderby_property, is_asc)
+
+        return Paginator(
+            client.list,
+            filter = job_filter,
+            orderby = orderby,
+            top = page_size,
+            skip = skip)
 
     def _get_target_status(
             self,
@@ -558,7 +670,15 @@ class Workspace:
         )]
 
     def list_top_level_items(
-        self
+        self,
+        name_match: Optional[str] = None, 
+        item_type: Optional[str]= None, 
+        job_type: Optional[str]= None, 
+        provider: Optional[list[str]]= None, 
+        target: Optional[list[str]]= None, 
+        status: Optional[list[JobStatus]] = None, 
+        created_after: Optional[datetime] = None,
+        created_before: Optional[datetime] = None,
     ) -> List[Union[Job, Session]]:
         """
         Get a list of top level items for the given workspace,
@@ -569,17 +689,73 @@ class Workspace:
         :rtype: typing.List[typing.Union[Job, Session]]
         """
         client = self._get_top_level_items_client()
-        item_details_list = client.list(
-            self._subscription_id,
-            self._resource_group,
-            self._workspace_name
+
+        top_level_item_filter = self._create_filter(
+            job_name=name_match,
+            item_type=item_type,
+            job_type=job_type,
+            provider_ids=provider,
+            target=target,
+            status=status,
+            created_after=created_after,
+            created_before=created_before
         )
+
+        paginator = Paginator(client.list, filter = top_level_item_filter)
+
+        item_details_list = []
+
+        while paginator.has_next:  # The loop runs as long as the condition is True
+            data = paginator.fetch_data()
+            item_details_list.append(data)
+
         result = [WorkspaceItemFactory.__new__(workspace=self, item_details=item_details)
                   for item_details in item_details_list]
         return result
+    
+    def list_top_level_items_paginated( 
+        self,
+        name_match: Optional[str] = None, 
+        item_type: Optional[str]= None, 
+        job_type: Optional[str]= None, 
+        provider: Optional[list[str]]= None, 
+        target: Optional[list[str]]= None, 
+        status: Optional[list[JobStatus]] = None, 
+        created_after: Optional[datetime] = None,
+        created_before: Optional[datetime] = None, 
+        skip: Optional[int] = 0, 
+        page_size: Optional[int]=100, 
+        orderby_property: Optional[str] = None,
+        is_asc: Optional[bool] = True
+    ) -> Paginator:
+        client = self._get_jobs_client()
+
+        top_level_item_filter = self._create_filter(
+            job_name=name_match,
+            item_type=item_type,
+            job_type=job_type,
+            provider_ids=provider,
+            target=target,
+            status=status,
+            created_after=created_after,
+            created_before=created_before
+        )
+        orderby = self._create_orderby(orderby_property, is_asc)
+
+        return Paginator(
+            client.list,
+            filter = top_level_item_filter,
+            orderby = orderby,
+            top = page_size,
+            skip = skip)
 
     def list_sessions(
-        self
+        self,
+        provider: Optional[list[str]]= None, 
+        target: Optional[list[str]]= None, 
+        status: Optional[list[JobStatus]] = None, 
+        created_after: Optional[datetime] = None,
+        created_before: Optional[datetime] = None, 
     ) -> List[Session]:
         """
         Get the list of sessions in the given workspace.
@@ -588,11 +764,59 @@ class Workspace:
         :rtype: typing.List[Session]
         """
         client = self._get_sessions_client()
-        session_details_list = client.list(
-            self._subscription_id,
-            self._resource_group,
-            self._workspace_name
+
+        session_filter = self._create_filter(
+            provider_ids=provider,
+            target=target,
+            status=status,
+            created_after=created_after,
+            created_before=created_before
         )
+
+        paginator = Paginator(client.list, filter = session_filter)
+
+        session_details_list = []
+
+        while paginator.has_next:  # The loop runs as long as the condition is True
+            data = paginator.fetch_data()
+            session_details_list.append(data)
+
+        result = [Session(workspace=self,details=session_details)
+                  for session_details in session_details_list]
+        return result
+    
+    def list_sessions_paginated(
+        self,
+        provider: Optional[list[str]]= None, 
+        target: Optional[list[str]]= None, 
+        status: Optional[list[JobStatus]] = None, 
+        created_after: Optional[datetime] = None,
+        created_before: Optional[datetime] = None, 
+        skip: Optional[int] = 0, 
+        page_size: Optional[int]=100, 
+        orderby_property: Optional[str] = None,
+        is_asc: Optional[bool] = True
+    ) -> List[Session]:
+        """
+        Get the list of sessions in the given workspace.
+
+        :return: List of Workspace Sessions.
+        :rtype: typing.List[Session]
+        """
+        client = self._get_sessions_client()
+        session_filter = self._create_filter(
+            provider_ids=provider,
+            target=target,
+            status=status,
+            created_after=created_after,
+            created_before=created_before
+        )
+
+        orderby = self._create_orderby(orderby_property=orderby_property, is_asc=is_asc)
+
+        paginator = Paginator(client.list, filter = session_filter, orderby=orderby, skip=skip, top=page_size)
+        session_details_list = paginator.fetch_data()
+
         result = [Session(workspace=self,details=session_details)
                   for session_details in session_details_list]
         return result
@@ -686,7 +910,14 @@ class Workspace:
 
     def list_session_jobs(
         self,
-        session_id: str
+        session_id: str,
+        name_match: Optional[str] = None, 
+        job_type: Optional[str]= None, 
+        provider: Optional[list[str]]= None, 
+        target: Optional[list[str]]= None, 
+        status: Optional[list[JobStatus]] = None, 
+        created_after: Optional[datetime] = None,
+        created_before: Optional[datetime] = None,
     ) -> List[Job]:
         """
         Gets all jobs associated with a session.
@@ -698,11 +929,70 @@ class Workspace:
         :rtype: typing.List[Job]
         """
         client = self._get_sessions_client()
-        job_details_list = client.jobs_list(
-            self._subscription_id,
-            self._resource_group,
-            self._workspace_name,
-            session_id=session_id)
+
+        session_job_filter = self._create_filter(
+            job_name=name_match,
+            job_type=job_type,
+            provider_ids=provider,
+            target=target,
+            status=status,
+            created_after=created_after,
+            created_before=created_before
+        )
+
+        paginator = Paginator(client.list, filter = session_job_filter, session_id=session_id)
+
+        job_details_list = []
+
+        while paginator.has_next:  # The loop runs as long as the condition is True
+            data = paginator.fetch_data()
+            job_details_list.append(data)
+
+        result = [Job(workspace=self, job_details=job_details)
+                  for job_details in job_details_list]
+        return result
+    
+    def list_session_jobs_paginated(
+        self,
+        session_id: str,
+        name_match: Optional[str] = None, 
+        job_type: Optional[str]= None, 
+        provider: Optional[list[str]]= None, 
+        target: Optional[list[str]]= None, 
+        status: Optional[list[JobStatus]] = None, 
+        created_after: Optional[datetime] = None,
+        created_before: Optional[datetime] = None, 
+        skip: Optional[int] = 0, 
+        page_size: Optional[int]=100, 
+        orderby_property: Optional[str] = None,
+        is_asc: Optional[bool] = True
+    ) -> List[Job]:
+        """
+        Gets all jobs associated with a session.
+
+        :param session_id:
+            The id of session.
+
+        :return: List of all jobs associated with a session.
+        :rtype: typing.List[Job]
+        """
+        client = self._get_sessions_client()
+
+        session_job_filter = self._create_filter(
+            job_name=name_match,
+            job_type=job_type,
+            provider_ids=provider,
+            target=target,
+            status=status,
+            created_after=created_after,
+            created_before=created_before
+        )
+
+        orderby = self._create_orderby(orderby_property=orderby_property, is_asc=is_asc)
+
+        paginator = Paginator(client.list, filter = session_job_filter, orderby=orderby, skip=skip, top=page_size, session_id=session_id)
+        job_details_list = paginator.fetch_data()
+
         result = [Job(workspace=self, job_details=job_details)
                   for job_details in job_details_list]
         return result
