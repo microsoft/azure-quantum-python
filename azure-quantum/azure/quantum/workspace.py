@@ -984,11 +984,33 @@ class Workspace:
         has_filter = False
         filter_string = ""
 
-        if (job_name is not None and job_name.length > 0):
+        if job_name:
             filter_string += f"startswith(Name, '{job_name}')"
             has_filter = True
 
-        if (provider_ids is not None and provider_ids.length != 0):
+        if (item_type is not None and item_type.count != 0):
+            if has_filter:
+                filter_string += " and "
+
+            filter_string += "("
+
+            item_type_filter = " or ".join([f"ItemType eq '{iid}'" for iid in item_type])
+
+            filter_string += f"${item_type_filter})"
+            has_filter = True
+
+        if (job_type is not None and job_type.count != 0):
+            if has_filter:
+                filter_string += " and "
+
+            filter_string += "("
+
+            job_type_filter = " or ".join([f"JobType eq '{jid}'" for jid in job_type])
+
+            filter_string += f"${job_type_filter})"
+            has_filter = True
+
+        if (provider_ids is not None and provider_ids.count != 0):
             if has_filter:
                 filter_string += " and "
 
@@ -999,7 +1021,7 @@ class Workspace:
             filter_string += f"${provider_filter})"
             has_filter = True
 
-        if (target is not None and target.length != 0):
+        if (target is not None and target.count != 0):
             if has_filter:
                 filter_string += " and "
 
@@ -1008,6 +1030,17 @@ class Workspace:
             target_filter = " or ".join([f"Target eq '{tid}'" for tid in target])
 
             filter_string += f"${target_filter})"
+            has_filter = True
+
+        if (status is not None and status.count != 0):
+            if has_filter:
+                filter_string += " and "
+
+            filter_string += "("
+
+            status_filter = " or ".join([f"State eq '{sid}'" for sid in status])
+
+            filter_string += f"${status_filter})"
             has_filter = True
 
         if created_after is not None:
@@ -1023,39 +1056,6 @@ class Workspace:
 
             iso_date_string = created_before.date().isoformat()
             filter_string += f"CreationTime le {iso_date_string}"
-
-        if (status is not None and status.length != 0):
-            if has_filter:
-                filter_string += " and "
-
-            filter_string += "("
-
-            status_filter = " or ".join([f"State eq '{sid}'" for sid in status])
-
-            filter_string += f"${status_filter})"
-            has_filter = True
-
-        if (item_type is not None and item_type.length != 0):
-            if has_filter:
-                filter_string += " and "
-
-            filter_string += "("
-
-            item_type_filter = " or ".join([f"ItemType eq '{iid}'" for iid in item_type])
-
-            filter_string += f"${item_type_filter})"
-            has_filter = True
-
-        if (job_type is not None and job_type.length != 0):
-            if has_filter:
-                filter_string += " and "
-
-            filter_string += "("
-
-            job_type_filter = " or ".join([f"JobType eq '{jid}'" for jid in job_type])
-
-            filter_string += f"${job_type_filter})"
-            has_filter = True
 
         encoded_filter_string = quote(filter_string, safe="")
         return encoded_filter_string
