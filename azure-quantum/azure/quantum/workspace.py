@@ -1007,7 +1007,7 @@ class Workspace:
 
             job_type_filter = " or ".join([f"JobType eq '{jid}'" for jid in job_type])
 
-            filter_string += f"${job_type_filter})"
+            filter_string += f"{job_type_filter})"
             has_filter = True
 
         if (provider_ids is not None and provider_ids.count != 0):
@@ -1018,7 +1018,7 @@ class Workspace:
 
             provider_filter = " or ".join([f"ProviderId eq '{pid}'" for pid in provider_ids])
 
-            filter_string += f"${provider_filter})"
+            filter_string += f"{provider_filter})"
             has_filter = True
 
         if (target is not None and target.count != 0):
@@ -1029,7 +1029,7 @@ class Workspace:
 
             target_filter = " or ".join([f"Target eq '{tid}'" for tid in target])
 
-            filter_string += f"${target_filter})"
+            filter_string += f"{target_filter})"
             has_filter = True
 
         if (status is not None and status.count != 0):
@@ -1040,7 +1040,7 @@ class Workspace:
 
             status_filter = " or ".join([f"State eq '{sid}'" for sid in status])
 
-            filter_string += f"${status_filter})"
+            filter_string += f"{status_filter})"
             has_filter = True
 
         if created_after is not None:
