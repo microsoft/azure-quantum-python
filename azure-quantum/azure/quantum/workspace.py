@@ -10,6 +10,7 @@ an Azure Quantum Workspace.
 from __future__ import annotations
 from datetime import datetime
 import logging
+from urllib.parse import quote
 from typing import (
     Any,
     Dict,
@@ -49,9 +50,6 @@ from azure.quantum.storage import (
 from azure.quantum.paginator import Paginator
 if TYPE_CHECKING:
     from azure.quantum.target import Target
-
-from typing import List, Optional
-from datetime import datetime
 
 logger = logging.getLogger(__name__)
 
@@ -231,11 +229,11 @@ class Workspace:
         if connection_params.api_version:
             kwargs["api_version"] = connection_params.api_version
         client = ServicesClient(
+            region=connection_params.location,
             credential=connection_params.get_credential_or_default(),
             subscription_id=connection_params.subscription_id,
             resource_group_name=connection_params.resource_group,
             workspace_name=connection_params.workspace_name,
-            azure_region=connection_params.location,
             user_agent=connection_params.get_full_user_agent(),
             credential_scopes = [ConnectionConstants.DATA_PLANE_CREDENTIAL_SCOPE],
             endpoint=connection_params.quantum_endpoint,
@@ -464,19 +462,14 @@ class Workspace:
         :return: Jobs that matched the search criteria.
         :rtype: typing.List[Job]
         """
-        client = self._get_jobs_client()
-
-        job_filter = self._create_filter(
-            job_name=name_match,
-            job_type=job_type,
-            provider_ids=provider,
-            target=target,
-            status=status,
-            created_after=created_after,
-            created_before=created_before
-        )
-
-        paginator = Paginator(client.list, filter = job_filter)
+        paginator = self.list_jobs_paginated (
+            name_match,
+            job_type,
+            provider,
+            target,
+            status,
+            created_after,
+            created_before)
 
         result = []
 
@@ -485,70 +478,6 @@ class Workspace:
             result.append(data)
 
         return result
-
-    def _create_filter(self,
-            job_name: Optional[str] = None,
-            item_type: Optional[List[str]] = None,
-            job_type: Optional[List[str]] = None,
-            provider_ids: Optional[List[str]] = None,
-            target: Optional[List[str]] = None,
-            status: Optional[List[str]] = None,
-            created_after: Optional[datetime] = None,
-            created_before: Optional[datetime] = None,) -> str:
-        filters = []
-
-        # Job Name: startswith
-        if job_name:
-            filters.append(f"startswith(Name, '{job_name}')")
-
-        # Item Type: eq or or
-        if item_type:
-            filters.append(
-                " or ".join([f"ItemType eq '{item}'" for item in item_type])
-            )
-
-        # Job Type: eq or or
-        if job_type:
-            filters.append(
-                " or ".join([f"JobType eq '{job}'" for job in job_type])
-            )
-
-        # Provider IDs: eq or or
-        if provider_ids:
-            filters.append(
-                " or ".join([f"ProviderId eq '{provider}'" for provider in provider_ids])
-            )
-
-        # Target: eq or or
-        if target:
-            filters.append(
-                " or ".join([f"Target eq '{t}'" for t in target])
-            )
-
-        # Status: eq or or
-        if status:
-            filters.append(
-                " or ".join([f"Status eq '{s}'" for s in status])
-            )
-
-        # Created After: gt
-        if created_after:
-            filters.append(f"CreatedAfter gt {created_after.isoformat()}")
-
-        # Created Before: lt
-        if created_before:
-            filters.append(f"CreatedBefore lt {created_before.isoformat()}")
-
-        # Combine all filters with 'and'
-        return " and ".join(filters)
-
-    def _create_orderby(self, orderby_property: str, is_asc: bool) -> str:
-        if orderby_property is None:
-            orderby = None
-        else:
-            orderby = f"{orderby_property} asc" if is_asc else f"{orderby_property} desc"
-
-        return orderby
 
     def list_jobs_paginated( 
         self,
@@ -701,7 +630,7 @@ class Workspace:
             created_before=created_before
         )
 
-        paginator = Paginator(client.list, filter = top_level_item_filter)
+        paginator = self.list_top_level_items_paginated(client.list, filter = top_level_item_filter)
 
         item_details_list = []
 
@@ -773,7 +702,7 @@ class Workspace:
             created_before=created_before
         )
 
-        paginator = Paginator(client.list, filter = session_filter)
+        paginator = self.list_sessions_paginated(client.list, filter = session_filter)
 
         session_details_list = []
 
@@ -951,7 +880,7 @@ class Workspace:
         result = [Job(workspace=self, job_details=job_details)
                   for job_details in job_details_list]
         return result
-    
+
     def list_session_jobs_paginated(
         self,
         session_id: str,
@@ -1042,3 +971,104 @@ class Workspace:
                 self.storage, container_name
             )
         return container_uri
+
+    def _create_filter(self,
+            job_name: Optional[str] = None,
+            item_type: Optional[List[str]] = None,
+            job_type: Optional[List[str]] = None,
+            provider_ids: Optional[List[str]] = None,
+            target: Optional[List[str]] = None,
+            status: Optional[List[str]] = None,
+            created_after: Optional[datetime] = None,
+            created_before: Optional[datetime] = None,) -> str:
+        has_filter = False
+        filter_string = ""
+
+        if (job_name is not None and job_name.length > 0):
+            filter_string += f"startswith(Name, '{job_name}')"
+            has_filter = True
+
+        if (provider_ids is not None and provider_ids.length != 0):
+            if has_filter:
+                filter_string += " and "
+
+            filter_string += "("
+
+            provider_filter = " or ".join([f"ProviderId eq '{pid}'" for pid in provider_ids])
+
+            filter_string += f"${provider_filter})"
+            has_filter = True
+
+        if (target is not None and target.length != 0):
+            if has_filter:
+                filter_string += " and "
+
+            filter_string += "("
+
+            target_filter = " or ".join([f"Target eq '{tid}'" for tid in target])
+
+            filter_string += f"${target_filter})"
+            has_filter = True
+
+        if created_after is not None:
+            if has_filter:
+                filter_string += " and "
+
+            iso_date_string = created_after.date().isoformat()
+            filter_string += f"CreationTime ge {iso_date_string}"
+
+        if created_before is not None:
+            if has_filter:
+                filter_string += " and "
+
+            iso_date_string = created_before.date().isoformat()
+            filter_string += f"CreationTime le {iso_date_string}"
+
+        if (status is not None and status.length != 0):
+            if has_filter:
+                filter_string += " and "
+
+            filter_string += "("
+
+            status_filter = " or ".join([f"State eq '{sid}'" for sid in status])
+
+            filter_string += f"${status_filter})"
+            has_filter = True
+
+        if (item_type is not None and item_type.length != 0):
+            if has_filter:
+                filter_string += " and "
+
+            filter_string += "("
+
+            item_type_filter = " or ".join([f"ItemType eq '{iid}'" for iid in item_type])
+
+            filter_string += f"${item_type_filter})"
+            has_filter = True
+
+        if (job_type is not None and job_type.length != 0):
+            if has_filter:
+                filter_string += " and "
+
+            filter_string += "("
+
+            job_type_filter = " or ".join([f"JobType eq '{jid}'" for jid in job_type])
+
+            filter_string += f"${job_type_filter})"
+            has_filter = True
+
+        encoded_filter_string = quote(filter_string, safe="")
+        return encoded_filter_string
+
+    def _create_orderby(self, orderby_property: str, is_asc: bool) -> str:
+        var_names = ["Name", "ItemType", "JobType", "ProviderId", "Target", "State", "CreationTime"]
+
+        if orderby_property in var_names:
+            orderby = f"{orderby_property} asc" if is_asc else f"{orderby_property} desc"
+        else:
+            raise ValueError(f"Invalid orderby property: {orderby_property}")
+
+        encoded_orderby = quote(orderby, safe="")
+
+        return encoded_orderby
+    
