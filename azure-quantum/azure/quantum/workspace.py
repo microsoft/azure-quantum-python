@@ -21,6 +21,7 @@ from typing import (
     Tuple,
     Union,
 )
+from azure.core.paging import ItemPaged
 from azure.quantum._client import ServicesClient
 from azure.quantum._client.models import JobDetails, ItemDetails, SessionDetails
 from azure.quantum._client.operations import (
@@ -491,7 +492,7 @@ class Workspace:
         page_size: Optional[int]=100,
         orderby_property: Optional[str] = None,
         is_asc: Optional[bool] = True
-    ) -> Iterable[JobDetails]:
+    ) -> ItemPaged[JobDetails]:
         client = self._get_jobs_client()
 
         job_filter = self._create_filter(
@@ -640,7 +641,7 @@ class Workspace:
         page_size: Optional[int]=100,
         orderby_property: Optional[str] = None,
         is_asc: Optional[bool] = True
-    ) -> Iterable[ItemDetails]:
+    ) -> ItemPaged[ItemDetails]:
         client = self._get_top_level_items_client()
 
         top_level_item_filter = self._create_filter(
@@ -693,7 +694,7 @@ class Workspace:
         page_size: Optional[int]=100, 
         orderby_property: Optional[str] = None,
         is_asc: Optional[bool] = True
-    ) -> Iterable[SessionDetails]:
+    ) -> ItemPaged[SessionDetails]:
         """
         Get the list of sessions in the given workspace.
 
@@ -848,7 +849,7 @@ class Workspace:
         page_size: Optional[int]=100,
         orderby_property: Optional[str] = None,
         is_asc: Optional[bool] = True
-    ) -> Iterable[JobDetails]:
+    ) -> ItemPaged[JobDetails]:
         """
         Gets all jobs associated with a session.
 
@@ -871,6 +872,11 @@ class Workspace:
         )
 
         orderby = self._create_orderby(orderby_property=orderby_property, is_asc=is_asc)
+
+        # todo, return Job instead, need to test.
+        #return ItemPaged(
+        #    (Job(workspace=self, job_details=job_details) for job_details in job_details_paged)
+        #)
 
         return client.jobs_list(subscription_id=self.subscription_id, resource_group_name=self.resource_group, workspace_name=self._workspace_name, session_id=session_id, filter = session_job_filter, orderby=orderby, skip=skip, top=page_size)
 
