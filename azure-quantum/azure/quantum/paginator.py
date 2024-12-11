@@ -15,8 +15,11 @@ class Paginator:
     def __init__(
         self,
         fetch_data_function,
+        subscription_id: str,
+        resource_group_name: str,
+        workspace_name: str,
         *,
-        data_filter: Optional[str] = None,
+        filter: Optional[str] = None,
         orderby: Optional[str] = None,
         top: Optional[int] = 100,
         skip: Optional[int] = 0,
@@ -31,7 +34,10 @@ class Paginator:
             **kwargs: Additional arguments to pass to the fetch_data_function.
         """
         self.fetch_data_function = fetch_data_function
-        self.filter = data_filter
+        self.subscription_id = subscription_id
+        self.resource_group_name = resource_group_name
+        self.workspace_name = workspace_name
+        self.filter = filter
         self.orderby = orderby
         self.top = top
         self.skip = skip
@@ -47,8 +53,12 @@ class Paginator:
             list: Data of the current page.
         """
         if not self._current_page_data:
-            response = self.fetch_data_function(self._kwargs, filter=self.filter, orderby=self.orderby, top = self.top, skip = self.skip)
-            self._current_page_data = response.data
-            self.has_next = True if response.next_link is not None else False
+            print("kwargs:", self._kwargs)
+
+            response = self.fetch_data_function(**self._kwargs, subscription_id=self.subscription_id, resource_group_name=self.resource_group_name, workspace_name=self.workspace_name, filter=self.filter, orderby=self.orderby, top = self.top, skip = self.skip)
+            print("response:", response)
+            self._current_page_data = response.by_page()
+            self.has_next = True if response.next is not None else False
             self.skip = self.skip + self.top
         return self._current_page_data
+    
