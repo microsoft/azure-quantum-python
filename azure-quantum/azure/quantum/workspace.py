@@ -873,11 +873,6 @@ class Workspace:
 
         orderby = self._create_orderby(orderby_property=orderby_property, is_asc=is_asc)
 
-        # todo, return Job instead, need to test.
-        #return ItemPaged(
-        #    (Job(workspace=self, job_details=job_details) for job_details in job_details_paged)
-        #)
-
         return client.jobs_list(subscription_id=self.subscription_id, resource_group_name=self.resource_group, workspace_name=self._workspace_name, session_id=session_id, filter = session_job_filter, orderby=orderby, skip=skip, top=page_size)
 
     def get_container_uri(
