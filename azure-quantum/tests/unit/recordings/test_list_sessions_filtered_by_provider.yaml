@@ -1,0 +1,41 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - testapp azsdk-python-quantum/1.0.0b1 Python/3.9.20 (Windows-10-10.0.26100-SP0)
+      x-ms-quantum-api-key:
+      - PLACEHOLDER
+    method: GET
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/sessions?api-version=2024-10-01-preview&filter=%28ProviderId%20eq%20%27microsoft-qc%27%20or%20ProviderId%20eq%20%27ionq%27%29&skip=0&top=100&test-sequence-id=1
+  response:
+    body:
+      string: '{"value": [{"status": "Succeeded", "jobFailurePolicy": "Abort", "name":
+        "session-1859a4c6-f786-11ee-974f-aa03815e5e6b", "id": "1859a4c6-f786-11ee-974f-aa03815e5e6b",
+        "providerId": "ionq", "target": "ionq.simulator", "creationTime": "2024-04-10T22:03:00.2077471Z",
+        "endExecutionTime": "2024-04-10T22:03:36.6318538Z", "costEstimate": {"currencyCode":
+        "USD", "events": [], "estimatedTotal": 0.0}, "itemType": "Session"}, {"status":
+        "Succeeded", "jobFailurePolicy": "Abort", "name": "session-7974eee5-f786-11ee-99c6-aa03815e5e6b",
+        "id": "7974eee5-f786-11ee-99c6-aa03815e5e6b", "providerId": "ionq", "target":
+        "ionq.simulator", "creationTime": "2024-04-10T22:05:43.1763416Z", "endExecutionTime":
+        "2024-04-10T22:06:04.953648Z", "costEstimate": {"currencyCode": "USD", "events":
+        [], "estimatedTotal": 0.0}, "itemType": "Session"}], "nextLink": null}'
+    headers:
+      connection:
+      - keep-alive
+      content-length:
+      - '842'
+      content-type:
+      - application/json; charset=utf-8
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
+version: 1

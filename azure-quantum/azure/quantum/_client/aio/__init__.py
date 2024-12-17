@@ -12,24 +12,18 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from ._patch import *  # pylint: disable=unused-wildcard-import
 
-from ._operations import JobsOperations  # type: ignore
-from ._operations import SessionsOperations  # type: ignore
-from ._operations import ProvidersOperations  # type: ignore
-from ._operations import StorageOperations  # type: ignore
-from ._operations import QuotasOperations  # type: ignore
-from ._operations import TopLevelItemsOperations  # type: ignore
+from ._client import ServicesClient  # type: ignore
 
-from ._patch import __all__ as _patch_all
-from ._patch import *
+try:
+    from ._patch import __all__ as _patch_all
+    from ._patch import *
+except ImportError:
+    _patch_all = []
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    "JobsOperations",
-    "SessionsOperations",
-    "ProvidersOperations",
-    "StorageOperations",
-    "QuotasOperations",
-    "TopLevelItemsOperations",
+    "ServicesClient",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
+
 _patch_sdk()
