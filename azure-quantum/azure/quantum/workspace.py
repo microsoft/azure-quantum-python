@@ -441,7 +441,7 @@ class Workspace:
     def list_jobs(
         self,
         name_match: Optional[str] = None,
-        job_type: Optional[str]= None,
+        job_type: Optional[list[str]]= None,
         provider: Optional[list[str]]= None,
         target: Optional[list[str]]= None,
         status: Optional[list[JobStatus]] = None,
@@ -595,12 +595,12 @@ class Workspace:
 
     def list_top_level_items(
         self,
-        name_match: Optional[str] = None, 
-        item_type: Optional[str]= None, 
-        job_type: Optional[str]= None, 
-        provider: Optional[list[str]]= None, 
-        target: Optional[list[str]]= None, 
-        status: Optional[list[JobStatus]] = None, 
+        name_match: Optional[str] = None,
+        item_type: Optional[list[str]]= None,
+        job_type: Optional[list[str]]= None,
+        provider: Optional[list[str]]= None,
+        target: Optional[list[str]]= None,
+        status: Optional[list[JobStatus]] = None,
         created_after: Optional[datetime] = None,
         created_before: Optional[datetime] = None,
     ) -> List[Union[Job, Session]]:
@@ -925,7 +925,7 @@ class Workspace:
 
             item_type_filter = " or ".join([f"ItemType eq '{iid}'" for iid in item_type])
 
-            filter_string += f"${item_type_filter})"
+            filter_string += f"{item_type_filter})"
             has_filter = True
 
         if (job_type is not None and job_type.count != 0):

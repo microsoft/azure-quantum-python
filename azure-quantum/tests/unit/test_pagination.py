@@ -303,8 +303,46 @@ class TestWorkspacePagination(QuantumTestBase):
             check_item_name = item.details.name.startswith("session")
             self.assertTrue( check_item_name, item.details.name)
 
-        #item_type: Optional[str]= None, 
-        #job_type: Optional[str]= None, 
+    #todo debug
+    @pytest.mark.live_test
+    def test_list_top_level_items_filtered_by_item_type(self):
+        ws = self.create_workspace()
+        subscription_id = ws.subscription_id
+        resource_group = ws.resource_group
+        workspace_name = ws.name
+        
+        items = ws.list_top_level_items(item_type = ["Job"])
+        for item in items:
+            self.assertEqual(item.workspace.subscription_id, subscription_id)
+            self.assertEqual(item.workspace.resource_group, resource_group)
+            self.assertEqual(item.workspace.name, workspace_name)
+
+            self.assertEqual(item.item_type, "Job")
+
+        items = ws.list_top_level_items(item_type = ["Session"])
+        for item in items:
+            self.assertEqual(item.workspace.subscription_id, subscription_id)
+            self.assertEqual(item.workspace.resource_group, resource_group)
+            self.assertEqual(item.workspace.name, workspace_name)
+
+            self.assertEqual(item.item_type, "Session")
+
+    @pytest.mark.live_test
+    def test_list_top_level_items_filtered_by_job_type(self):
+        ws = self.create_workspace()
+        subscription_id = ws.subscription_id
+        resource_group = ws.resource_group
+        workspace_name = ws.name
+        
+        items = ws.list_top_level_items(job_type = ["QuantumComputing", "QuantumChemistry"])
+        for item in items:
+            self.assertEqual(item.workspace.subscription_id, subscription_id)
+            self.assertEqual(item.workspace.resource_group, resource_group)
+            self.assertEqual(item.workspace.name, workspace_name)
+
+            check_job_type = item.details.job_type == "QuantumComputing" or item.details.job_type == "QuantumChemistry"
+            self.assertTrue( check_job_type, item.details.job_type)
+
         #provider: Optional[list[str]]= None, 
         #target: Optional[list[str]]= None, 
         #status: Optional[list[JobStatus]] = None, 
