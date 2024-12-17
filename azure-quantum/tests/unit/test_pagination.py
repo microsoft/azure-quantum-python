@@ -83,9 +83,6 @@ class TestWorkspacePagination(QuantumTestBase):
         for job in jobs:
             self.assertEqual(job.item_type, "Job")
 
-        #: Optional[datetime] = None,
-        #created_before: Optional[datetime] = None,
-
     @pytest.mark.live_test
     def test_list_jobs_filtered_by_name(self):
         ws = self.create_workspace()
@@ -152,6 +149,18 @@ class TestWorkspacePagination(QuantumTestBase):
 
             check_job_created_after = job.details.creation_time.date() >= test_date
             self.assertTrue( check_job_created_after, job.details.creation_time)
+
+    @pytest.mark.live_test
+    def test_list_jobs_filtered_by_created_before(self):
+        ws = self.create_workspace()
+    
+        test_date = date(2024, 4, 1)
+        jobs = ws.list_jobs(created_before = test_date)
+        for job in jobs:
+            self.assertEqual(job.item_type, "Job")
+
+            check_job_created_before = job.details.creation_time.date() <= test_date
+            self.assertTrue( check_job_created_before, job.details.creation_time)
     
     @pytest.mark.live_test
     def test_list_sessions(self):
