@@ -303,7 +303,6 @@ class TestWorkspacePagination(QuantumTestBase):
             check_item_name = item.details.name.startswith("session")
             self.assertTrue( check_item_name, item.details.name)
 
-    #todo debug
     @pytest.mark.live_test
     def test_list_top_level_items_filtered_by_item_type(self):
         ws = self.create_workspace()
@@ -317,7 +316,7 @@ class TestWorkspacePagination(QuantumTestBase):
             self.assertEqual(item.workspace.resource_group, resource_group)
             self.assertEqual(item.workspace.name, workspace_name)
 
-            self.assertEqual(item.item_type, "job")
+            self.assertEqual(item.item_type, "Job")
 
         items = ws.list_top_level_items(item_type = ["session"])
         for item in items:
@@ -325,7 +324,7 @@ class TestWorkspacePagination(QuantumTestBase):
             self.assertEqual(item.workspace.resource_group, resource_group)
             self.assertEqual(item.workspace.name, workspace_name)
 
-            self.assertEqual(item.item_type, "session")
+            self.assertEqual(item.item_type, "Session")
 
     @pytest.mark.live_test
     def test_list_top_level_items_filtered_by_job_type(self):
