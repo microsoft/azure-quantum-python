@@ -660,11 +660,11 @@ class Workspace:
 
     def list_sessions(
         self,
-        provider: Optional[list[str]]= None, 
-        target: Optional[list[str]]= None, 
-        status: Optional[list[JobStatus]] = None, 
+        provider: Optional[list[str]]= None,
+        target: Optional[list[str]]= None,
+        status: Optional[list[JobStatus]] = None,
         created_after: Optional[datetime] = None,
-        created_before: Optional[datetime] = None, 
+        created_before: Optional[datetime] = None
     ) -> List[Session]:
         """
         Get the list of sessions in the given workspace.
@@ -808,9 +808,7 @@ class Workspace:
         job_type: Optional[str]= None,
         provider: Optional[list[str]]= None,
         target: Optional[list[str]]= None,
-        status: Optional[list[JobStatus]] = None,
-        created_after: Optional[datetime] = None,
-        created_before: Optional[datetime] = None,
+        status: Optional[list[JobStatus]] = None
     ) -> List[Job]:
         """
         Gets all jobs associated with a session.
@@ -827,9 +825,7 @@ class Workspace:
             job_type=job_type, 
             provider=provider, 
             target=target, 
-            status=status, 
-            created_after=created_after,
-            created_before=created_before)
+            status=status)
 
         result = [Job(workspace=self, job_details=job_details)
                   for job_details in paginator]
@@ -843,8 +839,6 @@ class Workspace:
         provider: Optional[list[str]]= None,
         target: Optional[list[str]]= None,
         status: Optional[list[JobStatus]] = None,
-        created_after: Optional[datetime] = None,
-        created_before: Optional[datetime] = None,
         skip: Optional[int] = 0,
         page_size: Optional[int]=100,
         orderby_property: Optional[str] = None,
@@ -866,9 +860,7 @@ class Workspace:
             job_type=job_type,
             provider_ids=provider,
             target=target,
-            status=status,
-            created_after=created_after,
-            created_before=created_before
+            status=status
         )
 
         orderby = self._create_orderby(orderby_property=orderby_property, is_asc=is_asc)

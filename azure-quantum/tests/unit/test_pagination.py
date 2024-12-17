@@ -168,6 +168,23 @@ class TestWorkspacePagination(QuantumTestBase):
         sessions = ws.list_sessions()
         for session in sessions:
             self.assertEqual(session.item_type, "Session")
+
+    @pytest.mark.live_test
+    def test_list_sessions_filtered_by_provider(self):
+        ws = self.create_workspace()
+
+        sessions = ws.list_sessions(provider = ["microsoft-qc", "ionq"])
+        for session in sessions:
+            self.assertEqual(session.item_type, "Session")
+
+            check_session_provider = session._details.provider_id == "microsoft-qc" or session._details.provider_id == "ionq"
+            self.assertTrue( check_session_provider, session._details.provider_id)
+    
+    #: Optional[list[str]]= None,
+    #    target: Optional[list[str]]= None,
+    #    status: Optional[list[JobStatus]] = None,
+    #    created_after: Optional[datetime] = None,
+    #    created_before: Optional[datetime] = None
     
     @pytest.mark.live_test
     def test_list_session_jobs(self):
