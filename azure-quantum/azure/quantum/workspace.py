@@ -603,6 +603,8 @@ class Workspace:
         status: Optional[list[JobStatus]] = None,
         created_after: Optional[datetime] = None,
         created_before: Optional[datetime] = None,
+        orderby_property: Optional[str] = None,
+        is_asc: Optional[bool] = True
     ) -> List[Union[Job, Session]]:
         """
         Get a list of top level items for the given workspace,
@@ -620,7 +622,9 @@ class Workspace:
             target=target,
             status=status,
             created_after=created_after,
-            created_before=created_before
+            created_before=created_before,
+            orderby_property=orderby_property,
+            is_asc=is_asc
         )
 
         result = [WorkspaceItemFactory.__new__(workspace=self, item_details=item_details)

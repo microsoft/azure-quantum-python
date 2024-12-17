@@ -425,4 +425,57 @@ class TestWorkspacePagination(QuantumTestBase):
 
             check_item_created_before = item.details.creation_time.date() <= test_date
             self.assertTrue( check_item_created_before, item.details.creation_time)
-            
+
+    @pytest.mark.live_test
+    def test_list_top_level_items_orderby_asc(self):
+        ws = self.create_workspace()
+        subscription_id = ws.subscription_id
+        resource_group = ws.resource_group
+        workspace_name = ws.name
+
+        test_date = date(2024, 12, 1)
+
+        items = ws.list_top_level_items(created_after = test_date, orderby_property="CreationTime", is_asc=True)
+
+        creation_time = None
+        for item in items:
+            self.assertEqual(item.workspace.subscription_id, subscription_id)
+            self.assertEqual(item.workspace.resource_group, resource_group)
+            self.assertEqual(item.workspace.name, workspace_name)
+
+            check_item_created_after = item.details.creation_time.date() >= test_date
+            self.assertTrue( check_item_created_after, item.details.creation_time)
+
+            if creation_time is None:
+                creation_time = item.details.creation_time
+            else:
+                check_item_created_before_order = item.details.creation_time >= creation_time
+                self.assertTrue( check_item_created_before_order, item.details.creation_time)
+                creation_time = item.details.creation_time
+
+    @pytest.mark.live_test
+    def test_list_top_level_items_orderby_desc(self):
+        ws = self.create_workspace()
+        subscription_id = ws.subscription_id
+        resource_group = ws.resource_group
+        workspace_name = ws.name
+
+        test_date = date(2024, 12, 1)
+
+        items = ws.list_top_level_items(created_after = test_date, orderby_property="CreationTime", is_asc=False)
+
+        creation_time = None
+        for item in items:
+            self.assertEqual(item.workspace.subscription_id, subscription_id)
+            self.assertEqual(item.workspace.resource_group, resource_group)
+            self.assertEqual(item.workspace.name, workspace_name)
+
+            check_item_created_after = item.details.creation_time.date() >= test_date
+            self.assertTrue( check_item_created_after, item.details.creation_time)
+
+            if creation_time is None:
+                creation_time = item.details.creation_time
+            else:
+                check_item_created_before_order = item.details.creation_time <= creation_time
+                self.assertTrue( check_item_created_before_order, item.details.creation_time)
+                creation_time = item.details.creation_time
