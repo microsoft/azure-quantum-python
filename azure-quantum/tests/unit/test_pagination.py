@@ -190,6 +190,17 @@ class TestWorkspacePagination(QuantumTestBase):
 
             check_session_target = session._details.target == "ionq.test" or session._details.target == "ionq.simulator"
             self.assertTrue( check_session_target, session._details.target)
+
+    @pytest.mark.live_test
+    def test_list_sessions_filtered_by_state(self):
+        ws = self.create_workspace()
+
+        sessions = ws.list_sessions(status = ["Succeeded"])
+        for session in sessions:
+            self.assertEqual(session.item_type, "Session")
+
+            check_session_status = session._details.status == "Succeeded"
+            self.assertTrue( check_session_status, session._details.status)
     
     #    status: Optional[list[JobStatus]] = None,
     #    created_after: Optional[datetime] = None,
