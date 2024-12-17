@@ -809,7 +809,9 @@ class Workspace:
         self,
         session_id: str,
         name_match: Optional[str] = None,
-        status: Optional[list[JobStatus]] = None
+        status: Optional[list[JobStatus]] = None,
+        orderby_property: Optional[str] = None,
+        is_asc: Optional[bool] = True
     ) -> List[Job]:
         """
         Gets all jobs associated with a session.
@@ -823,7 +825,9 @@ class Workspace:
         paginator = self.list_session_jobs_paginated(
             session_id=session_id,
             name_match=name_match,
-            status=status)
+            status=status,
+            orderby_property=orderby_property,
+            is_asc=is_asc)
 
         result = [Job(workspace=self, job_details=job_details)
                   for job_details in paginator]

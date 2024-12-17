@@ -264,6 +264,50 @@ class TestWorkspacePagination(QuantumTestBase):
 
             check_job_status = job.details.status == "Succeeded"
             self.assertTrue( check_job_status, job.details.status)
+
+    @pytest.mark.live_test
+    def test_list_session_jobs_orderby_asc(self):
+        session_id = "aa9da17d-f786-11ee-a6f7-aa03815e5e6b"
+
+        ws = self.create_workspace()
+        jobs = ws.list_session_jobs(session_id=session_id, status=["Succeeded"], orderby_property="CreationTime", is_asc=True)
+
+        creation_time = None
+        for job in jobs:
+            self.assertEqual(job.item_type, "Job")
+            self.assertEqual(job._details.session_id, session_id)
+
+            check_job_status = job.details.status == "Succeeded"
+            self.assertTrue( check_job_status, job.details.status)
+
+            if creation_time is None:
+                creation_time = job.details.creation_time
+            else:
+                check_item_created_before_order = job.details.creation_time >= creation_time
+                self.assertTrue( check_item_created_before_order, job.details.creation_time)
+                creation_time = job.details.creation_time
+
+    @pytest.mark.live_test
+    def test_list_session_jobs_orderby_desc(self):
+        session_id = "aa9da17d-f786-11ee-a6f7-aa03815e5e6b"
+
+        ws = self.create_workspace()
+        jobs = ws.list_session_jobs(session_id=session_id, status=["Succeeded"], orderby_property="CreationTime", is_asc=False)
+
+        creation_time = None
+        for job in jobs:
+            self.assertEqual(job.item_type, "Job")
+            self.assertEqual(job._details.session_id, session_id)
+
+            check_job_status = job.details.status == "Succeeded"
+            self.assertTrue( check_job_status, job.details.status)
+
+            if creation_time is None:
+                creation_time = job.details.creation_time
+            else:
+                check_item_created_before_order = job.details.creation_time <= creation_time
+                self.assertTrue( check_item_created_before_order, job.details.creation_time)
+                creation_time = job.details.creation_time
     
     @pytest.mark.live_test
     def test_list_top_level_items(self):
