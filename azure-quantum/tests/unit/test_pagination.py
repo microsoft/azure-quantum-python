@@ -236,6 +236,25 @@ class TestWorkspacePagination(QuantumTestBase):
         for job in jobs:
             self.assertEqual(job.item_type, "Job")
             self.assertEqual(job._details.session_id, session_id)
+
+    @pytest.mark.live_test
+    def test_list_session_jobs_filtered_by_name(self):
+        session_id = "aa9da17d-f786-11ee-a6f7-aa03815e5e6b"
+
+        ws = self.create_workspace()
+        jobs = ws.list_session_jobs(session_id=session_id, name_match="Job")
+
+        for job in jobs:
+            self.assertEqual(job.item_type, "Job")
+            self.assertEqual(job._details.session_id, session_id)
+            
+            check_job_name = job.details.name.startswith("Job")
+            self.assertTrue( check_job_name, job.details.name)
+
+    #    job_type: Optional[str]= None,
+    #    provider: Optional[list[str]]= None,
+    #    target: Optional[list[str]]= None,
+    #    status: Optional[list[JobStatus]] = None
     
     @pytest.mark.live_test
     def test_list_top_level_items(self):
