@@ -129,6 +129,17 @@ class TestWorkspacePagination(QuantumTestBase):
 
             check_job_target = job.details.target == "microsoft.estimator" or job.details.target == "microsoft.dft"
             self.assertTrue( check_job_target, job.details.target)
+
+    @pytest.mark.live_test
+    def test_list_jobs_filtered_by_status(self):
+        ws = self.create_workspace()
+        
+        jobs = ws.list_jobs(status = ["Failed", "Cancelled"])
+        for job in jobs:
+            self.assertEqual(job.item_type, "Job")
+
+            check_job_status = job.details.status == "Failed" or job.details.status == "Cancelled"
+            self.assertTrue( check_job_status, job.details.status)
     
     @pytest.mark.live_test
     def test_list_sessions(self):
