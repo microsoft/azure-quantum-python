@@ -5,6 +5,7 @@
 
 import pytest
 import os
+from datetime import date
 from unittest import mock
 from datetime import datetime
 from azure.quantum import  Workspace
@@ -82,8 +83,7 @@ class TestWorkspacePagination(QuantumTestBase):
         for job in jobs:
             self.assertEqual(job.item_type, "Job")
 
-        #status: Optional[list[JobStatus]] = None,
-        #created_after: Optional[datetime] = None,
+        #: Optional[datetime] = None,
         #created_before: Optional[datetime] = None,
 
     @pytest.mark.live_test
@@ -140,6 +140,18 @@ class TestWorkspacePagination(QuantumTestBase):
 
             check_job_status = job.details.status == "Failed" or job.details.status == "Cancelled"
             self.assertTrue( check_job_status, job.details.status)
+
+    @pytest.mark.live_test
+    def test_list_jobs_filtered_by_created_after(self):
+        ws = self.create_workspace()
+    
+        test_date = date(2024, 8, 1)
+        jobs = ws.list_jobs(created_after = test_date)
+        for job in jobs:
+            self.assertEqual(job.item_type, "Job")
+
+            check_job_created_after = job.details.creation_time.date() >= test_date
+            self.assertTrue( check_job_created_after, job.details.creation_time)
     
     @pytest.mark.live_test
     def test_list_sessions(self):
