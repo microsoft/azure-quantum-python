@@ -82,7 +82,6 @@ class TestWorkspacePagination(QuantumTestBase):
         for job in jobs:
             self.assertEqual(job.item_type, "Job")
 
-        #target: Optional[list[str]]= None,
         #status: Optional[list[JobStatus]] = None,
         #created_after: Optional[datetime] = None,
         #created_before: Optional[datetime] = None,
@@ -119,6 +118,17 @@ class TestWorkspacePagination(QuantumTestBase):
 
             check_job_provider = job.details.provider_id == "microsoft-qc" or job.details.provider_id == "ionq"
             self.assertTrue( check_job_provider, job.details.provider_id)
+
+    @pytest.mark.live_test
+    def test_list_jobs_filtered_by_target(self):
+        ws = self.create_workspace()
+        
+        jobs = ws.list_jobs(target = ["microsoft.estimator", "microsoft.dft"])
+        for job in jobs:
+            self.assertEqual(job.item_type, "Job")
+
+            check_job_target = job.details.target == "microsoft.estimator" or job.details.target == "microsoft.dft"
+            self.assertTrue( check_job_target, job.details.target)
     
     @pytest.mark.live_test
     def test_list_sessions(self):
