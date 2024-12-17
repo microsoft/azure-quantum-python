@@ -374,6 +374,21 @@ class TestWorkspacePagination(QuantumTestBase):
             check_item_target = item.details.target == "microsoft.estimator" or item.details.target == "microsoft.dft"
             self.assertTrue( check_item_target, item.details.target)
 
-        #status: Optional[list[JobStatus]] = None, 
+    @pytest.mark.live_test
+    def test_list_top_level_items_filtered_by_status(self):
+        ws = self.create_workspace()
+        subscription_id = ws.subscription_id
+        resource_group = ws.resource_group
+        workspace_name = ws.name
+        
+        items = ws.list_top_level_items(status = ["Failed", "Cancelled"])
+        for item in items:
+            self.assertEqual(item.workspace.subscription_id, subscription_id)
+            self.assertEqual(item.workspace.resource_group, resource_group)
+            self.assertEqual(item.workspace.name, workspace_name)
+
+            check_item_status = item.details.status == "Failed" or item.details.status == "Cancelled"
+            self.assertTrue( check_item_status, item.details.status)
+
         #created_after: Optional[datetime] = None,
         #created_before: Optional[datetime] = None,
