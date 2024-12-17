@@ -440,13 +440,13 @@ class Workspace:
 
     def list_jobs(
         self,
-        name_match: Optional[str] = None, 
-        job_type: Optional[str]= None, 
-        provider: Optional[list[str]]= None, 
-        target: Optional[list[str]]= None, 
-        status: Optional[list[JobStatus]] = None, 
+        name_match: Optional[str] = None,
+        job_type: Optional[str]= None,
+        provider: Optional[list[str]]= None,
+        target: Optional[list[str]]= None,
+        status: Optional[list[JobStatus]] = None,
         created_after: Optional[datetime] = None,
-        created_before: Optional[datetime] = None, 
+        created_before: Optional[datetime] = None,
     ) -> List[Job]:
         """
         Returns list of jobs that meet optional (limited) filter criteria.
@@ -1006,10 +1006,8 @@ class Workspace:
             iso_date_string = created_before.date().isoformat()
             filter_string += f"CreationTime le {iso_date_string}"
 
-        encoded_filter_string = quote(filter_string, safe="")
-
-        if encoded_filter_string:
-            return encoded_filter_string
+        if filter_string:
+            return filter_string
         else:
             return None
 
@@ -1022,9 +1020,7 @@ class Workspace:
             else:
                 raise ValueError(f"Invalid orderby property: {orderby_property}")
 
-            encoded_orderby = quote(orderby, safe="")
-
-            return encoded_orderby
+            return orderby
         else:
             return None
     
