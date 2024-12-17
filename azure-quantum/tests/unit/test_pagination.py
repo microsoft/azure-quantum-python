@@ -225,6 +225,48 @@ class TestWorkspacePagination(QuantumTestBase):
 
             check_session_created_after = session._details.creation_time.date() <= test_date
             self.assertTrue( check_session_created_after, session._details.creation_time)
+
+    @pytest.mark.live_test
+    def test_list_sessions_orderby_asc(self):
+        ws = self.create_workspace()
+
+        test_date = date(2024, 5, 1)
+
+        creation_time = None
+        sessions = ws.list_sessions(created_before = test_date, orderby_property="CreationTime", is_asc=True)
+        for session in sessions:
+            self.assertEqual(session.item_type, "Session")
+
+            check_session_created_after = session._details.creation_time.date() <= test_date
+            self.assertTrue( check_session_created_after, session._details.creation_time)
+
+            if creation_time is None:
+                creation_time = session.details.creation_time
+            else:
+                check_item_created_before_order = session.details.creation_time >= creation_time
+                self.assertTrue( check_item_created_before_order, session.details.creation_time)
+                creation_time = session.details.creation_time
+
+    @pytest.mark.live_test
+    def test_list_sessions_orderby_desc_filtered_by_created_before(self):
+        ws = self.create_workspace()
+
+        test_date = date(2024, 5, 1)
+
+        creation_time = None
+        sessions = ws.list_sessions(created_before = test_date, orderby_property="CreationTime", is_asc=False)
+        for session in sessions:
+            self.assertEqual(session.item_type, "Session")
+
+            check_session_created_after = session._details.creation_time.date() <= test_date
+            self.assertTrue( check_session_created_after, session._details.creation_time)
+
+            if creation_time is None:
+                creation_time = session.details.creation_time
+            else:
+                check_item_created_before_order = session.details.creation_time <= creation_time
+                self.assertTrue( check_item_created_before_order, session.details.creation_time)
+                creation_time = session.details.creation_time
     
     @pytest.mark.live_test
     def test_list_session_jobs(self):
