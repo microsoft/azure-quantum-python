@@ -805,9 +805,6 @@ class Workspace:
         self,
         session_id: str,
         name_match: Optional[str] = None,
-        job_type: Optional[str]= None,
-        provider: Optional[list[str]]= None,
-        target: Optional[list[str]]= None,
         status: Optional[list[JobStatus]] = None
     ) -> List[Job]:
         """
@@ -821,10 +818,7 @@ class Workspace:
         """
         paginator = self.list_session_jobs_paginated(
             session_id=session_id,
-            name_match=name_match, 
-            job_type=job_type, 
-            provider=provider, 
-            target=target, 
+            name_match=name_match,
             status=status)
 
         result = [Job(workspace=self, job_details=job_details)
@@ -835,9 +829,6 @@ class Workspace:
         self,
         session_id: str,
         name_match: Optional[str] = None,
-        job_type: Optional[str]= None,
-        provider: Optional[list[str]]= None,
-        target: Optional[list[str]]= None,
         status: Optional[list[JobStatus]] = None,
         skip: Optional[int] = 0,
         page_size: Optional[int]=100,
@@ -857,9 +848,6 @@ class Workspace:
 
         session_job_filter = self._create_filter(
             job_name=name_match,
-            job_type=job_type,
-            provider_ids=provider,
-            target=target,
             status=status
         )
 
