@@ -447,6 +447,8 @@ class Workspace:
         status: Optional[list[JobStatus]] = None,
         created_after: Optional[datetime] = None,
         created_before: Optional[datetime] = None,
+        orderby_property: Optional[str] = None,
+        is_asc: Optional[bool] = True
     ) -> List[Job]:
         """
         Returns list of jobs that meet optional (limited) filter criteria.
@@ -470,7 +472,9 @@ class Workspace:
             target=target,
             status=status,
             created_after=created_after,
-            created_before=created_before)
+            created_before=created_before,
+            orderby_property=orderby_property,
+            is_asc=is_asc)
 
         result = []
         for j in paginator:

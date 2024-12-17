@@ -161,6 +161,48 @@ class TestWorkspacePagination(QuantumTestBase):
 
             check_job_created_before = job.details.creation_time.date() <= test_date
             self.assertTrue( check_job_created_before, job.details.creation_time)
+
+    @pytest.mark.live_test
+    def test_list_jobs_orderby_asc(self):
+        ws = self.create_workspace()
+    
+        test_date = date(2024, 4, 1)
+        jobs = ws.list_jobs(created_before = test_date, orderby_property="CreationTime", is_asc=True)
+
+        creation_time = None
+        for job in jobs:
+            self.assertEqual(job.item_type, "Job")
+
+            check_job_created_before = job.details.creation_time.date() <= test_date
+            self.assertTrue( check_job_created_before, job.details.creation_time)
+
+            if creation_time is None:
+                creation_time = job.details.creation_time
+            else:
+                check_item_created_before_order = job.details.creation_time >= creation_time
+                self.assertTrue( check_item_created_before_order, job.details.creation_time)
+                creation_time = job.details.creation_time
+        
+    @pytest.mark.live_test
+    def test_list_jobs_orderby_desc(self):
+        ws = self.create_workspace()
+    
+        test_date = date(2024, 4, 1)
+        jobs = ws.list_jobs(created_before = test_date,  orderby_property="CreationTime", is_asc=False)
+
+        creation_time = None
+        for job in jobs:
+            self.assertEqual(job.item_type, "Job")
+
+            check_job_created_before = job.details.creation_time.date() <= test_date
+            self.assertTrue( check_job_created_before, job.details.creation_time)
+
+            if creation_time is None:
+                creation_time = job.details.creation_time
+            else:
+                check_item_created_before_order = job.details.creation_time <= creation_time
+                self.assertTrue( check_item_created_before_order, job.details.creation_time)
+                creation_time = job.details.creation_time
     
     @pytest.mark.live_test
     def test_list_sessions(self):
