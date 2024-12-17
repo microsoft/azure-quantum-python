@@ -201,8 +201,19 @@ class TestWorkspacePagination(QuantumTestBase):
 
             check_session_status = session._details.status == "Succeeded"
             self.assertTrue( check_session_status, session._details.status)
+
+    @pytest.mark.live_test
+    def test_list_sessions_filtered_by_created_after(self):
+        ws = self.create_workspace()
+
+        test_date = date(2024, 4, 1)
+        sessions = ws.list_sessions(created_after = test_date)
+        for session in sessions:
+            self.assertEqual(session.item_type, "Session")
+
+            check_session_created_after = session._details.creation_time.date() >= test_date
+            self.assertTrue( check_session_created_after, session._details.creation_time)
     
-    #    status: Optional[list[JobStatus]] = None,
     #    created_after: Optional[datetime] = None,
     #    created_before: Optional[datetime] = None
     
