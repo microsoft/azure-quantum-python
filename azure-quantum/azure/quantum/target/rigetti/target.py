@@ -53,7 +53,7 @@ class RigettiTarget(str, Enum):
         if target_name == RigettiTarget.QVM.value:
             return 20
         elif target_name == RigettiTarget.ANKAA_3.value:
-            return 84
+            return 82
         elif target_name == RigettiTarget.ANKAA_9Q_3.value:
             return 9
         else:
