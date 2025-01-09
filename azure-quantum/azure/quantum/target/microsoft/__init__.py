@@ -3,13 +3,8 @@
 # Licensed under the MIT License.
 ##
 
-"""Defines classes for interacting with Microsoft Estimator"""
+"""Defines classes for interacting with Microsoft target"""
 
-__all__ = ["ErrorBudgetPartition", "MicrosoftEstimator",
-           "MicrosoftEstimatorJob", "MicrosoftEstimatorResult",
-           "MicrosoftEstimatorParams", "QECScheme", "QubitParams"]
+__all__ = ["ErrorBudgetPartition", "QECScheme", "QubitParams"]
 
-from .job import MicrosoftEstimatorJob
-from .result import MicrosoftEstimatorResult
-from .target import ErrorBudgetPartition, MicrosoftEstimator, \
-    MicrosoftEstimatorParams, QECScheme, QubitParams
+from .target import ErrorBudgetPartition, QECScheme, QubitParams
