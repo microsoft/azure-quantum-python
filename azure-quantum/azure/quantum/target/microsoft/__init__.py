@@ -5,6 +5,6 @@
 
 """Defines classes for interacting with Microsoft target"""
 
-__all__ = ["ErrorBudgetPartition", "QECScheme", "QubitParams"]
+__all__ = ["QECScheme", "QubitParams"]
 
-from .target import ErrorBudgetPartition, QECScheme, QubitParams
+from .target import QECScheme, QubitParams
