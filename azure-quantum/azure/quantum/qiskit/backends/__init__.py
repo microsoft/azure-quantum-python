@@ -37,10 +37,10 @@ from azure.quantum.qiskit.backends.qci import (
     QCIQPUBackend,
 )
 
-from azure.quantum.qiskit.backends.microsoft import (
-    MicrosoftBackend,
-    MicrosoftResourceEstimationBackend,
-)
+# from azure.quantum.qiskit.backends.microsoft import (
+#     MicrosoftBackend,
+#     MicrosoftResourceEstimationBackend,
+# )
 
 from .backend import AzureBackendBase
 
