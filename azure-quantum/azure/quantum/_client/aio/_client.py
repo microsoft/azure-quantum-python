@@ -7,16 +7,16 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, TYPE_CHECKING, Union
+from typing import Any, Awaitable, TYPE_CHECKING, Union
 from typing_extensions import Self
 
-from azure.core import PipelineClient
+from azure.core import AsyncPipelineClient
 from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline import policies
-from azure.core.rest import HttpRequest, HttpResponse
+from azure.core.rest import AsyncHttpResponse, HttpRequest
 
+from .._serialization import Deserializer, Serializer
 from ._configuration import ServicesClientConfiguration
-from ._serialization import Deserializer, Serializer
 from .operations import (
     JobsOperations,
     ProvidersOperations,
@@ -27,29 +27,29 @@ from .operations import (
 )
 
 if TYPE_CHECKING:
-    from azure.core.credentials import TokenCredential
+    from azure.core.credentials_async import AsyncTokenCredential
 
 
 class ServicesClient:
     """Azure Quantum Workspace Services.
 
     :ivar jobs: JobsOperations operations
-    :vartype jobs: azure.quantum.operations.JobsOperations
+    :vartype jobs: azure.quantum.aio.operations.JobsOperations
     :ivar sessions: SessionsOperations operations
-    :vartype sessions: azure.quantum.operations.SessionsOperations
+    :vartype sessions: azure.quantum.aio.operations.SessionsOperations
     :ivar providers: ProvidersOperations operations
-    :vartype providers: azure.quantum.operations.ProvidersOperations
+    :vartype providers: azure.quantum.aio.operations.ProvidersOperations
     :ivar storage: StorageOperations operations
-    :vartype storage: azure.quantum.operations.StorageOperations
+    :vartype storage: azure.quantum.aio.operations.StorageOperations
     :ivar quotas: QuotasOperations operations
-    :vartype quotas: azure.quantum.operations.QuotasOperations
+    :vartype quotas: azure.quantum.aio.operations.QuotasOperations
     :ivar top_level_items: TopLevelItemsOperations operations
-    :vartype top_level_items: azure.quantum.operations.TopLevelItemsOperations
+    :vartype top_level_items: azure.quantum.aio.operations.TopLevelItemsOperations
     :param region: The Azure region where the Azure Quantum Workspace is located. Required.
     :type region: str
     :param credential: Credential used to authenticate requests to the service. Is either a
      TokenCredential type or a AzureKeyCredential type. Required.
-    :type credential: ~azure.core.credentials.TokenCredential or
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential or
      ~azure.core.credentials.AzureKeyCredential
     :keyword service_base_url: The Azure Quantum service base url. Default value is
      "quantum.azure.com".
@@ -63,7 +63,7 @@ class ServicesClient:
     def __init__(
         self,
         region: str,
-        credential: Union["TokenCredential", AzureKeyCredential],
+        credential: Union["AsyncTokenCredential", AzureKeyCredential],
         *,
         service_base_url: str = "quantum.azure.com",
         **kwargs: Any
@@ -89,7 +89,7 @@ class ServicesClient:
                 policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
                 self._config.http_logging_policy,
             ]
-        self._client: PipelineClient = PipelineClient(base_url=_endpoint, policies=_policies, **kwargs)
+        self._client: AsyncPipelineClient = AsyncPipelineClient(base_url=_endpoint, policies=_policies, **kwargs)
 
         self._serialize = Serializer()
         self._deserialize = Deserializer()
@@ -101,14 +101,16 @@ class ServicesClient:
         self.quotas = QuotasOperations(self._client, self._config, self._serialize, self._deserialize)
         self.top_level_items = TopLevelItemsOperations(self._client, self._config, self._serialize, self._deserialize)
 
-    def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
+    def send_request(
+        self, request: HttpRequest, *, stream: bool = False, **kwargs: Any
+    ) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
         >>> request = HttpRequest("GET", "https://www.example.org/")
         <HttpRequest [GET], url: 'https://www.example.org/'>
-        >>> response = client.send_request(request)
-        <HttpResponse: 200 OK>
+        >>> response = await client.send_request(request)
+        <AsyncHttpResponse: 200 OK>
 
         For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
 
@@ -116,7 +118,7 @@ class ServicesClient:
         :type request: ~azure.core.rest.HttpRequest
         :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
         :return: The response of your network call. Does not do error handling on your response.
-        :rtype: ~azure.core.rest.HttpResponse
+        :rtype: ~azure.core.rest.AsyncHttpResponse
         """
 
         request_copy = deepcopy(request)
@@ -130,12 +132,12 @@ class ServicesClient:
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
         return self._client.send_request(request_copy, stream=stream, **kwargs)  # type: ignore
 
-    def close(self) -> None:
-        self._client.close()
+    async def close(self) -> None:
+        await self._client.close()
 
-    def __enter__(self) -> Self:
-        self._client.__enter__()
+    async def __aenter__(self) -> Self:
+        await self._client.__aenter__()
         return self
 
-    def __exit__(self, *exc_details: Any) -> None:
-        self._client.__exit__(*exc_details)
+    async def __aexit__(self, *exc_details: Any) -> None:
+        await self._client.__aexit__(*exc_details)
