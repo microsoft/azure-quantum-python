@@ -485,6 +485,7 @@ class Workspace:
 
     def list_jobs_paginated( 
         self,
+        *,
         name_match: Optional[str] = None, 
         job_type: Optional[str]= None, 
         provider: Optional[list[str]]= None, 
@@ -637,6 +638,7 @@ class Workspace:
 
     def list_top_level_items_paginated( 
         self,
+        *,
         name_match: Optional[str] = None, 
         item_type: Optional[str]= None, 
         job_type: Optional[str]= None, 
@@ -697,6 +699,7 @@ class Workspace:
     
     def list_sessions_paginated(
         self,
+        *,
         provider: Optional[list[str]]= None, 
         target: Optional[list[str]]= None, 
         status: Optional[list[JobStatus]] = None, 
@@ -843,6 +846,7 @@ class Workspace:
 
     def list_session_jobs_paginated(
         self,
+        *,
         session_id: str,
         name_match: Optional[str] = None,
         status: Optional[list[JobStatus]] = None,
