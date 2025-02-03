@@ -494,7 +494,7 @@ class Workspace:
         created_after: Optional[datetime] = None,
         created_before: Optional[datetime] = None, 
         skip: Optional[int] = 0,
-        page_size: Optional[int]=100,
+        top: Optional[int]=100,
         orderby_property: Optional[str] = None,
         is_asc: Optional[bool] = True
     ) -> ItemPaged[JobDetails]:
@@ -511,7 +511,7 @@ class Workspace:
         )
         orderby = self._create_orderby(orderby_property, is_asc)
 
-        return client.list(subscription_id=self.subscription_id, resource_group_name=self.resource_group, workspace_name=self._workspace_name, filter=job_filter, orderby=orderby, top = page_size, skip = skip)
+        return client.list(subscription_id=self.subscription_id, resource_group_name=self.resource_group, workspace_name=self._workspace_name, filter=job_filter, orderby=orderby, top = top, skip = skip)
 
     def _get_target_status(
             self,
@@ -648,7 +648,7 @@ class Workspace:
         created_after: Optional[datetime] = None,
         created_before: Optional[datetime] = None, 
         skip: Optional[int] = 0,
-        page_size: Optional[int]=100,
+        top: Optional[int]=100,
         orderby_property: Optional[str] = None,
         is_asc: Optional[bool] = True
     ) -> ItemPaged[ItemDetails]:
@@ -666,7 +666,7 @@ class Workspace:
         )
         orderby = self._create_orderby(orderby_property, is_asc)
 
-        return client.list(subscription_id=self.subscription_id, resource_group_name=self.resource_group, workspace_name=self._workspace_name, filter=top_level_item_filter, orderby=orderby, top = page_size, skip = skip)
+        return client.list(subscription_id=self.subscription_id, resource_group_name=self.resource_group, workspace_name=self._workspace_name, filter=top_level_item_filter, orderby=orderby, top = top, skip = skip)
 
     def list_sessions(
         self,
@@ -706,7 +706,7 @@ class Workspace:
         created_after: Optional[datetime] = None,
         created_before: Optional[datetime] = None, 
         skip: Optional[int] = 0, 
-        page_size: Optional[int]=100, 
+        top: Optional[int]=100, 
         orderby_property: Optional[str] = None,
         is_asc: Optional[bool] = True
     ) -> ItemPaged[SessionDetails]:
@@ -727,7 +727,7 @@ class Workspace:
 
         orderby = self._create_orderby(orderby_property=orderby_property, is_asc=is_asc)
 
-        return client.list(subscription_id=self.subscription_id, resource_group_name=self.resource_group, workspace_name=self._workspace_name, filter = session_filter, orderby=orderby, skip=skip, top=page_size)
+        return client.list(subscription_id=self.subscription_id, resource_group_name=self.resource_group, workspace_name=self._workspace_name, filter = session_filter, orderby=orderby, skip=skip, top=top)
 
     def open_session(
         self,
@@ -851,7 +851,7 @@ class Workspace:
         name_match: Optional[str] = None,
         status: Optional[list[JobStatus]] = None,
         skip: Optional[int] = 0,
-        page_size: Optional[int]=100,
+        top: Optional[int]=100,
         orderby_property: Optional[str] = None,
         is_asc: Optional[bool] = True
     ) -> ItemPaged[JobDetails]:
@@ -873,7 +873,7 @@ class Workspace:
 
         orderby = self._create_orderby(orderby_property=orderby_property, is_asc=is_asc)
 
-        return client.jobs_list(subscription_id=self.subscription_id, resource_group_name=self.resource_group, workspace_name=self._workspace_name, session_id=session_id, filter = session_job_filter, orderby=orderby, skip=skip, top=page_size)
+        return client.jobs_list(subscription_id=self.subscription_id, resource_group_name=self.resource_group, workspace_name=self._workspace_name, session_id=session_id, filter = session_job_filter, orderby=orderby, skip=skip, top=top)
 
     def get_container_uri(
         self,
