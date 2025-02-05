@@ -195,6 +195,7 @@ class MicrosoftElementsDft(Target):
             "geometry": [],
             "symbols": [],
         }
+        bohr_to_angstrom = 0.52917721092
         for line in lines:
             if line:
                 elements = line.split()
@@ -202,7 +203,7 @@ class MicrosoftElementsDft(Target):
                     raise ValueError("Invalid xyz format.")
                 symbol, x, y, z = elements
                 mol["symbols"].append(symbol)
-                mol["geometry"] += [float(x), float(y), float(z)]
+                mol["geometry"] += [float(x)/bohr_to_angstrom, float(y)/bohr_to_angstrom, float(z)/bohr_to_angstrom]
             else:
                 break
         
