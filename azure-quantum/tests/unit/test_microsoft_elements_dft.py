@@ -236,8 +236,58 @@ water
 O   0.00   0.00   0.00  
 H   1.00   0.00   0.00  
 H  -1.00   1.00   1.00  
-
+--MM--
+3
+MM water
+O   0.00   0.00   2.00  -0.6  
+H   1.00   0.00   2.00   0.3  
+H  -1.00   1.00   3.00   0.3  
 """,
+        """3
+water
+O   0.00   0.00   0.00  
+H   1.00   0.00   0.00  
+H  -1.00   1.00   1.00  
+-- MM --
+3
+MM water
+O   0.00   0.00   2.00  -0.6  
+H   1.00   0.00   2.00   0.3  
+H  -1.00   1.00   3.00   0.3  
+""",
+        """3
+water
+O   0.00   0.00   0.00  
+H   1.00   0.00   0.00  
+H  -1.00   1.00   1.00  
+--
+3
+MM water
+O   0.00   0.00   2.00  -0.6  
+H   1.00   0.00   2.00   0.3  
+H  -1.00   1.00   3.00   0.3  
+""",
+        """3
+water
+O   0.00   0.00   0.00  
+H   1.00   0.00   0.00  
+H  -1.00   1.00   1.00  
+
+--MM--
+3
+MM water
+O   0.00   0.00   2.00  -0.6  
+H   1.00   0.00   2.00   0.3  
+H  -1.00   1.00   3.00   0.3  
+""",
+    ],
+    ids=[
+        'minimal',
+        'minimal+line_at_end',
+        'mm_label_with_no_spaces',
+        'mm_label_with_spaces',
+        'mm_minimal_label',
+        'mm_with_extra_line_before',
     ]
 )
 def test_xyz_parsing_correct_xyz_files(data_regression, xyz_str):

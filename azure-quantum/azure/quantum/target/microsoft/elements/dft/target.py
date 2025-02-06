@@ -10,6 +10,7 @@ from .job import MicrosoftElementsDftJob
 from pathlib import Path
 import copy
 import json
+from collections import defaultdict
 
 
 class MicrosoftElementsDft(Target):
@@ -185,25 +186,69 @@ class MicrosoftElementsDft(Target):
         """
         Convert xyz format to qcschema molecule.
         """
-
         lines = file_data.split("\n")
+        
+        mm_index = None
+        for i, line in enumerate(lines):
+            if '--' in line:
+                mm_index = i
+                break
+
+        mol = {
+            "schema_name": "qcschema_molecule",
+            "schema_version": 2,
+        }
+        if mm_index:
+            qm_xyz = self._xyz_primitive(lines[0:mm_index])
+            mm_xyz = self._xyz_primitive(lines[mm_index+1:])
+            mol["geometry"] = qm_xyz["geometry"]
+            mol["symbols"] = qm_xyz["symbols"]
+            mol["extras"] = {
+                "mm_geometry": mm_xyz["geometry"],
+                "mm_charges": mm_xyz["charges"],
+                "mm_symbols": mm_xyz["symbols"],
+            }
+        else:
+            qm_xyz = self._xyz_primitive(lines)
+            mol["geometry"] = qm_xyz["geometry"]
+            mol["symbols"] = qm_xyz["symbols"]
+            
+
+        return mol
+
+    @classmethod
+    def _xyz_primitive(self, lines: list[str]) -> dict:
+        """
+        Read through a list of lines and extract the xyz data in the format of an xyz file.
+ 
+        Returns: result = {
+            "geometry": [ x1, y1. z1, ...]
+            "symbols": ['H', 'O', ...]
+            "charges": [q1, q2, ...]  # Optional
+        }
+ 
+        If there are four columns in the positions section then return that as MM charges.
+        """
         if len(lines) < 3:
-            raise ValueError("Invalid xyz format.")
+            raise ValueError("Invalid xyz format. Not enough lines.")
         n_atoms = int(lines.pop(0))
         comment = lines.pop(0)
-        mol = {
-            "geometry": [],
-            "symbols": [],
-        }
+        mol = defaultdict(list)
         bohr_to_angstrom = 0.52917721092
         for line in lines:
             if line:
                 elements = line.split()
-                if len(elements) < 4:
-                    raise ValueError("Invalid xyz format.")
-                symbol, x, y, z = elements
-                mol["symbols"].append(symbol)
-                mol["geometry"] += [float(x)/bohr_to_angstrom, float(y)/bohr_to_angstrom, float(z)/bohr_to_angstrom]
+                if len(elements) == 4:
+                    symbol, x, y, z = elements
+                    mol["symbols"].append(symbol)
+                    mol["geometry"] += [float(x)/bohr_to_angstrom, float(y)/bohr_to_angstrom, float(z)/bohr_to_angstrom]
+                elif len(elements) == 5:
+                    symbol, x, y, z, q = elements
+                    mol["symbols"].append(symbol)
+                    mol["geometry"] += [float(x)/bohr_to_angstrom, float(y)/bohr_to_angstrom, float(z)/bohr_to_angstrom]
+                    mol["charges"].append(q)
+                else:
+                    raise ValueError("Invalid xyz format. Should have: Element   x   y   z")
             else:
                 break
         
