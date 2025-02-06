@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 ##
 
-"""Defines argument types for Microsoft Estimator"""
+"""Defines argument types for QIR"""
 
 from .types import EmptyArray, Pauli, Range, Result
 

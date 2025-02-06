@@ -11,7 +11,6 @@ from common import QuantumTestBase
 from pytest import raises
 from azure.quantum.argument_types import EmptyArray, Pauli, Range, Result
 from azure.quantum.target.params import InputParams
-from azure.quantum.target.microsoft import MicrosoftEstimatorParams
 
 
 class TestWorkspace(QuantumTestBase):
@@ -63,19 +62,6 @@ class TestWorkspace(QuantumTestBase):
         params.file_uris["base"] = "https://some_link"
         self.assertEqual(params.as_dict(), {
             'entryPoint': 'run_program',
-            'items': [{'entryPoint': 'other_program'}, {}],
-            'fileUris': {'base': 'https://some_link'},
-            'resumeAfterFailedItem': True})
-
-    def test_params_for_estimator(self):
-        params = MicrosoftEstimatorParams(num_items=2)
-        params.entry_point = "run_program"
-        params.items[0].entry_point = "other_program"
-        params.file_uris["base"] = "https://some_link"
-        params.error_budget = 0.23
-        self.assertEqual(params.as_dict(), {
-            'entryPoint': 'run_program',
-            'errorBudget': 0.23,
             'items': [{'entryPoint': 'other_program'}, {}],
             'fileUris': {'base': 'https://some_link'},
             'resumeAfterFailedItem': True})
