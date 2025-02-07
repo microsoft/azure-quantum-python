@@ -147,7 +147,7 @@ class MicrosoftElementsDft(Target):
         Create a new default qcshema object.
         """
 
-        if input_params.get("driver") == "go":
+        if input_params.get("driver").lower() == "go":
             copy_input_params = copy.deepcopy(input_params)
             copy_input_params["driver"] = "gradient"
             new_object = {
@@ -159,7 +159,7 @@ class MicrosoftElementsDft(Target):
                 new_object["keywords"] = copy_input_params["keywords"].pop("geometryOptimization")
             new_object["input_specification"] = copy_input_params
             return new_object
-        elif input_params.get("driver") == "bomd":
+        elif input_params.get("driver").lower() == "bomd":
             copy_input_params = copy.deepcopy(input_params)
             copy_input_params["driver"] = "gradient"
             new_object = {
