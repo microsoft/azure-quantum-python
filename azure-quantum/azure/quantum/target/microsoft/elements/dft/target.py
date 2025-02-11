@@ -10,6 +10,7 @@ from .job import MicrosoftElementsDftJob
 from pathlib import Path
 import copy
 import json
+from collections import defaultdict
 
 
 class MicrosoftElementsDft(Target):
@@ -87,6 +88,7 @@ class MicrosoftElementsDft(Target):
             toc_str = self._create_table_of_contents(input_data, list(qcschema_blobs.keys()))
             toc = self._encode_input_data(toc_str)
 
+            input_params = {} if input_params is None else input_params
             return self._get_job_class().from_input_data_container(
                 workspace=self.workspace,
                 name=name,
@@ -146,6 +148,8 @@ class MicrosoftElementsDft(Target):
         Create a new default qcshema object.
         """
 
+        self._check_for_required_params(input_params)
+
         if input_params.get("driver").lower() == "go":
             copy_input_params = copy.deepcopy(input_params)
             copy_input_params["driver"] = "gradient"
@@ -178,7 +182,28 @@ class MicrosoftElementsDft(Target):
                 "molecule": mol,
             })
             return new_object
-            
+    
+    @classmethod
+    def _check_for_required_params(self, input_params):
+
+        # Top level params
+        self._check_dict_for_required_keys(input_params, 'input_params', ['driver', 'model'])
+        
+        # Check Model params
+        self._check_dict_for_required_keys(input_params['model'], 'input_params["model"]', ['method', 'basis'])
+
+        supported_drivers = ['energy', 'gradient', 'hessian', 'go', 'bomd']
+        if input_params['driver'] not in supported_drivers:
+            raise ValueError(f"Driver ({input_params['driver']}) is not supported. Please use one of {supported_drivers}.")
+
+    
+    @classmethod
+    def _check_dict_for_required_keys(self, input_params: dict, dict_name: str, required_keys: list[str]):
+        """Check dictionary for required keys and if it doesn't have then raise ValueError."""
+
+        for required_key in required_keys:
+            if required_key not in input_params.keys():
+                raise ValueError(f"Required key ({required_key}) was not provided in {dict_name}.")
 
     @classmethod
     def _xyz_to_qcschema_mol(self, file_data: str ) -> Dict[str, Any]:
@@ -191,23 +216,31 @@ class MicrosoftElementsDft(Target):
             raise ValueError("Invalid xyz format.")
         n_atoms = int(lines.pop(0))
         comment = lines.pop(0)
-        mol = {
-            "geometry": [],
-            "symbols": [],
-        }
+        mol = defaultdict(list)
+        mol['extras'] = defaultdict(list)
         bohr_to_angstrom = 0.52917721092
         for line in lines:
             if line:
                 elements = line.split()
-                if len(elements) < 4:
+                if len(elements) == 4:
+                    symbol, x, y, z = elements
+                    mol["symbols"].append(symbol)
+                    mol["geometry"] += [float(x)/bohr_to_angstrom, float(y)/bohr_to_angstrom, float(z)/bohr_to_angstrom]
+                elif len(elements) == 5:
+                    symbol, x, y, z, q = elements
+                    mol["extras"]["mm_symbols"].append(symbol.replace('-', ''))
+                    mol["extras"]["mm_geometry"] += [float(x)/bohr_to_angstrom, float(y)/bohr_to_angstrom, float(z)/bohr_to_angstrom]
+                    mol["extras"]["mm_charges"].append(float(q))
+                else:
                     raise ValueError("Invalid xyz format.")
-                symbol, x, y, z = elements
-                mol["symbols"].append(symbol)
-                mol["geometry"] += [float(x)/bohr_to_angstrom, float(y)/bohr_to_angstrom, float(z)/bohr_to_angstrom]
             else:
                 break
+
+        # Convert defaultdict to dict
+        mol = dict(mol)
+        mol["extras"] = dict(mol["extras"])
         
-        if len(mol["symbols"]) != n_atoms:
+        if len(mol["symbols"])+len(mol["extras"].get("mm_symbols",[])) != n_atoms:
             raise ValueError("Number of inputs does not match the number of atoms in xyz file.")
 
         return mol

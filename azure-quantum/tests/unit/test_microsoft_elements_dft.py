@@ -231,13 +231,48 @@ H   1.00   0.00   0.00
 H  -1.00   1.00   1.00
 
 """,
-        """3
-water
-O   0.00   0.00   0.00  
-H   1.00   0.00   0.00  
-H  -1.00   1.00   1.00  
+        """6
+water dimer
+O   0.00   0.00   0.00
+H   1.00   0.00   0.00
+H  -1.00   1.00   1.00
+-O   0.00   0.00   2.00  -0.6
+-H   1.00   0.00   2.00   0.3
+-H  -1.00   1.00   3.00   0.3
+""",
+        """6
+water dimer
+O   0.00   0.00   0.00
+H   1.00   0.00   0.00
+H  -1.00   1.00   1.00
+-O   0.00   0.00   2.00  -0.6
+-H   1.00   0.00   2.00   0.3
+-H  -1.00   1.00   3.00   0.3
 
 """,
+        """12
+water dimer
+O   0.00   0.00   0.00
+H   1.00   0.00   0.00
+H  -1.00   1.00   1.00
+-O   0.00   0.00   2.00  -0.6
+-H   1.00   0.00   2.00   0.3
+-H  -1.00   1.00   3.00   0.3
+O   0.00   0.00   3.00
+H   1.00   0.00   3.00
+H  -1.00   1.00   4.00
+-O   0.00   0.00   4.00  -0.6
+-H   1.00   0.00   4.00   0.3
+-H  -1.00   1.00   5.00   0.3
+
+""",
+    ],
+    ids=[
+        'minimal',
+        'minimal_with_line_at_end',
+        'qmmm_minimal',
+        'qmmm_minimal_with_line_at_end',
+        'qmmm_discontinuous_qm_mm'
     ]
 )
 def test_xyz_parsing_correct_xyz_files(data_regression, xyz_str):
@@ -271,6 +306,12 @@ H   1.00   0.00   0.00
 H  -1.00   1.00   1.00
 H  -1.00   1.00   1.00
 """,
+    ],
+    ids=[
+        'atom_missing',
+        'atom_on_previous_line',
+        'empty_line_in_middle',
+        'duplicated_line',
     ]
 )
 def test_xyz_raises_for_bad_input(xyz_str):
@@ -315,6 +356,21 @@ def test_assemble_qcschema_raise_value_error_for_unsupported_file_types(unsuppor
 
 @pytest.mark.parametrize(
     'input_params', [
+        {},
+        {'driver': 'bomd'},
+        {'model': {'method': 'b3lyp', 'basis': 'def2-svp'}},
+        {'driver': 'bomd', 'model': { 'method': 'b3lyp'}},
+        {'driver': 'bomd', 'model': { 'basis': 'def2-svp'}},
+        {'driver': 'md', 'model': {'method': 'b3lyp', 'basis': 'def2-svp'}},
+    ]
+)
+def test_raise_value_error_when_not_having_required_parameters(input_params):
+    target = MicrosoftElementsDft
+    with pytest.raises(ValueError):
+        qcschema_data = target._assemble_qcshema_from_files([test_xyz_file], input_params)
+
+@pytest.mark.parametrize(
+    'input_params', [
         {'method': 'm062x'},
     ]
 )
@@ -333,3 +389,9 @@ def test_assemble_qcschema_issues_no_warnings_for_empty_params_with_qcschema(rec
     target = MicrosoftElementsDft
     qcschema_data = target._assemble_qcshema_from_files([ test_qcschema_file ], input_params)
     assert len(recwarn) == 0
+
+def test_pass_none_as_params_for_qcschema_input(data_regression):
+    target = MicrosoftElementsDft
+    qcschema_data = target._assemble_qcshema_from_files([ test_qcschema_file ], None)
+    data_regression.check(qcschema_data)
+    
