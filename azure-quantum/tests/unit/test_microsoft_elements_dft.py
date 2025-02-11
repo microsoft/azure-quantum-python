@@ -154,8 +154,18 @@ def test_assemble_true_qcschema_from_files_success(data_regression, input_params
             "keywords": {
                 "scf": { "method": "rks", "maxSteps": 100, "convergeThreshold": 1e-8, "requireWaveFunction": True},
                 "xcFunctional": { "gridLevel": 3 },
-                "geometryOptimization": {"convergence_grms": 0.001667, "convergence_gmax": 0.0025, "convergence_drms": 0.006667, "convergence_dmax":0.01 }
             },
+        },
+        {
+            "driver": "go",
+            "model": { "method": "m06-2x", "basis": "def2-svp" },
+            "keywords": {
+                "scf": { "method": "rks", "maxSteps": 100, "convergeThreshold": 1e-8, "requireWaveFunction": True},
+                "xcFunctional": { "gridLevel": 3 },
+            },
+            "go_keywords": {
+                "gdiis": True,
+            }
         },
     ]
 )
@@ -182,8 +192,18 @@ def test_assemble_go_qcschema_from_files_success(data_regression, input_params, 
             "keywords": {
                 "scf": { "method": "rks", "maxSteps": 100, "convergeThreshold": 1e-8, "requireWaveFunction": True},
                 "xcFunctional": { "gridLevel": 3 },
-                "molecularDynamics":{"steps": 5, "temperature": 298, "timeStep": 1, "thermostat": {"type": "berendsen", "timeSmoothingFactor": 0.05 } }
             },
+        },
+        {
+            "driver": "bomd",
+            "model": { "method": "m06-2x", "basis": "def2-svp" },
+            "keywords": {
+                "scf": { "method": "rks", "maxSteps": 100, "convergeThreshold": 1e-8, "requireWaveFunction": True},
+                "xcFunctional": { "gridLevel": 3 },
+            },
+            "bomd_keywords": {
+                "steps": 1000,
+            }
         },
     ]
 )

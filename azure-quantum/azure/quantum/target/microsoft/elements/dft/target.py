@@ -158,8 +158,8 @@ class MicrosoftElementsDft(Target):
                 "schema_version": 1,
                 "initial_molecule": mol,
             }
-            if copy_input_params.get("keywords") and copy_input_params["keywords"].get("geometryOptimization"):
-                new_object["keywords"] = copy_input_params["keywords"].pop("geometryOptimization")
+            if copy_input_params.get("go_keywords"):
+                new_object["keywords"] = copy_input_params.pop("go_keywords")
             new_object["input_specification"] = copy_input_params
             return new_object
         elif input_params.get("driver").lower() == "bomd":
@@ -170,8 +170,8 @@ class MicrosoftElementsDft(Target):
                 "schema_version": 1,
                 "initial_molecule": mol,
             }
-            if copy_input_params.get("keywords") and copy_input_params["keywords"].get("molecularDynamics"):
-                new_object["keywords"] = copy_input_params["keywords"].pop("molecularDynamics")
+            if copy_input_params.get("bomd_keywords"):
+                new_object["keywords"] = copy_input_params.pop("bomd_keywords")
             new_object["input_specification"] = copy_input_params
             return new_object
         else:
