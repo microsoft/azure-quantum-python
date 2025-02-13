@@ -383,6 +383,16 @@ def test_assemble_qcschema_raise_value_error_for_unsupported_file_types(unsuppor
     os.remove(file_name) 
 
 @pytest.mark.parametrize(
+    'input_data', [
+        [test_xyz_file, test_qcschema_file]
+    ]
+)
+def test_mixed_extensions_raise_value_error(input_data):
+    target = MicrosoftElementsDft
+    with pytest.raises(ValueError):
+        qcschema_data = target._assemble_qcshema_from_files(input_data, {})
+
+@pytest.mark.parametrize(
     'input_params', [
         {},
         {'driver': 'bomd'},

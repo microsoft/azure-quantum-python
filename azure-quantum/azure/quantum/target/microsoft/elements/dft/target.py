@@ -121,11 +121,11 @@ class MicrosoftElementsDft(Target):
         Convert a list of files to a list of qcshema objects serialized in json.
         """
 
+        self._check_file_paths(input_data)
+
         qcshema_objects = []
         for file in input_data:
             file_path = Path(file)
-            if not file_path.exists():
-                raise FileNotFoundError(f"File {file} does not exist.")
             
             file_data = file_path.read_text()
             if file_path.suffix == '.xyz':
@@ -138,9 +138,30 @@ class MicrosoftElementsDft(Target):
                 with open(file_path, 'r') as f:
                     qcshema_objects.append( json.load(f) )
             else:
-                raise ValueError(f"File type '{file_path.suffix}' for file '{file_path}' is not supported. Please use xyz or QcSchema file formats.")
+                raise ValueError(f"File type '{file_path.suffix}' for file '{file_path}' is not supported.")
 
         return qcshema_objects
+
+    @classmethod
+    def _check_file_paths( self, input_data: List[str]):
+        """Check the file types and make sure they are supported by our parsers."""
+
+        supported_ext = ['.xyz', '.json']
+        prev_ext = None
+        for path_str in input_data:
+            path = Path(path_str)
+
+            if not path.exists():
+                raise FileNotFoundError(f"File {path_str} does not exist.")
+
+            if path.suffix not in supported_ext:
+                raise ValueError(f"'{path.suffix}' file type is not supported. Please use one of {supported_ext}.")
+            
+            if prev_ext is not None and prev_ext !=  path.suffix:
+                raise ValueError(f"Multiple file types were provided ('{path.suffix}', '{prev_ext}'). Please submit only one file type.")
+            else:
+                prev_ext = path.suffix
+            
 
     @classmethod
     def _new_qcshema( self, input_params: Dict[str,Any], mol: Dict[str,Any],  ) -> Dict[str, Any]:
