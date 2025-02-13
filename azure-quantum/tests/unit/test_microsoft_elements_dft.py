@@ -471,6 +471,13 @@ def test_assemble_qcschema_issues_warning_for_params_with_qcschema(input_params)
     with pytest.warns(UserWarning):
         qcschema_data = target._assemble_qcshema_from_files([ test_qcschema_file ], input_params)
 
+def test_issue_warning_for_large_number_of_tasks():
+    input_data = [test_xyz_file]*1001
+    target = MicrosoftElementsDft
+    with pytest.warns(UserWarning):
+        target._check_file_paths(input_data)
+
+
 @pytest.mark.parametrize(
     'input_params', [
         {},

@@ -146,6 +146,10 @@ class MicrosoftElementsDft(Target):
     def _check_file_paths( self, input_data: List[str]):
         """Check the file types and make sure they are supported by our parsers."""
 
+        warn_task_count = 1000
+        if len(input_data) >= warn_task_count:
+            warnings.warn(f'Number of tasks is greater than {warn_task_count}.')
+
         supported_ext = ['.xyz', '.json']
         prev_ext = None
         for path_str in input_data:
