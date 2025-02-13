@@ -139,7 +139,7 @@ test_xyz_file = Path(__file__).parent / "molecule.xyz"
 )
 def test_assemble_true_qcschema_from_files_success(data_regression, input_params, input_data):
     target = MicrosoftElementsDft
-    qcschema_data = target._assemble_qcshema_from_files(input_data, input_params)
+    qcschema_data = target.assemble_qcschema_from_files(input_data, input_params)
     data_regression.check(qcschema_data)
 
 @pytest.mark.parametrize(
@@ -177,7 +177,7 @@ def test_assemble_true_qcschema_from_files_success(data_regression, input_params
 )
 def test_assemble_go_qcschema_from_files_success(data_regression, input_params, input_data):
     target = MicrosoftElementsDft
-    qcschema_data = target._assemble_qcshema_from_files(input_data, input_params)
+    qcschema_data = target.assemble_qcschema_from_files(input_data, input_params)
     data_regression.check(qcschema_data)
 
 @pytest.mark.parametrize(
@@ -215,7 +215,7 @@ def test_assemble_go_qcschema_from_files_success(data_regression, input_params, 
 )
 def test_assemble_bomd_qcschema_from_files_success(data_regression, input_params, input_data):
     target = MicrosoftElementsDft
-    qcschema_data = target._assemble_qcshema_from_files(input_data, input_params)
+    qcschema_data = target.assemble_qcschema_from_files(input_data, input_params)
     data_regression.check(qcschema_data)
 
 
@@ -359,7 +359,7 @@ test_qcschema_file = Path(__file__).parent / "molecule.json"
 )
 def test_assemble_qcschema_from_qcschema_files_success(data_regression, input_data):
     target = MicrosoftElementsDft
-    qcschema_data = target._assemble_qcshema_from_files(input_data, {})
+    qcschema_data = target.assemble_qcschema_from_files(input_data, {})
     data_regression.check(qcschema_data)
 
 
@@ -378,7 +378,7 @@ def test_assemble_qcschema_raise_value_error_for_unsupported_file_types(unsuppor
         fp.close()
 
         with pytest.raises(ValueError):
-            qcschema_data = target._assemble_qcshema_from_files([file_name], {})
+            qcschema_data = target.assemble_qcschema_from_files([file_name], {})
 
     os.remove(file_name) 
 
@@ -390,7 +390,7 @@ def test_assemble_qcschema_raise_value_error_for_unsupported_file_types(unsuppor
 def test_mixed_extensions_raise_value_error(input_data):
     target = MicrosoftElementsDft
     with pytest.raises(ValueError):
-        qcschema_data = target._assemble_qcshema_from_files(input_data, {})
+        qcschema_data = target.assemble_qcschema_from_files(input_data, {})
 
 @pytest.mark.parametrize(
     'input_params', [
@@ -404,7 +404,7 @@ def test_mixed_extensions_raise_value_error(input_data):
 def test_raise_value_error_when_not_having_required_parameters(input_params):
     target = MicrosoftElementsDft
     with pytest.raises(ValueError):
-        qcschema_data = target._assemble_qcshema_from_files([test_xyz_file], input_params)
+        qcschema_data = target.assemble_qcschema_from_files([test_xyz_file], input_params)
 
 @pytest.mark.parametrize(
     "xyz",[
@@ -456,7 +456,7 @@ def test_raise_value_error_for_unsupported_tasks(xyz, input_params):
 
     target = MicrosoftElementsDft
     with pytest.raises(ValueError):
-        qcschema_data = target._assemble_qcshema_from_files([temp_xyz_file], input_params)
+        qcschema_data = target.assemble_qcschema_from_files([temp_xyz_file], input_params)
 
     os.remove(temp_xyz_file)
 
@@ -469,7 +469,7 @@ def test_raise_value_error_for_unsupported_tasks(xyz, input_params):
 def test_assemble_qcschema_issues_warning_for_params_with_qcschema(input_params):
     target = MicrosoftElementsDft
     with pytest.warns(UserWarning):
-        qcschema_data = target._assemble_qcshema_from_files([ test_qcschema_file ], input_params)
+        qcschema_data = target.assemble_qcschema_from_files([ test_qcschema_file ], input_params)
 
 def test_issue_warning_for_large_number_of_tasks():
     input_data = [test_xyz_file]*1001
@@ -486,11 +486,11 @@ def test_issue_warning_for_large_number_of_tasks():
 )
 def test_assemble_qcschema_issues_no_warnings_for_empty_params_with_qcschema(recwarn, input_params):
     target = MicrosoftElementsDft
-    qcschema_data = target._assemble_qcshema_from_files([ test_qcschema_file ], input_params)
+    qcschema_data = target.assemble_qcschema_from_files([ test_qcschema_file ], input_params)
     assert len(recwarn) == 0
 
 def test_pass_none_as_params_for_qcschema_input(data_regression):
     target = MicrosoftElementsDft
-    qcschema_data = target._assemble_qcshema_from_files([ test_qcschema_file ], None)
+    qcschema_data = target.assemble_qcschema_from_files([ test_qcschema_file ], None)
     data_regression.check(qcschema_data)
     

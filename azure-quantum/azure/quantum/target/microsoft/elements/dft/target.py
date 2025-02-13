@@ -79,13 +79,21 @@ class MicrosoftElementsDft(Target):
         
         if isinstance(input_data, list):
 
-            qcschema_data = self._assemble_qcshema_from_files(input_data, input_params)
-
-            qcschema_blobs = {}
-            for i in range(len(qcschema_data)):
-                qcschema_blobs[f"inputData_{i}"] = self._encode_input_data(qcschema_data[i])
-
-            toc_str = self._create_table_of_contents(input_data, list(qcschema_blobs.keys()))
+            if all(isinstance(task,str) for task in input_data):
+                qcschema_data = self.assemble_qcschema_from_files(input_data, input_params)
+            
+                qcschema_blobs = {}
+                for i in range(len(qcschema_data)):
+                    qcschema_blobs[f"inputData_{i}"] = self._encode_input_data(qcschema_data[i])
+            
+                toc_str = self._create_table_of_contents(input_data, list(qcschema_blobs.keys()))
+            elif all(isinstance(task,dict) for task in input_data): 
+                qcschema_blobs = {}
+                for i in range(len(input_data)):
+                    qcschema_blobs[f"inputData_{i}"] = input_data[i]
+                toc_str = '{"description": "QcSchema Objects were given for input."}'
+            else:
+                raise ValueError(f"Unsupported batch submission. Please use List[str] or List[dict].")
             toc = self._encode_input_data(toc_str)
 
             input_params = {} if input_params is None else input_params
@@ -95,7 +103,7 @@ class MicrosoftElementsDft(Target):
                 target=self.name,
                 input_data=toc,
                 batch_input_blobs=qcschema_blobs,
-                input_params={ 'numberOfFiles': len(qcschema_data), "inputFiles": list(qcschema_blobs.keys()), **input_params },
+                input_params={ 'numberOfFiles': len(input_data), "inputFiles": list(qcschema_blobs.keys()), **input_params },
                 content_type=kwargs.pop('content_type', self.content_type),
                 encoding=kwargs.pop('encoding', self.encoding),
                 provider_id=self.provider_id,
@@ -116,9 +124,15 @@ class MicrosoftElementsDft(Target):
 
     
     @classmethod
-    def _assemble_qcshema_from_files(self, input_data: List[str], input_params: Dict) -> str:
+    def assemble_qcschema_from_files(self, input_data: Union[List[str]], input_params: Dict) -> List[Dict]:
         """
-        Convert a list of files to a list of qcshema objects serialized in json.
+        Convert a list of files to a list of QcSchema objects that are ready for submission.
+        
+        :param input_data: Input data
+        :type input_data: List[str]
+        :param input_params: Input parameters
+        :type input_params: Dict[str, Any]
+        :rtype: List[Dict]
         """
 
         self._check_file_paths(input_data)
