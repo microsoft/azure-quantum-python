@@ -326,12 +326,20 @@ H   1.00   0.00   0.00
 H  -1.00   1.00   1.00
 H  -1.00   1.00   1.00
 """,
+        """3
+water
+O   0.00   0.00   0.00
+H   1.00   0.00   0.00
+H  -1.00   1.00   1.00
+H  -1.00   1.00   1.00  -0.6
+""",
     ],
     ids=[
         'atom_missing',
         'atom_on_previous_line',
         'empty_line_in_middle',
         'duplicated_line',
+        'mm_atom_without_dash'
     ]
 )
 def test_xyz_raises_for_bad_input(xyz_str):

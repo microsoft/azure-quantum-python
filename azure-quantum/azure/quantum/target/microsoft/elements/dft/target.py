@@ -228,6 +228,8 @@ class MicrosoftElementsDft(Target):
                     mol["geometry"] += [float(x)/bohr_to_angstrom, float(y)/bohr_to_angstrom, float(z)/bohr_to_angstrom]
                 elif len(elements) == 5:
                     symbol, x, y, z, q = elements
+                    if symbol[0] != '-':
+                        raise ValueError("Invalid xyz format. Molecular Mechanics atoms requires '-' at the beginning of the atom type.")
                     mol["extras"]["mm_symbols"].append(symbol.replace('-', ''))
                     mol["extras"]["mm_geometry"] += [float(x)/bohr_to_angstrom, float(y)/bohr_to_angstrom, float(z)/bohr_to_angstrom]
                     mol["extras"]["mm_charges"].append(float(q))
