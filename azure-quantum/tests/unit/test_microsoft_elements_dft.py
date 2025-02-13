@@ -1,6 +1,6 @@
 import os
 import pytest
-from tempfile import TemporaryFile
+from tempfile import TemporaryFile, NamedTemporaryFile
 from azure.quantum import Job
 from common import QuantumTestBase, DEFAULT_TIMEOUT_SECS
 from azure.quantum import JobStatus
@@ -389,13 +389,67 @@ def test_assemble_qcschema_raise_value_error_for_unsupported_file_types(unsuppor
         {'model': {'method': 'b3lyp', 'basis': 'def2-svp'}},
         {'driver': 'bomd', 'model': { 'method': 'b3lyp'}},
         {'driver': 'bomd', 'model': { 'basis': 'def2-svp'}},
-        {'driver': 'md', 'model': {'method': 'b3lyp', 'basis': 'def2-svp'}},
     ]
 )
 def test_raise_value_error_when_not_having_required_parameters(input_params):
     target = MicrosoftElementsDft
     with pytest.raises(ValueError):
         qcschema_data = target._assemble_qcshema_from_files([test_xyz_file], input_params)
+
+@pytest.mark.parametrize(
+    "xyz",[
+        """3
+water
+O   0.00   0.00   0.00
+H   1.00   0.00   0.00
+H  -1.00   1.00   1.00
+H  -1.00   1.00   1.00  -0.6
+""",
+    ],
+    ids=[
+        'qmmm',
+    ],
+)
+@pytest.mark.parametrize(
+    'input_params', [
+        {
+            "driver": "hessian",
+            "model": { "method": "m06-2x", "basis": "def2-svp" },
+        },
+        {
+            "driver": "go",
+            "model": { "method": "m06-2x", "basis": "def2-svp" },
+        },
+        {
+            "driver": "bomd",
+            "model": { "method": "m06-2x", "basis": "def2-svp" },
+            "keywords": {
+                "scf": { "method": "rks", "maxSteps": 100, "convergeThreshold": 1e-8, "requireWaveFunction": True},
+                "xcFunctional": { "gridLevel": 3 },
+            },
+            "bomd_keywords": {
+                "steps": 1000,
+            }
+        },
+    ],
+    ids=[
+        'hessian',
+        'go',
+        'bomd'
+    ]
+)
+def test_raise_value_error_for_unsupported_tasks(xyz, input_params):
+    with NamedTemporaryFile(suffix=".xyz", delete=False) as fp:
+        fp.write(xyz.encode())
+        fp.flush()
+        temp_xyz_file = fp.name
+
+    target = MicrosoftElementsDft
+    with pytest.raises(ValueError):
+        qcschema_data = target._assemble_qcshema_from_files([temp_xyz_file], input_params)
+
+    os.remove(temp_xyz_file)
+
 
 @pytest.mark.parametrize(
     'input_params', [

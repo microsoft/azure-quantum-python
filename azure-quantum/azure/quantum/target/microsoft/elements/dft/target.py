@@ -148,7 +148,7 @@ class MicrosoftElementsDft(Target):
         Create a new default qcshema object.
         """
 
-        self._check_for_required_params(input_params)
+        self._sanity_check_params(input_params, mol)
 
         if input_params.get("driver").lower() == "go":
             copy_input_params = copy.deepcopy(input_params)
@@ -184,7 +184,13 @@ class MicrosoftElementsDft(Target):
             return new_object
     
     @classmethod
-    def _check_for_required_params(self, input_params):
+    def _sanity_check_params(self, input_params, mol):
+
+        # QM/MM is not supported for GO, BOMD and Hessian.
+        driver = input_params.get("driver",'').lower()
+        if driver in ["go", "bomd", "hessian"]:
+            if "extras" in mol and "mm_charges" in mol["extras"]:
+                raise ValueError(f"'{driver}' does not support QM/MM.")
 
         # Top level params
         self._check_dict_for_required_keys(input_params, 'input_params', ['driver', 'model'])
