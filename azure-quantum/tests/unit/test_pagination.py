@@ -312,7 +312,8 @@ class TestWorkspacePagination(QuantumTestBase):
     
     @pytest.mark.live_test
     def test_list_session_jobs(self):
-        session_id = "aa9da17d-f786-11ee-a6f7-aa03815e5e6b"
+        # please change to valid session id for recording
+        session_id = "00000000-0000-0000-0000-000000000001"
 
         ws = self.create_workspace()
         jobs = ws.list_session_jobs(session_id=session_id)
@@ -323,7 +324,8 @@ class TestWorkspacePagination(QuantumTestBase):
 
     @pytest.mark.live_test
     def test_list_session_jobs_filtered_by_name(self):
-        session_id = "aa9da17d-f786-11ee-a6f7-aa03815e5e6b"
+        # please change to valid session id for recording
+        session_id = "00000000-0000-0000-0000-000000000001"
 
         ws = self.create_workspace()
         jobs = ws.list_session_jobs(session_id=session_id, name_match="Job")
@@ -337,7 +339,8 @@ class TestWorkspacePagination(QuantumTestBase):
 
     @pytest.mark.live_test
     def test_list_session_jobs_filtered_by_status(self):
-        session_id = "aa9da17d-f786-11ee-a6f7-aa03815e5e6b"
+        # please change to valid session id for recording
+        session_id = "00000000-0000-0000-0000-000000000001"
 
         ws = self.create_workspace()
         jobs = ws.list_session_jobs(session_id=session_id, status=["Succeeded"])
@@ -351,7 +354,8 @@ class TestWorkspacePagination(QuantumTestBase):
 
     @pytest.mark.live_test
     def test_list_session_jobs_orderby_asc(self):
-        session_id = "aa9da17d-f786-11ee-a6f7-aa03815e5e6b"
+        # please change to valid session id for recording
+        session_id = "00000000-0000-0000-0000-000000000001"
 
         ws = self.create_workspace()
         jobs = ws.list_session_jobs(session_id=session_id, status=["Succeeded"], orderby_property="CreationTime", is_asc=True)
@@ -373,7 +377,8 @@ class TestWorkspacePagination(QuantumTestBase):
 
     @pytest.mark.live_test
     def test_list_session_jobs_orderby_desc(self):
-        session_id = "aa9da17d-f786-11ee-a6f7-aa03815e5e6b"
+        # please change to valid session id for recording
+        session_id = "00000000-0000-0000-0000-000000000001"
 
         ws = self.create_workspace()
         jobs = ws.list_session_jobs(session_id=session_id, status=["Succeeded"], orderby_property="CreationTime", is_asc=False)

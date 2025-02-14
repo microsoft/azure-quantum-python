@@ -67,7 +67,7 @@ jobs:
     
     - script: |
         cd $(Build.SourcesDirectory)/azure-quantum
-        pip install .[all] --no-cache-dir
+        pip install .[all]
         pytest --cov-report term --cov=azure.quantum --junitxml test-output-azure-quantum.xml $(Build.SourcesDirectory)/azure-quantum
       displayName: Run azure-quantum unit tests
     
