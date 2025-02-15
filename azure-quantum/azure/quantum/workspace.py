@@ -996,14 +996,14 @@ class Workspace:
             if has_filter:
                 filter_string += " and "
 
-            iso_date_string = created_after.isoformat()
+            iso_date_string = created_after.date().isoformat()
             filter_string += f"CreationTime ge {iso_date_string}"
 
         if created_before is not None:
             if has_filter:
                 filter_string += " and "
 
-            iso_date_string = created_before.isoformat()
+            iso_date_string = created_before.date().isoformat()
             filter_string += f"CreationTime le {iso_date_string}"
 
         if filter_string:
