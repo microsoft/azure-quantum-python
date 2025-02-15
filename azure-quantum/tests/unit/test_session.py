@@ -15,7 +15,7 @@ from azure.quantum.qiskit.provider import AzureQuantumProvider
 from import_qsharp import skip_if_no_qsharp
 
 
-ECHO_PROVIDER_NAME = "microsoft.test"
+ECHO_PROVIDER_NAME = "Microsoft.Test.FirstParty"
 
 
 class TestSession(QuantumTestBase):
@@ -326,6 +326,7 @@ class TestSession(QuantumTestBase):
     def test_session_job_cirq_circuit_ionq(self):
         self._test_session_job_cirq_circuit(target_name="ionq.simulator")
 
+    @pytest.mark.skip(reason="No longer valid test cases.")
     @pytest.mark.live_test
     @pytest.mark.session
     @pytest.mark.cirq
