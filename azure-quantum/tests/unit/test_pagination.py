@@ -36,7 +36,7 @@ class TestWorkspacePagination(QuantumTestBase):
                                           created_after=datetime(2024, 10, 1),
                                           created_before=datetime(2024, 11, 1))
         # pylint: enable=protected-access
-        expected = "startswith(Name, 'name') and (ItemType eq 'Session' or ItemType eq 'Job') and (JobType eq 'Regular' or JobType eq 'Chemistry') and (ProviderId eq 'ionq' or ProviderId eq 'quantinuum') and (Target eq 'ionq.sim' or Target eq 'quantinuum,sim') and (State eq 'Completed' or State eq 'Failed') and CreationTime ge 2024-10-01T00:00:00 and CreationTime le 2024-11-01T00:00:00"
+        expected = "startswith(Name, 'name') and (ItemType eq 'Session' or ItemType eq 'Job') and (JobType eq 'Regular' or JobType eq 'Chemistry') and (ProviderId eq 'ionq' or ProviderId eq 'quantinuum') and (Target eq 'ionq.sim' or Target eq 'quantinuum,sim') and (State eq 'Completed' or State eq 'Failed') and CreationTime ge 2024-10-01 and CreationTime le 2024-11-01"
         self.assertEqual(filter_string, expected)
 
     def test_orderby_valid(self):
@@ -142,38 +142,38 @@ class TestWorkspacePagination(QuantumTestBase):
     def test_list_jobs_filtered_by_created_after(self):
         ws = self.create_workspace()
     
-        test_date = date(2024, 8, 1)
+        test_date = datetime(2024, 8, 1, 12, 30)
         jobs = ws.list_jobs(created_after = test_date)
         for job in jobs:
             self.assertEqual(job.item_type, "Job")
 
-            check_job_created_after = job.details.creation_time.date() >= test_date
+            check_job_created_after = job.details.creation_time.date() >= test_date.date()
             self.assertTrue( check_job_created_after, job.details.creation_time)
 
     @pytest.mark.live_test
     def test_list_jobs_filtered_by_created_before(self):
         ws = self.create_workspace()
     
-        test_date = date(2024, 4, 1)
+        test_date = datetime(2024, 4, 1, 12, 30)
         jobs = ws.list_jobs(created_before = test_date)
         for job in jobs:
             self.assertEqual(job.item_type, "Job")
 
-            check_job_created_before = job.details.creation_time.date() <= test_date
+            check_job_created_before = job.details.creation_time.date() <= test_date.date()
             self.assertTrue( check_job_created_before, job.details.creation_time)
 
     @pytest.mark.live_test
     def test_list_jobs_orderby_asc(self):
         ws = self.create_workspace()
     
-        test_date = date(2024, 4, 1)
+        test_date = datetime(2024, 4, 1)
         jobs = ws.list_jobs(created_before = test_date, orderby_property="CreationTime", is_asc=True)
 
         creation_time = None
         for job in jobs:
             self.assertEqual(job.item_type, "Job")
 
-            check_job_created_before = job.details.creation_time.date() <= test_date
+            check_job_created_before = job.details.creation_time.date() <= test_date.date()
             self.assertTrue( check_job_created_before, job.details.creation_time)
 
             if creation_time is None:
@@ -187,14 +187,14 @@ class TestWorkspacePagination(QuantumTestBase):
     def test_list_jobs_orderby_desc(self):
         ws = self.create_workspace()
     
-        test_date = date(2024, 4, 1)
+        test_date = datetime(2024, 4, 1)
         jobs = ws.list_jobs(created_before = test_date,  orderby_property="CreationTime", is_asc=False)
 
         creation_time = None
         for job in jobs:
             self.assertEqual(job.item_type, "Job")
 
-            check_job_created_before = job.details.creation_time.date() <= test_date
+            check_job_created_before = job.details.creation_time.date() <= test_date.date()
             self.assertTrue( check_job_created_before, job.details.creation_time)
 
             if creation_time is None:
@@ -248,38 +248,38 @@ class TestWorkspacePagination(QuantumTestBase):
     def test_list_sessions_filtered_by_created_after(self):
         ws = self.create_workspace()
 
-        test_date = date(2024, 4, 1)
+        test_date = datetime(2024, 4, 1, 12, 30)
         sessions = ws.list_sessions(created_after = test_date)
         for session in sessions:
             self.assertEqual(session.item_type, "Session")
 
-            check_session_created_after = session._details.creation_time.date() >= test_date
-            self.assertTrue( check_session_created_after, session._details.creation_time)
+            check_session_created_after = session._details.creation_time.date() >= test_date.date()
+            self.assertTrue(check_session_created_after, session._details.creation_time)
 
     @pytest.mark.live_test
     def test_list_sessions_filtered_by_created_before(self):
         ws = self.create_workspace()
 
-        test_date = date(2024, 5, 1)
+        test_date = datetime(2024, 5, 1, 12, 30)
         sessions = ws.list_sessions(created_before = test_date)
         for session in sessions:
             self.assertEqual(session.item_type, "Session")
 
-            check_session_created_after = session._details.creation_time.date() <= test_date
+            check_session_created_after = session._details.creation_time.date() <= test_date.date()
             self.assertTrue( check_session_created_after, session._details.creation_time)
 
     @pytest.mark.live_test
     def test_list_sessions_orderby_asc(self):
         ws = self.create_workspace()
 
-        test_date = date(2024, 5, 1)
+        test_date = datetime(2024, 5, 1)
 
         creation_time = None
         sessions = ws.list_sessions(created_before = test_date, orderby_property="CreationTime", is_asc=True)
         for session in sessions:
             self.assertEqual(session.item_type, "Session")
 
-            check_session_created_after = session._details.creation_time.date() <= test_date
+            check_session_created_after = session._details.creation_time.date() <= test_date.date()
             self.assertTrue( check_session_created_after, session._details.creation_time)
 
             if creation_time is None:
@@ -293,14 +293,14 @@ class TestWorkspacePagination(QuantumTestBase):
     def test_list_sessions_orderby_desc_filtered_by_created_before(self):
         ws = self.create_workspace()
 
-        test_date = date(2024, 5, 1)
+        test_date = datetime(2024, 5, 1, 12, 30)
 
         creation_time = None
         sessions = ws.list_sessions(created_before = test_date, orderby_property="CreationTime", is_asc=False)
         for session in sessions:
             self.assertEqual(session.item_type, "Session")
 
-            check_session_created_after = session._details.creation_time.date() <= test_date
+            check_session_created_after = session._details.creation_time.date() <= test_date.date()
             self.assertTrue( check_session_created_after, session._details.creation_time)
 
             if creation_time is None:
@@ -313,7 +313,8 @@ class TestWorkspacePagination(QuantumTestBase):
     @pytest.mark.live_test
     def test_list_session_jobs(self):
         # please change to valid session id for recording
-        session_id = "00000000-0000-0000-0000-000000000001"
+        session_id = "cd61afdb-eb34-11ef-a0c7-5414f37777d8"
+        #session_id = "00000000-0000-0000-0000-000000000001"
 
         ws = self.create_workspace()
         jobs = ws.list_session_jobs(session_id=session_id)
@@ -325,7 +326,8 @@ class TestWorkspacePagination(QuantumTestBase):
     @pytest.mark.live_test
     def test_list_session_jobs_filtered_by_name(self):
         # please change to valid session id for recording
-        session_id = "00000000-0000-0000-0000-000000000001"
+        session_id = "cd61afdb-eb34-11ef-a0c7-5414f37777d8"
+        #session_id = "00000000-0000-0000-0000-000000000001"
 
         ws = self.create_workspace()
         jobs = ws.list_session_jobs(session_id=session_id, name_match="Job")
@@ -340,7 +342,8 @@ class TestWorkspacePagination(QuantumTestBase):
     @pytest.mark.live_test
     def test_list_session_jobs_filtered_by_status(self):
         # please change to valid session id for recording
-        session_id = "00000000-0000-0000-0000-000000000001"
+        session_id = "cd61afdb-eb34-11ef-a0c7-5414f37777d8"
+        #session_id = "00000000-0000-0000-0000-000000000001"
 
         ws = self.create_workspace()
         jobs = ws.list_session_jobs(session_id=session_id, status=["Succeeded"])
@@ -355,7 +358,8 @@ class TestWorkspacePagination(QuantumTestBase):
     @pytest.mark.live_test
     def test_list_session_jobs_orderby_asc(self):
         # please change to valid session id for recording
-        session_id = "00000000-0000-0000-0000-000000000001"
+        session_id = "cd61afdb-eb34-11ef-a0c7-5414f37777d8"
+        #session_id = "00000000-0000-0000-0000-000000000001"
 
         ws = self.create_workspace()
         jobs = ws.list_session_jobs(session_id=session_id, status=["Succeeded"], orderby_property="CreationTime", is_asc=True)
@@ -378,7 +382,8 @@ class TestWorkspacePagination(QuantumTestBase):
     @pytest.mark.live_test
     def test_list_session_jobs_orderby_desc(self):
         # please change to valid session id for recording
-        session_id = "00000000-0000-0000-0000-000000000001"
+        session_id = "cd61afdb-eb34-11ef-a0c7-5414f37777d8"
+        #session_id = "00000000-0000-0000-0000-000000000001"
 
         ws = self.create_workspace()
         jobs = ws.list_session_jobs(session_id=session_id, status=["Succeeded"], orderby_property="CreationTime", is_asc=False)
@@ -530,7 +535,7 @@ class TestWorkspacePagination(QuantumTestBase):
         resource_group = ws.resource_group
         workspace_name = ws.name
 
-        test_date = date(2024, 12, 1)
+        test_date = datetime(2024, 12, 1, 12, 30)
 
         items = ws.list_top_level_items(created_after = test_date)
         for item in items:
@@ -538,7 +543,7 @@ class TestWorkspacePagination(QuantumTestBase):
             self.assertEqual(item.workspace.resource_group, resource_group)
             self.assertEqual(item.workspace.name, workspace_name)
 
-            check_item_created_after = item.details.creation_time.date() >= test_date
+            check_item_created_after = item.details.creation_time.date() >= test_date.date()
             self.assertTrue( check_item_created_after, item.details.creation_time)
 
     @pytest.mark.live_test
@@ -548,7 +553,7 @@ class TestWorkspacePagination(QuantumTestBase):
         resource_group = ws.resource_group
         workspace_name = ws.name
 
-        test_date = date(2024, 3, 1)
+        test_date = datetime(2024, 3, 1, 12, 30)
 
         items = ws.list_top_level_items(created_before = test_date)
         for item in items:
@@ -556,7 +561,7 @@ class TestWorkspacePagination(QuantumTestBase):
             self.assertEqual(item.workspace.resource_group, resource_group)
             self.assertEqual(item.workspace.name, workspace_name)
 
-            check_item_created_before = item.details.creation_time.date() <= test_date
+            check_item_created_before = item.details.creation_time.date() <= test_date.date()
             self.assertTrue( check_item_created_before, item.details.creation_time)
 
     @pytest.mark.live_test
@@ -566,7 +571,7 @@ class TestWorkspacePagination(QuantumTestBase):
         resource_group = ws.resource_group
         workspace_name = ws.name
 
-        test_date = date(2024, 12, 1)
+        test_date = datetime(2024, 12, 1)
 
         items = ws.list_top_level_items(created_after = test_date, orderby_property="CreationTime", is_asc=True)
 
@@ -576,7 +581,7 @@ class TestWorkspacePagination(QuantumTestBase):
             self.assertEqual(item.workspace.resource_group, resource_group)
             self.assertEqual(item.workspace.name, workspace_name)
 
-            check_item_created_after = item.details.creation_time.date() >= test_date
+            check_item_created_after = item.details.creation_time.date() >= test_date.date()
             self.assertTrue( check_item_created_after, item.details.creation_time)
 
             if creation_time is None:
@@ -593,7 +598,7 @@ class TestWorkspacePagination(QuantumTestBase):
         resource_group = ws.resource_group
         workspace_name = ws.name
 
-        test_date = date(2024, 12, 1)
+        test_date = datetime(2024, 12, 1)
 
         items = ws.list_top_level_items(created_after = test_date, orderby_property="CreationTime", is_asc=False)
 
@@ -603,7 +608,7 @@ class TestWorkspacePagination(QuantumTestBase):
             self.assertEqual(item.workspace.resource_group, resource_group)
             self.assertEqual(item.workspace.name, workspace_name)
 
-            check_item_created_after = item.details.creation_time.date() >= test_date
+            check_item_created_after = item.details.creation_time.date() >= test_date.date()
             self.assertTrue( check_item_created_after, item.details.creation_time)
 
             if creation_time is None:
