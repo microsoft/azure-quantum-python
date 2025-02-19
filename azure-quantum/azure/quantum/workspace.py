@@ -937,7 +937,7 @@ class Workspace:
             filter_string += f"startswith(Name, '{job_name}')"
             has_filter = True
 
-        if (item_type is not None and item_type.count != 0):
+        if (item_type is not None and len(item_type) != 0):
             if has_filter:
                 filter_string += " and "
 
@@ -948,7 +948,7 @@ class Workspace:
             filter_string += f"{item_type_filter})"
             has_filter = True
 
-        if (job_type is not None and job_type.count != 0):
+        if (job_type is not None and len(job_type) != 0):
             if has_filter:
                 filter_string += " and "
 
@@ -959,7 +959,7 @@ class Workspace:
             filter_string += f"{job_type_filter})"
             has_filter = True
 
-        if (provider_ids is not None and provider_ids.count != 0):
+        if (provider_ids is not None and len(provider_ids) != 0):
             if has_filter:
                 filter_string += " and "
 
@@ -970,7 +970,7 @@ class Workspace:
             filter_string += f"{provider_filter})"
             has_filter = True
 
-        if (target is not None and target.count != 0):
+        if (target is not None and len(target) != 0):
             if has_filter:
                 filter_string += " and "
 
@@ -981,7 +981,7 @@ class Workspace:
             filter_string += f"{target_filter})"
             has_filter = True
 
-        if (status is not None and status.count != 0):
+        if (status is not None and len(status) != 0):
             if has_filter:
                 filter_string += " and "
 
