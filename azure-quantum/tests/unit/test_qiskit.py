@@ -1618,13 +1618,13 @@ class TestQiskit(QuantumTestBase):
         provider = AzureQuantumProvider(workspace=workspace)
 
         try:
-            backend = provider.get_backend(RigettiTarget.ANKAA_9Q_3.value)
+            backend = provider.get_backend(RigettiTarget.ANKAA_3.value)
         except QiskitBackendNotFoundError as ex:
-            msg = f"Target {RigettiTarget.ANKAA_9Q_3} is not available for workspace {workspace.name}."
+            msg = f"Target {RigettiTarget.ANKAA_3} is not available for workspace {workspace.name}."
             warnings.warn(f"{msg}\nException:\n{QiskitBackendNotFoundError.__name__}\n{ex}")
             pytest.skip(msg)
 
-        self.assertEqual(backend.name(), RigettiTarget.ANKAA_9Q_3.value)
+        self.assertEqual(backend.name(), RigettiTarget.ANKAA_3.value)
         config = backend.configuration()
         self.assertFalse(config.simulator)
         self.assertEqual(1, config.max_experiments)
