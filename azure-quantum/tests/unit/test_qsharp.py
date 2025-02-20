@@ -35,16 +35,6 @@ class TestQSharpQIRJob(QuantumTestBase):
     def test_qsharp_qir_file_quantinuum(self):
         self._run_job("quantinuum.sim.h1-1e", inline=False)
 
-    @pytest.mark.skip("Modern Q# doesn't currently support QIR format required by \"microsoft.estimator\" target")
-    @pytest.mark.microsoft_qc
-    def test_qsharp_qir_inline_microsoft_qc(self):
-        self._run_job("microsoft.estimator", inline=True)
-
-    @pytest.mark.skip("Modern Q# doesn't currently support QIR format required by \"microsoft.estimator\" target")
-    @pytest.mark.microsoft_qc
-    def test_qsharp_qir_file_microsoft_qc(self):
-        self._run_job("microsoft.estimator", inline=False)
-
     def _run_job(self, target_name, inline):
         workspace = self.create_workspace()
         target = workspace.get_targets(target_name)

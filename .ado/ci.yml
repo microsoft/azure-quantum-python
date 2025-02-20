@@ -12,6 +12,10 @@ schedules:
     - main
   always: true
 
+variables:
+- name: QSHARP_PYTHON_TELEMETRY
+  value: none # Disable usage telemetry for internal test pipelines
+
 jobs:
 - job: "Build_Azure_Quantum_Python"
   displayName: Build "azure-quantum" package
@@ -54,7 +58,7 @@ jobs:
       displayName: Set Python version
 
     - script: |
-        pip install pytest pytest-azurepipelines pytest-cov
+        pip install pytest pytest-azurepipelines pytest-cov pytest-regressions
       displayName: Install pytest dependencies
 
     - script: |

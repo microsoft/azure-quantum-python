@@ -74,26 +74,6 @@ class QuantinuumTarget(Quantinuum, CirqTarget):
             meas.gate.key: [q.x for q in meas.qubits] for meas in measurements
         }
 
-    def estimate_cost(
-        self,
-        program: str,
-        repetitions: int
-    ) -> float:
-        """Estimate cost for running this program
-
-        :param program: Cirq quantum program
-        :type program: str, optional
-        :param repetitions: Number of repetitions
-        :type repetitions: int, optional
-        :return: Price estimate in HQC
-        :rtype: float
-        """
-        serialized_program = self._translate_circuit(program)
-        return super().estimate_cost(
-            circuit=serialized_program,
-            shots=repetitions
-        )
-
     def submit(
         self,
         program: "cirq.Circuit",

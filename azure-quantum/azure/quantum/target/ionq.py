@@ -59,12 +59,16 @@ class IonQ(Target):
         name: str = "ionq.simulator",
         input_data_format: str = "ionq.circuit.v1",
         output_data_format: str = "ionq.quantum-results.v1",
-        capability: str = "BasicExecution",
+        capability: str = "",
         provider_id: str = "IonQ",
         content_type: str = "application/json",
         encoding: str = "",
-        **kwargs
+        target_profile: Union[str, "TargetProfile"] = "Base",
+        **kwargs,
     ):
+        if capability:
+            msg = "The 'capability' parameter is not used for the Quantinuum target."
+            warn(msg, DeprecationWarning)
         super().__init__(
             workspace=workspace,
             name=name,
@@ -74,7 +78,8 @@ class IonQ(Target):
             provider_id=provider_id,
             content_type=content_type,
             encoding=encoding,
-            **kwargs
+            target_profile=target_profile,
+            **kwargs,
         )
 
     def submit(
@@ -120,115 +125,4 @@ class IonQ(Target):
             shots=shots,
             input_params=input_params,
             **kwargs
-        )
-
-    def estimate_cost(
-        self,
-        circuit: Union[Dict[str, Any], Any],
-        num_shots: int = None,
-        price_1q: float = None,
-        price_2q: float = None,
-        min_price: float = None,
-        shots: int = None
-    ) -> CostEstimate:
-        """Estimate the cost of submitting a circuit to IonQ targets.
-        Optionally, you can provide the number of gate and measurement operations
-        manually.
-        The actual price charged by the provider may differ from this calculation.
-        
-        Specify pricing details for your area to get most accurate results.
-        By default, this function charges depending on the target:
-            ionq.qpu.aria-1:
-                price_1q = 0.00022 USD for a single-qubit gate.
-                price_2q = 0.00098 USD for a two-qubit gate.
-                min_price = 1 USD, total minimum price per circuit.
-
-        For the most current pricing details, see
-        https://docs.microsoft.com/azure/quantum/provider-ionq#pricing
-        or find your workspace and view pricing options in the "Provider" tab
-        of your workspace: https://aka.ms/aq/myworkspaces
-
-        :param circuit: Quantum circuit in IonQ JSON format (for examples,
-            see: https://docs.ionq.com/#section/Sample-JSON-Circuits)
-        :type circuit: Dict[str, Any]
-        :param num_shots: Number of shots, defaults to None
-        :type num_shots: int
-        :param price_1q: The price of running a single-qubit gate
-            for one shot.
-        :type price_1q: float
-        :param price_2q: The price of running a double-qubit gate
-            for one shot.
-        :type price_2q: float
-        :param min_price: The minimum price for running a job.
-        :type min_price: float
-        :param shots: Number of shots, defaults to None
-        :type shots: int
-        """
-
-        if num_shots is None and shots is None:
-             raise ValueError("The 'shots' parameter has to be specified")
-
-        if num_shots is not None:
-            warn(
-                "The 'num_shots' parameter will be deprecated. Please, use 'shots' parameter instead.",
-                category=DeprecationWarning,
-            )
-            shots = num_shots
-
-        # Get the costs for the gates depending on the provider if not specified
-        if price_1q is None:
-            price_1q = COST_1QUBIT_GATE_MAP[self.name]
-
-        if price_2q is None:
-            price_2q = COST_2QUBIT_GATE_MAP[self.name]
-
-        if min_price is None:
-            min_price = MIN_PRICE_MAP[self.name]
-
-        if (isinstance(circuit, Dict)):
-            def is_1q_gate(gate: Dict[str, Any]):
-                return "controls" not in gate and "control" not in gate
-
-            def is_multi_q_gate(gate):
-                return "controls" in gate or "control" in gate
-
-            def num_2q_gates(gate):
-                controls = gate.get("controls")
-                if controls is None or len(controls) == 1:
-                    # Only one control qubit
-                    return 1
-                # Multiple control qubits
-                return 6 * (len(controls) - 2)
-            
-            gates = circuit.get("circuit", [])
-            N_1q = sum(map(is_1q_gate, gates))
-            N_2q = sum(map(num_2q_gates, filter(is_multi_q_gate, gates)))
-
-        else:
-            N_1q, N_2q, _ = Target._calculate_qir_module_gate_stats(circuit)
-            
-        price = (price_1q * N_1q + price_2q * N_2q) * shots
-        price = max(price, min_price)
-
-        return CostEstimate(
-            events = [
-                UsageEvent(
-                    dimension_id="gs1q",
-                    dimension_name="1Q Gate Shot",
-                    measure_unit="1q gate shot",
-                    amount_billed=0.0,
-                    amount_consumed=N_1q * shots,
-                    unit_price=0.0
-                ),
-                UsageEvent(
-                    dimension_id="gs2q",
-                    dimension_name="2Q Gate Shot",
-                    measure_unit="2q gate shot",
-                    amount_billed=0.0,
-                    amount_consumed=N_2q * shots,
-                    unit_price=0.0
-                )
-            ],
-            currency_code="USD",
-            estimated_total=price
         )

@@ -19,7 +19,6 @@ import ast
 import json
 import re
 from azure.quantum import Job
-from azure.quantum.qiskit.results.resource_estimator import make_estimator_result
 
 import logging
 logger = logging.getLogger(__name__)
@@ -38,7 +37,6 @@ MICROSOFT_OUTPUT_DATA_FORMAT = "microsoft.quantum-results.v1"
 MICROSOFT_OUTPUT_DATA_FORMAT_V2 = "microsoft.quantum-results.v2"
 IONQ_OUTPUT_DATA_FORMAT = "ionq.quantum-results.v1"
 QUANTINUUM_OUTPUT_DATA_FORMAT = "honeywell.quantum-results.v1"
-RESOURCE_ESTIMATOR_OUTPUT_DATA_FORMAT = "microsoft.resource-estimates.v1"
 
 class AzureQuantumJob(JobV1):
     def __init__(
@@ -96,10 +94,7 @@ class AzureQuantumJob(JobV1):
             "error_data" : None if self._azure_job.details.error_data is None else self._azure_job.details.error_data.as_dict()
         }
 
-        if self._azure_job.details.output_data_format == RESOURCE_ESTIMATOR_OUTPUT_DATA_FORMAT:
-            return make_estimator_result(result_dict)
-        else:
-            return Result.from_dict(result_dict)
+        return Result.from_dict(result_dict)
 
     def cancel(self):
         """Attempt to cancel the job."""
@@ -212,15 +207,19 @@ class AzureQuantumJob(JobV1):
 
     @staticmethod
     def _qir_to_qiskit_bitstring(obj):
-        """Convert the data structure from Azure into the "schema" used by Qiskit """
+        """Convert the data structure from Azure into the "schema" used by Qiskit"""
         if isinstance(obj, str) and not re.match(r"[\d\s]+$", obj):
             obj = ast.literal_eval(obj)
 
         if isinstance(obj, tuple):
             # the outermost implied container is a tuple, and each item is
-            # associated with a classical register. Azure and Qiskit order the
-            # registers in opposite directions, so reverse here to match.
-            return " ".join([AzureQuantumJob._qir_to_qiskit_bitstring(term) for term in reversed(obj)])
+            # associated with a classical register.
+            return " ".join(
+                [
+                    AzureQuantumJob._qir_to_qiskit_bitstring(term)
+                    for term in obj
+                ]
+            )
         elif isinstance(obj, list):
             # a list is for an individual classical register
             return "".join([str(bit) for bit in obj])

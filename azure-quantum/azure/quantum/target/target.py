@@ -68,7 +68,8 @@ class Target(abc.ABC, SessionHost):
         content_type: ContentType = ContentType.json,
         encoding: str = "",
         average_queue_time: Union[float, None] = None,
-        current_availability: str = ""
+        current_availability: str = "",
+        target_profile: Union[str, "TargetProfile"] = "Base",
     ):
         """
         Initializes a new target.
@@ -79,9 +80,9 @@ class Target(abc.ABC, SessionHost):
         :type name: str
         :param input_data_format: Format of input data (ex. "qir.v1")
         :type input_data_format: str
-        :param output_data_format: Format of output data (ex. "microsoft.resource-estimates.v1")
+        :param output_data_format: Format of output data (ex. "microsoft.quantum-log.v1")
         :type output_data_format: str
-        :param capability: QIR capability
+        :param capability: QIR capability. Deprecated, use `target_profile`
         :type capability: str
         :param provider_id: Id of provider (ex. "microsoft-qc")
         :type provider_id: str
@@ -93,6 +94,8 @@ class Target(abc.ABC, SessionHost):
         :type average_queue_time: float
         :param current_availability: Set current availability (for internal use)
         :type current_availability: str
+        :param target_profile: Target QIR profile.
+        :type target_profile: str | TargetProfile
         """
         if not provider_id and "." in name:
             provider_id = name.split(".")[0]
@@ -106,6 +109,7 @@ class Target(abc.ABC, SessionHost):
         self.encoding = encoding
         self._average_queue_time = average_queue_time
         self._current_availability = current_availability
+        self.target_profile = target_profile
 
     def __repr__(self):
         return f"<Target name=\"{self.name}\", \
@@ -255,8 +259,17 @@ target '{self.name}' of provider '{self.provider_id}' not found."
             input_params["arguments"] = input_params.get("arguments", [])
             targetCapability = input_params.get("targetCapability", kwargs.pop("target_capability", self.capability))
             if targetCapability:
+                warnings.warn(
+                    "The 'targetCapability' parameter is deprecated and will be ignored in the future. "
+                    "Please, use 'target_profile' parameter instead.",
+                    category=DeprecationWarning,
+                )
                 input_params["targetCapability"] = targetCapability
-            input_data = input_data._repr_qir_(target=self.name, target_capability=targetCapability)
+            if target_profile := input_params.get(
+                "target_profile", kwargs.pop("target_profile", self.target_profile)
+            ):
+                input_params["target_profile"] = target_profile
+            input_data = input_data._repr_qir_(target=self.name)
         else:
             input_data_format = kwargs.pop("input_data_format", self.input_data_format)
             output_data_format = kwargs.pop("output_data_format", self.output_data_format)
@@ -316,16 +329,6 @@ target '{self.name}' of provider '{self.provider_id}' not found."
         parameters.
         """
         return InputParams()
-
-    def estimate_cost(
-        self,
-        input_data: Any,
-        input_params: Union[Dict[str, Any], None] = None
-    ):
-        """
-        Estimate the cost for a given circuit.
-        """
-        return NotImplementedError("Price estimation is not implemented yet for this target.")
 
     def _get_azure_workspace(self) -> "Workspace":
         return self.workspace

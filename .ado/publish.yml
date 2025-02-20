@@ -38,6 +38,8 @@ parameters:
 variables:
 - name: OwnerPersonalAlias
   value: 'billti'
+- name: QSHARP_PYTHON_TELEMETRY
+  value: none # Disable usage telemetry for internal test pipelines
 
 resources:
   repositories:
@@ -106,7 +108,7 @@ extends:
           displayName: Set Python version
 
         - script: |
-            pip install pytest pytest-azurepipelines pytest-cov
+            pip install pytest pytest-azurepipelines pytest-cov pytest-regressions
           displayName: Install pytest dependencies
 
         - script: |

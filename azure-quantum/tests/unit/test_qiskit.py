@@ -199,15 +199,6 @@ class TestQiskit(QuantumTestBase):
         circuit.measure([0], [0])
         return circuit
 
-    def _endianness(self, pos=0):
-        self.assertLess(pos, 3)
-        qr = QuantumRegister(3)
-        cr = [ClassicalRegister(3) for _ in range(3)]
-        circuit = QuantumCircuit(qr, *cr, name=f"endian{pos}cr3")
-        circuit.x(pos)
-        circuit.measure(qr[pos], cr[pos][pos])
-        return circuit
-
     def _controlled_s(self):
         circuit = QuantumCircuit(3)
         circuit.t(0)
@@ -282,7 +273,7 @@ class TestQiskit(QuantumTestBase):
 
         self.assertEqual(AzureQuantumJob._qir_to_qiskit_bitstring(azure_register), bitstring)
         self.assertEqual(AzureQuantumJob._qir_to_qiskit_bitstring(azure_registers), " ".join(
-            f"{bit}10" for bit in reversed(bits)
+            f"{bit}10" for bit in bits
         ))
         self.assertEqual(AzureQuantumJob._qir_to_qiskit_bitstring(bitstring), bitstring)
 
@@ -410,45 +401,6 @@ class TestQiskit(QuantumTestBase):
             # Verify
             assert len(warns) == 1
             assert issubclass(warns[0].category, DeprecationWarning)
-
-    @pytest.mark.ionq
-    def test_plugins_estimate_cost_qiskit_ionq(self):
-        circuit = self._3_qubit_ghz()
-        workspace = self.create_workspace()
-        provider = AzureQuantumProvider(workspace=workspace)
-        self.assertIn("azure-quantum-qiskit", provider._workspace.user_agent)
-        backend = provider.get_backend("ionq.simulator")
-        self.assertIsInstance(backend, IonQSimulatorQirBackend)
-        cost = backend.estimate_cost(circuit, shots=100e3)
-        self.assertEqual(cost.estimated_total, 0.0)
-
-        backend = provider.get_backend("ionq.qpu.aria-1")
-        self.assertIsInstance(backend, IonQAriaQirBackend)
-        cost = backend.estimate_cost(circuit, shots=1024)
-        self.assertEqual(np.round(cost.estimated_total), 98.0)
-
-        backend = provider.get_backend("ionq.qpu.aria-1")
-        self.assertIsInstance(backend, IonQAriaQirBackend)
-        cost = backend.estimate_cost(circuit, shots=100e3)
-        self.assertEqual(np.round(cost.estimated_total), 240.0)
-
-    @pytest.mark.ionq
-    def test_plugins_estimate_cost_qiskit_ionq_passthrough(self):
-        circuit = self._3_qubit_ghz()
-        workspace = self.create_workspace()
-        provider = AzureQuantumProvider(workspace=workspace)
-        self.assertIn("azure-quantum-qiskit", provider._workspace.user_agent)
-        backend = provider.get_backend("ionq.simulator", input_data_format="ionq.circuit.v1", gateset="qis")
-        cost = backend.estimate_cost(circuit, shots=100e3)
-        self.assertEqual(cost.estimated_total, 0.0)
-
-        backend = provider.get_backend("ionq.qpu.aria-1", input_data_format="ionq.circuit.v1", gateset="qis")
-        cost = backend.estimate_cost(circuit, shots=1024)
-        self.assertEqual(np.round(cost.estimated_total), 98.0)
-
-        backend = provider.get_backend("ionq.qpu.aria-1", input_data_format="ionq.circuit.v1", gateset="qis")
-        cost = backend.estimate_cost(circuit, shots=100e3)
-        self.assertEqual(np.round(cost.estimated_total), 240.0)
 
     @pytest.mark.ionq
     @pytest.mark.live_test
@@ -878,7 +830,7 @@ class TestQiskit(QuantumTestBase):
         config = backend.configuration()
         self.assertFalse(config.simulator)
         self.assertEqual(1, config.max_experiments)
-        self.assertEqual(23, config.num_qubits)
+        self.assertEqual(25, config.num_qubits)
         self.assertEqual("qir.v1", config.azure["content_type"])
         self.assertEqual("ionq", config.azure["provider_id"])
         self.assertEqual("qir.v1", config.azure["input_data_format"])
@@ -1021,75 +973,6 @@ class TestQiskit(QuantumTestBase):
             self.assertEqual(sum(result.data()["counts"].values()), 100)
             self.assertAlmostEqual(result.data()["counts"]["000"], 50, delta=20)
             self.assertAlmostEqual(result.data()["counts"]["111"], 50, delta=20)
-
-    @pytest.mark.quantinuum
-    def test_plugins_estimate_cost_qiskit_quantinuum(self):
-        circuit = self._3_qubit_ghz()
-        workspace = self.create_workspace()
-        provider = AzureQuantumProvider(workspace=workspace)
-        self.assertIn("azure-quantum-qiskit", provider._workspace.user_agent)
-
-        backend = provider.get_backend("quantinuum.sim.h1-1sc")
-        self.assertIsInstance(backend, QuantinuumQirBackendBase)
-
-        cost = backend.estimate_cost(circuit, shots=100e3)
-        self.assertEqual(cost.estimated_total, 0.0)
-
-        backend = provider.get_backend("quantinuum.sim.h1-1e")
-        self.assertIsInstance(backend, QuantinuumQirBackendBase)
-        cost = backend.estimate_cost(circuit, shots=100e3)
-        self.assertEqual(cost.estimated_total, 745.0)
-
-        backend = provider.get_backend("quantinuum.qpu.h1-1")
-        self.assertIsInstance(backend, QuantinuumQirBackendBase)
-        cost = backend.estimate_cost(circuit, shots=100e3)
-        self.assertEqual(cost.estimated_total, 745.0)
-
-        backend = provider.get_backend("quantinuum.sim.h2-1sc")
-        self.assertIsInstance(backend, QuantinuumQirBackendBase)
-        cost = backend.estimate_cost(circuit, shots=100e3)
-        self.assertEqual(cost.estimated_total, 0.0)
-
-        backend = provider.get_backend("quantinuum.sim.h2-1e")
-        self.assertIsInstance(backend, QuantinuumQirBackendBase)
-        cost = backend.estimate_cost(circuit, shots=100e3)
-        self.assertEqual(cost.estimated_total, 745.0)
-
-        backend = provider.get_backend("quantinuum.qpu.h2-1")
-        self.assertIsInstance(backend, QuantinuumQirBackendBase)
-        cost = backend.estimate_cost(circuit, shots=100e3)
-        self.assertEqual(cost.estimated_total, 745.0)
-
-    @pytest.mark.quantinuum
-    def test_plugins_estimate_cost_qiskit_quantinuum_passthrough(self):
-        circuit = self._3_qubit_ghz()
-        workspace = self.create_workspace()
-        provider = AzureQuantumProvider(workspace=workspace)
-        self.assertIn("azure-quantum-qiskit", provider._workspace.user_agent)
-
-        backend = provider.get_backend("quantinuum.sim.h1-1sc", input_data_format="honeywell.openqasm.v1")
-        cost = backend.estimate_cost(circuit, shots=100e3)
-        self.assertEqual(cost.estimated_total, 0.0)
-
-        backend = provider.get_backend("quantinuum.sim.h1-1e", input_data_format="honeywell.openqasm.v1")
-        cost = backend.estimate_cost(circuit, shots=100e3)
-        self.assertEqual(cost.estimated_total, 745.0)
-
-        backend = provider.get_backend("quantinuum.qpu.h1-1", input_data_format="honeywell.openqasm.v1")
-        cost = backend.estimate_cost(circuit, shots=100e3)
-        self.assertEqual(cost.estimated_total, 745.0)
-
-        backend = provider.get_backend("quantinuum.sim.h2-1sc", input_data_format="honeywell.openqasm.v1")
-        cost = backend.estimate_cost(circuit, shots=100e3)
-        self.assertEqual(cost.estimated_total, 0.0)
-
-        backend = provider.get_backend("quantinuum.sim.h2-1e", input_data_format="honeywell.openqasm.v1")
-        cost = backend.estimate_cost(circuit, shots=100e3)
-        self.assertEqual(cost.estimated_total, 745.0)
-
-        backend = provider.get_backend("quantinuum.qpu.h2-1", input_data_format="honeywell.openqasm.v1")
-        cost = backend.estimate_cost(circuit, shots=100e3)
-        self.assertEqual(cost.estimated_total, 745.0)
 
     @pytest.mark.live_test
     def test_plugins_submit_qiskit_noexistent_target(self):
@@ -1564,7 +1447,7 @@ class TestQiskit(QuantumTestBase):
             self.assertIsNotNone(target_name)
             self.assertEqual(20, config.num_qubits)
 
-        # The following backends should have 32 qubits
+        # The following backends should have 56 qubits
         for target_name in [
             "quantinuum.qpu.h2-1",
             "quantinuum.sim.h2-1sc",
@@ -1573,7 +1456,7 @@ class TestQiskit(QuantumTestBase):
             config = provider.get_backend(target_name).configuration()
             # We check for name so the test log includes it when reporting a failure
             self.assertIsNotNone(target_name)
-            self.assertEqual(32, config.num_qubits)
+            self.assertEqual(56, config.num_qubits)
 
         # The following backends should have 20 qubits
         for target_name in [
@@ -1586,7 +1469,7 @@ class TestQiskit(QuantumTestBase):
             self.assertIsNotNone(target_name)
             self.assertEqual(20, config.num_qubits)
 
-        # The following backends should have 32 qubits
+        # The following backends should have 56 qubits
         for target_name in [
             "quantinuum.qpu.h2-1",
             "quantinuum.sim.h2-1sc",
@@ -1595,7 +1478,7 @@ class TestQiskit(QuantumTestBase):
             config = provider.get_backend(target_name, input_data_format="honeywell.openqasm.v1").configuration()
             # We check for name so the test log includes it when reporting a failure
             self.assertIsNotNone(target_name)
-            self.assertEqual(32, config.num_qubits)
+            self.assertEqual(56, config.num_qubits)
 
     @pytest.mark.rigetti
     @pytest.mark.live_test
@@ -1735,22 +1618,23 @@ class TestQiskit(QuantumTestBase):
         provider = AzureQuantumProvider(workspace=workspace)
 
         try:
-            backend = provider.get_backend(RigettiTarget.ANKAA_2.value)
+            backend = provider.get_backend(RigettiTarget.ANKAA_9Q_3.value)
         except QiskitBackendNotFoundError as ex:
-            msg = f"Target {RigettiTarget.ANKAA_2} is not available for workspace {workspace.name}."
+            msg = f"Target {RigettiTarget.ANKAA_9Q_3} is not available for workspace {workspace.name}."
             warnings.warn(f"{msg}\nException:\n{QiskitBackendNotFoundError.__name__}\n{ex}")
             pytest.skip(msg)
 
-        self.assertEqual(backend.name(), RigettiTarget.ANKAA_2.value)
+        self.assertEqual(backend.name(), RigettiTarget.ANKAA_9Q_3.value)
         config = backend.configuration()
         self.assertFalse(config.simulator)
         self.assertEqual(1, config.max_experiments)
-        self.assertEqual(84, config.num_qubits)
+        self.assertEqual(9, config.num_qubits)
         self.assertEqual("qir.v1", config.azure["content_type"])
         self.assertEqual("rigetti", config.azure["provider_id"])
         self.assertEqual("qir.v1", config.azure["input_data_format"])
         self.assertEqual(MICROSOFT_OUTPUT_DATA_FORMAT_V2, backend._get_output_data_format())
 
+    @pytest.mark.skip("Skipping tests against QCI's unavailable targets")
     @pytest.mark.qci
     @pytest.mark.live_test
     def test_qiskit_submit_to_qci(self):
@@ -1794,6 +1678,7 @@ class TestQiskit(QuantumTestBase):
             counts = result.get_counts()
             self.assertEqual(counts, result.data()["counts"])
 
+    @pytest.mark.skip("Skipping tests against QCI's unavailable targets")
     @pytest.mark.qci
     @pytest.mark.live_test
     def test_qiskit_submit_to_qci_with_default_shots(self):
@@ -1806,6 +1691,7 @@ class TestQiskit(QuantumTestBase):
         self._qiskit_wait_to_complete(qiskit_job, provider)
         self.assertEqual(qiskit_job._azure_job.details.input_params["shots"], 500)
 
+    @pytest.mark.skip("Skipping tests against QCI's unavailable targets")
     @pytest.mark.qci
     @pytest.mark.live_test
     def test_qiskit_submit_to_qci_with_deprecated_count_param(self):
@@ -1828,6 +1714,7 @@ class TestQiskit(QuantumTestBase):
         self._qiskit_wait_to_complete(qiskit_job, provider)
         self.assertEqual(qiskit_job._azure_job.details.input_params["shots"], shots)
 
+    @pytest.mark.skip("Skipping tests against QCI's unavailable targets")
     @pytest.mark.qci
     @pytest.mark.live_test
     def test_qiskit_get_qci_qpu_targets(self):
@@ -1845,20 +1732,29 @@ class TestQiskit(QuantumTestBase):
         self.assertEqual("qir.v1", config.azure["input_data_format"])
         self.assertEqual("microsoft.quantum-results.v2", backend._get_output_data_format())
 
-    # @pytest.mark.parametrize("endian_pos, expectation",
-    #     [(0,"000 000 001"), (1,"000 010 000"), (2,"100 000 000")]
-    # )
-    @pytest.mark.qci
+    @pytest.mark.rigetti
     @pytest.mark.live_test
-    def test_qiskit_endianness_submit_to_qci(
-        self, endian_pos=0, expectation="000 000 001"
+    def test_qiskit_endianness_submit_to_rigetti(
+        self, expectation="000 000 001"
     ):
         workspace = self.create_workspace()
         provider = AzureQuantumProvider(workspace=workspace)
-        backend = provider.get_backend("qci.simulator")
+        backend = provider.get_backend("rigetti.sim.qvm")
         shots = 100
 
-        circuit = self._endianness(pos=endian_pos)
+        qr = QuantumRegister(3)
+        cr = [ClassicalRegister(3) for _ in range(3)]
+        circuit = QuantumCircuit(qr, *cr, name="endian0cr3")
+        circuit.x(0)
+        circuit.measure(qr[0], cr[0][0])
+        circuit.measure(qr[1], cr[0][1])
+        circuit.measure(qr[1], cr[0][2])
+        circuit.measure(qr[1], cr[1][0])
+        circuit.measure(qr[1], cr[1][1])
+        circuit.measure(qr[1], cr[1][2])
+        circuit.measure(qr[2], cr[2][0])
+        circuit.measure(qr[2], cr[2][1])
+        circuit.measure(qr[2], cr[2][2])
         circuit.metadata = {"some": "data"}
 
         qiskit_job = backend.run(circuit, shots=shots)
@@ -1871,103 +1767,6 @@ class TestQiskit(QuantumTestBase):
             print(result)
             self.assertEqual(sum(result.data()["counts"].values()), shots)
             self.assertEqual(result.data()["counts"][expectation], shots)
-
-    @pytest.mark.microsoft_qc
-    @pytest.mark.live_test
-    def test_qiskit_controlled_s_to_resource_estimator(self):
-        from pyqir import rt
-
-        patcher = unittest.mock.patch.object(rt, "initialize")
-        patcher.start()
-
-        workspace = self.create_workspace()
-        provider = AzureQuantumProvider(workspace=workspace)
-        backend = provider.get_backend("microsoft.estimator")
-
-        circuit = self._controlled_s()
-
-        qiskit_job = backend.run(circuit)
-
-        # Make sure the job is completed before fetching results
-        self._qiskit_wait_to_complete(qiskit_job, provider)
-
-        patcher.stop()
-
-        self.assertEqual(qiskit_job.status(), JobStatus.DONE)
-        if JobStatus.DONE == qiskit_job.status():
-            result = qiskit_job.result()
-            self.assertEqual(result.data()["logicalCounts"]["numQubits"], 2)
-            self.assertEqual(result.data()["jobParams"]["qubitParams"]["name"], "qubit_gate_ns_e3")
-            self.assertEqual(result.data()["jobParams"]["qecScheme"]["name"], "surface_code")
-            self.assertEqual(result.data()["jobParams"]["errorBudget"], 0.001)
-
-    @pytest.mark.microsoft_qc
-    @pytest.mark.live_test
-    def test_qiskit_controlled_s_to_resource_estimator_with_high_error_rate(self):
-        from pyqir import rt
-
-        patcher = unittest.mock.patch.object(rt, "initialize")
-        patcher.start()
-
-        workspace = self.create_workspace()
-        provider = AzureQuantumProvider(workspace=workspace)
-        backend = provider.get_backend("microsoft.estimator")
-
-        circuit = self._controlled_s()
-
-        qiskit_job = backend.run(
-            circuit, qubitParams={"name": "qubit_gate_ns_e4"}, errorBudget=0.0001
-        )
-
-        # Make sure the job is completed before fetching results
-        self._qiskit_wait_to_complete(qiskit_job, provider)
-
-        patcher.stop()
-
-        self.assertEqual(qiskit_job.status(), JobStatus.DONE)
-        if JobStatus.DONE == qiskit_job.status():
-            result = qiskit_job.result()
-            self.assertEqual(result.data()["logicalCounts"]["numQubits"], 2)
-            self.assertEqual(result.data()["jobParams"]["qubitParams"]["name"], "qubit_gate_ns_e4")
-            self.assertEqual(result.data()["jobParams"]["qecScheme"]["name"], "surface_code")
-            self.assertEqual(result.data()["jobParams"]["errorBudget"], 0.0001)
-
-    @pytest.mark.microsoft_qc
-    @pytest.mark.live_test
-    def test_qiskit_controlled_s_to_resource_estimator_with_items(self):
-        from pyqir import rt
-
-        patcher = unittest.mock.patch.object(rt, "initialize")
-        patcher.start()
-
-        workspace = self.create_workspace()
-        provider = AzureQuantumProvider(workspace=workspace)
-        backend = provider.get_backend("microsoft.estimator")
-
-        circuit = self._controlled_s()
-
-        item1 = {"qubitParams": {"name": "qubit_gate_ns_e3"}, "errorBudget": 1e-4}
-        item2 = {"qubitParams": {"name": "qubit_gate_ns_e4"}, "errorBudget": 1e-4}
-        qiskit_job = backend.run(circuit, items=[item1, item2])
-
-        # Make sure the job is completed before fetching results
-        self._qiskit_wait_to_complete(qiskit_job, provider)
-
-        patcher.stop()
-
-        self.assertEqual(qiskit_job.status(), JobStatus.DONE)
-        if JobStatus.DONE == qiskit_job.status():
-            result = qiskit_job.result()
-
-            self.assertEqual(result.data(0)["logicalCounts"]["numQubits"], 2)
-            self.assertEqual(result.data(0)["jobParams"]["qubitParams"]["name"], "qubit_gate_ns_e3")
-            self.assertEqual(result.data(0)["jobParams"]["qecScheme"]["name"], "surface_code")
-            self.assertEqual(result.data(0)["jobParams"]["errorBudget"], 0.0001)
-
-            self.assertEqual(result.data(1)["logicalCounts"]["numQubits"], 2)
-            self.assertEqual(result.data(1)["jobParams"]["qubitParams"]["name"], "qubit_gate_ns_e4")
-            self.assertEqual(result.data(1)["jobParams"]["qecScheme"]["name"], "surface_code")
-            self.assertEqual(result.data(1)["jobParams"]["errorBudget"], 0.0001)
 
     def test_backend_without_azure_config_format_defaults_to_ms_format(self):
         backend = NoopQirBackend(None, "AzureQuantumProvider")

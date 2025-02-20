@@ -7,7 +7,7 @@ from azure.quantum import __version__
 from azure.quantum.qiskit.job import AzureQuantumJob
 from azure.quantum.target.ionq import IonQ
 from abc import abstractmethod
-
+from qsharp import TargetProfile
 from qiskit import QuantumCircuit
 
 from .backend import (
@@ -65,7 +65,7 @@ class IonQQirBackendBase(AzureQirBackend):
             **{
                 cls._SHOTS_PARAM_NAME: _DEFAULT_SHOTS_COUNT,
             },
-            targetCapability="BasicExecution",
+            target_profile=TargetProfile.Base,
             )
 
     def _azure_config(self) -> Dict[str, str]:
@@ -77,10 +77,6 @@ class IonQQirBackendBase(AzureQirBackend):
         )
         return config
 
-    def estimate_cost(self, circuits, shots, options={}):
-        """Estimate the cost for the given circuit."""
-        return self._estimate_cost_qir(circuits, shots, options)
-    
     def run(
         self, 
         run_input: Union[QuantumCircuit, List[QuantumCircuit]] = [],
@@ -147,7 +143,7 @@ class IonQAriaQirBackend(IonQQirBackendBase):
                 "description": "IonQ Aria QPU on Azure Quantum",
                 "basis_gates": self._basis_gates(),
                 "memory": False,
-                "n_qubits": 23,
+                "n_qubits": 25,
                 "conditional": False,
                 "max_shots": 10000,
                 "max_experiments": 1,
@@ -264,17 +260,6 @@ class IonQBackend(AzureBackend):
 
     def gateset(self):
         return self.configuration().gateset
-
-    def estimate_cost(self, circuit, shots):
-        """Estimate the cost for the given circuit."""
-        ionq_circ, _, _ = qiskit_circ_to_ionq_circ(circuit, gateset=self.gateset())
-        input_data = {
-            "qubits": circuit.num_qubits,
-            "circuit": ionq_circ,
-        }
-        workspace = self.provider().get_workspace()
-        target = workspace.get_targets(self.name())
-        return target.estimate_cost(input_data, shots=shots)
 
 
 class IonQSimulatorBackend(IonQBackend):
