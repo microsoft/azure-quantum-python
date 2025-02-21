@@ -1,0 +1,779 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-identity/1.17.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
+    method: GET
+    uri: https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/v2.0/.well-known/openid-configuration
+  response:
+    body:
+      string: '{"token_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token",
+        "token_endpoint_auth_methods_supported": ["client_secret_post", "private_key_jwt",
+        "client_secret_basic"], "jwks_uri": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/discovery/v2.0/keys",
+        "response_modes_supported": ["query", "fragment", "form_post"], "subject_types_supported":
+        ["pairwise"], "id_token_signing_alg_values_supported": ["RS256"], "response_types_supported":
+        ["code", "id_token", "code id_token", "id_token token"], "scopes_supported":
+        ["openid", "profile", "email", "offline_access"], "issuer": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/v2.0",
+        "request_uri_parameter_supported": false, "userinfo_endpoint": "https://graph.microsoft.com/oidc/userinfo",
+        "authorization_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/authorize",
+        "device_authorization_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/devicecode",
+        "http_logout_supported": true, "frontchannel_logout_supported": true, "end_session_endpoint":
+        "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/logout",
+        "claims_supported": ["sub", "iss", "cloud_instance_name", "cloud_instance_host_name",
+        "cloud_graph_host_name", "msgraph_host", "aud", "exp", "iat", "auth_time",
+        "acr", "nonce", "preferred_username", "name", "tid", "ver", "at_hash", "c_hash",
+        "email"], "kerberos_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/kerberos",
+        "tenant_region_scope": "WW", "cloud_instance_name": "microsoftonline.com",
+        "cloud_graph_host_name": "graph.windows.net", "msgraph_host": "graph.microsoft.com",
+        "rbac_url": "https://pas.windows.net"}'
+    headers:
+      content-length:
+      - '1826'
+      content-type:
+      - application/json; charset=utf-8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: client_id=PLACEHOLDER&grant_type=client_credentials&client_assertion=PLACEHOLDER&client_info=1&client_assertion_type=PLACEHOLDER&scope=https%3A%2F%2Fquantum.microsoft.com%2F.default
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '181'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      User-Agent:
+      - azsdk-python-identity/1.17.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
+      x-client-current-telemetry:
+      - 4|730,2|
+      x-client-os:
+      - win32
+      x-client-sku:
+      - MSAL.Python
+      x-client-ver:
+      - 1.30.0
+    method: POST
+    uri: https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token
+  response:
+    body:
+      string: '{"token_type": "Bearer", "expires_in": 1756429716, "ext_expires_in":
+        1756429716, "refresh_in": 31536000, "access_token": "PLACEHOLDER"}'
+    headers:
+      content-length:
+      - '135'
+      content-type:
+      - application/json; charset=utf-8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - testapp azsdk-python-quantum/0.0.1 Python/3.9.20 (Windows-10-10.0.26100-SP0)
+      x-ms-quantum-api-key:
+      - PLACEHOLDER
+    method: GET
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs?api-version=2024-10-01-preview&filter=%28State%20eq%20%27Failed%27%20or%20State%20eq%20%27Cancelled%27%29&skip=0&top=100&test-sequence-id=1
+  response:
+    body:
+      string: '{"value": [{"containerUri": "https://mystorage.blob.core.windows.net/job-372ace5a-d65e-11ee-b116-00155db56db0?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-372ace5a-d65e-11ee-b116-00155db56db0/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcw",
+        "inputDataFormat": "atomcomputing.openqasm.v1", "inputParams": {"shots": 100},
+        "metadata": null, "sessionId": null, "status": "Failed", "jobType": "QuantumComputing",
+        "outputDataFormat": "custom", "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-372ace5a-d65e-11ee-b116-00155db56db0/outputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
+        {"count": 1}, "errorData": {"code": "PartnerCallFailed", "message": "Call
+        to partner failed unexpectedly. RequestUri ''https://staging.api.atom-computing.com/azure-quantum/v1/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Solutions/applications/myworkspace-atomcomputing/jobs/476dcfeb-e27e-4da1-af2b-453a52608142''.
+        StatusCode ''NotFound''. Error response ''{\"detail\":\"Not Found\"}''."},
+        "isCancelling": false, "tags": [], "name": "My first Atom job", "id": "372ace5a-d65e-11ee-b116-00155db56db0",
+        "providerId": "atomcomputing", "target": "atomcomputing.sim.valkyrie-emulator",
+        "creationTime": "2024-02-28T17:24:24.5931645Z", "endExecutionTime": null,
+        "costEstimate": null, "itemType": "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-5bfab0ba-d65e-11ee-b116-00155db56db0?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-5bfab0ba-d65e-11ee-b116-00155db56db0/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcw",
+        "inputDataFormat": "atomcomputing.openqasm.v1", "inputParams": {"shots": 100},
+        "metadata": null, "sessionId": null, "status": "Failed", "jobType": "QuantumComputing",
+        "outputDataFormat": "atomcomputing.json.v1", "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-5bfab0ba-d65e-11ee-b116-00155db56db0/outputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
+        {"count": 1}, "errorData": {"code": "PartnerCallFailed", "message": "Call
+        to partner failed unexpectedly. RequestUri ''https://staging.api.atom-computing.com/azure-quantum/v1/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Solutions/applications/myworkspace-atomcomputing/jobs/014a6146-3b2e-41fe-a358-e2e850e70712''.
+        StatusCode ''NotFound''. Error response ''{\"detail\":\"Not Found\"}''."},
+        "isCancelling": false, "tags": [], "name": "My first Atom job", "id": "5bfab0ba-d65e-11ee-b116-00155db56db0",
+        "providerId": "atomcomputing", "target": "atomcomputing.sim.valkyrie-emulator",
+        "creationTime": "2024-02-28T17:25:25.715552Z", "endExecutionTime": null, "costEstimate":
+        null, "itemType": "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-e4171fc4-d65e-11ee-b116-00155db56db0?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-e4171fc4-d65e-11ee-b116-00155db56db0/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcw",
+        "inputDataFormat": "atomcomputing.openqasm.v1", "inputParams": {"shots": 100},
+        "metadata": null, "sessionId": null, "status": "Failed", "jobType": "QuantumComputing",
+        "outputDataFormat": "atomcomputing.json.v1", "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-e4171fc4-d65e-11ee-b116-00155db56db0/outputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
+        {"count": 1}, "errorData": {"code": "PartnerCallFailed", "message": "Call
+        to partner failed unexpectedly. RequestUri ''https://staging.api.atom-computing.com/azure-quantum/v1/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Solutions/applications/myworkspace-atomcomputing/jobs/c7e31ca2-8b00-4180-9b0f-f05d3c5fb51e''.
+        StatusCode ''NotFound''. Error response ''{\"detail\":\"Not Found\"}''."},
+        "isCancelling": false, "tags": [], "name": "My first Atom job", "id": "e4171fc4-d65e-11ee-b116-00155db56db0",
+        "providerId": "atomcomputing", "target": "atomcomputing.sim.valkyrie-emulator",
+        "creationTime": "2024-02-28T17:29:13.9468327Z", "endExecutionTime": null,
+        "costEstimate": null, "itemType": "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-aa6bbdb0-d65f-11ee-b116-00155db56db0?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-aa6bbdb0-d65f-11ee-b116-00155db56db0/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcw",
+        "inputDataFormat": "atomcomputing.openqasm.v1", "inputParams": {"shots": 100},
+        "metadata": null, "sessionId": null, "status": "Failed", "jobType": "QuantumComputing",
+        "outputDataFormat": "atomcomputing.json.v1", "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-aa6bbdb0-d65f-11ee-b116-00155db56db0/outputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
+        {"count": 1}, "errorData": {"code": "PartnerCallFailed", "message": "Call
+        to partner failed unexpectedly. RequestUri ''https://staging.api.atom-computing.com/azure-quantum/v1/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Solutions/applications/myworkspace-atomcomputing/jobs/72262158-d8b2-4633-9373-df570688d4fc''.
+        StatusCode ''NotFound''. Error response ''{\"detail\":\"Not Found\"}''."},
+        "isCancelling": false, "tags": [], "name": "My first Atom job", "id": "aa6bbdb0-d65f-11ee-b116-00155db56db0",
+        "providerId": "atomcomputing", "target": "atomcomputing.sim.valkyrie-emulator",
+        "creationTime": "2024-02-28T17:34:47.4646276Z", "endExecutionTime": null,
+        "costEstimate": null, "itemType": "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-16de65c8-d661-11ee-b116-00155db56db0?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-16de65c8-d661-11ee-b116-00155db56db0/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcw",
+        "inputDataFormat": "atomcomputing.openqasm.v1", "inputParams": {"shots": 100},
+        "metadata": null, "sessionId": null, "status": "Failed", "jobType": "QuantumComputing",
+        "outputDataFormat": "atomcomputing.json.v1", "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-16de65c8-d661-11ee-b116-00155db56db0/outputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
+        {"count": 1}, "errorData": {"code": "PartnerCallFailed", "message": "Call
+        to partner failed unexpectedly. RequestUri ''https://staging.api.atom-computing.com/azure-quantum/v1/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Solutions/applications/myworkspace-atomcomputing/jobs/19d7aa39-4caa-4e28-94df-a67c582f358c''.
+        StatusCode ''NotFound''. Error response ''{\"detail\":\"Not Found\"}''."},
+        "isCancelling": false, "tags": [], "name": "My first Atom job", "id": "16de65c8-d661-11ee-b116-00155db56db0",
+        "providerId": "atomcomputing", "target": "atomcomputing.sim.valkyrie-emulator",
+        "creationTime": "2024-02-28T17:44:58.7681109Z", "endExecutionTime": null,
+        "costEstimate": null, "itemType": "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-4adddbf4-d663-11ee-b116-00155db56db0?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-4adddbf4-d663-11ee-b116-00155db56db0/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcw",
+        "inputDataFormat": "atomcomputing.openqasm.v1", "inputParams": {"shots": 100},
+        "metadata": null, "sessionId": null, "status": "Failed", "jobType": "QuantumComputing",
+        "outputDataFormat": "atomcomputing.json.v1", "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-4adddbf4-d663-11ee-b116-00155db56db0/outputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
+        {"count": 1}, "errorData": {"code": "PartnerCallFailed", "message": "Call
+        to partner failed unexpectedly. RequestUri ''https://staging.api.atom-computing.com/azure-quantum/v1/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Solutions/applications/myworkspace-atomcomputing/jobs/9f46ebd8-228f-416b-9cec-ec89a6683564''.
+        StatusCode ''NotFound''. Error response ''{\"detail\":\"Not Found\"}''."},
+        "isCancelling": false, "tags": [], "name": "My first Atom job", "id": "4adddbf4-d663-11ee-b116-00155db56db0",
+        "providerId": "atomcomputing", "target": "atomcomputing.sim.valkyrie-emulator",
+        "creationTime": "2024-02-28T18:00:44.9242658Z", "endExecutionTime": null,
+        "costEstimate": null, "itemType": "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-25f1d54e-d66c-11ee-b098-00155db56db0?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-25f1d54e-d66c-11ee-b098-00155db56db0/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcw",
+        "inputDataFormat": "atomcomputing.openqasm.v1", "inputParams": {"shots": 100},
+        "metadata": null, "sessionId": null, "status": "Failed", "jobType": "QuantumComputing",
+        "outputDataFormat": "atomcomputing.json.v1", "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-25f1d54e-d66c-11ee-b098-00155db56db0/rawOutputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "beginExecutionTime": "2024-02-28T19:02:42.723589Z", "cancellationTime": null,
+        "quantumComputingData": {"count": 1}, "errorData": {"code": null, "message":
+        null}, "isCancelling": false, "tags": [], "name": "My first Atom job", "id":
+        "25f1d54e-d66c-11ee-b098-00155db56db0", "providerId": "atomcomputing", "target":
+        "atomcomputing.sim.valkyrie-emulator", "creationTime": "2024-02-28T19:04:08.6656966Z",
+        "endExecutionTime": "2024-02-28T19:02:52.723591Z", "costEstimate": null, "itemType":
+        "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-b5860842-d66c-11ee-b098-00155db56db0?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-b5860842-d66c-11ee-b098-00155db56db0/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcw",
+        "inputDataFormat": "atomcomputing.openqasm.v1", "inputParams": {"shots": 100},
+        "metadata": null, "sessionId": null, "status": "Failed", "jobType": "QuantumComputing",
+        "outputDataFormat": "atomcomputing.json.v1", "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-b5860842-d66c-11ee-b098-00155db56db0/rawOutputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "beginExecutionTime": "2024-02-28T19:06:41.414613Z", "cancellationTime": null,
+        "quantumComputingData": {"count": 1}, "errorData": {"code": null, "message":
+        null}, "isCancelling": false, "tags": [], "name": "My first Atom job", "id":
+        "b5860842-d66c-11ee-b098-00155db56db0", "providerId": "atomcomputing", "target":
+        "atomcomputing.sim.valkyrie-emulator", "creationTime": "2024-02-28T19:08:08.8178606Z",
+        "endExecutionTime": "2024-02-28T19:06:51.414615Z", "costEstimate": null, "itemType":
+        "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-2ee3c81c-db1f-11ee-8dce-00155da24c34?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-2ee3c81c-db1f-11ee-8dce-00155da24c34/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcw",
+        "inputDataFormat": "atomcomputing.qir.v1", "inputParams": {"shots": 100},
+        "metadata": null, "sessionId": null, "status": "Failed", "jobType": "QuantumComputing",
+        "outputDataFormat": "atomcomputing.json.v1", "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-2ee3c81c-db1f-11ee-8dce-00155da24c34/outputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
+        {"count": 1}, "errorData": {"code": "PartnerCallFailed", "message": "Call
+        to partner failed unexpectedly. RequestUri ''https://staging.api.atom-computing.com/azure-quantum/v1/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Solutions/applications/myworkspace-atomcomputing/jobs/c170f573-6cc3-449d-97f8-8eacca4c4c08''.
+        StatusCode ''UnprocessableEntity''. Error response ''{\"detail\":[{\"type\":\"literal_error\",\"loc\":[\"body\",\"inputDataFormat\"],\"msg\":\"Input
+        should be ''atomcomputing.openqasm.v1''\",\"input\":\"atomcomputing.qir.v1\",\"ctx\":{\"expected\":\"''atomcomputing.openqasm.v1''\"},\"url\":\"https://errors.pydantic.dev/2.6/v/literal_error\"}]}''."},
+        "isCancelling": false, "tags": [], "name": "My first Atom job", "id": "2ee3c81c-db1f-11ee-8dce-00155da24c34",
+        "providerId": "atomcomputing", "target": "atomcomputing.sim.valkyrie-emulator",
+        "creationTime": "2024-03-05T18:35:47.695144Z", "endExecutionTime": null, "costEstimate":
+        null, "itemType": "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-ac2ef55a-e577-11ee-a11b-00155d30edf4?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-ac2ef55a-e577-11ee-a11b-00155d30edf4/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcw",
+        "inputDataFormat": "qir.v1", "inputParams": {"entryPoint": "ENTRYPOINT__main",
+        "arguments": [], "targetCapability": "BasicExecution", "count": 100}, "metadata":
+        null, "sessionId": null, "status": "Failed", "jobType": "QuantumComputing",
+        "outputDataFormat": "microsoft.quantum-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-ac2ef55a-e577-11ee-a11b-00155d30edf4/outputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
+        null, "errorData": {"code": "InternalError", "message": "An internal error
+        occurred. Please retry the request."}, "isCancelling": false, "tags": [],
+        "name": "my-azure-quantum-job", "id": "ac2ef55a-e577-11ee-a11b-00155d30edf4",
+        "providerId": "rigetti", "target": "rigetti.sim.qvm", "creationTime": "2024-03-18T22:34:25.9668649Z",
+        "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}, {"containerUri":
+        "https://mystorage.blob.core.windows.net/job-010d212c-f38e-11ee-8b4d-00155d9e549f?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-010d212c-f38e-11ee-8b4d-00155d9e549f/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcw",
+        "inputDataFormat": "qir.v1", "inputParams": {"errorBudget": 0.01, "items":
+        [{"qubitParams": {"name": "qubit_gate_us_e3"}}, {"qubitParams": {"name": "qubit_gate_us_e4"}},
+        {"qubitParams": {"name": "qubit_gate_ns_e3"}}, {"qubitParams": {"name": "qubit_gate_ns_e4"}},
+        {"qubitParams": {"name": "qubit_maj_ns_e4"}, "qecScheme": {"name": "floquet_code"}},
+        {"qubitParams": {"name": "qubit_maj_ns_e6"}, "qecScheme": {"name": "floquet_code"}}],
+        "resumeAfterFailedItem": true, "fileUris": {"fcidumpUri": "https://aka.ms/fcidump/XVIII-cas4-fb-64e-56o"}},
+        "metadata": null, "sessionId": null, "status": "Failed", "jobType": "QuantumComputing",
+        "outputDataFormat": "microsoft.resource-estimates.v1", "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-010d212c-f38e-11ee-8b4d-00155d9e549f/outputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
+        {"count": 1}, "errorData": {"code": "InternalError", "message": "An internal
+        error occurred. Please retry the request."}, "isCancelling": false, "tags":
+        [], "name": "azure-quantum-job", "id": "010d212c-f38e-11ee-8b4d-00155d9e549f",
+        "providerId": "microsoft-qc", "target": "microsoft.estimator", "creationTime":
+        "2024-04-05T20:49:34.0532023Z", "endExecutionTime": null, "costEstimate":
+        null, "itemType": "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-ec3f0396-f77a-11ee-a84e-aa03815e5e6b?sv=PLACEHOLDER&sr=c&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcwl",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-ec3f0396-f77a-11ee-a84e-aa03815e5e6b/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcw",
+        "inputDataFormat": "microsoft.xyz.v1", "inputParams": {"tasks": [{"taskType":
+        "spe", "basisSet": {"name": "def2-svp", "cartesian": false}, "xcFunctional":
+        {"name": "m06-2x", "gridLevel": 4}, "scf": {"method": "rks", "maxSteps": 1,
+        "convergeThreshold": 1e-08}}]}, "metadata": null, "sessionId": null, "status":
+        "Failed", "jobType": "QuantumChemistry", "outputDataFormat": "microsoft.dft-results.v1",
+        "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-ec3f0396-f77a-11ee-a84e-aa03815e5e6b/rawOutputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "beginExecutionTime": "2024-04-10T20:43:50.4453167Z", "cancellationTime":
+        null, "quantumComputingData": null, "errorData": {"code": "RuntimeError",
+        "message": "The job failed due to a runtime error. Please check the output
+        file or the additional output zip file for error messages, and try submitting
+        the job again."}, "isCancelling": false, "tags": [], "name": "azure-quantum-dft-job",
+        "id": "ec3f0396-f77a-11ee-a84e-aa03815e5e6b", "providerId": "microsoft-elements",
+        "target": "microsoft.dft", "creationTime": "2024-04-10T20:43:16.4563031Z",
+        "endExecutionTime": "2024-04-10T20:45:28.8340662Z", "costEstimate": null,
+        "itemType": "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-57601815-f77b-11ee-99cf-aa03815e5e6b?sv=PLACEHOLDER&sr=c&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcwl",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-57601815-f77b-11ee-99cf-aa03815e5e6b/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcw",
+        "inputDataFormat": "microsoft.xyz.v1", "inputParams": {"tasks": [{"taskType":
+        "invlidTask", "basisSet": {"name": "def2-svp", "cartesian": false}, "xcFunctional":
+        {"name": "m06-2x", "gridLevel": 4}, "scf": {"method": "rks", "maxSteps": 100,
+        "convergeThreshold": 1e-08}}]}, "metadata": null, "sessionId": null, "status":
+        "Failed", "jobType": "QuantumChemistry", "outputDataFormat": "microsoft.dft-results.v1",
+        "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-57601815-f77b-11ee-99cf-aa03815e5e6b/rawOutputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "beginExecutionTime": "2024-04-10T20:46:11.5814379Z", "cancellationTime":
+        null, "quantumComputingData": null, "errorData": {"code": "InvalidInputData",
+        "message": "Invalid job params.\nValue \"invlidTask\" is not defined in enum.
+        Path: tasks[0].taskType."}, "isCancelling": false, "tags": [], "name": "azure-quantum-dft-job",
+        "id": "57601815-f77b-11ee-99cf-aa03815e5e6b", "providerId": "microsoft-elements",
+        "target": "microsoft.dft", "creationTime": "2024-04-10T20:46:10.7425703Z",
+        "endExecutionTime": "2024-04-10T20:46:11.5814379Z", "costEstimate": null,
+        "itemType": "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-5c0803e2-f77c-11ee-9754-aa03815e5e6b?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-5c0803e2-f77c-11ee-9754-aa03815e5e6b/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcw",
+        "inputDataFormat": "qir.v1", "inputParams": {"errorBudget": 2}, "metadata":
+        null, "sessionId": null, "status": "Failed", "jobType": "QuantumComputing",
+        "outputDataFormat": "microsoft.resource-estimates.v1", "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-5c0803e2-f77c-11ee-9754-aa03815e5e6b/rawOutputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "beginExecutionTime": "2024-04-11T16:07:02.6092234Z", "cancellationTime":
+        null, "quantumComputingData": {"count": 1}, "errorData": {"code": "InvalidInputError",
+        "message": "The error budget must be between 0.0 and 1.0, provided input was
+        `2`"}, "isCancelling": false, "tags": [], "name": "azure-quantum-job", "id":
+        "5c0803e2-f77c-11ee-9754-aa03815e5e6b", "providerId": "microsoft-qc", "target":
+        "microsoft.estimator", "creationTime": "2024-04-10T20:53:34.5078798Z", "endExecutionTime":
+        "2024-04-11T16:07:04.9630581Z", "costEstimate": null, "itemType": "Job"},
+        {"containerUri": "https://mystorage.blob.core.windows.net/job-09580c81-f786-11ee-9fe5-aa03815e5e6b?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-09580c81-f786-11ee-9fe5-aa03815e5e6b/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcw",
+        "inputDataFormat": "rigetti.quil.v1", "inputParams": {}, "metadata": null,
+        "sessionId": null, "status": "Failed", "jobType": "QuantumComputing", "outputDataFormat":
+        "rigetti.quil-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-09580c81-f786-11ee-9fe5-aa03815e5e6b/rawOutputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "beginExecutionTime": "2024-04-10T22:02:42.2593703Z", "cancellationTime":
+        null, "quantumComputingData": {"count": 1}, "errorData": {"code": "InvalidInputData",
+        "message": "QVM reported a problem running your program: error when calling
+        QVM: failed to perform multishot: Encountered the invalid instruction\n\n    a\n\nwhich
+        could not be executed because the operator a is not known"}, "isCancelling":
+        false, "tags": [], "name": "qdk-python-test", "id": "09580c81-f786-11ee-9fe5-aa03815e5e6b",
+        "providerId": "rigetti", "target": "rigetti.sim.qvm", "creationTime": "2024-04-10T22:02:38.7112335Z",
+        "endExecutionTime": "2024-04-10T22:02:42.7672812Z", "costEstimate": null,
+        "itemType": "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-30f81cb2-2d94-11ef-889d-00155d5128f1?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-30f81cb2-2d94-11ef-889d-00155d5128f1/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcw",
+        "inputDataFormat": "qir.v1", "inputParams": {"entryPoint": "ENTRYPOINT__main",
+        "arguments": [], "targetCapability": "BasicExecution", "shots": 20}, "metadata":
+        null, "sessionId": null, "status": "Failed", "jobType": "QuantumComputing",
+        "outputDataFormat": "microsoft.quantum-results.v2", "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-30f81cb2-2d94-11ef-889d-00155d5128f1/outputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
+        null, "errorData": {"code": "InternalError", "message": "An internal error
+        occurred. Please retry the request."}, "isCancelling": false, "tags": [],
+        "name": "Generate one random bit", "id": "30f81cb2-2d94-11ef-889d-00155d5128f1",
+        "providerId": "ionq", "target": "ionq.simulator", "creationTime": "2024-06-18T16:59:58.2428039Z",
+        "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}, {"containerUri":
+        "https://mystorage.blob.core.windows.net/job-91bcd466-2d94-11ef-889d-00155d5128f1?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-91bcd466-2d94-11ef-889d-00155d5128f1/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcw",
+        "inputDataFormat": "qir.v1", "inputParams": {"entryPoint": "ENTRYPOINT__main",
+        "arguments": [], "targetCapability": "BasicExecution", "shots": 20}, "metadata":
+        null, "sessionId": null, "status": "Failed", "jobType": "QuantumComputing",
+        "outputDataFormat": "microsoft.quantum-results.v2", "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-91bcd466-2d94-11ef-889d-00155d5128f1/outputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
+        null, "errorData": {"code": "InternalError", "message": "An internal error
+        occurred. Please retry the request."}, "isCancelling": false, "tags": [],
+        "name": "Generate one random bit", "id": "91bcd466-2d94-11ef-889d-00155d5128f1",
+        "providerId": "ionq", "target": "ionq.simulator", "creationTime": "2024-06-18T17:02:39.951774Z",
+        "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}, {"containerUri":
+        "https://mystorage.blob.core.windows.net/job-403b48aa-2d9b-11ef-8d13-00155d5128f1?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-403b48aa-2d9b-11ef-8d13-00155d5128f1/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcw",
+        "inputDataFormat": "qir.v1", "inputParams": {"entryPoint": "ENTRYPOINT__main",
+        "arguments": [], "targetCapability": "BasicExecution", "shots": 20}, "metadata":
+        null, "sessionId": null, "status": "Failed", "jobType": "QuantumComputing",
+        "outputDataFormat": "microsoft.quantum-results.v2", "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-403b48aa-2d9b-11ef-8d13-00155d5128f1/outputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
+        null, "errorData": {"code": "InternalError", "message": "An internal error
+        occurred. Please retry the request."}, "isCancelling": false, "tags": [],
+        "name": "Generate one random bit", "id": "403b48aa-2d9b-11ef-8d13-00155d5128f1",
+        "providerId": "ionq", "target": "ionq.simulator", "creationTime": "2024-06-18T17:50:30.2656495Z",
+        "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}, {"containerUri":
+        "https://mystorage.blob.core.windows.net/job-a3fc59fe-2dc5-11ef-97ee-00155d5128f1?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-a3fc59fe-2dc5-11ef-97ee-00155d5128f1/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcw",
+        "inputDataFormat": "qir.v1", "inputParams": {"entryPoint": "ENTRYPOINT__main",
+        "arguments": [], "targetCapability": "BasicExecution", "shots": 20}, "metadata":
+        null, "sessionId": null, "status": "Failed", "jobType": "QuantumComputing",
+        "outputDataFormat": "microsoft.quantum-results.v2", "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-a3fc59fe-2dc5-11ef-97ee-00155d5128f1/outputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
+        null, "errorData": {"code": "InternalError", "message": "An internal error
+        occurred. Please retry the request."}, "isCancelling": false, "tags": [],
+        "name": "Generate one random bit", "id": "a3fc59fe-2dc5-11ef-97ee-00155d5128f1",
+        "providerId": "ionq", "target": "ionq.simulator", "creationTime": "2024-06-18T22:53:56.7864101Z",
+        "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}, {"containerUri":
+        "https://mystorage.blob.core.windows.net/job-09bb1ff4-2dc7-11ef-97ee-00155d5128f1?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-09bb1ff4-2dc7-11ef-97ee-00155d5128f1/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcw",
+        "inputDataFormat": "qir.v1", "inputParams": {"entryPoint": "ENTRYPOINT__main",
+        "arguments": [], "targetCapability": "BasicExecution", "shots": 20}, "metadata":
+        null, "sessionId": null, "status": "Failed", "jobType": "QuantumComputing",
+        "outputDataFormat": "microsoft.quantum-results.v2", "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-09bb1ff4-2dc7-11ef-97ee-00155d5128f1/outputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
+        null, "errorData": {"code": "InternalError", "message": "An internal error
+        occurred. Please retry the request."}, "isCancelling": false, "tags": [],
+        "name": "Generate one random bit", "id": "09bb1ff4-2dc7-11ef-97ee-00155d5128f1",
+        "providerId": "ionq", "target": "ionq.simulator", "creationTime": "2024-06-18T23:03:56.6498382Z",
+        "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}, {"containerUri":
+        "https://mystorage.blob.core.windows.net/job-d8c5b9be-2e60-11ef-b25e-00155d274637?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-d8c5b9be-2e60-11ef-b25e-00155d274637/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcw",
+        "inputDataFormat": "microsoft.quantum-log.v1", "inputParams": {"entryPoint":
+        "ENTRYPOINT__main", "arguments": [], "targetCapability": "BasicExecution",
+        "shots": 20}, "metadata": null, "sessionId": null, "status": "Failed", "jobType":
+        "QuantumComputing", "outputDataFormat": "microsoft.quantum-results.v2", "outputDataUri":
+        "https://mystorage.blob.core.windows.net:443/job-d8c5b9be-2e60-11ef-b25e-00155d274637/outputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
+        null, "errorData": {"code": "CannotTranslateInputData", "message": "Unable
+        to translate input data in format ''microsoft.quantum-log.v1'' to a format
+        that ''ionq'' accepts. Please ensure that your ''providerId'', ''target'',
+        and ''inputDataFormat'' are all correct and your client SDK is up to date."},
+        "isCancelling": false, "tags": [], "name": "Generate one random bit", "id":
+        "d8c5b9be-2e60-11ef-b25e-00155d274637", "providerId": "ionq", "target": "ionq.simulator",
+        "creationTime": "2024-06-19T17:24:57.3460201Z", "endExecutionTime": null,
+        "costEstimate": null, "itemType": "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-ab398036-2e63-11ef-97b5-00155d274637?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-ab398036-2e63-11ef-97b5-00155d274637/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcw",
+        "inputDataFormat": "qir.v2", "inputParams": {"entryPoint": "ENTRYPOINT__main",
+        "arguments": [], "targetCapability": "BasicExecution", "shots": 20}, "metadata":
+        null, "sessionId": null, "status": "Failed", "jobType": "QuantumComputing",
+        "outputDataFormat": "microsoft.quantum-results.v2", "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-ab398036-2e63-11ef-97b5-00155d274637/outputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
+        null, "errorData": {"code": "CannotTranslateInputData", "message": "Unable
+        to translate input data in format ''qir.v2'' to a format that ''ionq'' accepts.
+        Please ensure that your ''providerId'', ''target'', and ''inputDataFormat''
+        are all correct and your client SDK is up to date."}, "isCancelling": false,
+        "tags": [], "name": "Generate one random bit", "id": "ab398036-2e63-11ef-97b5-00155d274637",
+        "providerId": "ionq", "target": "ionq.simulator", "creationTime": "2024-06-19T17:45:09.3478488Z",
+        "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}, {"containerUri":
+        "https://mystorage.blob.core.windows.net/job-05b15ee4-2e73-11ef-bd69-00155d274637?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-05b15ee4-2e73-11ef-bd69-00155d274637/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcw",
+        "inputDataFormat": "qir.v1", "inputParams": {"entryPoint": "ENTRYPOINT__main",
+        "arguments": [], "targetCapability": "BasicExecution", "count": 100}, "metadata":
+        null, "sessionId": null, "status": "Failed", "jobType": "QuantumComputing",
+        "outputDataFormat": "microsoft.quantum-results.v2", "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-05b15ee4-2e73-11ef-bd69-00155d274637/outputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "beginExecutionTime": "2024-06-19T19:35:10.686378Z", "cancellationTime": null,
+        "quantumComputingData": {"count": 1}, "errorData": {"code": "CannotTranslateOutputData",
+        "message": "The output returned by ''rigetti'' cannot be translated as specified
+        by ''outputDataFormat''. Please ensure that ''outputDataFormat'' is correct."},
+        "isCancelling": false, "tags": [], "name": "my-azure-quantum-job", "id": "05b15ee4-2e73-11ef-bd69-00155d274637",
+        "providerId": "rigetti", "target": "rigetti.sim.qvm", "creationTime": "2024-06-19T19:35:03.4265418Z",
+        "endExecutionTime": "2024-06-19T19:35:11.9862477Z", "costEstimate": null,
+        "itemType": "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-1a5ee082-2e73-11ef-829a-00155d274637?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-1a5ee082-2e73-11ef-829a-00155d274637/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcw",
+        "inputDataFormat": "qir.v1", "inputParams": {"errorBudget": 0.005}, "metadata":
+        null, "sessionId": null, "status": "Failed", "jobType": "QuantumComputing",
+        "outputDataFormat": "microsoft.resource-estimates.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-1a5ee082-2e73-11ef-829a-00155d274637/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcw",
+        "beginExecutionTime": "2024-06-25T00:03:14.1475192Z", "cancellationTime":
+        null, "quantumComputingData": {"count": 1}, "errorData": {"code": "InputFileMissing",
+        "message": "Failed to download file ''InputDataUri'', make sure that a valid
+        download link exists in the job data"}, "isCancelling": false, "tags": [],
+        "name": "azure-quantum-job", "id": "1a5ee082-2e73-11ef-829a-00155d274637",
+        "providerId": "microsoft-qc", "target": "microsoft.estimator", "creationTime":
+        "2024-06-19T19:35:37.6337024Z", "endExecutionTime": "2024-06-25T00:03:20.3667452Z",
+        "costEstimate": null, "itemType": "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-df688f22-2e78-11ef-b404-00155d274637?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-df688f22-2e78-11ef-b404-00155d274637/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcw",
+        "inputDataFormat": "qir.v1", "inputParams": {"entryPoint": "ENTRYPOINT__main",
+        "arguments": [], "targetCapability": "BasicExecution", "count": 100}, "metadata":
+        null, "sessionId": null, "status": "Failed", "jobType": "QuantumComputing",
+        "outputDataFormat": "microsoft.quantum-results.v2", "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-df688f22-2e78-11ef-b404-00155d274637/outputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "beginExecutionTime": "2024-06-19T20:17:01.544481Z", "cancellationTime": null,
+        "quantumComputingData": {"count": 1}, "errorData": {"code": "CannotTranslateOutputData",
+        "message": "The output returned by ''rigetti'' cannot be translated as specified
+        by ''outputDataFormat''. Please ensure that ''outputDataFormat'' is correct."},
+        "isCancelling": false, "tags": [], "name": "my-azure-quantum-job", "id": "df688f22-2e78-11ef-b404-00155d274637",
+        "providerId": "rigetti", "target": "rigetti.sim.qvm", "creationTime": "2024-06-19T20:16:55.6425849Z",
+        "endExecutionTime": "2024-06-19T20:17:02.8104032Z", "costEstimate": null,
+        "itemType": "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-b0715da6-2e83-11ef-b404-00155d274637?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-b0715da6-2e83-11ef-b404-00155d274637/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcw",
+        "inputDataFormat": "qir.v1", "inputParams": {"entryPoint": "ENTRYPOINT__main",
+        "arguments": [], "targetCapability": "BasicExecution", "count": 100}, "metadata":
+        null, "sessionId": null, "status": "Failed", "jobType": "QuantumComputing",
+        "outputDataFormat": "microsoft.quantum-results.v2", "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-b0715da6-2e83-11ef-b404-00155d274637/outputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "beginExecutionTime": "2024-06-19T21:34:30.3664363Z", "cancellationTime":
+        null, "quantumComputingData": {"count": 1}, "errorData": {"code": "CannotTranslateOutputData",
+        "message": "The output returned by ''rigetti'' cannot be translated as specified
+        by ''outputDataFormat''. Please ensure that ''outputDataFormat'' is correct."},
+        "isCancelling": false, "tags": [], "name": "my-azure-quantum-job", "id": "b0715da6-2e83-11ef-b404-00155d274637",
+        "providerId": "rigetti", "target": "rigetti.sim.qvm", "creationTime": "2024-06-19T21:34:21.7694819Z",
+        "endExecutionTime": "2024-06-19T21:34:31.6866809Z", "costEstimate": null,
+        "itemType": "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-8db18130-3007-11ef-a31c-00155da717f6?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-8db18130-3007-11ef-a31c-00155da717f6/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcw",
+        "inputDataFormat": "qir.v1", "inputParams": {"shots": 100, "count": 100},
+        "metadata": {"qiskit": "True", "name": "Single qubit random", "num_qubits":
+        "1", "metadata": "{}", "meas_map": "[0]"}, "sessionId": null, "status": "Failed",
+        "jobType": "QuantumComputing", "outputDataFormat": "microsoft.quantum-results.v2",
+        "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-8db18130-3007-11ef-a31c-00155da717f6/outputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
+        null, "errorData": {"code": "QIRLinkingFailed", "message": "Failed to load
+        /home/input/qir\nCould not load /home/input/qir\n\n\n\n"}, "isCancelling":
+        false, "tags": [], "name": "Single qubit random", "id": "8db18130-3007-11ef-a31c-00155da717f6",
+        "providerId": "ionq", "target": "ionq.simulator", "creationTime": "2024-06-21T19:50:48.1686073Z",
+        "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}, {"containerUri":
+        "https://mystorage.blob.core.windows.net/job-98e96eaa-3007-11ef-a31c-00155da717f6?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-98e96eaa-3007-11ef-a31c-00155da717f6/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcw",
+        "inputDataFormat": "qir.v1", "inputParams": {"shots": 100, "count": 100},
+        "metadata": {"qiskit": "True", "name": "Single qubit random", "num_qubits":
+        "1", "metadata": "{}", "meas_map": "[0]"}, "sessionId": null, "status": "Failed",
+        "jobType": "QuantumComputing", "outputDataFormat": "microsoft.quantum-results.v2",
+        "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-98e96eaa-3007-11ef-a31c-00155da717f6/outputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
+        null, "errorData": {"code": "QIRLinkingFailed", "message": "Failed to load
+        /home/input/qir\nCould not load /home/input/qir\n\n\n\n"}, "isCancelling":
+        false, "tags": [], "name": "Single qubit random", "id": "98e96eaa-3007-11ef-a31c-00155da717f6",
+        "providerId": "ionq", "target": "ionq.simulator", "creationTime": "2024-06-21T19:51:06.4043075Z",
+        "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}, {"containerUri":
+        "https://mystorage.blob.core.windows.net/job-098d8196-3008-11ef-a31c-00155da717f6?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-098d8196-3008-11ef-a31c-00155da717f6/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcw",
+        "inputDataFormat": "ionq.circuit.v1", "inputParams": {"shots": 100, "count":
+        100}, "metadata": {"qiskit": "True", "name": "Single qubit random", "num_qubits":
+        "1", "metadata": "{}", "meas_map": "[0]"}, "sessionId": null, "status": "Failed",
+        "jobType": "QuantumComputing", "outputDataFormat": "microsoft.quantum-results.v2",
+        "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-098d8196-3008-11ef-a31c-00155da717f6/outputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "beginExecutionTime": "2024-06-21T19:54:17.308Z", "cancellationTime": null,
+        "quantumComputingData": {"count": 1}, "errorData": {"code": "CannotTranslateOutputData",
+        "message": "The output returned by ''ionq'' cannot be translated as specified
+        by ''outputDataFormat''. Please ensure that ''outputDataFormat'' is correct."},
+        "isCancelling": false, "tags": [], "name": "Single qubit random", "id": "098d8196-3008-11ef-a31c-00155da717f6",
+        "providerId": "ionq", "target": "ionq.simulator", "creationTime": "2024-06-21T19:54:15.2896828Z",
+        "endExecutionTime": "2024-06-21T19:54:17.341Z", "costEstimate": null, "itemType":
+        "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-93c422d2-300a-11ef-bf4c-00155da717f6?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-93c422d2-300a-11ef-bf4c-00155da717f6/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcw",
+        "inputDataFormat": "ionq.circuit.v1", "inputParams": {"shots": 100}, "metadata":
+        {"measurement0": "q(0)\u001f0", "qubits": "1"}, "sessionId": null, "status":
+        "Failed", "jobType": "QuantumComputing", "outputDataFormat": "microsoft.quantum-results.v2",
+        "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-93c422d2-300a-11ef-bf4c-00155da717f6/outputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "beginExecutionTime": "2024-06-21T20:12:29.064Z", "cancellationTime": null,
+        "quantumComputingData": {"count": 1}, "errorData": {"code": "CannotTranslateOutputData",
+        "message": "The output returned by ''ionq'' cannot be translated as specified
+        by ''outputDataFormat''. Please ensure that ''outputDataFormat'' is correct."},
+        "isCancelling": false, "tags": [], "name": "hello world-cirq-ionq", "id":
+        "93c422d2-300a-11ef-bf4c-00155da717f6", "providerId": "ionq", "target": "ionq.simulator",
+        "creationTime": "2024-06-21T20:12:26.8565498Z", "endExecutionTime": "2024-06-21T20:12:29.08Z",
+        "costEstimate": null, "itemType": "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-aa4bae6c-3271-11ef-ab80-00155dee0d01?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-aa4bae6c-3271-11ef-ab80-00155dee0d01/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcw",
+        "inputDataFormat": "ionq.circuit.v1", "inputParams": {"shots": 100, "count":
+        100}, "metadata": {"qiskit": "True", "name": "Single qubit random", "num_qubits":
+        "1", "metadata": "{}", "meas_map": "[0]"}, "sessionId": null, "status": "Failed",
+        "jobType": "QuantumComputing", "outputDataFormat": "microsoft.quantum-results.v2",
+        "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-aa4bae6c-3271-11ef-ab80-00155dee0d01/outputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "beginExecutionTime": "2024-06-24T21:35:27.247Z", "cancellationTime": null,
+        "quantumComputingData": {"count": 1}, "errorData": {"code": "CannotTranslateOutputData",
+        "message": "The output returned by ''ionq'' cannot be translated as specified
+        by ''outputDataFormat''. Please ensure that ''outputDataFormat'' is correct."},
+        "isCancelling": false, "tags": [], "name": "Single qubit random", "id": "aa4bae6c-3271-11ef-ab80-00155dee0d01",
+        "providerId": "ionq", "target": "ionq.simulator", "creationTime": "2024-06-24T21:35:25.2938335Z",
+        "endExecutionTime": "2024-06-24T21:35:27.265Z", "costEstimate": null, "itemType":
+        "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-1d7bd8d4-3340-11ef-af5e-00155d68be75?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-1d7bd8d4-3340-11ef-af5e-00155d68be75/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcw",
+        "inputDataFormat": "ionq.circuit.v1", "inputParams": {"shots": 100, "count":
+        100}, "metadata": {"qiskit": "True", "name": "Single qubit random", "num_qubits":
+        "1", "metadata": "{}", "meas_map": "[0]"}, "sessionId": null, "status": "Failed",
+        "jobType": "QuantumComputing", "outputDataFormat": "microsoft.quantum-results.v2",
+        "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-1d7bd8d4-3340-11ef-af5e-00155d68be75/outputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "beginExecutionTime": "2024-06-25T22:13:17.039Z", "cancellationTime": null,
+        "quantumComputingData": {"count": 1}, "errorData": {"code": "CannotTranslateOutputData",
+        "message": "The output returned by ''ionq'' cannot be translated as specified
+        by ''outputDataFormat''. Please ensure that ''outputDataFormat'' is correct."},
+        "isCancelling": false, "tags": [], "name": "Single qubit random", "id": "1d7bd8d4-3340-11ef-af5e-00155d68be75",
+        "providerId": "ionq", "target": "ionq.simulator", "creationTime": "2024-06-25T22:13:14.7849517Z",
+        "endExecutionTime": "2024-06-25T22:13:17.081Z", "costEstimate": null, "itemType":
+        "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-8559cda8-3340-11ef-af5e-00155d68be75?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-8559cda8-3340-11ef-af5e-00155d68be75/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcw",
+        "inputDataFormat": "ionq.circuit.v1", "inputParams": {"shots": 100, "count":
+        100}, "metadata": {"qiskit": "True", "name": "Single qubit random", "num_qubits":
+        "1", "metadata": "{}", "meas_map": "[0]"}, "sessionId": null, "status": "Failed",
+        "jobType": "QuantumComputing", "outputDataFormat": "microsoft.quantum-results.v2",
+        "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-8559cda8-3340-11ef-af5e-00155d68be75/outputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "beginExecutionTime": "2024-06-25T22:16:10.127Z", "cancellationTime": null,
+        "quantumComputingData": {"count": 1}, "errorData": {"code": "CannotTranslateOutputData",
+        "message": "The output returned by ''ionq'' cannot be translated as specified
+        by ''outputDataFormat''. Please ensure that ''outputDataFormat'' is correct."},
+        "isCancelling": false, "tags": [], "name": "Single qubit random", "id": "8559cda8-3340-11ef-af5e-00155d68be75",
+        "providerId": "ionq", "target": "ionq.simulator", "creationTime": "2024-06-25T22:16:08.2684463Z",
+        "endExecutionTime": "2024-06-25T22:16:10.152Z", "costEstimate": null, "itemType":
+        "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-9a75480c-3340-11ef-af5e-00155d68be75?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-9a75480c-3340-11ef-af5e-00155d68be75/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcw",
+        "inputDataFormat": "ionq.circuit.v1", "inputParams": {"shots": 100, "count":
+        100}, "metadata": {"qiskit": "True", "name": "Single qubit random", "num_qubits":
+        "1", "metadata": "{}", "meas_map": "[0]"}, "sessionId": null, "status": "Failed",
+        "jobType": "QuantumComputing", "outputDataFormat": "microsoft.quantum-results.v2",
+        "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-9a75480c-3340-11ef-af5e-00155d68be75/outputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "beginExecutionTime": "2024-06-25T22:16:45.401Z", "cancellationTime": null,
+        "quantumComputingData": {"count": 1}, "errorData": {"code": "CannotTranslateOutputData",
+        "message": "The output returned by ''ionq'' cannot be translated as specified
+        by ''outputDataFormat''. Please ensure that ''outputDataFormat'' is correct."},
+        "isCancelling": false, "tags": [], "name": "Single qubit random", "id": "9a75480c-3340-11ef-af5e-00155d68be75",
+        "providerId": "ionq", "target": "ionq.simulator", "creationTime": "2024-06-25T22:16:43.6560718Z",
+        "endExecutionTime": "2024-06-25T22:16:45.424Z", "costEstimate": null, "itemType":
+        "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-a33a4b86-3340-11ef-af5e-00155d68be75?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-a33a4b86-3340-11ef-af5e-00155d68be75/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcw",
+        "inputDataFormat": "ionq.circuit.v1", "inputParams": {"shots": 100, "count":
+        100}, "metadata": {"qiskit": "True", "name": "Single qubit random", "num_qubits":
+        "1", "metadata": "{}", "meas_map": "[0]"}, "sessionId": null, "status": "Failed",
+        "jobType": "QuantumComputing", "outputDataFormat": "microsoft.quantum-results.v2",
+        "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-a33a4b86-3340-11ef-af5e-00155d68be75/outputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "beginExecutionTime": "2024-06-25T22:17:00.246Z", "cancellationTime": null,
+        "quantumComputingData": {"count": 1}, "errorData": {"code": "CannotTranslateOutputData",
+        "message": "The output returned by ''ionq'' cannot be translated as specified
+        by ''outputDataFormat''. Please ensure that ''outputDataFormat'' is correct."},
+        "isCancelling": false, "tags": [], "name": "Single qubit random", "id": "a33a4b86-3340-11ef-af5e-00155d68be75",
+        "providerId": "ionq", "target": "ionq.simulator", "creationTime": "2024-06-25T22:16:58.5828939Z",
+        "endExecutionTime": "2024-06-25T22:17:00.274Z", "costEstimate": null, "itemType":
+        "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-dac903fa-34bf-11ef-8d51-00155d7a5058?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-dac903fa-34bf-11ef-8d51-00155d7a5058/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcw",
+        "inputDataFormat": "qir.v1", "inputParams": {"entryPoint": "ENTRYPOINT__main",
+        "arguments": []}, "metadata": null, "sessionId": null, "status": "Failed",
+        "jobType": "QuantumComputing", "outputDataFormat": "microsoft.quantum-results.v2",
+        "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-dac903fa-34bf-11ef-8d51-00155d7a5058/outputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "beginExecutionTime": "2024-06-27T20:00:13.7587447Z", "cancellationTime":
+        null, "quantumComputingData": {"count": 1}, "errorData": {"code": "BitcodeError",
+        "message": "QIR bitcode has invalid format; did you submit ASCII payload?"},
+        "isCancelling": false, "tags": [], "name": "Generate one random bit", "id":
+        "dac903fa-34bf-11ef-8d51-00155d7a5058", "providerId": "microsoft-qc", "target":
+        "microsoft.estimator", "creationTime": "2024-06-27T20:00:09.9216539Z", "endExecutionTime":
+        "2024-06-27T20:00:14.5511262Z", "costEstimate": null, "itemType": "Job"},
+        {"containerUri": "https://mystorage.blob.core.windows.net/job-f929a8ae-34bf-11ef-8d51-00155d7a5058?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-f929a8ae-34bf-11ef-8d51-00155d7a5058/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcw",
+        "inputDataFormat": "qir.v1", "inputParams": {"entryPoint": "ENTRYPOINT__main",
+        "arguments": []}, "metadata": null, "sessionId": null, "status": "Failed",
+        "jobType": "QuantumComputing", "outputDataFormat": "microsoft.resource-estimates.v1",
+        "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-f929a8ae-34bf-11ef-8d51-00155d7a5058/rawOutputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "beginExecutionTime": "2024-06-27T20:01:00.919568Z", "cancellationTime": null,
+        "quantumComputingData": {"count": 1}, "errorData": {"code": "BitcodeError",
+        "message": "QIR bitcode has invalid format; did you submit ASCII payload?"},
+        "isCancelling": false, "tags": [], "name": "Generate one random bit", "id":
+        "f929a8ae-34bf-11ef-8d51-00155d7a5058", "providerId": "microsoft-qc", "target":
+        "microsoft.estimator", "creationTime": "2024-06-27T20:00:59.9131045Z", "endExecutionTime":
+        "2024-06-27T20:01:01.6502888Z", "costEstimate": null, "itemType": "Job"},
+        {"containerUri": "https://mystorage.blob.core.windows.net/job-0f5d0152-34c0-11ef-8d51-00155d7a5058?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-0f5d0152-34c0-11ef-8d51-00155d7a5058/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcw",
+        "inputDataFormat": "qir.v1", "inputParams": {"entryPoint": "ENTRYPOINT__main",
+        "arguments": [], "targetCapability": "BasicExecution", "count": 20}, "metadata":
+        null, "sessionId": null, "status": "Failed", "jobType": "QuantumComputing",
+        "outputDataFormat": "microsoft.quantum-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-0f5d0152-34c0-11ef-8d51-00155d7a5058/outputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
+        null, "errorData": {"code": "CannotTranslateInputData", "message": "Unable
+        to translate input data in format ''qir.v1'' to a format that ''pasqal'' accepts.
+        Please ensure that your ''providerId'', ''target'', and ''inputDataFormat''
+        are all correct and your client SDK is up to date."}, "isCancelling": false,
+        "tags": [], "name": "Generate one random bit", "id": "0f5d0152-34c0-11ef-8d51-00155d7a5058",
+        "providerId": "pasqal", "target": "pasqal.sim.emu-tn", "creationTime": "2024-06-27T20:01:37.2333715Z",
+        "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}, {"containerUri":
+        "https://mystorage.blob.core.windows.net/job-35395b3c-34c0-11ef-8d51-00155d7a5058?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-35395b3c-34c0-11ef-8d51-00155d7a5058/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcw",
+        "inputDataFormat": "qir.v1", "inputParams": {"entryPoint": "ENTRYPOINT__main",
+        "arguments": []}, "metadata": null, "sessionId": null, "status": "Failed",
+        "jobType": "QuantumComputing", "outputDataFormat": "microsoft.quantum-results.v2",
+        "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-35395b3c-34c0-11ef-8d51-00155d7a5058/outputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "beginExecutionTime": "2024-06-27T20:02:41.8749635Z", "cancellationTime":
+        null, "quantumComputingData": {"count": 1}, "errorData": {"code": "BitcodeError",
+        "message": "QIR bitcode has invalid format; did you submit ASCII payload?"},
+        "isCancelling": false, "tags": [], "name": "Generate one random bit", "id":
+        "35395b3c-34c0-11ef-8d51-00155d7a5058", "providerId": "microsoft-qc", "target":
+        "microsoft.estimator", "creationTime": "2024-06-27T20:02:40.681621Z", "endExecutionTime":
+        "2024-06-27T20:02:42.843771Z", "costEstimate": null, "itemType": "Job"}, {"containerUri":
+        "https://mystorage.blob.core.windows.net/job-634f4d1a-34c0-11ef-8d51-00155d7a5058?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-634f4d1a-34c0-11ef-8d51-00155d7a5058/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcw",
+        "inputDataFormat": "qir.v1", "inputParams": {"entryPoint": "ENTRYPOINT__main",
+        "arguments": [], "targetCapability": "BasicExecution", "count": 20}, "metadata":
+        null, "sessionId": null, "status": "Failed", "jobType": "QuantumComputing",
+        "outputDataFormat": "microsoft.quantum-results.v2", "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-634f4d1a-34c0-11ef-8d51-00155d7a5058/outputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
+        null, "errorData": {"code": "CannotTranslateInputData", "message": "Unable
+        to translate input data in format ''qir.v1'' to a format that ''pasqal'' accepts.
+        Please ensure that your ''providerId'', ''target'', and ''inputDataFormat''
+        are all correct and your client SDK is up to date."}, "isCancelling": false,
+        "tags": [], "name": "Generate one random bit", "id": "634f4d1a-34c0-11ef-8d51-00155d7a5058",
+        "providerId": "pasqal", "target": "pasqal.sim.emu-tn", "creationTime": "2024-06-27T20:03:58.202187Z",
+        "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}, {"containerUri":
+        "https://mystorage.blob.core.windows.net/job-7b0c8e4a-34c0-11ef-8d51-00155d7a5058?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-7b0c8e4a-34c0-11ef-8d51-00155d7a5058/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcw",
+        "inputDataFormat": "qir.v1", "inputParams": {"entryPoint": "ENTRYPOINT__main",
+        "arguments": [], "targetCapability": "BasicExecution", "count": 20}, "metadata":
+        null, "sessionId": null, "status": "Failed", "jobType": "QuantumComputing",
+        "outputDataFormat": "microsoft.quantum-results.v2", "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-7b0c8e4a-34c0-11ef-8d51-00155d7a5058/outputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
+        null, "errorData": {"code": "CannotTranslateInputData", "message": "Unable
+        to translate input data in format ''qir.v1'' to a format that ''pasqal'' accepts.
+        Please ensure that your ''providerId'', ''target'', and ''inputDataFormat''
+        are all correct and your client SDK is up to date."}, "isCancelling": false,
+        "tags": [], "name": "Generate one random bit", "id": "7b0c8e4a-34c0-11ef-8d51-00155d7a5058",
+        "providerId": "pasqal", "target": "pasqal.qpu.fresnel", "creationTime": "2024-06-27T20:04:37.8264268Z",
+        "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}, {"containerUri":
+        "https://mystorage.blob.core.windows.net/job-111f1b0a-37c8-11ef-b16d-00155d9b6dc6?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-111f1b0a-37c8-11ef-b16d-00155d9b6dc6/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcw",
+        "inputDataFormat": "qir.v1", "inputParams": {"entryPoint": "ENTRYPOINT__main",
+        "arguments": [], "targetCapability": "BasicExecution", "count": 100}, "metadata":
+        null, "sessionId": null, "status": "Failed", "jobType": "QuantumComputing",
+        "outputDataFormat": "microsoft.quantum-results.v2", "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-111f1b0a-37c8-11ef-b16d-00155d9b6dc6/outputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "beginExecutionTime": "2024-07-01T23:05:05.066809Z", "cancellationTime": null,
+        "quantumComputingData": {"count": 1}, "errorData": {"code": "CannotTranslateOutputData",
+        "message": "The output returned by ''rigetti'' cannot be translated as specified
+        by ''outputDataFormat''. Please ensure that ''outputDataFormat'' is correct."},
+        "isCancelling": false, "tags": [], "name": "my-azure-quantum-job", "id": "111f1b0a-37c8-11ef-b16d-00155d9b6dc6",
+        "providerId": "rigetti", "target": "rigetti.sim.qvm", "creationTime": "2024-07-01T16:36:29.8830679Z",
+        "endExecutionTime": "2024-07-01T23:05:06.2655469Z", "costEstimate": null,
+        "itemType": "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-16575b40-37c9-11ef-b16d-00155d9b6dc6?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-16575b40-37c9-11ef-b16d-00155d9b6dc6/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcw",
+        "inputDataFormat": "qir.v1", "inputParams": {"entryPoint": "ENTRYPOINT__main",
+        "arguments": [], "targetCapability": "BasicExecution", "count": 100}, "metadata":
+        null, "sessionId": null, "status": "Failed", "jobType": "QuantumComputing",
+        "outputDataFormat": "microsoft.quantum-results.v2", "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-16575b40-37c9-11ef-b16d-00155d9b6dc6/outputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "beginExecutionTime": "2024-07-01T23:05:01.0812422Z", "cancellationTime":
+        null, "quantumComputingData": {"count": 1}, "errorData": {"code": "CannotTranslateOutputData",
+        "message": "The output returned by ''rigetti'' cannot be translated as specified
+        by ''outputDataFormat''. Please ensure that ''outputDataFormat'' is correct."},
+        "isCancelling": false, "tags": [], "name": "my-azure-quantum-job", "id": "16575b40-37c9-11ef-b16d-00155d9b6dc6",
+        "providerId": "rigetti", "target": "rigetti.sim.qvm", "creationTime": "2024-07-01T16:43:48.0067654Z",
+        "endExecutionTime": "2024-07-01T23:05:02.3353759Z", "costEstimate": null,
+        "itemType": "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-cab6289c-3fac-11ef-a9cf-00155d8f2915?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-cab6289c-3fac-11ef-a9cf-00155d8f2915/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcw",
+        "inputDataFormat": "qir.v1", "inputParams": {"entryPoint": "ENTRYPOINT__main",
+        "arguments": [], "targetCapability": "AdaptiveExecution", "count": 20}, "metadata":
+        null, "sessionId": null, "status": "Failed", "jobType": "QuantumComputing",
+        "outputDataFormat": "microsoft.quantum-results.v2", "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-cab6289c-3fac-11ef-a9cf-00155d8f2915/outputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
+        null, "errorData": {"code": "InternalError", "message": "An internal error
+        occurred. Please retry the request."}, "isCancelling": false, "tags": [],
+        "name": "Generate one random bit", "id": "cab6289c-3fac-11ef-a9cf-00155d8f2915",
+        "providerId": "quantinuum", "target": "quantinuum.sim.h1-1sc", "creationTime":
+        "2024-07-11T17:41:25.2615652Z", "endExecutionTime": null, "costEstimate":
+        null, "itemType": "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-e101aa68-3fac-11ef-a9cf-00155d8f2915?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-e101aa68-3fac-11ef-a9cf-00155d8f2915/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcw",
+        "inputDataFormat": "qir.v1", "inputParams": {"entryPoint": "ENTRYPOINT__main",
+        "arguments": [], "targetCapability": "AdaptiveExecution", "count": 20}, "metadata":
+        null, "sessionId": null, "status": "Failed", "jobType": "QuantumComputing",
+        "outputDataFormat": "microsoft.quantum-results.v2", "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-e101aa68-3fac-11ef-a9cf-00155d8f2915/outputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
+        null, "errorData": {"code": "InternalError", "message": "An internal error
+        occurred. Please retry the request."}, "isCancelling": false, "tags": [],
+        "name": "Generate one random bit", "id": "e101aa68-3fac-11ef-a9cf-00155d8f2915",
+        "providerId": "quantinuum", "target": "quantinuum.sim.h1-1sc", "creationTime":
+        "2024-07-11T17:42:01.7928524Z", "endExecutionTime": null, "costEstimate":
+        null, "itemType": "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-b55ba562-7b7f-11ef-a20d-00155daa5684?sv=PLACEHOLDER&ss=b&srt=co&spr=https&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sp=rwlac&sig=PLACEHOLDER",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-b55ba562-7b7f-11ef-a20d-00155daa5684/inputData?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=b&sp=rcw&sig=PLACEHOLDER",
+        "inputDataFormat": "qir.v1", "inputParams": {"entryPoint": "ENTRYPOINT__main",
+        "arguments": [], "targetCapability": "AdaptiveExecution", "count": 100}, "metadata":
+        null, "sessionId": null, "status": "Cancelled", "jobType": "QuantumComputing",
+        "outputDataFormat": "microsoft.quantum-results.v2", "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-b55ba562-7b7f-11ef-a20d-00155daa5684/outputData?sv=PLACEHOLDER&ss=b&srt=co&spr=https&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sp=rwlac&sig=PLACEHOLDER",
+        "beginExecutionTime": null, "cancellationTime": "2024-09-25T22:00:50.042277Z",
+        "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling": false,
+        "tags": [], "name": "Generate one random bit", "id": "b55ba562-7b7f-11ef-a20d-00155daa5684",
+        "providerId": "quantinuum", "target": "quantinuum.qpu.h2-2", "creationTime":
+        "2024-09-25T20:49:52.1335494Z", "endExecutionTime": null, "costEstimate":
+        null, "itemType": "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-28e7a310-7b89-11ef-a20d-00155daa5684?sv=PLACEHOLDER&ss=b&srt=co&spr=https&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sp=rwlac&sig=PLACEHOLDER",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-28e7a310-7b89-11ef-a20d-00155daa5684/inputData?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=b&sp=rcw&sig=PLACEHOLDER",
+        "inputDataFormat": "qir.v1", "inputParams": {"entryPoint": "ENTRYPOINT__main",
+        "arguments": [], "targetCapability": "AdaptiveExecution", "count": 100}, "metadata":
+        null, "sessionId": null, "status": "Failed", "jobType": "QuantumComputing",
+        "outputDataFormat": "microsoft.quantum-results.v2", "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-28e7a310-7b89-11ef-a20d-00155daa5684/outputData?sv=PLACEHOLDER&ss=b&srt=co&spr=https&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sp=rwlac&sig=PLACEHOLDER",
+        "beginExecutionTime": "2024-09-25T21:57:56.929187Z", "cancellationTime": null,
+        "quantumComputingData": {"count": 1}, "errorData": {"code": "quantinuum -
+        1000", "message": "1000: the JSON object must be str, bytes or bytearray,
+        not NoneType"}, "isCancelling": false, "tags": [], "name": "Generate one random
+        bit", "id": "28e7a310-7b89-11ef-a20d-00155daa5684", "providerId": "quantinuum",
+        "target": "quantinuum.sim.h2-2e", "creationTime": "2024-09-25T21:57:30.6160134Z",
+        "endExecutionTime": "2024-09-25T21:57:56.940863Z", "costEstimate": null, "itemType":
+        "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-cf43aa11-e4df-11ef-88d5-5414f37777d8?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=c&sp=rcwl&sig=PLACEHOLDER",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-cf43aa11-e4df-11ef-88d5-5414f37777d8/inputData?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=b&sp=rcw&sig=PLACEHOLDER",
+        "inputDataFormat": "microsoft.xyz.v1", "inputParams": {"tasks": [{"taskType":
+        "spe", "basisSet": {"name": "def2-svp", "cartesian": false}, "xcFunctional":
+        {"name": "m06-2x", "gridLevel": 4}, "scf": {"method": "rks", "maxSteps": 1,
+        "convergeThreshold": 1e-08}}]}, "metadata": null, "sessionId": null, "status":
+        "Failed", "jobType": "QuantumChemistry", "outputDataFormat": "microsoft.dft-results.v1",
+        "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-cf43aa11-e4df-11ef-88d5-5414f37777d8/rawOutputData?sv=PLACEHOLDER&ss=b&srt=co&spr=https&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sp=rwlac&sig=PLACEHOLDER",
+        "beginExecutionTime": "2025-02-08T03:11:37.4326168Z", "cancellationTime":
+        null, "quantumComputingData": null, "errorData": {"code": "RuntimeError",
+        "message": "The job failed due to a runtime error. Please check the output
+        file or the additional output zip file for error messages, and try submitting
+        the job again."}, "isCancelling": false, "tags": [], "name": "azure-quantum-dft-job",
+        "id": "cf43aa11-e4df-11ef-88d5-5414f37777d8", "providerId": "microsoft-elements",
+        "target": "microsoft.dft", "creationTime": "2025-02-06T23:12:20.4292184Z",
+        "endExecutionTime": "2025-02-08T03:13:10.0897681Z", "costEstimate": null,
+        "itemType": "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-85b105c5-e4e0-11ef-a5b6-5414f37777d8?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=c&sp=rcwl&sig=PLACEHOLDER",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-85b105c5-e4e0-11ef-a5b6-5414f37777d8/inputData?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=b&sp=rcw&sig=PLACEHOLDER",
+        "inputDataFormat": "microsoft.xyz.v1", "inputParams": {"tasks": [{"taskType":
+        "invlidTask", "basisSet": {"name": "def2-svp", "cartesian": false}, "xcFunctional":
+        {"name": "m06-2x", "gridLevel": 4}, "scf": {"method": "rks", "maxSteps": 100,
+        "convergeThreshold": 1e-08}}]}, "metadata": null, "sessionId": null, "status":
+        "Failed", "jobType": "QuantumChemistry", "outputDataFormat": "microsoft.dft-results.v1",
+        "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-85b105c5-e4e0-11ef-a5b6-5414f37777d8/rawOutputData?sv=PLACEHOLDER&ss=b&srt=co&spr=https&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sp=rwlac&sig=PLACEHOLDER",
+        "beginExecutionTime": "2025-02-07T19:52:18.4809993Z", "cancellationTime":
+        null, "quantumComputingData": null, "errorData": {"code": "InvalidInputData",
+        "message": "Invalid job params.\nValue \"invlidTask\" is not defined in enum.
+        Path: tasks[0].taskType."}, "isCancelling": false, "tags": [], "name": "azure-quantum-dft-job",
+        "id": "85b105c5-e4e0-11ef-a5b6-5414f37777d8", "providerId": "microsoft-elements",
+        "target": "microsoft.dft", "creationTime": "2025-02-06T23:17:28.0029202Z",
+        "endExecutionTime": "2025-02-07T19:52:18.4809993Z", "costEstimate": null,
+        "itemType": "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-4c6ac453-eb31-11ef-bb63-5414f37777d8?sv=PLACEHOLDER&ss=b&srt=co&spr=https&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sp=rwlac&sig=PLACEHOLDER",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-4c6ac453-eb31-11ef-bb63-5414f37777d8/inputData?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=b&sp=rcw&sig=PLACEHOLDER",
+        "inputDataFormat": "qir.v1", "inputParams": {"entryPoint": "ENTRYPOINT__main",
+        "arguments": [], "target_profile": "Adaptive_RI"}, "metadata": null, "sessionId":
+        "4bc42c27-eb31-11ef-9cf8-5414f37777d8", "status": "Failed", "jobType": "QuantumComputing",
+        "outputDataFormat": "invalid_output_format", "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-4c6ac453-eb31-11ef-bb63-5414f37777d8/outputData?sv=PLACEHOLDER&ss=b&srt=co&spr=https&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sp=rwlac&sig=PLACEHOLDER",
+        "beginExecutionTime": "2025-02-15T00:10:52.439Z", "cancellationTime": null,
+        "quantumComputingData": {"count": 1}, "errorData": {"code": "CannotTranslateOutputData",
+        "message": "The output returned by ''microsoft.test.firstparty'' cannot be
+        translated as specified by ''outputDataFormat''. Please ensure that ''outputDataFormat''
+        is correct."}, "isCancelling": false, "tags": [], "name": "Bad Job 1", "id":
+        "4c6ac453-eb31-11ef-bb63-5414f37777d8", "providerId": "microsoft.test.firstparty",
+        "target": "echo-quantinuum", "creationTime": "2025-02-15T00:10:47.4069176Z",
+        "endExecutionTime": "2025-02-15T00:10:53.051Z", "costEstimate": null, "itemType":
+        "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-5be8355e-eb31-11ef-9bff-5414f37777d8?sv=PLACEHOLDER&ss=b&srt=co&spr=https&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sp=rwlac&sig=PLACEHOLDER",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-5be8355e-eb31-11ef-9bff-5414f37777d8/inputData?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=b&sp=rcw&sig=PLACEHOLDER",
+        "inputDataFormat": "qir.v1", "inputParams": {"entryPoint": "ENTRYPOINT__main",
+        "arguments": [], "target_profile": "Adaptive_RI"}, "metadata": null, "sessionId":
+        "5550ef2b-eb31-11ef-bc85-5414f37777d8", "status": "Failed", "jobType": "QuantumComputing",
+        "outputDataFormat": "invalid_output_format", "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-5be8355e-eb31-11ef-9bff-5414f37777d8/outputData?sv=PLACEHOLDER&ss=b&srt=co&spr=https&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sp=rwlac&sig=PLACEHOLDER",
+        "beginExecutionTime": "2025-02-15T00:11:16.062Z", "cancellationTime": null,
+        "quantumComputingData": {"count": 1}, "errorData": {"code": "CannotTranslateOutputData",
+        "message": "The output returned by ''microsoft.test.firstparty'' cannot be
+        translated as specified by ''outputDataFormat''. Please ensure that ''outputDataFormat''
+        is correct."}, "isCancelling": false, "tags": [], "name": "Bad Job 2", "id":
+        "5be8355e-eb31-11ef-9bff-5414f37777d8", "providerId": "microsoft.test.firstparty",
+        "target": "echo-quantinuum", "creationTime": "2025-02-15T00:11:12.7976017Z",
+        "endExecutionTime": "2025-02-15T00:11:42.26Z", "costEstimate": null, "itemType":
+        "Job"}], "nextLink": null}'
+    headers:
+      connection:
+      - keep-alive
+      content-length:
+      - '75036'
+      content-type:
+      - application/json; charset=utf-8
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
+version: 1

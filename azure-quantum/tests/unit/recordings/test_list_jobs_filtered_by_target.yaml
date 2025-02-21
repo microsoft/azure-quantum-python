@@ -1,0 +1,421 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-identity/1.17.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
+    method: GET
+    uri: https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/v2.0/.well-known/openid-configuration
+  response:
+    body:
+      string: '{"token_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token",
+        "token_endpoint_auth_methods_supported": ["client_secret_post", "private_key_jwt",
+        "client_secret_basic"], "jwks_uri": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/discovery/v2.0/keys",
+        "response_modes_supported": ["query", "fragment", "form_post"], "subject_types_supported":
+        ["pairwise"], "id_token_signing_alg_values_supported": ["RS256"], "response_types_supported":
+        ["code", "id_token", "code id_token", "id_token token"], "scopes_supported":
+        ["openid", "profile", "email", "offline_access"], "issuer": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/v2.0",
+        "request_uri_parameter_supported": false, "userinfo_endpoint": "https://graph.microsoft.com/oidc/userinfo",
+        "authorization_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/authorize",
+        "device_authorization_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/devicecode",
+        "http_logout_supported": true, "frontchannel_logout_supported": true, "end_session_endpoint":
+        "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/logout",
+        "claims_supported": ["sub", "iss", "cloud_instance_name", "cloud_instance_host_name",
+        "cloud_graph_host_name", "msgraph_host", "aud", "exp", "iat", "auth_time",
+        "acr", "nonce", "preferred_username", "name", "tid", "ver", "at_hash", "c_hash",
+        "email"], "kerberos_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/kerberos",
+        "tenant_region_scope": "WW", "cloud_instance_name": "microsoftonline.com",
+        "cloud_graph_host_name": "graph.windows.net", "msgraph_host": "graph.microsoft.com",
+        "rbac_url": "https://pas.windows.net"}'
+    headers:
+      content-length:
+      - '1826'
+      content-type:
+      - application/json; charset=utf-8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: client_id=PLACEHOLDER&grant_type=client_credentials&client_assertion=PLACEHOLDER&client_info=1&client_assertion_type=PLACEHOLDER&scope=https%3A%2F%2Fquantum.microsoft.com%2F.default
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '181'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      User-Agent:
+      - azsdk-python-identity/1.17.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
+      x-client-current-telemetry:
+      - 4|730,2|
+      x-client-os:
+      - win32
+      x-client-sku:
+      - MSAL.Python
+      x-client-ver:
+      - 1.30.0
+    method: POST
+    uri: https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token
+  response:
+    body:
+      string: '{"token_type": "Bearer", "expires_in": 1756429716, "ext_expires_in":
+        1756429716, "refresh_in": 31536000, "access_token": "PLACEHOLDER"}'
+    headers:
+      content-length:
+      - '135'
+      content-type:
+      - application/json; charset=utf-8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - testapp azsdk-python-quantum/0.0.1 Python/3.9.20 (Windows-10-10.0.26100-SP0)
+      x-ms-quantum-api-key:
+      - PLACEHOLDER
+    method: GET
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs?api-version=2024-10-01-preview&filter=%28Target%20eq%20%27microsoft.estimator%27%20or%20Target%20eq%20%27microsoft.dft%27%29&skip=0&top=100&test-sequence-id=1
+  response:
+    body:
+      string: '{"value": [{"containerUri": "https://mystorage.blob.core.windows.net/job-9264253c-dd75-11ee-9499-00155dc91505?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-9264253c-dd75-11ee-9499-00155dc91505/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcw",
+        "inputDataFormat": "qir.v1", "inputParams": {"errorBudget": 0.01, "items":
+        [{"qubitParams": {"name": "qubit_gate_us_e3"}}, {"qubitParams": {"name": "qubit_gate_us_e4"}},
+        {"qubitParams": {"name": "qubit_gate_ns_e3"}}, {"qubitParams": {"name": "qubit_gate_ns_e4"}},
+        {"qubitParams": {"name": "qubit_maj_ns_e4"}, "qecScheme": {"name": "floquet_code"}},
+        {"qubitParams": {"name": "qubit_maj_ns_e6"}, "qecScheme": {"name": "floquet_code"}}],
+        "resumeAfterFailedItem": true, "fileUris": {"fcidumpUri": "https://aka.ms/fcidump/XVIII-cas4-fb-64e-56o"}},
+        "metadata": null, "sessionId": null, "status": "Succeeded", "jobType": "QuantumComputing",
+        "outputDataFormat": "microsoft.resource-estimates.v1", "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-9264253c-dd75-11ee-9499-00155dc91505/rawOutputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "beginExecutionTime": "2024-03-08T17:59:19.7571833Z", "cancellationTime":
+        null, "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling":
+        false, "tags": [], "name": "azure-quantum-job", "id": "9264253c-dd75-11ee-9499-00155dc91505",
+        "providerId": "microsoft-qc", "target": "microsoft.estimator", "creationTime":
+        "2024-03-08T17:59:15.4849174Z", "endExecutionTime": "2024-03-08T18:00:01.4208021Z",
+        "costEstimate": null, "itemType": "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-4391412b-dd79-11ee-977a-5414f37777d8?sv=PLACEHOLDER&sr=c&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcwl",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-4391412b-dd79-11ee-977a-5414f37777d8/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcw",
+        "inputDataFormat": "microsoft.xyz.v1", "inputParams": {"tasks": [{"taskType":
+        "spe", "basisSet": {"name": "def2-svp", "cartesian": false}, "xcFunctional":
+        {"name": "m06-2x", "gridLevel": 4}, "scf": {"method": "rks", "maxSteps": 100,
+        "convergeThreshold": 1e-08}}]}, "metadata": null, "sessionId": null, "status":
+        "Succeeded", "jobType": "QuantumChemistry", "outputDataFormat": "microsoft.dft-results.v1",
+        "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-4391412b-dd79-11ee-977a-5414f37777d8/rawOutputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "beginExecutionTime": "2024-03-08T18:26:06.752335Z", "cancellationTime": null,
+        "quantumComputingData": null, "errorData": null, "isCancelling": false, "tags":
+        [], "name": "water2-spe", "id": "4391412b-dd79-11ee-977a-5414f37777d8", "providerId":
+        "microsoft-elements", "target": "microsoft.dft", "creationTime": "2024-03-08T18:25:41.5915357Z",
+        "endExecutionTime": "2024-03-08T18:26:35.5586904Z", "costEstimate": null,
+        "itemType": "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-010d212c-f38e-11ee-8b4d-00155d9e549f?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-010d212c-f38e-11ee-8b4d-00155d9e549f/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcw",
+        "inputDataFormat": "qir.v1", "inputParams": {"errorBudget": 0.01, "items":
+        [{"qubitParams": {"name": "qubit_gate_us_e3"}}, {"qubitParams": {"name": "qubit_gate_us_e4"}},
+        {"qubitParams": {"name": "qubit_gate_ns_e3"}}, {"qubitParams": {"name": "qubit_gate_ns_e4"}},
+        {"qubitParams": {"name": "qubit_maj_ns_e4"}, "qecScheme": {"name": "floquet_code"}},
+        {"qubitParams": {"name": "qubit_maj_ns_e6"}, "qecScheme": {"name": "floquet_code"}}],
+        "resumeAfterFailedItem": true, "fileUris": {"fcidumpUri": "https://aka.ms/fcidump/XVIII-cas4-fb-64e-56o"}},
+        "metadata": null, "sessionId": null, "status": "Failed", "jobType": "QuantumComputing",
+        "outputDataFormat": "microsoft.resource-estimates.v1", "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-010d212c-f38e-11ee-8b4d-00155d9e549f/outputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
+        {"count": 1}, "errorData": {"code": "InternalError", "message": "An internal
+        error occurred. Please retry the request."}, "isCancelling": false, "tags":
+        [], "name": "azure-quantum-job", "id": "010d212c-f38e-11ee-8b4d-00155d9e549f",
+        "providerId": "microsoft-qc", "target": "microsoft.estimator", "creationTime":
+        "2024-04-05T20:49:34.0532023Z", "endExecutionTime": null, "costEstimate":
+        null, "itemType": "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-ec3f0396-f77a-11ee-a84e-aa03815e5e6b?sv=PLACEHOLDER&sr=c&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcwl",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-ec3f0396-f77a-11ee-a84e-aa03815e5e6b/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcw",
+        "inputDataFormat": "microsoft.xyz.v1", "inputParams": {"tasks": [{"taskType":
+        "spe", "basisSet": {"name": "def2-svp", "cartesian": false}, "xcFunctional":
+        {"name": "m06-2x", "gridLevel": 4}, "scf": {"method": "rks", "maxSteps": 1,
+        "convergeThreshold": 1e-08}}]}, "metadata": null, "sessionId": null, "status":
+        "Failed", "jobType": "QuantumChemistry", "outputDataFormat": "microsoft.dft-results.v1",
+        "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-ec3f0396-f77a-11ee-a84e-aa03815e5e6b/rawOutputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "beginExecutionTime": "2024-04-10T20:43:50.4453167Z", "cancellationTime":
+        null, "quantumComputingData": null, "errorData": {"code": "RuntimeError",
+        "message": "The job failed due to a runtime error. Please check the output
+        file or the additional output zip file for error messages, and try submitting
+        the job again."}, "isCancelling": false, "tags": [], "name": "azure-quantum-dft-job",
+        "id": "ec3f0396-f77a-11ee-a84e-aa03815e5e6b", "providerId": "microsoft-elements",
+        "target": "microsoft.dft", "creationTime": "2024-04-10T20:43:16.4563031Z",
+        "endExecutionTime": "2024-04-10T20:45:28.8340662Z", "costEstimate": null,
+        "itemType": "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-57601815-f77b-11ee-99cf-aa03815e5e6b?sv=PLACEHOLDER&sr=c&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcwl",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-57601815-f77b-11ee-99cf-aa03815e5e6b/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcw",
+        "inputDataFormat": "microsoft.xyz.v1", "inputParams": {"tasks": [{"taskType":
+        "invlidTask", "basisSet": {"name": "def2-svp", "cartesian": false}, "xcFunctional":
+        {"name": "m06-2x", "gridLevel": 4}, "scf": {"method": "rks", "maxSteps": 100,
+        "convergeThreshold": 1e-08}}]}, "metadata": null, "sessionId": null, "status":
+        "Failed", "jobType": "QuantumChemistry", "outputDataFormat": "microsoft.dft-results.v1",
+        "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-57601815-f77b-11ee-99cf-aa03815e5e6b/rawOutputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "beginExecutionTime": "2024-04-10T20:46:11.5814379Z", "cancellationTime":
+        null, "quantumComputingData": null, "errorData": {"code": "InvalidInputData",
+        "message": "Invalid job params.\nValue \"invlidTask\" is not defined in enum.
+        Path: tasks[0].taskType."}, "isCancelling": false, "tags": [], "name": "azure-quantum-dft-job",
+        "id": "57601815-f77b-11ee-99cf-aa03815e5e6b", "providerId": "microsoft-elements",
+        "target": "microsoft.dft", "creationTime": "2024-04-10T20:46:10.7425703Z",
+        "endExecutionTime": "2024-04-10T20:46:11.5814379Z", "costEstimate": null,
+        "itemType": "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-66e7267c-f77b-11ee-88c8-aa03815e5e6b?sv=PLACEHOLDER&sr=c&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcwl",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-66e7267c-f77b-11ee-88c8-aa03815e5e6b/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcw",
+        "inputDataFormat": "microsoft.xyz.v1", "inputParams": {"tasks": [{"taskType":
+        "spe", "basisSet": {"name": "def2-svp", "cartesian": false}, "xcFunctional":
+        {"name": "m06-2x", "gridLevel": 4}, "scf": {"method": "rks", "maxSteps": 100,
+        "convergeThreshold": 1e-08}}]}, "metadata": null, "sessionId": null, "status":
+        "Succeeded", "jobType": "QuantumChemistry", "outputDataFormat": "microsoft.dft-results.v1",
+        "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-66e7267c-f77b-11ee-88c8-aa03815e5e6b/rawOutputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "beginExecutionTime": "2024-04-10T20:46:55.3968685Z", "cancellationTime":
+        null, "quantumComputingData": null, "errorData": null, "isCancelling": false,
+        "tags": [], "name": "azure-quantum-dft-job", "id": "66e7267c-f77b-11ee-88c8-aa03815e5e6b",
+        "providerId": "microsoft-elements", "target": "microsoft.dft", "creationTime":
+        "2024-04-10T20:46:31.371291Z", "endExecutionTime": "2024-04-10T20:47:27.8955919Z",
+        "costEstimate": null, "itemType": "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-a3223fd2-f77b-11ee-91fc-aa03815e5e6b?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-a3223fd2-f77b-11ee-91fc-aa03815e5e6b/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcw",
+        "inputDataFormat": "qir.v1", "inputParams": {"items": [{"qubitParams": {"name":
+        "qubit_maj_ns_e4", "instructionSet": "majorana", "tGateTime": "10 ns", "twoQubitJointMeasurementErrorRate":
+        {"process": 5e-05, "readout": 7e-05}, "tGateErrorRate": 0.03, "idleErrorRate":
+        2e-05}, "distillationUnitSpecifications": [{"displayName": "S", "numInputTs":
+        1, "numOutputTs": 15, "failureProbabilityFormula": "15.0 * inputErrorRate
+        + 356.0 * cliffordErrorRate", "outputErrorRateFormula": "35.0 * inputErrorRate
+        ^ 3 + 7.1 * cliffordErrorRate", "physicalQubitSpecification": {"numUnitQubits":
+        12, "durationInQubitCycleTime": 45}, "logicalQubitSpecification": {"numUnitQubits":
+        12, "durationInQubitCycleTime": 45}}, {"name": "15-1 RM"}, {"name": "15-1
+        space-efficient"}], "errorBudget": 0.001}, {"constraints": {"maxDuration":
+        "20s"}, "errorBudget": 0.002}, {"constraints": {"maxPhysicalQubits": 10000},
+        "errorBudget": 0.003}], "resumeAfterFailedItem": true}, "metadata": null,
+        "sessionId": null, "status": "Succeeded", "jobType": "QuantumComputing", "outputDataFormat":
+        "microsoft.resource-estimates.v1", "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-a3223fd2-f77b-11ee-91fc-aa03815e5e6b/rawOutputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "beginExecutionTime": "2024-04-11T16:07:02.5443055Z", "cancellationTime":
+        null, "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling":
+        false, "tags": [], "name": "azure-quantum-job", "id": "a3223fd2-f77b-11ee-91fc-aa03815e5e6b",
+        "providerId": "microsoft-qc", "target": "microsoft.estimator", "creationTime":
+        "2024-04-10T20:48:12.5207917Z", "endExecutionTime": "2024-04-11T16:07:04.8756959Z",
+        "costEstimate": null, "itemType": "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-5c0803e2-f77c-11ee-9754-aa03815e5e6b?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-5c0803e2-f77c-11ee-9754-aa03815e5e6b/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcw",
+        "inputDataFormat": "qir.v1", "inputParams": {"errorBudget": 2}, "metadata":
+        null, "sessionId": null, "status": "Failed", "jobType": "QuantumComputing",
+        "outputDataFormat": "microsoft.resource-estimates.v1", "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-5c0803e2-f77c-11ee-9754-aa03815e5e6b/rawOutputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "beginExecutionTime": "2024-04-11T16:07:02.6092234Z", "cancellationTime":
+        null, "quantumComputingData": {"count": 1}, "errorData": {"code": "InvalidInputError",
+        "message": "The error budget must be between 0.0 and 1.0, provided input was
+        `2`"}, "isCancelling": false, "tags": [], "name": "azure-quantum-job", "id":
+        "5c0803e2-f77c-11ee-9754-aa03815e5e6b", "providerId": "microsoft-qc", "target":
+        "microsoft.estimator", "creationTime": "2024-04-10T20:53:34.5078798Z", "endExecutionTime":
+        "2024-04-11T16:07:04.9630581Z", "costEstimate": null, "itemType": "Job"},
+        {"containerUri": "https://mystorage.blob.core.windows.net/job-19064327-f77d-11ee-abfc-aa03815e5e6b?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-19064327-f77d-11ee-abfc-aa03815e5e6b/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcw",
+        "inputDataFormat": "qir.v1", "inputParams": {}, "metadata": null, "sessionId":
+        null, "status": "Succeeded", "jobType": "QuantumComputing", "outputDataFormat":
+        "microsoft.resource-estimates.v1", "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-19064327-f77d-11ee-abfc-aa03815e5e6b/rawOutputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "beginExecutionTime": "2024-04-11T16:07:05.2302068Z", "cancellationTime":
+        null, "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling":
+        false, "tags": [], "name": "azure-quantum-job", "id": "19064327-f77d-11ee-abfc-aa03815e5e6b",
+        "providerId": "microsoft-qc", "target": "microsoft.estimator", "creationTime":
+        "2024-04-10T20:58:40.2610617Z", "endExecutionTime": "2024-04-11T16:07:07.2612888Z",
+        "costEstimate": null, "itemType": "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-cf5d3dee-f77d-11ee-9967-aa03815e5e6b?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-cf5d3dee-f77d-11ee-9967-aa03815e5e6b/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcw",
+        "inputDataFormat": "qir.v1", "inputParams": {"profiling": {"callStackDepth":
+        0}}, "metadata": null, "sessionId": null, "status": "Succeeded", "jobType":
+        "QuantumComputing", "outputDataFormat": "microsoft.resource-estimates.v1",
+        "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-cf5d3dee-f77d-11ee-9967-aa03815e5e6b/rawOutputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "beginExecutionTime": "2024-04-11T16:07:05.346224Z", "cancellationTime": null,
+        "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling": false,
+        "tags": [], "name": "azure-quantum-job", "id": "cf5d3dee-f77d-11ee-9967-aa03815e5e6b",
+        "providerId": "microsoft-qc", "target": "microsoft.estimator", "creationTime":
+        "2024-04-10T21:03:56.7097684Z", "endExecutionTime": "2024-04-11T16:07:07.3981562Z",
+        "costEstimate": null, "itemType": "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-8ccb58a3-f77e-11ee-a2e6-aa03815e5e6b?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-8ccb58a3-f77e-11ee-a2e6-aa03815e5e6b/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcw",
+        "inputDataFormat": "qir.v1", "inputParams": {}, "metadata": null, "sessionId":
+        null, "status": "Succeeded", "jobType": "QuantumComputing", "outputDataFormat":
+        "microsoft.resource-estimates.v1", "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-8ccb58a3-f77e-11ee-a2e6-aa03815e5e6b/rawOutputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "beginExecutionTime": "2024-04-11T16:07:07.6748953Z", "cancellationTime":
+        null, "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling":
+        false, "tags": [], "name": "azure-quantum-job", "id": "8ccb58a3-f77e-11ee-a2e6-aa03815e5e6b",
+        "providerId": "microsoft-qc", "target": "microsoft.estimator", "creationTime":
+        "2024-04-10T21:09:03.1915572Z", "endExecutionTime": "2024-04-11T16:07:09.7411253Z",
+        "costEstimate": null, "itemType": "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-43394f2d-f77f-11ee-99a7-aa03815e5e6b?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-43394f2d-f77f-11ee-99a7-aa03815e5e6b/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcw",
+        "inputDataFormat": "qir.v1", "inputParams": {}, "metadata": null, "sessionId":
+        null, "status": "Succeeded", "jobType": "QuantumComputing", "outputDataFormat":
+        "microsoft.resource-estimates.v1", "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-43394f2d-f77f-11ee-99a7-aa03815e5e6b/rawOutputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "beginExecutionTime": "2024-04-11T16:07:07.6998966Z", "cancellationTime":
+        null, "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling":
+        false, "tags": [], "name": "azure-quantum-job", "id": "43394f2d-f77f-11ee-99a7-aa03815e5e6b",
+        "providerId": "microsoft-qc", "target": "microsoft.estimator", "creationTime":
+        "2024-04-10T21:14:21.1102912Z", "endExecutionTime": "2024-04-11T16:07:09.7316923Z",
+        "costEstimate": null, "itemType": "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-eb6af53c-f781-11ee-a1be-aa03815e5e6b?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-eb6af53c-f781-11ee-a1be-aa03815e5e6b/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcw",
+        "inputDataFormat": "qir.v1", "inputParams": {"errorBudget": 0.001, "qubitParams":
+        {"name": "qubit_gate_ns_e3"}, "qecScheme": {"name": "surface_code"}, "items":
+        [{"entryPoint": "circuit-185", "arguments": []}]}, "metadata": {"qiskit":
+        "True", "name": "circuit-185", "num_qubits": "3", "metadata": "{}"}, "sessionId":
+        null, "status": "Succeeded", "jobType": "QuantumComputing", "outputDataFormat":
+        "microsoft.resource-estimates.v1", "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-eb6af53c-f781-11ee-a1be-aa03815e5e6b/rawOutputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "beginExecutionTime": "2024-04-11T16:07:10.1513474Z", "cancellationTime":
+        null, "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling":
+        false, "tags": [], "name": "circuit-185", "id": "eb6af53c-f781-11ee-a1be-aa03815e5e6b",
+        "providerId": "microsoft-qc", "target": "microsoft.estimator", "creationTime":
+        "2024-04-10T21:33:09.7554195Z", "endExecutionTime": "2024-04-11T16:07:12.1546372Z",
+        "costEstimate": null, "itemType": "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-a20e0a68-f782-11ee-bfe8-aa03815e5e6b?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-a20e0a68-f782-11ee-bfe8-aa03815e5e6b/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcw",
+        "inputDataFormat": "qir.v1", "inputParams": {"errorBudget": 0.0001, "qubitParams":
+        {"name": "qubit_gate_ns_e4"}, "qecScheme": {"name": "surface_code"}, "items":
+        [{"entryPoint": "circuit-187", "arguments": []}]}, "metadata": {"qiskit":
+        "True", "name": "circuit-187", "num_qubits": "3", "metadata": "{}"}, "sessionId":
+        null, "status": "Succeeded", "jobType": "QuantumComputing", "outputDataFormat":
+        "microsoft.resource-estimates.v1", "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-a20e0a68-f782-11ee-bfe8-aa03815e5e6b/rawOutputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "beginExecutionTime": "2024-04-11T16:07:10.3200162Z", "cancellationTime":
+        null, "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling":
+        false, "tags": [], "name": "circuit-187", "id": "a20e0a68-f782-11ee-bfe8-aa03815e5e6b",
+        "providerId": "microsoft-qc", "target": "microsoft.estimator", "creationTime":
+        "2024-04-10T21:38:15.5554054Z", "endExecutionTime": "2024-04-11T16:07:12.3427255Z",
+        "costEstimate": null, "itemType": "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-5fcbd64d-f783-11ee-ae34-aa03815e5e6b?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-5fcbd64d-f783-11ee-ae34-aa03815e5e6b/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcw",
+        "inputDataFormat": "qir.v1", "inputParams": {"errorBudget": 0.001, "qubitParams":
+        {"name": "qubit_gate_ns_e3"}, "qecScheme": {"name": "surface_code"}, "items":
+        [{"qubitParams": {"name": "qubit_gate_ns_e3"}, "errorBudget": 0.0001}, {"qubitParams":
+        {"name": "qubit_gate_ns_e4"}, "errorBudget": 0.0001}]}, "metadata": {"qiskit":
+        "True", "name": "circuit-189", "num_qubits": "3", "metadata": "{}"}, "sessionId":
+        null, "status": "Succeeded", "jobType": "QuantumComputing", "outputDataFormat":
+        "microsoft.resource-estimates.v1", "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-5fcbd64d-f783-11ee-ae34-aa03815e5e6b/rawOutputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "beginExecutionTime": "2024-04-11T16:07:12.4288263Z", "cancellationTime":
+        null, "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling":
+        false, "tags": [], "name": "circuit-189", "id": "5fcbd64d-f783-11ee-ae34-aa03815e5e6b",
+        "providerId": "microsoft-qc", "target": "microsoft.estimator", "creationTime":
+        "2024-04-10T21:43:34.2838739Z", "endExecutionTime": "2024-04-11T16:07:14.4096619Z",
+        "costEstimate": null, "itemType": "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-ae8eb6c8-f78c-11ee-8dfe-aa03815e5e6b?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-ae8eb6c8-f78c-11ee-8dfe-aa03815e5e6b/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcw",
+        "inputDataFormat": "qir.v1", "inputParams": {"errorBudget": 0.001, "qubitParams":
+        {"name": "qubit_gate_ns_e3"}, "qecScheme": {"name": "surface_code"}, "items":
+        [{"entryPoint": "circuit-152", "arguments": []}]}, "metadata": {"qiskit":
+        "True", "name": "circuit-152", "num_qubits": "3", "metadata": "{}"}, "sessionId":
+        null, "status": "Succeeded", "jobType": "QuantumComputing", "outputDataFormat":
+        "microsoft.resource-estimates.v1", "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-ae8eb6c8-f78c-11ee-8dfe-aa03815e5e6b/rawOutputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "beginExecutionTime": "2024-04-11T16:07:13.6994733Z", "cancellationTime":
+        null, "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling":
+        false, "tags": [], "name": "circuit-152", "id": "ae8eb6c8-f78c-11ee-8dfe-aa03815e5e6b",
+        "providerId": "microsoft-qc", "target": "microsoft.estimator", "creationTime":
+        "2024-04-10T22:50:12.1151931Z", "endExecutionTime": "2024-04-11T16:07:15.7318084Z",
+        "costEstimate": null, "itemType": "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-1a5ee082-2e73-11ef-829a-00155d274637?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-1a5ee082-2e73-11ef-829a-00155d274637/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcw",
+        "inputDataFormat": "qir.v1", "inputParams": {"errorBudget": 0.005}, "metadata":
+        null, "sessionId": null, "status": "Failed", "jobType": "QuantumComputing",
+        "outputDataFormat": "microsoft.resource-estimates.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-1a5ee082-2e73-11ef-829a-00155d274637/rawOutputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcw",
+        "beginExecutionTime": "2024-06-25T00:03:14.1475192Z", "cancellationTime":
+        null, "quantumComputingData": {"count": 1}, "errorData": {"code": "InputFileMissing",
+        "message": "Failed to download file ''InputDataUri'', make sure that a valid
+        download link exists in the job data"}, "isCancelling": false, "tags": [],
+        "name": "azure-quantum-job", "id": "1a5ee082-2e73-11ef-829a-00155d274637",
+        "providerId": "microsoft-qc", "target": "microsoft.estimator", "creationTime":
+        "2024-06-19T19:35:37.6337024Z", "endExecutionTime": "2024-06-25T00:03:20.3667452Z",
+        "costEstimate": null, "itemType": "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-dac903fa-34bf-11ef-8d51-00155d7a5058?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-dac903fa-34bf-11ef-8d51-00155d7a5058/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcw",
+        "inputDataFormat": "qir.v1", "inputParams": {"entryPoint": "ENTRYPOINT__main",
+        "arguments": []}, "metadata": null, "sessionId": null, "status": "Failed",
+        "jobType": "QuantumComputing", "outputDataFormat": "microsoft.quantum-results.v2",
+        "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-dac903fa-34bf-11ef-8d51-00155d7a5058/outputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "beginExecutionTime": "2024-06-27T20:00:13.7587447Z", "cancellationTime":
+        null, "quantumComputingData": {"count": 1}, "errorData": {"code": "BitcodeError",
+        "message": "QIR bitcode has invalid format; did you submit ASCII payload?"},
+        "isCancelling": false, "tags": [], "name": "Generate one random bit", "id":
+        "dac903fa-34bf-11ef-8d51-00155d7a5058", "providerId": "microsoft-qc", "target":
+        "microsoft.estimator", "creationTime": "2024-06-27T20:00:09.9216539Z", "endExecutionTime":
+        "2024-06-27T20:00:14.5511262Z", "costEstimate": null, "itemType": "Job"},
+        {"containerUri": "https://mystorage.blob.core.windows.net/job-f929a8ae-34bf-11ef-8d51-00155d7a5058?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-f929a8ae-34bf-11ef-8d51-00155d7a5058/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcw",
+        "inputDataFormat": "qir.v1", "inputParams": {"entryPoint": "ENTRYPOINT__main",
+        "arguments": []}, "metadata": null, "sessionId": null, "status": "Failed",
+        "jobType": "QuantumComputing", "outputDataFormat": "microsoft.resource-estimates.v1",
+        "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-f929a8ae-34bf-11ef-8d51-00155d7a5058/rawOutputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "beginExecutionTime": "2024-06-27T20:01:00.919568Z", "cancellationTime": null,
+        "quantumComputingData": {"count": 1}, "errorData": {"code": "BitcodeError",
+        "message": "QIR bitcode has invalid format; did you submit ASCII payload?"},
+        "isCancelling": false, "tags": [], "name": "Generate one random bit", "id":
+        "f929a8ae-34bf-11ef-8d51-00155d7a5058", "providerId": "microsoft-qc", "target":
+        "microsoft.estimator", "creationTime": "2024-06-27T20:00:59.9131045Z", "endExecutionTime":
+        "2024-06-27T20:01:01.6502888Z", "costEstimate": null, "itemType": "Job"},
+        {"containerUri": "https://mystorage.blob.core.windows.net/job-35395b3c-34c0-11ef-8d51-00155d7a5058?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-35395b3c-34c0-11ef-8d51-00155d7a5058/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcw",
+        "inputDataFormat": "qir.v1", "inputParams": {"entryPoint": "ENTRYPOINT__main",
+        "arguments": []}, "metadata": null, "sessionId": null, "status": "Failed",
+        "jobType": "QuantumComputing", "outputDataFormat": "microsoft.quantum-results.v2",
+        "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-35395b3c-34c0-11ef-8d51-00155d7a5058/outputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "beginExecutionTime": "2024-06-27T20:02:41.8749635Z", "cancellationTime":
+        null, "quantumComputingData": {"count": 1}, "errorData": {"code": "BitcodeError",
+        "message": "QIR bitcode has invalid format; did you submit ASCII payload?"},
+        "isCancelling": false, "tags": [], "name": "Generate one random bit", "id":
+        "35395b3c-34c0-11ef-8d51-00155d7a5058", "providerId": "microsoft-qc", "target":
+        "microsoft.estimator", "creationTime": "2024-06-27T20:02:40.681621Z", "endExecutionTime":
+        "2024-06-27T20:02:42.843771Z", "costEstimate": null, "itemType": "Job"}, {"containerUri":
+        "https://mystorage.blob.core.windows.net/job-cf43aa11-e4df-11ef-88d5-5414f37777d8?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=c&sp=rcwl&sig=PLACEHOLDER",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-cf43aa11-e4df-11ef-88d5-5414f37777d8/inputData?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=b&sp=rcw&sig=PLACEHOLDER",
+        "inputDataFormat": "microsoft.xyz.v1", "inputParams": {"tasks": [{"taskType":
+        "spe", "basisSet": {"name": "def2-svp", "cartesian": false}, "xcFunctional":
+        {"name": "m06-2x", "gridLevel": 4}, "scf": {"method": "rks", "maxSteps": 1,
+        "convergeThreshold": 1e-08}}]}, "metadata": null, "sessionId": null, "status":
+        "Failed", "jobType": "QuantumChemistry", "outputDataFormat": "microsoft.dft-results.v1",
+        "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-cf43aa11-e4df-11ef-88d5-5414f37777d8/rawOutputData?sv=PLACEHOLDER&ss=b&srt=co&spr=https&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sp=rwlac&sig=PLACEHOLDER",
+        "beginExecutionTime": "2025-02-08T03:11:37.4326168Z", "cancellationTime":
+        null, "quantumComputingData": null, "errorData": {"code": "RuntimeError",
+        "message": "The job failed due to a runtime error. Please check the output
+        file or the additional output zip file for error messages, and try submitting
+        the job again."}, "isCancelling": false, "tags": [], "name": "azure-quantum-dft-job",
+        "id": "cf43aa11-e4df-11ef-88d5-5414f37777d8", "providerId": "microsoft-elements",
+        "target": "microsoft.dft", "creationTime": "2025-02-06T23:12:20.4292184Z",
+        "endExecutionTime": "2025-02-08T03:13:10.0897681Z", "costEstimate": null,
+        "itemType": "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-85b105c5-e4e0-11ef-a5b6-5414f37777d8?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=c&sp=rcwl&sig=PLACEHOLDER",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-85b105c5-e4e0-11ef-a5b6-5414f37777d8/inputData?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=b&sp=rcw&sig=PLACEHOLDER",
+        "inputDataFormat": "microsoft.xyz.v1", "inputParams": {"tasks": [{"taskType":
+        "invlidTask", "basisSet": {"name": "def2-svp", "cartesian": false}, "xcFunctional":
+        {"name": "m06-2x", "gridLevel": 4}, "scf": {"method": "rks", "maxSteps": 100,
+        "convergeThreshold": 1e-08}}]}, "metadata": null, "sessionId": null, "status":
+        "Failed", "jobType": "QuantumChemistry", "outputDataFormat": "microsoft.dft-results.v1",
+        "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-85b105c5-e4e0-11ef-a5b6-5414f37777d8/rawOutputData?sv=PLACEHOLDER&ss=b&srt=co&spr=https&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sp=rwlac&sig=PLACEHOLDER",
+        "beginExecutionTime": "2025-02-07T19:52:18.4809993Z", "cancellationTime":
+        null, "quantumComputingData": null, "errorData": {"code": "InvalidInputData",
+        "message": "Invalid job params.\nValue \"invlidTask\" is not defined in enum.
+        Path: tasks[0].taskType."}, "isCancelling": false, "tags": [], "name": "azure-quantum-dft-job",
+        "id": "85b105c5-e4e0-11ef-a5b6-5414f37777d8", "providerId": "microsoft-elements",
+        "target": "microsoft.dft", "creationTime": "2025-02-06T23:17:28.0029202Z",
+        "endExecutionTime": "2025-02-07T19:52:18.4809993Z", "costEstimate": null,
+        "itemType": "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-3d05c570-e4e1-11ef-9ac0-5414f37777d8?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=c&sp=rcwl&sig=PLACEHOLDER",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-3d05c570-e4e1-11ef-9ac0-5414f37777d8/inputData?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=b&sp=rcw&sig=PLACEHOLDER",
+        "inputDataFormat": "microsoft.xyz.v1", "inputParams": {"tasks": [{"taskType":
+        "spe", "basisSet": {"name": "def2-svp", "cartesian": false}, "xcFunctional":
+        {"name": "m06-2x", "gridLevel": 4}, "scf": {"method": "rks", "maxSteps": 100,
+        "convergeThreshold": 1e-08}}]}, "metadata": null, "sessionId": null, "status":
+        "Succeeded", "jobType": "QuantumChemistry", "outputDataFormat": "microsoft.dft-results.v1",
+        "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-3d05c570-e4e1-11ef-9ac0-5414f37777d8/rawOutputData?sv=PLACEHOLDER&ss=b&srt=co&spr=https&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sp=rwlac&sig=PLACEHOLDER",
+        "beginExecutionTime": "2025-02-08T03:24:18.4562282Z", "cancellationTime":
+        null, "quantumComputingData": null, "errorData": null, "isCancelling": false,
+        "tags": [], "name": "azure-quantum-dft-job", "id": "3d05c570-e4e1-11ef-9ac0-5414f37777d8",
+        "providerId": "microsoft-elements", "target": "microsoft.dft", "creationTime":
+        "2025-02-06T23:22:35.2126782Z", "endExecutionTime": "2025-02-08T03:24:51.3934901Z",
+        "costEstimate": null, "itemType": "Job"}], "nextLink": null}'
+    headers:
+      connection:
+      - keep-alive
+      content-length:
+      - '33740'
+      content-type:
+      - application/json; charset=utf-8
+      transfer-encoding:
+      - chunked
+    status:
+      code: 200
+      message: OK
+version: 1
