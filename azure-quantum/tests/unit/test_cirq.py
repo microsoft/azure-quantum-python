@@ -163,7 +163,6 @@ class TestCirq(QuantumTestBase):
 
     @pytest.mark.quantinuum
     @pytest.mark.live_test
-    @pytest.mark.skip(reason="Quantinuum continues to time out the requests")
     def test_plugins_quantinuum_cirq(self):
         with unittest.mock.patch.object(
             Job,
