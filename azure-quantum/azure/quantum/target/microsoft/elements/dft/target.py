@@ -90,7 +90,7 @@ class MicrosoftElementsDft(Target):
             elif all(isinstance(task,dict) for task in input_data): 
                 qcschema_blobs = {}
                 for i in range(len(input_data)):
-                    qcschema_blobs[f"inputData_{i}"] = input_data[i]
+                    qcschema_blobs[f"inputData_{i}"] = self._encode_input_data(input_data[i])
                 toc_str = '{"description": "QcSchema Objects were given for input."}'
             else:
                 raise ValueError(f"Unsupported batch submission. Please use List[str] or List[dict].")
