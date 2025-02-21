@@ -1,16 +1,4 @@
-- driver: gradient
-  keywords:
-    scf:
-      convergeThreshold: 1.0e-08
-      maxSteps: 100
-      method: rks
-      requireWaveFunction: true
-    xcFunctional:
-      gridLevel: 3
-  model:
-    basis: def2-svp
-    method: m06-2x
-  molecule:
+- initial_molecule:
     extras: {}
     geometry:
     - 184.9548657430684
@@ -254,21 +242,24 @@
     - O
     - H
     - H
-  schema_name: qcschema_input
+  input_specification:
+    driver: gradient
+    keywords:
+      scf:
+        convergeThreshold: 1.0e-08
+        maxSteps: 100
+        method: rks
+        requireWaveFunction: true
+      xcFunctional:
+        gridLevel: 3
+    model:
+      basis: def2-svp
+      method: m06-2x
+  keywords:
+    gdiis: true
+  schema_name: qcschema_optimization_input
   schema_version: 1
-- driver: gradient
-  keywords:
-    scf:
-      convergeThreshold: 1.0e-08
-      maxSteps: 100
-      method: rks
-      requireWaveFunction: true
-    xcFunctional:
-      gridLevel: 3
-  model:
-    basis: def2-svp
-    method: m06-2x
-  molecule:
+- initial_molecule:
     extras: {}
     geometry:
     - 184.9548657430684
@@ -512,5 +503,20 @@
     - O
     - H
     - H
-  schema_name: qcschema_input
+  input_specification:
+    driver: gradient
+    keywords:
+      scf:
+        convergeThreshold: 1.0e-08
+        maxSteps: 100
+        method: rks
+        requireWaveFunction: true
+      xcFunctional:
+        gridLevel: 3
+    model:
+      basis: def2-svp
+      method: m06-2x
+  keywords:
+    gdiis: true
+  schema_name: qcschema_optimization_input
   schema_version: 1

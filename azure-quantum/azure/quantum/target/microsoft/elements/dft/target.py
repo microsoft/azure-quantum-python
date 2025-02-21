@@ -10,6 +10,7 @@ from .job import MicrosoftElementsDftJob
 from pathlib import Path
 import copy
 import json
+from collections import defaultdict
 
 
 class MicrosoftElementsDft(Target):
@@ -78,22 +79,31 @@ class MicrosoftElementsDft(Target):
         
         if isinstance(input_data, list):
 
-            qcschema_data = self._assemble_qcshema_from_files(input_data, input_params)
-
-            qcschema_blobs = {}
-            for i in range(len(qcschema_data)):
-                qcschema_blobs[f"inputData_{i}"] = self._encode_input_data(qcschema_data[i])
-
-            toc_str = self._create_table_of_contents(input_data, list(qcschema_blobs.keys()))
+            if all(isinstance(task,str) for task in input_data):
+                qcschema_data = self.assemble_qcschema_from_files(input_data, input_params)
+            
+                qcschema_blobs = {}
+                for i in range(len(qcschema_data)):
+                    qcschema_blobs[f"inputData_{i}"] = self._encode_input_data(qcschema_data[i])
+            
+                toc_str = self._create_table_of_contents(input_data, list(qcschema_blobs.keys()))
+            elif all(isinstance(task,dict) for task in input_data): 
+                qcschema_blobs = {}
+                for i in range(len(input_data)):
+                    qcschema_blobs[f"inputData_{i}"] = input_data[i]
+                toc_str = '{"description": "QcSchema Objects were given for input."}'
+            else:
+                raise ValueError(f"Unsupported batch submission. Please use List[str] or List[dict].")
             toc = self._encode_input_data(toc_str)
 
+            input_params = {} if input_params is None else input_params
             return self._get_job_class().from_input_data_container(
                 workspace=self.workspace,
                 name=name,
                 target=self.name,
                 input_data=toc,
                 batch_input_blobs=qcschema_blobs,
-                input_params={ 'numberOfFiles': len(qcschema_data), "inputFiles": list(qcschema_blobs.keys()), **input_params },
+                input_params={ 'numberOfFiles': len(input_data), "inputFiles": list(qcschema_blobs.keys()), **input_params },
                 content_type=kwargs.pop('content_type', self.content_type),
                 encoding=kwargs.pop('encoding', self.encoding),
                 provider_id=self.provider_id,
@@ -114,16 +124,22 @@ class MicrosoftElementsDft(Target):
 
     
     @classmethod
-    def _assemble_qcshema_from_files(self, input_data: List[str], input_params: Dict) -> str:
+    def assemble_qcschema_from_files(self, input_data: Union[List[str]], input_params: Dict) -> List[Dict]:
         """
-        Convert a list of files to a list of qcshema objects serialized in json.
+        Convert a list of files to a list of QcSchema objects that are ready for submission.
+        
+        :param input_data: Input data
+        :type input_data: List[str]
+        :param input_params: Input parameters
+        :type input_params: Dict[str, Any]
+        :rtype: List[Dict]
         """
+
+        self._check_file_paths(input_data)
 
         qcshema_objects = []
         for file in input_data:
             file_path = Path(file)
-            if not file_path.exists():
-                raise FileNotFoundError(f"File {file} does not exist.")
             
             file_data = file_path.read_text()
             if file_path.suffix == '.xyz':
@@ -136,9 +152,34 @@ class MicrosoftElementsDft(Target):
                 with open(file_path, 'r') as f:
                     qcshema_objects.append( json.load(f) )
             else:
-                raise ValueError(f"File type '{file_path.suffix}' for file '{file_path}' is not supported. Please use xyz or QcSchema file formats.")
+                raise ValueError(f"File type '{file_path.suffix}' for file '{file_path}' is not supported.")
 
         return qcshema_objects
+
+    @classmethod
+    def _check_file_paths( self, input_data: List[str]):
+        """Check the file types and make sure they are supported by our parsers."""
+
+        warn_task_count = 1000
+        if len(input_data) >= warn_task_count:
+            warnings.warn(f'Number of tasks is greater than {warn_task_count}.')
+
+        supported_ext = ['.xyz', '.json']
+        prev_ext = None
+        for path_str in input_data:
+            path = Path(path_str)
+
+            if not path.exists():
+                raise FileNotFoundError(f"File {path_str} does not exist.")
+
+            if path.suffix not in supported_ext:
+                raise ValueError(f"'{path.suffix}' file type is not supported. Please use one of {supported_ext}.")
+            
+            if prev_ext is not None and prev_ext !=  path.suffix:
+                raise ValueError(f"Multiple file types were provided ('{path.suffix}', '{prev_ext}'). Please submit only one file type.")
+            else:
+                prev_ext = path.suffix
+            
 
     @classmethod
     def _new_qcshema( self, input_params: Dict[str,Any], mol: Dict[str,Any],  ) -> Dict[str, Any]:
@@ -146,7 +187,9 @@ class MicrosoftElementsDft(Target):
         Create a new default qcshema object.
         """
 
-        if input_params.get("driver") == "go":
+        self._sanity_check_params(input_params, mol)
+
+        if input_params.get("driver").lower() == "go":
             copy_input_params = copy.deepcopy(input_params)
             copy_input_params["driver"] = "gradient"
             new_object = {
@@ -154,11 +197,11 @@ class MicrosoftElementsDft(Target):
                 "schema_version": 1,
                 "initial_molecule": mol,
             }
-            if copy_input_params.get("keywords") and copy_input_params["keywords"].get("geometryOptimization"):
-                new_object["keywords"] = copy_input_params["keywords"].pop("geometryOptimization")
+            if copy_input_params.get("go_keywords"):
+                new_object["keywords"] = copy_input_params.pop("go_keywords")
             new_object["input_specification"] = copy_input_params
             return new_object
-        elif input_params.get("driver") == "bomd":
+        elif input_params.get("driver").lower() == "bomd":
             copy_input_params = copy.deepcopy(input_params)
             copy_input_params["driver"] = "gradient"
             new_object = {
@@ -166,8 +209,8 @@ class MicrosoftElementsDft(Target):
                 "schema_version": 1,
                 "initial_molecule": mol,
             }
-            if copy_input_params.get("keywords") and copy_input_params["keywords"].get("molecularDynamics"):
-                new_object["keywords"] = copy_input_params["keywords"].pop("molecularDynamics")
+            if copy_input_params.get("bomd_keywords"):
+                new_object["keywords"] = copy_input_params.pop("bomd_keywords")
             new_object["input_specification"] = copy_input_params
             return new_object
         else:
@@ -178,7 +221,34 @@ class MicrosoftElementsDft(Target):
                 "molecule": mol,
             })
             return new_object
-            
+    
+    @classmethod
+    def _sanity_check_params(self, input_params, mol):
+
+        # QM/MM is not supported for GO, BOMD and Hessian.
+        driver = input_params.get("driver",'').lower()
+        if driver in ["go", "bomd", "hessian"]:
+            if "extras" in mol and "mm_charges" in mol["extras"]:
+                raise ValueError(f"'{driver}' does not support QM/MM.")
+
+        # Top level params
+        self._check_dict_for_required_keys(input_params, 'input_params', ['driver', 'model'])
+        
+        # Check Model params
+        self._check_dict_for_required_keys(input_params['model'], 'input_params["model"]', ['method', 'basis'])
+
+        supported_drivers = ['energy', 'gradient', 'hessian', 'go', 'bomd']
+        if input_params['driver'] not in supported_drivers:
+            raise ValueError(f"Driver ({input_params['driver']}) is not supported. Please use one of {supported_drivers}.")
+
+    
+    @classmethod
+    def _check_dict_for_required_keys(self, input_params: dict, dict_name: str, required_keys: list[str]):
+        """Check dictionary for required keys and if it doesn't have then raise ValueError."""
+
+        for required_key in required_keys:
+            if required_key not in input_params.keys():
+                raise ValueError(f"Required key ({required_key}) was not provided in {dict_name}.")
 
     @classmethod
     def _xyz_to_qcschema_mol(self, file_data: str ) -> Dict[str, Any]:
@@ -191,23 +261,33 @@ class MicrosoftElementsDft(Target):
             raise ValueError("Invalid xyz format.")
         n_atoms = int(lines.pop(0))
         comment = lines.pop(0)
-        mol = {
-            "geometry": [],
-            "symbols": [],
-        }
+        mol = defaultdict(list)
+        mol['extras'] = defaultdict(list)
         bohr_to_angstrom = 0.52917721092
         for line in lines:
             if line:
                 elements = line.split()
-                if len(elements) < 4:
+                if len(elements) == 4:
+                    symbol, x, y, z = elements
+                    mol["symbols"].append(symbol)
+                    mol["geometry"] += [float(x)/bohr_to_angstrom, float(y)/bohr_to_angstrom, float(z)/bohr_to_angstrom]
+                elif len(elements) == 5:
+                    symbol, x, y, z, q = elements
+                    if symbol[0] != '-':
+                        raise ValueError("Invalid xyz format. Molecular Mechanics atoms requires '-' at the beginning of the atom type.")
+                    mol["extras"]["mm_symbols"].append(symbol.replace('-', ''))
+                    mol["extras"]["mm_geometry"] += [float(x)/bohr_to_angstrom, float(y)/bohr_to_angstrom, float(z)/bohr_to_angstrom]
+                    mol["extras"]["mm_charges"].append(float(q))
+                else:
                     raise ValueError("Invalid xyz format.")
-                symbol, x, y, z = elements
-                mol["symbols"].append(symbol)
-                mol["geometry"] += [float(x)/bohr_to_angstrom, float(y)/bohr_to_angstrom, float(z)/bohr_to_angstrom]
             else:
                 break
+
+        # Convert defaultdict to dict
+        mol = dict(mol)
+        mol["extras"] = dict(mol["extras"])
         
-        if len(mol["symbols"]) != n_atoms:
+        if len(mol["symbols"])+len(mol["extras"].get("mm_symbols",[])) != n_atoms:
             raise ValueError("Number of inputs does not match the number of atoms in xyz file.")
 
         return mol
