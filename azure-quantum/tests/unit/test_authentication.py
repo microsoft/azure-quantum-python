@@ -326,7 +326,6 @@ class TestWorkspace(QuantumTestBase):
         return connection_string
 
     @pytest.mark.live_test
-    @pytest.mark.skip(reason="There's a bug in AQS service that blocks api key enable/disable actions")
     def test_workspace_auth_connection_string_api_key(self):
         connection_string = ""
 
