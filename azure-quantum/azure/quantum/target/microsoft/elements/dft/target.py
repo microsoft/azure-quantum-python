@@ -79,6 +79,9 @@ class MicrosoftElementsDft(Target):
         
         if isinstance(input_data, list):
 
+            if len(input_data) < 1:
+                raise ValueError("Input data list has no elements.")
+
             if all(isinstance(task,str) for task in input_data):
                 qcschema_data = self.assemble_qcschema_from_files(input_data, input_params)
             
