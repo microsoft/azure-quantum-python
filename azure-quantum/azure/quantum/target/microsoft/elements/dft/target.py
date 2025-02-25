@@ -79,6 +79,9 @@ class MicrosoftElementsDft(Target):
         
         if isinstance(input_data, list):
 
+            if len(input_data) < 1:
+                raise ValueError("Input data list has no elements.")
+
             if all(isinstance(task,str) for task in input_data):
                 qcschema_data = self.assemble_qcschema_from_files(input_data, input_params)
             
@@ -257,7 +260,7 @@ class MicrosoftElementsDft(Target):
         """
 
         lines = file_data.split("\n")
-        if len(lines) < 3:
+        if len(lines) < 3 or not lines[0]:
             raise ValueError("Invalid xyz format.")
         n_atoms = int(lines.pop(0))
         comment = lines.pop(0)
