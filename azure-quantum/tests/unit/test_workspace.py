@@ -336,7 +336,7 @@ class TestWorkspace(QuantumTestBase):
         self.assertGreater(len(quotas), 0)
         self.assertIn("dimension", quotas[0])
         self.assertIn("scope", quotas[0])
-        self.assertIn("provider_id", quotas[0])
+        self.assertIn("providerId", quotas[0])
         self.assertIn("utilization", quotas[0])
         self.assertIn("holds", quotas[0])
         self.assertIn("limit", quotas[0])
