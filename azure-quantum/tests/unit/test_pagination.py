@@ -312,96 +312,98 @@ class TestWorkspacePagination(QuantumTestBase):
     
     @pytest.mark.live_test
     def test_list_session_jobs(self):
-        # please change to valid session id for recording
-        #session_id = "cd61afdb-eb34-11ef-a0c7-5414f37777d8"
-        session_id = "00000000-0000-0000-0000-000000000001"
-
         ws = self.create_workspace()
-        jobs = ws.list_session_jobs(session_id=session_id)
 
-        for job in jobs:
-            self.assertEqual(job.item_type, "Job")
-            self.assertEqual(job._details.session_id, session_id)
+        sessions = ws.list_sessions()
+
+        if len(sessions) > 0:
+            session = sessions[0]
+            jobs = ws.list_session_jobs(session_id=session.id)
+
+            for job in jobs:
+                self.assertEqual(job.item_type, "Job")
+                self.assertEqual(job._details.session_id, session.id)
 
     @pytest.mark.live_test
     def test_list_session_jobs_filtered_by_name(self):
-        # please change to valid session id for recording
-        #session_id = "cd61afdb-eb34-11ef-a0c7-5414f37777d8"
-        session_id = "00000000-0000-0000-0000-000000000001"
-
         ws = self.create_workspace()
-        jobs = ws.list_session_jobs(session_id=session_id, name_match="Job")
 
-        for job in jobs:
-            self.assertEqual(job.item_type, "Job")
-            self.assertEqual(job._details.session_id, session_id)
-            
-            check_job_name = job.details.name.startswith("Job")
-            self.assertTrue( check_job_name, job.details.name)
+        sessions = ws.list_sessions()
+        
+        if len(sessions) > 0:
+            session = sessions[0]
+            jobs = ws.list_session_jobs(session_id=session.id, name_match="Job")
+
+            for job in jobs:
+                self.assertEqual(job.item_type, "Job")
+                self.assertEqual(job._details.session_id, session.id)
+                
+                check_job_name = job.details.name.startswith("Job")
+                self.assertTrue( check_job_name, job.details.name)
 
     @pytest.mark.live_test
     def test_list_session_jobs_filtered_by_status(self):
-        # please change to valid session id for recording
-        #session_id = "cd61afdb-eb34-11ef-a0c7-5414f37777d8"
-        session_id = "00000000-0000-0000-0000-000000000001"
-
         ws = self.create_workspace()
-        jobs = ws.list_session_jobs(session_id=session_id, status=["Succeeded"])
 
-        for job in jobs:
-            self.assertEqual(job.item_type, "Job")
-            self.assertEqual(job._details.session_id, session_id)
+        sessions = ws.list_sessions()
+        if len(sessions) > 0:
+            session = sessions[0]
+            jobs = ws.list_session_jobs(session_id=session.id, status=["Succeeded"])
 
-            check_job_status = job.details.status == "Succeeded"
-            self.assertTrue( check_job_status, job.details.status)
+            for job in jobs:
+                self.assertEqual(job.item_type, "Job")
+                self.assertEqual(job._details.session_id, session.id)
+
+                check_job_status = job.details.status == "Succeeded"
+                self.assertTrue( check_job_status, job.details.status)
 
     @pytest.mark.live_test
     def test_list_session_jobs_orderby_asc(self):
-        # please change to valid session id for recording
-        #session_id = "cd61afdb-eb34-11ef-a0c7-5414f37777d8"
-        session_id = "00000000-0000-0000-0000-000000000001"
-
         ws = self.create_workspace()
-        jobs = ws.list_session_jobs(session_id=session_id, status=["Succeeded"], orderby_property="CreationTime", is_asc=True)
+        sessions = ws.list_sessions()
+        
+        if len(sessions) > 0:
+            session = sessions[0]
+            jobs = ws.list_session_jobs(session_id=session.id, status=["Succeeded"], orderby_property="CreationTime", is_asc=True)
 
-        creation_time = None
-        for job in jobs:
-            self.assertEqual(job.item_type, "Job")
-            self.assertEqual(job._details.session_id, session_id)
+            creation_time = None
+            for job in jobs:
+                self.assertEqual(job.item_type, "Job")
+                self.assertEqual(job._details.session_id, session.id)
 
-            check_job_status = job.details.status == "Succeeded"
-            self.assertTrue( check_job_status, job.details.status)
+                check_job_status = job.details.status == "Succeeded"
+                self.assertTrue( check_job_status, job.details.status)
 
-            if creation_time is None:
-                creation_time = job.details.creation_time
-            else:
-                check_item_created_before_order = job.details.creation_time >= creation_time
-                self.assertTrue( check_item_created_before_order, job.details.creation_time)
-                creation_time = job.details.creation_time
+                if creation_time is None:
+                    creation_time = job.details.creation_time
+                else:
+                    check_item_created_before_order = job.details.creation_time >= creation_time
+                    self.assertTrue( check_item_created_before_order, job.details.creation_time)
+                    creation_time = job.details.creation_time
 
     @pytest.mark.live_test
     def test_list_session_jobs_orderby_desc(self):
-        # please change to valid session id for recording
-        #session_id = "cd61afdb-eb34-11ef-a0c7-5414f37777d8"
-        session_id = "00000000-0000-0000-0000-000000000001"
-
         ws = self.create_workspace()
-        jobs = ws.list_session_jobs(session_id=session_id, status=["Succeeded"], orderby_property="CreationTime", is_asc=False)
+        sessions = ws.list_sessions()
 
-        creation_time = None
-        for job in jobs:
-            self.assertEqual(job.item_type, "Job")
-            self.assertEqual(job._details.session_id, session_id)
+        if len(sessions) > 0:
+            session = sessions[0]
+            jobs = ws.list_session_jobs(session_id=session.id, status=["Succeeded"], orderby_property="CreationTime", is_asc=False)
 
-            check_job_status = job.details.status == "Succeeded"
-            self.assertTrue( check_job_status, job.details.status)
+            creation_time = None
+            for job in jobs:
+                self.assertEqual(job.item_type, "Job")
+                self.assertEqual(job._details.session_id, session.id)
 
-            if creation_time is None:
-                creation_time = job.details.creation_time
-            else:
-                check_item_created_before_order = job.details.creation_time <= creation_time
-                self.assertTrue( check_item_created_before_order, job.details.creation_time)
-                creation_time = job.details.creation_time
+                check_job_status = job.details.status == "Succeeded"
+                self.assertTrue( check_job_status, job.details.status)
+
+                if creation_time is None:
+                    creation_time = job.details.creation_time
+                else:
+                    check_item_created_before_order = job.details.creation_time <= creation_time
+                    self.assertTrue( check_item_created_before_order, job.details.creation_time)
+                    creation_time = job.details.creation_time
     
     @pytest.mark.live_test
     def test_list_top_level_items(self):
