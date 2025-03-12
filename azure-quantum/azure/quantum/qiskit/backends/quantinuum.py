@@ -105,6 +105,7 @@ class QuantinuumSyntaxCheckerQirBackend(QuantinuumQirBackendBase):
         # Note: Target names on the same line are equivalent.
         "quantinuum.sim.h1-1sc",
         "quantinuum.sim.h2-1sc",
+        "quantinuum.sim.h2-2sc"
     )
 
     def __init__(self, name: str, provider: "AzureQuantumProvider", **kwargs):
@@ -142,6 +143,7 @@ class QuantinuumEmulatorQirBackend(QuantinuumQirBackendBase):
         # Note: Target names on the same line are equivalent.
         "quantinuum.sim.h1-1e",
         "quantinuum.sim.h2-1e",
+        "quantinuum.sim.h2-2e"
     )
 
     def __init__(self, name: str, provider: "AzureQuantumProvider", **kwargs):
@@ -179,6 +181,7 @@ class QuantinuumQPUQirBackend(QuantinuumQirBackendBase):
         # Note: Target names on the same line are equivalent.
         "quantinuum.qpu.h1-1",
         "quantinuum.qpu.h2-1",
+        "quantinuum.qpu.h2-2"
     )
 
     def __init__(self, name: str, provider: "AzureQuantumProvider", **kwargs):
@@ -253,6 +256,7 @@ class QuantinuumSyntaxCheckerBackend(QuantinuumBackend):
         # Note: Target names on the same line are equivalent.
         "quantinuum.sim.h1-1sc",
         "quantinuum.sim.h2-1sc",
+        "quantinuum.sim.h2-2sc"
     )
 
     def __init__(self, name: str, provider: "AzureQuantumProvider", **kwargs):
@@ -290,6 +294,7 @@ class QuantinuumEmulatorBackend(QuantinuumBackend):
         # Note: Target names on the same line are equivalent.
         "quantinuum.sim.h1-1e",
         "quantinuum.sim.h2-1e",
+        "quantinuum.sim.h2-2e"
     )
 
     def __init__(self, name: str, provider: "AzureQuantumProvider", **kwargs):
@@ -327,6 +332,7 @@ class QuantinuumQPUBackend(QuantinuumBackend):
         # Note: Target names on the same line are equivalent.
         "quantinuum.qpu.h1-1",
         "quantinuum.qpu.h2-1",
+        "quantinuum.qpu.h2-2"
     )
 
     def __init__(self, name: str, provider: "AzureQuantumProvider", **kwargs):
