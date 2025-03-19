@@ -37,7 +37,7 @@ parameters:
 
 variables:
 - name: OwnerPersonalAlias
-  value: 'billti'
+  value: 'xiou'
 - name: QSHARP_PYTHON_TELEMETRY
   value: none # Disable usage telemetry for internal test pipelines
 
@@ -214,6 +214,6 @@ extends:
             domaintenantid: '975f013f-7f24-47e8-a7d3-abc4752bf346'
             folderlocation: '$(Build.ArtifactStagingDirectory)/artifacts/wheels'
             waitforreleasecompletion: true
-            owners: 'xiou@microsoft.com' # alias of an owner. owner and approver should be different. sg's and dl's are not supported.
-            approvers: 'xiou@microsoft.com' # alias of an approver, this is auto approved on behalf of this user
-            mainpublisher: ESRPRELPACMAN # Should be your main publisher value, provided at the time of ESRP Release onboarding. Please reachout to esrprelpm@microsoft.com if you don't know this.
+            owners: '$(OwnerPersonalAlias)@microsoft.com'
+            approvers: '$(OwnerPersonalAlias)@microsoft.com'
+            mainpublisher: ESRPRELPACMAN
