@@ -37,7 +37,7 @@ parameters:
 
 variables:
 - name: OwnerPersonalAlias
-  value: 'billti'
+  value: 'xiou'
 - name: QSHARP_PYTHON_TELEMETRY
   value: none # Disable usage telemetry for internal test pipelines
 
@@ -201,21 +201,19 @@ extends:
             assets: |
               $(Build.ArtifactStagingDirectory)/artifacts/wheels/*
 
-        - task: EsrpRelease@7
+        - task: EsrpRelease@9
           condition: ${{ parameters.Publish_Python_Package_To_PyPi }}
           displayName: Sign and publish "azure-quantum" package to PyPi
           inputs:
-            ConnectedServiceName: 'ESRP Signing Connection'
-            KeyVaultName: 'kv-aqua-esrp-001'
-            AuthCertName: 'EsrpAuthCert'
-            SignCertName: 'EsrpSignCert'
-            ClientId: '832c049d-cd07-4c1c-bfa5-c07250d190cb'
-            Intent: 'PackageDistribution'
-            ContentType: 'PyPi'
-            FolderLocation: '$(Build.ArtifactStagingDirectory)/artifacts/wheels'
-            WaitForReleaseCompletion: true
-            Owners: '$(OwnerPersonalAlias)@microsoft.com'                             # Group email here fails the task with non-actionable output.
-            Approvers: 'billti@microsoft.com'
-            ServiceEndpointUrl: 'https://api.esrp.microsoft.com'
-            MainPublisher: 'ESRPRELPACMAN'                                            # Default ESRP v7 publisher. Do not change.
-            DomainTenantId: '72f988bf-86f1-41af-91ab-2d7cd011db47'
+            connectedservicename: 'PME ESRP Azure Connection'
+            usemanagedidentity: true
+            keyvaultname: 'quantum-esrp-kv'
+            signcertname: ESRPCert
+            clientid: '832c049d-cd07-4c1c-bfa5-c07250d190cb'
+            contenttype: PyPi
+            domaintenantid: '975f013f-7f24-47e8-a7d3-abc4752bf346'
+            folderlocation: '$(Build.ArtifactStagingDirectory)/artifacts/wheels'
+            waitforreleasecompletion: true
+            owners: '$(OwnerPersonalAlias)@microsoft.com'
+            approvers: '$(OwnerPersonalAlias)@microsoft.com'
+            mainpublisher: ESRPRELPACMAN
