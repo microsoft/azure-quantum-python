@@ -62,9 +62,6 @@ function PyTestMarkExpr() {
     if ($AzureQuantumCapabilities -notcontains "submit.quantinuum") {
         $MarkExpr += " and not quantinuum"
     }
-    if ($AzureQuantumCapabilities -notcontains "submit.microsoft-qc") {
-        $MarkExpr += " and not microsoft_qc"
-    }    
     if ($AzureQuantumCapabilities -notcontains "submit.microsoft-elements") {
         $MarkExpr += " and not microsoft_elements_dft"
     }
