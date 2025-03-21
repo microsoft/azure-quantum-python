@@ -109,11 +109,11 @@ class TestWorkspacePagination(QuantumTestBase):
     def test_list_jobs_filtered_by_provider(self):
         ws = self.create_workspace()
         
-        jobs = ws.list_jobs(provider = ["microsoft-qc", "ionq"])
+        jobs = ws.list_jobs(provider = ["ionq"])
         for job in jobs:
             self.assertEqual(job.item_type, "Job")
 
-            check_job_provider = job.details.provider_id == "microsoft-qc" or job.details.provider_id == "ionq"
+            check_job_provider = job.details.provider_id == "ionq"
             self.assertTrue( check_job_provider, job.details.provider_id)
 
     @pytest.mark.live_test
@@ -215,11 +215,11 @@ class TestWorkspacePagination(QuantumTestBase):
     def test_list_sessions_filtered_by_provider(self):
         ws = self.create_workspace()
 
-        sessions = ws.list_sessions(provider = ["microsoft-qc", "ionq"])
+        sessions = ws.list_sessions(provider = ["ionq"])
         for session in sessions:
             self.assertEqual(session.item_type, "Session")
 
-            check_session_provider = session._details.provider_id == "microsoft-qc" or session._details.provider_id == "ionq"
+            check_session_provider = session._details.provider_id == "ionq"
             self.assertTrue( check_session_provider, session._details.provider_id)
 
     @pytest.mark.live_test
@@ -489,13 +489,13 @@ class TestWorkspacePagination(QuantumTestBase):
         resource_group = ws.resource_group
         workspace_name = ws.name
         
-        items = ws.list_top_level_items(provider = ["microsoft-qc", "ionq"])
+        items = ws.list_top_level_items(provider = ["ionq"])
         for item in items:
             self.assertEqual(item.workspace.subscription_id, subscription_id)
             self.assertEqual(item.workspace.resource_group, resource_group)
             self.assertEqual(item.workspace.name, workspace_name)
 
-            check_item_provider = item.details.provider_id == "microsoft-qc" or item.details.provider_id == "ionq"
+            check_item_provider = item.details.provider_id == "ionq"
             self.assertTrue( check_item_provider, item.details.provider_id)
 
     @pytest.mark.live_test
