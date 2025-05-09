@@ -282,7 +282,7 @@ class TestWorkspace(QuantumTestBase):
             },
             body=workspace_json
         )
-        self.assertEqual(response.status, 200,
+        self.assertEqual(response.status, 201,
                          f"""
                          {url} failed with error code {response.status}.
                          Failed to enable/disable api key.
