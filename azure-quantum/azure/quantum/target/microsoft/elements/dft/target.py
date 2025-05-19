@@ -240,10 +240,6 @@ class MicrosoftElementsDft(Target):
         # Check Model params
         self._check_dict_for_required_keys(input_params['model'], 'input_params["model"]', ['method', 'basis'])
 
-        supported_drivers = ['energy', 'gradient', 'hessian', 'go', 'bomd']
-        if input_params['driver'] not in supported_drivers:
-            raise ValueError(f"Driver ({input_params['driver']}) is not supported. Please use one of {supported_drivers}.")
-
     
     @classmethod
     def _check_dict_for_required_keys(self, input_params: dict, dict_name: str, required_keys: list[str]):
