@@ -341,6 +341,7 @@ class TestWorkspace(QuantumTestBase):
             token = self._get_rp_credential()
             workspace = self._get_workspace(token)
             self._enable_workspace_api_keys(token, workspace, True)
+            time.sleep(10)
             connection_string = self._get_current_primary_connection_string(token)
             self.resume_recording()
             # Sleep 1 min for cache to be cleared
@@ -351,8 +352,8 @@ class TestWorkspace(QuantumTestBase):
             workspace = Workspace.from_connection_string(
                 connection_string=connection_string,
             )
-            jobs = workspace.list_jobs()
-            assert len(jobs) >= 0
+            targets = workspace.get_targets()
+            assert len(targets) >= 0
 
         if not self.is_playback:
             self.pause_recording()
@@ -369,6 +370,6 @@ class TestWorkspace(QuantumTestBase):
                 connection_string=connection_string,
             )
             with self.assertRaises(Exception) as context:
-                workspace.list_jobs()
+                workspace.get_targets()
 
             self.assertIn("Unauthorized", context.exception.message)
