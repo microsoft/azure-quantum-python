@@ -318,14 +318,14 @@ class QuantumTestBase(ReplayableTest):
         **kwargs
     ) -> Target:
         """
-        Create a `Microsoft.Test.echo-target` Target for simple job submission tests.
+        Create a `Microsoft.Test.FirstParty.echo-target` Target for simple job submission tests.
         Uses the Workspace returned from `create_workspace()` method. 
         """
         workspace = self.create_workspace(credential=credential, **kwargs)
         target = Target(
             workspace=workspace,
             name="echo-output",
-            provider_id="Microsoft.Test",
+            provider_id="Microsoft.Test.FirstParty",
             input_data_format = "microsoft.quantum-log.v1",
             output_data_format = "microsoft.quantum-log.v1"
         )

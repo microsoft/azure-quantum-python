@@ -27,6 +27,8 @@ from qiskit_ionq.helpers import (
 if TYPE_CHECKING:
     from azure.quantum.qiskit import AzureQuantumProvider
 
+import json
+
 import logging
 
 logger = logging.getLogger(__name__)
@@ -244,7 +246,7 @@ class IonQBackend(AzureBackend):
         _, _, meas_map = qiskit_circ_to_ionq_circ(circuit, gateset=self.gateset())
 
         metadata = super()._prepare_job_metadata(circuit, **kwargs)
-        metadata["meas_map"] = meas_map
+        metadata["meas_map"] = json.dumps(meas_map)
 
         return metadata
 
