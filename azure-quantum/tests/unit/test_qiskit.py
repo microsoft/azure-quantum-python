@@ -940,7 +940,7 @@ class TestQiskit(QuantumTestBase):
         self.assertEqual("native", payload["gateset"])
         # We also expect the metadata to be produced correctly for native circuits
         metadata = backend._prepare_job_metadata(native_circuit)
-        self.assertEqual(2, len(metadata["meas_map"]))
+        self.assertEqual(2,len(json.loads(metadata["meas_map"])))
 
         # should also be available with the qpu target
         backend = provider.get_backend("ionq.qpu.aria-1", gateset="native")
@@ -950,7 +950,7 @@ class TestQiskit(QuantumTestBase):
         payload = json.loads(payload.decode("utf-8"))
         self.assertEqual("ms", payload["circuit"][0]["gate"])
         metadata = backend._prepare_job_metadata(native_circuit)
-        self.assertEqual(2, len(metadata["meas_map"]))
+        self.assertEqual(2, len(json.loads(metadata["meas_map"])))
 
     @pytest.mark.ionq
     @pytest.mark.live_test
