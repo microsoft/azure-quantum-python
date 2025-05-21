@@ -84,7 +84,7 @@ class Target(abc.ABC, SessionHost):
         :type output_data_format: str
         :param capability: QIR capability. Deprecated, use `target_profile`
         :type capability: str
-        :param provider_id: Id of provider (ex. "microsoft-qc")
+        :param provider_id: Id of provider
         :type provider_id: str
         :param content_type: "Content-Type" attribute value to set on input blob (ex. "application/json")
         :type content_type: azure.quantum.job.ContentType
