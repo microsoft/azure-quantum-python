@@ -68,50 +68,11 @@ interactions:
     uri: https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token
   response:
     body:
-      string: '{"error": "invalid_grant", "error_description": "AADSTS53003: Access
-        has been blocked by Conditional Access policies. The access policy does not
-        allow token issuance. Trace ID: cdd45dd4-907f-41e1-bf2f-a7e90b632c00 Correlation
-        ID: 7c5a925d-266f-4df0-a4e5-ff711c978ac9 Timestamp: 2025-05-21 07:07:19Z",
-        "error_codes": [53003], "timestamp": "2025-05-21 07:07:19Z", "trace_id": "cdd45dd4-907f-41e1-bf2f-a7e90b632c00",
-        "correlation_id": "7c5a925d-266f-4df0-a4e5-ff711c978ac9", "error_uri": "https://login.microsoftonline.com/error?code=PLACEHOLDER",
-        "suberror": "message_only", "claims": "{\"access_token\":{\"capolids\":{\"essential\":true,\"values\":[\"37b3c007-8510-40aa-9c46-819fdb20bf63\",\"3d79d567-88b8-4901-ae54-01418818a0e8\"]}}}"}'
+      string: '{"token_type": "Bearer", "expires_in": 1779348940, "ext_expires_in":
+        1779348940, "refresh_in": 31536000, "access_token": "PLACEHOLDER"}'
     headers:
       content-length:
-      - '735'
-      content-type:
-      - application/json; charset=utf-8
-    status:
-      code: 400
-      message: Bad Request
-- request:
-    body: null
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-identity/1.18.0 Python/3.9.20 (Windows-10-10.0.26100-SP0)
-    method: GET
-    uri: https://login.microsoftonline.com/common/discovery/instance?api-version=1.1&authorization_endpoint=https://login.microsoftonline.com/common/oauth2/authorize
-  response:
-    body:
-      string: '{"tenant_discovery_endpoint": "https://login.microsoftonline.com/common/.well-known/openid-configuration",
-        "api-version": "1.1", "metadata": [{"preferred_network": "login.microsoftonline.com",
-        "preferred_cache": "login.windows.net", "aliases": ["login.microsoftonline.com",
-        "login.windows.net", "login.microsoft.com", "sts.windows.net"]}, {"preferred_network":
-        "login.partner.microsoftonline.cn", "preferred_cache": "login.partner.microsoftonline.cn",
-        "aliases": ["login.partner.microsoftonline.cn", "login.chinacloudapi.cn"]},
-        {"preferred_network": "login.microsoftonline.de", "preferred_cache": "login.microsoftonline.de",
-        "aliases": ["login.microsoftonline.de"]}, {"preferred_network": "login.microsoftonline.us",
-        "preferred_cache": "login.microsoftonline.us", "aliases": ["login.microsoftonline.us",
-        "login.usgovcloudapi.net"]}, {"preferred_network": "login-us.microsoftonline.com",
-        "preferred_cache": "login-us.microsoftonline.com", "aliases": ["login-us.microsoftonline.com"]}]}'
-    headers:
-      content-length:
-      - '984'
+      - '135'
       content-type:
       - application/json; charset=utf-8
     status:
