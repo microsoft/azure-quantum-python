@@ -69,6 +69,7 @@ class RegexScrubbingPatterns:
     URL_QUERY_AUTH_CLAIMS = r"claims=[\w\%\-\.]+"
     URL_QUERY_AUTH_CODE_VERIFIER = r"code_verifier=[\w\%\-\.]+"
     URL_QUERY_AUTH_CODE = r"code=[\w\%\-\.]+"
+    URL_QUERY_KEY_CODE = r"key=[\w\%\-\.]+"
     URL_HTTP = r"http://" # Devskim: ignore DS137138
 
 class QuantumTestBase(ReplayableTest):
@@ -180,6 +181,8 @@ class QuantumTestBase(ReplayableTest):
                                       "code_verifier=PLACEHOLDER")
         self._regex_replacer.register_scrubbing(RegexScrubbingPatterns.URL_QUERY_AUTH_CODE,
                                       "code=PLACEHOLDER")
+        self._regex_replacer.register_scrubbing(RegexScrubbingPatterns.URL_QUERY_KEY_CODE,
+                                      "key=PLACEHOLDER")
         self._regex_replacer.register_scrubbing(RegexScrubbingPatterns.URL_HTTP, "https://")
 
         self._regex_replacer.register_scrubbing(

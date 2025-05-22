@@ -352,8 +352,8 @@ class TestWorkspace(QuantumTestBase):
             workspace = Workspace.from_connection_string(
                 connection_string=connection_string,
             )
-            targets = workspace.get_targets()
-            assert len(targets) >= 0
+            jobs_paged = workspace.list_jobs_paginated()
+            assert jobs_paged.next() is not None
 
         if not self.is_playback:
             self.pause_recording()
@@ -370,6 +370,6 @@ class TestWorkspace(QuantumTestBase):
                 connection_string=connection_string,
             )
             with self.assertRaises(Exception) as context:
-                workspace.get_targets()
+                workspace.list_jobs_paginated().next()
 
             self.assertIn("Unauthorized", context.exception.message)
