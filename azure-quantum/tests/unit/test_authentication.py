@@ -240,7 +240,7 @@ class TestWorkspace(QuantumTestBase):
             workspace_name=connection_params.workspace_name,
         )
         url = (connection_params.arm_endpoint.rstrip('/') +
-               f"{resource_id}?api-version=2023-11-13-preview")
+               f"{resource_id}?api-version=2025-01-01-preview")
         
         # Get workspace object
         response = http.request(
@@ -272,7 +272,7 @@ class TestWorkspace(QuantumTestBase):
             workspace_name=connection_params.workspace_name,
         )
         url = (connection_params.arm_endpoint.rstrip('/') +
-               f"{resource_id}?api-version=2023-11-13-preview")
+               f"{resource_id}?api-version=2025-01-01-preview")
         response = http.request(
             method="PUT",
             url=url,
@@ -298,7 +298,7 @@ class TestWorkspace(QuantumTestBase):
             workspace_name=connection_params.workspace_name,
         )
         url = (connection_params.arm_endpoint.rstrip('/') +
-               f"{resource_id}/listKeys?api-version=2023-11-13-preview")
+               f"{resource_id}/listKeys?api-version=2025-01-01-preview")
         response = http.request(
             method="POST",
             url=url,
