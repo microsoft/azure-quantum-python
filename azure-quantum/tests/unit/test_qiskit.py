@@ -940,7 +940,7 @@ class TestQiskit(QuantumTestBase):
         self.assertEqual("native", payload["gateset"])
         # We also expect the metadata to be produced correctly for native circuits
         metadata = backend._prepare_job_metadata(native_circuit)
-        self.assertEqual(2, len(metadata["meas_map"]))
+        self.assertEqual(2,len(json.loads(metadata["meas_map"])))
 
         # should also be available with the qpu target
         backend = provider.get_backend("ionq.qpu.aria-1", gateset="native")
@@ -950,7 +950,7 @@ class TestQiskit(QuantumTestBase):
         payload = json.loads(payload.decode("utf-8"))
         self.assertEqual("ms", payload["circuit"][0]["gate"])
         metadata = backend._prepare_job_metadata(native_circuit)
-        self.assertEqual(2, len(metadata["meas_map"]))
+        self.assertEqual(2, len(json.loads(metadata["meas_map"])))
 
     @pytest.mark.ionq
     @pytest.mark.live_test
@@ -1618,17 +1618,17 @@ class TestQiskit(QuantumTestBase):
         provider = AzureQuantumProvider(workspace=workspace)
 
         try:
-            backend = provider.get_backend(RigettiTarget.ANKAA_9Q_3.value)
+            backend = provider.get_backend(RigettiTarget.ANKAA_3.value)
         except QiskitBackendNotFoundError as ex:
-            msg = f"Target {RigettiTarget.ANKAA_9Q_3} is not available for workspace {workspace.name}."
+            msg = f"Target {RigettiTarget.ANKAA_3} is not available for workspace {workspace.name}."
             warnings.warn(f"{msg}\nException:\n{QiskitBackendNotFoundError.__name__}\n{ex}")
             pytest.skip(msg)
 
-        self.assertEqual(backend.name(), RigettiTarget.ANKAA_9Q_3.value)
+        self.assertEqual(backend.name(), RigettiTarget.ANKAA_3.value)
         config = backend.configuration()
         self.assertFalse(config.simulator)
         self.assertEqual(1, config.max_experiments)
-        self.assertEqual(9, config.num_qubits)
+        self.assertEqual(84, config.num_qubits)
         self.assertEqual("qir.v1", config.azure["content_type"])
         self.assertEqual("rigetti", config.azure["provider_id"])
         self.assertEqual("qir.v1", config.azure["input_data_format"])
@@ -1767,103 +1767,6 @@ class TestQiskit(QuantumTestBase):
             print(result)
             self.assertEqual(sum(result.data()["counts"].values()), shots)
             self.assertEqual(result.data()["counts"][expectation], shots)
-
-    @pytest.mark.microsoft_qc
-    @pytest.mark.live_test
-    def test_qiskit_controlled_s_to_resource_estimator(self):
-        from pyqir import rt
-
-        patcher = unittest.mock.patch.object(rt, "initialize")
-        patcher.start()
-
-        workspace = self.create_workspace()
-        provider = AzureQuantumProvider(workspace=workspace)
-        backend = provider.get_backend("microsoft.estimator")
-
-        circuit = self._controlled_s()
-
-        qiskit_job = backend.run(circuit)
-
-        # Make sure the job is completed before fetching results
-        self._qiskit_wait_to_complete(qiskit_job, provider)
-
-        patcher.stop()
-
-        self.assertEqual(qiskit_job.status(), JobStatus.DONE)
-        if JobStatus.DONE == qiskit_job.status():
-            result = qiskit_job.result()
-            self.assertEqual(result.data()["logicalCounts"]["numQubits"], 2)
-            self.assertEqual(result.data()["jobParams"]["qubitParams"]["name"], "qubit_gate_ns_e3")
-            self.assertEqual(result.data()["jobParams"]["qecScheme"]["name"], "surface_code")
-            self.assertEqual(result.data()["jobParams"]["errorBudget"], 0.001)
-
-    @pytest.mark.microsoft_qc
-    @pytest.mark.live_test
-    def test_qiskit_controlled_s_to_resource_estimator_with_high_error_rate(self):
-        from pyqir import rt
-
-        patcher = unittest.mock.patch.object(rt, "initialize")
-        patcher.start()
-
-        workspace = self.create_workspace()
-        provider = AzureQuantumProvider(workspace=workspace)
-        backend = provider.get_backend("microsoft.estimator")
-
-        circuit = self._controlled_s()
-
-        qiskit_job = backend.run(
-            circuit, qubitParams={"name": "qubit_gate_ns_e4"}, errorBudget=0.0001
-        )
-
-        # Make sure the job is completed before fetching results
-        self._qiskit_wait_to_complete(qiskit_job, provider)
-
-        patcher.stop()
-
-        self.assertEqual(qiskit_job.status(), JobStatus.DONE)
-        if JobStatus.DONE == qiskit_job.status():
-            result = qiskit_job.result()
-            self.assertEqual(result.data()["logicalCounts"]["numQubits"], 2)
-            self.assertEqual(result.data()["jobParams"]["qubitParams"]["name"], "qubit_gate_ns_e4")
-            self.assertEqual(result.data()["jobParams"]["qecScheme"]["name"], "surface_code")
-            self.assertEqual(result.data()["jobParams"]["errorBudget"], 0.0001)
-
-    @pytest.mark.microsoft_qc
-    @pytest.mark.live_test
-    def test_qiskit_controlled_s_to_resource_estimator_with_items(self):
-        from pyqir import rt
-
-        patcher = unittest.mock.patch.object(rt, "initialize")
-        patcher.start()
-
-        workspace = self.create_workspace()
-        provider = AzureQuantumProvider(workspace=workspace)
-        backend = provider.get_backend("microsoft.estimator")
-
-        circuit = self._controlled_s()
-
-        item1 = {"qubitParams": {"name": "qubit_gate_ns_e3"}, "errorBudget": 1e-4}
-        item2 = {"qubitParams": {"name": "qubit_gate_ns_e4"}, "errorBudget": 1e-4}
-        qiskit_job = backend.run(circuit, items=[item1, item2])
-
-        # Make sure the job is completed before fetching results
-        self._qiskit_wait_to_complete(qiskit_job, provider)
-
-        patcher.stop()
-
-        self.assertEqual(qiskit_job.status(), JobStatus.DONE)
-        if JobStatus.DONE == qiskit_job.status():
-            result = qiskit_job.result()
-
-            self.assertEqual(result.data(0)["logicalCounts"]["numQubits"], 2)
-            self.assertEqual(result.data(0)["jobParams"]["qubitParams"]["name"], "qubit_gate_ns_e3")
-            self.assertEqual(result.data(0)["jobParams"]["qecScheme"]["name"], "surface_code")
-            self.assertEqual(result.data(0)["jobParams"]["errorBudget"], 0.0001)
-
-            self.assertEqual(result.data(1)["logicalCounts"]["numQubits"], 2)
-            self.assertEqual(result.data(1)["jobParams"]["qubitParams"]["name"], "qubit_gate_ns_e4")
-            self.assertEqual(result.data(1)["jobParams"]["qecScheme"]["name"], "surface_code")
-            self.assertEqual(result.data(1)["jobParams"]["errorBudget"], 0.0001)
 
     def test_backend_without_azure_config_format_defaults_to_ms_format(self):
         backend = NoopQirBackend(None, "AzureQuantumProvider")

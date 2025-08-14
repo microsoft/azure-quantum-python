@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 ##
+import json
 import numpy as np
 
 from typing import TYPE_CHECKING, Any, Dict, Sequence
@@ -97,7 +98,7 @@ class QuantinuumTarget(Quantinuum, CirqTarget):
         metadata = {
             "qubits": len(program.all_qubits()),
             "repetitions": repetitions,
-            "measurement_dict": self._measurement_dict(program)
+            "measurement_dict": json.dumps(self._measurement_dict(program))
         }
         # Override metadata with value from kwargs
         metadata.update(kwargs.get("metadata", {}))

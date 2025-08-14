@@ -80,11 +80,11 @@ class Target(abc.ABC, SessionHost):
         :type name: str
         :param input_data_format: Format of input data (ex. "qir.v1")
         :type input_data_format: str
-        :param output_data_format: Format of output data (ex. "microsoft.resource-estimates.v1")
+        :param output_data_format: Format of output data (ex. "microsoft.quantum-log.v1")
         :type output_data_format: str
         :param capability: QIR capability. Deprecated, use `target_profile`
         :type capability: str
-        :param provider_id: Id of provider (ex. "microsoft-qc")
+        :param provider_id: Id of provider
         :type provider_id: str
         :param content_type: "Content-Type" attribute value to set on input blob (ex. "application/json")
         :type content_type: azure.quantum.job.ContentType

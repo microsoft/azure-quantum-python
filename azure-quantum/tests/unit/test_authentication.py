@@ -240,7 +240,7 @@ class TestWorkspace(QuantumTestBase):
             workspace_name=connection_params.workspace_name,
         )
         url = (connection_params.arm_endpoint.rstrip('/') +
-               f"{resource_id}?api-version=2023-11-13-preview")
+               f"{resource_id}?api-version=2025-01-01-preview")
         
         # Get workspace object
         response = http.request(
@@ -272,7 +272,7 @@ class TestWorkspace(QuantumTestBase):
             workspace_name=connection_params.workspace_name,
         )
         url = (connection_params.arm_endpoint.rstrip('/') +
-               f"{resource_id}?api-version=2023-11-13-preview")
+               f"{resource_id}?api-version=2025-01-01-preview")
         response = http.request(
             method="PUT",
             url=url,
@@ -282,7 +282,7 @@ class TestWorkspace(QuantumTestBase):
             },
             body=workspace_json
         )
-        self.assertEqual(response.status, 200,
+        self.assertEqual(response.status, 201,
                          f"""
                          {url} failed with error code {response.status}.
                          Failed to enable/disable api key.
@@ -298,7 +298,7 @@ class TestWorkspace(QuantumTestBase):
             workspace_name=connection_params.workspace_name,
         )
         url = (connection_params.arm_endpoint.rstrip('/') +
-               f"{resource_id}/listKeys?api-version=2023-11-13-preview")
+               f"{resource_id}/listKeys?api-version=2025-01-01-preview")
         response = http.request(
             method="POST",
             url=url,
@@ -341,6 +341,7 @@ class TestWorkspace(QuantumTestBase):
             token = self._get_rp_credential()
             workspace = self._get_workspace(token)
             self._enable_workspace_api_keys(token, workspace, True)
+            time.sleep(10)
             connection_string = self._get_current_primary_connection_string(token)
             self.resume_recording()
             # Sleep 1 min for cache to be cleared
@@ -351,8 +352,8 @@ class TestWorkspace(QuantumTestBase):
             workspace = Workspace.from_connection_string(
                 connection_string=connection_string,
             )
-            jobs = workspace.list_jobs()
-            assert len(jobs) >= 0
+            jobs_paged = workspace.list_jobs_paginated()
+            assert jobs_paged.next() is not None
 
         if not self.is_playback:
             self.pause_recording()
@@ -369,6 +370,6 @@ class TestWorkspace(QuantumTestBase):
                 connection_string=connection_string,
             )
             with self.assertRaises(Exception) as context:
-                workspace.list_jobs()
+                workspace.list_jobs_paginated().next()
 
             self.assertIn("Unauthorized", context.exception.message)

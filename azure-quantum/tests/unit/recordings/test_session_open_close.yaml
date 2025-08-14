@@ -79,8 +79,8 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: 'b''{"id": "00000000-0000-0000-0000-000000000001", "name": "session-00000000-0000-0000-0000-000000000001",
-      "providerId": "microsoft.test", "target": "echo-quantinuum", "itemType": "Session"}'''
+    body: 'b''{"itemType": "Session", "name": "session-00000000-0000-0000-0000-000000000001",
+      "providerId": "Microsoft.Test.FirstParty", "target": "echo-quantinuum"}'''
     headers:
       Accept:
       - application/json
@@ -89,24 +89,26 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '189'
+      - '154'
       Content-Type:
       - application/json
       User-Agent:
-      - testapp azsdk-python-quantum/0.0.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
+      - testapp azsdk-python-quantum/0.0.1 Python/3.9.20 (Windows-10-10.0.26100-SP0)
+      x-ms-quantum-api-key:
+      - PLACEHOLDER
     method: PUT
-    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/sessions/00000000-0000-0000-0000-000000000001?api-version=2022-09-12-preview&test-sequence-id=1
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/sessions/00000000-0000-0000-0000-000000000001?api-version=2024-10-01-preview&test-sequence-id=1
   response:
     body:
       string: '{"status": "Waiting", "jobFailurePolicy": "Abort", "name": "session-00000000-0000-0000-0000-000000000001",
-        "id": "00000000-0000-0000-0000-000000000001", "providerId": "microsoft.test",
-        "target": "echo-quantinuum", "creationTime": "2024-08-29T18:32:41.2924609Z",
+        "id": "00000000-0000-0000-0000-000000000001", "providerId": "microsoft.test.firstparty",
+        "target": "echo-quantinuum", "creationTime": "2025-02-15T00:08:51.686226Z",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Session"}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '332'
+      - '342'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -126,21 +128,23 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - testapp azsdk-python-quantum/0.0.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
+      - testapp azsdk-python-quantum/0.0.1 Python/3.9.20 (Windows-10-10.0.26100-SP0)
+      x-ms-quantum-api-key:
+      - PLACEHOLDER
     method: POST
-    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/sessions/00000000-0000-0000-0000-000000000001:close?api-version=2022-09-12-preview&test-sequence-id=1
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/sessions/00000000-0000-0000-0000-000000000001:close?api-version=2024-10-01-preview&test-sequence-id=1
   response:
     body:
       string: '{"status": "Succeeded", "jobFailurePolicy": "Abort", "name": "session-00000000-0000-0000-0000-000000000001",
-        "id": "00000000-0000-0000-0000-000000000001", "providerId": "microsoft.test",
-        "target": "echo-quantinuum", "creationTime": "2024-08-29T18:32:41.2924609Z",
-        "endExecutionTime": "2024-08-29T18:32:41.3389908Z", "costEstimate": null,
+        "id": "00000000-0000-0000-0000-000000000001", "providerId": "microsoft.test.firstparty",
+        "target": "echo-quantinuum", "creationTime": "2025-02-15T00:08:51.686226Z",
+        "endExecutionTime": "2025-02-15T00:08:51.9460097Z", "costEstimate": null,
         "itemType": "Session"}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '360'
+      - '370'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:

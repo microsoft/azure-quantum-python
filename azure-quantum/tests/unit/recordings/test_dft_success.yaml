@@ -9,7 +9,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-identity/1.17.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
+      - azsdk-python-identity/1.18.0 Python/3.9.20 (Windows-10-10.0.26100-SP0)
     method: GET
     uri: https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/v2.0/.well-known/openid-configuration
   response:
@@ -55,7 +55,7 @@ interactions:
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - azsdk-python-identity/1.17.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
+      - azsdk-python-identity/1.18.0 Python/3.9.20 (Windows-10-10.0.26100-SP0)
       x-client-current-telemetry:
       - 4|730,2|
       x-client-os:
@@ -63,13 +63,13 @@ interactions:
       x-client-sku:
       - MSAL.Python
       x-client-ver:
-      - 1.30.0
+      - 1.31.0
     method: POST
     uri: https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token
   response:
     body:
-      string: '{"token_type": "Bearer", "expires_in": 1756429911, "ext_expires_in":
-        1756429911, "refresh_in": 31536000, "access_token": "PLACEHOLDER"}'
+      string: '{"token_type": "Bearer", "expires_in": 1779431820, "ext_expires_in":
+        1779431820, "refresh_in": 31536000, "access_token": "PLACEHOLDER"}'
     headers:
       content-length:
       - '135'
@@ -88,155 +88,84 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - testapp azsdk-python-quantum/0.0.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
+      - testapp azsdk-python-quantum/0.0.1 Python/3.9.20 (Windows-10-10.0.26100-SP0)
     method: GET
-    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/providerStatus?api-version=2022-09-12-preview&test-sequence-id=1
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/providerStatus?api-version=2024-10-01-preview&test-sequence-id=1
   response:
     body:
       string: '{"value": [{"id": "microsoft-elements", "currentAvailability": "Available",
         "targets": [{"id": "microsoft.dft", "currentAvailability": "Available", "averageQueueTime":
-        0, "statusPage": null}]}, {"id": "ionq", "currentAvailability": "Degraded",
-        "targets": [{"id": "ionq.qpu", "currentAvailability": "Unavailable", "averageQueueTime":
-        0, "statusPage": null}, {"id": "ionq.qpu.aria-1", "currentAvailability": "Available",
-        "averageQueueTime": 8438084, "statusPage": "https://status.ionq.co"}, {"id":
-        "ionq.qpu.aria-2", "currentAvailability": "Available", "averageQueueTime":
-        2604054, "statusPage": "https://status.ionq.co"}, {"id": "ionq.simulator",
-        "currentAvailability": "Available", "averageQueueTime": 1, "statusPage": "https://status.ionq.co"}]},
-        {"id": "microsoft-qc", "currentAvailability": "Available", "targets": [{"id":
-        "microsoft.estimator", "currentAvailability": "Available", "averageQueueTime":
-        0, "statusPage": null}]}, {"id": "pasqal", "currentAvailability": "Degraded",
+        0, "statusPage": null}]}, {"id": "ionq", "currentAvailability": "Available",
+        "targets": [{"id": "ionq.qpu.aria-1", "currentAvailability": "Unavailable",
+        "averageQueueTime": 0, "statusPage": "https://status.ionq.co"}, {"id": "ionq.qpu.aria-2",
+        "currentAvailability": "Unavailable", "averageQueueTime": 0, "statusPage":
+        "https://status.ionq.co"}, {"id": "ionq.simulator", "currentAvailability":
+        "Available", "averageQueueTime": 0, "statusPage": "https://status.ionq.co"}]},
+        {"id": "microsoft-qc", "currentAvailability": "Unavailable", "targets": [{"id":
+        "microsoft.estimator", "currentAvailability": "Unavailable", "averageQueueTime":
+        0, "statusPage": null}]}, {"id": "pasqal", "currentAvailability": "Available",
         "targets": [{"id": "pasqal.sim.emu-tn", "currentAvailability": "Available",
-        "averageQueueTime": 273, "statusPage": "https://pasqal.com"}, {"id": "pasqal.qpu.fresnel",
-        "currentAvailability": "Degraded", "averageQueueTime": 0, "statusPage": "https://pasqal.com"}]},
-        {"id": "quantinuum", "currentAvailability": "Available", "targets": [{"id":
-        "quantinuum.qpu.h1-1", "currentAvailability": "Available", "averageQueueTime":
-        164985, "statusPage": "https://www.quantinuum.com/hardware/h1"}, {"id": "quantinuum.sim.h1-1sc",
-        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        "averageQueueTime": 527, "statusPage": ""}, {"id": "pasqal.qpu.fresnel", "currentAvailability":
+        "Unavailable", "averageQueueTime": 0, "statusPage": ""}]}, {"id": "quantinuum",
+        "currentAvailability": "Available", "targets": [{"id": "quantinuum.qpu.h1-1",
+        "currentAvailability": "Available", "averageQueueTime": 11806, "statusPage":
+        "https://calendar.qapi.quantinuum.com/?target=H1-1&key=PLACEHOLDER"}, {"id":
+        "quantinuum.sim.h1-1sc", "currentAvailability": "Available", "averageQueueTime":
+        26, "statusPage": "https://calendar.qapi.quantinuum.com/?target=H1-1SC&key=PLACEHOLDER"},
         {"id": "quantinuum.sim.h1-1e", "currentAvailability": "Available", "averageQueueTime":
-        5, "statusPage": "https://www.quantinuum.com/hardware/h1"}, {"id": "quantinuum.qpu.h2-1",
-        "currentAvailability": "Available", "averageQueueTime": 115568, "statusPage":
-        "https://www.quantinuum.com/hardware/h2"}, {"id": "quantinuum.sim.h2-1sc",
-        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h2"},
+        5, "statusPage": "https://calendar.qapi.quantinuum.com/?target=H1-1E&key=PLACEHOLDER"},
+        {"id": "quantinuum.qpu.h2-1", "currentAvailability": "Available", "averageQueueTime":
+        76798, "statusPage": "https://calendar.qapi.quantinuum.com/?target=H2-1&key=PLACEHOLDER"},
+        {"id": "quantinuum.sim.h2-1sc", "currentAvailability": "Available", "averageQueueTime":
+        0, "statusPage": "https://calendar.qapi.quantinuum.com/?target=H2-1SC&key=PLACEHOLDER"},
         {"id": "quantinuum.sim.h2-1e", "currentAvailability": "Available", "averageQueueTime":
-        0, "statusPage": "https://www.quantinuum.com/hardware/h2"}, {"id": "quantinuum.sim.h1-1sc-preview",
-        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        2130, "statusPage": "https://calendar.qapi.quantinuum.com/?target=H2-1E&key=PLACEHOLDER"},
+        {"id": "quantinuum.qpu.h2-2", "currentAvailability": "Degraded", "averageQueueTime":
+        0, "statusPage": "https://calendar.qapi.quantinuum.com/?target=H2-2&key=PLACEHOLDER"},
+        {"id": "quantinuum.sim.h2-2sc", "currentAvailability": "Available", "averageQueueTime":
+        0, "statusPage": "https://calendar.qapi.quantinuum.com/?target=H2-2SC&key=PLACEHOLDER"},
+        {"id": "quantinuum.sim.h2-2e", "currentAvailability": "Available", "averageQueueTime":
+        109, "statusPage": "https://calendar.qapi.quantinuum.com/?target=H2-2E&key=PLACEHOLDER"},
+        {"id": "quantinuum.sim.h1-1sc-preview", "currentAvailability": "Available",
+        "averageQueueTime": 26, "statusPage": "https://calendar.qapi.quantinuum.com/?target=H1-1SC&key=PLACEHOLDER"},
         {"id": "quantinuum.sim.h1-1e-preview", "currentAvailability": "Available",
-        "averageQueueTime": 5, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        "averageQueueTime": 5, "statusPage": "https://calendar.qapi.quantinuum.com/?target=H1-1E&key=PLACEHOLDER"},
         {"id": "quantinuum.sim.h1-2e-preview", "currentAvailability": "Available",
-        "averageQueueTime": 0, "statusPage": "https://www.quantinuum.com/hardware/h1"},
+        "averageQueueTime": 0, "statusPage": "https://calendar.qapi.quantinuum.com/?target=H1-2E-PREVIEW&key=PLACEHOLDER"},
         {"id": "quantinuum.qpu.h1-1-preview", "currentAvailability": "Available",
-        "averageQueueTime": 164985, "statusPage": "https://www.quantinuum.com/hardware/h1"}]},
+        "averageQueueTime": 11806, "statusPage": "https://calendar.qapi.quantinuum.com/?target=H1-1&key=PLACEHOLDER"}]},
         {"id": "rigetti", "currentAvailability": "Available", "targets": [{"id": "rigetti.sim.qvm",
         "currentAvailability": "Available", "averageQueueTime": 5, "statusPage": "https://rigetti.statuspage.io/"},
-        {"id": "rigetti.qpu.ankaa-2", "currentAvailability": "Available", "averageQueueTime":
+        {"id": "rigetti.qpu.ankaa-3", "currentAvailability": "Available", "averageQueueTime":
         5, "statusPage": "https://rigetti.statuspage.io/"}]}, {"id": "qci", "currentAvailability":
-        "Degraded", "targets": [{"id": "qci.simulator", "currentAvailability": "Available",
-        "averageQueueTime": 1, "statusPage": "https://quantumcircuits.com"}, {"id":
-        "qci.machine1", "currentAvailability": "Unavailable", "averageQueueTime":
-        1, "statusPage": "https://quantumcircuits.com"}, {"id": "qci.simulator.noisy",
-        "currentAvailability": "Available", "averageQueueTime": 0, "statusPage": "https://quantumcircuits.com"}]},
-        {"id": "Microsoft.Test", "currentAvailability": "Available", "targets": [{"id":
-        "echo-rigetti", "currentAvailability": "Available", "averageQueueTime": 1,
-        "statusPage": ""}, {"id": "echo-quantinuum", "currentAvailability": "Available",
-        "averageQueueTime": 1, "statusPage": ""}, {"id": "echo-qci", "currentAvailability":
-        "Available", "averageQueueTime": 1, "statusPage": ""}, {"id": "echo-ionq",
+        "Unavailable", "targets": [{"id": "qci.simulator", "currentAvailability":
+        "Unavailable", "averageQueueTime": 0, "statusPage": null}, {"id": "qci.machine1",
+        "currentAvailability": "Unavailable", "averageQueueTime": 0, "statusPage":
+        null}, {"id": "qci.simulator.noisy", "currentAvailability": "Unavailable",
+        "averageQueueTime": 0, "statusPage": null}]}, {"id": "Microsoft.Test.FirstParty",
+        "currentAvailability": "Available", "targets": [{"id": "echo-rigetti", "currentAvailability":
+        "Available", "averageQueueTime": 1, "statusPage": ""}, {"id": "echo-quantinuum",
         "currentAvailability": "Available", "averageQueueTime": 1, "statusPage": ""},
-        {"id": "echo-aquarius", "currentAvailability": "Available", "averageQueueTime":
-        1, "statusPage": ""}, {"id": "sparse-sim-rigetti", "currentAvailability":
-        "Available", "averageQueueTime": 1, "statusPage": ""}, {"id": "sparse-sim-quantinuum",
+        {"id": "echo-qci", "currentAvailability": "Available", "averageQueueTime":
+        1, "statusPage": ""}, {"id": "echo-ionq", "currentAvailability": "Available",
+        "averageQueueTime": 1, "statusPage": ""}, {"id": "echo-aquarius", "currentAvailability":
+        "Available", "averageQueueTime": 1, "statusPage": ""}, {"id": "sparse-sim-rigetti",
         "currentAvailability": "Available", "averageQueueTime": 1, "statusPage": ""},
-        {"id": "sparse-sim-qci", "currentAvailability": "Available", "averageQueueTime":
-        1, "statusPage": ""}, {"id": "sparse-sim-ionq", "currentAvailability": "Available",
-        "averageQueueTime": 1, "statusPage": ""}, {"id": "echo-output", "currentAvailability":
-        "Available", "averageQueueTime": 1, "statusPage": ""}]}], "nextLink": null}'
+        {"id": "sparse-sim-quantinuum", "currentAvailability": "Available", "averageQueueTime":
+        1, "statusPage": ""}, {"id": "sparse-sim-qci", "currentAvailability": "Available",
+        "averageQueueTime": 1, "statusPage": ""}, {"id": "sparse-sim-ionq", "currentAvailability":
+        "Available", "averageQueueTime": 1, "statusPage": ""}, {"id": "echo-output",
+        "currentAvailability": "Available", "averageQueueTime": 1, "statusPage": ""}]}],
+        "nextLink": null}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '4751'
+      - '5374'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
       - chunked
-    status:
-      code: 200
-      message: OK
-- request:
-    body: null
-    headers:
-      Accept:
-      - '*/*'
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      User-Agent:
-      - azsdk-python-identity/1.17.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
-    method: GET
-    uri: https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/v2.0/.well-known/openid-configuration
-  response:
-    body:
-      string: '{"token_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token",
-        "token_endpoint_auth_methods_supported": ["client_secret_post", "private_key_jwt",
-        "client_secret_basic"], "jwks_uri": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/discovery/v2.0/keys",
-        "response_modes_supported": ["query", "fragment", "form_post"], "subject_types_supported":
-        ["pairwise"], "id_token_signing_alg_values_supported": ["RS256"], "response_types_supported":
-        ["code", "id_token", "code id_token", "id_token token"], "scopes_supported":
-        ["openid", "profile", "email", "offline_access"], "issuer": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/v2.0",
-        "request_uri_parameter_supported": false, "userinfo_endpoint": "https://graph.microsoft.com/oidc/userinfo",
-        "authorization_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/authorize",
-        "device_authorization_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/devicecode",
-        "http_logout_supported": true, "frontchannel_logout_supported": true, "end_session_endpoint":
-        "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/logout",
-        "claims_supported": ["sub", "iss", "cloud_instance_name", "cloud_instance_host_name",
-        "cloud_graph_host_name", "msgraph_host", "aud", "exp", "iat", "auth_time",
-        "acr", "nonce", "preferred_username", "name", "tid", "ver", "at_hash", "c_hash",
-        "email"], "kerberos_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/kerberos",
-        "tenant_region_scope": "WW", "cloud_instance_name": "microsoftonline.com",
-        "cloud_graph_host_name": "graph.windows.net", "msgraph_host": "graph.microsoft.com",
-        "rbac_url": "https://pas.windows.net"}'
-    headers:
-      content-length:
-      - '1826'
-      content-type:
-      - application/json; charset=utf-8
-    status:
-      code: 200
-      message: OK
-- request:
-    body: client_id=PLACEHOLDER&grant_type=client_credentials&client_assertion=PLACEHOLDER&client_info=1&client_assertion_type=PLACEHOLDER&scope=https%3A%2F%2Fquantum.microsoft.com%2F.default
-    headers:
-      Accept:
-      - application/json
-      Accept-Encoding:
-      - gzip, deflate
-      Connection:
-      - keep-alive
-      Content-Length:
-      - '181'
-      Content-Type:
-      - application/x-www-form-urlencoded
-      User-Agent:
-      - azsdk-python-identity/1.17.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
-      x-client-current-telemetry:
-      - 4|730,2|
-      x-client-os:
-      - win32
-      x-client-sku:
-      - MSAL.Python
-      x-client-ver:
-      - 1.30.0
-    method: POST
-    uri: https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token
-  response:
-    body:
-      string: '{"token_type": "Bearer", "expires_in": 1756429912, "ext_expires_in":
-        1756429912, "refresh_in": 31536000, "access_token": "PLACEHOLDER"}'
-    headers:
-      content-length:
-      - '135'
-      content-type:
-      - application/json; charset=utf-8
     status:
       code: 200
       message: OK
@@ -254,9 +183,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-quantum/0.0.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
+      - testapp azsdk-python-quantum/0.0.1 Python/3.9.20 (Windows-10-10.0.26100-SP0)
     method: POST
-    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/storage/sasUri?api-version=2022-09-12-preview&test-sequence-id=1
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/storage/sasUri?api-version=2024-10-01-preview&test-sequence-id=1
   response:
     body:
       string: '{"sasUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&ss=b&srt=co&spr=https&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sp=rwlac&sig=PLACEHOLDER"}'
@@ -282,9 +211,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-blob/12.20.0 Python/3.9.19 (Windows-10-10.0.22631-SP0)
+      - azsdk-python-storage-blob/12.20.0 Python/3.9.20 (Windows-10-10.0.26100-SP0)
       x-ms-date:
-      - Thu, 29 Aug 2024 01:11:52 GMT
+      - Thu, 22 May 2025 06:37:00 GMT
       x-ms-version:
       - '2024-05-04'
     method: GET
@@ -292,7 +221,7 @@ interactions:
   response:
     body:
       string: "\uFEFF<?xml version=\"1.0\" encoding=\"utf-8\"?><Error><Code>ContainerNotFound</Code><Message>The
-        specified container does not exist.\nRequestId:f1bc15a9-601e-005a-61b0-f9258d000000\nTime:2024-08-29T01:11:53.4092759Z</Message></Error>"
+        specified container does not exist.\nRequestId:e7888f97-901e-0013-01e3-ca6766000000\nTime:2025-05-22T06:37:01.9954041Z</Message></Error>"
     headers:
       content-length:
       - '223'
@@ -315,9 +244,9 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-storage-blob/12.20.0 Python/3.9.19 (Windows-10-10.0.22631-SP0)
+      - azsdk-python-storage-blob/12.20.0 Python/3.9.20 (Windows-10-10.0.26100-SP0)
       x-ms-date:
-      - Thu, 29 Aug 2024 01:11:52 GMT
+      - Thu, 22 May 2025 06:37:01 GMT
       x-ms-version:
       - '2024-05-04'
     method: PUT
@@ -343,9 +272,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-blob/12.20.0 Python/3.9.19 (Windows-10-10.0.22631-SP0)
+      - azsdk-python-storage-blob/12.20.0 Python/3.9.20 (Windows-10-10.0.26100-SP0)
       x-ms-date:
-      - Thu, 29 Aug 2024 01:11:52 GMT
+      - Thu, 22 May 2025 06:37:01 GMT
       x-ms-version:
       - '2024-05-04'
     method: GET
@@ -366,7 +295,10 @@ interactions:
       code: 200
       message: OK
 - request:
-    body: b'60\n\nO       97.873900000   103.017000000   100.816000000\nH       98.128600000   103.038000000    99.848800000\nH       97.173800000   102.317000000   100.960000000\nO      100.645000000   100.169000000    95.891500000\nH      101.491000000   100.305000000    96.406200000\nH       99.888700000   100.618000000    96.367800000\nO       99.814000000   100.835000000   101.232000000\nH       99.329200000    99.976800000   101.063000000\nH       99.151600000   101.561000000   101.414000000\nO       98.804000000    98.512200000    97.758100000\nH       99.782100000    98.646900000    97.916700000\nH       98.421800000    99.326500000    97.321300000\nO      100.747000000   100.164000000   103.736000000\nH      100.658000000   100.628000000   102.855000000\nH      100.105000000    99.398600000   103.776000000\nO       98.070300000    98.516900000   100.438000000\nH       97.172800000    98.878600000   100.690000000\nH       98.194000000    98.592200000    99.448100000\nO       98.548000000   101.265000000    97.248600000\nH       98.688900000   102.140000000    97.711000000\nH       97.919900000   101.391000000    96.480800000\nO      103.898000000    98.427900000    99.984500000\nH      103.015000000    98.654900000    99.573700000\nH      104.128000000    97.477300000    99.776100000\nO       99.166600000    96.442100000   101.723000000\nH       98.843200000    97.206600000   101.166000000\nH       99.643900000    95.783700000   101.141000000\nO      102.891000000   100.842000000    97.477600000\nH      103.837000000   100.662000000    97.209700000\nH      102.868000000   101.166000000    98.423400000\nO       96.227200000   100.990000000   101.698000000\nH       96.148800000   100.422000000   102.517000000\nH       95.313600000   101.237000000   101.375000000\nO       98.864800000    98.222500000   103.917000000\nH       98.949800000    97.463000000   103.272000000\nH       99.054800000    97.896400000   104.843000000\nO      104.578000000   100.035000000   101.952000000\nH      104.419000000   101.011000000   101.802000000\nH      104.206000000    99.514900000   101.184000000\nO      102.429000000   104.060000000   101.348000000\nH      101.757000000   103.665000000   101.974000000\nH      102.209000000   105.021000000   101.185000000\nO       98.708200000   103.752000000    98.244300000\nH       98.397100000   104.234000000    97.425400000\nH       99.598500000   104.111000000    98.524400000\nO       95.630300000    99.996600000    98.245400000\nH       96.540400000   100.410000000    98.268900000\nH       94.982900000   100.638000000    97.834500000\nO      102.360000000   101.551000000    99.964500000\nH      102.675000000   102.370000000   100.444000000\nH      101.556000000   101.180000000   100.430000000\nO      101.836000000    97.446700000   102.110000000\nH      100.860000000    97.397400000   101.898000000\nH      101.991000000    97.133400000   103.047000000\nO      101.665000000    98.316100000    98.319400000\nH      101.904000000    99.233800000    98.002000000\nH      102.224000000    97.640900000    97.837700000\nO       99.984700000   103.272000000   102.307000000\nH       99.640700000   103.104000000   103.231000000\nH       99.216500000   103.453000000   101.693000000'
+    body: 'b''{"description": "This files contains the mapping between the xyz file
+      name that were submitted and the qcschema blobs that are used for the calculation.",
+      "tableOfContents": [{"inputFileName": "C:\\\\Users\\\\kikomiss\\\\Projects\\\\azure-quantum-python\\\\azure-quantum\\\\tests\\\\unit/molecule.xyz",
+      "qcschemaBlobName": "inputData_0"}]}'''
     headers:
       Accept:
       - application/xml
@@ -375,15 +307,15 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '3247'
+      - '342'
       Content-Type:
       - application/octet-stream
       User-Agent:
-      - azsdk-python-storage-blob/12.20.0 Python/3.9.19 (Windows-10-10.0.22631-SP0)
+      - azsdk-python-storage-blob/12.20.0 Python/3.9.20 (Windows-10-10.0.26100-SP0)
       x-ms-blob-type:
       - BlockBlob
       x-ms-date:
-      - Thu, 29 Aug 2024 01:11:53 GMT
+      - Thu, 22 May 2025 06:37:01 GMT
       x-ms-version:
       - '2024-05-04'
     method: PUT
@@ -400,14 +332,129 @@ interactions:
       code: 201
       message: Created
 - request:
-    body: 'b''{"id": "00000000-0000-0000-0000-000000000001", "name": "azure-quantum-dft-job",
-      "providerId": "microsoft-elements", "target": "microsoft.dft", "itemType": "Job",
-      "containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&ss=b&srt=co&spr=https&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sp=rwlac&sig=PLACEHOLDER",
+    body: null
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - azsdk-python-storage-blob/12.20.0 Python/3.9.20 (Windows-10-10.0.26100-SP0)
+      x-ms-date:
+      - Thu, 22 May 2025 06:37:01 GMT
+      x-ms-version:
+      - '2024-05-04'
+    method: GET
+    uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?restype=container&sv=PLACEHOLDER&ss=b&srt=co&spr=https&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sp=rwlac&sig=PLACEHOLDER
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      x-ms-lease-state:
+      - available
+      x-ms-lease-status:
+      - unlocked
+      x-ms-version:
+      - '2024-05-04'
+    status:
+      code: 200
+      message: OK
+- request:
+    body: 'b''{"driver": "energy", "model": {"method": "m06-2x", "basis": "def2-svp"},
+      "schema_name": "qcschema_input", "schema_version": 1, "molecule": {"extras":
+      {}, "symbols": ["O", "H", "H", "O", "H", "H", "O", "H", "H", "O", "H", "H",
+      "O", "H", "H", "O", "H", "H", "O", "H", "H", "O", "H", "H", "O", "H", "H", "O",
+      "H", "H", "O", "H", "H", "O", "H", "H", "O", "H", "H", "O", "H", "H", "O", "H",
+      "H", "O", "H", "H", "O", "H", "H", "O", "H", "H", "O", "H", "H", "O", "H", "H"],
+      "geometry": [184.9548657430684, 194.67391617431898, 190.5146289741513, 185.43617898699515,
+      194.71360042293483, 188.68688586647195, 183.6318684832604, 193.35110788712342,
+      190.78674953608865, 190.19148580685064, 189.29197617155768, 181.20867267373063,
+      191.7901941082327, 189.54897892449856, 182.18131471004426, 188.7622859388421,
+      190.1404632014874, 182.10874922686097, 188.62112339733707, 190.550533770518,
+      191.30075504197035, 187.70498417214793, 188.92877081041627, 190.98139132691887,
+      187.3693688124252, 191.92247493695226, 191.64468519664118, 186.71250001152637,
+      186.1610779283783, 184.73603545784377, 188.56084113396346, 186.41562403735722,
+      185.0357460211998, 185.99024668671763, 187.6998819116116, 183.91060308663376,
+      190.38423787155628, 189.28252754093486, 196.03262925788127, 190.21605224647,
+      190.15936046273305, 194.36778054213946, 189.17103369958554, 187.83613116519277,
+      196.10821830286386, 185.326007953933, 186.16995964116376, 189.80031249906568,
+      183.62997875713583, 186.85347358041895, 190.27652348245607, 185.55976707554169,
+      186.3122560183435, 187.92967260835871, 186.22873012363772, 191.36311600408098,
+      183.77321999737788, 186.49499253458893, 193.01662636307543, 184.64702935737677,
+      185.0417931447984, 191.6012214957762, 182.32228827893684, 196.3387648900608,
+      186.00177401607743, 188.94332170157543, 194.67013672206986, 186.43074184635373,
+      188.1670222096041, 196.77340189871077, 184.20540036206592, 188.54950277721608,
+      187.39771470429366, 182.24915587791614, 192.22861056913177, 186.78657727560932,
+      183.69385150014614, 191.17603311774906, 188.29968098354857, 181.0049601975025,
+      191.12878996463493, 194.43581068262378, 190.56376185338996, 184.20596727990326,
+      196.22349159646234, 190.22361115096828, 183.69970965113228, 194.39234698175878,
+      191.17603311774906, 185.99327024851692, 181.84305373374713, 190.8434413198256,
+      192.18136741601765, 181.6948992055812, 189.77007688107264, 193.72905311203644,
+      180.11659994634448, 191.31020367259316, 191.57098587778316, 186.82739535989992,
+      185.61362427009178, 196.37466968642755, 186.98802208048795, 184.17837727848462,
+      195.15579633608309, 187.1864433235673, 184.9973845808711, 198.1245560777748,
+      197.62377865476503, 189.03875287086595, 192.6613578516572, 197.32331220095918,
+      190.88312556844147, 192.37789893297244, 196.92080053642684, 188.05590631347968,
+      191.21004818799122, 193.56275721307472, 196.64490052224033, 191.5199632724199,
+      192.292861257367, 195.89845870303716, 192.70293182639762, 193.14701746567042,
+      198.46092732794736, 191.2119379141158, 186.53146424879304, 196.06286487587428,
+      185.6548202996073, 185.94357045144085, 196.97371286791466, 184.10732357620097,
+      188.2138874174933, 196.74127655459316, 186.184132587098, 180.71507620999424,
+      188.96618738768268, 185.65689899834433, 182.43491595596092, 189.74740016757787,
+      185.7013075622716, 179.49166751695083, 190.1782577239787, 184.88041053376057,
+      193.43236611047973, 191.9035776757066, 188.90552717908412, 194.02762983971772,
+      193.4512633717254, 189.81165085581307, 191.9130263063294, 191.20248928349298,
+      189.78519469006918, 192.44214962120765, 184.14757474265423, 192.95993457933847,
+      190.59777692363215, 184.05441124471318, 192.55931264093067, 192.73505717051523,
+      183.55552354782796, 194.7306079580559, 192.11900645390702, 185.7905026353511,
+      185.79673873156216, 192.57065099767806, 187.52470429986445, 185.19693965962517,
+      193.17536335753888, 184.51455955604476, 184.88645765735916, 188.94369964680035,
+      195.15579633608309, 193.3322106258778, 188.29363385994995, 194.83832234715615,
+      195.0783175649759, 187.49201203790946, 195.49783676462934, 192.17191878539484]}}'''
+    headers:
+      Accept:
+      - application/xml
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '4038'
+      Content-Type:
+      - application/octet-stream
+      User-Agent:
+      - azsdk-python-storage-blob/12.20.0 Python/3.9.20 (Windows-10-10.0.26100-SP0)
+      x-ms-blob-type:
+      - BlockBlob
+      x-ms-date:
+      - Thu, 22 May 2025 06:37:01 GMT
+      x-ms-version:
+      - '2024-05-04'
+    method: PUT
+    uri: https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData_0?sv=PLACEHOLDER&ss=b&srt=co&spr=https&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sp=rwlac&sig=PLACEHOLDER
+  response:
+    body:
+      string: ''
+    headers:
+      content-length:
+      - '0'
+      x-ms-version:
+      - '2024-05-04'
+    status:
+      code: 201
+      message: Created
+- request:
+    body: 'b''{"itemType": "Job", "name": "azure-quantum-dft-job", "containerUri":
+      "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&ss=b&srt=co&spr=https&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sp=rwlac&sig=PLACEHOLDER",
+      "inputDataFormat": "microsoft.qc-schema.v1", "outputDataFormat": "microsoft.dft-results.v1",
       "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData",
-      "inputDataFormat": "microsoft.xyz.v1", "inputParams": {"tasks": [{"taskType":
-      "spe", "basisSet": {"name": "def2-svp", "cartesian": false}, "xcFunctional":
-      {"name": "m06-2x", "gridLevel": 4}, "scf": {"method": "rks", "maxSteps": 100,
-      "convergeThreshold": 1e-08}}]}, "outputDataFormat": "microsoft.dft-results.v1"}'''
+      "providerId": "microsoft-elements", "target": "microsoft.dft", "inputParams":
+      {"numberOfFiles": 1, "inputFiles": ["inputData_0"], "driver": "energy", "model":
+      {"method": "m06-2x", "basis": "def2-svp"}}}'''
     headers:
       Accept:
       - application/json
@@ -416,33 +463,32 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '805'
+      - '679'
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-quantum/0.0.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
+      - testapp azsdk-python-quantum/0.0.1 Python/3.9.20 (Windows-10-10.0.26100-SP0)
     method: PUT
-    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000001?api-version=2022-09-12-preview&test-sequence-id=1
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000001?api-version=2024-10-01-preview&test-sequence-id=1
   response:
     body:
       string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001",
-        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=b&sp=rcw&sig=PLACEHOLDER",
-        "inputDataFormat": "microsoft.xyz.v1", "inputParams": {"tasks": [{"taskType":
-        "spe", "basisSet": {"name": "def2-svp", "cartesian": false}, "xcFunctional":
-        {"name": "m06-2x", "gridLevel": 4}, "scf": {"method": "rks", "maxSteps": 100,
-        "convergeThreshold": 1e-08}}]}, "metadata": null, "sessionId": null, "status":
-        "Waiting", "jobType": "QuantumChemistry", "outputDataFormat": "microsoft.dft-results.v1",
-        "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&ss=b&srt=co&spr=https&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sp=rwlac&sig=PLACEHOLDER",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData",
+        "inputDataFormat": "microsoft.qc-schema.v1", "inputParams": {"numberOfFiles":
+        1, "inputFiles": ["inputData_0"], "driver": "energy", "model": {"method":
+        "m06-2x", "basis": "def2-svp"}}, "metadata": null, "sessionId": null, "jobPriority":
+        "Basic", "status": "Waiting", "jobType": "QuantumChemistry", "outputDataFormat":
+        "microsoft.dft-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-00000000-0000-0000-0000-000000000001/outputData",
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         null, "errorData": null, "isCancelling": false, "tags": [], "name": "azure-quantum-dft-job",
         "id": "00000000-0000-0000-0000-000000000001", "providerId": "microsoft-elements",
-        "target": "microsoft.dft", "creationTime": "2024-08-29T01:11:53.8175653+00:00",
+        "target": "microsoft.dft", "creationTime": "2025-05-22T06:37:03.2140743+00:00",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '1345'
+      - '1072'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -460,29 +506,28 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-quantum/0.0.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
+      - testapp azsdk-python-quantum/0.0.1 Python/3.9.20 (Windows-10-10.0.26100-SP0)
     method: GET
-    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000001?api-version=2022-09-12-preview&test-sequence-id=1
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000001?api-version=2024-10-01-preview&test-sequence-id=1
   response:
     body:
       string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=c&sp=rcwl&sig=PLACEHOLDER",
         "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=b&sp=r&rscd=attachment%3B+filename%3Dazure-quantum-dft-job-00000000-0000-0000-0000-000000000001.input.json&sig=PLACEHOLDER",
-        "inputDataFormat": "microsoft.xyz.v1", "inputParams": {"tasks": [{"taskType":
-        "spe", "basisSet": {"name": "def2-svp", "cartesian": false}, "xcFunctional":
-        {"name": "m06-2x", "gridLevel": 4}, "scf": {"method": "rks", "maxSteps": 100,
-        "convergeThreshold": 1e-08}}]}, "metadata": null, "sessionId": null, "status":
-        "Waiting", "jobType": "QuantumChemistry", "outputDataFormat": "microsoft.dft-results.v1",
-        "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=b&sp=r&rscd=attachment%3B+filename%3Dazure-quantum-dft-job-00000000-0000-0000-0000-000000000001.output.json&sig=PLACEHOLDER",
+        "inputDataFormat": "microsoft.qc-schema.v1", "inputParams": {"numberOfFiles":
+        1, "inputFiles": ["inputData_0"], "driver": "energy", "model": {"method":
+        "m06-2x", "basis": "def2-svp"}}, "metadata": null, "sessionId": null, "jobPriority":
+        "Basic", "status": "Waiting", "jobType": "QuantumChemistry", "outputDataFormat":
+        "microsoft.dft-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=b&sp=r&rscd=attachment%3B+filename%3Dazure-quantum-dft-job-00000000-0000-0000-0000-000000000001.output.json&sig=PLACEHOLDER",
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         null, "errorData": null, "isCancelling": false, "tags": [], "name": "azure-quantum-dft-job",
         "id": "00000000-0000-0000-0000-000000000001", "providerId": "microsoft-elements",
-        "target": "microsoft.dft", "creationTime": "2024-08-29T01:11:53.8175653+00:00",
+        "target": "microsoft.dft", "creationTime": "2025-05-22T06:37:03.2140743+00:00",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '1619'
+      - '1563'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -500,29 +545,28 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-quantum/0.0.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
+      - testapp azsdk-python-quantum/0.0.1 Python/3.9.20 (Windows-10-10.0.26100-SP0)
     method: GET
-    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000001?api-version=2022-09-12-preview&test-sequence-id=2
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000001?api-version=2024-10-01-preview&test-sequence-id=2
   response:
     body:
       string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=c&sp=rcwl&sig=PLACEHOLDER",
         "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=b&sp=r&rscd=attachment%3B+filename%3Dazure-quantum-dft-job-00000000-0000-0000-0000-000000000001.input.json&sig=PLACEHOLDER",
-        "inputDataFormat": "microsoft.xyz.v1", "inputParams": {"tasks": [{"taskType":
-        "spe", "basisSet": {"name": "def2-svp", "cartesian": false}, "xcFunctional":
-        {"name": "m06-2x", "gridLevel": 4}, "scf": {"method": "rks", "maxSteps": 100,
-        "convergeThreshold": 1e-08}}]}, "metadata": null, "sessionId": null, "status":
-        "Waiting", "jobType": "QuantumChemistry", "outputDataFormat": "microsoft.dft-results.v1",
-        "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=b&sp=r&rscd=attachment%3B+filename%3Dazure-quantum-dft-job-00000000-0000-0000-0000-000000000001.output.json&sig=PLACEHOLDER",
+        "inputDataFormat": "microsoft.qc-schema.v1", "inputParams": {"numberOfFiles":
+        1, "inputFiles": ["inputData_0"], "driver": "energy", "model": {"method":
+        "m06-2x", "basis": "def2-svp"}}, "metadata": null, "sessionId": null, "jobPriority":
+        "Basic", "status": "Waiting", "jobType": "QuantumChemistry", "outputDataFormat":
+        "microsoft.dft-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=b&sp=r&rscd=attachment%3B+filename%3Dazure-quantum-dft-job-00000000-0000-0000-0000-000000000001.output.json&sig=PLACEHOLDER",
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         null, "errorData": null, "isCancelling": false, "tags": [], "name": "azure-quantum-dft-job",
         "id": "00000000-0000-0000-0000-000000000001", "providerId": "microsoft-elements",
-        "target": "microsoft.dft", "creationTime": "2024-08-29T01:11:53.8175653+00:00",
+        "target": "microsoft.dft", "creationTime": "2025-05-22T06:37:03.2140743+00:00",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '1619'
+      - '1563'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -540,29 +584,28 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-quantum/0.0.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
+      - testapp azsdk-python-quantum/0.0.1 Python/3.9.20 (Windows-10-10.0.26100-SP0)
     method: GET
-    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000001?api-version=2022-09-12-preview&test-sequence-id=3
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000001?api-version=2024-10-01-preview&test-sequence-id=3
   response:
     body:
       string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=c&sp=rcwl&sig=PLACEHOLDER",
         "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=b&sp=r&rscd=attachment%3B+filename%3Dazure-quantum-dft-job-00000000-0000-0000-0000-000000000001.input.json&sig=PLACEHOLDER",
-        "inputDataFormat": "microsoft.xyz.v1", "inputParams": {"tasks": [{"taskType":
-        "spe", "basisSet": {"name": "def2-svp", "cartesian": false}, "xcFunctional":
-        {"name": "m06-2x", "gridLevel": 4}, "scf": {"method": "rks", "maxSteps": 100,
-        "convergeThreshold": 1e-08}}]}, "metadata": null, "sessionId": null, "status":
-        "Waiting", "jobType": "QuantumChemistry", "outputDataFormat": "microsoft.dft-results.v1",
-        "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=b&sp=r&rscd=attachment%3B+filename%3Dazure-quantum-dft-job-00000000-0000-0000-0000-000000000001.output.json&sig=PLACEHOLDER",
+        "inputDataFormat": "microsoft.qc-schema.v1", "inputParams": {"numberOfFiles":
+        1, "inputFiles": ["inputData_0"], "driver": "energy", "model": {"method":
+        "m06-2x", "basis": "def2-svp"}}, "metadata": null, "sessionId": null, "jobPriority":
+        "Basic", "status": "Waiting", "jobType": "QuantumChemistry", "outputDataFormat":
+        "microsoft.dft-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=b&sp=r&rscd=attachment%3B+filename%3Dazure-quantum-dft-job-00000000-0000-0000-0000-000000000001.output.json&sig=PLACEHOLDER",
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         null, "errorData": null, "isCancelling": false, "tags": [], "name": "azure-quantum-dft-job",
         "id": "00000000-0000-0000-0000-000000000001", "providerId": "microsoft-elements",
-        "target": "microsoft.dft", "creationTime": "2024-08-29T01:11:53.8175653+00:00",
+        "target": "microsoft.dft", "creationTime": "2025-05-22T06:37:03.2140743+00:00",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '1619'
+      - '1563'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -580,29 +623,28 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-quantum/0.0.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
+      - testapp azsdk-python-quantum/0.0.1 Python/3.9.20 (Windows-10-10.0.26100-SP0)
     method: GET
-    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000001?api-version=2022-09-12-preview&test-sequence-id=4
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000001?api-version=2024-10-01-preview&test-sequence-id=4
   response:
     body:
       string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=c&sp=rcwl&sig=PLACEHOLDER",
         "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=b&sp=r&rscd=attachment%3B+filename%3Dazure-quantum-dft-job-00000000-0000-0000-0000-000000000001.input.json&sig=PLACEHOLDER",
-        "inputDataFormat": "microsoft.xyz.v1", "inputParams": {"tasks": [{"taskType":
-        "spe", "basisSet": {"name": "def2-svp", "cartesian": false}, "xcFunctional":
-        {"name": "m06-2x", "gridLevel": 4}, "scf": {"method": "rks", "maxSteps": 100,
-        "convergeThreshold": 1e-08}}]}, "metadata": null, "sessionId": null, "status":
-        "Waiting", "jobType": "QuantumChemistry", "outputDataFormat": "microsoft.dft-results.v1",
-        "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=b&sp=r&rscd=attachment%3B+filename%3Dazure-quantum-dft-job-00000000-0000-0000-0000-000000000001.output.json&sig=PLACEHOLDER",
+        "inputDataFormat": "microsoft.qc-schema.v1", "inputParams": {"numberOfFiles":
+        1, "inputFiles": ["inputData_0"], "driver": "energy", "model": {"method":
+        "m06-2x", "basis": "def2-svp"}}, "metadata": null, "sessionId": null, "jobPriority":
+        "Basic", "status": "Waiting", "jobType": "QuantumChemistry", "outputDataFormat":
+        "microsoft.dft-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=b&sp=r&rscd=attachment%3B+filename%3Dazure-quantum-dft-job-00000000-0000-0000-0000-000000000001.output.json&sig=PLACEHOLDER",
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         null, "errorData": null, "isCancelling": false, "tags": [], "name": "azure-quantum-dft-job",
         "id": "00000000-0000-0000-0000-000000000001", "providerId": "microsoft-elements",
-        "target": "microsoft.dft", "creationTime": "2024-08-29T01:11:53.8175653+00:00",
+        "target": "microsoft.dft", "creationTime": "2025-05-22T06:37:03.2140743+00:00",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '1619'
+      - '1563'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -620,29 +662,28 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-quantum/0.0.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
+      - testapp azsdk-python-quantum/0.0.1 Python/3.9.20 (Windows-10-10.0.26100-SP0)
     method: GET
-    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000001?api-version=2022-09-12-preview&test-sequence-id=5
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000001?api-version=2024-10-01-preview&test-sequence-id=5
   response:
     body:
       string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=c&sp=rcwl&sig=PLACEHOLDER",
         "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=b&sp=r&rscd=attachment%3B+filename%3Dazure-quantum-dft-job-00000000-0000-0000-0000-000000000001.input.json&sig=PLACEHOLDER",
-        "inputDataFormat": "microsoft.xyz.v1", "inputParams": {"tasks": [{"taskType":
-        "spe", "basisSet": {"name": "def2-svp", "cartesian": false}, "xcFunctional":
-        {"name": "m06-2x", "gridLevel": 4}, "scf": {"method": "rks", "maxSteps": 100,
-        "convergeThreshold": 1e-08}}]}, "metadata": null, "sessionId": null, "status":
-        "Waiting", "jobType": "QuantumChemistry", "outputDataFormat": "microsoft.dft-results.v1",
-        "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=b&sp=r&rscd=attachment%3B+filename%3Dazure-quantum-dft-job-00000000-0000-0000-0000-000000000001.output.json&sig=PLACEHOLDER",
+        "inputDataFormat": "microsoft.qc-schema.v1", "inputParams": {"numberOfFiles":
+        1, "inputFiles": ["inputData_0"], "driver": "energy", "model": {"method":
+        "m06-2x", "basis": "def2-svp"}}, "metadata": null, "sessionId": null, "jobPriority":
+        "Basic", "status": "Waiting", "jobType": "QuantumChemistry", "outputDataFormat":
+        "microsoft.dft-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=b&sp=r&rscd=attachment%3B+filename%3Dazure-quantum-dft-job-00000000-0000-0000-0000-000000000001.output.json&sig=PLACEHOLDER",
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         null, "errorData": null, "isCancelling": false, "tags": [], "name": "azure-quantum-dft-job",
         "id": "00000000-0000-0000-0000-000000000001", "providerId": "microsoft-elements",
-        "target": "microsoft.dft", "creationTime": "2024-08-29T01:11:53.8175653+00:00",
+        "target": "microsoft.dft", "creationTime": "2025-05-22T06:37:03.2140743+00:00",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '1619'
+      - '1563'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -660,29 +701,28 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-quantum/0.0.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
+      - testapp azsdk-python-quantum/0.0.1 Python/3.9.20 (Windows-10-10.0.26100-SP0)
     method: GET
-    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000001?api-version=2022-09-12-preview&test-sequence-id=6
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000001?api-version=2024-10-01-preview&test-sequence-id=6
   response:
     body:
       string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=c&sp=rcwl&sig=PLACEHOLDER",
         "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=b&sp=r&rscd=attachment%3B+filename%3Dazure-quantum-dft-job-00000000-0000-0000-0000-000000000001.input.json&sig=PLACEHOLDER",
-        "inputDataFormat": "microsoft.xyz.v1", "inputParams": {"tasks": [{"taskType":
-        "spe", "basisSet": {"name": "def2-svp", "cartesian": false}, "xcFunctional":
-        {"name": "m06-2x", "gridLevel": 4}, "scf": {"method": "rks", "maxSteps": 100,
-        "convergeThreshold": 1e-08}}]}, "metadata": null, "sessionId": null, "status":
-        "Waiting", "jobType": "QuantumChemistry", "outputDataFormat": "microsoft.dft-results.v1",
-        "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=b&sp=r&rscd=attachment%3B+filename%3Dazure-quantum-dft-job-00000000-0000-0000-0000-000000000001.output.json&sig=PLACEHOLDER",
+        "inputDataFormat": "microsoft.qc-schema.v1", "inputParams": {"numberOfFiles":
+        1, "inputFiles": ["inputData_0"], "driver": "energy", "model": {"method":
+        "m06-2x", "basis": "def2-svp"}}, "metadata": null, "sessionId": null, "jobPriority":
+        "Basic", "status": "Waiting", "jobType": "QuantumChemistry", "outputDataFormat":
+        "microsoft.dft-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=b&sp=r&rscd=attachment%3B+filename%3Dazure-quantum-dft-job-00000000-0000-0000-0000-000000000001.output.json&sig=PLACEHOLDER",
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         null, "errorData": null, "isCancelling": false, "tags": [], "name": "azure-quantum-dft-job",
         "id": "00000000-0000-0000-0000-000000000001", "providerId": "microsoft-elements",
-        "target": "microsoft.dft", "creationTime": "2024-08-29T01:11:53.8175653+00:00",
+        "target": "microsoft.dft", "creationTime": "2025-05-22T06:37:03.2140743+00:00",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '1619'
+      - '1563'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -700,29 +740,28 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-quantum/0.0.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
+      - testapp azsdk-python-quantum/0.0.1 Python/3.9.20 (Windows-10-10.0.26100-SP0)
     method: GET
-    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000001?api-version=2022-09-12-preview&test-sequence-id=7
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000001?api-version=2024-10-01-preview&test-sequence-id=7
   response:
     body:
       string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=c&sp=rcwl&sig=PLACEHOLDER",
         "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=b&sp=r&rscd=attachment%3B+filename%3Dazure-quantum-dft-job-00000000-0000-0000-0000-000000000001.input.json&sig=PLACEHOLDER",
-        "inputDataFormat": "microsoft.xyz.v1", "inputParams": {"tasks": [{"taskType":
-        "spe", "basisSet": {"name": "def2-svp", "cartesian": false}, "xcFunctional":
-        {"name": "m06-2x", "gridLevel": 4}, "scf": {"method": "rks", "maxSteps": 100,
-        "convergeThreshold": 1e-08}}]}, "metadata": null, "sessionId": null, "status":
-        "Waiting", "jobType": "QuantumChemistry", "outputDataFormat": "microsoft.dft-results.v1",
-        "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=b&sp=r&rscd=attachment%3B+filename%3Dazure-quantum-dft-job-00000000-0000-0000-0000-000000000001.output.json&sig=PLACEHOLDER",
+        "inputDataFormat": "microsoft.qc-schema.v1", "inputParams": {"numberOfFiles":
+        1, "inputFiles": ["inputData_0"], "driver": "energy", "model": {"method":
+        "m06-2x", "basis": "def2-svp"}}, "metadata": null, "sessionId": null, "jobPriority":
+        "Basic", "status": "Waiting", "jobType": "QuantumChemistry", "outputDataFormat":
+        "microsoft.dft-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=b&sp=r&rscd=attachment%3B+filename%3Dazure-quantum-dft-job-00000000-0000-0000-0000-000000000001.output.json&sig=PLACEHOLDER",
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         null, "errorData": null, "isCancelling": false, "tags": [], "name": "azure-quantum-dft-job",
         "id": "00000000-0000-0000-0000-000000000001", "providerId": "microsoft-elements",
-        "target": "microsoft.dft", "creationTime": "2024-08-29T01:11:53.8175653+00:00",
+        "target": "microsoft.dft", "creationTime": "2025-05-22T06:37:03.2140743+00:00",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '1619'
+      - '1563'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -740,29 +779,28 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-quantum/0.0.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
+      - testapp azsdk-python-quantum/0.0.1 Python/3.9.20 (Windows-10-10.0.26100-SP0)
     method: GET
-    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000001?api-version=2022-09-12-preview&test-sequence-id=8
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000001?api-version=2024-10-01-preview&test-sequence-id=8
   response:
     body:
       string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=c&sp=rcwl&sig=PLACEHOLDER",
         "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=b&sp=r&rscd=attachment%3B+filename%3Dazure-quantum-dft-job-00000000-0000-0000-0000-000000000001.input.json&sig=PLACEHOLDER",
-        "inputDataFormat": "microsoft.xyz.v1", "inputParams": {"tasks": [{"taskType":
-        "spe", "basisSet": {"name": "def2-svp", "cartesian": false}, "xcFunctional":
-        {"name": "m06-2x", "gridLevel": 4}, "scf": {"method": "rks", "maxSteps": 100,
-        "convergeThreshold": 1e-08}}]}, "metadata": null, "sessionId": null, "status":
-        "Waiting", "jobType": "QuantumChemistry", "outputDataFormat": "microsoft.dft-results.v1",
-        "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=b&sp=r&rscd=attachment%3B+filename%3Dazure-quantum-dft-job-00000000-0000-0000-0000-000000000001.output.json&sig=PLACEHOLDER",
+        "inputDataFormat": "microsoft.qc-schema.v1", "inputParams": {"numberOfFiles":
+        1, "inputFiles": ["inputData_0"], "driver": "energy", "model": {"method":
+        "m06-2x", "basis": "def2-svp"}}, "metadata": null, "sessionId": null, "jobPriority":
+        "Basic", "status": "Waiting", "jobType": "QuantumChemistry", "outputDataFormat":
+        "microsoft.dft-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=b&sp=r&rscd=attachment%3B+filename%3Dazure-quantum-dft-job-00000000-0000-0000-0000-000000000001.output.json&sig=PLACEHOLDER",
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         null, "errorData": null, "isCancelling": false, "tags": [], "name": "azure-quantum-dft-job",
         "id": "00000000-0000-0000-0000-000000000001", "providerId": "microsoft-elements",
-        "target": "microsoft.dft", "creationTime": "2024-08-29T01:11:53.8175653+00:00",
+        "target": "microsoft.dft", "creationTime": "2025-05-22T06:37:03.2140743+00:00",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '1619'
+      - '1563'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -780,29 +818,28 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-quantum/0.0.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
+      - testapp azsdk-python-quantum/0.0.1 Python/3.9.20 (Windows-10-10.0.26100-SP0)
     method: GET
-    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000001?api-version=2022-09-12-preview&test-sequence-id=9
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000001?api-version=2024-10-01-preview&test-sequence-id=9
   response:
     body:
       string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=c&sp=rcwl&sig=PLACEHOLDER",
         "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=b&sp=r&rscd=attachment%3B+filename%3Dazure-quantum-dft-job-00000000-0000-0000-0000-000000000001.input.json&sig=PLACEHOLDER",
-        "inputDataFormat": "microsoft.xyz.v1", "inputParams": {"tasks": [{"taskType":
-        "spe", "basisSet": {"name": "def2-svp", "cartesian": false}, "xcFunctional":
-        {"name": "m06-2x", "gridLevel": 4}, "scf": {"method": "rks", "maxSteps": 100,
-        "convergeThreshold": 1e-08}}]}, "metadata": null, "sessionId": null, "status":
-        "Waiting", "jobType": "QuantumChemistry", "outputDataFormat": "microsoft.dft-results.v1",
-        "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=b&sp=r&rscd=attachment%3B+filename%3Dazure-quantum-dft-job-00000000-0000-0000-0000-000000000001.output.json&sig=PLACEHOLDER",
+        "inputDataFormat": "microsoft.qc-schema.v1", "inputParams": {"numberOfFiles":
+        1, "inputFiles": ["inputData_0"], "driver": "energy", "model": {"method":
+        "m06-2x", "basis": "def2-svp"}}, "metadata": null, "sessionId": null, "jobPriority":
+        "Basic", "status": "Waiting", "jobType": "QuantumChemistry", "outputDataFormat":
+        "microsoft.dft-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=b&sp=r&rscd=attachment%3B+filename%3Dazure-quantum-dft-job-00000000-0000-0000-0000-000000000001.output.json&sig=PLACEHOLDER",
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         null, "errorData": null, "isCancelling": false, "tags": [], "name": "azure-quantum-dft-job",
         "id": "00000000-0000-0000-0000-000000000001", "providerId": "microsoft-elements",
-        "target": "microsoft.dft", "creationTime": "2024-08-29T01:11:53.8175653+00:00",
+        "target": "microsoft.dft", "creationTime": "2025-05-22T06:37:03.2140743+00:00",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '1619'
+      - '1563'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -820,29 +857,28 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-quantum/0.0.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
+      - testapp azsdk-python-quantum/0.0.1 Python/3.9.20 (Windows-10-10.0.26100-SP0)
     method: GET
-    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000001?api-version=2022-09-12-preview&test-sequence-id=10
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000001?api-version=2024-10-01-preview&test-sequence-id=10
   response:
     body:
       string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=c&sp=rcwl&sig=PLACEHOLDER",
         "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=b&sp=r&rscd=attachment%3B+filename%3Dazure-quantum-dft-job-00000000-0000-0000-0000-000000000001.input.json&sig=PLACEHOLDER",
-        "inputDataFormat": "microsoft.xyz.v1", "inputParams": {"tasks": [{"taskType":
-        "spe", "basisSet": {"name": "def2-svp", "cartesian": false}, "xcFunctional":
-        {"name": "m06-2x", "gridLevel": 4}, "scf": {"method": "rks", "maxSteps": 100,
-        "convergeThreshold": 1e-08}}]}, "metadata": null, "sessionId": null, "status":
-        "Waiting", "jobType": "QuantumChemistry", "outputDataFormat": "microsoft.dft-results.v1",
-        "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=b&sp=r&rscd=attachment%3B+filename%3Dazure-quantum-dft-job-00000000-0000-0000-0000-000000000001.output.json&sig=PLACEHOLDER",
+        "inputDataFormat": "microsoft.qc-schema.v1", "inputParams": {"numberOfFiles":
+        1, "inputFiles": ["inputData_0"], "driver": "energy", "model": {"method":
+        "m06-2x", "basis": "def2-svp"}}, "metadata": null, "sessionId": null, "jobPriority":
+        "Basic", "status": "Waiting", "jobType": "QuantumChemistry", "outputDataFormat":
+        "microsoft.dft-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=b&sp=r&rscd=attachment%3B+filename%3Dazure-quantum-dft-job-00000000-0000-0000-0000-000000000001.output.json&sig=PLACEHOLDER",
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         null, "errorData": null, "isCancelling": false, "tags": [], "name": "azure-quantum-dft-job",
         "id": "00000000-0000-0000-0000-000000000001", "providerId": "microsoft-elements",
-        "target": "microsoft.dft", "creationTime": "2024-08-29T01:11:53.8175653+00:00",
+        "target": "microsoft.dft", "creationTime": "2025-05-22T06:37:03.2140743+00:00",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '1619'
+      - '1563'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -860,29 +896,28 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-quantum/0.0.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
+      - testapp azsdk-python-quantum/0.0.1 Python/3.9.20 (Windows-10-10.0.26100-SP0)
     method: GET
-    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000001?api-version=2022-09-12-preview&test-sequence-id=11
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000001?api-version=2024-10-01-preview&test-sequence-id=11
   response:
     body:
       string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=c&sp=rcwl&sig=PLACEHOLDER",
         "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=b&sp=r&rscd=attachment%3B+filename%3Dazure-quantum-dft-job-00000000-0000-0000-0000-000000000001.input.json&sig=PLACEHOLDER",
-        "inputDataFormat": "microsoft.xyz.v1", "inputParams": {"tasks": [{"taskType":
-        "spe", "basisSet": {"name": "def2-svp", "cartesian": false}, "xcFunctional":
-        {"name": "m06-2x", "gridLevel": 4}, "scf": {"method": "rks", "maxSteps": 100,
-        "convergeThreshold": 1e-08}}]}, "metadata": null, "sessionId": null, "status":
-        "Waiting", "jobType": "QuantumChemistry", "outputDataFormat": "microsoft.dft-results.v1",
-        "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=b&sp=r&rscd=attachment%3B+filename%3Dazure-quantum-dft-job-00000000-0000-0000-0000-000000000001.output.json&sig=PLACEHOLDER",
+        "inputDataFormat": "microsoft.qc-schema.v1", "inputParams": {"numberOfFiles":
+        1, "inputFiles": ["inputData_0"], "driver": "energy", "model": {"method":
+        "m06-2x", "basis": "def2-svp"}}, "metadata": null, "sessionId": null, "jobPriority":
+        "Basic", "status": "Waiting", "jobType": "QuantumChemistry", "outputDataFormat":
+        "microsoft.dft-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=b&sp=r&rscd=attachment%3B+filename%3Dazure-quantum-dft-job-00000000-0000-0000-0000-000000000001.output.json&sig=PLACEHOLDER",
         "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
         null, "errorData": null, "isCancelling": false, "tags": [], "name": "azure-quantum-dft-job",
         "id": "00000000-0000-0000-0000-000000000001", "providerId": "microsoft-elements",
-        "target": "microsoft.dft", "creationTime": "2024-08-29T01:11:53.8175653+00:00",
+        "target": "microsoft.dft", "creationTime": "2025-05-22T06:37:03.2140743+00:00",
         "endExecutionTime": null, "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '1619'
+      - '1563'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -900,30 +935,29 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-quantum/0.0.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
+      - testapp azsdk-python-quantum/0.0.1 Python/3.9.20 (Windows-10-10.0.26100-SP0)
     method: GET
-    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000001?api-version=2022-09-12-preview&test-sequence-id=12
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000001?api-version=2024-10-01-preview&test-sequence-id=12
   response:
     body:
       string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=c&sp=rcwl&sig=PLACEHOLDER",
         "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=b&sp=r&rscd=attachment%3B+filename%3Dazure-quantum-dft-job-00000000-0000-0000-0000-000000000001.input.json&sig=PLACEHOLDER",
-        "inputDataFormat": "microsoft.xyz.v1", "inputParams": {"tasks": [{"taskType":
-        "spe", "basisSet": {"name": "def2-svp", "cartesian": false}, "xcFunctional":
-        {"name": "m06-2x", "gridLevel": 4}, "scf": {"method": "rks", "maxSteps": 100,
-        "convergeThreshold": 1e-08}}]}, "metadata": null, "sessionId": null, "status":
-        "Executing", "jobType": "QuantumChemistry", "outputDataFormat": "microsoft.dft-results.v1",
-        "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=b&sp=r&rscd=attachment%3B+filename%3Dazure-quantum-dft-job-00000000-0000-0000-0000-000000000001.output.json&sig=PLACEHOLDER",
-        "beginExecutionTime": "2024-08-29T01:12:16.7016602Z", "cancellationTime":
-        null, "quantumComputingData": null, "errorData": null, "isCancelling": false,
-        "tags": [], "name": "azure-quantum-dft-job", "id": "00000000-0000-0000-0000-000000000001",
+        "inputDataFormat": "microsoft.qc-schema.v1", "inputParams": {"numberOfFiles":
+        1, "inputFiles": ["inputData_0"], "driver": "energy", "model": {"method":
+        "m06-2x", "basis": "def2-svp"}}, "metadata": null, "sessionId": null, "jobPriority":
+        "Basic", "status": "Executing", "jobType": "QuantumChemistry", "outputDataFormat":
+        "microsoft.dft-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=b&sp=r&rscd=attachment%3B+filename%3Dazure-quantum-dft-job-00000000-0000-0000-0000-000000000001.output.json&sig=PLACEHOLDER",
+        "beginExecutionTime": "2025-05-22T06:37:27.948292Z", "cancellationTime": null,
+        "quantumComputingData": null, "errorData": null, "isCancelling": false, "tags":
+        [], "name": "azure-quantum-dft-job", "id": "00000000-0000-0000-0000-000000000001",
         "providerId": "microsoft-elements", "target": "microsoft.dft", "creationTime":
-        "2024-08-29T01:11:53.8175653+00:00", "endExecutionTime": null, "costEstimate":
+        "2025-05-22T06:37:03.2140743+00:00", "endExecutionTime": null, "costEstimate":
         null, "itemType": "Job"}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '1647'
+      - '1590'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -941,30 +975,29 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-quantum/0.0.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
+      - testapp azsdk-python-quantum/0.0.1 Python/3.9.20 (Windows-10-10.0.26100-SP0)
     method: GET
-    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000001?api-version=2022-09-12-preview&test-sequence-id=13
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000001?api-version=2024-10-01-preview&test-sequence-id=13
   response:
     body:
       string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=c&sp=rcwl&sig=PLACEHOLDER",
         "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=b&sp=r&rscd=attachment%3B+filename%3Dazure-quantum-dft-job-00000000-0000-0000-0000-000000000001.input.json&sig=PLACEHOLDER",
-        "inputDataFormat": "microsoft.xyz.v1", "inputParams": {"tasks": [{"taskType":
-        "spe", "basisSet": {"name": "def2-svp", "cartesian": false}, "xcFunctional":
-        {"name": "m06-2x", "gridLevel": 4}, "scf": {"method": "rks", "maxSteps": 100,
-        "convergeThreshold": 1e-08}}]}, "metadata": null, "sessionId": null, "status":
-        "Executing", "jobType": "QuantumChemistry", "outputDataFormat": "microsoft.dft-results.v1",
-        "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=b&sp=r&rscd=attachment%3B+filename%3Dazure-quantum-dft-job-00000000-0000-0000-0000-000000000001.output.json&sig=PLACEHOLDER",
-        "beginExecutionTime": "2024-08-29T01:12:16.7016602Z", "cancellationTime":
-        null, "quantumComputingData": null, "errorData": null, "isCancelling": false,
-        "tags": [], "name": "azure-quantum-dft-job", "id": "00000000-0000-0000-0000-000000000001",
+        "inputDataFormat": "microsoft.qc-schema.v1", "inputParams": {"numberOfFiles":
+        1, "inputFiles": ["inputData_0"], "driver": "energy", "model": {"method":
+        "m06-2x", "basis": "def2-svp"}}, "metadata": null, "sessionId": null, "jobPriority":
+        "Basic", "status": "Executing", "jobType": "QuantumChemistry", "outputDataFormat":
+        "microsoft.dft-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/outputData?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=b&sp=r&rscd=attachment%3B+filename%3Dazure-quantum-dft-job-00000000-0000-0000-0000-000000000001.output.json&sig=PLACEHOLDER",
+        "beginExecutionTime": "2025-05-22T06:37:27.948292Z", "cancellationTime": null,
+        "quantumComputingData": null, "errorData": null, "isCancelling": false, "tags":
+        [], "name": "azure-quantum-dft-job", "id": "00000000-0000-0000-0000-000000000001",
         "providerId": "microsoft-elements", "target": "microsoft.dft", "creationTime":
-        "2024-08-29T01:11:53.8175653+00:00", "endExecutionTime": null, "costEstimate":
+        "2025-05-22T06:37:03.2140743+00:00", "endExecutionTime": null, "costEstimate":
         null, "itemType": "Job"}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '1647'
+      - '1590'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -982,30 +1015,29 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-quantum/0.0.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
+      - testapp azsdk-python-quantum/0.0.1 Python/3.9.20 (Windows-10-10.0.26100-SP0)
     method: GET
-    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000001?api-version=2022-09-12-preview&test-sequence-id=14
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000001?api-version=2024-10-01-preview&test-sequence-id=14
   response:
     body:
       string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=c&sp=rcwl&sig=PLACEHOLDER",
         "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=b&sp=r&rscd=attachment%3B+filename%3Dazure-quantum-dft-job-00000000-0000-0000-0000-000000000001.input.json&sig=PLACEHOLDER",
-        "inputDataFormat": "microsoft.xyz.v1", "inputParams": {"tasks": [{"taskType":
-        "spe", "basisSet": {"name": "def2-svp", "cartesian": false}, "xcFunctional":
-        {"name": "m06-2x", "gridLevel": 4}, "scf": {"method": "rks", "maxSteps": 100,
-        "convergeThreshold": 1e-08}}]}, "metadata": null, "sessionId": null, "status":
-        "Succeeded", "jobType": "QuantumChemistry", "outputDataFormat": "microsoft.dft-results.v1",
-        "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/rawOutputData?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=b&sp=r&rscd=attachment%3B+filename%3Dazure-quantum-dft-job-00000000-0000-0000-0000-000000000001.output.json&sig=PLACEHOLDER",
-        "beginExecutionTime": "2024-08-29T01:12:16.7016602Z", "cancellationTime":
-        null, "quantumComputingData": null, "errorData": null, "isCancelling": false,
-        "tags": [], "name": "azure-quantum-dft-job", "id": "00000000-0000-0000-0000-000000000001",
+        "inputDataFormat": "microsoft.qc-schema.v1", "inputParams": {"numberOfFiles":
+        1, "inputFiles": ["inputData_0"], "driver": "energy", "model": {"method":
+        "m06-2x", "basis": "def2-svp"}}, "metadata": null, "sessionId": null, "jobPriority":
+        "Basic", "status": "Succeeded", "jobType": "QuantumChemistry", "outputDataFormat":
+        "microsoft.dft-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/rawOutputData?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=b&sp=r&rscd=attachment%3B+filename%3Dazure-quantum-dft-job-00000000-0000-0000-0000-000000000001.output.json&sig=PLACEHOLDER",
+        "beginExecutionTime": "2025-05-22T06:37:27.948292Z", "cancellationTime": null,
+        "quantumComputingData": null, "errorData": null, "isCancelling": false, "tags":
+        [], "name": "azure-quantum-dft-job", "id": "00000000-0000-0000-0000-000000000001",
         "providerId": "microsoft-elements", "target": "microsoft.dft", "creationTime":
-        "2024-08-29T01:11:53.8175653+00:00", "endExecutionTime": "2024-08-29T01:12:50.6437342Z",
+        "2025-05-22T06:37:03.2140743+00:00", "endExecutionTime": "2025-05-22T06:38:10.5170274Z",
         "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '1676'
+      - '1619'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -1023,30 +1055,29 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-quantum/0.0.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
+      - testapp azsdk-python-quantum/0.0.1 Python/3.9.20 (Windows-10-10.0.26100-SP0)
     method: GET
-    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000001?api-version=2022-09-12-preview&test-sequence-id=15
+    uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/jobs/00000000-0000-0000-0000-000000000001?api-version=2024-10-01-preview&test-sequence-id=15
   response:
     body:
       string: '{"containerUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=c&sp=rcwl&sig=PLACEHOLDER",
         "inputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/inputData?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=b&sp=r&rscd=attachment%3B+filename%3Dazure-quantum-dft-job-00000000-0000-0000-0000-000000000001.input.json&sig=PLACEHOLDER",
-        "inputDataFormat": "microsoft.xyz.v1", "inputParams": {"tasks": [{"taskType":
-        "spe", "basisSet": {"name": "def2-svp", "cartesian": false}, "xcFunctional":
-        {"name": "m06-2x", "gridLevel": 4}, "scf": {"method": "rks", "maxSteps": 100,
-        "convergeThreshold": 1e-08}}]}, "metadata": null, "sessionId": null, "status":
-        "Succeeded", "jobType": "QuantumChemistry", "outputDataFormat": "microsoft.dft-results.v1",
-        "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/rawOutputData?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=b&sp=r&rscd=attachment%3B+filename%3Dazure-quantum-dft-job-00000000-0000-0000-0000-000000000001.output.json&sig=PLACEHOLDER",
-        "beginExecutionTime": "2024-08-29T01:12:16.7016602Z", "cancellationTime":
-        null, "quantumComputingData": null, "errorData": null, "isCancelling": false,
-        "tags": [], "name": "azure-quantum-dft-job", "id": "00000000-0000-0000-0000-000000000001",
+        "inputDataFormat": "microsoft.qc-schema.v1", "inputParams": {"numberOfFiles":
+        1, "inputFiles": ["inputData_0"], "driver": "energy", "model": {"method":
+        "m06-2x", "basis": "def2-svp"}}, "metadata": null, "sessionId": null, "jobPriority":
+        "Basic", "status": "Succeeded", "jobType": "QuantumChemistry", "outputDataFormat":
+        "microsoft.dft-results.v1", "outputDataUri": "https://mystorage.blob.core.windows.net/job-00000000-0000-0000-0000-000000000001/rawOutputData?sv=PLACEHOLDER&st=2000-01-01T00%3A00%3A00Z&se=2050-01-01T00%3A00%3A00Z&sr=b&sp=r&rscd=attachment%3B+filename%3Dazure-quantum-dft-job-00000000-0000-0000-0000-000000000001.output.json&sig=PLACEHOLDER",
+        "beginExecutionTime": "2025-05-22T06:37:27.948292Z", "cancellationTime": null,
+        "quantumComputingData": null, "errorData": null, "isCancelling": false, "tags":
+        [], "name": "azure-quantum-dft-job", "id": "00000000-0000-0000-0000-000000000001",
         "providerId": "microsoft-elements", "target": "microsoft.dft", "creationTime":
-        "2024-08-29T01:11:53.8175653+00:00", "endExecutionTime": "2024-08-29T01:12:50.6437342Z",
+        "2025-05-22T06:37:03.2140743+00:00", "endExecutionTime": "2025-05-22T06:38:10.5170274Z",
         "costEstimate": null, "itemType": "Job"}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '1676'
+      - '1619'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
@@ -1064,9 +1095,9 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-storage-blob/12.20.0 Python/3.9.19 (Windows-10-10.0.22631-SP0)
+      - azsdk-python-storage-blob/12.20.0 Python/3.9.20 (Windows-10-10.0.26100-SP0)
       x-ms-date:
-      - Thu, 29 Aug 2024 01:13:12 GMT
+      - Thu, 22 May 2025 06:38:21 GMT
       x-ms-range:
       - bytes=0-33554431
       x-ms-version:
@@ -1081,97 +1112,160 @@ interactions:
         "O", "H", "H", "O", "H", "H", "O", "H", "H", "O", "H", "H", "O", "H", "H",
         "O", "H", "H", "O", "H", "H", "O", "H", "H", "O", "H", "H", "O", "H", "H",
         "O", "H", "H", "O", "H", "H", "O", "H", "H", "O", "H", "H", "O", "H", "H",
-        "O", "H", "H"], "geometry": [184.95486583, 194.67391627, 190.51462906, 185.43617907,
-        194.71360051, 188.68688596, 183.63186857, 193.35110798, 190.78674963, 190.1914859,
-        189.29197626, 181.20867276, 191.7901942, 189.54897901, 182.1813148, 188.76228603,
-        190.14046329, 182.10874931, 188.62112349, 190.55053386, 191.30075513, 187.70498426,
-        188.9287709, 190.98139142, 187.3693689, 191.92247503, 191.64468529, 186.7125001,
-        186.16107802, 184.73603555, 188.56084122, 186.41562413, 185.03574611, 185.99024677,
-        187.699882, 183.91060317, 190.38423796, 189.28252763, 196.03262935, 190.21605234,
-        190.15936055, 194.36778063, 189.17103379, 187.83613125, 196.1082184, 185.32600804,
-        186.16995973, 189.80031259, 183.62997884, 186.85347367, 190.27652357, 185.55976716,
-        186.31225611, 187.9296727, 186.22873021, 191.36311609, 183.77322008, 186.49499262,
-        193.01662645, 184.64702944, 185.04179323, 191.60122159, 182.32228837, 196.33876498,
-        186.0017741, 188.94332179, 194.67013681, 186.43074193, 188.1670223, 196.77340199,
-        184.20540045, 188.54950287, 187.39771479, 182.24915596, 192.22861066, 186.78657736,
-        183.69385159, 191.17603321, 188.29968107, 181.00496028, 191.12879005, 194.43581077,
-        190.56376194, 184.20596737, 196.22349169, 190.22361124, 183.69970974, 194.39234707,
-        191.17603321, 185.99327034, 181.84305382, 190.84344141, 192.18136751, 181.69489929,
-        189.77007697, 193.7290532, 180.11660003, 191.31020376, 191.57098597, 186.82739545,
-        185.61362436, 196.37466978, 186.98802217, 184.17837737, 195.15579643, 187.18644341,
-        184.99738467, 198.12455617, 197.62377875, 189.03875296, 192.66135794, 197.32331229,
-        190.88312566, 192.37789902, 196.92080063, 188.0559064, 191.21004828, 193.5627573,
-        196.64490062, 191.51996336, 192.29286135, 195.8984588, 192.70293192, 193.14701756,
-        198.46092742, 191.211938, 186.53146434, 196.06286497, 185.65482039, 185.94357054,
-        196.97371296, 184.10732366, 188.21388751, 196.74127665, 186.18413268, 180.7150763,
-        188.96618748, 185.65689909, 182.43491604, 189.74740026, 185.70130765, 179.4916676,
-        190.17825781, 184.88041062, 193.4323662, 191.90357777, 188.90552727, 194.02762993,
-        193.45126346, 189.81165095, 191.9130264, 191.20248937, 189.78519478, 192.44214971,
-        184.14757483, 192.95993467, 190.59777701, 184.05441133, 192.55931273, 192.73505726,
-        183.55552363, 194.73060805, 192.11900654, 185.79050272, 185.79673882, 192.57065109,
-        187.52470439, 185.19693975, 193.17536345, 184.51455964, 184.88645774, 188.94369974,
-        195.15579643, 193.33221072, 188.29363395, 194.83832244, 195.07831766, 187.49201213,
-        195.49783686, 192.17191888], "name": "H40O20", "molecular_charge": 0.0, "molecular_multiplicity":
+        "O", "H", "H"], "geometry": [184.95486574, 194.67391617, 190.51462897, 185.43617899,
+        194.71360042, 188.68688587, 183.63186848, 193.35110789, 190.78674954, 190.19148581,
+        189.29197617, 181.20867267, 191.79019411, 189.54897892, 182.18131471, 188.76228594,
+        190.1404632, 182.10874923, 188.6211234, 190.55053377, 191.30075504, 187.70498417,
+        188.92877081, 190.98139133, 187.36936881, 191.92247494, 191.6446852, 186.71250001,
+        186.16107793, 184.73603546, 188.56084113, 186.41562404, 185.03574602, 185.99024669,
+        187.69988191, 183.91060309, 190.38423787, 189.28252754, 196.03262926, 190.21605225,
+        190.15936046, 194.36778054, 189.1710337, 187.83613117, 196.1082183, 185.32600795,
+        186.16995964, 189.8003125, 183.62997876, 186.85347358, 190.27652348, 185.55976708,
+        186.31225602, 187.92967261, 186.22873012, 191.363116, 183.77322, 186.49499253,
+        193.01662636, 184.64702936, 185.04179314, 191.6012215, 182.32228828, 196.33876489,
+        186.00177402, 188.9433217, 194.67013672, 186.43074185, 188.16702221, 196.7734019,
+        184.20540036, 188.54950278, 187.3977147, 182.24915588, 192.22861057, 186.78657728,
+        183.6938515, 191.17603312, 188.29968098, 181.0049602, 191.12878996, 194.43581068,
+        190.56376185, 184.20596728, 196.2234916, 190.22361115, 183.69970965, 194.39234698,
+        191.17603312, 185.99327025, 181.84305373, 190.84344132, 192.18136742, 181.69489921,
+        189.77007688, 193.72905311, 180.11659995, 191.31020367, 191.57098588, 186.82739536,
+        185.61362427, 196.37466969, 186.98802208, 184.17837728, 195.15579634, 187.18644332,
+        184.99738458, 198.12455608, 197.62377865, 189.03875287, 192.66135785, 197.3233122,
+        190.88312557, 192.37789893, 196.92080054, 188.05590631, 191.21004819, 193.56275721,
+        196.64490052, 191.51996327, 192.29286126, 195.8984587, 192.70293183, 193.14701747,
+        198.46092733, 191.21193791, 186.53146425, 196.06286488, 185.6548203, 185.94357045,
+        196.97371287, 184.10732358, 188.21388742, 196.74127655, 186.18413259, 180.71507621,
+        188.96618739, 185.656899, 182.43491596, 189.74740017, 185.70130756, 179.49166752,
+        190.17825772, 184.88041053, 193.43236611, 191.90357768, 188.90552718, 194.02762984,
+        193.45126337, 189.81165086, 191.91302631, 191.20248928, 189.78519469, 192.44214962,
+        184.14757474, 192.95993458, 190.59777692, 184.05441124, 192.55931264, 192.73505717,
+        183.55552355, 194.73060796, 192.11900645, 185.79050264, 185.79673873, 192.570651,
+        187.5247043, 185.19693966, 193.17536336, 184.51455956, 184.88645766, 188.94369965,
+        195.15579634, 193.33221063, 188.29363386, 194.83832235, 195.07831756, 187.49201204,
+        195.49783676, 192.17191879], "name": "H40O20", "molecular_charge": 0.0, "molecular_multiplicity":
         1, "fix_com": false, "fix_orientation": false, "provenance": {"creator": "Microsoft
         Accelerated DFT", "version": "1.0", "routine": "madft.cli"}, "extras": {}},
-        "driver": "energy", "model": {"method": "M06-2X", "basis": "def2-svp"}, "keywords":
-        {"taskType": "spe", "basisSet": {"name": "def2-svp", "cartesian": false},
-        "xcFunctional": {"name": "m06-2x", "gridLevel": 4}, "scf": {"method": "rks",
-        "densityInitMethod": "atom", "maxSteps": 100, "convergeThreshold": 1e-08,
-        "eriTolerance": 1e-12, "damping": 0.0, "dispersion": null, "pcm": null, "requireWaveFunction":
-        false}}, "protocols": {"wavefunction": "none"}, "extras": {"program_time_seconds":
-        6.559424129}, "provenance": {"creator": "Microsoft Accelerated DFT", "version":
-        "1.0", "routine": "madft.lightaimd", "total_time_seconds": 8.094160556793213},
-        "properties": {"calcinfo_nbasis": 480, "calcinfo_nalpha": 100, "calcinfo_nbeta":
-        100, "calcinfo_natom": 60, "nuclear_repulsion_energy": 2286.8096438080293,
-        "return_energy": -1526.712044617371, "scf_one_electron_energy": -6669.313461079337,
-        "scf_two_electron_energy": 2945.294993365429, "scf_xc_energy": -89.50322071149256,
-        "scf_total_energy": -1526.712044617371, "scf_iterations": 11}, "wavefunction":
-        null, "return_result": -1526.712044617371, "stdout": "[2024-08-29 01:12:32.285]
-        mol=mol: atoms=60, electrons=200, ecp_cores=0, charge=0, multiplicity=1, spin(2S)=0,
-        alpha=100, beta=100\n[2024-08-29 01:12:32.286] restricted=true, basis=def2-svp,
-        pure=true, nbf=480, conv_threshold=1.00e-08, eri_tolerance=1.00e-12, disp=none,
-        PCM=false\n[2024-08-29 01:12:34.343] xc=m06-2x, grids_level=4\n[2024-08-29
-        01:12:34.504] Total grid points: 1216560\n[2024-08-29 01:12:34.625] Reset
-        incremental Fock matrix\n[2024-08-29 01:12:35.114] Step 000: E=-1.526062981106583e+03,
-        DE=-1.526062981106583e+03, |DP|=6.129082631893899e+00\n[2024-08-29 01:12:35.116]
-        Reset incremental Fock matrix\n[2024-08-29 01:12:35.411] Step 001: E=-1.525260869406547e+03,
-        DE=+8.021117000357663e-01, |DP|=3.539198496930412e+00\n[2024-08-29 01:12:35.412]
-        Reset incremental Fock matrix\n[2024-08-29 01:12:35.730] Step 002: E=-1.525475947483707e+03,
-        DE=-2.150780771598875e-01, |DP|=1.732884141018227e+00\n[2024-08-29 01:12:36.036]
-        Step 003: E=-1.526710575340868e+03, DE=-1.234627857161058e+00, |DP|=7.027705293075490e-02\n[2024-08-29
-        01:12:36.324] Step 004: E=-1.526711736979313e+03, DE=-1.161638444727942e-03,
-        |DP|=3.840633207072809e-02\n[2024-08-29 01:12:36.620] Step 005: E=-1.526711965458593e+03,
-        DE=-2.284792799400748e-04, |DP|=1.422620034888390e-02\n[2024-08-29 01:12:36.920]
-        Step 006: E=-1.526712043825706e+03, DE=-7.836711301933974e-05, |DP|=2.353163485708094e-03\n[2024-08-29
-        01:12:37.218] Step 007: E=-1.526712044352700e+03, DE=-5.269937446428230e-07,
-        |DP|=8.707324343636024e-04\n[2024-08-29 01:12:37.515] Step 008: E=-1.526712044605111e+03,
-        DE=-2.524109277146636e-07, |DP|=2.470693953156613e-04\n[2024-08-29 01:12:37.814]
-        Step 009: E=-1.526712044616282e+03, DE=-1.117132342187688e-08, |DP|=7.680993725933848e-05\n[2024-08-29
-        01:12:38.105] Step 010: E=-1.526712044617371e+03, DE=-1.088892531697638e-09,
-        |DP|=2.375267957621719e-05\n[2024-08-29 01:12:38.105] SCF converged: steps=11,
-        E=-1526.712044617371\n-----------------------------------------------------------------\nNuclear
-        Repulsion Energy =            2286.809643808029\nOne-Electron Energy =                -6669.313461079337\nTwo-Electron
-        Energy =                 2945.294993365429\nDFT Exchange-Correlation Energy
-        =      -89.503220711493\nDispersion Correction Energy =           0.000000000000\nPCM
-        Polarization Energy =                0.000000000000\nTotal Energy =                       -1526.712044617371\n-----------------------------------------------------------------\n[2024-08-29
-        01:12:38.105] Total time: 6.6 sec\n", "stderr": null, "native_files": {},
-        "success": true, "error": null}]}'
+        "driver": "energy", "model": {"method": "m06-2x", "basis": "def2-svp"}, "keywords":
+        {"verbosity": 4, "basis_mode": "psi4", "output_basis_mode": "raw", "cartesian_basis":
+        false, "auxiliary_basis": "def2-universal-jfit", "write_wavefunction": "none",
+        "unrestricted": false, "max_scf_steps": 100, "convergence_threshold": 1e-08,
+        "orbital_gradient_threshold": 0.001, "density_threshold": 0.0001, "linear_dependence_threshold":
+        1e-06, "incremental_fock_start_step": 3, "fock_reset_steps": 10000000, "diis_subspace_size":
+        8, "finite_difference_displacement": 0.001, "force_finite_difference": false,
+        "xc": {"grid_level": "ULTRAFINE", "rad_quad": "MURAKNOWLES", "prune_method":
+        "UNPRUNED", "basis_tol": 1e-10, "batch_size": 512.0}, "eri": {"tolerance":
+        1e-12}, "grad_eri": {"tolerance": 1e-12}}, "protocols": {}, "extras": {},
+        "provenance": {"creator": "Microsoft Accelerated DFT", "version": "1.0", "routine":
+        "madft.cli", "total_time_seconds": 16.693514347076416}, "properties": {"calcinfo_nbasis":
+        480, "calcinfo_nmo": 480, "calcinfo_nalpha": 100, "calcinfo_nbeta": 100, "calcinfo_natom":
+        60, "nuclear_repulsion_energy": 2286.809643862374, "return_energy": -1526.7120199535527,
+        "scf_one_electron_energy": -6669.313122326666, "scf_two_electron_energy":
+        2945.2946699373033, "scf_xc_energy": -89.50321142656396, "scf_total_energy":
+        -1526.7120199535527, "scf_iterations": 11}, "wavefunction": null, "return_result":
+        -1526.7120199535527, "stdout": "[2025-05-22 06:37:50.268] DFT run for new
+        positions\n[2025-05-22 06:37:50.268] Iteration: 0\n[2025-05-22 06:37:50.268]
+        \n[2025-05-22 06:37:50.268] Positions [Bohr]:\n[2025-05-22 06:37:50.268] O   184.95486574
+        194.67391617 190.51462897\n[2025-05-22 06:37:50.268] H   185.43617899 194.71360042
+        188.68688587\n[2025-05-22 06:37:50.268] H   183.63186848 193.35110789 190.78674954\n[2025-05-22
+        06:37:50.268] O   190.19148581 189.29197617 181.20867267\n[2025-05-22 06:37:50.268]
+        H   191.79019411 189.54897892 182.18131471\n[2025-05-22 06:37:50.268] H   188.76228594
+        190.14046320 182.10874923\n[2025-05-22 06:37:50.268] O   188.62112340 190.55053377
+        191.30075504\n[2025-05-22 06:37:50.268] H   187.70498417 188.92877081 190.98139133\n[2025-05-22
+        06:37:50.268] H   187.36936881 191.92247494 191.64468520\n[2025-05-22 06:37:50.268]
+        O   186.71250001 186.16107793 184.73603546\n[2025-05-22 06:37:50.268] H   188.56084113
+        186.41562404 185.03574602\n[2025-05-22 06:37:50.268] H   185.99024669 187.69988191
+        183.91060309\n[2025-05-22 06:37:50.268] O   190.38423787 189.28252754 196.03262926\n[2025-05-22
+        06:37:50.268] H   190.21605225 190.15936046 194.36778054\n[2025-05-22 06:37:50.268]
+        H   189.17103370 187.83613117 196.10821830\n[2025-05-22 06:37:50.268] O   185.32600795
+        186.16995964 189.80031250\n[2025-05-22 06:37:50.268] H   183.62997876 186.85347358
+        190.27652348\n[2025-05-22 06:37:50.268] H   185.55976708 186.31225602 187.92967261\n[2025-05-22
+        06:37:50.268] O   186.22873012 191.36311600 183.77322000\n[2025-05-22 06:37:50.268]
+        H   186.49499253 193.01662636 184.64702936\n[2025-05-22 06:37:50.268] H   185.04179314
+        191.60122150 182.32228828\n[2025-05-22 06:37:50.268] O   196.33876489 186.00177402
+        188.94332170\n[2025-05-22 06:37:50.268] H   194.67013672 186.43074185 188.16702221\n[2025-05-22
+        06:37:50.268] H   196.77340190 184.20540036 188.54950278\n[2025-05-22 06:37:50.268]
+        O   187.39771470 182.24915588 192.22861057\n[2025-05-22 06:37:50.268] H   186.78657728
+        183.69385150 191.17603312\n[2025-05-22 06:37:50.268] H   188.29968098 181.00496020
+        191.12878996\n[2025-05-22 06:37:50.268] O   194.43581068 190.56376185 184.20596728\n[2025-05-22
+        06:37:50.268] H   196.22349160 190.22361115 183.69970965\n[2025-05-22 06:37:50.268]
+        H   194.39234698 191.17603312 185.99327025\n[2025-05-22 06:37:50.268] O   181.84305373
+        190.84344132 192.18136742\n[2025-05-22 06:37:50.268] H   181.69489921 189.77007688
+        193.72905311\n[2025-05-22 06:37:50.268] H   180.11659995 191.31020367 191.57098588\n[2025-05-22
+        06:37:50.268] O   186.82739536 185.61362427 196.37466969\n[2025-05-22 06:37:50.268]
+        H   186.98802208 184.17837728 195.15579634\n[2025-05-22 06:37:50.268] H   187.18644332
+        184.99738458 198.12455608\n[2025-05-22 06:37:50.268] O   197.62377865 189.03875287
+        192.66135785\n[2025-05-22 06:37:50.268] H   197.32331220 190.88312557 192.37789893\n[2025-05-22
+        06:37:50.268] H   196.92080054 188.05590631 191.21004819\n[2025-05-22 06:37:50.268]
+        O   193.56275721 196.64490052 191.51996327\n[2025-05-22 06:37:50.268] H   192.29286126
+        195.89845870 192.70293183\n[2025-05-22 06:37:50.268] H   193.14701747 198.46092733
+        191.21193791\n[2025-05-22 06:37:50.268] O   186.53146425 196.06286488 185.65482030\n[2025-05-22
+        06:37:50.268] H   185.94357045 196.97371287 184.10732358\n[2025-05-22 06:37:50.268]
+        H   188.21388742 196.74127655 186.18413259\n[2025-05-22 06:37:50.268] O   180.71507621
+        188.96618739 185.65689900\n[2025-05-22 06:37:50.268] H   182.43491596 189.74740017
+        185.70130756\n[2025-05-22 06:37:50.268] H   179.49166752 190.17825772 184.88041053\n[2025-05-22
+        06:37:50.268] O   193.43236611 191.90357768 188.90552718\n[2025-05-22 06:37:50.268]
+        H   194.02762984 193.45126337 189.81165086\n[2025-05-22 06:37:50.268] H   191.91302631
+        191.20248928 189.78519469\n[2025-05-22 06:37:50.268] O   192.44214962 184.14757474
+        192.95993458\n[2025-05-22 06:37:50.268] H   190.59777692 184.05441124 192.55931264\n[2025-05-22
+        06:37:50.268] H   192.73505717 183.55552355 194.73060796\n[2025-05-22 06:37:50.268]
+        O   192.11900645 185.79050264 185.79673873\n[2025-05-22 06:37:50.268] H   192.57065100
+        187.52470430 185.19693966\n[2025-05-22 06:37:50.268] H   193.17536336 184.51455956
+        184.88645766\n[2025-05-22 06:37:50.268] O   188.94369965 195.15579634 193.33221063\n[2025-05-22
+        06:37:50.268] H   188.29363386 194.83832235 195.07831756\n[2025-05-22 06:37:50.268]
+        H   187.49201204 195.49783676 192.17191879\n[2025-05-22 06:37:50.268] \n[2025-05-22
+        06:37:50.299] Basis set output is unnormalized for external compatibility.\n[2025-05-22
+        06:37:50.312] mol=H40O20: atoms=60, electrons=200, ecp_cores=0, charge=0,
+        multiplicity=1, spin(2S)=0, alpha=100, beta=100\n[2025-05-22 06:37:50.312]
+        restricted=true, basis=def2-svp, pure=true, nbf=480, energy_threshold=1.00e-08,
+        density_threshold=1.00e-04, og_threshold=1.00e-03\n[2025-05-22 06:37:50.312]
+        fock_alg=TradJK\n[2025-05-22 06:37:50.312] eri_tolerance=1.00e-12, disp=none,
+        enable_pcm=false, use_ddx=false, add_mm_charge=false\n[2025-05-22 06:37:50.312]
+        world_size=4, omp_get_max_threads=24\n[2025-05-22 06:37:50.312] xc=m06-2x,
+        grid_level=ULTRAFINE\n[2025-05-22 06:37:52.958] Reset incremental Fock matrix\n[2025-05-22
+        06:37:53.433] Step 000: E=-1.526062969464814e+03, DE=-1.526062969464814e+03,
+        |DP|=1.276893063340223e-02 OG=3.461044391930576e-03\n[2025-05-22 06:37:53.434]
+        Reset incremental Fock matrix\n[2025-05-22 06:37:53.747] Step 001: E=-1.525260830858450e+03,
+        DE=+8.021386063635418e-01, |DP|=7.373193862316899e-03 OG=6.456352443110746e-04\n[2025-05-22
+        06:37:53.748] Reset incremental Fock matrix\n[2025-05-22 06:37:54.060] Step
+        002: E=-1.525475917138229e+03, DE=-2.150862797784612e-01, |DP|=3.610042469008798e-03
+        OG=6.153340508068986e-04\n[2025-05-22 06:37:54.365] Step 003: E=-1.526710550671560e+03,
+        DE=-1.234633533331589e+00, |DP|=1.464195234090620e-04 OG=2.919377211297152e-05\n[2025-05-22
+        06:37:54.664] Step 004: E=-1.526711712365985e+03, DE=-1.161694424354209e-03,
+        |DP|=7.999620862656036e-05 OG=1.916683129542495e-05\n[2025-05-22 06:37:54.963]
+        Step 005: E=-1.526711940801691e+03, DE=-2.284357062762865e-04, |DP|=2.963449519429320e-05
+        OG=8.985158276342507e-06\n[2025-05-22 06:37:55.262] Step 006: E=-1.526712019161185e+03,
+        DE=-7.835949440959666e-05, |DP|=4.904417667152688e-06 OG=5.459905952330998e-07\n[2025-05-22
+        06:37:55.563] Step 007: E=-1.526712019688288e+03, DE=-5.271026566333603e-07,
+        |DP|=1.815554678153707e-06 OG=4.677703316436725e-07\n[2025-05-22 06:37:55.856]
+        Step 008: E=-1.526712019941279e+03, DE=-2.529905032133684e-07, |DP|=5.147187727907325e-07
+        OG=9.143774125341028e-08\n[2025-05-22 06:37:56.151] Step 009: E=-1.526712019952416e+03,
+        DE=-1.113698999688495e-08, |DP|=1.598026388679689e-07 OG=2.764654360605060e-08\n[2025-05-22
+        06:37:56.447] Step 010: E=-1.526712019953553e+03, DE=-1.137095750891604e-09,
+        |DP|=4.949820389176546e-08 OG=1.170680004938344e-08\n[2025-05-22 06:37:56.447]
+        SCF converged: steps=11, E=-1526.712019953553\n-----------------------------------------------------------------\nNuclear
+        Repulsion Energy =            2286.809643862374\nOne-Electron Energy =                -6669.313122326666\nTwo-Electron
+        Energy =                 2945.294669937303\nDFT Exchange-Correlation Energy
+        =      -89.503211426564\nDispersion Correction Energy =           0.000000000000\nPCM
+        Polarization Energy =                0.000000000000\nQMMM Coulomb Energy =                    0.000000000000\nMM
+        Self Energy =                         0.000000000000\nTotal Energy =                       -1526.712019953553\n-----------------------------------------------------------------\n[2025-05-22
+        06:37:56.447] Total time: 14.9 sec\n[2025-05-22 06:37:56.447] \n[2025-05-22
+        06:37:56.754] Stopping Accelerated DFT\n", "stderr": null, "native_files":
+        {}, "success": true, "error": null}]}'
     headers:
       accept-ranges:
       - bytes
       content-length:
-      - '6897'
+      - '12368'
       content-range:
-      - bytes 0-9978/9979
+      - bytes 0-15493/15494
       content-type:
       - application/octet-stream
       x-ms-blob-content-md5:
-      - 94VdeYRRx6BTrCVVPWHXPg==
+      - HqxB4N2QnaqaPKjREOFtCw==
       x-ms-blob-type:
       - BlockBlob
       x-ms-creation-time:
-      - Thu, 29 Aug 2024 01:11:54 GMT
+      - Thu, 22 May 2025 06:37:03 GMT
       x-ms-lease-state:
       - available
       x-ms-lease-status:

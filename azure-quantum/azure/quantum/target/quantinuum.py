@@ -24,6 +24,9 @@ class Quantinuum(Target):
         "quantinuum.qpu.h2-1",
         "quantinuum.sim.h2-1sc",
         "quantinuum.sim.h2-1e",
+        "quantinuum.qpu.h2-2",
+        "quantinuum.sim.h2-2sc",
+        "quantinuum.sim.h2-2e",
     )
 
     _SHOTS_PARAM_NAME = "count"

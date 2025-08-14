@@ -67,18 +67,90 @@ To read more about how to create and update recordings for testing code that int
 
 Before merging your code contribution to `main`, make sure that all new code is covered by unit tests and that the unit tests have up-to-date recordings. If you recorded your tests and then updated or refactored the code afterwards, remember to re-record the tests.
 
-### Update/re-generate the Azure Quantum internal SDK client based on Swagger ###
+### Update/re-generate the Azure Quantum internal SDK client ###
 
 The internal Azure Quantum Python SDK client (`azure/quantum/_client`) needs to be re-generated every time there is a change in the [Azure Quantum Service API definition](https://github.com/Azure/azure-rest-api-specs/tree/main/specification/quantum/data-plane) (aka Swagger).
 
-To re-generate the client based on the latest published API definition simply run the following PowerShell script
+#### Prerequisites
+Python 3.8 or later is required
 
-```powershell
- ./eng/Generate-DataPlane-Client.ps1
-```
-> See the Generate-DataPlane-Client.ps1 script for more options
+linux
 
-After re-generating the client make sure to:
+    sudo apt install python3
+
+    sudo apt install python3-pip
+
+    sudo apt install python3.{?}-venv explicitly if needed
+
+Node.js 18.3 LTS or later is required
+
+#### Setup your repo
+Fork and clone the azure-sdk-for-python repo (we call it's name SDK repo and it's absolute path)
+
+Create a branch in SDK repo to work in
+
+Make sure your typespec definition is merged into main branch of public rest repo (we call it rest repo) or you already make a PR in rest repo so that you could get the github link of your typespec definition which contains commit id (e.g. https://github.com/Azure/azure-rest-api-specs/blob/46ca83821edd120552403d4d11cf1dd22360c0b5/specification/contosowidgetmanager/Contoso.WidgetManager/tspconfig.yaml)
+
+#### Project service name and package name
+Two key pieces of information for your project are the service_name and package_name.
+
+The service_name is the short name for the Azure service. The service_name should match across all the SDK language repos and should be name of the directory in the specification folder of the azure-rest-api-specs repo that contains the REST API definition file. An example is Service Bus, whose API definitions are in the specification/servicebus folder of the azure-rest-api-specs repo, and uses the service_name "servicebus". Not every service follows this convention, but it should be the standard unless there are strong reasons to deviate.
+
+In Python, a project's package name is the name used to publish the package in PyPI. For data plane libraries (management plane uses a different convention), the package_name could be just azure-{service_name}. An example is "azure-servicebus".
+
+Some services may need several different packages. For these cases a third component, the module_name, is added to the package_name, as azure-{service_name}-{module_name}. The module_name usually comes from the name of the REST API file itself or one of the directories toward the end of the file path. An example is the Synapse service, with packages azure-synapse, azure-synapse-accesscontrol, azure-synapse-artifacts, etc.
+
+#### Project folder structure
+Before we start, we probably should get to know the project folder for SDK repo.
+
+Normally, the folder structure would be something like:
+
+sdk/{service_name}/{package_name}: the PROJECT_ROOT folder
+/azure/{service_name}/{module_name} : folder where generated code is.
+/tests: folder of test files
+/samples: folder of sample files
+azure-{service_name}-{module_name}: package name. Usually, package name is same with part of ${PROJECT_ROOT} folder. After release, you can find it in pypi. For example: you can find azure-messaging-webpubsubservice in pypi.
+there are also some other files (like setup.py, README.md, etc.) which are necessary for a complete package.
+More details on the structure of Azure SDK repos is available in the Azure SDK common repo.
+
+#### How to generate SDK code with Dataplane Codegen
+We are working on to automatically generate everything right now, but currently we still need some manual work to get a releasable package. Here're the steps of how to get the package.
+
+1. Configure python emitter in tspconfig.yaml
+In rest repo, there shall be tspconfig.yaml where main.tsp of your service is. Make sure there are configuration for Python SDK like:
+
+parameters:
+  "service-dir":
+    default: "YOUR_SERVICE_DIRECTORY"
+
+emit: [
+  "@azure-tools/typespec-autorest", // this value does not affect python code generation
+]
+
+options:
+  "@azure-tools/typespec-python":
+    package-dir: "YOUR_PACKAGE_NAME"
+    package-name: "{package-dir}"
+    flavor: "azure"
+YOUR_PACKAGE_NAME is your package name; YOUR_SERVICE_DIRECTORY is SDK directory name. For example, assume that package name is "azure-ai-anomalydetector" and you want to put it in folder "azure-sdk-for-python/sdk/anomalydetector", then "YOUR_PACKAGE_NAME" is "azure-ai-anomalydetector" and "YOUR_SERVICE_DIRECTORY" is "sdk/anomalydetector"
+
+2. Run cmd to generate the SDK
+Install tsp-client CLI tool:
+
+npm install -g @azure-tools/typespec-client-generator-cli
+For initial set up, from the root of the SDK repo, call:
+
+D:\dev\azure-sdk-for-python> tsp-client init -c YOUR_REMOTE_TSPCONFIG_URL
+An example of YOUR_REMOTE_TSPCONFIG_URL is https://github.com/Azure/azure-rest-api-specs/blob/46ca83821edd120552403d4d11cf1dd22360c0b5/specification/contosowidgetmanager/Contoso.WidgetManager/tspconfig.yaml
+
+To update your TypeSpec generated SDK, go to your SDK folder where your tsp-location.yaml is located, call:
+
+D:\dev\azure-sdk-for-python\sdk\contoso\azure-contoso-widget> tox run -e generate -c ..\..\..\eng\tox\tox.ini --root .
+Note: To know more about tox, read our contributing guidelines
+
+The tox run -e generate call will look for a tsp-location.yaml file in your local directory. tsp-location.yaml contains the configuration information that will be used to sync your TypeSpec project and generate your SDK. Please make sure that the commit is targeting the correct TypeSpec project updates you wish to generate your SDK from.
+
+#### After re-generating the client make sure to:
 
 1. Re-run/Re-record all unit tests against the live-service (you can run `./eng/Record-Tests.ps1`)
 1. If necessary, adjust the convenience layer for breaking-changes or to expose new features

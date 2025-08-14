@@ -329,16 +329,6 @@ class TestWorkspace(QuantumTestBase):
         target = ws.get_targets(name="ionq.qpu.aria-1")
         assert not isinstance(target, list)
 
-    @pytest.mark.microsoft_qc
-    @pytest.mark.live_test
-    def test_workspace_get_target_microsoft_qc(self):
-        from azure.quantum.target.microsoft import MicrosoftEstimator
-
-        ws = self.create_workspace()
-        target = ws.get_targets("microsoft.estimator")
-
-        self.assertEqual(type(target), MicrosoftEstimator)
-
     @pytest.mark.live_test
     def test_workspace_job_quotas(self):
         ws = self.create_workspace()
@@ -346,7 +336,7 @@ class TestWorkspace(QuantumTestBase):
         self.assertGreater(len(quotas), 0)
         self.assertIn("dimension", quotas[0])
         self.assertIn("scope", quotas[0])
-        self.assertIn("provider_id", quotas[0])
+        self.assertIn("providerId", quotas[0])
         self.assertIn("utilization", quotas[0])
         self.assertIn("holds", quotas[0])
         self.assertIn("limit", quotas[0])

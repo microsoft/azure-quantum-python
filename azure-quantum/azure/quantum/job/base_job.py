@@ -59,7 +59,14 @@ class BaseJob(WorkspaceItem):
     @property
     def container_name(self):
         """Job input/output data container name"""
-        return f"job-{self.id}"
+
+        if self._details.container_uri is None:
+            return  f"job-{self.id}"
+        else:
+            container_uri = self._details.container_uri
+        path = urlparse(container_uri).path
+        container_name = path.split("/")[1]
+        return container_name
 
     @classmethod
     def from_input_data(
@@ -323,7 +330,10 @@ class BaseJob(WorkspaceItem):
 
         # Use Job's default container if not specified
         if container_uri is None:
-            container_uri = self.workspace.get_container_uri(job_id=self.id)
+            if self._details.container_uri is None:
+                container_uri = self.workspace.get_container_uri(job_id=self.id)
+            else:
+                container_uri = self._details.container_uri
 
         uploaded_blob_uri = self.upload_input_data(
             container_uri = container_uri,
@@ -353,7 +363,10 @@ class BaseJob(WorkspaceItem):
 
         # Use Job's default container if not specified
         if container_uri is None:
-            container_uri = self.workspace.get_container_uri(job_id=self.id)
+            if self._details.container_uri is None:
+                container_uri = self.workspace.get_container_uri(job_id=self.id)
+            else:
+                container_uri = self._details.container_uri
         
         container_client = ContainerClient.from_container_url(container_uri)
         blob_client = container_client.get_blob_client(name)

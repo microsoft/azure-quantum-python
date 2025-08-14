@@ -69,6 +69,7 @@ class RegexScrubbingPatterns:
     URL_QUERY_AUTH_CLAIMS = r"claims=[\w\%\-\.]+"
     URL_QUERY_AUTH_CODE_VERIFIER = r"code_verifier=[\w\%\-\.]+"
     URL_QUERY_AUTH_CODE = r"code=[\w\%\-\.]+"
+    URL_QUERY_KEY_CODE = r"key=[\w\%\-\.]+"
     URL_HTTP = r"http://" # Devskim: ignore DS137138
 
 class QuantumTestBase(ReplayableTest):
@@ -180,6 +181,8 @@ class QuantumTestBase(ReplayableTest):
                                       "code_verifier=PLACEHOLDER")
         self._regex_replacer.register_scrubbing(RegexScrubbingPatterns.URL_QUERY_AUTH_CODE,
                                       "code=PLACEHOLDER")
+        self._regex_replacer.register_scrubbing(RegexScrubbingPatterns.URL_QUERY_KEY_CODE,
+                                      "key=PLACEHOLDER")
         self._regex_replacer.register_scrubbing(RegexScrubbingPatterns.URL_HTTP, "https://")
 
         self._regex_replacer.register_scrubbing(
@@ -318,14 +321,14 @@ class QuantumTestBase(ReplayableTest):
         **kwargs
     ) -> Target:
         """
-        Create a `Microsoft.Test.echo-target` Target for simple job submission tests.
+        Create a `Microsoft.Test.FirstParty.echo-target` Target for simple job submission tests.
         Uses the Workspace returned from `create_workspace()` method. 
         """
         workspace = self.create_workspace(credential=credential, **kwargs)
         target = Target(
             workspace=workspace,
             name="echo-output",
-            provider_id="Microsoft.Test",
+            provider_id="Microsoft.Test.FirstParty",
             input_data_format = "microsoft.quantum-log.v1",
             output_data_format = "microsoft.quantum-log.v1"
         )
