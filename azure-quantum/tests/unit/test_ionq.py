@@ -48,7 +48,7 @@ class TestIonQ(QuantumTestBase):
     @pytest.mark.ionq
     @pytest.mark.live_test
     def test_job_submit_ionq_100_shots_with_deprecated_num_shots(self):
-        # Call submit with a depteracted 'num_shots' argument, need to emit a deptecation warning.
+        # Call submit with a deprecated 'num_shots' argument, need to emit a deprecation warning.
         with pytest.warns(
             DeprecationWarning, 
             match="The 'num_shots' parameter will be deprecated. Please, use 'shots' parameter instead."

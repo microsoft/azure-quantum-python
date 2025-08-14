@@ -36,7 +36,7 @@ To be able to run the tests in recording or live mode, make sure:
 ## Recordings
 
 Our testing infrastructure uses Python VCR to record HTTP calls against a live service and then use
-the recordings (aka "cassetes") to playback the responses, essentially creating a mock of the live-service.
+the recordings (aka "cassettes") to playback the responses, essentially creating a mock of the live-service.
 
 ### Cannot Overwrite Existing Cassette Exception
 
@@ -63,7 +63,7 @@ See [Sequence ids](#Sequence-ids) and [Non-deterministic Job ids and Session ids
 
 To prevent potentially sensitive information to be checked-in in the repository (like authentication tokens, access keys, etc) inside the recordings, we do several text replacements in the HTTP requests and responses in the VCR pipeline before they end-up persisted in the recorded files.
 
-The [QuantumTestBase.\_\_init\_\_ method](https://github.com/microsoft/azure-quantum-python/blob/main/azure-quantum/tests/unit/common.py#L73) contains several rules (mostly regular expressions) that are applied in the HTTP requests and reponses via several recording and playback processors that are injected in the VCR HTTP pipeline.
+The [QuantumTestBase.\_\_init\_\_ method](https://github.com/microsoft/azure-quantum-python/blob/main/azure-quantum/tests/unit/common.py#L73) contains several rules (mostly regular expressions) that are applied in the HTTP requests and responses via several recording and playback processors that are injected in the VCR HTTP pipeline.
 We use some common processors provided by the Azure SDK framework (including AccessTokenReplacer, InteractiveAccessTokenReplacer, RequestUrlNormalizer) but we also apply custom text replacement logic in URLs and HTTP Headers via the `process_request` and `process_response` methods and some other processors/filters found at the end of the file.
 
 ### Ability to Pause Recordings
@@ -106,14 +106,14 @@ To run the tests, simply run `pytest` from the root of the `azure-quantum` direc
 pytest
 ```
 
-To run the a specific test class, run `pytest [test_file.py]`.
+To run a specific test class, run `pytest [test_file.py]`.
 Example:
 
 ```bash
 pytest ./tests/unit/test_job.py
 ```
 
-To run the a specific test case, run `pytest -k [test_method_name]`.
+To run a specific test case, run `pytest -k [test_method_name]`.
 Example:
 
 ```bash
