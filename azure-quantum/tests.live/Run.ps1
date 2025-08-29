@@ -62,9 +62,6 @@ function PyTestMarkExpr() {
     if ($AzureQuantumCapabilities -notcontains "submit.quantinuum") {
         $MarkExpr += " and not quantinuum"
     }
-    if ($AzureQuantumCapabilities -notcontains "submit.microsoft-elements") {
-        $MarkExpr += " and not microsoft_elements_dft"
-    }
 
     return $MarkExpr
 }
@@ -95,9 +92,6 @@ if ($PackageDir -Match "azure-quantum") {
 
     Write-Host "##[info]Copy auxiliary Q# test files from $PackageDir to $PSScriptRoot"
     Copy-Item -Path (Join-Path $PackageDir "tests" "unit" "*.qs") -Destination $PSScriptRoot
-
-    Write-Host "##[info]Copy auxiliary DFT test files from $PackageDir to $PSScriptRoot"
-    Copy-Item -Path (Join-Path $PackageDir "tests" "unit" "*.xyz") -Destination $PSScriptRoot
 }
 
 python -m pytest -v `

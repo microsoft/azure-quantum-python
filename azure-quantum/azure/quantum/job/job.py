@@ -111,7 +111,7 @@ class Job(BaseJob, FilteredJob):
         Raises :class:`ValueError` if job output is malformed or output format is not compatible.
 
         Raises :class:`azure.quantum.job.JobFailedWithResultsError` if job execution fails, 
-                but failure results could still be retrieved (e.g. for jobs submitted against "microsoft.dft" target).
+                but failure results could still be retrieved.
 
         :param timeout_secs: Timeout in seconds, defaults to 300
         :type timeout_secs: float
@@ -274,7 +274,7 @@ class Job(BaseJob, FilteredJob):
         Raises :class:`ValueError` if job output is malformed or output format is not compatible.
 
         Raises :class:`azure.quantum.job.JobFailedWithResultsError` if job execution fails, 
-                but failure results could still be retrieved (e.g. for jobs submitted against "microsoft.dft" target).
+                but failure results could still be retrieved.
 
         :param timeout_secs: Timeout in seconds, defaults to 300
         :type timeout_secs: float
