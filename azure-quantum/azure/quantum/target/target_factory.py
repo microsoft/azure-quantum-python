@@ -68,10 +68,6 @@ class TargetFactory:
         if provider_id.lower() in self._default_targets:
             return self._default_targets[provider_id.lower()]
  
-        warnings.warn(
-            f"No default target specified for provider {provider_id}. \
-Please check the provider name and try again or create an issue here: \
-https://github.com/microsoft/qdk-python/issues.")
         return Target
 
     def create_target(
