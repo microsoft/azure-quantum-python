@@ -117,7 +117,7 @@ avg. queue time={self._average_queue_time} s, {self._current_availability}>"
 
     @classmethod
     def from_target_status(
-        cls, workspace: "Workspace", status: TargetStatus, **kwargs
+        cls, workspace: "Workspace", provider_id: str, status: TargetStatus, **kwargs
     ):
         """Create a Target instance from a given workspace and target status.
 
@@ -131,6 +131,7 @@ avg. queue time={self._average_queue_time} s, {self._current_availability}>"
         return cls(
             workspace=workspace,
             name=status.id,
+            provider_id=provider_id,
             average_queue_time=status.average_queue_time,
             current_availability=status.current_availability,
             **kwargs
