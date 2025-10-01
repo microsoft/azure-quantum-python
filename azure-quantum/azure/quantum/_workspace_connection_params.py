@@ -14,7 +14,7 @@ from typing import (
 )
 from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy
-from azure.quantum._authentication import _DefaultAzureCredential
+from azure.identity import DefaultAzureCredential
 from azure.quantum._constants import (
     EnvironmentKind,
     EnvironmentVariables,
@@ -403,13 +403,10 @@ class WorkspaceConnectionParams:
     def get_credential_or_default(self) -> Any:
         """
         Get the credential if one was set,
-        or defaults to a new _DefaultAzureCredential.
+        or defaults to a new DefaultAzureCredential.
         """
         return (self.credential
-                or _DefaultAzureCredential(
-                    subscription_id=self.subscription_id,
-                    arm_endpoint=self.arm_endpoint,
-                    tenant_id=self.tenant_id))
+                or DefaultAzureCredential())
 
     def get_auth_policy(self) -> Any:
         """

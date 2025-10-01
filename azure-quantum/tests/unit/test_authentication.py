@@ -18,15 +18,11 @@ from common import (
     API_KEY,
 )
 from azure.identity import (
-    CredentialUnavailableError,
     ClientSecretCredential,
+    DefaultAzureCredential,
     InteractiveBrowserCredential,
 )
 from azure.quantum import Workspace
-from azure.quantum._authentication import (
-    _TokenFileCredential,
-    _DefaultAzureCredential,
-)
 from azure.quantum._constants import (
     EnvironmentVariables,
     ConnectionConstants,
@@ -34,134 +30,6 @@ from azure.quantum._constants import (
 
 
 class TestWorkspace(QuantumTestBase):
-    def test_azure_quantum_token_credential_file_not_set(self):
-        credential = _TokenFileCredential()
-        with pytest.raises(CredentialUnavailableError) as exception:
-            credential.get_token(ConnectionConstants.DATA_PLANE_CREDENTIAL_SCOPE)
-        self.assertIn("Token file location not set.", str(exception.value))
-
-    def test_azure_quantum_token_credential_file_not_exists(self):
-        with patch.dict(os.environ,
-                        {EnvironmentVariables.QUANTUM_TOKEN_FILE: "fake_file_path"},
-                        clear=True):
-            with patch('os.path.isfile') as mock_isfile:
-                mock_isfile.return_value = False
-                credential = _TokenFileCredential()
-                with pytest.raises(CredentialUnavailableError) as exception:
-                    credential.get_token(ConnectionConstants.DATA_PLANE_CREDENTIAL_SCOPE)
-                self.assertIn("Token file at fake_file_path does not exist.",
-                              str(exception.value))
-
-    def test_azure_quantum_token_credential_file_invalid_json(self):
-        tmpdir = self.create_temp_dir()
-        file = Path(tmpdir) / "token.json"
-        file.write_text("not a json")
-        with patch.dict(os.environ,
-                        {EnvironmentVariables.QUANTUM_TOKEN_FILE: str(file.resolve())},
-                        clear=True):
-            credential = _TokenFileCredential()
-            with pytest.raises(CredentialUnavailableError) as exception:
-                credential.get_token(ConnectionConstants.DATA_PLANE_CREDENTIAL_SCOPE)
-            self.assertIn("Failed to parse token file: Invalid JSON.",
-                          str(exception.value))
-
-    def test_azure_quantum_token_credential_file_missing_expires_on(self):
-        content = {
-            "access_token": "fake_token",
-        }
-        tmpdir = self.create_temp_dir()
-        file = Path(tmpdir) / "token.json"
-        file.write_text(json.dumps(content))
-        with patch.dict(os.environ,
-                        {EnvironmentVariables.QUANTUM_TOKEN_FILE: str(file.resolve())},
-                        clear=True):
-            credential = _TokenFileCredential()
-            with pytest.raises(CredentialUnavailableError) as exception:
-                credential.get_token(ConnectionConstants.DATA_PLANE_CREDENTIAL_SCOPE)
-            self.assertIn("Failed to parse token file: " +
-                          "Missing expected value: 'expires_on'""",
-                          str(exception.value))
-
-    def test_azure_quantum_token_credential_file_token_expired(self):
-        content = {
-            "access_token": "fake_token",
-            # Matches timestamp in error message below
-            "expires_on": 1628543125086
-        }
-        tmpdir = self.create_temp_dir()
-        file = Path(tmpdir) / "token.json"
-        file.write_text(json.dumps(content))
-        with patch.dict(os.environ,
-                        {EnvironmentVariables.QUANTUM_TOKEN_FILE: str(file.resolve())},
-                        clear=True):
-            credential = _TokenFileCredential()
-            with pytest.raises(CredentialUnavailableError) as exception:
-                credential.get_token(ConnectionConstants.DATA_PLANE_CREDENTIAL_SCOPE)
-            self.assertIn("Token already expired at Mon Aug  9 21:05:25 2021",
-                          str(exception.value))
-
-    def test_azure_quantum_token_credential_file_valid_token(self):
-        one_hour_ahead = time.time() + 60*60
-        content = {
-            "access_token": "fake_token",
-            "expires_on": one_hour_ahead * 1000  # Convert to milliseconds
-        }
-
-        tmpdir = self.create_temp_dir()
-        file = Path(tmpdir) / "token.json"
-        file.write_text(json.dumps(content))
-        with patch.dict(os.environ,
-                        {EnvironmentVariables.QUANTUM_TOKEN_FILE: str(file.resolve())},
-                        clear=True):
-            credential = _TokenFileCredential()
-            token = credential.get_token(ConnectionConstants.DATA_PLANE_CREDENTIAL_SCOPE)
-        self.assertEqual(token.token, "fake_token")
-        self.assertEqual(token.expires_on, pytest.approx(one_hour_ahead))
-
-    @pytest.mark.live_test
-    def test_workspace_auth_token_credential(self):
-        with patch.dict(os.environ):
-            self.clear_env_vars(os.environ)
-            connection_params = self.connection_params
-
-            os.environ[EnvironmentVariables.AZURE_CLIENT_ID] = \
-                connection_params.client_id
-            os.environ[EnvironmentVariables.AZURE_TENANT_ID] = \
-                connection_params.tenant_id
-
-            if self.in_recording and os.path.exists(self._client_certificate_path):
-                os.environ[EnvironmentVariables.AZURE_CLIENT_CERTIFICATE_PATH] = \
-                    self._client_certificate_path
-                os.environ[EnvironmentVariables.AZURE_CLIENT_SEND_CERTIFICATE_CHAIN] = \
-                    self._client_send_certificate_chain
-            else:
-                os.environ[EnvironmentVariables.AZURE_CLIENT_SECRET] = \
-                    self._client_secret
-            
-            credential = _DefaultAzureCredential(
-                subscription_id=connection_params.subscription_id,
-                arm_endpoint=connection_params.arm_endpoint,
-                tenant_id=connection_params.tenant_id)
-            
-            token = credential.get_token(ConnectionConstants.DATA_PLANE_CREDENTIAL_SCOPE)
-            content = {
-                "access_token": token.token,
-                "expires_on": token.expires_on * 1000
-            }
-            tmpdir = self.create_temp_dir()
-            file = Path(tmpdir) / "token.json"
-            try:
-                file.write_text(json.dumps(content))
-                with patch.dict(os.environ,
-                                {EnvironmentVariables.QUANTUM_TOKEN_FILE: str(file.resolve())},
-                                clear=True):
-                    credential = _TokenFileCredential()
-                    workspace = self.create_workspace(credential=credential)
-                    targets = workspace.get_targets()
-                    self.assertGreater(len(targets), 1)
-            finally:
-                os.remove(file)
-
     @pytest.mark.live_test
     def test_workspace_auth_client_secret_credential(self):
         client_secret = os.environ.get(EnvironmentVariables.AZURE_CLIENT_SECRET)
@@ -199,10 +67,7 @@ class TestWorkspace(QuantumTestBase):
                 os.environ[EnvironmentVariables.AZURE_CLIENT_SECRET] = \
                     self._client_secret
 
-            credential = _DefaultAzureCredential(
-                subscription_id=connection_params.subscription_id,
-                arm_endpoint=connection_params.arm_endpoint,
-                tenant_id=connection_params.tenant_id)
+            credential = DefaultAzureCredential()
                 
             workspace = self.create_workspace(credential=credential)
             targets = workspace.get_targets()
@@ -223,10 +88,7 @@ class TestWorkspace(QuantumTestBase):
     def _get_rp_credential(self):
         connection_params = self.connection_params
         # We have to use DefaultAzureCredential to avoid using ApiKeyCredential
-        credential = _DefaultAzureCredential(
-                    subscription_id=connection_params.subscription_id,
-                    arm_endpoint=connection_params.arm_endpoint,
-                    tenant_id=connection_params.tenant_id)
+        credential = DefaultAzureCredential()
         scope = ConnectionConstants.ARM_CREDENTIAL_SCOPE
         token = credential.get_token(scope).token
         return token
