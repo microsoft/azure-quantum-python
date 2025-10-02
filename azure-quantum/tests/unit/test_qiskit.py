@@ -798,6 +798,26 @@ class TestQiskit(QuantumTestBase):
         self.assertEqual(config.gateset, "qis")
 
     @pytest.mark.ionq
+    def test_ionq_forte_enterprise_has_default(self):
+        provider = DummyProvider()
+        provider.get_backend("ionq.qpu.forte-enterprise-1")
+
+    @pytest.mark.ionq
+    def test_ionq_forte_enterprise_has_qir_target(self):
+        provider = DummyProvider()
+        provider.get_backend("ionq.qpu.forte-enterprise-1", input_data_format="qir.v1")
+
+    @pytest.mark.ionq
+    def test_ionq_forte_enterprise_has_native_gateset_target(self):
+        provider = DummyProvider()
+        provider.get_backend("ionq.qpu.forte-enterprise-1", gateset="native")
+
+    @pytest.mark.ionq
+    def test_ionq_forte_enterprise_has_qis_gateset_target(self):
+        provider = DummyProvider()
+        provider.get_backend("ionq.qpu.forte-enterprise-1", gateset="qis")
+
+    @pytest.mark.ionq
     def test_translate_ionq_qir(self):
         circuit = self._3_qubit_ghz()
         workspace = self.create_workspace()
@@ -855,26 +875,6 @@ class TestQiskit(QuantumTestBase):
     def test_ionq_aria_has_qis_gateset_target(self):
         provider = DummyProvider()
         provider.get_backend("ionq.qpu.aria-1", gateset="qis")
-
-    @pytest.mark.ionq
-    def test_ionq_aria2_has_default(self):
-        provider = DummyProvider()
-        provider.get_backend("ionq.qpu.aria-2")
-
-    @pytest.mark.ionq
-    def test_ionq_aria2_has_qir_target(self):
-        provider = DummyProvider()
-        provider.get_backend("ionq.qpu.aria-2", input_data_format="qir.v1")
-
-    @pytest.mark.ionq
-    def test_ionq_aria2_has_native_gateset_target(self):
-        provider = DummyProvider()
-        provider.get_backend("ionq.qpu.aria-2", gateset="native")
-
-    @pytest.mark.ionq
-    def test_ionq_aria2_has_qis_gateset_target(self):
-        provider = DummyProvider()
-        provider.get_backend("ionq.qpu.aria-2", gateset="qis")
 
     @pytest.mark.ionq
     def test_ionq_forte1_has_default(self):
