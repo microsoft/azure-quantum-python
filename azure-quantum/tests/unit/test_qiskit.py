@@ -34,7 +34,7 @@ from azure.quantum.qiskit.backends.backend import (
     AzureQirBackend,
 )
 from azure.quantum.qiskit.backends.quantinuum import QuantinuumEmulatorQirBackend, QuantinuumQirBackendBase
-from azure.quantum.qiskit.backends.ionq import IonQSimulatorQirBackend, IonQAriaQirBackend
+from azure.quantum.qiskit.backends.ionq import IonQSimulatorQirBackend
 
 # This provider is used to stub out calls to the AzureQuantumProvider
 # There are live tests that use the available backends in the workspace
