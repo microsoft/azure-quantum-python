@@ -6,22 +6,6 @@
         PowerShell utilities for managing Python virtual environments
 #>
 
-function Enable-Venv {
-    <#
-    .SYNOPSIS
-        Initialize Python virtual environment support in the current session
-    #>
-    # Check if Python is available
-    try {
-        $PythonVersion = python --version 2>&1
-        Write-Host "Using Python: $PythonVersion"
-    }
-    catch {
-        Write-Error "Python is not available in PATH. Please install Python first."
-        throw
-    }
-}
-
 function Get-VenvName {
     <#
     .SYNOPSIS
@@ -90,6 +74,10 @@ function Use-Venv {
     
     if (Test-Path $ActivateScript) {
         Write-Host "Activating virtual environment '$VenvName'..."
+        # Ensure prompt function exists to avoid activation errors
+        if (-not (Get-Command prompt -ErrorAction SilentlyContinue)) {
+            function prompt { "PS $($executionContext.SessionState.Path.CurrentLocation)$('>' * ($nestedPromptLevel + 1)) " }
+        }
         & $ActivateScript
     } else {
         Write-Warning "Virtual environment '$VenvName' not found at '$VenvPath'. Trying to use current Python environment."

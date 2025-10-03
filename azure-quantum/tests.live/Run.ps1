@@ -27,24 +27,6 @@ if ($True -eq $SkipInstall) {
     & (Join-Path $PSScriptRoot Install-Artifacts.ps1)
 }
 
-Enable-Venv
-
-# Try activating the virtual environment for azure-quantum
-if ([string]::IsNullOrEmpty($PackageName) -or ($PackageName -eq "azure-quantum")) {
-    try {
-      $VenvPath = Join-Path (Split-Path -parent $PSScriptRoot) "venv"
-      if (Test-Path $VenvPath) {
-        Use-Venv -VenvName "venv"
-      }    
-    }
-    catch {
-      Write-Host "##[warning]Failed to activate virtual environment."
-    }
-}
-
-$EnvName = GetEnvName -PackageName $PackageName
-Use-Venv -VenvName $EnvName
-
 function PyTestMarkExpr() {
     param (
         [string[]] $AzureQuantumCapabilities

@@ -30,7 +30,10 @@ function Install-PackageInEnv {
     
     if ($FromSource) {
         Write-Host "Installing '$PackageName' from source (editable install)..."
-        pip install -e "[$PackageName]"
+        $ParentPath = Split-Path -parent $PSScriptRoot
+        $AbsPackageName = Join-Path $ParentPath $PackageName
+        Write-Host "##[info]Install package $AbsPackageName in development mode for env $EnvName"
+        pip install -e $AbsPackageName
     } elseif (-not [string]::IsNullOrEmpty($BuildArtifactPath)) {
         Write-Host "Installing '$PackageName' from build artifacts at '$BuildArtifactPath'..."
         $WheelFiles = Get-ChildItem -Path $BuildArtifactPath -Filter "*.whl"
@@ -46,23 +49,5 @@ function Install-PackageInEnv {
     }
 }
 
-function GetEnvName {
-    <#
-    .SYNOPSIS
-        Get the environment name for a package
-    .PARAMETER PackageName
-        The name of the package
-    #>
-    param(
-        [Parameter(Mandatory=$true)]
-        [string] $PackageName
-    )
-    
-    if ([string]::IsNullOrEmpty($PackageName) -or ($PackageName -eq "azure-quantum")) {
-        return "venv"
-    }
-    return "venv-$PackageName"
-}
-
 # Export functions
-Export-ModuleMember -Function Install-PackageInEnv, GetEnvName
+Export-ModuleMember -Function Install-PackageInEnv

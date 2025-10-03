@@ -9,11 +9,8 @@
 $PackageDir = Split-Path -parent $PSScriptRoot;
 $PackageName = $PackageDir | Split-Path -Leaf;
 $RootDir = Split-Path -parent $PackageDir;
-Import-Module (Join-Path $RootDir "build" "venv-utils.psm1");
-Import-Module (Join-Path $RootDir "build" "package-utils.psm1");
-
-# Enable venv support
-Enable-Venv
+Import-Module (Join-Path $RootDir "build" "venv-utils.psm1") -Force;
+Import-Module (Join-Path $RootDir "build" "package-utils.psm1") -Force;
 
 New-VenvForPackage -PackageName $PackageName
 
@@ -23,7 +20,8 @@ if (-not $Env:PYTHON_OUTDIR) {
     "== We will install $PackageName from source." | Write-Host
     "" | Write-Host
 
-    Install-PackageInEnv -PackageName "$PackageName[qiskit,cirq,qsharp,dev]" -FromSource $True
+    $PackageWithExtras = "$PackageName[qiskit,cirq,qsharp,dev]"
+    Install-PackageInEnv -PackageName $PackageWithExtras -FromSource $True
 
     "" | Write-Host
     "== $PackageName installed from source. ==" | Write-Host
