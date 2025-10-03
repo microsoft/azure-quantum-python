@@ -87,6 +87,7 @@ For developers who want to contribute to this package or run tests locally, foll
 
 - Python 3.9 or later
 - Git
+- Powershell
 
 ### Setting up the development environment
 
