@@ -79,6 +79,47 @@ result = job.get_results()
 
 You can find example Python scripts that use the Azure Quantum Python API in the [examples](https://github.com/microsoft/qdk-python/tree/main/azure-quantum/examples) directory.
 
+## Development Setup ##
+
+For developers who want to contribute to this package or run tests locally, follow these steps:
+
+### Prerequisites
+
+- Python 3.9 or later
+- Git
+
+### Setting up the development environment
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/microsoft/qdk-python.git
+   cd qdk-python/azure-quantum
+   ```
+
+2. Set up a virtual environment and install development dependencies:
+   ```powershell
+   # On Windows (PowerShell)
+   .\eng\Setup-Dev-Env.ps1
+   ```
+
+3. Run the tests:
+   ```bash
+   pytest tests/unit/
+   ```
+
+4. (Optional) Install additional provider dependencies:
+   ```bash
+   # For specific providers
+   pip install -e .[pulser,quil]
+   
+   # For all providers (requires Rust toolchain for PyQuil)
+   pip install -e .[all]
+   ```
+
+### Running Tests
+
+The development environment includes pytest for running unit tests. See [tests/README.md](tests/README.md) for detailed testing instructions.
+
 ## Contributing ##
 
 For details on contributing to this package, see the [contributing guide](https://github.com/microsoft/qdk-python/blob/main/CONTRIBUTING.md).

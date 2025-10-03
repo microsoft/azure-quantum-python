@@ -18,7 +18,7 @@ Get-ChildItem env:AZURE*, env:*VERSION, env:*OUTDIR | ForEach-Object {
 $PackageDir = Split-Path -parent $PSScriptRoot;
 $PackageName = $PackageDir | Split-Path -Leaf;
 $RootDir = Split-Path -parent $PackageDir;
-Import-Module (Join-Path $RootDir "build" "conda-utils.psm1");
+Import-Module (Join-Path $RootDir "build" "venv-utils.psm1");
 Import-Module (Join-Path $RootDir "build" "package-utils.psm1");
 
 if ($True -eq $SkipInstall) {
@@ -27,23 +27,23 @@ if ($True -eq $SkipInstall) {
     & (Join-Path $PSScriptRoot Install-Artifacts.ps1)
 }
 
-Enable-Conda
+Enable-Venv
 
-# Try activating the azurequantum conda environment
+# Try activating the virtual environment for azure-quantum
 if ([string]::IsNullOrEmpty($PackageName) -or ($PackageName -eq "azure-quantum")) {
     try {
-      $EnvExists = conda env list | Select-String -Pattern "azurequantum " | Measure-Object | Select-Object -Exp Count
-      if ($EnvExists) {
-        conda activate azurequantum
+      $VenvPath = Join-Path (Split-Path -parent $PSScriptRoot) "venv"
+      if (Test-Path $VenvPath) {
+        Use-Venv -VenvName "venv"
       }    
     }
     catch {
-      Write-Host "##[warning]Failed to active conda environment."
+      Write-Host "##[warning]Failed to activate virtual environment."
     }
 }
 
 $EnvName = GetEnvName -PackageName $PackageName
-Use-CondaEnv $EnvName
+Use-Venv -VenvName $EnvName
 
 function PyTestMarkExpr() {
     param (

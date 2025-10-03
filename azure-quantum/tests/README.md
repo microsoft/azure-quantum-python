@@ -2,7 +2,19 @@
 
 ## Environment Pre-reqs
 
-Refer to [the parent README](../README.md) for how to prepare the development environment before running the unit tests.
+Before running the unit tests, set up your development environment using the venv-based setup:
+
+### On Windows (PowerShell):
+```powershell
+.\eng\Setup-Dev-Env.ps1
+```
+
+This will install the package with common optional dependencies (qiskit, cirq, qsharp). To install additional provider dependencies, run:
+```bash
+source venv/bin/activate        # Activate the virtual environment first
+pip install -e .[pulser,quil]   # for specific providers
+pip install -e .[all]           # for all providers (requires Rust toolchain)
+```
 
 ### Environment variables for Recording and Live-Tests
 
