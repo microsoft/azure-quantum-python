@@ -18,9 +18,6 @@ class Quantinuum(Target):
     """Quantinuum target."""
     target_names = (
         # Note: Target names on the same line are equivalent.
-        "quantinuum.qpu.h1-1",
-        "quantinuum.sim.h1-1sc",
-        "quantinuum.sim.h1-1e",
         "quantinuum.qpu.h2-1",
         "quantinuum.sim.h2-1sc",
         "quantinuum.sim.h2-1e",
@@ -34,7 +31,7 @@ class Quantinuum(Target):
     def __init__(
         self,
         workspace: Workspace,
-        name: str = "quantinuum.sim.h1-1sc",
+        name: str = "quantinuum.sim.h2-1sc",
         input_data_format: str = "honeywell.openqasm.v1",
         output_data_format: str = "honeywell.quantum-results.v1",
         capability: str = "",
