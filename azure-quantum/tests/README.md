@@ -10,8 +10,8 @@ Before running the unit tests, set up your development environment using the ven
 ```
 
 This will install the package with common optional dependencies (qiskit, cirq, qsharp). To install additional provider dependencies, run:
-```bash
-source venv/bin/activate        # Activate the virtual environment first
+```powershell
+./venv/Scripts/activate        # Activate the virtual environment first
 pip install -e .[pulser,quil]   # for specific providers
 pip install -e .[all]           # for all providers (requires Rust toolchain)
 ```
