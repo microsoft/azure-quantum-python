@@ -57,8 +57,6 @@ QUANTINUUM_PROVIDER_NAME = "Quantinuum"
 
 def _get_n_qubits(name):
     name = name.lower()
-    if ".h1-" in name or "hqs-lt" in name:
-        return 20
     if ".h2-" in name:
         return 56
     warnings.warn(
@@ -103,7 +101,6 @@ class QuantinuumQirBackendBase(AzureQirBackend):
 class QuantinuumSyntaxCheckerQirBackend(QuantinuumQirBackendBase):
     backend_names = (
         # Note: Target names on the same line are equivalent.
-        "quantinuum.sim.h1-1sc",
         "quantinuum.sim.h2-1sc",
         "quantinuum.sim.h2-2sc"
     )
@@ -141,7 +138,6 @@ class QuantinuumSyntaxCheckerQirBackend(QuantinuumQirBackendBase):
 class QuantinuumEmulatorQirBackend(QuantinuumQirBackendBase):
     backend_names = (
         # Note: Target names on the same line are equivalent.
-        "quantinuum.sim.h1-1e",
         "quantinuum.sim.h2-1e",
         "quantinuum.sim.h2-2e"
     )
@@ -179,7 +175,6 @@ class QuantinuumEmulatorQirBackend(QuantinuumQirBackendBase):
 class QuantinuumQPUQirBackend(QuantinuumQirBackendBase):
     backend_names = (
         # Note: Target names on the same line are equivalent.
-        "quantinuum.qpu.h1-1",
         "quantinuum.qpu.h2-1",
         "quantinuum.qpu.h2-2"
     )
@@ -254,7 +249,6 @@ class QuantinuumBackend(AzureBackend):
 class QuantinuumSyntaxCheckerBackend(QuantinuumBackend):
     backend_names = (
         # Note: Target names on the same line are equivalent.
-        "quantinuum.sim.h1-1sc",
         "quantinuum.sim.h2-1sc",
         "quantinuum.sim.h2-2sc"
     )
@@ -292,7 +286,6 @@ class QuantinuumSyntaxCheckerBackend(QuantinuumBackend):
 class QuantinuumEmulatorBackend(QuantinuumBackend):
     backend_names = (
         # Note: Target names on the same line are equivalent.
-        "quantinuum.sim.h1-1e",
         "quantinuum.sim.h2-1e",
         "quantinuum.sim.h2-2e"
     )
@@ -330,7 +323,6 @@ class QuantinuumEmulatorBackend(QuantinuumBackend):
 class QuantinuumQPUBackend(QuantinuumBackend):
     backend_names = (
         # Note: Target names on the same line are equivalent.
-        "quantinuum.qpu.h1-1",
         "quantinuum.qpu.h2-1",
         "quantinuum.qpu.h2-2"
     )

@@ -33,23 +33,17 @@ class TestQuantinuum(QuantumTestBase):
         h q[1];
         measure q[1] -> c2[0];
         """
-
-    @pytest.mark.quantinuum
-    @pytest.mark.live_test
-    def test_job_submit_quantinuum(self):
-        self._test_job_submit_quantinuum("quantinuum.sim.h1-1e")
-
     
     @pytest.mark.quantinuum
     @pytest.mark.live_test
     def test_job_submit_quantinuum_with_shots(self):
-        self._test_job_submit_quantinuum("quantinuum.sim.h1-1e", shots=100)
+        self._test_job_submit_quantinuum("quantinuum.sim.h2-1sc", shots=100)
 
 
     @pytest.mark.quantinuum
     @pytest.mark.live_test
     def test_job_submit_quantinuum_with_none_shots(self):
-        self._test_job_submit_quantinuum("quantinuum.sim.h1-1e", shots=None)
+        self._test_job_submit_quantinuum("quantinuum.sim.h2-1sc", shots=None)
 
 
     @pytest.mark.quantinuum
@@ -59,14 +53,14 @@ class TestQuantinuum(QuantumTestBase):
             DeprecationWarning, 
             match="The 'num_shots' parameter will be deprecated. Please, use 'shots' parameter instead."
         ):
-            self._test_job_submit_quantinuum("quantinuum.sim.h1-1e", shots=100, shots_as_deprecated_num_shots=True)
+            self._test_job_submit_quantinuum("quantinuum.sim.h2-1sc", shots=100, shots_as_deprecated_num_shots=True)
 
     @pytest.mark.quantinuum
     @pytest.mark.live_test
     def test_job_submit_quantinuum_with_shots_and_deprecated_num_shots(self):
         workspace = self.create_workspace()
         circuit = self._teleport()
-        target = workspace.get_targets("quantinuum.sim.h1-1e")
+        target = workspace.get_targets("quantinuum.sim.h2-1sc")
 
         shots = 100
 
@@ -88,7 +82,7 @@ class TestQuantinuum(QuantumTestBase):
     def test_job_submit_quantinuum_with_conflictin_shots_and_count_from_input_params(self):
         workspace = self.create_workspace()
         circuit = self._teleport()
-        target = workspace.get_targets("quantinuum.sim.h1-1e")
+        target = workspace.get_targets("quantinuum.sim.h2-1sc")
 
         shots = 100
 
@@ -109,7 +103,7 @@ class TestQuantinuum(QuantumTestBase):
     def test_job_submit_quantinuum_with_count_from_input_params(self):
         workspace = self.create_workspace()
         circuit = self._teleport()
-        target = workspace.get_targets("quantinuum.sim.h1-1e")
+        target = workspace.get_targets("quantinuum.sim.h2-1sc")
 
         shots = 100
 
@@ -128,11 +122,6 @@ class TestQuantinuum(QuantumTestBase):
     @pytest.mark.live_test
     def test_job_submit_quantinuum_h2_1e(self):
         self._test_job_submit_quantinuum("quantinuum.sim.h2-1e")
-
-    @pytest.mark.quantinuum
-    @pytest.mark.live_test
-    def test_job_submit_quantinuum_h2_1sc(self):
-        self._test_job_submit_quantinuum("quantinuum.sim.h2-1sc")
 
     @pytest.mark.quantinuum
     @pytest.mark.skip("Target was unavailable at the moment of the recording")

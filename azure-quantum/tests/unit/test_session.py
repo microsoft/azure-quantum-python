@@ -332,7 +332,7 @@ class TestSession(QuantumTestBase):
     @pytest.mark.cirq
     @pytest.mark.quantinuum
     def test_session_job_cirq_circuit_quantinuum(self):
-        self._test_session_job_cirq_circuit(target_name="quantinuum.sim.h1-1e")
+        self._test_session_job_cirq_circuit(target_name="quantinuum.sim.h2-1sc")
 
     @pytest.mark.skip(reason="Currently the echo-quantinuum is only accepting QIR input formats and Cirq is using qasm.")
     @pytest.mark.live_test
@@ -356,7 +356,7 @@ class TestSession(QuantumTestBase):
     @pytest.mark.qiskit
     @pytest.mark.quantinuum
     def test_session_job_qiskit_circuit_quantinuum(self):
-        self._test_session_job_qiskit_circuit(target_name="quantinuum.sim.h1-1e")
+        self._test_session_job_qiskit_circuit(target_name="quantinuum.sim.h2-1sc")
 
     @pytest.mark.live_test
     @pytest.mark.session
@@ -373,7 +373,7 @@ class TestSession(QuantumTestBase):
     @pytest.mark.quantinuum
     @skip_if_no_qsharp
     def test_session_job_qsharp_callable_quantinuum(self):
-        self._test_session_job_qsharp_callable(target_name="quantinuum.sim.h1-1e")
+        self._test_session_job_qsharp_callable(target_name="quantinuum.sim.h2-1sc")
 
     @pytest.mark.live_test
     @pytest.mark.session
