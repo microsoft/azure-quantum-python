@@ -390,33 +390,3 @@ target '{self.name}' of provider '{self.provider_id}' not found."
             multi_qubit_gates, 
             measurement_gates
         )
-
-
-def _determine_shots_or_deprecated_num_shots(
-    shots: int = None,
-    num_shots: int = None,
-) -> int:
-    """
-    This helper function checks if the deprecated 'num_shots' parameter is specified.
-    In earlier versions it was possible to pass this parameter to specify shots number for a job,
-    but now we only check for it for compatibility reasons.  
-    """
-    final_shots = None
-    if shots is not None and num_shots is not None:
-        warnings.warn(
-            "Both 'shots' and 'num_shots' parameters were specified. Defaulting to 'shots' parameter. "
-            "Please, use 'shots' since 'num_shots' will be deprecated.",
-            category=DeprecationWarning,
-        )
-        final_shots = shots
-        
-    elif shots is not None:
-        final_shots = shots
-    elif num_shots is not None:
-        warnings.warn(
-            "The 'num_shots' parameter will be deprecated. Please, use 'shots' parameter instead.",
-            category=DeprecationWarning,
-        )
-        final_shots = num_shots
-
-    return final_shots
