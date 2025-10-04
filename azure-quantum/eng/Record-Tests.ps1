@@ -20,7 +20,14 @@ try
 {
     Push-Location (Join-Path $PSScriptRoot "../tests/")
 
-    conda activate azurequantum
+    # Activate virtual environment if it exists
+    $VenvPath = "../venv"
+    if (Test-Path $VenvPath) {
+        Write-Host "Activating virtual environment..."
+        & "$VenvPath\Scripts\Activate.ps1"
+    } else {
+        Write-Warning "Virtual environment not found at $VenvPath. Please run Setup-Dev-Env.ps1 first."
+    }
 
     if ([string]::IsNullOrEmpty($TestFilter)) {
         pytest
