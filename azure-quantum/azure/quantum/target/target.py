@@ -55,7 +55,7 @@ class Target(abc.ABC, SessionHost):
 
     # Name of the provider's input parameter which specifies number of shots for a submitted job.
     # If None, target will not pass this input parameter. 
-    _SHOTS_PARAM_NAME = None
+    _SHOTS_PARAM_NAME = "shots"
 
     def __init__(
         self,
