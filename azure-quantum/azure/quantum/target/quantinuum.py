@@ -5,13 +5,9 @@
 from typing import Any, Dict, Union
 from warnings import warn
 
-from azure.quantum.target.target import (
-    Target,
-    _determine_shots_or_deprecated_num_shots,
-)
 from azure.quantum.job.job import Job
+from azure.quantum.target.target import Target
 from azure.quantum.workspace import Workspace
-from azure.quantum._client.models import CostEstimate, UsageEvent
 
 
 class Quantinuum(Target):
@@ -85,13 +81,6 @@ class Quantinuum(Target):
             )
         if input_params is None:
             input_params = {}
-
-        num_shots = kwargs.pop("num_shots", None)
-
-        shots = _determine_shots_or_deprecated_num_shots(
-            shots=shots,
-            num_shots=num_shots,
-        )
 
         return super().submit(
             input_data=input_data,

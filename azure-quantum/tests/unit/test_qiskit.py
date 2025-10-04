@@ -283,12 +283,12 @@ class TestQiskit(QuantumTestBase):
         self.assertIn("azure-quantum-qiskit", provider._workspace.user_agent)
         backend = provider.get_backend("ionq.simulator")
         self.assertIsInstance(backend, IonQSimulatorQirBackend)
-        num_shots = 1000
+        shots = 1000
 
         circuit = self._5_qubit_superposition()
         circuit.metadata = {"some": "data"}
 
-        qiskit_job = backend.run(circuit, shots=num_shots)
+        qiskit_job = backend.run(circuit, shots=shots)
 
         # Check job metadata:
         self.assertEqual(qiskit_job._azure_job.details.target, "ionq.simulator")
@@ -304,8 +304,8 @@ class TestQiskit(QuantumTestBase):
 
         if JobStatus.DONE == qiskit_job.status():
             result = qiskit_job.result()
-            self.assertAlmostEqual(result.data()["counts"]["0"], num_shots // 2, delta=50)
-            self.assertAlmostEqual(result.data()["counts"]["1"], num_shots // 2, delta=50)
+            self.assertAlmostEqual(result.data()["counts"]["0"], shots // 2, delta=50)
+            self.assertAlmostEqual(result.data()["counts"]["1"], shots // 2, delta=50)
             self.assertEqual(result.data()["probabilities"], {"0": 0.5, "1": 0.5})
             counts = result.get_counts()
             self.assertEqual(counts, result.data()["counts"])
@@ -317,12 +317,12 @@ class TestQiskit(QuantumTestBase):
         provider = AzureQuantumProvider(workspace=workspace)
         self.assertIn("azure-quantum-qiskit", provider._workspace.user_agent)
         backend = provider.get_backend("ionq.simulator", input_data_format="ionq.circuit.v1", gateset="qis")
-        num_shots = 1000
+        shots = 1000
 
         circuit = self._5_qubit_superposition()
         circuit.metadata = {"some": "data"}
 
-        qiskit_job = backend.run(circuit, shots=num_shots)
+        qiskit_job = backend.run(circuit, shots=shots)
 
         # Check job metadata:
         self.assertEqual(qiskit_job._azure_job.details.target, "ionq.simulator")
@@ -339,9 +339,9 @@ class TestQiskit(QuantumTestBase):
 
         if JobStatus.DONE == qiskit_job.status():
             result = qiskit_job.result()
-            self.assertEqual(sum(result.data()["counts"].values()), num_shots)
-            self.assertAlmostEqual(result.data()["counts"]["0"], num_shots // 2, delta=50)
-            self.assertAlmostEqual(result.data()["counts"]["1"], num_shots // 2, delta=50)
+            self.assertEqual(sum(result.data()["counts"].values()), shots)
+            self.assertAlmostEqual(result.data()["counts"]["0"], shots // 2, delta=50)
+            self.assertAlmostEqual(result.data()["counts"]["1"], shots // 2, delta=50)
             self.assertEqual(result.data()["probabilities"], {"0": 0.5, "1": 0.5})
             counts = result.get_counts()
             self.assertEqual(counts, result.data()["counts"])

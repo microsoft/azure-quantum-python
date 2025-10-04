@@ -65,11 +65,11 @@ class TestRigettiTarget(QuantumTestBase):
         return Result(job)
 
     def test_job_submit_rigetti_typed_input_params(self) -> None:
-        num_shots = 5
-        result = self._run_job(BELL_STATE_QUIL, InputParams(count=num_shots))
+        shots = 5
+        result = self._run_job(BELL_STATE_QUIL, InputParams(count=shots))
         self.assertIsNotNone(result)
         readout = result[READOUT]
-        self.assertEqual(len(readout), num_shots)
+        self.assertEqual(len(readout), shots)
         for shot in readout:
             self.assertEqual(len(shot), 2, "Bell state program should only measure 2 qubits")
     
@@ -102,11 +102,11 @@ class TestRigettiTarget(QuantumTestBase):
     
 
     def test_job_submit_rigetti_dict_input_params(self) -> None:
-        num_shots = 5
-        result = self._run_job(BELL_STATE_QUIL, {"count": num_shots})
+        shots = 5
+        result = self._run_job(BELL_STATE_QUIL, {"count": shots})
         self.assertIsNotNone(result)
         readout = result[READOUT]
-        self.assertEqual(len(readout), num_shots)
+        self.assertEqual(len(readout), shots)
         for shot in readout:
             self.assertEqual(len(shot), 2, "Bell state program should only measure 2 qubits")
     
