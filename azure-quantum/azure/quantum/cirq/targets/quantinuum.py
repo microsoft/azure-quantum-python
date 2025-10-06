@@ -105,7 +105,7 @@ class QuantinuumTarget(Quantinuum, CirqTarget):
         azure_job = super().submit(
             circuit=serialized_program,
             name=name,
-            num_shots=repetitions,
+            shots=repetitions,
             metadata=metadata,
             **kwargs
         )
