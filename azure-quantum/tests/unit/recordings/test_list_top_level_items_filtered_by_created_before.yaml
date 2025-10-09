@@ -9,7 +9,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-identity/1.17.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
+      - azsdk-python-identity/1.25.0 Python/3.12.3 (Linux-6.6.87.2-microsoft-standard-WSL2-aarch64-with-glibc2.39)
     method: GET
     uri: https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/v2.0/.well-known/openid-configuration
   response:
@@ -55,21 +55,21 @@ interactions:
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - azsdk-python-identity/1.17.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
+      - azsdk-python-identity/1.25.0 Python/3.12.3 (Linux-6.6.87.2-microsoft-standard-WSL2-aarch64-with-glibc2.39)
       x-client-current-telemetry:
       - 4|730,2|
       x-client-os:
-      - win32
+      - linux
       x-client-sku:
       - MSAL.Python
       x-client-ver:
-      - 1.30.0
+      - 1.34.0
     method: POST
     uri: https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token
   response:
     body:
-      string: '{"token_type": "Bearer", "expires_in": 1756429716, "ext_expires_in":
-        1756429716, "refresh_in": 31536000, "access_token": "PLACEHOLDER"}'
+      string: '{"token_type": "Bearer", "expires_in": 1791503892, "ext_expires_in":
+        1791503892, "refresh_in": 31536000, "access_token": "PLACEHOLDER"}'
     headers:
       content-length:
       - '135'
@@ -88,123 +88,34 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - testapp azsdk-python-quantum/0.0.1 Python/3.9.20 (Windows-10-10.0.26100-SP0)
-      x-ms-quantum-api-key:
-      - PLACEHOLDER
+      - testapp azsdk-python-quantum/0.0.1 Python/3.12.3 (Linux-6.6.87.2-microsoft-standard-WSL2-aarch64-with-glibc2.39)
     method: GET
     uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/topLevelItems?api-version=2024-10-01-preview&filter=CreationTime%20le%202024-03-01&skip=0&top=100&test-sequence-id=1
   response:
     body:
-      string: '{"value": [{"containerUri": "https://mystorage.blob.core.windows.net/job-372ace5a-d65e-11ee-b116-00155db56db0?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
-        "inputDataUri": "https://mystorage.blob.core.windows.net/job-372ace5a-d65e-11ee-b116-00155db56db0/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcw",
-        "inputDataFormat": "atomcomputing.openqasm.v1", "inputParams": {"shots": 100},
-        "metadata": null, "sessionId": null, "status": "Failed", "jobType": "QuantumComputing",
-        "outputDataFormat": "custom", "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-372ace5a-d65e-11ee-b116-00155db56db0/outputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
-        "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
-        {"count": 1}, "errorData": {"code": "PartnerCallFailed", "message": "Call
-        to partner failed unexpectedly. RequestUri ''https://staging.api.atom-computing.com/azure-quantum/v1/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Solutions/applications/myworkspace-atomcomputing/jobs/476dcfeb-e27e-4da1-af2b-453a52608142''.
-        StatusCode ''NotFound''. Error response ''{\"detail\":\"Not Found\"}''."},
-        "isCancelling": false, "tags": [], "name": "My first Atom job", "id": "372ace5a-d65e-11ee-b116-00155db56db0",
-        "providerId": "atomcomputing", "target": "atomcomputing.sim.valkyrie-emulator",
-        "creationTime": "2024-02-28T17:24:24.5931645Z", "endExecutionTime": null,
-        "costEstimate": null, "itemType": "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-5bfab0ba-d65e-11ee-b116-00155db56db0?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
-        "inputDataUri": "https://mystorage.blob.core.windows.net/job-5bfab0ba-d65e-11ee-b116-00155db56db0/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcw",
-        "inputDataFormat": "atomcomputing.openqasm.v1", "inputParams": {"shots": 100},
-        "metadata": null, "sessionId": null, "status": "Failed", "jobType": "QuantumComputing",
-        "outputDataFormat": "atomcomputing.json.v1", "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-5bfab0ba-d65e-11ee-b116-00155db56db0/outputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
-        "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
-        {"count": 1}, "errorData": {"code": "PartnerCallFailed", "message": "Call
-        to partner failed unexpectedly. RequestUri ''https://staging.api.atom-computing.com/azure-quantum/v1/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Solutions/applications/myworkspace-atomcomputing/jobs/014a6146-3b2e-41fe-a358-e2e850e70712''.
-        StatusCode ''NotFound''. Error response ''{\"detail\":\"Not Found\"}''."},
-        "isCancelling": false, "tags": [], "name": "My first Atom job", "id": "5bfab0ba-d65e-11ee-b116-00155db56db0",
-        "providerId": "atomcomputing", "target": "atomcomputing.sim.valkyrie-emulator",
-        "creationTime": "2024-02-28T17:25:25.715552Z", "endExecutionTime": null, "costEstimate":
-        null, "itemType": "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-e4171fc4-d65e-11ee-b116-00155db56db0?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
-        "inputDataUri": "https://mystorage.blob.core.windows.net/job-e4171fc4-d65e-11ee-b116-00155db56db0/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcw",
-        "inputDataFormat": "atomcomputing.openqasm.v1", "inputParams": {"shots": 100},
-        "metadata": null, "sessionId": null, "status": "Failed", "jobType": "QuantumComputing",
-        "outputDataFormat": "atomcomputing.json.v1", "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-e4171fc4-d65e-11ee-b116-00155db56db0/outputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
-        "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
-        {"count": 1}, "errorData": {"code": "PartnerCallFailed", "message": "Call
-        to partner failed unexpectedly. RequestUri ''https://staging.api.atom-computing.com/azure-quantum/v1/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Solutions/applications/myworkspace-atomcomputing/jobs/c7e31ca2-8b00-4180-9b0f-f05d3c5fb51e''.
-        StatusCode ''NotFound''. Error response ''{\"detail\":\"Not Found\"}''."},
-        "isCancelling": false, "tags": [], "name": "My first Atom job", "id": "e4171fc4-d65e-11ee-b116-00155db56db0",
-        "providerId": "atomcomputing", "target": "atomcomputing.sim.valkyrie-emulator",
-        "creationTime": "2024-02-28T17:29:13.9468327Z", "endExecutionTime": null,
-        "costEstimate": null, "itemType": "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-aa6bbdb0-d65f-11ee-b116-00155db56db0?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
-        "inputDataUri": "https://mystorage.blob.core.windows.net/job-aa6bbdb0-d65f-11ee-b116-00155db56db0/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcw",
-        "inputDataFormat": "atomcomputing.openqasm.v1", "inputParams": {"shots": 100},
-        "metadata": null, "sessionId": null, "status": "Failed", "jobType": "QuantumComputing",
-        "outputDataFormat": "atomcomputing.json.v1", "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-aa6bbdb0-d65f-11ee-b116-00155db56db0/outputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
-        "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
-        {"count": 1}, "errorData": {"code": "PartnerCallFailed", "message": "Call
-        to partner failed unexpectedly. RequestUri ''https://staging.api.atom-computing.com/azure-quantum/v1/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Solutions/applications/myworkspace-atomcomputing/jobs/72262158-d8b2-4633-9373-df570688d4fc''.
-        StatusCode ''NotFound''. Error response ''{\"detail\":\"Not Found\"}''."},
-        "isCancelling": false, "tags": [], "name": "My first Atom job", "id": "aa6bbdb0-d65f-11ee-b116-00155db56db0",
-        "providerId": "atomcomputing", "target": "atomcomputing.sim.valkyrie-emulator",
-        "creationTime": "2024-02-28T17:34:47.4646276Z", "endExecutionTime": null,
-        "costEstimate": null, "itemType": "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-16de65c8-d661-11ee-b116-00155db56db0?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
-        "inputDataUri": "https://mystorage.blob.core.windows.net/job-16de65c8-d661-11ee-b116-00155db56db0/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcw",
-        "inputDataFormat": "atomcomputing.openqasm.v1", "inputParams": {"shots": 100},
-        "metadata": null, "sessionId": null, "status": "Failed", "jobType": "QuantumComputing",
-        "outputDataFormat": "atomcomputing.json.v1", "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-16de65c8-d661-11ee-b116-00155db56db0/outputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
-        "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
-        {"count": 1}, "errorData": {"code": "PartnerCallFailed", "message": "Call
-        to partner failed unexpectedly. RequestUri ''https://staging.api.atom-computing.com/azure-quantum/v1/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Solutions/applications/myworkspace-atomcomputing/jobs/19d7aa39-4caa-4e28-94df-a67c582f358c''.
-        StatusCode ''NotFound''. Error response ''{\"detail\":\"Not Found\"}''."},
-        "isCancelling": false, "tags": [], "name": "My first Atom job", "id": "16de65c8-d661-11ee-b116-00155db56db0",
-        "providerId": "atomcomputing", "target": "atomcomputing.sim.valkyrie-emulator",
-        "creationTime": "2024-02-28T17:44:58.7681109Z", "endExecutionTime": null,
-        "costEstimate": null, "itemType": "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-4adddbf4-d663-11ee-b116-00155db56db0?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
-        "inputDataUri": "https://mystorage.blob.core.windows.net/job-4adddbf4-d663-11ee-b116-00155db56db0/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcw",
-        "inputDataFormat": "atomcomputing.openqasm.v1", "inputParams": {"shots": 100},
-        "metadata": null, "sessionId": null, "status": "Failed", "jobType": "QuantumComputing",
-        "outputDataFormat": "atomcomputing.json.v1", "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-4adddbf4-d663-11ee-b116-00155db56db0/outputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
-        "beginExecutionTime": null, "cancellationTime": null, "quantumComputingData":
-        {"count": 1}, "errorData": {"code": "PartnerCallFailed", "message": "Call
-        to partner failed unexpectedly. RequestUri ''https://staging.api.atom-computing.com/azure-quantum/v1/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Solutions/applications/myworkspace-atomcomputing/jobs/9f46ebd8-228f-416b-9cec-ec89a6683564''.
-        StatusCode ''NotFound''. Error response ''{\"detail\":\"Not Found\"}''."},
-        "isCancelling": false, "tags": [], "name": "My first Atom job", "id": "4adddbf4-d663-11ee-b116-00155db56db0",
-        "providerId": "atomcomputing", "target": "atomcomputing.sim.valkyrie-emulator",
-        "creationTime": "2024-02-28T18:00:44.9242658Z", "endExecutionTime": null,
-        "costEstimate": null, "itemType": "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-25f1d54e-d66c-11ee-b098-00155db56db0?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
-        "inputDataUri": "https://mystorage.blob.core.windows.net/job-25f1d54e-d66c-11ee-b098-00155db56db0/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcw",
-        "inputDataFormat": "atomcomputing.openqasm.v1", "inputParams": {"shots": 100},
-        "metadata": null, "sessionId": null, "status": "Failed", "jobType": "QuantumComputing",
-        "outputDataFormat": "atomcomputing.json.v1", "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-25f1d54e-d66c-11ee-b098-00155db56db0/rawOutputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
-        "beginExecutionTime": "2024-02-28T19:02:42.723589Z", "cancellationTime": null,
-        "quantumComputingData": {"count": 1}, "errorData": {"code": null, "message":
-        null}, "isCancelling": false, "tags": [], "name": "My first Atom job", "id":
-        "25f1d54e-d66c-11ee-b098-00155db56db0", "providerId": "atomcomputing", "target":
-        "atomcomputing.sim.valkyrie-emulator", "creationTime": "2024-02-28T19:04:08.6656966Z",
-        "endExecutionTime": "2024-02-28T19:02:52.723591Z", "costEstimate": null, "itemType":
-        "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-b5860842-d66c-11ee-b098-00155db56db0?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
-        "inputDataUri": "https://mystorage.blob.core.windows.net/job-b5860842-d66c-11ee-b098-00155db56db0/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcw",
-        "inputDataFormat": "atomcomputing.openqasm.v1", "inputParams": {"shots": 100},
-        "metadata": null, "sessionId": null, "status": "Failed", "jobType": "QuantumComputing",
-        "outputDataFormat": "atomcomputing.json.v1", "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-b5860842-d66c-11ee-b098-00155db56db0/rawOutputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
-        "beginExecutionTime": "2024-02-28T19:06:41.414613Z", "cancellationTime": null,
-        "quantumComputingData": {"count": 1}, "errorData": {"code": null, "message":
-        null}, "isCancelling": false, "tags": [], "name": "My first Atom job", "id":
-        "b5860842-d66c-11ee-b098-00155db56db0", "providerId": "atomcomputing", "target":
-        "atomcomputing.sim.valkyrie-emulator", "creationTime": "2024-02-28T19:08:08.8178606Z",
-        "endExecutionTime": "2024-02-28T19:06:51.414615Z", "costEstimate": null, "itemType":
-        "Job"}, {"containerUri": "https://mystorage.blob.core.windows.net/job-83444866-d68b-11ee-b0be-00155db56db0?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
-        "inputDataUri": "https://mystorage.blob.core.windows.net/job-83444866-d68b-11ee-b0be-00155db56db0/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcw",
-        "inputDataFormat": "atomcomputing.openqasm.v1", "inputParams": {"shots": 100},
-        "metadata": null, "sessionId": null, "status": "Succeeded", "jobType": "QuantumComputing",
-        "outputDataFormat": "atomcomputing.json.v1", "outputDataUri": "https://mystorage.blob.core.windows.net:443/job-83444866-d68b-11ee-b0be-00155db56db0/rawOutputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
-        "beginExecutionTime": "2024-02-28T22:47:13.724948Z", "cancellationTime": null,
-        "quantumComputingData": {"count": 1}, "errorData": null, "isCancelling": false,
-        "tags": [], "name": "My first Atom job", "id": "83444866-d68b-11ee-b0be-00155db56db0",
-        "providerId": "atomcomputing", "target": "atomcomputing.sim.valkyrie-emulator",
-        "creationTime": "2024-02-28T22:48:39.5435255Z", "endExecutionTime": "2024-02-28T22:47:23.72495Z",
-        "costEstimate": null, "itemType": "Job"}], "nextLink": null}'
+      string: '{"value": [{"containerUri": "https://mystorage.blob.core.windows.net/job-a9342dee-d4f5-11ee-8801-00155d699477?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "inputDataUri": "https://mystorage.blob.core.windows.net/job-a9342dee-d4f5-11ee-8801-00155d699477/inputData?sv=PLACEHOLDER&sr=b&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&sp=rcw",
+        "inputDataFormat": "qir.v1", "inputParams": {"entryPoint": "ENTRYPOINT__main",
+        "arguments": [], "targetCapability": "BasicExecution", "shots": 100}, "metadata":
+        null, "sessionId": null, "jobPriority": "Basic", "status": "Succeeded", "jobType":
+        "QuantumComputing", "outputDataFormat": "microsoft.quantum-results.v1", "outputDataUri":
+        "https://mystorage.blob.core.windows.net:443/job-a9342dee-d4f5-11ee-8801-00155d699477/outputData?sv=PLACEHOLDER&sig=PLACEHOLDER&se=2050-01-01T00%3A00%3A00Z&srt=co&ss=b&sp=racwl",
+        "beginExecutionTime": "2024-02-26T22:23:37.824Z", "cancellationTime": null,
+        "lastModifiedTime": null, "quantumComputingData": {"count": 1}, "errorData":
+        null, "isCancelling": false, "tags": [], "name": "Generate one random bit",
+        "id": "a9342dee-d4f5-11ee-8801-00155d699477", "providerId": "ionq", "target":
+        "ionq.simulator", "creationTime": "2024-02-26T22:23:28.1066358Z", "endExecutionTime":
+        "2024-02-26T22:23:37.912Z", "costEstimate": {"currencyCode": "USD", "events":
+        [{"dimensionId": "gs1q", "dimensionName": "1Q Gate Shot", "measureUnit": "1q
+        gate shot", "amountBilled": 0.0, "amountConsumed": 0.0, "unitPrice": 0.0},
+        {"dimensionId": "gs2q", "dimensionName": "2Q Gate Shot", "measureUnit": "2q
+        gate shot", "amountBilled": 0.0, "amountConsumed": 0.0, "unitPrice": 0.0}],
+        "estimatedTotal": 0.0}, "itemType": "Job"}], "nextLink": null}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '13353'
+      - '1722'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:

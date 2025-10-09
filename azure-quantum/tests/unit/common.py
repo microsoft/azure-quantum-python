@@ -26,7 +26,7 @@ from azure.quantum._constants import (
 )
 from azure.quantum import Job
 from azure.quantum.target import Target
-from azure.identity import ClientSecretCredential, AzureCliCredential
+from azure.identity import ClientSecretCredential, EnvironmentCredential
 
 
 ZERO_UID = "00000000-0000-0000-0000-000000000000"
@@ -304,7 +304,7 @@ class QuantumTestBase(ReplayableTest):
                 client_secret=PLACEHOLDER)
 
         workspace = Workspace(
-            credential=credential if credential else AzureCliCredential(),
+            credential=credential if credential else EnvironmentCredential(),
             subscription_id=connection_params.subscription_id,
             resource_group=connection_params.resource_group,
             name=connection_params.workspace_name,
