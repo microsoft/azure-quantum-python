@@ -9,8 +9,7 @@ from unittest.mock import MagicMock
 import pytest
 from numpy import pi, mean
 
-from azure.quantum.target import Rigetti
-from azure.quantum.target.rigetti import Result, InputParams, Rigetti
+from azure.quantum.target.rigetti import Result, InputParams, Rigetti, RigettiTarget
 from common import QuantumTestBase, DEFAULT_TIMEOUT_SECS
 
 READOUT = "ro"
@@ -37,7 +36,7 @@ MEASURE 0 {READOUT}[0]
 
 @pytest.mark.rigetti
 @pytest.mark.live_test
-@pytest.mark.xdist_group(name=Rigetti.QVM.value)
+@pytest.mark.xdist_group(name=RigettiTarget.QVM.value)
 class TestRigettiTarget(QuantumTestBase):
     """Tests the azure.quantum.target.Rigetti class."""
 
