@@ -2,9 +2,9 @@
 
 # Azure Quantum #
 
-[![Build Status](https://dev.azure.com/ms-quantum-public/Microsoft%20Quantum%20(public)/_apis/build/status/microsoft.qdk-python?branchName=main)](https://dev.azure.com/ms-quantum-public/Microsoft%20Quantum%20(public)/_build/latest?definitionId=32&branchName=main) [![PyPI version](https://badge.fury.io/py/azure-quantum.svg)](https://badge.fury.io/py/azure-quantum)
+[![PyPI version](https://badge.fury.io/py/azure-quantum.svg)](https://badge.fury.io/py/azure-quantum)
 
-Azure Quantum is Microsoft's cloud service for running Quantum Computing programs and circuits with our quantum partners and technologies. The `azure-quantum` package for Python provides functionality for interacting with Azure Quantum workspaces, including creating jobs, listing jobs, and retrieving job results. For more information, view the [Azure Quantum Documentation](https://learn.microsoft.com/en-us/azure/quantum/).
+Azure Quantum is Microsoft's cloud service for running Quantum Computing programs. The `azure-quantum` package for Python provides functionality for interacting with Azure Quantum workspaces, including creating jobs, listing jobs, and retrieving job results. For more information, view the [Azure Quantum Documentation](https://learn.microsoft.com/en-us/azure/quantum/).
 
 This package supports submitting quantum programs or circuits written with Python. To submit quantum programs written with Q#, Microsoft's Domain-specific language for Quantum Programming, view [Submit Q# Jobs to Azure Quantum](https://learn.microsoft.com/azure/quantum/how-to-submit-jobs).
 
@@ -12,21 +12,10 @@ This package supports submitting quantum programs or circuits written with Pytho
 
 The package is released on PyPI and can be installed via `pip`:
 
-```bash
-pip install azure-quantum
-```
-
-To use `azure-quantum` for submitting quantum circuits expressed with [Qiskit](https://pypi.org/project/qiskit), install with optional dependencies:
-
-```bash
-pip install azure-quantum[qiskit]
-```
-
-To use `azure-quantum` for submitting quantum circuits expressed with [Cirq](https://pypi.org/project/cirq), install with optional dependencies:
-
-```bash
-pip install azure-quantum[cirq]
-```
+- For default installation - `pip install azure-quantum`
+- Submit quantum circuits written in [Q#](https://pypi.org/project/qsharp) - `pip install azure-quantum[qsharp]` 
+- Submit quantum circuits written in [Qiskit](https://pypi.org/project/qiskit) - `pip install azure-quantum[qiskit]`
+- Submit quantum circuits written in [Cirq](https://pypi.org/project/cirq) - `pip install azure-quantum[cirq]`  
 
 ## Getting started and Quickstart guides ##
 
@@ -77,49 +66,7 @@ result = job.get_results()
 
 ## Examples ##
 
-You can find example Python scripts that use the Azure Quantum Python API in the [examples](https://github.com/microsoft/qdk-python/tree/main/azure-quantum/examples) directory.
-
-## Development Setup ##
-
-For developers who want to contribute to this package or run tests locally, follow these steps:
-
-### Prerequisites
-
-- Python 3.9 or later
-- Git
-- Powershell
-
-### Setting up the development environment
-
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/microsoft/qdk-python.git
-   cd qdk-python/azure-quantum
-   ```
-
-2. Set up a virtual environment and install development dependencies:
-   ```powershell
-   # On Windows (PowerShell)
-   .\eng\Setup-Dev-Env.ps1
-   ```
-
-3. Run the tests:
-   ```bash
-   pytest tests/unit/
-   ```
-
-4. (Optional) Install additional provider dependencies:
-   ```bash
-   # For specific providers
-   pip install -e .[pulser,quil]
-   
-   # For all providers (requires Rust toolchain for PyQuil)
-   pip install -e .[all]
-   ```
-
-### Running Tests
-
-The development environment includes pytest for running unit tests. See [tests/README.md](tests/README.md) for detailed testing instructions.
+You can find example Python scripts that use the Azure Quantum Python API in the [samples](https://github.com/microsoft/azure-quantum-python/tree/main/samples) directory.
 
 ## Contributing ##
 

@@ -35,6 +35,7 @@ from azure.quantum.qiskit.backends.backend import (
 )
 from azure.quantum.qiskit.backends.quantinuum import QuantinuumEmulatorQirBackend, QuantinuumQirBackendBase
 from azure.quantum.qiskit.backends.ionq import IonQSimulatorQirBackend
+from azure.quantum.target.rigetti import RigettiTarget
 
 # This provider is used to stub out calls to the AzureQuantumProvider
 # There are live tests that use the available backends in the workspace
@@ -277,6 +278,9 @@ class TestQiskit(QuantumTestBase):
         ))
         self.assertEqual(AzureQuantumJob._qir_to_qiskit_bitstring(bitstring), bitstring)
 
+    @pytest.mark.ionq
+    @pytest.mark.live_test
+    @pytest.mark.xdist_group(name="ionq.simulator")
     def test_qiskit_submit_ionq_5_qubit_superposition(self):
         workspace = self.create_workspace()
         provider = AzureQuantumProvider(workspace=workspace)
@@ -312,6 +316,9 @@ class TestQiskit(QuantumTestBase):
             self.assertEqual(result.results[0].header.num_qubits, 5)
             self.assertEqual(result.results[0].header.metadata["some"], "data")
 
+    @pytest.mark.ionq
+    @pytest.mark.live_test
+    @pytest.mark.xdist_group(name="ionq.simulator")
     def test_qiskit_submit_ionq_5_qubit_superposition_passthrough(self):
         workspace = self.create_workspace()
         provider = AzureQuantumProvider(workspace=workspace)
@@ -404,18 +411,21 @@ class TestQiskit(QuantumTestBase):
 
     @pytest.mark.ionq
     @pytest.mark.live_test
+    @pytest.mark.xdist_group(name="ionq.simulator")
     def test_plugins_submit_qiskit_to_ionq(self):
         circuit = self._3_qubit_ghz()
         self._test_qiskit_submit_ionq(circuit)
 
     @pytest.mark.ionq
     @pytest.mark.live_test
+    @pytest.mark.xdist_group(name="ionq.simulator")
     def test_plugins_submit_qiskit_circuit_as_list_to_ionq(self):
         circuit = self._3_qubit_ghz()
         self._test_qiskit_submit_ionq([circuit])
 
     @pytest.mark.ionq
     @pytest.mark.live_test
+    @pytest.mark.xdist_group(name="ionq.simulator")
     def test_plugins_submit_qiskit_multi_circuit_experiment_to_ionq(self):
         circuit = self._3_qubit_ghz()
 
@@ -430,6 +440,7 @@ class TestQiskit(QuantumTestBase):
 
     @pytest.mark.ionq
     @pytest.mark.live_test
+    @pytest.mark.xdist_group(name="ionq.simulator")
     def test_plugins_submit_qiskit_qobj_to_ionq(self):
         from qiskit import assemble
 
@@ -439,6 +450,7 @@ class TestQiskit(QuantumTestBase):
 
     @pytest.mark.ionq
     @pytest.mark.live_test
+    @pytest.mark.xdist_group(name="ionq.simulator")
     def test_qiskit_qir_submit_ionq(self):
         circuit = self._3_qubit_ghz()
         workspace = self.create_workspace()
@@ -492,18 +504,21 @@ class TestQiskit(QuantumTestBase):
     
     @pytest.mark.ionq
     @pytest.mark.live_test
+    @pytest.mark.xdist_group(name="ionq.simulator")
     def test_plugins_submit_qiskit_to_ionq_passthrough(self):
         circuit = self._3_qubit_ghz()
         self._test_qiskit_submit_ionq_passthrough(circuit)
 
     @pytest.mark.ionq
     @pytest.mark.live_test
+    @pytest.mark.xdist_group(name="ionq.simulator")
     def test_plugins_submit_qiskit_circuit_as_list_to_ionq_passthrough(self):
         circuit = self._3_qubit_ghz()
         self._test_qiskit_submit_ionq_passthrough([circuit])
 
     @pytest.mark.ionq
     @pytest.mark.live_test
+    @pytest.mark.xdist_group(name="ionq.simulator")
     def test_plugins_submit_qiskit_multi_circuit_experiment_to_ionq_passthrough(self):
         circuit = self._3_qubit_ghz()
 
@@ -527,6 +542,9 @@ class TestQiskit(QuantumTestBase):
         qiskit_job = provider.get_job(job.id)
         self.assertEqual(expected_status, qiskit_job.status())
 
+    @pytest.mark.ionq
+    @pytest.mark.live_test
+    @pytest.mark.xdist_group(name="ionq.simulator")
     def test_plugins_submit_qiskit_to_ionq_with_shots_param(self):
         circuit = self._3_qubit_ghz()
 
@@ -540,6 +558,9 @@ class TestQiskit(QuantumTestBase):
         self._qiskit_wait_to_complete(qiskit_job, provider)
         self.assertEqual(qiskit_job._azure_job.details.input_params["shots"], shots)
     
+    @pytest.mark.ionq
+    @pytest.mark.live_test
+    @pytest.mark.xdist_group(name="ionq.simulator")
     def test_plugins_submit_qiskit_to_ionq_with_default_shots(self):
         circuit = self._3_qubit_ghz()
 
@@ -552,6 +573,9 @@ class TestQiskit(QuantumTestBase):
         self._qiskit_wait_to_complete(qiskit_job, provider)
         self.assertEqual(qiskit_job._azure_job.details.input_params["shots"], 500)
 
+    @pytest.mark.ionq
+    @pytest.mark.live_test
+    @pytest.mark.xdist_group(name="ionq.simulator")
     def test_plugins_submit_qiskit_to_ionq_with_deprecated_count_param(self):
         """
         Verify that a warning message is printed when the 'count' option is specified.
@@ -575,6 +599,9 @@ class TestQiskit(QuantumTestBase):
         self._qiskit_wait_to_complete(qiskit_job, provider)
         self.assertEqual(qiskit_job._azure_job.details.input_params["shots"], shots)
 
+    @pytest.mark.ionq
+    @pytest.mark.live_test
+    @pytest.mark.xdist_group(name="ionq.simulator")
     def test_plugins_submit_qiskit_to_ionq_with_shots_param_passthrough(self):
         circuit = self._3_qubit_ghz()
 
@@ -586,7 +613,10 @@ class TestQiskit(QuantumTestBase):
         qiskit_job = backend.run(circuit, shots=shots)
         self._qiskit_wait_to_complete(qiskit_job, provider)
         self.assertEqual(qiskit_job._azure_job.details.input_params["shots"], shots)
-    
+
+    @pytest.mark.ionq
+    @pytest.mark.live_test
+    @pytest.mark.xdist_group(name="ionq.simulator")
     def test_plugins_submit_qiskit_to_ionq_with_default_shots_passthrough(self):
         circuit = self._3_qubit_ghz()
 
@@ -598,6 +628,9 @@ class TestQiskit(QuantumTestBase):
         self._qiskit_wait_to_complete(qiskit_job, provider)
         self.assertEqual(qiskit_job._azure_job.details.input_params["shots"], 500)
 
+    @pytest.mark.ionq
+    @pytest.mark.live_test
+    @pytest.mark.xdist_group(name="ionq.simulator")
     def test_plugins_submit_qiskit_to_ionq_with_deprecated_count_param_passthrough(self):
         """
         Verify that a warning message is printed when the 'count' option is specified.
@@ -818,6 +851,7 @@ class TestQiskit(QuantumTestBase):
         provider.get_backend("ionq.qpu.forte-enterprise-1", gateset="qis")
 
     @pytest.mark.ionq
+    @pytest.mark.xdist_group(name="ionq.simulator")
     def test_translate_ionq_qir(self):
         circuit = self._3_qubit_ghz()
         workspace = self.create_workspace()
@@ -840,7 +874,6 @@ class TestQiskit(QuantumTestBase):
         self.assertIn("arguments", item)
 
     @pytest.mark.ionq
-    @pytest.mark.live_test
     def test_qiskit_get_ionq_qpu_target(self):
         workspace = self.create_workspace()
         provider = AzureQuantumProvider(workspace=workspace)
@@ -916,6 +949,7 @@ class TestQiskit(QuantumTestBase):
 
     @pytest.mark.ionq
     @pytest.mark.live_test
+    @pytest.mark.xdist_group(name="ionq.simulator")
     def test_qiskit_get_ionq_native_gateset(self):
         # initialize a quantum circuit with native gates (see https://ionq.com/docs/using-native-gates-with-qiskit)
         native_circuit = QuantumCircuit(2, 2)
@@ -954,6 +988,7 @@ class TestQiskit(QuantumTestBase):
 
     @pytest.mark.ionq
     @pytest.mark.live_test
+    @pytest.mark.xdist_group(name="ionq.simulator")
     def test_plugins_retrieve_job(self):
         workspace = self.create_workspace()
         provider = AzureQuantumProvider(workspace=workspace)
@@ -974,7 +1009,6 @@ class TestQiskit(QuantumTestBase):
             self.assertAlmostEqual(result.data()["counts"]["000"], 50, delta=20)
             self.assertAlmostEqual(result.data()["counts"]["111"], 50, delta=20)
 
-    @pytest.mark.live_test
     def test_plugins_submit_qiskit_noexistent_target(self):
         workspace = self.create_workspace()
         provider = AzureQuantumProvider(workspace=workspace)
@@ -983,12 +1017,15 @@ class TestQiskit(QuantumTestBase):
 
     @pytest.mark.quantinuum
     @pytest.mark.live_test
+    @pytest.mark.xdist_group(name="quantinuum.sim.h2-1e")
     def test_plugins_submit_qiskit_to_quantinuum(self):
         circuit = self._3_qubit_ghz()
-        self._test_qiskit_submit_quantinuum(circuit)
+        self._test_qiskit_submit_quantinuum(circuit,
+                                            target="quantinuum.sim.h2-1e")
 
     @pytest.mark.quantinuum
     @pytest.mark.live_test
+    @pytest.mark.xdist_group(name="quantinuum.sim.h2-1e")
     def test_plugins_submit_qiskit_to_quantinuum_h2_1e(self):
         circuit = self._3_qubit_ghz()
         self._test_qiskit_submit_quantinuum(circuit,
@@ -996,12 +1033,14 @@ class TestQiskit(QuantumTestBase):
 
     @pytest.mark.quantinuum
     @pytest.mark.live_test
+    @pytest.mark.xdist_group(name="quantinuum.sim.h2-1sc")
     def test_plugins_submit_qiskit_to_quantinuum_h2_1sc(self):
         circuit = self._3_qubit_ghz()
         self._test_qiskit_submit_quantinuum(circuit,
                                             target="quantinuum.sim.h2-1sc")
 
     @pytest.mark.quantinuum
+    @pytest.mark.xdist_group(name="quantinuum.sim.h2-1")
     @pytest.mark.skip("Target was unavailable at the moment of the recording")
     def test_plugins_submit_qiskit_to_quantinuum_h2_1qpu(self):
         circuit = self._3_qubit_ghz()
@@ -1010,18 +1049,22 @@ class TestQiskit(QuantumTestBase):
 
     @pytest.mark.quantinuum
     @pytest.mark.live_test
+    @pytest.mark.xdist_group(name="quantinuum.sim.h2-1e")
     def test_plugins_submit_qiskit_circuit_as_list_to_quantinuum(self):
         circuit = self._3_qubit_ghz()
-        self._test_qiskit_submit_quantinuum([circuit])
+        self._test_qiskit_submit_quantinuum([circuit],
+                                            target="quantinuum.sim.h2-1e")
 
     @pytest.mark.quantinuum
     @pytest.mark.live_test
+    @pytest.mark.xdist_group(name="quantinuum.sim.h2-1e")
     def test_plugins_submit_qiskit_to_quantinuum_passthrough(self):
         circuit = self._3_qubit_ghz()
         self._test_qiskit_submit_quantinuum_passthrough(circuit)
 
     @pytest.mark.quantinuum
     @pytest.mark.live_test
+    @pytest.mark.xdist_group(name="quantinuum.sim.h2-1e")
     def test_plugins_submit_qiskit_to_quantinuum_h2_1e_passthrough(self):
         circuit = self._3_qubit_ghz()
         self._test_qiskit_submit_quantinuum_passthrough(circuit,
@@ -1029,12 +1072,14 @@ class TestQiskit(QuantumTestBase):
 
     @pytest.mark.quantinuum
     @pytest.mark.live_test
+    @pytest.mark.xdist_group(name="quantinuum.sim.h2-1sc")
     def test_plugins_submit_qiskit_to_quantinuum_h2_1sc_passthrough(self):
         circuit = self._3_qubit_ghz()
         self._test_qiskit_submit_quantinuum_passthrough(circuit,
                                             target="quantinuum.sim.h2-1sc")
 
     @pytest.mark.quantinuum
+    @pytest.mark.xdist_group(name="quantinuum.sim.h2-1")
     @pytest.mark.skip("Target was unavailable at the moment of the recording")
     def test_plugins_submit_qiskit_to_quantinuum_h2_1qpu_passthrough(self):
         circuit = self._3_qubit_ghz()
@@ -1043,12 +1088,15 @@ class TestQiskit(QuantumTestBase):
 
     @pytest.mark.quantinuum
     @pytest.mark.live_test
+    @pytest.mark.xdist_group(name="quantinuum.sim.h2-1e")
     def test_plugins_submit_qiskit_circuit_as_list_to_quantinuum_passthrough(self):
         circuit = self._3_qubit_ghz()
-        self._test_qiskit_submit_quantinuum_passthrough([circuit])
+        self._test_qiskit_submit_quantinuum_passthrough([circuit],
+                                            target="quantinuum.sim.h2-1e")
 
     @pytest.mark.quantinuum
     @pytest.mark.live_test
+    @pytest.mark.xdist_group(name="quantinuum.sim.h2-1e")
     def test_plugins_submit_qiskit_multi_circuit_experiment_to_quantinuum(self):
         circuit = self._3_qubit_ghz()
 
@@ -1067,6 +1115,7 @@ class TestQiskit(QuantumTestBase):
     
     @pytest.mark.quantinuum
     @pytest.mark.live_test
+    @pytest.mark.xdist_group(name="quantinuum.sim.h2-1sc")
     def test_plugins_submit_qiskit_to_quantinuum_with_counts_param(self):
         """
         This test verifies that we can pass a "provider-specific" shots number option.
@@ -1089,6 +1138,7 @@ class TestQiskit(QuantumTestBase):
     
     @pytest.mark.quantinuum
     @pytest.mark.live_test
+    @pytest.mark.xdist_group(name="quantinuum.sim.h2-1sc")
     def test_plugins_submit_qiskit_to_quantinuum_with_explicit_shots_param(self):
         circuit = self._3_qubit_ghz()
         workspace = self.create_workspace()
@@ -1103,6 +1153,7 @@ class TestQiskit(QuantumTestBase):
 
     @pytest.mark.quantinuum
     @pytest.mark.live_test
+    @pytest.mark.xdist_group(name="quantinuum.sim.h2-1sc")
     def test_plugins_submit_qiskit_to_quantinuum_with_default_shots_param(self):
         circuit = self._3_qubit_ghz()
         workspace = self.create_workspace()
@@ -1116,6 +1167,7 @@ class TestQiskit(QuantumTestBase):
 
     @pytest.mark.quantinuum
     @pytest.mark.live_test
+    @pytest.mark.xdist_group(name="quantinuum.sim.h2-1sc")
     def test_plugins_submit_qiskit_to_quantinuum_with_conflicting_shots_and_count_from_options(self):
         circuit = self._3_qubit_ghz()
         workspace = self.create_workspace()
@@ -1134,6 +1186,7 @@ class TestQiskit(QuantumTestBase):
 
     @pytest.mark.quantinuum
     @pytest.mark.live_test
+    @pytest.mark.xdist_group(name="quantinuum.sim.h2-1sc")
     def test_plugins_submit_qiskit_to_quantinuum_with_count_from_options(self):
         """
         Check that backend also allows to specify shots by using a provider-specific option,
@@ -1157,6 +1210,7 @@ class TestQiskit(QuantumTestBase):
 
     @pytest.mark.quantinuum
     @pytest.mark.live_test
+    @pytest.mark.xdist_group(name="quantinuum.sim.h2-1e")
     def test_plugins_submit_qiskit_multi_circuit_experiment_to_quantinuum_passthrough(self):
         circuit = self._3_qubit_ghz()
 
@@ -1174,6 +1228,7 @@ class TestQiskit(QuantumTestBase):
     
     @pytest.mark.quantinuum
     @pytest.mark.live_test
+    @pytest.mark.xdist_group(name="quantinuum.sim.h2-1sc")
     def test_plugins_submit_qiskit_to_quantinuum_with_counts_param_passthrough(self):
         """
         This test verifies that we can pass a "provider-specific" shots number option.
@@ -1195,6 +1250,7 @@ class TestQiskit(QuantumTestBase):
     
     @pytest.mark.quantinuum
     @pytest.mark.live_test
+    @pytest.mark.xdist_group(name="quantinuum.sim.h2-1sc")
     def test_plugins_submit_qiskit_to_quantinuum_with_explicit_shots_param_passthrough(self):
         circuit = self._3_qubit_ghz()
         workspace = self.create_workspace()
@@ -1208,6 +1264,7 @@ class TestQiskit(QuantumTestBase):
 
     @pytest.mark.quantinuum
     @pytest.mark.live_test
+    @pytest.mark.xdist_group(name="quantinuum.sim.h2-1sc")
     def test_plugins_submit_qiskit_to_quantinuum_with_default_shots_param_passthrough(self):
         circuit = self._3_qubit_ghz()
         workspace = self.create_workspace()
@@ -1220,6 +1277,7 @@ class TestQiskit(QuantumTestBase):
 
     @pytest.mark.quantinuum
     @pytest.mark.live_test
+    @pytest.mark.xdist_group(name="quantinuum.sim.h2-1sc")
     def test_plugins_submit_qiskit_to_quantinuum_with_conflicting_shots_and_count_from_options_passthrough(self):
         circuit = self._3_qubit_ghz()
         workspace = self.create_workspace()
@@ -1237,6 +1295,7 @@ class TestQiskit(QuantumTestBase):
 
     @pytest.mark.quantinuum
     @pytest.mark.live_test
+    @pytest.mark.xdist_group(name="quantinuum.sim.h2-1sc")
     def test_plugins_submit_qiskit_to_quantinuum_with_count_from_options_passthrough(self):
         """
         Check that backend also allows to specify shots by using a provider-specific option,
@@ -1259,6 +1318,7 @@ class TestQiskit(QuantumTestBase):
 
     @pytest.mark.quantinuum
     @pytest.mark.live_test
+    @pytest.mark.xdist_group(name="quantinuum.sim.h2-1e")
     def test_qiskit_qir_submit_quantinuum(self):
         circuit = self._3_qubit_ghz()
         workspace = self.create_workspace()
@@ -1460,8 +1520,8 @@ class TestQiskit(QuantumTestBase):
 
     @pytest.mark.rigetti
     @pytest.mark.live_test
+    @pytest.mark.xdist_group(name=RigettiTarget.QVM.value)
     def test_qiskit_submit_to_rigetti(self):
-        from azure.quantum.target.rigetti import RigettiTarget
 
         workspace = self.create_workspace()
         provider = AzureQuantumProvider(workspace=workspace)
@@ -1513,12 +1573,12 @@ class TestQiskit(QuantumTestBase):
     
     @pytest.mark.rigetti
     @pytest.mark.live_test
+    @pytest.mark.xdist_group(name=RigettiTarget.QVM.value)
     def test_qiskit_submit_to_rigetti_with_count_param(self):
         """
         Check that backend also allows to specify shots by using a provider-specific option,
         but also throws warning with recommndation to use 'shots'
         """
-        from azure.quantum.target.rigetti import RigettiTarget
 
         workspace = self.create_workspace()
         provider = AzureQuantumProvider(workspace=workspace)
@@ -1534,8 +1594,8 @@ class TestQiskit(QuantumTestBase):
         
     @pytest.mark.rigetti
     @pytest.mark.live_test
+    @pytest.mark.xdist_group(name=RigettiTarget.QVM.value)
     def test_qiskit_submit_to_rigetti_with_explicit_shots_param(self):
-        from azure.quantum.target.rigetti import RigettiTarget
 
         workspace = self.create_workspace()
         provider = AzureQuantumProvider(workspace=workspace)
@@ -1549,8 +1609,8 @@ class TestQiskit(QuantumTestBase):
 
     @pytest.mark.rigetti
     @pytest.mark.live_test
+    @pytest.mark.xdist_group(name=RigettiTarget.QVM.value)
     def test_qiskit_submit_to_rigetti_conflicting_shots_and_count_from_options(self):
-        from azure.quantum.target.rigetti import RigettiTarget
 
         workspace = self.create_workspace()
         provider = AzureQuantumProvider(workspace=workspace)
@@ -1570,9 +1630,9 @@ class TestQiskit(QuantumTestBase):
     
     @pytest.mark.rigetti
     @pytest.mark.live_test
+    @pytest.mark.xdist_group(name=RigettiTarget.QVM.value)
     def test_qiskit_submit_to_rigetti_with_count_from_options(self):
-        from azure.quantum.target.rigetti import RigettiTarget
-
+        
         workspace = self.create_workspace()
         provider = AzureQuantumProvider(workspace=workspace)
         backend = provider.get_backend(RigettiTarget.QVM.value)
@@ -1590,7 +1650,6 @@ class TestQiskit(QuantumTestBase):
     @pytest.mark.rigetti
     @pytest.mark.live_test
     def test_qiskit_get_rigetti_qpu_targets(self):
-        from azure.quantum.target.rigetti import RigettiTarget
 
         workspace = self.create_workspace()
         provider = AzureQuantumProvider(workspace=workspace)
@@ -1712,12 +1771,13 @@ class TestQiskit(QuantumTestBase):
 
     @pytest.mark.rigetti
     @pytest.mark.live_test
+    @pytest.mark.xdist_group(name=RigettiTarget.QVM.value)
     def test_qiskit_endianness_submit_to_rigetti(
         self, expectation="000 000 001"
     ):
         workspace = self.create_workspace()
         provider = AzureQuantumProvider(workspace=workspace)
-        backend = provider.get_backend("rigetti.sim.qvm")
+        backend = provider.get_backend(RigettiTarget.QVM.value)
         shots = 100
 
         qr = QuantumRegister(3)

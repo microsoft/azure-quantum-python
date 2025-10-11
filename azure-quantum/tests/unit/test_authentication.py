@@ -180,8 +180,8 @@ class TestWorkspace(QuantumTestBase):
             time.sleep(10)
             connection_string = self._get_current_primary_connection_string(token)
             self.resume_recording()
-            # Sleep 1 min for cache to be cleared
-            time.sleep(60)
+            # Sleep longer than 1 min for cache to be cleared
+            time.sleep(70)
 
         with patch.dict(os.environ):
             self.clear_env_vars(os.environ)
@@ -197,8 +197,8 @@ class TestWorkspace(QuantumTestBase):
             workspace = self._get_workspace(token)
             self._enable_workspace_api_keys(token, workspace, False)
             self.resume_recording()
-            # Sleep 1 min for cache to be cleared
-            time.sleep(60)
+            # Sleep longer than 1 min for cache to be cleared
+            time.sleep(70)
 
         with patch.dict(os.environ):
             self.clear_env_vars(os.environ)

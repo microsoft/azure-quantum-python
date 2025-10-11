@@ -8,7 +8,7 @@ from azure.quantum import JobStatus
 from common import QuantumTestBase, DEFAULT_TIMEOUT_SECS
 from import_qsharp import skip_if_no_qsharp
 from test_job_payload_factory import JobPayloadFactory
-
+from azure.quantum.target.rigetti import RigettiTarget
 
 @pytest.mark.qsharp
 @pytest.mark.live_test
@@ -16,18 +16,22 @@ from test_job_payload_factory import JobPayloadFactory
 class TestQSharpQIRJob(QuantumTestBase):
 
     @pytest.mark.rigetti
+    @pytest.mark.xdist_group(name=RigettiTarget.QVM.value)
     def test_qsharp_qir_inline_rigetti(self):
-        self._run_job("rigetti.sim.qvm", inline=True)
+        self._run_job(RigettiTarget.QVM.value, inline=True)
 
     @pytest.mark.rigetti
+    @pytest.mark.xdist_group(name=RigettiTarget.QVM.value)
     def test_qsharp_qir_file_rigetti(self):
-        self._run_job("rigetti.sim.qvm", inline=False)
+        self._run_job(RigettiTarget.QVM.value, inline=False)
 
     @pytest.mark.quantinuum
+    @pytest.mark.xdist_group(name="quantinuum.sim.h2-1e")
     def test_qsharp_qir_inline_quantinuum_h2(self):
         self._run_job("quantinuum.sim.h2-1e", inline=True)
 
     @pytest.mark.quantinuum
+    @pytest.mark.xdist_group(name="quantinuum.sim.h2-1e")
     def test_qsharp_qir_file_quantinuum(self):
         self._run_job("quantinuum.sim.h2-1e", inline=False)
 

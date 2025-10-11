@@ -36,18 +36,21 @@ class TestQuantinuum(QuantumTestBase):
     
     @pytest.mark.quantinuum
     @pytest.mark.live_test
+    @pytest.mark.xdist_group(name="quantinuum.sim.h2-1sc")
     def test_job_submit_quantinuum_with_shots(self):
         self._test_job_submit_quantinuum("quantinuum.sim.h2-1sc", shots=100)
 
 
     @pytest.mark.quantinuum
     @pytest.mark.live_test
+    @pytest.mark.xdist_group(name="quantinuum.sim.h2-1sc")
     def test_job_submit_quantinuum_with_none_shots(self):
         self._test_job_submit_quantinuum("quantinuum.sim.h2-1sc", shots=None)
 
 
     @pytest.mark.quantinuum
     @pytest.mark.live_test
+    @pytest.mark.xdist_group(name="quantinuum.sim.h2-1sc")
     def test_job_submit_quantinuum_with_conflictin_shots_and_count_from_input_params(self):
         workspace = self.create_workspace()
         circuit = self._teleport()
@@ -69,6 +72,7 @@ class TestQuantinuum(QuantumTestBase):
 
     @pytest.mark.quantinuum
     @pytest.mark.live_test
+    @pytest.mark.xdist_group(name="quantinuum.sim.h2-1sc")
     def test_job_submit_quantinuum_with_count_from_input_params(self):
         workspace = self.create_workspace()
         circuit = self._teleport()
@@ -89,10 +93,12 @@ class TestQuantinuum(QuantumTestBase):
 
     @pytest.mark.quantinuum
     @pytest.mark.live_test
+    @pytest.mark.xdist_group(name="quantinuum.sim.h2-1e")
     def test_job_submit_quantinuum_h2_1e(self):
         self._test_job_submit_quantinuum("quantinuum.sim.h2-1e")
 
     @pytest.mark.quantinuum
+    @pytest.mark.xdist_group(name="quantinuum.sim.h2-1")
     @pytest.mark.skip("Target was unavailable at the moment of the recording")
     def test_job_submit_quantinuum_h2_1qpu(self):
         self._test_job_submit_quantinuum("quantinuum.qpu.h2-1")

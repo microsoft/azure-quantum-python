@@ -135,6 +135,7 @@ class TestCirq(QuantumTestBase):
 
     @pytest.mark.ionq
     @pytest.mark.live_test
+    @pytest.mark.xdist_group(name="ionq.simulator")
     def test_plugins_ionq_cirq(self):
         with unittest.mock.patch.object(
             Job,
@@ -163,6 +164,7 @@ class TestCirq(QuantumTestBase):
 
     @pytest.mark.quantinuum
     @pytest.mark.live_test
+    @pytest.mark.xdist_group(name="quantinuum.sim.h2-1e")
     def test_plugins_quantinuum_cirq(self):
         with unittest.mock.patch.object(
             Job,
