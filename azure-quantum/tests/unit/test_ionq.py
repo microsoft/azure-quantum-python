@@ -36,16 +36,19 @@ class TestIonQ(QuantumTestBase):
 
     @pytest.mark.ionq
     @pytest.mark.live_test
+    @pytest.mark.xdist_group(name="ionq.simulator")
     def test_job_submit_ionq(self):
         self._test_job_submit_ionq(shots=None)
 
     @pytest.mark.ionq
     @pytest.mark.live_test
+    @pytest.mark.xdist_group(name="ionq.simulator")
     def test_job_submit_ionq_100_shots(self):
         self._test_job_submit_ionq(shots=100)
 
     @pytest.mark.ionq
     @pytest.mark.live_test
+    @pytest.mark.xdist_group(name="ionq.simulator")
     def test_job_submit_ionq_with_shots_from_input_params(self):
         workspace = self.create_workspace()
         circuit = self._3_qubit_ghz()
@@ -63,6 +66,7 @@ class TestIonQ(QuantumTestBase):
         
     @pytest.mark.ionq
     @pytest.mark.live_test
+    @pytest.mark.xdist_group(name="ionq.simulator")
     def test_job_submit_ionq_with_conflicting_shots_from_input_params(self):
         workspace = self.create_workspace()
         circuit = self._3_qubit_ghz()
@@ -85,6 +89,7 @@ class TestIonQ(QuantumTestBase):
 
     @pytest.mark.ionq
     @pytest.mark.live_test
+    @pytest.mark.xdist_group(name="ionq.simulator")
     def test_job_submit_ionq_cost_estimate(self):
         job = self._test_job_submit_ionq(shots=None)
         self.assertIsNotNone(job.details)
