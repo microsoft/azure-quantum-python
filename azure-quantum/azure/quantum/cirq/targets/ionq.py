@@ -146,7 +146,7 @@ are not installed, throw error with installation instructions."""
         azure_job = super().submit(
             circuit=serialized_program.body,
             name=name,
-            num_shots=repetitions,
+            shots=repetitions,
             metadata=metadata,
             **kwargs
         )

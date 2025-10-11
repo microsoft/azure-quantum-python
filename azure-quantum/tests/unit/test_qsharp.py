@@ -28,12 +28,8 @@ class TestQSharpQIRJob(QuantumTestBase):
         self._run_job("quantinuum.sim.h2-1e", inline=True)
 
     @pytest.mark.quantinuum
-    def test_qsharp_qir_inline_quantinuum(self):
-        self._run_job("quantinuum.sim.h1-1e", inline=True)
-
-    @pytest.mark.quantinuum
     def test_qsharp_qir_file_quantinuum(self):
-        self._run_job("quantinuum.sim.h1-1e", inline=False)
+        self._run_job("quantinuum.sim.h2-1e", inline=False)
 
     def _run_job(self, target_name, inline):
         workspace = self.create_workspace()

@@ -26,7 +26,7 @@ from azure.quantum._constants import (
 )
 from azure.quantum import Job
 from azure.quantum.target import Target
-from azure.identity import ClientSecretCredential
+from azure.identity import ClientSecretCredential, AzureCliCredential
 
 
 ZERO_UID = "00000000-0000-0000-0000-000000000000"
@@ -304,7 +304,7 @@ class QuantumTestBase(ReplayableTest):
                 client_secret=PLACEHOLDER)
 
         workspace = Workspace(
-            credential=credential,
+            credential=credential if credential else AzureCliCredential(),
             subscription_id=connection_params.subscription_id,
             resource_group=connection_params.resource_group,
             name=connection_params.workspace_name,
@@ -527,9 +527,9 @@ class CustomRecordingProcessor(RecordingProcessor):
         return value
 
     def process_request(self, request):
-        # when loading the VCR cassete during
+        # when loading the VCR cassette during
         # the test playback, just return the request
-        # that is recorded in the cassete
+        # that is recorded in the cassette
         if self._quantumTest.in_test_setUp:
             return request
 
@@ -591,9 +591,9 @@ class CustomRecordingProcessor(RecordingProcessor):
         return content_type
 
     def process_response(self, response):
-        # when loading the VCR cassete during
+        # when loading the VCR cassette during
         # the test playback, just return the response
-        # that is recorded in the cassete
+        # that is recorded in the cassette
         if self._quantumTest.in_test_setUp:
             return response
 

@@ -5,22 +5,15 @@
 from typing import Any, Dict, Union
 from warnings import warn
 
-from azure.quantum.target.target import (
-    Target,
-    _determine_shots_or_deprecated_num_shots,
-)
 from azure.quantum.job.job import Job
+from azure.quantum.target.target import Target
 from azure.quantum.workspace import Workspace
-from azure.quantum._client.models import CostEstimate, UsageEvent
 
 
 class Quantinuum(Target):
     """Quantinuum target."""
     target_names = (
         # Note: Target names on the same line are equivalent.
-        "quantinuum.qpu.h1-1",
-        "quantinuum.sim.h1-1sc",
-        "quantinuum.sim.h1-1e",
         "quantinuum.qpu.h2-1",
         "quantinuum.sim.h2-1sc",
         "quantinuum.sim.h2-1e",
@@ -34,7 +27,7 @@ class Quantinuum(Target):
     def __init__(
         self,
         workspace: Workspace,
-        name: str = "quantinuum.sim.h1-1sc",
+        name: str = "quantinuum.sim.h2-1sc",
         input_data_format: str = "honeywell.openqasm.v1",
         output_data_format: str = "honeywell.quantum-results.v1",
         capability: str = "",
@@ -88,13 +81,6 @@ class Quantinuum(Target):
             )
         if input_params is None:
             input_params = {}
-
-        num_shots = kwargs.pop("num_shots", None)
-
-        shots = _determine_shots_or_deprecated_num_shots(
-            shots=shots,
-            num_shots=num_shots,
-        )
 
         return super().submit(
             input_data=input_data,

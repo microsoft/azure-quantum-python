@@ -5,35 +5,11 @@
 from typing import Any, Dict, List
 from warnings import warn
 
-from azure.quantum.target.target import (
-    Target,
-    _determine_shots_or_deprecated_num_shots,
-)
 from azure.quantum.job.job import Job
+from azure.quantum.target.target import Target
 from azure.quantum.workspace import Workspace
-from azure.quantum._client.models import CostEstimate, UsageEvent
 from typing import Union
 
-COST_1QUBIT_GATE_MAP = {
-    "ionq.simulator" : 0.0,
-    "ionq.qpu.aria-1" : 0.0002205,
-    "ionq.qpu.aria-2" : 0.0002205,
-    "ionq.qpu.forte-1" : 0.0002205
-}
-
-COST_2QUBIT_GATE_MAP = {
-    "ionq.simulator" : 0.0,
-    "ionq.qpu.aria-1" : 0.00098,
-    "ionq.qpu.aria-2" : 0.00098,
-    "ionq.qpu.forte-1" : 0.00098
-}
-
-MIN_PRICE_MAP = {
-    "ionq.simulator" : 0.0,
-    "ionq.qpu.aria-1" : 97.5,
-    "ionq.qpu.aria-2" : 97.5,
-    "ionq.qpu.forte-1" : 97.5
-}
 
 def int_to_bitstring(k: int, num_qubits: int, measured_qubit_ids: List[int]):
     # flip bitstring to convert to little Endian
@@ -47,8 +23,8 @@ class IonQ(Target):
     target_names = (
         "ionq.simulator",
         "ionq.qpu.aria-1",
-        "ionq.qpu.aria-2",
-        "ionq.qpu.forte-1"
+        "ionq.qpu.forte-1",
+        "ionq.qpu.forte-enterprise-1",
     )
 
     _SHOTS_PARAM_NAME = "shots"
@@ -111,13 +87,6 @@ class IonQ(Target):
             )
         if input_params is None:
             input_params = {}
-
-        num_shots = kwargs.pop("num_shots", None)
-
-        shots = _determine_shots_or_deprecated_num_shots(
-            shots=shots,
-            num_shots=num_shots,
-        )
         
         return super().submit(
             input_data=input_data,

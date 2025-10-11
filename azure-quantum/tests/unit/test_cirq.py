@@ -119,7 +119,7 @@ class TestCirq(QuantumTestBase):
         for t in targets:
             self.assertIsInstance(t, Target)
         self.assertIn("ionq.simulator", target_names)
-        self.assertIn("quantinuum.sim.h1-1sc", target_names)
+        self.assertIn("quantinuum.sim.h2-1sc", target_names)
 
     @pytest.mark.live_test
     def test_plugins_cirq_nonexistent_target(self):
@@ -175,7 +175,7 @@ class TestCirq(QuantumTestBase):
             run_result = service.run(
                 program=program,
                 repetitions=500,
-                target="quantinuum.sim.h1-1e",
+                target="quantinuum.sim.h2-1e",
                 timeout_seconds=DEFAULT_TIMEOUT_SECS
             )
             job_no_program = service.get_job(self.get_test_job_id())
@@ -183,7 +183,7 @@ class TestCirq(QuantumTestBase):
                 self.get_test_job_id(), program=program)
             # pylint: disable=protected-access
             target = service._target_factory.create_target(
-                provider_id="quantinuum", name="quantinuum.sim.h1-1e")
+                provider_id="quantinuum", name="quantinuum.sim.h2-1e")
             job_result1 = target._to_cirq_result(
                 result=job_no_program.results(timeout_seconds=DEFAULT_TIMEOUT_SECS), param_resolver=ParamResolver({}))
             job_result2 = target._to_cirq_result(
