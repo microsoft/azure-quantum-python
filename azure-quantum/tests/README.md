@@ -159,3 +159,6 @@ skip_older_version = pytest.mark.skipif(__version__ != "0.0.1" and __version__ <
 def test_my_test(self):
     pass
 ```
+
+Additionally, some of the Live Tests are marked with `@pytest.mark.xdist_group(name="<targetName>")` annotation.   
+This is to avoid failing concurrent tests when they're waiting in the same target queue on the provider side.

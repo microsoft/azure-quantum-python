@@ -120,7 +120,7 @@ extends:
         - script: |
             cd $(Build.SourcesDirectory)/azure-quantum
             pip install .[qiskit,cirq,qsharp,dev]
-            pytest --numprocesses $(PYTEST_MAX_PARALLEL_TESTS) --dist loadgroup --cov-report term --cov=azure.quantum --junitxml test-output-azure-quantum.xml $(Build.SourcesDirectory)/azure-quantum
+            pytest --numprocesses $(PYTEST_MAX_PARALLEL_TESTS) --cov-report term --cov=azure.quantum --junitxml test-output-azure-quantum.xml $(Build.SourcesDirectory)/azure-quantum
           displayName: Run Unit-tests
 
         - task: PublishTestResults@2
