@@ -40,6 +40,8 @@ variables:
   value: 'xiou'
 - name: QSHARP_PYTHON_TELEMETRY
   value: none # Disable usage telemetry for internal test pipelines
+- name: PYTEST_MAX_PARALLEL_TESTS
+  value: 'auto'
 
 resources:
   repositories:
@@ -108,7 +110,7 @@ extends:
           displayName: Set Python version
 
         - script: |
-            pip install pytest pytest-azurepipelines pytest-cov pytest-regressions
+            pip install pytest pytest-azurepipelines pytest-cov pytest-xdist
           displayName: Install pytest dependencies
 
         - script: |
@@ -118,7 +120,7 @@ extends:
         - script: |
             cd $(Build.SourcesDirectory)/azure-quantum
             pip install .[qiskit,cirq,qsharp,dev]
-            pytest --cov-report term --cov=azure.quantum --junitxml test-output-azure-quantum.xml $(Build.SourcesDirectory)/azure-quantum
+            pytest --numprocesses $(PYTEST_MAX_PARALLEL_TESTS) --cov-report term --cov=azure.quantum --junitxml test-output-azure-quantum.xml $(Build.SourcesDirectory)/azure-quantum
           displayName: Run Unit-tests
 
         - task: PublishTestResults@2

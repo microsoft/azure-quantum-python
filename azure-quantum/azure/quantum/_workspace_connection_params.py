@@ -406,7 +406,7 @@ class WorkspaceConnectionParams:
         or defaults to a new DefaultAzureCredential.
         """
         return (self.credential
-                or DefaultAzureCredential())
+                or DefaultAzureCredential(exclude_interactive_browser_credential=False))
 
     def get_auth_policy(self) -> Any:
         """

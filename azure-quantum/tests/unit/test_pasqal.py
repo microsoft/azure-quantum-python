@@ -19,6 +19,7 @@ TEST_PULSER = """{"sequence_builder": "{\\"version\\": \\"1\\", \\"name\\": \\"p
 # Will update once pasqal 
 @pytest.mark.pasqal
 @pytest.mark.live_test
+@pytest.mark.xdist_group(name=PasqalTarget.SIM_EMU_TN)
 class TestPasqalTarget(QuantumTestBase):
    """Tests the azure.quantum.target.Pasqal class."""
 

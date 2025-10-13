@@ -9,7 +9,7 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-identity/1.17.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
+      - azsdk-python-identity/1.25.0 Python/3.12.3 (Linux-6.6.87.2-microsoft-standard-WSL2-aarch64-with-glibc2.39)
     method: GET
     uri: https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/v2.0/.well-known/openid-configuration
   response:
@@ -55,21 +55,21 @@ interactions:
       Content-Type:
       - application/x-www-form-urlencoded
       User-Agent:
-      - azsdk-python-identity/1.17.1 Python/3.9.19 (Windows-10-10.0.22631-SP0)
+      - azsdk-python-identity/1.25.0 Python/3.12.3 (Linux-6.6.87.2-microsoft-standard-WSL2-aarch64-with-glibc2.39)
       x-client-current-telemetry:
       - 4|730,2|
       x-client-os:
-      - win32
+      - linux
       x-client-sku:
       - MSAL.Python
       x-client-ver:
-      - 1.30.0
+      - 1.34.0
     method: POST
     uri: https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token
   response:
     body:
-      string: '{"token_type": "Bearer", "expires_in": 1756429716, "ext_expires_in":
-        1756429716, "refresh_in": 31536000, "access_token": "PLACEHOLDER"}'
+      string: '{"token_type": "Bearer", "expires_in": 1791503869, "ext_expires_in":
+        1791503869, "refresh_in": 31536000, "access_token": "PLACEHOLDER"}'
     headers:
       content-length:
       - '135'
@@ -88,44 +88,31 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - testapp azsdk-python-quantum/0.0.1 Python/3.9.20 (Windows-10-10.0.26100-SP0)
-      x-ms-quantum-api-key:
-      - PLACEHOLDER
+      - testapp azsdk-python-quantum/0.0.1 Python/3.12.3 (Linux-6.6.87.2-microsoft-standard-WSL2-aarch64-with-glibc2.39)
     method: GET
     uri: https://eastus.quantum.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace/sessions?api-version=2024-10-01-preview&filter=CreationTime%20le%202024-05-01&skip=0&top=100&orderby=CreationTime%20asc&test-sequence-id=1
   response:
     body:
-      string: '{"value": [{"status": "Succeeded", "jobFailurePolicy": "Abort", "name":
-        "session-1859a4c6-f786-11ee-974f-aa03815e5e6b", "id": "1859a4c6-f786-11ee-974f-aa03815e5e6b",
-        "providerId": "ionq", "target": "ionq.simulator", "creationTime": "2024-04-10T22:03:00.2077471Z",
-        "endExecutionTime": "2024-04-10T22:03:36.6318538Z", "costEstimate": {"currencyCode":
+      string: '{"value": [{"status": "Failed", "jobFailurePolicy": "Abort", "jobPriority":
+        "Basic", "name": "Qiskit Session", "id": "43e0c690-e7f2-11ee-98c1-00155dfe59ef",
+        "providerId": "ionq", "target": "ionq.simulator", "creationTime": "2024-03-22T02:17:00.2696796Z",
+        "endExecutionTime": "2024-03-22T02:17:01.2971486Z", "costEstimate": null,
+        "itemType": "Session"}, {"status": "Succeeded", "jobFailurePolicy": "Abort",
+        "jobPriority": "Basic", "name": "Qiskit Session", "id": "513d65be-e7f2-11ee-98c1-00155dfe59ef",
+        "providerId": "rigetti", "target": "rigetti.sim.qvm", "creationTime": "2024-03-22T02:17:22.7188598Z",
+        "endExecutionTime": "2024-03-22T02:17:41.1794839Z", "costEstimate": {"currencyCode":
         "USD", "events": [], "estimatedTotal": 0.0}, "itemType": "Session"}, {"status":
-        "Succeeded", "jobFailurePolicy": "Abort", "name": "session-3647adaf-f786-11ee-ae45-aa03815e5e6b",
-        "id": "3647adaf-f786-11ee-ae45-aa03815e5e6b", "providerId": "quantinuum",
-        "target": "quantinuum.sim.h1-1e", "creationTime": "2024-04-10T22:03:50.6318746Z",
-        "endExecutionTime": "2024-04-10T22:05:28.7668469Z", "costEstimate": {"currencyCode":
-        "USD", "events": [], "estimatedTotal": 0.0}, "itemType": "Session"}, {"status":
-        "Succeeded", "jobFailurePolicy": "Abort", "name": "session-7974eee5-f786-11ee-99c6-aa03815e5e6b",
-        "id": "7974eee5-f786-11ee-99c6-aa03815e5e6b", "providerId": "ionq", "target":
-        "ionq.simulator", "creationTime": "2024-04-10T22:05:43.1763416Z", "endExecutionTime":
-        "2024-04-10T22:06:04.953648Z", "costEstimate": {"currencyCode": "USD", "events":
-        [], "estimatedTotal": 0.0}, "itemType": "Session"}, {"status": "Succeeded",
-        "jobFailurePolicy": "Abort", "name": "session-8919ff0a-f786-11ee-9e45-aa03815e5e6b",
-        "id": "8919ff0a-f786-11ee-9e45-aa03815e5e6b", "providerId": "quantinuum",
-        "target": "quantinuum.sim.h1-1e", "creationTime": "2024-04-10T22:06:09.5480371Z",
-        "endExecutionTime": "2024-04-10T22:06:42.3084604Z", "costEstimate": {"currencyCode":
-        "USD", "events": [], "estimatedTotal": 0.0}, "itemType": "Session"}, {"status":
-        "Succeeded", "jobFailurePolicy": "Abort", "name": "session-aa9da17d-f786-11ee-a6f7-aa03815e5e6b",
-        "id": "aa9da17d-f786-11ee-a6f7-aa03815e5e6b", "providerId": "quantinuum",
-        "target": "quantinuum.sim.h1-1e", "creationTime": "2024-04-10T22:07:05.5911882Z",
-        "endExecutionTime": "2024-04-10T22:07:39.5877653Z", "costEstimate": {"currencyCode":
+        "Succeeded", "jobFailurePolicy": "Abort", "jobPriority": "Basic", "name":
+        "Qiskit Session", "id": "a02952c6-ee0c-11ee-83e0-00155d1bd86c", "providerId":
+        "rigetti", "target": "rigetti.sim.qvm", "creationTime": "2024-03-29T20:40:48.9980176Z",
+        "endExecutionTime": "2024-03-29T20:41:08.763544Z", "costEstimate": {"currencyCode":
         "USD", "events": [], "estimatedTotal": 0.0}, "itemType": "Session"}], "nextLink":
         null}'
     headers:
       connection:
       - keep-alive
       content-length:
-      - '2099'
+      - '1180'
       content-type:
       - application/json; charset=utf-8
       transfer-encoding:
