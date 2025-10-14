@@ -304,7 +304,7 @@ class QuantumTestBase(ReplayableTest):
                 client_secret=PLACEHOLDER)
 
         workspace = Workspace(
-            credential=credential if credential else EnvironmentCredential(),
+            credential=credential,
             subscription_id=connection_params.subscription_id,
             resource_group=connection_params.resource_group,
             name=connection_params.workspace_name,
