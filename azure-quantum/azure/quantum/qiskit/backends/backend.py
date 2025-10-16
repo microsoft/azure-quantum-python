@@ -10,23 +10,29 @@ import warnings
 
 logger = logging.getLogger(__name__)
 
-from typing import Any, Dict, Union, List, Optional
+from functools import lru_cache
+from typing import Any, Dict, Union, List, Optional, TYPE_CHECKING
 from azure.quantum.version import __version__
 from azure.quantum.qiskit.job import (
     MICROSOFT_OUTPUT_DATA_FORMAT,
-    MICROSOFT_OUTPUT_DATA_FORMAT_V2,
     AzureQuantumJob,
 )
 from abc import abstractmethod
 from azure.quantum.job.session import SessionHost
 
+if TYPE_CHECKING:
+    from azure.quantum import Workspace
+
 try:
     from qiskit import QuantumCircuit
-    from qiskit.providers import BackendV1 as Backend
+    from qiskit.providers import BackendV2 as Backend
     from qiskit.providers import Options
     from qiskit.providers import Provider
     from qiskit.providers.models import BackendConfiguration
     from qiskit.qobj import QasmQobj, PulseQobj
+    from qiskit.transpiler import Target
+    from qiskit.circuit import Instruction, Parameter
+    from qiskit.circuit.library.standard_gates import get_standard_gate_name_mapping
     from qsharp.interop.qiskit import QSharpBackend
     from qsharp import TargetProfile
 
@@ -70,6 +76,77 @@ QIR_BASIS_GATES = [
 ]
 
 
+@lru_cache(maxsize=None)
+def _standard_gate_map() -> Dict[str, Instruction]:
+    mapping = get_standard_gate_name_mapping()
+    # Include both canonical and lowercase keys for easier lookup
+    lowered = {name.lower(): gate for name, gate in mapping.items()}
+    combined = {**mapping, **lowered}
+    return combined
+
+
+def _custom_instruction_builders() -> Dict[str, Instruction]:
+    """Provide Instruction stubs for backend-specific gates.
+
+    Azure Quantum targets expose native operations (for example, IonQ's
+    GPI-family gates or Quantinuum's multi-controlled primitives) that are not
+    part of Qiskit's standard gate catalogue. When we build a Target instance we
+    still need Instruction objects for these names so transpilation and circuit
+    validation can succeed. This helper returns lightweight Instruction
+    definitions that mirror each provider's gate signatures, ensuring
+    ``Target.add_instruction`` has the metadata it requires even though the
+    operations themselves are executed remotely.
+    """
+    param = Parameter
+    return {
+        "gpi": Instruction("gpi", 1, 0, params=[param("phi")]),
+        "gpi2": Instruction("gpi2", 1, 0, params=[param("phi")]),
+        "ms": Instruction(
+            "ms",
+            2,
+            0,
+            params=[param("phi0"), param("phi1"), param("angle")],
+        ),
+        "zz": Instruction("zz", 2, 0, params=[param("angle")]),
+        "v": Instruction("v", 1, 0, params=[]),
+        "vdg": Instruction("vdg", 1, 0, params=[]),
+        "vi": Instruction("vi", 1, 0, params=[]),
+        "si": Instruction("si", 1, 0, params=[]),
+        "ti": Instruction("ti", 1, 0, params=[]),
+        "mcp": Instruction("mcp", 3, 0, params=[param("angle")]),
+        "mcphase": Instruction("mcphase", 3, 0, params=[param("angle")]),
+        "mct": Instruction("mct", 3, 0, params=[]),
+        "mcx": Instruction("mcx", 3, 0, params=[]),
+        "mcx_gray": Instruction("mcx_gray", 3, 0, params=[]),
+        "pauliexp": Instruction("pauliexp", 1, 0, params=[param("time")]),
+        "paulievolution": Instruction("PauliEvolution", 1, 0, params=[param("time")]),
+    }
+
+
+def _resolve_instruction(gate_name: str) -> Optional[Instruction]:
+    if not gate_name:
+        return None
+
+    mapping = _standard_gate_map()
+    instruction = mapping.get(gate_name)
+    if instruction is not None:
+        return instruction.copy()
+
+    lower_name = gate_name.lower()
+    instruction = mapping.get(lower_name)
+    if instruction is not None:
+        return instruction.copy()
+
+    custom_map = _custom_instruction_builders()
+    if gate_name in custom_map:
+        return custom_map[gate_name]
+    if lower_name in custom_map:
+        return custom_map[lower_name]
+
+    # Default to a single-qubit placeholder instruction.
+    return Instruction(gate_name, 1, 0, params=[])
+
+
 class AzureBackendBase(Backend, SessionHost):
 
     # Name of the provider's input parameter which specifies number of shots for a submitted job.
@@ -83,7 +160,54 @@ class AzureBackendBase(Backend, SessionHost):
         provider: Provider = None,
         **fields
     ):
-        super().__init__(configuration, provider, **fields)
+        if configuration is None:
+            raise ValueError("Backend configuration is required for Azure backends")
+
+        warnings.warn(
+            "The BackendConfiguration parameter is deprecated and will be removed when the SDK "
+            "adopts Qiskit 2.0. Future versions will expose a lightweight provider-specific "
+            "configuration instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+
+        self._configuration = configuration
+        self._max_circuits = getattr(configuration, "max_experiments", 1)
+        if self._max_circuits is None or self._max_circuits != 1:
+            raise ValueError(
+                "This backend only supports running a single circuit per job."
+                )
+
+        super().__init__(
+            provider=provider,
+            name=getattr(configuration, "backend_name", None),
+            description=getattr(configuration, "description", None),
+            backend_version=getattr(configuration, "backend_version", None),
+            **fields,
+        )
+
+        self._target = self._build_target(configuration)
+
+    def _build_target(self, configuration: BackendConfiguration) -> Target:
+        num_qubits = getattr(configuration, "n_qubits", None)
+        target = Target(
+            description=getattr(configuration, "description", None),
+            num_qubits=num_qubits,
+            dt=getattr(configuration, "dt", None),
+        )
+
+        basis_gates: List[str] = list(getattr(configuration, "basis_gates", []) or [])
+        for gate_name in dict.fromkeys(basis_gates + ["measure", "reset"]):
+            instruction = _resolve_instruction(gate_name)
+            if instruction is None:
+                continue
+            try:
+                target.add_instruction(instruction)
+            except AttributeError:
+                # Instruction already registered; skip duplicates.
+                continue
+
+        return target
     
     @abstractmethod
     def run(
@@ -129,25 +253,34 @@ class AzureBackendBase(Backend, SessionHost):
     def _azure_config(self) -> Dict[str, str]:
         pass
 
+    def configuration(self) -> BackendConfiguration:
+        warnings.warn(
+            "AzureBackendBase.configuration() is deprecated and will be removed when the SDK "
+            "switches to Qiskit 2.0.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return self._configuration
+
+    @property
+    def target(self) -> Target:
+        return self._target
+
+    @property
+    def max_circuits(self) -> Optional[int]:
+        return self._max_circuits
+
     def retrieve_job(self, job_id) -> AzureQuantumJob:
         """Returns the Job instance associated with the given id."""
-        return self._provider.get_job(job_id)
+        return self.provider.get_job(job_id)
 
     def _get_output_data_format(self, options: Dict[str, Any] = {}) -> str:
         config: BackendConfiguration = self.configuration()
-        # output data format default depends on the number of experiments. QIR backends
-        # that don't define a default in their azure config will use this value
-        # Once more than one experiment is supported, we should always use the v2 format
-        default_output_data_format = (
-            MICROSOFT_OUTPUT_DATA_FORMAT
-            if config.max_experiments == 1
-            else MICROSOFT_OUTPUT_DATA_FORMAT_V2
-        )
 
         azure_config: Dict[str, Any] = config.azure
         # if the backend defines an output format, use that over the default
         azure_defined_override = azure_config.get(
-            "output_data_format", default_output_data_format
+            "output_data_format", MICROSOFT_OUTPUT_DATA_FORMAT
         )
         # if the user specifies an output format, use that over the default azure config
         output_data_format = options.pop("output_data_format", azure_defined_override)
@@ -212,7 +345,7 @@ class AzureBackendBase(Backend, SessionHost):
         return input_params
 
     def _run(self, job_name, input_data, input_params, metadata, **options):
-        logger.info(f"Submitting new job for backend {self.name()}")
+        logger.info(f"Submitting new job for backend {self.name}")
 
         # The default of these job parameters come from the AzureBackend configuration:
         config = self.configuration()
@@ -237,13 +370,13 @@ class AzureBackendBase(Backend, SessionHost):
             message += "To find a QIR capable backend, use the following code:"
             message += os.linesep
             message += (
-                f'\tprovider.get_backend("{self.name()}", input_data_format: "qir.v1").'
+                f'\tprovider.get_backend("{self.name}", input_data_format: "qir.v1").'
             )
             raise ValueError(message)
 
         job = AzureQuantumJob(
             backend=self,
-            target=self.name(),
+            target=self.name,
             name=job_name,
             input_data=input_data,
             blob_name=blob_name,
@@ -291,10 +424,10 @@ class AzureBackendBase(Backend, SessionHost):
             raise ValueError("No input provided.")
 
     def _get_azure_workspace(self) -> "Workspace":
-        return self.provider().get_workspace()
+        return self.provider.get_workspace()
 
     def _get_azure_target_id(self) -> str:
-        return self.name()
+        return self.name
 
     def _get_azure_provider_id(self) -> str:
         return self._azure_config()["provider_id"]
