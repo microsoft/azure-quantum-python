@@ -10,7 +10,7 @@ import warnings
 
 logger = logging.getLogger(__name__)
 
-from typing import Any, Dict, Tuple, Union, List, Optional
+from typing import Any, Dict, Union, List, Optional
 from azure.quantum.version import __version__
 from azure.quantum.qiskit.job import (
     MICROSOFT_OUTPUT_DATA_FORMAT,
@@ -27,7 +27,6 @@ try:
     from qiskit.providers import Provider
     from qiskit.providers.models import BackendConfiguration
     from qiskit.qobj import QasmQobj, PulseQobj
-    import pyqir as pyqir
     from qsharp.interop.qiskit import QSharpBackend
     from qsharp import TargetProfile
 
@@ -101,7 +100,7 @@ class AzureBackendBase(Backend, SessionHost):
 
         Args:
             run_input (QuantumCircuit or List[QuantumCircuit]): An individual or a
-            list of :class:`~qiskit.circuits.QuantumCircuit` to run on the backend.
+            list of one :class:`~qiskit.circuits.QuantumCircuit` to run on the backend.
             shots (int, optional): Number of shots, defaults to None.
             options: Any kwarg options to pass to the backend for running the
             config. If a key is also present in the options
@@ -334,7 +333,7 @@ class AzureQirBackend(AzureBackendBase):
 
         Args:
             run_input (QuantumCircuit or List[QuantumCircuit]): An individual or a
-            list of :class:`~qiskit.circuits.QuantumCircuit` to run on the backend.
+            list of one :class:`~qiskit.circuits.QuantumCircuit` to run on the backend.
             shots (int, optional): Number of shots, defaults to None.
             options: Any kwarg options to pass to the backend for running the
             config. If a key is also present in the options
@@ -349,17 +348,16 @@ class AzureQirBackend(AzureBackendBase):
         options.pop("run_input", None)
         options.pop("circuit", None)
 
-        circuits = list([])
-        if isinstance(run_input, QuantumCircuit):
-            circuits = [run_input]
-        else:
-            circuits = run_input
-
-        max_circuits_per_job = self.configuration().max_experiments
-        if len(circuits) > max_circuits_per_job:
-            raise NotImplementedError(
-                f"This backend only supports running a maximum of {max_circuits_per_job} circuits per job."
-            )
+        circuit = run_input
+        if isinstance(run_input, list):
+            # just in case they passed a list, we only support single-experiment jobs
+            if len(run_input) != 1:
+                raise NotImplementedError(
+                    f"This backend only supports running a single circuit per job."
+                )
+            circuit = run_input[0]
+            if not isinstance(circuit, QuantumCircuit):
+                raise ValueError("Invalid input: expected a QuantumCircuit.")
 
         # config normalization
         input_params = self._get_input_params(options, shots=shots)
@@ -369,18 +367,11 @@ class AzureQirBackend(AzureBackendBase):
         if self._can_send_shots_input_param():
             shots_count = input_params.get(self.__class__._SHOTS_PARAM_NAME)
 
-        job_name = ""
-        if len(circuits) > 1:
-            job_name = f"batch-{len(circuits)}"
-            if shots_count is not None:
-                job_name = f"{job_name}-{shots_count}"
-        else:
-            job_name = circuits[0].name
-        job_name = options.pop("job_name", job_name)
+        job_name = options.pop("job_name", circuit.name)
 
-        metadata = options.pop("metadata", self._prepare_job_metadata(circuits))
+        metadata = options.pop("metadata", self._prepare_job_metadata(circuit))
 
-        input_data = self._translate_input(circuits, input_params)
+        input_data = self._translate_input(circuit, input_params)
 
         job = super()._run(job_name, input_data, input_params, metadata, **options)
         logger.info(
@@ -389,28 +380,19 @@ class AzureQirBackend(AzureBackendBase):
 
         return job
 
-    def _prepare_job_metadata(self, circuits: List[QuantumCircuit]) -> Dict[str, str]:
+    def _prepare_job_metadata(self, circuit: QuantumCircuit) -> Dict[str, str]:
         """Returns the metadata relative to the given circuits that will be attached to the Job"""
-        if len(circuits) == 1:
-            circuit: QuantumCircuit = circuits[0]
-            return {
-                "qiskit": str(True),
-                "name": circuit.name,
-                "num_qubits": circuit.num_qubits,
-                "metadata": json.dumps(circuit.metadata),
-            }
-        # for batch jobs, we don't want to store the metadata of each circuit
-        # we fill out the result header in output processing.
-        # These headers don't matter for execution are are only used for
-        # result processing.
-        return {}
+        return {
+            "qiskit": str(True),
+            "name": circuit.name,
+            "num_qubits": circuit.num_qubits,
+            "metadata": json.dumps(circuit.metadata),
+        }
 
-    def _generate_qir(
-        self, circuits: List[QuantumCircuit], target_profile: TargetProfile, **kwargs
-    ) -> pyqir.Module:
 
-        if len(circuits) == 0:
-            raise ValueError("No QuantumCircuits provided")
+    def _get_qir_str(
+        self, circuit: QuantumCircuit, target_profile: TargetProfile, **kwargs
+    ) -> str:
 
         config = self.configuration()
         # Barriers aren't removed by transpilation and must be explicitly removed in the Qiskit to QIR translation.
@@ -424,72 +406,36 @@ class AzureQirBackend(AzureBackendBase):
             **kwargs,
         )
 
-        name = "batch"
-        if len(circuits) == 1:
-            name = circuits[0].name
+        qir_str = backend.qir(circuit)
+        
+        return qir_str
 
-        if isinstance(circuits, list):
-            for value in circuits:
-                if not isinstance(value, QuantumCircuit):
-                    raise ValueError("Input must be List[QuantumCircuit]")
-        else:
-            raise ValueError("Input must be List[QuantumCircuit]")
-
-        context = pyqir.Context()
-        llvm_module = pyqir.qir_module(context, name)
-        for circuit in circuits:
-            qir_str = backend.qir(circuit)
-            module = pyqir.Module.from_ir(context, qir_str)
-            entry_point = next(filter(pyqir.is_entry_point, module.functions))
-            entry_point.name = circuit.name
-            llvm_module.link(module)
-        err = llvm_module.verify()
-        if err is not None:
-            raise Exception(err)
-
-        return llvm_module
-
-    def _get_qir_str(
-        self,
-        circuits: List[QuantumCircuit],
-        target_profile: TargetProfile,
-        **to_qir_kwargs,
-    ) -> str:
-        module = self._generate_qir(circuits, target_profile, **to_qir_kwargs)
-        return str(module)
 
     def _translate_input(
-        self, circuits: Union[QuantumCircuit, List[QuantumCircuit]], input_params: Dict[str, Any]
+        self, circuit: QuantumCircuit, input_params: Dict[str, Any]
     ) -> bytes:
         """Translates the input values to the QIR expected by the Backend."""
         logger.info(f"Using QIR as the job's payload format.")
-        if not (isinstance(circuits, list)):
-            circuits = [circuits]
 
         target_profile = self._get_target_profile(input_params)
 
         if logger.isEnabledFor(logging.DEBUG):
-            qir = self._get_qir_str(circuits, target_profile, skip_transpilation=True)
+            qir = self._get_qir_str(circuit, target_profile, skip_transpilation=True)
             logger.debug(f"QIR:\n{qir}")
 
         # We'll transpile automatically to the supported gates in QIR unless explicitly skipped.
         skip_transpilation = input_params.pop("skipTranspile", False)
 
-        module = self._generate_qir(
-            circuits, target_profile, skip_transpilation=skip_transpilation
+        qir_str = self._get_qir_str(
+            circuit, target_profile, skip_transpilation=skip_transpilation
         )
 
-        def get_func_name(func: pyqir.Function) -> str:
-            return func.name
-
-        entry_points = list(
-            map(get_func_name, filter(pyqir.is_entry_point, module.functions))
-        )
+        entry_points = ["ENTTRYPOINT_main"]
 
         if not skip_transpilation:
             # We'll only log the QIR again if we performed a transpilation.
             if logger.isEnabledFor(logging.DEBUG):
-                qir = str(module)
+                qir = str(qir_str)
                 logger.debug(f"QIR (Post-transpilation):\n{qir}")
 
         if "items" not in input_params:
@@ -498,7 +444,7 @@ class AzureQirBackend(AzureBackendBase):
                 {"entryPoint": name, "arguments": arguments} for name in entry_points
             ]
 
-        return str(module).encode("utf-8")
+        return qir_str.encode("utf-8")
 
     def _get_target_profile(self, input_params) -> TargetProfile:
         # Default to Adaptive_RI if not specified on the backend
