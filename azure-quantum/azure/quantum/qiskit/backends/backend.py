@@ -10,7 +10,7 @@ import warnings
 
 logger = logging.getLogger(__name__)
 
-from typing import Any, Dict, Tuple, Union, List, Optional
+from typing import TYPE_CHECKING, Any, Dict, Union, List, Optional
 from azure.quantum.version import __version__
 from azure.quantum.qiskit.job import (
     MICROSOFT_OUTPUT_DATA_FORMAT,
@@ -20,11 +20,13 @@ from azure.quantum.qiskit.job import (
 from abc import abstractmethod
 from azure.quantum.job.session import SessionHost
 
+if TYPE_CHECKING:
+    from azure.quantum.qiskit import AzureQuantumProvider
+
 try:
     from qiskit import QuantumCircuit
     from qiskit.providers import BackendV1 as Backend
     from qiskit.providers import Options
-    from qiskit.providers import Provider
     from qiskit.providers.models import BackendConfiguration
     from qiskit.qobj import QasmQobj, PulseQobj
     import pyqir as pyqir
@@ -81,7 +83,7 @@ class AzureBackendBase(Backend, SessionHost):
     def __init__(
         self,
         configuration: BackendConfiguration,
-        provider: Provider = None,
+        provider: "AzureQuantumProvider" = None,
         **fields
     ):
         super().__init__(configuration, provider, **fields)
@@ -304,7 +306,7 @@ class AzureBackendBase(Backend, SessionHost):
 class AzureQirBackend(AzureBackendBase):
     @abstractmethod
     def __init__(
-        self, configuration: BackendConfiguration, provider: Provider = None, **fields
+        self, configuration: BackendConfiguration, provider: "AzureQuantumProvider" = None, **fields
     ):
         super().__init__(configuration, provider, **fields)
 
@@ -528,7 +530,7 @@ class AzureBackend(AzureBackendBase):
 
     @abstractmethod
     def __init__(
-        self, configuration: BackendConfiguration, provider: Provider = None, **fields
+        self, configuration: BackendConfiguration, provider: "AzureQuantumProvider" = None, **fields
     ):
         super().__init__(configuration, provider, **fields)
 

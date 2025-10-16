@@ -10,7 +10,7 @@ from abc import abstractmethod
 from .backend import AzureQirBackend
 
 from qiskit.providers.models import BackendConfiguration
-from qiskit.providers import Options, Provider
+from qiskit.providers import Options
 from qsharp import TargetProfile
 
 if TYPE_CHECKING:
@@ -32,7 +32,7 @@ class RigettiBackend(AzureQirBackend):
 
     @abstractmethod
     def __init__(
-        self, configuration: BackendConfiguration, provider: Provider = None, **fields
+        self, configuration: BackendConfiguration, provider: "AzureQuantumProvider" = None, **fields
     ):
         super().__init__(configuration, provider, **fields)
 
