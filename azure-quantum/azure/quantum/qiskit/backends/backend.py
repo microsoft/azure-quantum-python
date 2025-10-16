@@ -430,7 +430,7 @@ class AzureQirBackend(AzureBackendBase):
             circuit, target_profile, skip_transpilation=skip_transpilation
         )
 
-        entry_points = ["ENTTRYPOINT_main"]
+        entry_points = ["ENTRYPOINT__main"]
 
         if not skip_transpilation:
             # We'll only log the QIR again if we performed a transpilation.
