@@ -15,7 +15,6 @@ from .backend import (
 )
 from abc import abstractmethod
 from qiskit.providers import Options
-from qiskit.providers import Provider
 from qiskit.qasm2 import dumps
 from qsharp import TargetProfile
 import logging
@@ -77,7 +76,7 @@ class QuantinuumQirBackendBase(AzureQirBackend):
 
     @abstractmethod
     def __init__(
-        self, configuration: AzureBackendConfig, provider: Provider = None, **fields
+        self, configuration: AzureBackendConfig, provider: "AzureQuantumProvider" = None, **fields
     ):
         super().__init__(configuration, provider, **fields)
 
@@ -225,7 +224,7 @@ class QuantinuumBackend(AzureBackend):
 
     @abstractmethod
     def __init__(
-        self, configuration: AzureBackendConfig, provider: Provider = None, **fields
+        self, configuration: AzureBackendConfig, provider: "AzureQuantumProvider" = None, **fields
     ):
         super().__init__(configuration, provider, **fields)
 

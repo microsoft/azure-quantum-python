@@ -8,7 +8,7 @@ from azure.quantum.version import __version__
 from azure.quantum.target.rigetti import RigettiTarget
 from abc import abstractmethod
 from .backend import AzureBackendConfig, AzureQirBackend, _ensure_backend_config
-from qiskit.providers import Options, Provider
+from qiskit.providers import Options
 from qsharp import TargetProfile
 
 if TYPE_CHECKING:
@@ -30,7 +30,7 @@ class RigettiBackend(AzureQirBackend):
 
     @abstractmethod
     def __init__(
-        self, configuration: AzureBackendConfig, provider: Provider = None, **fields
+        self, configuration: AzureBackendConfig, provider: "AzureQuantumProvider" = None, **fields
     ):
         super().__init__(configuration, provider, **fields)
 

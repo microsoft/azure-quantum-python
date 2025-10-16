@@ -13,7 +13,7 @@ from .backend import (
     _ensure_backend_config,
     _get_shots_or_deprecated_count_input_param,
 )
-from qiskit.providers import Options, Provider
+from qiskit.providers import Options
 from qsharp import TargetProfile
 
 
@@ -35,7 +35,7 @@ class QCIBackend(AzureQirBackend):
 
     @abstractmethod
     def __init__(
-        self, configuration: AzureBackendConfig, provider: Provider = None, **fields
+        self, configuration: AzureBackendConfig, provider: "AzureQuantumProvider" = None, **fields
     ):
         super().__init__(configuration, provider, **fields)
 

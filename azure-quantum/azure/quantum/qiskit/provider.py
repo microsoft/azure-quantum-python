@@ -5,12 +5,12 @@
 
 import warnings
 import inspect
-from itertools import groupby
 from typing import Dict, List, Optional, Tuple, Type
+
+from abc import ABC
 from azure.quantum import Workspace
 
 try:
-    from qiskit.providers import ProviderV1 as Provider
     from qiskit.providers.exceptions import QiskitBackendNotFoundError
     from qiskit.providers import BackendV2 as Backend
     from qiskit.exceptions import QiskitError
@@ -26,7 +26,7 @@ from azure.quantum.qiskit.backends import *
 
 QISKIT_USER_AGENT = "azure-quantum-qiskit"
 
-class AzureQuantumProvider(Provider):
+class AzureQuantumProvider(ABC):
     
     def __init__(self, workspace: Optional[Workspace]=None, **kwargs):
         """Class for interfacing with the Azure Quantum service
@@ -281,3 +281,9 @@ see https://aka.ms/AQ/Docs/AddProvider"
         backends = list(filter(filters, backends))
         
         return backends
+
+    def __eq__(self, other):
+        """
+        Equality comparison.
+        """
+        return type(self).__name__ == type(other).__name__

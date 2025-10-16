@@ -27,12 +27,12 @@ QOBJ_TYPES: Tuple[type, ...] = tuple()
 
 if TYPE_CHECKING:
     from azure.quantum import Workspace
+    from azure.quantum.qiskit import AzureQuantumProvider
 
 try:
     from qiskit import QuantumCircuit
     from qiskit.providers import BackendV2 as Backend
     from qiskit.providers import Options
-    from qiskit.providers import Provider
     from qiskit.transpiler import Target
     from qiskit.circuit import Instruction, Parameter
     from qiskit.circuit.library.standard_gates import get_standard_gate_name_mapping
@@ -308,7 +308,7 @@ class AzureBackendBase(Backend, SessionHost):
     def __init__(
         self,
         configuration: Any,
-        provider: Provider = None,
+        provider: "AzureQuantumProvider" = None,
         **fields
     ):
         if configuration is None:
@@ -600,7 +600,7 @@ class AzureQirBackend(AzureBackendBase):
     def __init__(
         self,
         configuration: AzureBackendConfig,
-        provider: Provider = None,
+        provider: "AzureQuantumProvider" = None,
         **fields,
     ):
         super().__init__(configuration, provider, **fields)
@@ -775,7 +775,7 @@ class AzureBackend(AzureBackendBase):
     def __init__(
         self,
         configuration: AzureBackendConfig,
-        provider: Provider = None,
+        provider: "AzureQuantumProvider" = None,
         **fields,
     ):
         super().__init__(configuration, provider, **fields)
