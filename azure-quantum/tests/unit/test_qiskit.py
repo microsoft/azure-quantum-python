@@ -11,10 +11,11 @@ import pytest
 import numpy as np
 import collections
 
-from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister
+from qiskit import ClassicalRegister, QuantumCircuit, QuantumRegister, transpile
 from qiskit.providers import JobStatus
 from qiskit.providers.models import BackendConfiguration
-from qiskit.providers import BackendV1 as Backend
+from qiskit.providers import BackendV2 as Backend
+from qiskit.providers import Options
 from qiskit.providers.exceptions import QiskitBackendNotFoundError
 from qiskit_ionq.exceptions import IonQGateError
 from qiskit_ionq import GPIGate, GPI2Gate, MSGate
@@ -32,9 +33,22 @@ from azure.quantum.qiskit.job import (
 from azure.quantum.qiskit.backends.backend import (
     AzureBackend,
     AzureQirBackend,
+    QIR_BASIS_GATES,
 )
-from azure.quantum.qiskit.backends.quantinuum import QuantinuumEmulatorQirBackend, QuantinuumQirBackendBase
-from azure.quantum.qiskit.backends.ionq import IonQSimulatorQirBackend
+from qiskit.circuit import Instruction
+from qiskit.circuit.library import UGate, U1Gate, U2Gate, U3Gate
+
+from azure.quantum.qiskit.backends.quantinuum import (
+    QuantinuumEmulatorBackend,
+    QuantinuumEmulatorQirBackend,
+    QuantinuumQirBackendBase,
+)
+from azure.quantum.qiskit.backends.ionq import (
+    IonQSimulatorNativeBackend,
+    IonQSimulatorQirBackend,
+)
+from azure.quantum.qiskit.backends.qci import QCISimulatorBackend
+from azure.quantum.qiskit.backends.rigetti import RigettiSimulatorBackend
 from azure.quantum.target.rigetti import RigettiTarget
 
 # This provider is used to stub out calls to the AzureQuantumProvider
@@ -56,7 +70,7 @@ class DummyProvider(AzureQuantumProvider):
         backend_list = [x for v in self._backends.values() for x in v]
         selection = []
         for backend in backend_list:
-            if backend.name() == name:
+            if backend.name == name:
                 selection.append(
                     (name, backend.configuration().to_dict()["azure"]["provider_id"])
                 )
@@ -70,7 +84,7 @@ class DummyProvider(AzureQuantumProvider):
         return any(
             tup
             for tup in allowed_targets
-            if tup[0] == backend.name()
+            if tup[0] == backend.name
             and tup[1] == backend.configuration().to_dict()["azure"]["provider_id"]
         )
 
@@ -124,10 +138,10 @@ class NoopQirBackend(AzureQirBackend):
         return values
 
     def _default_options(cls):
-        return None
+        return Options()
 
     def _translate_input(
-        self, circuits: List[QuantumCircuit], input_params: Dict[str, Any]
+        self, circuit: QuantumCircuit, input_params: Dict[str, Any]
     ) -> bytes:
         return None
 
@@ -171,7 +185,7 @@ class NoopPassThruBackend(AzureBackend):
         return fields
 
     def _default_options(cls):
-        return None
+        return Options()
 
     def _translate_input(self, circuit):
         return None
@@ -199,6 +213,130 @@ class TestQiskit(QuantumTestBase):
             circuit.h(q)
         circuit.measure([0], [0])
         return circuit
+
+    def _assert_transpile_respects_target(
+        self,
+        backend,
+        circuit: QuantumCircuit,
+        expected_ops: set[str] | None = None,
+        **kwargs,
+    ) -> QuantumCircuit:
+        """Transpile ``circuit`` for ``backend`` and assert only supported gates remain.
+
+        Parameters
+        ----------
+        backend:
+            The Azure Quantum backend under test whose ``Target`` defines the
+            supported operation set.
+        circuit: QuantumCircuit
+            The input circuit to transpile.
+        expected_ops: set[str] | None
+            Optional collection of gate names that must appear in the
+            transpiled output.
+
+        Returns
+        -------
+        QuantumCircuit
+            The transpiled circuit, validated to contain only target-supported
+            operations (aside from virtual barriers).
+        """
+        transpiled_circuit = transpile(circuit, backend=backend, target=backend.target, **kwargs)
+
+        target_ops = {instruction.name for instruction in backend.target.operations}
+        transpiled_ops = [instruction.operation.name for instruction in transpiled_circuit.data]
+
+        allowed_virtual_ops = {"barrier"}
+        unsupported = {
+            name
+            for name in transpiled_ops
+            if name not in target_ops and name not in allowed_virtual_ops
+        }
+        self.assertFalse(
+            unsupported,
+            msg=(
+                f"Transpiled circuit for backend '{backend.name}' contains unsupported "
+                f"operations: {sorted(unsupported)}"
+            ),
+        )
+
+        if expected_ops:
+            missing = set(expected_ops) - set(transpiled_ops)
+            self.assertFalse(
+                missing,
+                msg=(
+                    f"Transpiled circuit for backend '{backend.name}' is missing expected "
+                    f"operations: {sorted(missing)}, found: {sorted(transpiled_ops)}"
+                ),
+            )
+
+        return transpiled_circuit
+
+    def _build_non_qir_test_circuit(self) -> Tuple[QuantumCircuit, set[str]]:
+        """Create a circuit exercising gates absent from ``QIR_BASIS_GATES``.
+
+        Returns
+        -------
+        Tuple[QuantumCircuit, set[str]]
+            A two-qubit circuit populated with standard gates not listed in the
+            QIR basis, along with the set of those non-QIR gate names. The
+            helper fails if no such gates are present, ensuring test coverage
+            stays meaningful.
+        """
+        circuit = QuantumCircuit(2)
+        circuit.append(UGate(np.pi / 3, np.pi / 5, np.pi / 7), [0])
+        circuit.append(U1Gate(np.pi / 9), [0])
+        circuit.append(U2Gate(np.pi / 8, np.pi / 6), [1])
+        circuit.append(U3Gate(np.pi / 4, np.pi / 3, np.pi / 2), [1])
+        circuit.p(np.pi / 7, 0)
+        circuit.cp(np.pi / 6, 0, 1)
+        circuit.iswap(0, 1)
+        circuit.rzx(np.pi / 5, 0, 1)
+        circuit.measure_all()
+
+        initial_ops = {
+            instruction.operation.name
+            for instruction in circuit.data
+            if instruction.operation.name != "measure"
+        }
+        non_qir_ops = {
+            name
+            for name in initial_ops
+            if name not in set(QIR_BASIS_GATES) and name != "barrier"
+        }
+        self.assertTrue(
+            non_qir_ops,
+            "Non-QIR gates should be present in the test circuit before transpilation.",
+        )
+        return circuit, non_qir_ops
+
+    def _assert_qir_transpile_decomposes_non_qir_gates(self, backend) -> set[str]:
+        """Ensure QIR transpilation removes all non-QIR gates for ``backend``.
+
+        Parameters
+        ----------
+        backend:
+            The QIR backend whose transpilation behavior is being validated.
+
+        Returns
+        -------
+        set[str]
+            The set of operation names found in the transpiled circuit,
+            guaranteed not to intersect with the generated non-QIR gate set.
+        """
+        circuit, non_qir_ops = self._build_non_qir_test_circuit()
+        transpiled = self._assert_transpile_respects_target(backend, circuit)
+        transpiled_ops = {
+            instruction.operation.name for instruction in transpiled.data
+        }
+        intersection = non_qir_ops & transpiled_ops
+        self.assertFalse(
+            intersection,
+            msg=(
+                f"Transpiled circuit for backend '{backend.name}' contains non-QIR gates "
+                f"that should have been decomposed: {sorted(intersection)}"
+            ),
+        )
+        return transpiled_ops
 
     def _controlled_s(self):
         circuit = QuantumCircuit(3)
@@ -436,7 +574,7 @@ class TestQiskit(QuantumTestBase):
 
         with pytest.raises(NotImplementedError) as exc:
             backend.run(circuit=[circuit, circuit], shots=500)
-        self.assertEqual(str(exc.value), "This backend only supports running a maximum of 1 circuits per job.")
+        self.assertEqual(str(exc.value), "This backend only supports running a single circuit per job.")
 
     @pytest.mark.ionq
     @pytest.mark.live_test
@@ -501,7 +639,7 @@ class TestQiskit(QuantumTestBase):
             self.assertEqual(len(memory), shots)
             self.assertTrue(all([shot == "000" or shot == "111" for shot in memory]))
             self.assertEqual(counts, result.data()["counts"])
-    
+
     @pytest.mark.ionq
     @pytest.mark.live_test
     @pytest.mark.xdist_group(name="ionq.simulator")
@@ -743,7 +881,7 @@ class TestQiskit(QuantumTestBase):
         backends = provider.backends()
 
         # Check that all names are unique
-        backend_names = [b.name() for b in backends]
+        backend_names = [b.name for b in backends]
         assert sorted(set(backend_names)) == sorted(backend_names)
 
         # Also check that all backends are default
@@ -803,6 +941,34 @@ class TestQiskit(QuantumTestBase):
         config = backend.configuration()
         self.assertEqual(config.gateset, "qis")
 
+    @pytest.mark.ionq
+    def test_ionq_transpile_supports_native_instructions(self):
+        backend = IonQSimulatorNativeBackend(
+            name="ionq.simulator", provider=None, gateset="native"
+        )
+
+        circuit = QuantumCircuit(2)
+        circuit.append(MSGate(0.1, 0.2), [0, 1])
+        circuit.append(GPIGate(0.3), [0])
+        circuit.append(GPI2Gate(0.4), [1])
+
+        self._assert_transpile_respects_target(
+            backend,
+            circuit,
+            expected_ops={"ms", "gpi", "gpi2"},
+        )
+
+    @pytest.mark.ionq
+    def test_ionq_qir_transpile_converts_non_qir_gates(self):
+        backend = IonQSimulatorQirBackend(name="ionq.simulator", provider=None)
+
+        transpiled_ops = self._assert_qir_transpile_decomposes_non_qir_gates(backend)
+        self.assertGreater(
+            len(transpiled_ops - {"measure"}),
+            0,
+            "Expected decomposed operations besides measurement.",
+        )
+    
     @pytest.mark.ionq
     def test_ionq_qpu_has_default(self):
         provider = DummyProvider()
@@ -879,7 +1045,7 @@ class TestQiskit(QuantumTestBase):
         provider = AzureQuantumProvider(workspace=workspace)
 
         backend = provider.get_backend("ionq.qpu.aria-1")
-        self.assertEqual(backend.name(), "ionq.qpu.aria-1")
+        self.assertEqual(backend.name, "ionq.qpu.aria-1")
         config = backend.configuration()
         self.assertFalse(config.simulator)
         self.assertEqual(1, config.max_experiments)
@@ -938,7 +1104,7 @@ class TestQiskit(QuantumTestBase):
     #     provider = AzureQuantumProvider(workspace=workspace)
 
     #     backend = provider.get_backend("ionq.qpu.aria-1")
-    #     self.assertEqual(backend.name(), "ionq.qpu.aria-1")
+    #     self.assertEqual(backend.name, "ionq.qpu.aria-1")
     #     config = backend.configuration()
     #     self.assertFalse(config.simulator)
     #     self.assertEqual(1, config.max_experiments)
@@ -1111,7 +1277,7 @@ class TestQiskit(QuantumTestBase):
 
         with self.assertRaises(NotImplementedError) as context:
             backend.run(circuit=[circuit, circuit], shots=None)
-        self.assertEqual(str(context.exception), "This backend only supports running a maximum of 1 circuits per job.")
+        self.assertEqual(str(context.exception), "This backend only supports running a single circuit per job.")
     
     @pytest.mark.quantinuum
     @pytest.mark.live_test
@@ -1491,6 +1657,72 @@ class TestQiskit(QuantumTestBase):
         self.assertIn("arguments", item)
 
     @pytest.mark.quantinuum
+    def test_quantinuum_transpile_supports_native_instructions(self):
+        backend = QuantinuumEmulatorBackend(
+            name="quantinuum.sim.h2-1e", provider=None
+        )
+
+        circuit = QuantumCircuit(2)
+        circuit.append(Instruction("v", 1, 0, []), [0])
+        circuit.append(Instruction("vdg", 1, 0, []), [1])
+        circuit.append(Instruction("zz", 2, 0, [0.5]), [0, 1])
+
+        self._assert_transpile_respects_target(
+            backend,
+            circuit,
+            expected_ops={"v", "vdg", "zz"},
+        )
+
+    @pytest.mark.quantinuum
+    def test_quantinuum_qir_transpile_converts_non_qir_gates(self):
+        backend = QuantinuumEmulatorQirBackend(name="quantinuum.sim.h2-1e", provider=None)
+
+        transpiled_ops = self._assert_qir_transpile_decomposes_non_qir_gates(backend)
+        self.assertGreater(
+            len(transpiled_ops - {"measure"}),
+            0,
+            "Expected decomposed operations besides measurement.",
+        )
+
+    @pytest.mark.quantinuum
+    def test_quantinuum_qir_transpile_decomposes_initialize(self):
+        backend = QuantinuumEmulatorQirBackend(name="quantinuum.sim.h2-1e", provider=None)
+
+        circuit = QuantumCircuit(1)
+        circuit.initialize([0, 1], 0)
+
+        # we would get rz, rz, rz, sx, sx, but optimizing should reduce this to just ry
+        transpiled = self._assert_transpile_respects_target(
+            backend,
+            circuit,
+            expected_ops={"reset", "ry"},
+            optimization_level=2
+        )
+
+        transpiled_ops = [instruction.operation.name for instruction in transpiled.data]
+
+        self.assertNotIn(
+            "initialize",
+            transpiled_ops,
+            "State preparation should be decomposed for Quantinuum QIR backends.",
+        )
+        self.assertEqual(
+            transpiled_ops,
+            ["reset", "ry"],
+            f"Unexpected decomposition for Quantinuum QIR transpilation: {transpiled_ops}",
+        )
+        self.assertEqual(
+            len(transpiled_ops),
+            2,
+            "Initialize should decompose into exactly two operations for Quantinuum QIR backends.",
+        )
+        self.assertAlmostEqual(
+            transpiled.data[1].operation.params[0],
+            np.pi,
+            msg="Initialize([0, 1]) should decompose to an ry(pi) rotation.",
+        )
+
+    @pytest.mark.quantinuum
     @pytest.mark.live_test
     def test_configuration_quantinuum_backends(self):
         workspace = self.create_workspace()
@@ -1519,6 +1751,34 @@ class TestQiskit(QuantumTestBase):
             self.assertEqual(56, config.num_qubits)
 
     @pytest.mark.rigetti
+    def test_rigetti_qir_transpile_converts_non_qir_gates(self):
+        backend = RigettiSimulatorBackend(name=RigettiTarget.QVM.value, provider=None)
+
+        transpiled_ops = self._assert_qir_transpile_decomposes_non_qir_gates(backend)
+        self.assertGreater(
+            len(transpiled_ops - {"measure"}),
+            0,
+            "Expected decomposed operations besides measurement.",
+        )
+
+    @pytest.mark.rigetti
+    def test_rigetti_transpile_supports_standard_gates(self):
+        backend = RigettiSimulatorBackend(
+            name=RigettiTarget.QVM.value, provider=None
+        )
+
+        circuit = QuantumCircuit(2)
+        circuit.h(0)
+        circuit.cx(0, 1)
+        circuit.measure_all()
+
+        self._assert_transpile_respects_target(
+            backend,
+            circuit,
+            expected_ops={"h", "cx", "measure"},
+        )
+
+    @pytest.mark.rigetti
     @pytest.mark.live_test
     @pytest.mark.xdist_group(name=RigettiTarget.QVM.value)
     def test_qiskit_submit_to_rigetti(self):
@@ -1527,7 +1787,7 @@ class TestQiskit(QuantumTestBase):
         provider = AzureQuantumProvider(workspace=workspace)
         self.assertIn("azure-quantum-qiskit", provider._workspace.user_agent)
         backend = provider.get_backend(RigettiTarget.QVM.value)
-        self.assertEqual(backend.name(), RigettiTarget.QVM.value)
+        self.assertEqual(backend.name, RigettiTarget.QVM.value)
         config = backend.configuration()
         self.assertTrue(config.simulator)
         self.assertEqual(1, config.max_experiments)
@@ -1661,7 +1921,7 @@ class TestQiskit(QuantumTestBase):
             warnings.warn(f"{msg}\nException:\n{QiskitBackendNotFoundError.__name__}\n{ex}")
             pytest.skip(msg)
 
-        self.assertEqual(backend.name(), RigettiTarget.ANKAA_3.value)
+        self.assertEqual(backend.name, RigettiTarget.ANKAA_3.value)
         config = backend.configuration()
         self.assertFalse(config.simulator)
         self.assertEqual(1, config.max_experiments)
@@ -1671,6 +1931,32 @@ class TestQiskit(QuantumTestBase):
         self.assertEqual("qir.v1", config.azure["input_data_format"])
         self.assertEqual(MICROSOFT_OUTPUT_DATA_FORMAT_V2, backend._get_output_data_format())
 
+    @pytest.mark.qci
+    def test_qci_qir_transpile_converts_non_qir_gates(self):
+        backend = QCISimulatorBackend(name="qci.simulator", provider=None)
+
+        transpiled_ops = self._assert_qir_transpile_decomposes_non_qir_gates(backend)
+        self.assertGreater(
+            len(transpiled_ops - {"measure"}),
+            0,
+            "Expected decomposed operations besides measurement.",
+        )
+
+    @pytest.mark.qci
+    def test_qci_transpile_supports_barrier(self):
+        backend = QCISimulatorBackend(name="qci.simulator", provider=None)
+
+        circuit = QuantumCircuit(1)
+        circuit.h(0)
+        circuit.barrier()
+        circuit.measure_all()
+
+        self._assert_transpile_respects_target(
+            backend,
+            circuit,
+            expected_ops={"h", "barrier", "measure"},
+        )
+
     @pytest.mark.skip("Skipping tests against QCI's unavailable targets")
     @pytest.mark.qci
     @pytest.mark.live_test
@@ -1679,7 +1965,7 @@ class TestQiskit(QuantumTestBase):
         provider = AzureQuantumProvider(workspace=workspace)
         self.assertIn("azure-quantum-qiskit", provider._workspace.user_agent)
         backend = provider.get_backend("qci.simulator")
-        self.assertEqual(backend.name(), "qci.simulator")
+        self.assertEqual(backend.name, "qci.simulator")
         config = backend.configuration()
         self.assertTrue(config.simulator)
         self.assertEqual(1, config.max_experiments)
@@ -1759,7 +2045,7 @@ class TestQiskit(QuantumTestBase):
         provider = AzureQuantumProvider(workspace=workspace)
 
         backend = provider.get_backend("qci.machine1")
-        self.assertEqual(backend.name(), "qci.machine1")
+        self.assertEqual(backend.name, "qci.machine1")
         config = backend.configuration()
         self.assertFalse(config.simulator)
         self.assertEqual(1, config.max_experiments)
@@ -1819,13 +2105,13 @@ class TestQiskit(QuantumTestBase):
         actual = backend._get_output_data_format()
         self.assertEqual(expected, actual)
 
-    def test_backend_without_azure_config_format_and_multiple_experiment_support_defaults_to_ms_format_v2(
+    def test_backend_without_azure_config_format_and_multiple_experiment_raises_value_error(
         self,
     ):
-        backend = NoopQirBackend(None, "AzureQuantumProvider", **{"max_experiments": 2})
-        output_data_format = backend._get_output_data_format()
-        self.assertEqual(output_data_format, MICROSOFT_OUTPUT_DATA_FORMAT_V2)
-
+        with self.assertRaises(ValueError) as context:
+            _ = NoopQirBackend(None, "AzureQuantumProvider", **{"max_experiments": 2})
+        self.assertEqual(str(context.exception), "This backend only supports running a single circuit per job.")
+        
     def test_backend_with_azure_config_format_is_overridden_with_explicit_format(self):
         azure_congfig_value = "test_format"
         backend = NoopQirBackend(
