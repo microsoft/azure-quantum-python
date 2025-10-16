@@ -127,7 +127,7 @@ class NoopQirBackend(AzureQirBackend):
         return None
 
     def _translate_input(
-        self, circuits: List[QuantumCircuit], input_params: Dict[str, Any]
+        self, circuit: QuantumCircuit, input_params: Dict[str, Any]
     ) -> bytes:
         return None
 
@@ -436,7 +436,7 @@ class TestQiskit(QuantumTestBase):
 
         with pytest.raises(NotImplementedError) as exc:
             backend.run(circuit=[circuit, circuit], shots=500)
-        self.assertEqual(str(exc.value), "This backend only supports running a maximum of 1 circuits per job.")
+        self.assertEqual(str(exc.value), "This backend only supports running a single circuit per job.")
 
     @pytest.mark.ionq
     @pytest.mark.live_test
@@ -1111,7 +1111,7 @@ class TestQiskit(QuantumTestBase):
 
         with self.assertRaises(NotImplementedError) as context:
             backend.run(circuit=[circuit, circuit], shots=None)
-        self.assertEqual(str(context.exception), "This backend only supports running a maximum of 1 circuits per job.")
+        self.assertEqual(str(context.exception), "This backend only supports running a single circuit per job.")
     
     @pytest.mark.quantinuum
     @pytest.mark.live_test
