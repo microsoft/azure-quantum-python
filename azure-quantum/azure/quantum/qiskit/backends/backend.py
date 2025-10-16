@@ -64,6 +64,7 @@ QIR_BASIS_GATES = [
     "crz",
     "h",
     "s",
+    "sx",
     "sdg",
     "swap",
     "t",
