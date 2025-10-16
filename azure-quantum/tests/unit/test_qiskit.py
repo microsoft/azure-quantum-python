@@ -14,7 +14,8 @@ import collections
 from qiskit import QuantumCircuit, QuantumRegister, ClassicalRegister
 from qiskit.providers import JobStatus
 from qiskit.providers.models import BackendConfiguration
-from qiskit.providers import BackendV1 as Backend
+from qiskit.providers import BackendV2 as Backend
+from qiskit.providers import Options
 from qiskit.providers.exceptions import QiskitBackendNotFoundError
 from qiskit_ionq.exceptions import IonQGateError
 from qiskit_ionq import GPIGate, GPI2Gate, MSGate
@@ -56,7 +57,7 @@ class DummyProvider(AzureQuantumProvider):
         backend_list = [x for v in self._backends.values() for x in v]
         selection = []
         for backend in backend_list:
-            if backend.name() == name:
+            if backend.name == name:
                 selection.append(
                     (name, backend.configuration().to_dict()["azure"]["provider_id"])
                 )
@@ -70,7 +71,7 @@ class DummyProvider(AzureQuantumProvider):
         return any(
             tup
             for tup in allowed_targets
-            if tup[0] == backend.name()
+            if tup[0] == backend.name
             and tup[1] == backend.configuration().to_dict()["azure"]["provider_id"]
         )
 
@@ -124,7 +125,7 @@ class NoopQirBackend(AzureQirBackend):
         return values
 
     def _default_options(cls):
-        return None
+        return Options()
 
     def _translate_input(
         self, circuit: QuantumCircuit, input_params: Dict[str, Any]
@@ -171,7 +172,7 @@ class NoopPassThruBackend(AzureBackend):
         return fields
 
     def _default_options(cls):
-        return None
+        return Options()
 
     def _translate_input(self, circuit):
         return None
@@ -743,7 +744,7 @@ class TestQiskit(QuantumTestBase):
         backends = provider.backends()
 
         # Check that all names are unique
-        backend_names = [b.name() for b in backends]
+        backend_names = [b.name for b in backends]
         assert sorted(set(backend_names)) == sorted(backend_names)
 
         # Also check that all backends are default
@@ -879,7 +880,7 @@ class TestQiskit(QuantumTestBase):
         provider = AzureQuantumProvider(workspace=workspace)
 
         backend = provider.get_backend("ionq.qpu.aria-1")
-        self.assertEqual(backend.name(), "ionq.qpu.aria-1")
+        self.assertEqual(backend.name, "ionq.qpu.aria-1")
         config = backend.configuration()
         self.assertFalse(config.simulator)
         self.assertEqual(1, config.max_experiments)
@@ -938,7 +939,7 @@ class TestQiskit(QuantumTestBase):
     #     provider = AzureQuantumProvider(workspace=workspace)
 
     #     backend = provider.get_backend("ionq.qpu.aria-1")
-    #     self.assertEqual(backend.name(), "ionq.qpu.aria-1")
+    #     self.assertEqual(backend.name, "ionq.qpu.aria-1")
     #     config = backend.configuration()
     #     self.assertFalse(config.simulator)
     #     self.assertEqual(1, config.max_experiments)
@@ -1527,7 +1528,7 @@ class TestQiskit(QuantumTestBase):
         provider = AzureQuantumProvider(workspace=workspace)
         self.assertIn("azure-quantum-qiskit", provider._workspace.user_agent)
         backend = provider.get_backend(RigettiTarget.QVM.value)
-        self.assertEqual(backend.name(), RigettiTarget.QVM.value)
+        self.assertEqual(backend.name, RigettiTarget.QVM.value)
         config = backend.configuration()
         self.assertTrue(config.simulator)
         self.assertEqual(1, config.max_experiments)
@@ -1661,7 +1662,7 @@ class TestQiskit(QuantumTestBase):
             warnings.warn(f"{msg}\nException:\n{QiskitBackendNotFoundError.__name__}\n{ex}")
             pytest.skip(msg)
 
-        self.assertEqual(backend.name(), RigettiTarget.ANKAA_3.value)
+        self.assertEqual(backend.name, RigettiTarget.ANKAA_3.value)
         config = backend.configuration()
         self.assertFalse(config.simulator)
         self.assertEqual(1, config.max_experiments)
@@ -1679,7 +1680,7 @@ class TestQiskit(QuantumTestBase):
         provider = AzureQuantumProvider(workspace=workspace)
         self.assertIn("azure-quantum-qiskit", provider._workspace.user_agent)
         backend = provider.get_backend("qci.simulator")
-        self.assertEqual(backend.name(), "qci.simulator")
+        self.assertEqual(backend.name, "qci.simulator")
         config = backend.configuration()
         self.assertTrue(config.simulator)
         self.assertEqual(1, config.max_experiments)
@@ -1759,7 +1760,7 @@ class TestQiskit(QuantumTestBase):
         provider = AzureQuantumProvider(workspace=workspace)
 
         backend = provider.get_backend("qci.machine1")
-        self.assertEqual(backend.name(), "qci.machine1")
+        self.assertEqual(backend.name, "qci.machine1")
         config = backend.configuration()
         self.assertFalse(config.simulator)
         self.assertEqual(1, config.max_experiments)
@@ -1819,13 +1820,13 @@ class TestQiskit(QuantumTestBase):
         actual = backend._get_output_data_format()
         self.assertEqual(expected, actual)
 
-    def test_backend_without_azure_config_format_and_multiple_experiment_support_defaults_to_ms_format_v2(
+    def test_backend_without_azure_config_format_and_multiple_experiment_raises_value_error(
         self,
     ):
-        backend = NoopQirBackend(None, "AzureQuantumProvider", **{"max_experiments": 2})
-        output_data_format = backend._get_output_data_format()
-        self.assertEqual(output_data_format, MICROSOFT_OUTPUT_DATA_FORMAT_V2)
-
+        with self.assertRaises(ValueError) as context:
+            _ = NoopQirBackend(None, "AzureQuantumProvider", **{"max_experiments": 2})
+        self.assertEqual(str(context.exception), "This backend only supports running a single circuit per job.")
+        
     def test_backend_with_azure_config_format_is_overridden_with_explicit_format(self):
         azure_congfig_value = "test_format"
         backend = NoopQirBackend(

@@ -54,13 +54,13 @@ class AzureQuantumJob(JobV1):
         """
         if azure_job is None:
             azure_job = Job.from_input_data(
-                workspace=backend.provider().get_workspace(),
+                workspace=backend.provider.get_workspace(),
                 session_id=backend.get_latest_session_id(),
                 **kwargs
             )
 
         self._azure_job = azure_job
-        self._workspace = backend.provider().get_workspace()
+        self._workspace = backend.provider.get_workspace()
 
         super().__init__(backend, self._azure_job.id, **kwargs)
 
@@ -91,8 +91,8 @@ class AzureQuantumJob(JobV1):
         result_dict = {
             "results" : results if isinstance(results, list) else [results],
             "job_id" : self._azure_job.details.id,
-            "backend_name" : self._backend.name(),
-            "backend_version" : self._backend.version,
+            "backend_name" : self._backend.name,
+            "backend_version" : getattr(self._backend, "backend_version", None),
             "qobj_id" : self._azure_job.details.name,
             "success" : success,
             "error_data" : None if self._azure_job.details.error_data is None else self._azure_job.details.error_data.as_dict()

@@ -12,7 +12,7 @@ from azure.quantum import Workspace
 try:
     from qiskit.providers import ProviderV1 as Provider
     from qiskit.providers.exceptions import QiskitBackendNotFoundError
-    from qiskit.providers import BackendV1 as Backend
+    from qiskit.providers import BackendV2 as Backend
     from qiskit.exceptions import QiskitError
 except ImportError:
     raise ImportError(
@@ -152,7 +152,7 @@ see https://aka.ms/AQ/Docs/AddProvider"
         self, allowed_targets: List[Tuple[str, str]], backend: Backend
     ):
         for name, provider in allowed_targets:
-            if backend.name() == name:
+            if backend.name == name:
                 config = backend.configuration().to_dict()
                 if "azure" in config and "provider_id" in config["azure"]:
                     if config["azure"]["provider_id"] == provider:
@@ -192,7 +192,7 @@ see https://aka.ms/AQ/Docs/AddProvider"
                 backend_instance: Backend = self._get_backend_instance(
                     backend_cls, name
                 )
-                backend_name: str = backend_instance.name()
+                backend_name: str = backend_instance.name
                 instances.setdefault(backend_name, []).append(backend_instance)
 
         return instances
