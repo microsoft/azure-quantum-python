@@ -71,10 +71,8 @@ class ServicesClient:
     ) -> None:
         if endpoint is not None:
             _endpoint = endpoint
-            print("Overrided endpoint: ", _endpoint)
         else:
             _endpoint = "https://{region}.{serviceBaseUrl}"
-            print("Default endpoint: ", _endpoint)
         self._config = ServicesClientConfiguration(
             region=region, credential=credential, service_base_url=service_base_url, **kwargs
         )
