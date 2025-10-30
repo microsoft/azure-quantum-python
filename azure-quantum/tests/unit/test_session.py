@@ -420,7 +420,7 @@ class EchoQuantinuumQPUQirBackend(QuantinuumQPUQirBackend):
 
     def __init__(self,
                  name: str,
-                 provider: AzureQuantumProvider,
+                 provider: "AzureQuantumProvider",
                  **kwargs):
         super().__init__(name=name, provider=provider)
         self._provider_id = ECHO_PROVIDER_NAME

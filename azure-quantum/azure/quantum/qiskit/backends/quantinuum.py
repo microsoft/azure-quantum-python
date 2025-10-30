@@ -3,8 +3,7 @@
 # Licensed under the MIT License.
 ##
 
-from typing import Dict, List, Union
-from azure.quantum.qiskit.job import AzureQuantumJob
+from typing import TYPE_CHECKING, Dict
 from azure.quantum.version import __version__
 import warnings
 
@@ -13,12 +12,14 @@ from abc import abstractmethod
 from qiskit import QuantumCircuit
 from qiskit.providers.models import BackendConfiguration
 from qiskit.providers import Options
-from qiskit.providers import Provider
 from qiskit.qasm2 import dumps
 from qsharp import TargetProfile
 import logging
 
 logger = logging.getLogger(__name__)
+
+if TYPE_CHECKING:
+    from azure.quantum.qiskit import AzureQuantumProvider
 
 __all__ = [
     "QuantinuumSyntaxCheckerBackend",
@@ -72,7 +73,7 @@ class QuantinuumQirBackendBase(AzureQirBackend):
 
     @abstractmethod
     def __init__(
-        self, configuration: BackendConfiguration, provider: Provider = None, **fields
+        self, configuration: BackendConfiguration, provider: "AzureQuantumProvider" = None, **fields
     ):
         super().__init__(configuration, provider, **fields)
 
@@ -216,7 +217,7 @@ class QuantinuumBackend(AzureBackend):
 
     @abstractmethod
     def __init__(
-        self, configuration: BackendConfiguration, provider: Provider = None, **fields
+        self, configuration: BackendConfiguration, provider: "AzureQuantumProvider" = None, **fields
     ):
         super().__init__(configuration, provider, **fields)
 

@@ -17,7 +17,7 @@ from .backend import (
 )
 
 from qiskit.providers.models import BackendConfiguration
-from qiskit.providers import Options, Provider
+from qiskit.providers import Options
 
 from qiskit_ionq.helpers import (
     GATESET_MAP,
@@ -57,7 +57,7 @@ class IonQQirBackendBase(AzureQirBackend):
 
     @abstractmethod
     def __init__(
-        self, configuration: BackendConfiguration, provider: Provider = None, **fields
+        self, configuration: BackendConfiguration, provider: "AzureQuantumProvider" = None, **fields
     ):
         super().__init__(configuration, provider, **fields)
 
@@ -201,7 +201,7 @@ class IonQBackend(AzureBackend):
 
     @abstractmethod
     def __init__(
-        self, configuration: BackendConfiguration, provider: Provider = None, **fields
+        self, configuration: BackendConfiguration, provider: "AzureQuantumProvider" = None, **fields
     ):
         super().__init__(configuration, provider, **fields)
 

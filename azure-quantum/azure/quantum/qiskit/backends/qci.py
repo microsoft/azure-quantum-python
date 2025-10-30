@@ -13,7 +13,7 @@ from .backend import (
 )
 
 from qiskit.providers.models import BackendConfiguration
-from qiskit.providers import Options, Provider
+from qiskit.providers import Options
 from qsharp import TargetProfile
 
 
@@ -35,7 +35,7 @@ class QCIBackend(AzureQirBackend):
 
     @abstractmethod
     def __init__(
-        self, configuration: BackendConfiguration, provider: Provider = None, **fields
+        self, configuration: BackendConfiguration, provider: "AzureQuantumProvider" = None, **fields
     ):
         super().__init__(configuration, provider, **fields)
 
