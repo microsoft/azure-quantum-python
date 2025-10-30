@@ -66,9 +66,13 @@ class ServicesClient:
         credential: Union["TokenCredential", AzureKeyCredential],
         *,
         service_base_url: str = "quantum.azure.com",
+        endpoint: str = None,
         **kwargs: Any
     ) -> None:
-        _endpoint = "https://{region}.{serviceBaseUrl}"
+        if endpoint is not None:
+            _endpoint = endpoint
+        else:
+            _endpoint = "https://{region}.{serviceBaseUrl}"
         self._config = ServicesClientConfiguration(
             region=region, credential=credential, service_base_url=service_base_url, **kwargs
         )
