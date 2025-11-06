@@ -11,12 +11,12 @@ from qsharp import TargetProfile
 from qiskit import QuantumCircuit
 
 from .backend import (
-    AzureBackend, 
-    AzureQirBackend, 
-    _get_shots_or_deprecated_count_input_param
+    AzureBackend,
+    AzureBackendConfig,
+    AzureQirBackend,
+    _ensure_backend_config,
+    _get_shots_or_deprecated_count_input_param,
 )
-
-from qiskit.providers.models import BackendConfiguration
 from qiskit.providers import Options, Provider
 
 from qiskit_ionq.helpers import (
@@ -57,7 +57,7 @@ class IonQQirBackendBase(AzureQirBackend):
 
     @abstractmethod
     def __init__(
-        self, configuration: BackendConfiguration, provider: Provider = None, **fields
+        self, configuration: AzureBackendConfig, provider: Provider = None, **fields
     ):
         super().__init__(configuration, provider, **fields)
 
@@ -104,7 +104,7 @@ class IonQSimulatorQirBackend(IonQQirBackendBase):
 
     def __init__(self, name: str, provider: "AzureQuantumProvider", **kwargs):
         """Base class for interfacing with an IonQ QIR Simulator backend"""
-        default_config = BackendConfiguration.from_dict(
+        default_config = AzureBackendConfig.from_dict(
             {
                 "backend_name": name,
                 "backend_version": __version__,
@@ -124,8 +124,8 @@ class IonQSimulatorQirBackend(IonQQirBackendBase):
             }
         )
         logger.info("Initializing IonQSimulatorQirBackend")
-        configuration: BackendConfiguration = kwargs.pop(
-            "configuration", default_config
+        configuration = _ensure_backend_config(
+            kwargs.pop("configuration", default_config)
         )
         super().__init__(configuration=configuration, provider=provider, **kwargs)
 
@@ -135,7 +135,7 @@ class IonQAriaQirBackend(IonQQirBackendBase):
 
     def __init__(self, name: str, provider: "AzureQuantumProvider", **kwargs):
         """Base class for interfacing with an IonQ Aria QPU backend"""
-        default_config = BackendConfiguration.from_dict(
+        default_config = AzureBackendConfig.from_dict(
             {
                 "backend_name": name,
                 "backend_version": __version__,
@@ -155,8 +155,8 @@ class IonQAriaQirBackend(IonQQirBackendBase):
             }
         )
         logger.info("Initializing IonQAriaQirBackend")
-        configuration: BackendConfiguration = kwargs.pop(
-            "configuration", default_config
+        configuration = _ensure_backend_config(
+            kwargs.pop("configuration", default_config)
         )
         super().__init__(configuration=configuration, provider=provider, **kwargs)
 
@@ -166,7 +166,7 @@ class IonQForteQirBackend(IonQQirBackendBase):
 
     def __init__(self, name: str, provider: "AzureQuantumProvider", **kwargs):
         """Base class for interfacing with an IonQ Forte QPU backend"""
-        default_config = BackendConfiguration.from_dict(
+        default_config = AzureBackendConfig.from_dict(
             {
                 "backend_name": name,
                 "backend_version": __version__,
@@ -186,8 +186,8 @@ class IonQForteQirBackend(IonQQirBackendBase):
             }
         )
         logger.info("Initializing IonQForteQirBackend")
-        configuration: BackendConfiguration = kwargs.pop(
-            "configuration", default_config
+        configuration = _ensure_backend_config(
+            kwargs.pop("configuration", default_config)
         )
         super().__init__(configuration=configuration, provider=provider, **kwargs)
 
@@ -201,7 +201,7 @@ class IonQBackend(AzureBackend):
 
     @abstractmethod
     def __init__(
-        self, configuration: BackendConfiguration, provider: Provider = None, **fields
+        self, configuration: AzureBackendConfig, provider: Provider = None, **fields
     ):
         super().__init__(configuration, provider, **fields)
 
@@ -270,7 +270,7 @@ class IonQSimulatorBackend(IonQBackend):
     def __init__(self, name: str, provider: "AzureQuantumProvider", **kwargs):
         """Base class for interfacing with an IonQ Simulator backend"""
         gateset = kwargs.pop("gateset", "qis")
-        default_config = BackendConfiguration.from_dict(
+        default_config = AzureBackendConfig.from_dict(
             {
                 "backend_name": name,
                 "backend_version": __version__,
@@ -291,8 +291,8 @@ class IonQSimulatorBackend(IonQBackend):
             }
         )
         logger.info("Initializing IonQSimulatorBackend")
-        configuration: BackendConfiguration = kwargs.pop(
-            "configuration", default_config
+        configuration = _ensure_backend_config(
+            kwargs.pop("configuration", default_config)
         )
         super().__init__(configuration=configuration, provider=provider, **kwargs)
 
@@ -310,7 +310,7 @@ class IonQAriaBackend(IonQBackend):
     def __init__(self, name: str, provider: "AzureQuantumProvider", **kwargs):
         """Base class for interfacing with an IonQ Aria QPU backend"""
         gateset = kwargs.pop("gateset", "qis")
-        default_config = BackendConfiguration.from_dict(
+        default_config = AzureBackendConfig.from_dict(
             {
                 "backend_name": name,
                 "backend_version": __version__,
@@ -331,8 +331,8 @@ class IonQAriaBackend(IonQBackend):
             }
         )
         logger.info("Initializing IonQAriaQPUBackend")
-        configuration: BackendConfiguration = kwargs.pop(
-            "configuration", default_config
+        configuration = _ensure_backend_config(
+            kwargs.pop("configuration", default_config)
         )
         super().__init__(configuration=configuration, provider=provider, **kwargs)
 
@@ -343,7 +343,7 @@ class IonQForteBackend(IonQBackend):
     def __init__(self, name: str, provider: "AzureQuantumProvider", **kwargs):
         """Base class for interfacing with an IonQ Forte QPU backend"""
         gateset = kwargs.pop("gateset", "qis")
-        default_config = BackendConfiguration.from_dict(
+        default_config = AzureBackendConfig.from_dict(
             {
                 "backend_name": name,
                 "backend_version": __version__,
@@ -364,8 +364,8 @@ class IonQForteBackend(IonQBackend):
             }
         )
         logger.info("Initializing IonQForteBackend")
-        configuration: BackendConfiguration = kwargs.pop(
-            "configuration", default_config
+        configuration = _ensure_backend_config(
+            kwargs.pop("configuration", default_config)
         )
         super().__init__(configuration=configuration, provider=provider, **kwargs)
 

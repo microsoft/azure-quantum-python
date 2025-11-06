@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 ##
+import copy
 import os
 import json
 
@@ -10,8 +11,9 @@ import warnings
 
 logger = logging.getLogger(__name__)
 
+from dataclasses import dataclass, field
 from functools import lru_cache
-from typing import Any, Dict, Union, List, Optional, TYPE_CHECKING
+from typing import Any, Dict, Union, List, Optional, TYPE_CHECKING, Tuple, Mapping
 from azure.quantum.version import __version__
 from azure.quantum.qiskit.job import (
     MICROSOFT_OUTPUT_DATA_FORMAT,
@@ -19,6 +21,9 @@ from azure.quantum.qiskit.job import (
 )
 from abc import abstractmethod
 from azure.quantum.job.session import SessionHost
+
+BackendConfigurationType = None
+QOBJ_TYPES: Tuple[type, ...] = tuple()
 
 if TYPE_CHECKING:
     from azure.quantum import Workspace
@@ -28,19 +33,29 @@ try:
     from qiskit.providers import BackendV2 as Backend
     from qiskit.providers import Options
     from qiskit.providers import Provider
-    from qiskit.providers.models import BackendConfiguration
-    from qiskit.qobj import QasmQobj, PulseQobj
     from qiskit.transpiler import Target
     from qiskit.circuit import Instruction, Parameter
     from qiskit.circuit.library.standard_gates import get_standard_gate_name_mapping
     from qsharp.interop.qiskit import QSharpBackend
     from qsharp import TargetProfile
-
-except ImportError:
+except ImportError as exc:
     raise ImportError(
         "Missing optional 'qiskit' dependencies. \
 To install run: pip install azure-quantum[qiskit]"
-    )
+    ) from exc
+
+try:  # Qiskit 1.x legacy support
+    from qiskit.providers.models import BackendConfiguration  # type: ignore
+    BackendConfigurationType = BackendConfiguration
+
+    from qiskit.qobj import QasmQobj, PulseQobj  # type: ignore
+except ImportError:  # Qiskit 2.0 removes qobj module
+    QasmQobj = None  # type: ignore
+    PulseQobj = None  # type: ignore
+
+QOBJ_TYPES = tuple(
+    obj_type for obj_type in (QasmQobj, PulseQobj) if obj_type is not None
+)
 
 # barrier is handled by an extra flag which will transpile
 # them away if the backend doesn't support them. This has
@@ -148,6 +163,141 @@ def _resolve_instruction(gate_name: str) -> Optional[Instruction]:
     return Instruction(gate_name, 1, 0, params=[])
 
 
+@dataclass
+class AzureBackendConfig:
+    """Lightweight configuration container for Azure Quantum backends."""
+
+    backend_name: Optional[str] = None
+    backend_version: Optional[str] = None
+    description: Optional[str] = None
+    max_experiments: Optional[int] = None
+    max_experiments_provided: bool = False
+    n_qubits: Optional[int] = None
+    dt: Optional[float] = None
+    basis_gates: Tuple[str, ...] = field(default_factory=tuple)
+    azure: Dict[str, Any] = field(default_factory=dict)
+    metadata: Dict[str, Any] = field(default_factory=dict)
+
+    def __post_init__(self) -> None:
+        self.azure = copy.deepcopy(self.azure or {})
+        self.metadata = dict(self.metadata or {})
+        if self.basis_gates is None:
+            self.basis_gates = tuple()
+        else:
+            self.basis_gates = tuple(self.basis_gates)
+        if not self.max_experiments_provided and self.max_experiments is not None:
+            self.max_experiments_provided = True
+
+    @property
+    def name(self) -> Optional[str]:
+        return self.backend_name
+
+    @property
+    def max_circuits(self) -> Optional[int]:
+        return self.max_experiments
+
+    @property
+    def num_qubits(self) -> Optional[int]:
+        """Backward-compatible alias for Qiskit's ``BackendConfiguration.num_qubits``."""
+        return self.n_qubits
+
+    @num_qubits.setter
+    def num_qubits(self, value: Optional[int]) -> None:
+        self.n_qubits = value
+
+    def get(self, key: str, default: Any = None) -> Any:
+        if key == "basis_gates":
+            return list(self.basis_gates)
+        if key == "azure":
+            return copy.deepcopy(self.azure)
+        if hasattr(self, key):
+            return getattr(self, key)
+        return self.metadata.get(key, default)
+
+    def __getattr__(self, name: str) -> Any:
+        try:
+            return self.__dict__[name]
+        except KeyError as exc:
+            if name in self.metadata:
+                return self.metadata[name]
+            raise AttributeError(
+                f"'{type(self).__name__}' object has no attribute '{name}'"
+            ) from exc
+
+    def to_dict(self) -> Dict[str, Any]:
+        config_dict: Dict[str, Any] = {
+            "backend_name": self.backend_name,
+            "backend_version": self.backend_version,
+            "description": self.description,
+            "max_experiments": self.max_experiments,
+            "n_qubits": self.n_qubits,
+            "dt": self.dt,
+            "basis_gates": list(self.basis_gates),
+        }
+
+        config_dict.update(self.metadata)
+
+        if self.azure:
+            config_dict["azure"] = copy.deepcopy(self.azure)
+
+        return config_dict
+
+    @classmethod
+    def from_dict(cls, data: Mapping[str, Any]) -> "AzureBackendConfig":
+        raw = dict(data)
+        azure_config = copy.deepcopy(raw.get("azure", {}))
+        basis_gates = raw.get("basis_gates") or []
+
+        known_keys = {
+            "backend_name",
+            "backend_version",
+            "description",
+            "max_experiments",
+            "n_qubits",
+            "dt",
+            "basis_gates",
+            "azure",
+        }
+
+        metadata = {k: v for k, v in raw.items() if k not in known_keys}
+
+        return cls(
+            backend_name=raw.get("backend_name"),
+            backend_version=raw.get("backend_version"),
+            description=raw.get("description"),
+            max_experiments=raw.get("max_experiments"),
+            max_experiments_provided="max_experiments" in raw,
+            n_qubits=raw.get("n_qubits"),
+            dt=raw.get("dt"),
+            basis_gates=tuple(basis_gates),
+            azure=azure_config,
+            metadata=metadata,
+        )
+
+    @classmethod
+    def from_backend_configuration(
+        cls, configuration: Any
+    ) -> "AzureBackendConfig":
+        return cls.from_dict(configuration.to_dict())
+
+
+def _ensure_backend_config(
+    configuration: Any
+) -> AzureBackendConfig:
+    if isinstance(configuration, AzureBackendConfig):
+        return configuration
+
+    if BackendConfigurationType is not None and isinstance(
+        configuration, BackendConfigurationType
+    ):
+        return AzureBackendConfig.from_backend_configuration(configuration)
+
+    if isinstance(configuration, Mapping):
+        return AzureBackendConfig.from_dict(configuration)
+
+    raise TypeError("Unsupported configuration type for Azure backends")
+
+
 class AzureBackendBase(Backend, SessionHost):
 
     # Name of the provider's input parameter which specifies number of shots for a submitted job.
@@ -157,23 +307,33 @@ class AzureBackendBase(Backend, SessionHost):
     @abstractmethod
     def __init__(
         self,
-        configuration: BackendConfiguration,
+        configuration: Any,
         provider: Provider = None,
         **fields
     ):
         if configuration is None:
             raise ValueError("Backend configuration is required for Azure backends")
 
-        warnings.warn(
-            "The BackendConfiguration parameter is deprecated and will be removed when the SDK "
-            "adopts Qiskit 2.0. Future versions will expose a lightweight provider-specific "
-            "configuration instead.",
-            DeprecationWarning,
-            stacklevel=2,
-        )
+        if BackendConfigurationType is not None and isinstance(
+            configuration, BackendConfigurationType
+        ):
+            warnings.warn(
+                "The BackendConfiguration parameter is deprecated and will be removed when the SDK "
+                "adopts Qiskit 2.0. Future versions will expose a lightweight provider-specific "
+                "configuration instead.",
+                DeprecationWarning,
+                stacklevel=2,
+            )
 
-        self._configuration = configuration
-        self._max_circuits = getattr(configuration, "max_experiments", 1)
+        config = _ensure_backend_config(configuration)
+
+        self._config = config
+        self._configuration = self._config  # Backwards compatibility for legacy attribute access.
+
+        if config.max_experiments_provided:
+            self._max_circuits = config.max_experiments
+        else:
+            self._max_circuits = 1
         if self._max_circuits is None or self._max_circuits != 1:
             raise ValueError(
                 "This backend only supports running a single circuit per job."
@@ -181,23 +341,23 @@ class AzureBackendBase(Backend, SessionHost):
 
         super().__init__(
             provider=provider,
-            name=getattr(configuration, "backend_name", None),
-            description=getattr(configuration, "description", None),
-            backend_version=getattr(configuration, "backend_version", None),
+            name=config.backend_name,
+            description=config.description,
+            backend_version=config.backend_version,
             **fields,
         )
 
-        self._target = self._build_target(configuration)
+        self._target = self._build_target(config)
 
-    def _build_target(self, configuration: BackendConfiguration) -> Target:
-        num_qubits = getattr(configuration, "n_qubits", None)
+    def _build_target(self, configuration: AzureBackendConfig) -> Target:
+        num_qubits = configuration.n_qubits
         target = Target(
-            description=getattr(configuration, "description", None),
+            description=configuration.description,
             num_qubits=num_qubits,
-            dt=getattr(configuration, "dt", None),
+            dt=configuration.dt,
         )
 
-        basis_gates: List[str] = list(getattr(configuration, "basis_gates", []) or [])
+        basis_gates: List[str] = list(configuration.basis_gates or [])
         for gate_name in dict.fromkeys(basis_gates + ["measure", "reset"]):
             instruction = _resolve_instruction(gate_name)
             if instruction is None:
@@ -254,14 +414,14 @@ class AzureBackendBase(Backend, SessionHost):
     def _azure_config(self) -> Dict[str, str]:
         pass
 
-    def configuration(self) -> BackendConfiguration:
+    def configuration(self) -> AzureBackendConfig:
         warnings.warn(
             "AzureBackendBase.configuration() is deprecated and will be removed when the SDK "
             "switches to Qiskit 2.0.",
             DeprecationWarning,
             stacklevel=2,
         )
-        return self._configuration
+        return self._config
 
     @property
     def target(self) -> Target:
@@ -276,9 +436,9 @@ class AzureBackendBase(Backend, SessionHost):
         return self.provider.get_job(job_id)
 
     def _get_output_data_format(self, options: Dict[str, Any] = {}) -> str:
-        config: BackendConfiguration = self.configuration()
+        config: AzureBackendConfig = self._config
 
-        azure_config: Dict[str, Any] = config.azure
+        azure_config: Dict[str, Any] = config.azure or {}
         # if the backend defines an output format, use that over the default
         azure_defined_override = azure_config.get(
             "output_data_format", MICROSOFT_OUTPUT_DATA_FORMAT
@@ -349,12 +509,13 @@ class AzureBackendBase(Backend, SessionHost):
         logger.info(f"Submitting new job for backend {self.name}")
 
         # The default of these job parameters come from the AzureBackend configuration:
-        config = self.configuration()
-        blob_name = options.pop("blob_name", config.azure["blob_name"])
-        content_type = options.pop("content_type", config.azure["content_type"])
-        provider_id = options.pop("provider_id", config.azure["provider_id"])
+        config = self._config
+        azure_config = config.azure or {}
+        blob_name = options.pop("blob_name", azure_config.get("blob_name"))
+        content_type = options.pop("content_type", azure_config.get("content_type"))
+        provider_id = options.pop("provider_id", azure_config.get("provider_id"))
         input_data_format = options.pop(
-            "input_data_format", config.azure["input_data_format"]
+            "input_data_format", azure_config.get("input_data_format")
         )
         output_data_format = self._get_output_data_format(options)
 
@@ -437,7 +598,10 @@ class AzureBackendBase(Backend, SessionHost):
 class AzureQirBackend(AzureBackendBase):
     @abstractmethod
     def __init__(
-        self, configuration: BackendConfiguration, provider: Provider = None, **fields
+        self,
+        configuration: AzureBackendConfig,
+        provider: Provider = None,
+        **fields,
     ):
         super().__init__(configuration, provider, **fields)
 
@@ -509,7 +673,9 @@ class AzureQirBackend(AzureBackendBase):
 
         job = super()._run(job_name, input_data, input_params, metadata, **options)
         logger.info(
-            f"Submitted job with id '{job.id()}' with shot count of {shots_count}:"
+            "Submitted job with id '%s' with shot count of %s:",
+            job.id(),
+            shots_count,
         )
 
         return job
@@ -527,8 +693,7 @@ class AzureQirBackend(AzureBackendBase):
     def _get_qir_str(
         self, circuit: QuantumCircuit, target_profile: TargetProfile, **kwargs
     ) -> str:
-
-        config = self.configuration()
+        config = self._config
         # Barriers aren't removed by transpilation and must be explicitly removed in the Qiskit to QIR translation.
         supports_barrier = "barrier" in config.basis_gates
         skip_transpilation = kwargs.pop("skip_transpilation", False)
@@ -564,7 +729,7 @@ class AzureQirBackend(AzureBackendBase):
             circuit, target_profile, skip_transpilation=skip_transpilation
         )
 
-        entry_points = ["ENTTRYPOINT_main"]
+        entry_points = ["ENTRYPOINT__main"]
 
         if not skip_transpilation:
             # We'll only log the QIR again if we performed a transpilation.
@@ -608,7 +773,10 @@ class AzureBackend(AzureBackendBase):
 
     @abstractmethod
     def __init__(
-        self, configuration: BackendConfiguration, provider: Provider = None, **fields
+        self,
+        configuration: AzureBackendConfig,
+        provider: Provider = None,
+        **fields,
     ):
         super().__init__(configuration, provider, **fields)
 
@@ -647,7 +815,7 @@ class AzureBackend(AzureBackendBase):
 
         # If the circuit was created using qiskit.assemble,
         # disassemble into QASM here
-        if isinstance(circuit, QasmQobj) or isinstance(circuit, PulseQobj):
+        if QOBJ_TYPES and isinstance(circuit, QOBJ_TYPES):
             from qiskit.assembler import disassemble
 
             circuits, run, _ = disassemble(circuit)

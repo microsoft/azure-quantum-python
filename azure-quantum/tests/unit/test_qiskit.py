@@ -9,11 +9,9 @@ import random
 import json
 import pytest
 import numpy as np
-import collections
 
 from qiskit import ClassicalRegister, QuantumCircuit, QuantumRegister, transpile
 from qiskit.providers import JobStatus
-from qiskit.providers.models import BackendConfiguration
 from qiskit.providers import BackendV2 as Backend
 from qiskit.providers import Options
 from qiskit.providers.exceptions import QiskitBackendNotFoundError
@@ -32,7 +30,9 @@ from azure.quantum.qiskit.job import (
 )
 from azure.quantum.qiskit.backends.backend import (
     AzureBackend,
+    AzureBackendConfig,
     AzureQirBackend,
+    _ensure_backend_config,
     QIR_BASIS_GATES,
 )
 from qiskit.circuit import Instruction
@@ -92,11 +92,11 @@ class DummyProvider(AzureQuantumProvider):
 class NoopQirBackend(AzureQirBackend):
     def __init__(
         self,
-        configuration: BackendConfiguration,
+        configuration: AzureBackendConfig,
         provider: "AzureQuantumProvider",
         **fields,
     ):
-        default_config = BackendConfiguration.from_dict(
+        default_config = AzureBackendConfig.from_dict(
             {
                 "backend_name": fields.pop("name", "sample"),
                 "backend_version": fields.pop("version", "1.0"),
@@ -116,8 +116,8 @@ class NoopQirBackend(AzureQirBackend):
             }
         )
 
-        configuration: BackendConfiguration = fields.pop(
-            "configuration", default_config
+        configuration = _ensure_backend_config(
+            fields.pop("configuration", default_config)
         )
 
         super().__init__(configuration=configuration, provider=provider, **fields)
@@ -149,11 +149,11 @@ class NoopQirBackend(AzureQirBackend):
 class NoopPassThruBackend(AzureBackend):
     def __init__(
         self,
-        configuration: BackendConfiguration,
+        configuration: AzureBackendConfig,
         provider: "AzureQuantumProvider",
         **fields,
     ):
-        default_config = BackendConfiguration.from_dict(
+        default_config = AzureBackendConfig.from_dict(
             {
                 "backend_name": fields.pop("name", "sample"),
                 "backend_version": fields.pop("version", "1.0"),
@@ -173,8 +173,8 @@ class NoopPassThruBackend(AzureBackend):
             }
         )
 
-        configuration: BackendConfiguration = fields.pop(
-            "configuration", default_config
+        configuration = _ensure_backend_config(
+            fields.pop("configuration", default_config)
         )
         super().__init__(configuration=configuration, provider=provider, **fields)
 
@@ -346,6 +346,50 @@ class TestQiskit(QuantumTestBase):
         circuit.tdg(1)
         circuit.cx(0, 1)
         return circuit
+
+    def test_provider_uses_lightweight_backend_config(self):
+        provider = DummyProvider()
+        backend = provider.get_backend("ionq.simulator")
+
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", DeprecationWarning)
+            config = backend.configuration()
+
+        self.assertIsInstance(config, AzureBackendConfig)
+        self.assertEqual("ionq.simulator", config.backend_name)
+
+        # Returned copies should be isolated from the internal state.
+        azure_copy = config.get("azure")
+        azure_copy["provider_id"] = "mutated"
+        self.assertEqual("ionq", config.azure["provider_id"])
+
+        basis_copy = config.get("basis_gates")
+        basis_copy.append("__sentinel__")
+        self.assertNotIn("__sentinel__", config.basis_gates)
+
+        target_ops = {instruction.name for instruction in backend.target.operations}
+        self.assertIn("measure", target_ops)
+        self.assertIn("reset", target_ops)
+
+    def test_qir_backend_config_aliases_num_qubits(self):
+        backend = IonQSimulatorQirBackend(name="ionq.simulator", provider=DummyProvider())
+
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", DeprecationWarning)
+            config = backend.configuration()
+
+        self.assertIsInstance(config, AzureBackendConfig)
+        # The alias should surface the recorded qubit count.
+        self.assertEqual(29, config.num_qubits)
+
+        config.num_qubits = 31
+        self.assertEqual(31, config.n_qubits)
+
+        output_format = backend._get_output_data_format({})
+        self.assertEqual(MICROSOFT_OUTPUT_DATA_FORMAT_V2, output_format)
+
+        target_ops = {instruction.name for instruction in backend.target.operations}
+        self.assertTrue({"measure", "reset"}.issubset(target_ops))
 
     def test_unnamed_run_input_passes_through(self):
         backend = NoopPassThruBackend(None, "AzureQuantumProvider")
@@ -580,8 +624,13 @@ class TestQiskit(QuantumTestBase):
     @pytest.mark.live_test
     @pytest.mark.xdist_group(name="ionq.simulator")
     def test_plugins_submit_qiskit_qobj_to_ionq(self):
-        from qiskit import assemble
+        import qiskit
 
+        if not qiskit.__version__.startswith("1."):
+            self.skipTest("Qiskit 2.0 removes Qobj support; skipping assemble coverage.")
+            return
+
+        from qiskit import assemble
         circuit = self._3_qubit_ghz()
         qobj = assemble(circuit)
         self._test_qiskit_submit_ionq_passthrough(circuit=qobj, shots=1024)

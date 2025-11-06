@@ -3,20 +3,25 @@
 # Licensed under the MIT License.
 ##
 
-from typing import Dict, List, Union
-from azure.quantum.qiskit.job import AzureQuantumJob
+from typing import TYPE_CHECKING, Dict
 from azure.quantum.version import __version__
 import warnings
 
-from .backend import AzureBackend, AzureQirBackend
+from .backend import (
+    AzureBackend,
+    AzureBackendConfig,
+    AzureQirBackend,
+    _ensure_backend_config,
+)
 from abc import abstractmethod
-from qiskit import QuantumCircuit
-from qiskit.providers.models import BackendConfiguration
 from qiskit.providers import Options
 from qiskit.providers import Provider
 from qiskit.qasm2 import dumps
 from qsharp import TargetProfile
 import logging
+
+if TYPE_CHECKING:
+    from azure.quantum.qiskit import AzureQuantumProvider
 
 logger = logging.getLogger(__name__)
 
@@ -72,7 +77,7 @@ class QuantinuumQirBackendBase(AzureQirBackend):
 
     @abstractmethod
     def __init__(
-        self, configuration: BackendConfiguration, provider: Provider = None, **fields
+        self, configuration: AzureBackendConfig, provider: Provider = None, **fields
     ):
         super().__init__(configuration, provider, **fields)
 
@@ -109,14 +114,14 @@ class QuantinuumSyntaxCheckerQirBackend(QuantinuumQirBackendBase):
         self._provider_id = QUANTINUUM_PROVIDER_ID
         self._provider_name = QUANTINUUM_PROVIDER_NAME
 
-        default_config = BackendConfiguration.from_dict(
+        default_config = AzureBackendConfig.from_dict(
             {
                 "backend_name": name,
                 "backend_version": __version__,
                 "simulator": True,
                 "local": False,
                 "coupling_map": None,
-                "description": f"Quantinuum Syntax Checker on Azure Quantum",
+                "description": "Quantinuum Syntax Checker on Azure Quantum",
                 "basis_gates": self._basis_gates(),
                 "memory": True,
                 "n_qubits": self._get_n_qubits(name),
@@ -128,10 +133,12 @@ class QuantinuumSyntaxCheckerQirBackend(QuantinuumQirBackendBase):
                 "azure": self._azure_config(),
             }
         )
-        configuration: BackendConfiguration = kwargs.pop(
-            "configuration", default_config
+        configuration = _ensure_backend_config(
+            kwargs.pop("configuration", default_config)
         )
-        logger.info(f"Initializing {self._provider_name}SyntaxCheckerQirBackend")
+        logger.info(
+            "Initializing %sSyntaxCheckerQirBackend", self._provider_name
+        )
         super().__init__(configuration=configuration, provider=provider, **kwargs)
 
 
@@ -146,14 +153,14 @@ class QuantinuumEmulatorQirBackend(QuantinuumQirBackendBase):
         self._provider_id = QUANTINUUM_PROVIDER_ID
         self._provider_name = QUANTINUUM_PROVIDER_NAME
 
-        default_config = BackendConfiguration.from_dict(
+        default_config = AzureBackendConfig.from_dict(
             {
                 "backend_name": name,
                 "backend_version": __version__,
                 "simulator": True,
                 "local": False,
                 "coupling_map": None,
-                "description": f"Quantinuum emulator on Azure Quantum",
+                "description": "Quantinuum emulator on Azure Quantum",
                 "basis_gates": self._basis_gates(),
                 "memory": True,
                 "n_qubits": self._get_n_qubits(name),
@@ -165,10 +172,12 @@ class QuantinuumEmulatorQirBackend(QuantinuumQirBackendBase):
                 "azure": self._azure_config(),
             }
         )
-        configuration: BackendConfiguration = kwargs.pop(
-            "configuration", default_config
+        configuration = _ensure_backend_config(
+            kwargs.pop("configuration", default_config)
         )
-        logger.info(f"Initializing {self._provider_name}EmulatorQirBackend")
+        logger.info(
+            "Initializing %sEmulatorQirBackend", self._provider_name
+        )
         super().__init__(configuration=configuration, provider=provider, **kwargs)
 
 
@@ -183,14 +192,14 @@ class QuantinuumQPUQirBackend(QuantinuumQirBackendBase):
         self._provider_id = QUANTINUUM_PROVIDER_ID
         self._provider_name = QUANTINUUM_PROVIDER_NAME
 
-        default_config = BackendConfiguration.from_dict(
+        default_config = AzureBackendConfig.from_dict(
             {
                 "backend_name": name,
                 "backend_version": __version__,
                 "simulator": False,
                 "local": False,
                 "coupling_map": None,
-                "description": f"Quantinuum QPU on Azure Quantum",
+                "description": "Quantinuum QPU on Azure Quantum",
                 "basis_gates": self._basis_gates(),
                 "memory": True,
                 "n_qubits": self._get_n_qubits(name),
@@ -202,10 +211,10 @@ class QuantinuumQPUQirBackend(QuantinuumQirBackendBase):
                 "azure": self._azure_config(),
             }
         )
-        configuration: BackendConfiguration = kwargs.pop(
-            "configuration", default_config
+        configuration = _ensure_backend_config(
+            kwargs.pop("configuration", default_config)
         )
-        logger.info(f"Initializing {self._provider_name}QPUQirBackend")
+        logger.info("Initializing %sQPUQirBackend", self._provider_name)
         super().__init__(configuration=configuration, provider=provider, **kwargs)
 
 
@@ -216,7 +225,7 @@ class QuantinuumBackend(AzureBackend):
 
     @abstractmethod
     def __init__(
-        self, configuration: BackendConfiguration, provider: Provider = None, **fields
+        self, configuration: AzureBackendConfig, provider: Provider = None, **fields
     ):
         super().__init__(configuration, provider, **fields)
 
@@ -257,14 +266,14 @@ class QuantinuumSyntaxCheckerBackend(QuantinuumBackend):
         self._provider_id = QUANTINUUM_PROVIDER_ID
         self._provider_name = QUANTINUUM_PROVIDER_NAME
 
-        default_config = BackendConfiguration.from_dict(
+        default_config = AzureBackendConfig.from_dict(
             {
                 "backend_name": name,
                 "backend_version": __version__,
                 "simulator": True,
                 "local": False,
                 "coupling_map": None,
-                "description": f"Quantinuum Syntax Checker on Azure Quantum",
+                "description": "Quantinuum Syntax Checker on Azure Quantum",
                 "basis_gates": QUANTINUUM_BASIS_GATES,
                 "memory": False,
                 "n_qubits": self._get_n_qubits(name),
@@ -276,10 +285,10 @@ class QuantinuumSyntaxCheckerBackend(QuantinuumBackend):
                 "azure": self._azure_config(),
             }
         )
-        configuration: BackendConfiguration = kwargs.pop(
-            "configuration", default_config
+        configuration = _ensure_backend_config(
+            kwargs.pop("configuration", default_config)
         )
-        logger.info(f"Initializing {self._provider_name}SyntaxCheckerBackend")
+        logger.info("Initializing %sSyntaxCheckerBackend", self._provider_name)
         super().__init__(configuration=configuration, provider=provider, **kwargs)
 
 
@@ -294,14 +303,14 @@ class QuantinuumEmulatorBackend(QuantinuumBackend):
         self._provider_id = QUANTINUUM_PROVIDER_ID
         self._provider_name = QUANTINUUM_PROVIDER_NAME
 
-        default_config = BackendConfiguration.from_dict(
+        default_config = AzureBackendConfig.from_dict(
             {
                 "backend_name": name,
                 "backend_version": __version__,
                 "simulator": True,
                 "local": False,
                 "coupling_map": None,
-                "description": f"Quantinuum emulator on Azure Quantum",
+                "description": "Quantinuum emulator on Azure Quantum",
                 "basis_gates": QUANTINUUM_BASIS_GATES,
                 "memory": False,
                 "n_qubits": self._get_n_qubits(name),
@@ -313,10 +322,10 @@ class QuantinuumEmulatorBackend(QuantinuumBackend):
                 "azure": self._azure_config(),
             }
         )
-        configuration: BackendConfiguration = kwargs.pop(
-            "configuration", default_config
+        configuration = _ensure_backend_config(
+            kwargs.pop("configuration", default_config)
         )
-        logger.info(f"Initializing {self._provider_name}EmulatorBackend")
+        logger.info("Initializing %sEmulatorBackend", self._provider_name)
         super().__init__(configuration=configuration, provider=provider, **kwargs)
 
 
@@ -331,14 +340,14 @@ class QuantinuumQPUBackend(QuantinuumBackend):
         self._provider_id = QUANTINUUM_PROVIDER_ID
         self._provider_name = QUANTINUUM_PROVIDER_NAME
 
-        default_config = BackendConfiguration.from_dict(
+        default_config = AzureBackendConfig.from_dict(
             {
                 "backend_name": name,
                 "backend_version": __version__,
                 "simulator": False,
                 "local": False,
                 "coupling_map": None,
-                "description": f"Quantinuum QPU on Azure Quantum",
+                "description": "Quantinuum QPU on Azure Quantum",
                 "basis_gates": QUANTINUUM_BASIS_GATES,
                 "memory": False,
                 "n_qubits": self._get_n_qubits(name),
@@ -350,8 +359,8 @@ class QuantinuumQPUBackend(QuantinuumBackend):
                 "azure": self._azure_config(),
             }
         )
-        configuration: BackendConfiguration = kwargs.pop(
-            "configuration", default_config
+        configuration = _ensure_backend_config(
+            kwargs.pop("configuration", default_config)
         )
-        logger.info(f"Initializing {self._provider_name}QPUBackend")
+        logger.info("Initializing %sQPUBackend", self._provider_name)
         super().__init__(configuration=configuration, provider=provider, **kwargs)

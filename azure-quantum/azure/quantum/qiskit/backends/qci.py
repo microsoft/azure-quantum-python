@@ -8,11 +8,11 @@ from azure.quantum.version import __version__
 from azure.quantum.qiskit.job import AzureQuantumJob
 from abc import abstractmethod
 from .backend import (
-    AzureQirBackend, 
+    AzureBackendConfig,
+    AzureQirBackend,
+    _ensure_backend_config,
     _get_shots_or_deprecated_count_input_param,
 )
-
-from qiskit.providers.models import BackendConfiguration
 from qiskit.providers import Options, Provider
 from qsharp import TargetProfile
 
@@ -35,7 +35,7 @@ class QCIBackend(AzureQirBackend):
 
     @abstractmethod
     def __init__(
-        self, configuration: BackendConfiguration, provider: Provider = None, **fields
+        self, configuration: AzureBackendConfig, provider: Provider = None, **fields
     ):
         super().__init__(configuration, provider, **fields)
 
@@ -85,7 +85,7 @@ class QCISimulatorBackend(QCIBackend):
 
     def __init__(self, name: str, provider: "AzureQuantumProvider", **kwargs):
         """Base class for interfacing with an QCI Simulator backend"""
-        default_config = BackendConfiguration.from_dict(
+        default_config = AzureBackendConfig.from_dict(
             {
                 "backend_name": name,
                 "backend_version": __version__,
@@ -106,8 +106,8 @@ class QCISimulatorBackend(QCIBackend):
             }
         )
         logger.info("Initializing QCISimulatorBackend")
-        configuration: BackendConfiguration = kwargs.pop(
-            "configuration", default_config
+        configuration = _ensure_backend_config(
+            kwargs.pop("configuration", default_config)
         )
         super().__init__(configuration=configuration, provider=provider, **kwargs)
 
@@ -117,7 +117,7 @@ class QCIQPUBackend(QCIBackend):
 
     def __init__(self, name: str, provider: "AzureQuantumProvider", **kwargs):
         """Base class for interfacing with an QCI QPU backend"""
-        default_config = BackendConfiguration.from_dict(
+        default_config = AzureBackendConfig.from_dict(
             {
                 "backend_name": name,
                 "backend_version": __version__,
@@ -138,7 +138,7 @@ class QCIQPUBackend(QCIBackend):
             }
         )
         logger.info("Initializing QCIQPUBackend")
-        configuration: BackendConfiguration = kwargs.pop(
-            "configuration", default_config
+        configuration = _ensure_backend_config(
+            kwargs.pop("configuration", default_config)
         )
         super().__init__(configuration=configuration, provider=provider, **kwargs)
