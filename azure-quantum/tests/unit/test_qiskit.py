@@ -51,6 +51,28 @@ from azure.quantum.qiskit.backends.rigetti import RigettiSimulatorBackend
 from azure.quantum.target.rigetti import RigettiTarget
 
 
+_HEADER_MISSING = object()
+
+
+def _get_header_field(header: Any, key: str, default: Any = _HEADER_MISSING) -> Any:
+    # Helper to read ExperimentResult.header across Qiskit 1.x and 2.x shapes.
+    if header is None:
+        return default
+    if isinstance(header, dict):
+        return header.get(key, default)
+    if hasattr(header, key):
+        return getattr(header, key)
+    if hasattr(header, "to_dict"):
+        header_dict = header.to_dict()
+        if isinstance(header_dict, dict):
+            return header_dict.get(key, default)
+    return default
+
+
+def _header_has_field(header: Any, key: str) -> bool:
+    return _get_header_field(header, key) is not _HEADER_MISSING
+
+
 #####################################################################
 #####################################################################
 #####################################################################
@@ -634,8 +656,11 @@ class TestQiskit(QuantumTestBase):
             self.assertEqual(result.data()["probabilities"], {"0": 0.5, "1": 0.5})
             counts = result.get_counts()
             self.assertEqual(counts, result.data()["counts"])
-            self.assertEqual(result.results[0].header.num_qubits, 5)
-            self.assertEqual(result.results[0].header.metadata["some"], "data")
+            header = result.results[0].header
+            num_qubits = _get_header_field(header, "num_qubits")
+            self.assertEqual(str(num_qubits), "5")
+            metadata = _get_header_field(header, "metadata", {})
+            self.assertEqual(metadata.get("some"), "data")
 
     @pytest.mark.ionq
     @pytest.mark.live_test
@@ -673,8 +698,11 @@ class TestQiskit(QuantumTestBase):
             self.assertEqual(result.data()["probabilities"], {"0": 0.5, "1": 0.5})
             counts = result.get_counts()
             self.assertEqual(counts, result.data()["counts"])
-            self.assertEqual(result.results[0].header.num_qubits, '5')
-            self.assertEqual(result.results[0].header.metadata["some"], "data")
+            header = result.results[0].header
+            num_qubits = _get_header_field(header, "num_qubits")
+            self.assertEqual(str(num_qubits), "5")
+            metadata = _get_header_field(header, "metadata", {})
+            self.assertEqual(metadata.get("some"), "data")
 
     def test_qiskit_provider_init_with_workspace_not_raises_deprecation(self):
         # testing warning according to https://docs.python.org/3/library/warnings.html#testing-warnings
@@ -1016,8 +1044,9 @@ class TestQiskit(QuantumTestBase):
             self.assertEqual(result.data()["probabilities"], {"000": 0.5, "111": 0.5})
             counts = result.get_counts()
             self.assertEqual(counts, result.data()["counts"])
-            self.assertTrue(hasattr(result.results[0].header, "num_qubits"))
-            self.assertTrue(hasattr(result.results[0].header, "metadata"))
+            header = result.results[0].header
+            self.assertTrue(_header_has_field(header, "num_qubits"))
+            self.assertTrue(_header_has_field(header, "metadata"))
     
     def _test_qiskit_submit_ionq_passthrough(self, circuit, **kwargs):
         workspace = self.create_workspace()
@@ -1057,8 +1086,9 @@ class TestQiskit(QuantumTestBase):
             self.assertEqual(result.data()["probabilities"], {"000": 0.5, "111": 0.5})
             counts = result.get_counts()
             self.assertEqual(counts, result.data()["counts"])
-            self.assertTrue(hasattr(result.results[0].header, "num_qubits"))
-            self.assertTrue(hasattr(result.results[0].header, "metadata"))
+            header = result.results[0].header
+            self.assertTrue(_header_has_field(header, "num_qubits"))
+            self.assertTrue(_header_has_field(header, "metadata"))
     
 
     @pytest.mark.live_test
@@ -1770,9 +1800,12 @@ class TestQiskit(QuantumTestBase):
         result = qiskit_job.result()
         self.assertIn("counts", result.data())
         self.assertIn("probabilities", result.data())
-        self.assertTrue(hasattr(result.results[0].header, "num_qubits"))
-        self.assertEqual(result.results[0].header.num_qubits, num_qubits)
-        self.assertEqual(result.results[0].header.metadata["some"], "data")
+        header = result.results[0].header
+        self.assertTrue(_header_has_field(header, "num_qubits"))
+        num_qubits_value = _get_header_field(header, "num_qubits")
+        self.assertEqual(str(num_qubits_value), str(num_qubits))
+        metadata = _get_header_field(header, "metadata", {})
+        self.assertEqual(metadata.get("some"), "data")
 
     def _test_qiskit_submit_quantinuum_passthrough(self, circuit, target="quantinuum.sim.h2-1e", **kwargs):
         workspace = self.create_workspace()
@@ -1815,9 +1848,12 @@ class TestQiskit(QuantumTestBase):
         result = qiskit_job.result()
         self.assertIn("counts", result.data())
         self.assertIn("probabilities", result.data())
-        self.assertTrue(hasattr(result.results[0].header, "num_qubits"))
-        self.assertEqual(result.results[0].header.num_qubits, str(num_qubits))
-        self.assertEqual(result.results[0].header.metadata["some"], "data")
+        header = result.results[0].header
+        self.assertTrue(_header_has_field(header, "num_qubits"))
+        num_qubits_value = _get_header_field(header, "num_qubits")
+        self.assertEqual(str(num_qubits_value), str(num_qubits))
+        metadata = _get_header_field(header, "metadata", {})
+        self.assertEqual(metadata.get("some"), "data")
 
     @pytest.mark.quantinuum
     def test_translate_quantinuum_qir(self):
