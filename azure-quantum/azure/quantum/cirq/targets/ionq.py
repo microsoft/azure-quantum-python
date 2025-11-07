@@ -30,10 +30,15 @@ class _IonQClient:
     def _to_ionq_status(status: str):
         from azure.quantum._client.models._enums import JobStatus
         _STATUS_DICT = {
+            JobStatus.COMPLETED: 'completed',
             JobStatus.SUCCEEDED: 'completed',
             JobStatus.CANCELLED: 'canceled',
             JobStatus.FAILED: 'failed',
             JobStatus.EXECUTING: 'running',
+            JobStatus.FINISHING: 'running',
+            JobStatus.CANCELLATION_REQUESTED: 'running',
+            JobStatus.CANCELLING: 'running',
+            JobStatus.QUEUED: 'ready',
             JobStatus.WAITING: 'ready'
         }
         return _STATUS_DICT.get(status, 'submitted')

@@ -24,12 +24,16 @@ import logging
 logger = logging.getLogger(__name__)
 
 AzureJobStatusMap = {
+    "Completed": JobStatus.DONE,
     "Succeeded": JobStatus.DONE,
+    "Queued": JobStatus.QUEUED,
     "Waiting": JobStatus.QUEUED,
     "Executing": JobStatus.RUNNING,
+    "Finishing": JobStatus.RUNNING,
+    "CancellationRequested": JobStatus.RUNNING,
+    "Cancelling": JobStatus.RUNNING,
     "Failed": JobStatus.ERROR,
-    "Cancelled": JobStatus.CANCELLED,
-    "Finishing": JobStatus.RUNNING
+    "Cancelled": JobStatus.CANCELLED
 }
 
 # Constants for output data format:
@@ -81,7 +85,7 @@ class AzureQuantumJob(JobV1):
         """Return the results of the job."""
         self._azure_job.wait_until_completed(timeout_secs=timeout)
 
-        success = self._azure_job.details.status == "Succeeded"
+        success = self._azure_job.details.status == "Succeeded" or self._azure_job.details.status == "Completed"
         results = self._format_results(sampler_seed=sampler_seed)
 
         result_dict = {
@@ -128,7 +132,7 @@ class AzureQuantumJob(JobV1):
         if (self._azure_job.details.output_data_format == MICROSOFT_OUTPUT_DATA_FORMAT_V2):
             return self._format_microsoft_v2_results()
 
-        success = self._azure_job.details.status == "Succeeded"
+        success = self._azure_job.details.status == "Succeeded" or self._azure_job.details.status == "Completed"
 
         job_result = {
             "data": {},
@@ -332,7 +336,7 @@ class AzureQuantumJob(JobV1):
 
 
     def _format_microsoft_v2_results(self) -> List[Dict[str, Any]]:
-        success = self._azure_job.details.status == "Succeeded"
+        success = self._azure_job.details.status == "Succeeded" or self._azure_job.details.status == "Completed"
 
         if not success:
             return [{
