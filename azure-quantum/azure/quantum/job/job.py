@@ -59,7 +59,8 @@ class Job(BaseJob, FilteredJob):
     def has_completed(self) -> bool:
         """Check if the job has completed."""
         return (
-            self.details.status == "Succeeded"
+            self.details.status == "Completed"
+            or self.details.status == "Succeeded"
             or self.details.status == "Failed"
             or self.details.status == "Cancelled"
         )
@@ -124,7 +125,7 @@ class Job(BaseJob, FilteredJob):
         if not self.has_completed():
             self.wait_until_completed(timeout_secs=timeout_secs)
 
-        if not self.details.status == "Succeeded":
+        if not self.details.status == "Succeeded" or self.details.status == "Completed":
             if self.details.status == "Failed" and self._allow_failure_results():
                 job_blob_properties = self.download_blob_properties(self.details.output_data_uri)
                 if job_blob_properties.size > 0:
@@ -204,7 +205,7 @@ class Job(BaseJob, FilteredJob):
         if not self.has_completed():
             self.wait_until_completed(timeout_secs=timeout_secs)
 
-        if not self.details.status == "Succeeded":
+        if not self.details.status == "Succeeded" or self.details.status == "Completed":
             if self.details.status == "Failed" and self._allow_failure_results():
                 job_blob_properties = self.download_blob_properties(self.details.output_data_uri)
                 if job_blob_properties.size > 0:
@@ -287,7 +288,7 @@ class Job(BaseJob, FilteredJob):
         if not self.has_completed():
             self.wait_until_completed(timeout_secs=timeout_secs)
 
-        if not self.details.status == "Succeeded":
+        if not self.details.status == "Succeeded" or self.details.status == "Completed":
             if self.details.status == "Failed" and self._allow_failure_results():
                 job_blob_properties = self.download_blob_properties(self.details.output_data_uri)
                 if job_blob_properties.size > 0:

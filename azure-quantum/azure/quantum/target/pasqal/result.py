@@ -38,7 +38,7 @@ class Result:
             RuntimeError: if the job has not completed successfully
         """
 
-        if job.details.status != "Succeeded":
+        if job.details.status != "Succeeded" and job.details.status != "Completed":
             raise RuntimeError(
                 "Cannot retrieve results as job execution failed "
                 f"(status: {job.details.status}."

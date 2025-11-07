@@ -252,8 +252,8 @@ class JobDetails(ItemDetails, discriminator="Job"):
     :vartype input_data_uri: str
     :ivar input_data_format: The format of the input data.
     :vartype input_data_format: str
-    :ivar status: The status of the job. Known values are: "Waiting", "Executing", "Succeeded",
-     "Failed", and "Cancelled".
+    :ivar status: The status of the job. Known values are: "Waiting", "Queued", "Executing", "Finishing", "Completed",
+     "Succeeded", "Failed", "Cancelling", "CancellationRequested" and "Cancelled".
     :vartype status: str or ~azure.quantum.models.JobStatus
     :ivar metadata: The job metadata. Metadata provides client the ability to store client-specific
      information.
@@ -289,8 +289,8 @@ class JobDetails(ItemDetails, discriminator="Job"):
     input_data_format: Optional[str] = rest_field(name="inputDataFormat", visibility=["read", "create"])
     """The format of the input data."""
     status: Optional[Union[str, "_models.JobStatus"]] = rest_field(visibility=["read"])
-    """The status of the job. Known values are: \"Waiting\", \"Executing\", \"Succeeded\", \"Failed\",
-     and \"Cancelled\"."""
+    """The status of the job. Known values are: \"Waiting\", \"Queued\", \"Executing\", \"Finishing\", \"Completed\",
+     \"Succeeded\", \"Failed\", \"Cancelling\", \"CancellationRequested\" and \"Cancelled\"."""
     metadata: Optional[Any] = rest_field(visibility=["read", "create", "update"])
     """The job metadata. Metadata provides client the ability to store client-specific information."""
     cancellation_time: Optional[datetime.datetime] = rest_field(
