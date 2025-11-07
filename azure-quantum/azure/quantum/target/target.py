@@ -9,10 +9,9 @@ import json
 import abc
 import warnings
 
-from azure.quantum._client.models import TargetStatus, SessionDetails
-from azure.quantum._client.models._enums import SessionJobFailurePolicy
-from azure.quantum.job.job import Job, BaseJob
-from azure.quantum.job.session import Session, SessionHost
+from azure.quantum._client.models import TargetStatus
+from azure.quantum.job.job import Job
+from azure.quantum.job.session import SessionHost
 from azure.quantum.job.base_job import ContentType
 from azure.quantum.target.params import InputParams
 if TYPE_CHECKING:

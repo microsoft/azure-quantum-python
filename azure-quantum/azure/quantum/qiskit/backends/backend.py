@@ -696,7 +696,7 @@ class AzureQirBackend(AzureBackendBase):
         config = self._config
         # Barriers aren't removed by transpilation and must be explicitly removed in the Qiskit to QIR translation.
         supports_barrier = "barrier" in config.basis_gates
-        skip_transpilation = kwargs.pop("skip_transpilation", False)
+        skip_transpilation = kwargs.pop("skip_transpilation", True)
 
         backend = QSharpBackend(
             qiskit_pass_options={"supports_barrier": supports_barrier},
@@ -722,8 +722,7 @@ class AzureQirBackend(AzureBackendBase):
             qir = self._get_qir_str(circuit, target_profile, skip_transpilation=True)
             logger.debug(f"QIR:\n{qir}")
 
-        # We'll transpile automatically to the supported gates in QIR unless explicitly skipped.
-        skip_transpilation = input_params.pop("skipTranspile", False)
+        skip_transpilation = input_params.pop("skipTranspile", True)
 
         qir_str = self._get_qir_str(
             circuit, target_profile, skip_transpilation=skip_transpilation
@@ -734,8 +733,7 @@ class AzureQirBackend(AzureBackendBase):
         if not skip_transpilation:
             # We'll only log the QIR again if we performed a transpilation.
             if logger.isEnabledFor(logging.DEBUG):
-                qir = str(qir_str)
-                logger.debug(f"QIR (Post-transpilation):\n{qir}")
+                logger.debug(f"QIR (Post-transpilation):\n{qir_str}")
 
         if "items" not in input_params:
             arguments = input_params.pop("arguments", [])
