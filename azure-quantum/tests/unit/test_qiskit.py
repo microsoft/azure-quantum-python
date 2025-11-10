@@ -44,6 +44,8 @@ from azure.quantum.qiskit.backends.quantinuum import (
 from azure.quantum.qiskit.backends.ionq import (
     IonQSimulatorNativeBackend,
     IonQSimulatorQirBackend,
+)
+from azure.quantum.qiskit.backends._qiskit_ionq import (
     IonQGateError,
 )
 from azure.quantum.qiskit.backends.qci import QCISimulatorBackend
