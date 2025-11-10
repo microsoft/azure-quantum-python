@@ -140,9 +140,6 @@ def _custom_instruction_builders() -> Dict[str, Instruction]:
 
 
 def _resolve_instruction(gate_name: str) -> Optional[Instruction]:
-    if not gate_name:
-        return None
-
     mapping = _standard_gate_map()
     instruction = mapping.get(gate_name)
     if instruction is not None:
@@ -170,8 +167,6 @@ class AzureBackendConfig:
     backend_name: Optional[str] = None
     backend_version: Optional[str] = None
     description: Optional[str] = None
-    max_experiments: Optional[int] = None
-    max_experiments_provided: bool = False
     n_qubits: Optional[int] = None
     dt: Optional[float] = None
     basis_gates: Tuple[str, ...] = field(default_factory=tuple)
@@ -185,16 +180,10 @@ class AzureBackendConfig:
             self.basis_gates = tuple()
         else:
             self.basis_gates = tuple(self.basis_gates)
-        if not self.max_experiments_provided and self.max_experiments is not None:
-            self.max_experiments_provided = True
 
     @property
     def name(self) -> Optional[str]:
         return self.backend_name
-
-    @property
-    def max_circuits(self) -> Optional[int]:
-        return self.max_experiments
 
     @property
     def num_qubits(self) -> Optional[int]:
@@ -215,6 +204,8 @@ class AzureBackendConfig:
         return self.metadata.get(key, default)
 
     def __getattr__(self, name: str) -> Any:
+        if name == "max_experiments":
+            return 1
         try:
             return self.__dict__[name]
         except KeyError as exc:
@@ -229,7 +220,7 @@ class AzureBackendConfig:
             "backend_name": self.backend_name,
             "backend_version": self.backend_version,
             "description": self.description,
-            "max_experiments": self.max_experiments,
+            "max_experiments": 1,
             "n_qubits": self.n_qubits,
             "dt": self.dt,
             "basis_gates": list(self.basis_gates),
@@ -252,7 +243,6 @@ class AzureBackendConfig:
             "backend_name",
             "backend_version",
             "description",
-            "max_experiments",
             "n_qubits",
             "dt",
             "basis_gates",
@@ -265,8 +255,6 @@ class AzureBackendConfig:
             backend_name=raw.get("backend_name"),
             backend_version=raw.get("backend_version"),
             description=raw.get("description"),
-            max_experiments=raw.get("max_experiments"),
-            max_experiments_provided="max_experiments" in raw,
             n_qubits=raw.get("n_qubits"),
             dt=raw.get("dt"),
             basis_gates=tuple(basis_gates),
@@ -326,16 +314,6 @@ class AzureBackendBase(Backend, SessionHost):
         config = _ensure_backend_config(configuration)
 
         self._config = config
-        self._configuration = self._config  # Backwards compatibility for legacy attribute access.
-
-        if config.max_experiments_provided:
-            self._max_circuits = config.max_experiments
-        else:
-            self._max_circuits = 1
-        if self._max_circuits is None or self._max_circuits != 1:
-            raise ValueError(
-                "This backend only supports running a single circuit per job."
-                )
 
         super().__init__(
             provider=provider,
@@ -358,13 +336,7 @@ class AzureBackendBase(Backend, SessionHost):
         basis_gates: List[str] = list(configuration.basis_gates or [])
         for gate_name in dict.fromkeys(basis_gates + ["measure", "reset"]):
             instruction = _resolve_instruction(gate_name)
-            if instruction is None:
-                continue
-            try:
-                target.add_instruction(instruction)
-            except AttributeError:
-                # Instruction already registered; skip duplicates.
-                continue
+            target.add_instruction(instruction)
 
         return target
     
@@ -426,8 +398,7 @@ class AzureBackendBase(Backend, SessionHost):
 
     @property
     def max_circuits(self) -> Optional[int]:
-        return self._max_circuits
-
+        return 1
     def retrieve_job(self, job_id) -> AzureQuantumJob:
         """Returns the Job instance associated with the given id."""
         return self.provider.get_job(job_id)

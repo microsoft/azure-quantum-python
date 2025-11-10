@@ -2193,13 +2193,6 @@ class TestQiskit(QuantumTestBase):
         )
         actual = backend._get_output_data_format()
         self.assertEqual(expected, actual)
-
-    def test_backend_without_azure_config_format_and_multiple_experiment_raises_value_error(
-        self,
-    ):
-        with self.assertRaises(ValueError) as context:
-            _ = NoopQirBackend(None, "AzureQuantumProvider", **{"max_experiments": 2})
-        self.assertEqual(str(context.exception), "This backend only supports running a single circuit per job.")
         
     def test_backend_with_azure_config_format_is_overridden_with_explicit_format(self):
         azure_congfig_value = "test_format"
