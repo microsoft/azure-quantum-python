@@ -24,7 +24,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-__all__ = ["QCISimulatorBackend" "QCIQPUBackend"]
+__all__ = ["QCISimulatorBackend", "QCIQPUBackend"]
 
 
 _DEFAULT_SHOTS_COUNT = 500
