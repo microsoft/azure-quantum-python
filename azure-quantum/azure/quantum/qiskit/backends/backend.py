@@ -318,9 +318,7 @@ class AzureBackendBase(Backend, SessionHost):
             configuration, BackendConfigurationType
         ):
             warnings.warn(
-                "The BackendConfiguration parameter is deprecated and will be removed when the SDK "
-                "adopts Qiskit 2.0. Future versions will expose a lightweight provider-specific "
-                "configuration instead.",
+                "The BackendConfiguration parameter is deprecated and will be removed from the SDK.",
                 DeprecationWarning,
                 stacklevel=2,
             )
@@ -416,8 +414,7 @@ class AzureBackendBase(Backend, SessionHost):
 
     def configuration(self) -> AzureBackendConfig:
         warnings.warn(
-            "AzureBackendBase.configuration() is deprecated and will be removed when the SDK "
-            "switches to Qiskit 2.0.",
+            "AzureBackendBase.configuration() is deprecated and will be removed from the SDK."
             DeprecationWarning,
             stacklevel=2,
         )
