@@ -414,7 +414,7 @@ class AzureBackendBase(Backend, SessionHost):
 
     def configuration(self) -> AzureBackendConfig:
         warnings.warn(
-            "AzureBackendBase.configuration() is deprecated and will be removed from the SDK."
+            "AzureBackendBase.configuration() is deprecated and will be removed from the SDK.",
             DeprecationWarning,
             stacklevel=2,
         )

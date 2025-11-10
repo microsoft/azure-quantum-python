@@ -74,146 +74,6 @@ def _get_header_field(header: Any, key: str, default: Any = _HEADER_MISSING) -> 
 def _header_has_field(header: Any, key: str) -> bool:
     return _get_header_field(header, key) is not _HEADER_MISSING
 
-
-#####################################################################
-#####################################################################
-#####################################################################
-
-from typing import Optional
-import math
-import numpy as np
-from qiskit.circuit.gate import Gate
-from qiskit.circuit.parameterexpression import ParameterValueType
-
-class GPIGate(Gate):
-    r"""Single-qubit GPI gate.
-    **Circuit symbol:**
-    .. parsed-literal::
-             ┌───────┐
-        q_0: ┤ GPI(φ)├
-             └───────┘
-    **Matrix Representation:**
-
-    .. math::
-
-       GPI(\phi) =
-            \begin{pmatrix}
-                0 & e^{-i*2*\pi*\phi} \\
-                e^{i*2*\pi*\phi} & 0
-            \end{pmatrix}
-    """
-
-    def __init__(self, phi: ParameterValueType, label: Optional[str] = None):
-        """Create new GPI gate."""
-        super().__init__("gpi", 1, [phi], label=label)
-
-    def __array__(self, dtype=None, copy=None):
-        """Return a numpy array for the GPI gate."""
-        top = np.exp(-1j * 2 * math.pi * self.params[0])
-        bottom = np.exp(1j * 2 * math.pi * self.params[0])
-        arr = np.array([[0, top], [bottom, 0]])  # build without dtype first
-        if dtype is not None:
-            arr = arr.astype(dtype, copy=False)  # avoid unnecessary copy
-        if copy is True:
-            return arr.copy()
-        return arr
-
-
-class GPI2Gate(Gate):
-    r"""Single-qubit GPI2 gate.
-    **Circuit symbol:**
-    .. parsed-literal::
-             ┌───────┐
-        q_0: ┤GPI2(φ)├
-             └───────┘
-    **Matrix Representation:**
-
-    .. math::
-
-        GPI2(\phi) =
-            \frac{1}{\sqrt{2}}
-            \begin{pmatrix}
-                1 & -i*e^{-i*2*\pi*\phi} \\
-                -i*e^{i*2*\pi*\phi} & 1
-            \end{pmatrix}
-    """
-
-    def __init__(self, phi: ParameterValueType, label: Optional[str] = None):
-        """Create new GPI2 gate."""
-        super().__init__("gpi2", 1, [phi], label=label)
-
-    def __array__(self, dtype=None, copy=None):
-        """Return a numpy array for the GPI2 gate."""
-        top = -1j * np.exp(-1j * self.params[0] * 2 * math.pi)
-        bottom = -1j * np.exp(1j * self.params[0] * 2 * math.pi)
-        arr = (1 / np.sqrt(2)) * np.array([[1, top], [bottom, 1]])
-        if dtype is not None:
-            arr = arr.astype(dtype, copy=False)
-        if copy is True:
-            return arr.copy()
-        return arr
-
-
-class MSGate(Gate):
-    r"""Entangling 2-Qubit MS gate.
-    **Circuit symbol:**
-    .. parsed-literal::
-              _______
-        q_0: ┤       ├-
-             |MS(ϴ,0)|
-        q_1: ┤       ├-
-             └───────┘
-    **Matrix representation:**
-
-    .. math::
-
-       MS(\phi_0, \phi_1, \theta) =
-            \begin{pmatrix}
-                cos(\theta*\pi) & 0 & 0 & -i*e^{-i*2*\pi(\phi_0+\phi_1)}*sin(\theta*\pi) \\
-                0 & cos(\theta*\pi) & -i*e^{i*2*\pi(\phi_0-\phi_1)}*sin(\theta*\pi) & 0 \\
-                0 & -i*e^{-i*2*\pi(\phi_0-\phi_1)}*sin(\theta*\pi) & cos(\theta*\pi) & 0 \\
-                -i*e^{i*2*\pi(\phi_0+\phi_1)}*sin(\theta*\pi) & 0 & 0 & cos(\theta*\pi)
-            \end{pmatrix}
-    """
-
-    def __init__(
-        self,
-        phi0: ParameterValueType,
-        phi1: ParameterValueType,
-        theta: Optional[ParameterValueType] = 0.25,
-        label: Optional[str] = None,
-    ):
-        """Create new MS gate."""
-        super().__init__(
-            "ms",
-            2,
-            [phi0, phi1, theta],
-            label=label,
-        )
-
-    def __array__(self, dtype=None, copy=None):
-        """Return a numpy array for the MS gate."""
-        phi0, phi1, theta = self.params
-        diag = np.cos(math.pi * theta)
-        sin = np.sin(math.pi * theta)
-        arr = np.array(
-            [
-                [diag, 0, 0, sin * -1j * np.exp(-1j * 2 * math.pi * (phi0 + phi1))],
-                [0, diag, sin * -1j * np.exp(1j * 2 * math.pi * (phi0 - phi1)), 0],
-                [0, sin * -1j * np.exp(-1j * 2 * math.pi * (phi0 - phi1)), diag, 0],
-                [sin * -1j * np.exp(1j * 2 * math.pi * (phi0 + phi1)), 0, 0, diag],
-            ]
-        )
-        if dtype is not None:
-            arr = arr.astype(dtype, copy=False)
-        if copy is True:
-            return arr.copy()
-        return arr
-
-#####################################################################
-#####################################################################
-#####################################################################
-
 # This provider is used to stub out calls to the AzureQuantumProvider
 # There are live tests that use the available backends in the workspace
 # This provider is used to test the Qiskit plugin without making any
@@ -1163,6 +1023,8 @@ class TestQiskit(QuantumTestBase):
 
     @pytest.mark.ionq
     def test_ionq_transpile_supports_native_instructions(self):
+        from _qiskit_ionq import MSGate, GPIGate, GPI2Gate
+
         backend = IonQSimulatorNativeBackend(
             name="ionq.simulator", provider=None, gateset="native"
         )
@@ -1338,6 +1200,7 @@ class TestQiskit(QuantumTestBase):
     @pytest.mark.xdist_group(name="ionq.simulator")
     def test_qiskit_get_ionq_native_gateset(self):
         # initialize a quantum circuit with native gates (see https://ionq.com/docs/using-native-gates-with-qiskit)
+        from _qiskit_ionq import MSGate, GPIGate, GPI2Gate
         native_circuit = QuantumCircuit(2, 2)
         native_circuit.append(MSGate(0, 0), [0, 1])
         native_circuit.append(GPIGate(0), [0])
