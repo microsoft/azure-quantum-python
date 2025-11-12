@@ -432,7 +432,8 @@ class AzureBackendBase(Backend, SessionHost):
             if shots is not None and options_shots is not None:
                 warnings.warn(
                     f"Parameter 'shots' conflicts with the '{self.__class__._SHOTS_PARAM_NAME}' parameter. "
-                    "Please, provide only one option for setting shots. Defaulting to 'shots' parameter."
+                    "Please, provide only one option for setting shots. Defaulting to 'shots' parameter.",
+                    stacklevel=3,
                 )
                 final_shots = shots
             
@@ -441,7 +442,8 @@ class AzureBackendBase(Backend, SessionHost):
             elif options_shots is not None:
                 warnings.warn(
                     f"Parameter '{self.__class__._SHOTS_PARAM_NAME}' is subject to change in future versions. "
-                    "Please, use 'shots' parameter instead."
+                    "Please, use 'shots' parameter instead.",
+                    stacklevel=3,
                 )
                 final_shots = options_shots
             
@@ -691,7 +693,14 @@ class AzureQirBackend(AzureBackendBase):
             logger.debug(f"QIR:\n{qir}")
 
         skip_transpilation = input_params.pop("skipTranspile", True)
-
+        if not skip_transpilation:
+            warnings.warn(
+                "Transpilation is deprecated and will be removed in future versions. "
+                "Please, transpile circuits manually before passing them to the backend.",
+                category=DeprecationWarning,
+                stacklevel=3,
+            )
+    
         qir_str = self._get_qir_str(
             circuit, target_profile, skip_transpilation=skip_transpilation
         )

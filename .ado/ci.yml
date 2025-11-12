@@ -71,7 +71,7 @@ jobs:
     - script: |
         cd $(Build.SourcesDirectory)/azure-quantum
         pip install .[cirq,qsharp,dev]
-        pytest --numprocesses $(PYTEST_MAX_PARALLEL_TESTS) --cov-report term --cov=azure.quantum --junitxml test-output-azure-quantum.xml --ignore tests/unit/test_qiskit.py
+        pytest --numprocesses $(PYTEST_MAX_PARALLEL_TESTS) --cov-report term --cov=azure.quantum --junitxml test-output-azure-quantum.xml --ignore tests/unit/test_qiskit.py $(Build.SourcesDirectory)/azure-quantum
       displayName: Run azure-quantum unit tests
 
     - script: |

@@ -92,7 +92,7 @@ class AzureQuantumJob(JobV1):
             "results" : results if isinstance(results, list) else [results],
             "job_id" : self._azure_job.details.id,
             "backend_name" : self._backend.name,
-            "backend_version" : getattr(self._backend, "backend_version", None),
+            "backend_version" : self._backend.version,
             "qobj_id" : self._azure_job.details.name,
             "success" : success,
             "error_data" : None if self._azure_job.details.error_data is None else self._azure_job.details.error_data.as_dict()
