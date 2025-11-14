@@ -506,6 +506,15 @@ class AzureBackendBase(Backend, SessionHost):
             )
             raise ValueError(message)
 
+        
+        # Update metadata with all remaining options values, then clear options
+        # JobDetails model will error if unknown keys are passed down which
+        # can happen with estiamtor and backend wrappers
+        if metadata is None:
+            metadata = {}
+        metadata.update(options)
+        options.clear()
+
         job = AzureQuantumJob(
             backend=self,
             target=self.name,

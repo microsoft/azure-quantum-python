@@ -321,12 +321,15 @@ class AzureQuantumJob(JobV1):
             headers = [headers]
 
         # This function will attempt to parse the header into a JSON object, and if the header is not a JSON object, we return the header itself
-        def tryParseJSON(header):
-            try:
-                json_object = json.loads(header)
-            except ValueError as e:
-                return header
-            return json_object
+        def tryParseJSON(value):
+            if value is None or isinstance(value, (dict, list, int, float, bool)):
+                return value
+            if isinstance(value, str):
+                try:
+                    return json.loads(value)
+                except ValueError:
+                    return value
+            return value
         
         for header in headers:
             del header['qiskit'] # we throw out the qiskit header as it is implied
