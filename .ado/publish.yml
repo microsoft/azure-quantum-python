@@ -110,8 +110,9 @@ extends:
           displayName: Set Python version
 
         - script: |
-            pip install pytest pytest-azurepipelines pytest-cov pytest-xdist
-          displayName: Install pytest dependencies
+            python -m pip install --upgrade pip
+            pip install pytest pytest-azurepipelines pytest-cov pytest-xdist tox
+          displayName: Install test dependencies
 
         - script: |
             pip freeze
@@ -119,9 +120,14 @@ extends:
 
         - script: |
             cd $(Build.SourcesDirectory)/azure-quantum
-            pip install .[qiskit,cirq,qsharp,dev]
-            pytest --numprocesses $(PYTEST_MAX_PARALLEL_TESTS) --cov-report term --cov=azure.quantum --junitxml test-output-azure-quantum.xml $(Build.SourcesDirectory)/azure-quantum
+            pip install ".[cirq,qsharp,dev]"
+            pytest --numprocesses $(PYTEST_MAX_PARALLEL_TESTS) --cov-report term --cov=azure.quantum --junitxml test-output-azure-quantum.xml --ignore tests/unit/test_qiskit.py --ignore tests/unit/test_session_qiskit.py $(Build.SourcesDirectory)/azure-quantum
           displayName: Run Unit-tests
+
+        - script: |
+            cd $(Build.SourcesDirectory)/azure-quantum
+            tox -e py311-qiskit1,py311-qiskit2
+          displayName: Run Qiskit matrix tests
 
         - task: PublishTestResults@2
           displayName: 'Publish test results (python)'

@@ -2,17 +2,16 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 ##
-from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union, Type,  Protocol, runtime_checkable
+from typing import TYPE_CHECKING, Any, Dict, Union, Type,  Protocol, runtime_checkable
 from dataclasses import dataclass
 import io
 import json
 import abc
 import warnings
 
-from azure.quantum._client.models import TargetStatus, SessionDetails
-from azure.quantum._client.models._enums import SessionJobFailurePolicy
-from azure.quantum.job.job import Job, BaseJob
-from azure.quantum.job.session import Session, SessionHost
+from azure.quantum._client.models import TargetStatus
+from azure.quantum.job.job import Job
+from azure.quantum.job.session import SessionHost
 from azure.quantum.job.base_job import ContentType
 from azure.quantum.target.params import InputParams
 if TYPE_CHECKING:
@@ -339,54 +338,3 @@ target '{self.name}' of provider '{self.provider_id}' not found."
 
     def _get_azure_provider_id(self) -> str:
         return self.provider_id
-
-    @classmethod
-    def _calculate_qir_module_gate_stats(self, qir_module) -> GateStats:
-        try:
-            from pyqir import Module, is_qubit_type, is_result_type, entry_point, is_entry_point, Function
-
-        except ImportError:
-            raise ImportError(
-                "Missing optional 'qiskit' dependencies. \
-        To install run: pip install azure-quantum[qiskit]"
-            )
-        
-        module: Module = qir_module
-
-        one_qubit_gates = 0
-        multi_qubit_gates = 0
-        measurement_gates = 0
-
-        function_entry_points: list[Function] = filter(is_entry_point, module.functions)
-        
-        # Iterate over the blocks and their instructions
-        for function in function_entry_points:
-            for block in function.basic_blocks:
-                for instruction in block.instructions:
-                    qubit_count = 0
-                    result_count = 0
-                    
-                    # If the instruction is of type quantum rt, do not include this is the price calculation
-                    if len(instruction.operands) > 0 and "__quantum__rt" not in instruction.operands[-1].name:
-                        # Check each operand in the instruction
-                        for operand in instruction.operands:
-                            value_type = operand.type
-                            
-                            if is_qubit_type(value_type):
-                                qubit_count += 1
-                            elif is_result_type(value_type):
-                                result_count += 1
-
-                    # Determine the type of gate based on the counts
-                    if qubit_count == 1 and result_count == 0:
-                        one_qubit_gates += 1
-                    if qubit_count >= 2 and result_count == 0:
-                        multi_qubit_gates += 1
-                    if result_count > 0:
-                        measurement_gates += 1
-
-        return GateStats (
-            one_qubit_gates, 
-            multi_qubit_gates, 
-            measurement_gates
-        )

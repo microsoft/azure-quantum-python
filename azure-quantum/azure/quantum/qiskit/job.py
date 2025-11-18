@@ -54,13 +54,13 @@ class AzureQuantumJob(JobV1):
         """
         if azure_job is None:
             azure_job = Job.from_input_data(
-                workspace=backend.provider().get_workspace(),
+                workspace=backend.provider.get_workspace(),
                 session_id=backend.get_latest_session_id(),
                 **kwargs
             )
 
         self._azure_job = azure_job
-        self._workspace = backend.provider().get_workspace()
+        self._workspace = backend.provider.get_workspace()
 
         super().__init__(backend, self._azure_job.id, **kwargs)
 
@@ -91,7 +91,7 @@ class AzureQuantumJob(JobV1):
         result_dict = {
             "results" : results if isinstance(results, list) else [results],
             "job_id" : self._azure_job.details.id,
-            "backend_name" : self._backend.name(),
+            "backend_name" : self._backend.name,
             "backend_version" : self._backend.version,
             "qobj_id" : self._azure_job.details.name,
             "success" : success,
@@ -321,12 +321,15 @@ class AzureQuantumJob(JobV1):
             headers = [headers]
 
         # This function will attempt to parse the header into a JSON object, and if the header is not a JSON object, we return the header itself
-        def tryParseJSON(header):
-            try:
-                json_object = json.loads(header)
-            except ValueError as e:
-                return header
-            return json_object
+        def tryParseJSON(value):
+            if value is None or isinstance(value, (dict, list, int, float, bool)):
+                return value
+            if isinstance(value, str):
+                try:
+                    return json.loads(value)
+                except ValueError:
+                    return value
+            return value
         
         for header in headers:
             del header['qiskit'] # we throw out the qiskit header as it is implied
