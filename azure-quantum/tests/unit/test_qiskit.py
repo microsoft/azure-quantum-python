@@ -1600,7 +1600,7 @@ class TestQiskit(QuantumTestBase):
         self.assertEqual(qiskit_job._azure_job.details.input_data_format, "qir.v1")
         self.assertEqual(qiskit_job._azure_job.details.output_data_format, MICROSOFT_OUTPUT_DATA_FORMAT_V2)
         self.assertEqual(qiskit_job._azure_job.details.input_params["count"], shots)
-        self.assertEqual(qiskit_job._azure_job.details.input_params["items"][0]["entryPoint"], circuit.name)
+        self.assertEqual(qiskit_job._azure_job.details.input_params["items"][0]["entryPoint"], "ENTRYPOINT__main")
         self.assertEqual(qiskit_job._azure_job.details.input_params["items"][0]["arguments"], [])
 
         # Make sure the job is completed before fetching the results
@@ -1897,7 +1897,7 @@ class TestQiskit(QuantumTestBase):
         self.assertEqual(qiskit_job._azure_job.details.input_data_format, "qir.v1")
         self.assertEqual(qiskit_job._azure_job.details.output_data_format, MICROSOFT_OUTPUT_DATA_FORMAT_V2)
         self.assertEqual(qiskit_job._azure_job.details.input_params["count"], shots)
-        self.assertEqual(qiskit_job._azure_job.details.input_params["items"][0]["entryPoint"], circuit.name)
+        self.assertEqual(qiskit_job._azure_job.details.input_params["items"][0]["entryPoint"], "ENTRYPOINT__main")
         self.assertEqual(qiskit_job._azure_job.details.input_params["items"][0]["arguments"], [])
 
         # Make sure the job is completed before fetching the results
@@ -2075,7 +2075,7 @@ class TestQiskit(QuantumTestBase):
         self.assertEqual(qiskit_job._azure_job.details.input_data_format, "qir.v1")
         self.assertEqual(qiskit_job._azure_job.details.output_data_format, MICROSOFT_OUTPUT_DATA_FORMAT_V2)
         self.assertEqual(qiskit_job._azure_job.details.input_params["shots"], shots)
-        self.assertEqual(qiskit_job._azure_job.details.input_params["items"][0]["entryPoint"], circuit.name)
+        self.assertEqual(qiskit_job._azure_job.details.input_params["items"][0]["entryPoint"], "ENTRYPOINT__main")
         self.assertEqual(qiskit_job._azure_job.details.input_params["items"][0]["arguments"], [])
 
         # Make sure the job is completed before fetching the results
