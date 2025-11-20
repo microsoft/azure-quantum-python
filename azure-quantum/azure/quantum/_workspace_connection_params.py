@@ -46,7 +46,7 @@ class WorkspaceConnectionParams:
             ResourceGroupName=(?P<resource_group>[^\s;]+);
             WorkspaceName=(?P<workspace_name>[^\s;]+);
             ApiKey=(?P<api_key>[^\s;]+);
-            QuantumEndpoint=(?P<quantum_endpoint>https://(?P<location>[^\s\.]+).quantum(?:-test)?.azure.com/);
+            QuantumEndpoint=(?P<quantum_endpoint>https://(?P<location>[^\s\.]+?)(?:-v2)?.quantum(?:-test)?.azure.com/);
         """,
         re.VERBOSE | re.IGNORECASE)
 

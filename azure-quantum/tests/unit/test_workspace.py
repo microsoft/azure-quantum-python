@@ -38,6 +38,14 @@ SIMPLE_CONNECTION_STRING = ConnectionConstants.VALID_CONNECTION_STRING(
     quantum_endpoint=ConnectionConstants.GET_QUANTUM_PRODUCTION_ENDPOINT(LOCATION)
 )
 
+SIMPLE_CONNECTION_STRING_V2 = ConnectionConstants.VALID_CONNECTION_STRING(
+    subscription_id=SUBSCRIPTION_ID,
+    resource_group=RESOURCE_GROUP,
+    workspace_name=WORKSPACE,
+    api_key=API_KEY,
+    quantum_endpoint=ConnectionConstants.GET_QUANTUM_PRODUCTION_ENDPOINT_v2(LOCATION)
+)
+
 
 class TestWorkspace(QuantumTestBase):
     def test_create_workspace_instance_valid(self):
@@ -204,6 +212,70 @@ class TestWorkspace(QuantumTestBase):
             self.assertEqual(workspace.subscription_id, SUBSCRIPTION_ID)
             self.assertEqual(workspace.resource_group, RESOURCE_GROUP)
             self.assertEqual(workspace.name, WORKSPACE)
+    
+    def test_workspace_from_connection_string_v2(self):
+        """Test that v2 QuantumEndpoint format is correctly parsed."""
+        with mock.patch.dict(
+            os.environ,
+            clear=True
+        ):
+            workspace = Workspace.from_connection_string(SIMPLE_CONNECTION_STRING_V2)
+            self.assertEqual(workspace.location, LOCATION)
+            self.assertEqual(workspace.subscription_id, SUBSCRIPTION_ID)
+            self.assertEqual(workspace.resource_group, RESOURCE_GROUP)
+            self.assertEqual(workspace.name, WORKSPACE)
+            self.assertIsInstance(workspace.credential, AzureKeyCredential)
+            self.assertEqual(workspace.credential.key, API_KEY)
+            # pylint: disable=protected-access
+            self.assertIsInstance(
+                workspace._client._config.authentication_policy,
+                AzureKeyCredentialPolicy)
+            auth_policy = workspace._client._config.authentication_policy
+            self.assertEqual(auth_policy._name, ConnectionConstants.QUANTUM_API_KEY_HEADER)
+            self.assertEqual(id(auth_policy._credential),
+                             id(workspace.credential))
+    
+    def test_workspace_from_connection_string_v2_dogfood(self):
+        """Test v2 QuantumEndpoint with dogfood environment."""
+        canary_location = "eastus2euap"
+        dogfood_connection_string_v2 = ConnectionConstants.VALID_CONNECTION_STRING(
+            subscription_id=SUBSCRIPTION_ID,
+            resource_group=RESOURCE_GROUP,
+            workspace_name=WORKSPACE,
+            api_key=API_KEY,
+            quantum_endpoint=ConnectionConstants.GET_QUANTUM_DOGFOOD_ENDPOINT_v2(canary_location)
+        )
+        
+        with mock.patch.dict(os.environ, clear=True):
+            workspace = Workspace.from_connection_string(dogfood_connection_string_v2)
+            self.assertEqual(workspace.location, canary_location)
+            self.assertEqual(workspace.subscription_id, SUBSCRIPTION_ID)
+            self.assertEqual(workspace.resource_group, RESOURCE_GROUP)
+            self.assertEqual(workspace.name, WORKSPACE)
+            self.assertIsInstance(workspace.credential, AzureKeyCredential)
+            self.assertEqual(workspace.credential.key, API_KEY)
+
+    def test_env_connection_string_v2(self):
+        """Test v2 QuantumEndpoint from environment variable."""
+        with mock.patch.dict(os.environ):
+            self.clear_env_vars(os.environ)
+            os.environ[EnvironmentVariables.CONNECTION_STRING] = SIMPLE_CONNECTION_STRING_V2
+
+            workspace = Workspace()
+            self.assertEqual(workspace.location, LOCATION)
+            self.assertEqual(workspace.subscription_id, SUBSCRIPTION_ID)
+            self.assertEqual(workspace.name, WORKSPACE)
+            self.assertEqual(workspace.resource_group, RESOURCE_GROUP)
+            self.assertIsInstance(workspace.credential, AzureKeyCredential)
+            self.assertEqual(workspace.credential.key, API_KEY)
+            # pylint: disable=protected-access
+            self.assertIsInstance(
+                workspace._client._config.authentication_policy,
+                AzureKeyCredentialPolicy)
+            auth_policy = workspace._client._config.authentication_policy
+            self.assertEqual(auth_policy._name, ConnectionConstants.QUANTUM_API_KEY_HEADER)
+            self.assertEqual(id(auth_policy._credential),
+                             id(workspace.credential))
 
     def test_create_workspace_instance_invalid(self):
         def assert_value_error(exception):
