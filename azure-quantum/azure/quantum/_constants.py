@@ -63,10 +63,14 @@ class ConnectionConstants:
     # pylint: disable=unnecessary-lambda-assignment
     GET_QUANTUM_PRODUCTION_ENDPOINT = \
         lambda location: f"https://{location}.quantum.azure.com/"
+    GET_QUANTUM_PRODUCTION_ENDPOINT_v2 = \
+        lambda location: f"https://{location}-v2.quantum.azure.com/"
     GET_QUANTUM_CANARY_ENDPOINT = \
         lambda location: f"https://{location or 'eastus2euap'}.quantum.azure.com/"
     GET_QUANTUM_DOGFOOD_ENDPOINT = \
         lambda location: f"https://{location}.quantum-test.azure.com/"
+    GET_QUANTUM_DOGFOOD_ENDPOINT_v2 = \
+        lambda location: f"https://{location}-v2.quantum-test.azure.com/"
 
     ARM_PRODUCTION_ENDPOINT = "https://management.azure.com/"
     ARM_DOGFOOD_ENDPOINT = "https://api-dogfood.resources.windows-int.net/"
