@@ -538,7 +538,6 @@ class TestQiskit(QuantumTestBase):
     @pytest.mark.ionq
     @pytest.mark.live_test
     @pytest.mark.xdist_group(name="ionq.simulator")
-    # @pytest.mark.skip("Unknown issue causing probabilities to not add up to 1.")
     def test_qiskit_submit_ionq_5_qubit_superposition_passthrough(self):
         workspace = self.create_workspace()
         provider = AzureQuantumProvider(workspace=workspace)
