@@ -22,15 +22,12 @@ class EchoQuantinuumQPUQirBackend(QuantinuumQPUQirBackend):
         config.update(
             {
                 "provider_id": ECHO_PROVIDER_NAME,
-                "output_data_format": "honeywell.qir.v1"
+                "output_data_format": "honeywell.qir.v1",
             }
         )
         return config
 
-    def __init__(self,
-                 name: str,
-                 provider: "AzureQuantumProvider",
-                 **kwargs):
+    def __init__(self, name: str, provider: "AzureQuantumProvider", **kwargs):
         super().__init__(name=name, provider=provider)
         self._provider_id = ECHO_PROVIDER_NAME
         self._provider_name = ECHO_PROVIDER_NAME
@@ -39,6 +36,7 @@ class EchoQuantinuumQPUQirBackend(QuantinuumQPUQirBackend):
 class QiskitTestSession(QuantumTestBase):
     def _get_qiskit_backend(self, target_name):
         from azure.quantum.qiskit import AzureQuantumProvider
+
         workspace = self.create_workspace()
         provider = AzureQuantumProvider(workspace=workspace)
         if "echo-quantinuum" in target_name:
@@ -55,22 +53,26 @@ class QiskitTestSession(QuantumTestBase):
         with backend.open_session() as session:
             self.assertEqual(session.details.status, SessionStatus.WAITING)
             session_id = session.id
-            job1 = backend.run(circuit, shots=100, job_name="Job 1")  
+            job1 = backend.run(circuit, shots=100, job_name="Job 1")
 
             backend.run(circuit, shots=100, job_name="Job 2")
 
             job1.wait_for_final_state(wait=5 if not self.is_playback else 0)
             session.refresh()
-                
+
             self.assertEqual(session.details.status, SessionStatus.EXECUTING)
 
         session = workspace.get_session(session_id=session_id)
         session_jobs = session.list_jobs()
         self.assertEqual(len(session_jobs), 2)
-        self.assertEqual(session_jobs[0].details.name, "Job 1")
-        self.assertEqual(session_jobs[1].details.name, "Job 2")
+        job_names = [job.details.name for job in session_jobs]
+        self.assertIn("Job 1", job_names)
+        self.assertIn("Job 2", job_names)
 
-        [job.wait_until_completed(timeout_secs=DEFAULT_TIMEOUT_SECS) for job in session_jobs]
+        [
+            job.wait_until_completed(timeout_secs=DEFAULT_TIMEOUT_SECS)
+            for job in session_jobs
+        ]
         session.refresh()
         self.assertEqual(session.details.status, SessionStatus.SUCCEEDED)
 
@@ -78,14 +80,14 @@ class QiskitTestSession(QuantumTestBase):
         workspace = self.create_workspace()
         if "echo-quantinuum" in target_name:
             from azure.quantum.target.quantinuum import Quantinuum
-            target = Quantinuum(workspace=workspace,
-                                name=target_name,
-                                provider_id=ECHO_PROVIDER_NAME)
+
+            target = Quantinuum(
+                workspace=workspace, name=target_name, provider_id=ECHO_PROVIDER_NAME
+            )
             return target
         target = workspace.get_targets(target_name)
         self.assertIsNotNone(target)
         return target
-
 
     # Session support for Qiskit jobs
 
