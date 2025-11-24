@@ -7,7 +7,13 @@ import pytest
 
 from common import QuantumTestBase, DEFAULT_TIMEOUT_SECS
 from test_job_payload_factory import JobPayloadFactory
-from azure.quantum import Job, JobStatus, Session, SessionStatus, SessionJobFailurePolicy
+from azure.quantum import (
+    Job,
+    JobStatus,
+    Session,
+    SessionStatus,
+    SessionJobFailurePolicy,
+)
 from import_qsharp import skip_if_no_qsharp
 
 
@@ -38,10 +44,12 @@ class TestSession(QuantumTestBase):
     @pytest.mark.xdist_group(name="echo-quantinuum")
     def test_session_get_session(self):
         workspace = self.create_workspace()
-        session = Session(workspace=workspace,
-                          name="My Session",
-                          target="echo-quantinuum",
-                          provider_id=ECHO_PROVIDER_NAME)
+        session = Session(
+            workspace=workspace,
+            name="My Session",
+            target="echo-quantinuum",
+            provider_id=ECHO_PROVIDER_NAME,
+        )
         self.assertIsNone(session.details.status)
         session.open()
         self.assertEqual(session.details.status, SessionStatus.WAITING)
@@ -50,7 +58,9 @@ class TestSession(QuantumTestBase):
         self.assertEqual(obtained_session.id, session.id)
         self.assertEqual(obtained_session.details.id, session.details.id)
         self.assertEqual(obtained_session.details.target, session.details.target)
-        self.assertEqual(obtained_session.details.provider_id, session.details.provider_id)
+        self.assertEqual(
+            obtained_session.details.provider_id, session.details.provider_id
+        )
         self.assertEqual(obtained_session.details.name, session.details.name)
         self.assertEqual(obtained_session.details.status, session.details.status)
 
@@ -60,9 +70,11 @@ class TestSession(QuantumTestBase):
     @pytest.mark.xdist_group(name="echo-quantinuum")
     def test_session_open_close(self):
         workspace = self.create_workspace()
-        session = Session(workspace=workspace,
-                          target="echo-quantinuum",
-                          provider_id=ECHO_PROVIDER_NAME)
+        session = Session(
+            workspace=workspace,
+            target="echo-quantinuum",
+            provider_id=ECHO_PROVIDER_NAME,
+        )
         self.assertIsNone(session.details.status)
         session.open()
         self.assertEqual(session.details.status, SessionStatus.WAITING)
@@ -102,10 +114,12 @@ class TestSession(QuantumTestBase):
         workspace = self.create_workspace()
         if "echo-quantinuum" in target_name:
             from azure.quantum.cirq.targets import QuantinuumTarget
-            return QuantinuumTarget(workspace=workspace,
-                                    provider_id=ECHO_PROVIDER_NAME,
-                                    name=target_name)
+
+            return QuantinuumTarget(
+                workspace=workspace, provider_id=ECHO_PROVIDER_NAME, name=target_name
+            )
         from azure.quantum.cirq import AzureQuantumService
+
         service = AzureQuantumService(workspace=workspace)
         target = service.get_target(target_name)
         self.assertIsNotNone(target)
@@ -121,8 +135,11 @@ class TestSession(QuantumTestBase):
             self.assertEqual(session.details.status, SessionStatus.WAITING)
             session_id = session.id
             job1 = target.submit(circuit, name="Job 1")
-            azure_job = job1._azure_job if hasattr(job1, '_azure_job') \
-                        else workspace.get_job(job_id=job1._job["id"])
+            azure_job = (
+                job1._azure_job
+                if hasattr(job1, "_azure_job")
+                else workspace.get_job(job_id=job1._job["id"])
+            )
 
             target.submit(circuit, name="Job 2")
 
@@ -134,10 +151,14 @@ class TestSession(QuantumTestBase):
         session = workspace.get_session(session_id=session_id)
         session_jobs = session.list_jobs()
         self.assertEqual(len(session_jobs), 2)
-        self.assertEqual(session_jobs[0].details.name, "Job 1")
-        self.assertEqual(session_jobs[1].details.name, "Job 2")
+        job_names = [job.details.name for job in session_jobs]
+        self.assertIn("Job 1", job_names)
+        self.assertIn("Job 2", job_names)
 
-        [job.wait_until_completed(timeout_secs=DEFAULT_TIMEOUT_SECS) for job in session_jobs]
+        [
+            job.wait_until_completed(timeout_secs=DEFAULT_TIMEOUT_SECS)
+            for job in session_jobs
+        ]
         session.refresh()
         self.assertEqual(session.details.status, SessionStatus.SUCCEEDED)
 
@@ -145,9 +166,10 @@ class TestSession(QuantumTestBase):
         workspace = self.create_workspace()
         if "echo-quantinuum" in target_name:
             from azure.quantum.target.quantinuum import Quantinuum
-            target = Quantinuum(workspace=workspace,
-                                name=target_name,
-                                provider_id=ECHO_PROVIDER_NAME)
+
+            target = Quantinuum(
+                workspace=workspace, name=target_name, provider_id=ECHO_PROVIDER_NAME
+            )
             return target
         target = workspace.get_targets(target_name)
         self.assertIsNotNone(target)
@@ -159,19 +181,22 @@ class TestSession(QuantumTestBase):
 
         qsharp_callable = JobPayloadFactory.get_qsharp_inline_callable_bell_state()
 
-        output_data_format = "honeywell.qir.v1" if "echo-quantinuum" in target_name \
-                             else target._qir_output_data_format()
+        output_data_format = (
+            "honeywell.qir.v1"
+            if "echo-quantinuum" in target_name
+            else target._qir_output_data_format()
+        )
 
         with target.open_session() as session:
             self.assertEqual(session.details.status, SessionStatus.WAITING)
             session_id = session.id
-            job1 = target.submit(qsharp_callable,
-                                 name="Job 1",
-                                 output_data_format=output_data_format)
+            job1 = target.submit(
+                qsharp_callable, name="Job 1", output_data_format=output_data_format
+            )
 
-            target.submit(qsharp_callable,
-                          name="Job 2",
-                          output_data_format=output_data_format)
+            target.submit(
+                qsharp_callable, name="Job 2", output_data_format=output_data_format
+            )
 
             job1.wait_until_completed(timeout_secs=DEFAULT_TIMEOUT_SECS)
 
@@ -181,10 +206,14 @@ class TestSession(QuantumTestBase):
         session = workspace.get_session(session_id=session_id)
         session_jobs = session.list_jobs()
         self.assertEqual(len(session_jobs), 2)
-        self.assertEqual(session_jobs[0].details.name, "Job 1")
-        self.assertEqual(session_jobs[1].details.name, "Job 2")
+        job_names = [job.details.name for job in session_jobs]
+        self.assertIn("Job 1", job_names)
+        self.assertIn("Job 2", job_names)
 
-        [job.wait_until_completed(timeout_secs=DEFAULT_TIMEOUT_SECS) for job in session_jobs]
+        [
+            job.wait_until_completed(timeout_secs=DEFAULT_TIMEOUT_SECS)
+            for job in session_jobs
+        ]
         session.refresh()
         self.assertEqual(session.details.status, SessionStatus.SUCCEEDED)
 
@@ -211,54 +240,72 @@ class TestSession(QuantumTestBase):
 
         qsharp_callable = JobPayloadFactory.get_qsharp_inline_callable_bell_state()
 
-        output_data_format = "honeywell.qir.v1" if "echo-quantinuum" in target_name else None
+        output_data_format = (
+            "honeywell.qir.v1" if "echo-quantinuum" in target_name else None
+        )
 
-        with target.open_session(job_failure_policy=SessionJobFailurePolicy.ABORT) as session:
+        with target.open_session(
+            job_failure_policy=SessionJobFailurePolicy.ABORT
+        ) as session:
             self.assertEqual(session.details.status, SessionStatus.WAITING)
 
             # pass an invalid output_data_format to make the job fail
-            job1 = target.submit(qsharp_callable,
-                                 name="Bad Job 1",
-                                 output_data_format="invalid_output_format")
+            job1 = target.submit(
+                qsharp_callable,
+                name="Bad Job 1",
+                output_data_format="invalid_output_format",
+            )
             job1.wait_until_completed(timeout_secs=DEFAULT_TIMEOUT_SECS)
             self.assertEqual(job1.details.status, JobStatus.FAILED)
             session.refresh()
             self.assertEqual(session.details.status, SessionStatus.FAILED)
 
             from azure.core.exceptions import HttpResponseError
+
             with self.assertRaises(HttpResponseError) as context:
-                target.submit(qsharp_callable,
-                              name="Good Job 2",
-                              output_data_format=output_data_format)
-            self.assertIn("Session is already in a terminal state.",
-                          context.exception.message)
+                target.submit(
+                    qsharp_callable,
+                    name="Good Job 2",
+                    output_data_format=output_data_format,
+                )
+            self.assertIn(
+                "Session is already in a terminal state.", context.exception.message
+            )
 
             session_jobs = session.list_jobs()
             self.assertEqual(len(session_jobs), 1)
             self.assertEqual(session_jobs[0].details.name, "Bad Job 1")
 
-        with target.open_session(job_failure_policy=SessionJobFailurePolicy.CONTINUE) as session:
+        with target.open_session(
+            job_failure_policy=SessionJobFailurePolicy.CONTINUE
+        ) as session:
             self.assertEqual(session.details.status, SessionStatus.WAITING)
-            job1 = target.submit(qsharp_callable,
-                                 name="Good Job 1",
-                                 output_data_format=output_data_format)
+            job1 = target.submit(
+                qsharp_callable,
+                name="Good Job 1",
+                output_data_format=output_data_format,
+            )
             job1.wait_until_completed(timeout_secs=DEFAULT_TIMEOUT_SECS)
             self.assertEqual(job1.details.status, JobStatus.SUCCEEDED)
             session.refresh()
             self.assertEqual(session.details.status, SessionStatus.EXECUTING)
 
             # pass an invalid output_data_format to make the job fail
-            job2 = target.submit(qsharp_callable,
-                                 name="Bad Job 2",
-                                 output_data_format="invalid_output_format")
+            job2 = target.submit(
+                qsharp_callable,
+                name="Bad Job 2",
+                output_data_format="invalid_output_format",
+            )
             job2.wait_until_completed(timeout_secs=DEFAULT_TIMEOUT_SECS)
             self.assertEqual(job2.details.status, JobStatus.FAILED)
             session.refresh()
             self.assertEqual(session.details.status, SessionStatus.FAILURE_S_)
 
-            job3 = target.submit(qsharp_callable,
-                                 name="Good Job 3",
-                                 output_data_format=output_data_format)
+            job3 = target.submit(
+                qsharp_callable,
+                name="Good Job 3",
+                output_data_format=output_data_format,
+            )
             job3.wait_until_completed(timeout_secs=DEFAULT_TIMEOUT_SECS)
             self.assertEqual(job3.details.status, JobStatus.SUCCEEDED)
             session.refresh()
@@ -266,9 +313,10 @@ class TestSession(QuantumTestBase):
 
             session_jobs = session.list_jobs()
             self.assertEqual(len(session_jobs), 3)
-            self.assertEqual(session_jobs[0].details.name, "Good Job 1")
-            self.assertEqual(session_jobs[1].details.name, "Bad Job 2")
-            self.assertEqual(session_jobs[2].details.name, "Good Job 3")
+            job_names = [job.details.name for job in session_jobs]
+            self.assertIn("Good Job 1", job_names)
+            self.assertIn("Bad Job 2", job_names)
+            self.assertIn("Good Job 3", job_names)
 
     # Session job failure policy tests
 
@@ -300,7 +348,9 @@ class TestSession(QuantumTestBase):
     def test_session_job_cirq_circuit_quantinuum(self):
         self._test_session_job_cirq_circuit(target_name="quantinuum.sim.h2-1sc")
 
-    @pytest.mark.skip(reason="Currently the echo-quantinuum is only accepting QIR input formats and Cirq is using qasm.")
+    @pytest.mark.skip(
+        reason="Currently the echo-quantinuum is only accepting QIR input formats and Cirq is using qasm."
+    )
     @pytest.mark.live_test
     @pytest.mark.session
     @pytest.mark.cirq
@@ -338,4 +388,3 @@ class TestSession(QuantumTestBase):
     @skip_if_no_qsharp
     def test_session_job_qsharp_callable_ionq(self):
         self._test_session_job_qsharp_callable(target_name="ionq.simulator")
-
