@@ -1320,7 +1320,6 @@ class TestQiskit(QuantumTestBase):
     @pytest.mark.quantinuum
     @pytest.mark.live_test
     @pytest.mark.xdist_group(name="quantinuum.sim.h2-1e")
-    @pytest.mark.skip("Target is having timeout issues")
     def test_plugins_submit_qiskit_to_quantinuum(self):
         circuit = self._3_qubit_ghz()
         self._test_qiskit_submit_quantinuum(circuit, target="quantinuum.sim.h2-1e")
@@ -1328,7 +1327,6 @@ class TestQiskit(QuantumTestBase):
     @pytest.mark.quantinuum
     @pytest.mark.live_test
     @pytest.mark.xdist_group(name="quantinuum.sim.h2-1e")
-    @pytest.mark.skip("Target is having timeout issues")
     def test_plugins_submit_qiskit_to_quantinuum_h2_1e(self):
         circuit = self._3_qubit_ghz()
         self._test_qiskit_submit_quantinuum(circuit, target="quantinuum.sim.h2-1e")
@@ -1350,7 +1348,6 @@ class TestQiskit(QuantumTestBase):
     @pytest.mark.quantinuum
     @pytest.mark.live_test
     @pytest.mark.xdist_group(name="quantinuum.sim.h2-1e")
-    @pytest.mark.skip("Target is having timeout issues")
     def test_plugins_submit_qiskit_circuit_as_list_to_quantinuum(self):
         circuit = self._3_qubit_ghz()
         self._test_qiskit_submit_quantinuum([circuit], target="quantinuum.sim.h2-1e")
@@ -1358,7 +1355,6 @@ class TestQiskit(QuantumTestBase):
     @pytest.mark.quantinuum
     @pytest.mark.live_test
     @pytest.mark.xdist_group(name="quantinuum.sim.h2-1e")
-    @pytest.mark.skip("Target is having timeout issues")
     def test_plugins_submit_qiskit_to_quantinuum_passthrough(self):
         circuit = self._3_qubit_ghz()
         self._test_qiskit_submit_quantinuum_passthrough(circuit)
@@ -1366,7 +1362,6 @@ class TestQiskit(QuantumTestBase):
     @pytest.mark.quantinuum
     @pytest.mark.live_test
     @pytest.mark.xdist_group(name="quantinuum.sim.h2-1e")
-    @pytest.mark.skip("Target is having timeout issues")
     def test_plugins_submit_qiskit_to_quantinuum_h2_1e_passthrough(self):
         circuit = self._3_qubit_ghz()
         self._test_qiskit_submit_quantinuum_passthrough(
@@ -1394,7 +1389,6 @@ class TestQiskit(QuantumTestBase):
     @pytest.mark.quantinuum
     @pytest.mark.live_test
     @pytest.mark.xdist_group(name="quantinuum.sim.h2-1e")
-    @pytest.mark.skip("Target is having timeout issues")
     def test_plugins_submit_qiskit_circuit_as_list_to_quantinuum_passthrough(self):
         circuit = self._3_qubit_ghz()
         self._test_qiskit_submit_quantinuum_passthrough(
@@ -1657,7 +1651,6 @@ class TestQiskit(QuantumTestBase):
     @pytest.mark.quantinuum
     @pytest.mark.live_test
     @pytest.mark.xdist_group(name="quantinuum.sim.h2-1e")
-    @pytest.mark.skip("Target is having timeout issues")
     def test_qiskit_qir_submit_quantinuum(self):
         circuit = self._3_qubit_ghz()
         workspace = self.create_workspace()
