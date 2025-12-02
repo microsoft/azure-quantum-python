@@ -19,7 +19,7 @@ from common import (
 
 class TestWorkspacePagination(QuantumTestBase):
     def test_filter_valid(self):
-        ws = Workspace(
+        ws = self.create_workspace_with_params(
             subscription_id=SUBSCRIPTION_ID,
             resource_group=RESOURCE_GROUP,
             name=WORKSPACE,
@@ -42,7 +42,7 @@ class TestWorkspacePagination(QuantumTestBase):
     def test_orderby_valid(self):
         var_names = ["Name", "ItemType", "JobType", "ProviderId", "Target", "State", "CreationTime"]
 
-        ws = Workspace(
+        ws = self.create_workspace_with_params(
             subscription_id=SUBSCRIPTION_ID,
             resource_group=RESOURCE_GROUP,
             name=WORKSPACE,
@@ -64,7 +64,7 @@ class TestWorkspacePagination(QuantumTestBase):
             self.assertEqual(orderby, expected)
 
     def test_orderby_invalid(self):
-        ws = Workspace(
+        ws = self.create_workspace_with_params(
             subscription_id=SUBSCRIPTION_ID,
             resource_group=RESOURCE_GROUP,
             name=WORKSPACE,

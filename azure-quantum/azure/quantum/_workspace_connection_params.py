@@ -49,6 +49,17 @@ class WorkspaceConnectionParams:
             QuantumEndpoint=(?P<quantum_endpoint>https://(?P<location>[^\s\.]+?)(?:-v2)?.quantum(?:-test)?.azure.com/);
         """,
         re.VERBOSE | re.IGNORECASE)
+    
+    WORKSPACE_NOT_FULLY_SPECIFIED_MSG = """
+                    Azure Quantum workspace not fully specified.
+                    Please specify one of the following:
+                    1) A valid resource ID.
+                    2) A valid combination of subscription ID,
+                    resource group name, and workspace name.
+                    3) A valid combination of workspace name and location.
+                    4) A valid workspace name.
+                    5) A valid connection string (via Workspace.from_connection_string()).
+                """
 
     def __init__(
         self,
@@ -85,6 +96,8 @@ class WorkspaceConnectionParams:
         self.client_id = None
         self.tenant_id = None
         self.api_version = None
+        # Track if connection string was used
+        self._used_connection_string = False
         # callback to create a new client if needed
         # for example, when changing the user agent
         self.on_new_client_request = on_new_client_request
@@ -235,6 +248,7 @@ class WorkspaceConnectionParams:
             if not match:
                 raise ValueError("Invalid connection string")
             self._merge_re_match(match)
+            self._used_connection_string = True
 
     def merge(
         self,
@@ -450,6 +464,32 @@ class WorkspaceConnectionParams:
             full_user_agent = (f"{app_id} {full_user_agent}"
                                if full_user_agent else app_id)
         return full_user_agent
+    
+    def have_enough_for_discovery(self) -> bool:
+        """
+        Returns true if we have enough parameters
+        to try to find the Azure Quantum Workspace.
+        """
+        return (self.workspace_name
+                and self.get_credential_or_default())
+
+    def assert_have_enough_for_discovery(self):
+        """
+        Raises ValueError if we don't have enough parameters
+        to try to find the Azure Quantum Workspace.
+        """
+        if not self.have_enough_for_discovery():
+            raise ValueError(self.WORKSPACE_NOT_FULLY_SPECIFIED_MSG)
+    
+    def can_build_resource_id(self) -> bool:
+        """
+        Returns true if we have all necessary parameters
+        to identify the Azure Quantum Workspace resource.
+        """
+        return (self.subscription_id
+                and self.resource_group
+                and self.workspace_name
+                and self.get_credential_or_default())
 
     def is_complete(self) -> bool:
         """
@@ -460,6 +500,7 @@ class WorkspaceConnectionParams:
                 and self.subscription_id
                 and self.resource_group
                 and self.workspace_name
+                and self.quantum_endpoint
                 and self.get_credential_or_default())
 
     def assert_complete(self):
@@ -468,15 +509,7 @@ class WorkspaceConnectionParams:
         to connect to the Azure Quantum Workspace.
         """
         if not self.is_complete():
-            raise ValueError(
-                """
-                    Azure Quantum workspace not fully specified.
-                    Please specify one of the following:
-                    1) A valid combination of location and resource ID.
-                    2) A valid combination of location, subscription ID,
-                    resource group name, and workspace name.
-                    3) A valid connection string (via Workspace.from_connection_string()).
-                """)
+            raise ValueError(self.WORKSPACE_NOT_FULLY_SPECIFIED_MSG)
 
     def default_from_env_vars(self) -> WorkspaceConnectionParams:
         """
@@ -512,10 +545,13 @@ class WorkspaceConnectionParams:
             or not self.workspace_name
             or not self.credential
         ):
-            self._merge_connection_params(
-                connection_params=WorkspaceConnectionParams(
-                    connection_string=os.environ.get(EnvironmentVariables.CONNECTION_STRING)),
-                merge_default_mode=True)
+            env_connection_string = os.environ.get(EnvironmentVariables.CONNECTION_STRING)
+            if env_connection_string:
+                self._merge_connection_params(
+                    connection_params=WorkspaceConnectionParams(
+                        connection_string=env_connection_string),
+                    merge_default_mode=True)
+                self._used_connection_string = True
         return self
 
     @classmethod

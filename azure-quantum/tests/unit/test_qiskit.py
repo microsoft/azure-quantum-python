@@ -573,8 +573,8 @@ class TestQiskit(QuantumTestBase):
         with warnings.catch_warnings(record=True) as w:
             # Cause all warnings to always be triggered.
             warnings.simplefilter("always")
-            # Try to trigger a warning.
-            workspace = Workspace(
+            # Try to trigger a warning.            
+            workspace = self.create_workspace_with_params(
                 resource_id=SIMPLE_RESOURCE_ID,
                 location=LOCATION)
             AzureQuantumProvider(workspace)
@@ -585,34 +585,41 @@ class TestQiskit(QuantumTestBase):
             assert len(warns) == 0
 
     def test_qiskit_provider_init_without_workspace_raises_deprecation(self):
-        # testing warning according to https://docs.python.org/3/library/warnings.html#testing-warnings                
-        with warnings.catch_warnings(record=True) as w:
-            # Cause all warnings to always be triggered.
-            warnings.simplefilter("always")
-            # Try to trigger a warning.
-            AzureQuantumProvider(
-                resource_id=SIMPLE_RESOURCE_ID,
-                location=LOCATION)
+        # testing warning according to https://docs.python.org/3/library/warnings.html#testing-warnings
+        from unittest.mock import patch
+        
+        # Create mock mgmt_client to avoid ARM calls
+        mock_mgmt_client = self.create_mock_mgmt_client(location=LOCATION)
+        
+        with patch('azure.quantum.workspace.AzureQuantumMgmtClient', return_value=mock_mgmt_client):
+            with warnings.catch_warnings(record=True) as w:
+                # Cause all warnings to always be triggered.
+                warnings.simplefilter("always")
+                # Try to trigger a warning.
+                AzureQuantumProvider(
+                    resource_id=SIMPLE_RESOURCE_ID,
+                    location=LOCATION)
 
-            warns = [warn for warn in w if "Consider passing \"workspace\" argument explicitly." in warn.message.args[0]]
+                warns = [warn for warn in w if "Consider passing \"workspace\" argument explicitly." in warn.message.args[0]]
 
-            # Verify
-            assert len(warns) == 1
-            assert issubclass(warns[0].category, DeprecationWarning)
+                # Verify
+                assert len(warns) == 1
+                assert issubclass(warns[0].category, DeprecationWarning)
 
-        # Validate rising deprecation warning even if workspace is passed, but other parameters are also passed
-        with warnings.catch_warnings(record=True) as w:
-            # Cause all warnings to always be triggered.
-            warnings.simplefilter("always")
-            # Try to trigger a warning.
-            workspace = Workspace(
-                resource_id=SIMPLE_RESOURCE_ID,
-                location=LOCATION)
+            # Validate rising deprecation warning even if workspace is passed, but other parameters are also passed
+            with warnings.catch_warnings(record=True) as w:
+                # Cause all warnings to always be triggered.
+                warnings.simplefilter("always")
+                # Try to trigger a warning.
+                workspace = Workspace(
+                    resource_id=SIMPLE_RESOURCE_ID,
+                    location=LOCATION,
+                    _mgmt_client=mock_mgmt_client)
 
-            AzureQuantumProvider(
-                workspace=workspace,
-                resource_id=SIMPLE_RESOURCE_ID,
-                location=LOCATION)
+                AzureQuantumProvider(
+                    workspace=workspace,
+                    resource_id=SIMPLE_RESOURCE_ID,
+                    location=LOCATION)
             
             warns = [warn for warn in w if "Consider passing \"workspace\" argument explicitly." in warn.message.args[0]]
 

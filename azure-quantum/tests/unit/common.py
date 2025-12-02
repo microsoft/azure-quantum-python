@@ -7,7 +7,8 @@ import re
 import os
 import json
 import time
-from unittest.mock import patch
+from typing import Optional, Any
+from unittest.mock import patch, MagicMock
 from vcr.request import Request as VcrRequest
 
 from azure_devtools.scenario_tests.base import ReplayableTest
@@ -40,6 +41,7 @@ RESOURCE_GROUP = "myresourcegroup"
 WORKSPACE = "myworkspace"
 LOCATION = "eastus"
 STORAGE = "mystorage"
+ENDPOINT_URI = "https://myworkspace.eastus.quantum.azure.com/"
 API_KEY = "myapikey"
 APP_ID = "testapp"
 DEFAULT_TIMEOUT_SECS = 300
@@ -285,6 +287,22 @@ class QuantumTestBase(ReplayableTest):
             if env_var in os_environ:
                 del os_environ[env_var]
 
+    def create_mock_mgmt_client(self, location: str = None) -> MagicMock:
+        """
+        Create a mock Azure Quantum Management Client to avoid ARM calls during tests.
+        
+        :param location:
+            The location to use for the workspace resource.
+        """
+        mock_mgmt_client = MagicMock()
+        mock_workspace_resource = MagicMock()
+        mock_workspace_resource.location = location
+        mock_workspace_resource.properties = MagicMock()
+        mock_workspace_resource.properties.endpoint_uri = ConnectionConstants.GET_QUANTUM_PRODUCTION_ENDPOINT(location)
+        mock_mgmt_client.workspaces.get.return_value = mock_workspace_resource
+        
+        return mock_mgmt_client
+
     def create_workspace(
             self,
             credential = None,
@@ -303,6 +321,9 @@ class QuantumTestBase(ReplayableTest):
                 client_id=ZERO_UID,
                 client_secret=PLACEHOLDER)
 
+        # Create mock mgmt_client to avoid ARM calls during tests
+        mock_mgmt_client = self.create_mock_mgmt_client(location=connection_params.location)
+
         workspace = Workspace(
             credential=credential,
             subscription_id=connection_params.subscription_id,
@@ -310,9 +331,42 @@ class QuantumTestBase(ReplayableTest):
             name=connection_params.workspace_name,
             location=connection_params.location,
             user_agent=connection_params.user_agent_app_id,
+            _mgmt_client=mock_mgmt_client,
             **kwargs
         )
 
+        return workspace
+
+    def create_workspace_with_params(
+            self,
+            subscription_id: Optional[str] = None,
+            resource_group: Optional[str] = None,
+            name: Optional[str] = None,
+            storage: Optional[str] = None,
+            resource_id: Optional[str] = None,
+            location: Optional[str] = None,
+            credential: Optional[object] = None,
+            user_agent: Optional[str] = None,
+            **kwargs: Any) -> Workspace:
+        """
+        Create workspace with explicit parameters, using a mock management client
+        to avoid ARM calls during tests.
+        """
+        mock_mgmt_client = self.create_mock_mgmt_client(location=location)
+        
+        workspace = Workspace(
+            subscription_id=subscription_id,
+            resource_group=resource_group,
+            name=name,
+            storage=storage,
+            resource_id=resource_id,
+            location=location,
+            credential=credential,
+            user_agent=user_agent,
+            _mgmt_client=mock_mgmt_client,
+            **kwargs
+        )
+        
         return workspace
 
     def create_echo_target(

@@ -12,7 +12,10 @@ from common import (
     WORKSPACE,
     LOCATION,
     STORAGE,
+    ENDPOINT_URI,
     API_KEY,
+    ZERO_UID,
+    PLACEHOLDER,
 )
 from azure.quantum import Workspace
 from azure.quantum._constants import (
@@ -49,41 +52,84 @@ SIMPLE_CONNECTION_STRING_V2 = ConnectionConstants.VALID_CONNECTION_STRING(
 
 class TestWorkspace(QuantumTestBase):
     def test_create_workspace_instance_valid(self):
+        def assert_all_required_params(ws: Workspace):
+            self.assertEqual(ws.subscription_id, SUBSCRIPTION_ID)
+            self.assertEqual(ws.resource_group, RESOURCE_GROUP)
+            self.assertEqual(ws.name, WORKSPACE)
+            self.assertEqual(ws.location, LOCATION)
+            self.assertEqual(ws._connection_params.quantum_endpoint, ENDPOINT_URI)
+        
         ws = Workspace(
             subscription_id=SUBSCRIPTION_ID,
             resource_group=RESOURCE_GROUP,
             name=WORKSPACE,
-            location=LOCATION,
         )
-        self.assertEqual(ws.subscription_id, SUBSCRIPTION_ID)
-        self.assertEqual(ws.resource_group, RESOURCE_GROUP)
-        self.assertEqual(ws.name, WORKSPACE)
-        self.assertEqual(ws.location, LOCATION)
+        assert_all_required_params(ws)
 
         ws = Workspace(
             subscription_id=SUBSCRIPTION_ID,
             resource_group=RESOURCE_GROUP,
             name=WORKSPACE,
-            location=LOCATION,
             storage=STORAGE,
         )
+        assert_all_required_params(ws)
         self.assertEqual(ws.storage, STORAGE)
 
         ws = Workspace(
             resource_id=SIMPLE_RESOURCE_ID,
-            location=LOCATION,
         )
-        self.assertEqual(ws.subscription_id, SUBSCRIPTION_ID)
-        self.assertEqual(ws.resource_group, RESOURCE_GROUP)
-        self.assertEqual(ws.name, WORKSPACE)
-        self.assertEqual(ws.location, LOCATION)
+        assert_all_required_params(ws)
 
         ws = Workspace(
             resource_id=SIMPLE_RESOURCE_ID,
             storage=STORAGE,
+        )
+        assert_all_required_params(ws)
+        self.assertEqual(ws.storage, STORAGE)
+
+        ws = Workspace(
+            name=WORKSPACE,
+        )
+        assert_all_required_params(ws)
+
+        ws = Workspace(
+            name=WORKSPACE,
+            storage=STORAGE,
+        )
+        assert_all_required_params(ws)
+        self.assertEqual(ws.storage, STORAGE)
+
+        ws = Workspace(
+            name=WORKSPACE,
             location=LOCATION,
         )
-        self.assertEqual(ws.storage, STORAGE)
+        assert_all_required_params(ws)
+
+        ws = Workspace(
+            name=WORKSPACE,
+            subscription_id=SUBSCRIPTION_ID,
+        )
+        assert_all_required_params(ws)
+
+        ws = Workspace(
+            name=WORKSPACE,
+            subscription_id=SUBSCRIPTION_ID,
+            location=LOCATION,
+        )
+        assert_all_required_params(ws)
+
+        ws = Workspace(
+            name=WORKSPACE,
+            resource_group=RESOURCE_GROUP,
+        )
+        assert_all_required_params(ws)
+
+        ws = Workspace(
+            name=WORKSPACE,
+            resource_group=RESOURCE_GROUP,
+            location=LOCATION,
+        )
+        assert_all_required_params(ws)
 
     def test_create_workspace_locations(self):
         # User-provided location name should be normalized
@@ -176,6 +222,9 @@ class TestWorkspace(QuantumTestBase):
             self.assertIsInstance(workspace.credential, AzureKeyCredential)
 
             # if we pass a credential, then it should be used
+            os.environ[EnvironmentVariables.AZURE_CLIENT_ID] = ZERO_UID
+            os.environ[EnvironmentVariables.AZURE_TENANT_ID] = ZERO_UID
+            os.environ[EnvironmentVariables.AZURE_CLIENT_SECRET] = PLACEHOLDER
             workspace = Workspace(credential=EnvironmentCredential())
             self.assertIsInstance(workspace.credential, EnvironmentCredential)
 
@@ -285,41 +334,6 @@ class TestWorkspace(QuantumTestBase):
         with mock.patch.dict(os.environ):
             self.clear_env_vars(os.environ)
 
-            # missing location
-            with self.assertRaises(ValueError) as context:
-                Workspace(
-                    location=None,
-                    subscription_id=SUBSCRIPTION_ID,
-                    resource_group=RESOURCE_GROUP,
-                    name=WORKSPACE,
-                )
-            assert_value_error(context.exception)
-
-            # missing location
-            with self.assertRaises(ValueError) as context:
-                Workspace(resource_id=SIMPLE_RESOURCE_ID)
-            assert_value_error(context.exception)
-
-            # missing subscription id
-            with self.assertRaises(ValueError) as context:
-                Workspace(
-                    location=LOCATION,
-                    subscription_id=None,
-                    resource_group=RESOURCE_GROUP,
-                    name=WORKSPACE
-                )
-            assert_value_error(context.exception)
-
-            # missing resource group
-            with self.assertRaises(ValueError) as context:
-                Workspace(
-                    location=LOCATION,
-                    subscription_id=SUBSCRIPTION_ID,
-                    resource_group=None,
-                    name=WORKSPACE
-                )
-            assert_value_error(context.exception)
-
             # missing workspace name
             with self.assertRaises(ValueError) as context:
                 Workspace(
@@ -327,6 +341,14 @@ class TestWorkspace(QuantumTestBase):
                     subscription_id=SUBSCRIPTION_ID,
                     resource_group=RESOURCE_GROUP,
                     name=None
+                )
+            assert_value_error(context.exception)
+
+            # provide only subscription id and resource group
+            with self.assertRaises(ValueError) as context:
+                Workspace(
+                    subscription_id=SUBSCRIPTION_ID,
+                    resource_group=RESOURCE_GROUP,
                 )
             assert_value_error(context.exception)
 

@@ -1,0 +1,292 @@
+interactions:
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.32.5
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace?api-version=2023-11-13-preview
+  response:
+    body:
+      string: '{"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace",
+        "name": "myworkspace", "type": "Microsoft.Quantum/workspaces", "location":
+        "eastus", "properties": {"endpointUri": "https://myworkspace.eastus.quantum.azure.com/",
+        "provisioningState": "Succeeded", "usable": "Yes"}}'
+    headers:
+      content-length:
+      - '385'
+      content-type:
+      - application/json; charset=utf-8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.32.5
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace?api-version=2023-11-13-preview
+  response:
+    body:
+      string: '{"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace",
+        "name": "myworkspace", "type": "Microsoft.Quantum/workspaces", "location":
+        "eastus", "properties": {"endpointUri": "https://myworkspace.eastus.quantum.azure.com/",
+        "provisioningState": "Succeeded", "usable": "Yes"}}'
+    headers:
+      content-length:
+      - '385'
+      content-type:
+      - application/json; charset=utf-8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.32.5
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace?api-version=2023-11-13-preview
+  response:
+    body:
+      string: '{"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace",
+        "name": "myworkspace", "type": "Microsoft.Quantum/workspaces", "location":
+        "eastus", "properties": {"endpointUri": "https://myworkspace.eastus.quantum.azure.com/",
+        "provisioningState": "Succeeded", "usable": "Yes"}}'
+    headers:
+      content-length:
+      - '385'
+      content-type:
+      - application/json; charset=utf-8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: null
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      User-Agent:
+      - python-requests/2.32.5
+    method: GET
+    uri: https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace?api-version=2023-11-13-preview
+  response:
+    body:
+      string: '{"id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/myresourcegroup/providers/Microsoft.Quantum/workspaces/myworkspace",
+        "name": "myworkspace", "type": "Microsoft.Quantum/workspaces", "location":
+        "eastus", "properties": {"endpointUri": "https://myworkspace.eastus.quantum.azure.com/",
+        "provisioningState": "Succeeded", "usable": "Yes"}}'
+    headers:
+      content-length:
+      - '385'
+      content-type:
+      - application/json; charset=utf-8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"query": "\n            Resources\n            | where type =~ ''microsoft.quantum/workspaces''\n            | where name =~ ''myworkspace''\n        \n            | extend endpointUri = tostring(properties.endpointUri)\n            | project name, subscriptionId, resourceGroup, location, endpointUri\n        "}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json
+      User-Agent:
+      - python-requests/2.32.5
+    method: POST
+    uri: https://management.azure.com/providers/Microsoft.ResourceGraph/resources?api-version=2021-03-01
+  response:
+    body:
+      string: '{"totalRecords": 1, "count": 1, "data": [{"name": "myworkspace", "subscriptionId": "11111111-2222-3333-4444-555555555555", "resourceGroup": "myresourcegroup", "location": "eastus", "endpointUri": "https://myworkspace.eastus.quantum.azure.com/"}], "facets": [], "resultTruncated": "false"}'
+    headers:
+      content-length:
+      - '286'
+      content-type:
+      - application/json; charset=utf-8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"query": "\n            Resources\n            | where type =~ ''microsoft.quantum/workspaces''\n            | where name =~ ''myworkspace''\n        \n            | extend endpointUri = tostring(properties.endpointUri)\n            | project name, subscriptionId, resourceGroup, location, endpointUri\n        "}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json
+      User-Agent:
+      - python-requests/2.32.5
+    method: POST
+    uri: https://management.azure.com/providers/Microsoft.ResourceGraph/resources?api-version=2021-03-01
+  response:
+    body:
+      string: '{"totalRecords": 1, "count": 1, "data": [{"name": "myworkspace", "subscriptionId": "11111111-2222-3333-4444-555555555555", "resourceGroup": "myresourcegroup", "location": "eastus", "endpointUri": "https://myworkspace.eastus.quantum.azure.com/"}], "facets": [], "resultTruncated": "false"}'
+    headers:
+      content-length:
+      - '286'
+      content-type:
+      - application/json; charset=utf-8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"query": "\n            Resources\n            | where type =~ ''microsoft.quantum/workspaces''\n            | where name =~ ''myworkspace''\n        \n                | where location =~ ''eastus''\n            | extend endpointUri = tostring(properties.endpointUri)\n            | project name, subscriptionId, resourceGroup, location, endpointUri\n        "}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json
+      User-Agent:
+      - python-requests/2.32.5
+    method: POST
+    uri: https://management.azure.com/providers/Microsoft.ResourceGraph/resources?api-version=2021-03-01
+  response:
+    body:
+      string: '{"totalRecords": 1, "count": 1, "data": [{"name": "myworkspace", "subscriptionId": "11111111-2222-3333-4444-555555555555", "resourceGroup": "myresourcegroup", "location": "eastus", "endpointUri": "https://myworkspace.eastus.quantum.azure.com/"}], "facets": [], "resultTruncated": "false"}'
+    headers:
+      content-length:
+      - '286'
+      content-type:
+      - application/json; charset=utf-8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"query": "\n            Resources\n            | where type =~ ''microsoft.quantum/workspaces''\n            | where name =~ ''myworkspace''\n        \n            | extend endpointUri = tostring(properties.endpointUri)\n            | project name, subscriptionId, resourceGroup, location, endpointUri\n        ", "subscriptions": ["11111111-2222-3333-4444-555555555555"]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json
+      User-Agent:
+      - python-requests/2.32.5
+    method: POST
+    uri: https://management.azure.com/providers/Microsoft.ResourceGraph/resources?api-version=2021-03-01
+  response:
+    body:
+      string: '{"totalRecords": 1, "count": 1, "data": [{"name": "myworkspace", "subscriptionId": "11111111-2222-3333-4444-555555555555", "resourceGroup": "myresourcegroup", "location": "eastus", "endpointUri": "https://myworkspace.eastus.quantum.azure.com/"}], "facets": [], "resultTruncated": "false"}'
+    headers:
+      content-length:
+      - '286'
+      content-type:
+      - application/json; charset=utf-8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"query": "\n            Resources\n            | where type =~ ''microsoft.quantum/workspaces''\n            | where name =~ ''myworkspace''\n        \n                | where location =~ ''eastus''\n            | extend endpointUri = tostring(properties.endpointUri)\n            | project name, subscriptionId, resourceGroup, location, endpointUri\n        ", "subscriptions": ["11111111-2222-3333-4444-555555555555"]}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json
+      User-Agent:
+      - python-requests/2.32.5
+    method: POST
+    uri: https://management.azure.com/providers/Microsoft.ResourceGraph/resources?api-version=2021-03-01
+  response:
+    body:
+      string: '{"totalRecords": 1, "count": 1, "data": [{"name": "myworkspace", "subscriptionId": "11111111-2222-3333-4444-555555555555", "resourceGroup": "myresourcegroup", "location": "eastus", "endpointUri": "https://myworkspace.eastus.quantum.azure.com/"}], "facets": [], "resultTruncated": "false"}'
+    headers:
+      content-length:
+      - '286'
+      content-type:
+      - application/json; charset=utf-8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"query": "\n            Resources\n            | where type =~ ''microsoft.quantum/workspaces''\n            | where name =~ ''myworkspace''\n        \n                | where resourceGroup =~ ''myresourcegroup''\n            | extend endpointUri = tostring(properties.endpointUri)\n            | project name, subscriptionId, resourceGroup, location, endpointUri\n        "}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json
+      User-Agent:
+      - python-requests/2.32.5
+    method: POST
+    uri: https://management.azure.com/providers/Microsoft.ResourceGraph/resources?api-version=2021-03-01
+  response:
+    body:
+      string: '{"totalRecords": 1, "count": 1, "data": [{"name": "myworkspace", "subscriptionId": "11111111-2222-3333-4444-555555555555", "resourceGroup": "myresourcegroup", "location": "eastus", "endpointUri": "https://myworkspace.eastus.quantum.azure.com/"}], "facets": [], "resultTruncated": "false"}'
+    headers:
+      content-length:
+      - '286'
+      content-type:
+      - application/json; charset=utf-8
+    status:
+      code: 200
+      message: OK
+- request:
+    body: '{"query": "\n            Resources\n            | where type =~ ''microsoft.quantum/workspaces''\n            | where name =~ ''myworkspace''\n        \n                | where resourceGroup =~ ''myresourcegroup''\n                | where location =~ ''eastus''\n            | extend endpointUri = tostring(properties.endpointUri)\n            | project name, subscriptionId, resourceGroup, location, endpointUri\n        "}'
+    headers:
+      Accept:
+      - application/json
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Type:
+      - application/json
+      User-Agent:
+      - python-requests/2.32.5
+    method: POST
+    uri: https://management.azure.com/providers/Microsoft.ResourceGraph/resources?api-version=2021-03-01
+  response:
+    body:
+      string: '{"totalRecords": 1, "count": 1, "data": [{"name": "myworkspace", "subscriptionId": "11111111-2222-3333-4444-555555555555", "resourceGroup": "myresourcegroup", "location": "eastus", "endpointUri": "https://myworkspace.eastus.quantum.azure.com/"}], "facets": [], "resultTruncated": "false"}'
+    headers:
+      content-length:
+      - '286'
+      content-type:
+      - application/json; charset=utf-8
+    status:
+      code: 200
+      message: OK
+version: 1

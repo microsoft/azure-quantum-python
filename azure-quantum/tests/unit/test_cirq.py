@@ -64,9 +64,9 @@ class TestCirq(QuantumTestBase):
             # Cause all warnings to always be triggered.
             warnings.simplefilter("always")
             # Try to trigger a warning.
-            workspace = Workspace(
+            workspace = self.create_workspace_with_params(
                 resource_id=SIMPLE_RESOURCE_ID,
-                location=LOCATION)                
+                location=LOCATION)
             AzureQuantumService(workspace)
 
             # Verify
@@ -75,36 +75,42 @@ class TestCirq(QuantumTestBase):
     def test_cirq_service_init_without_workspace_raises_deprecation(self):
         # testing warning according to https://docs.python.org/3/library/warnings.html#testing-warnings
         import warnings
-                
-        with warnings.catch_warnings(record=True) as w:
-            # Cause all warnings to always be triggered.
-            warnings.simplefilter("always")
-            # Try to trigger a warning.
-            AzureQuantumService(
-                resource_id=SIMPLE_RESOURCE_ID,
-                location=LOCATION)
-            # Verify
-            assert len(w) == 1
-            assert issubclass(w[-1].category, DeprecationWarning)
-            assert "Consider passing \"workspace\" argument explicitly" in str(w[-1].message)
-
-        # Validate rising deprecation warning even if workspace is passed, but other parameters are also passed
-        with warnings.catch_warnings(record=True) as w:
-            # Cause all warnings to always be triggered.
-            warnings.simplefilter("always")
-            # Try to trigger a warning.
-            workspace = Workspace(
-                resource_id=SIMPLE_RESOURCE_ID,
-                location=LOCATION)
-
-            AzureQuantumService(
-                    workspace=workspace,
+        from unittest.mock import patch
+        
+        # Create mock mgmt_client to avoid ARM calls
+        mock_mgmt_client = self.create_mock_mgmt_client(location=LOCATION)
+        
+        with patch('azure.quantum.workspace.AzureQuantumMgmtClient', return_value=mock_mgmt_client):
+            with warnings.catch_warnings(record=True) as w:
+                # Cause all warnings to always be triggered.
+                warnings.simplefilter("always")
+                # Try to trigger a warning.
+                AzureQuantumService(
                     resource_id=SIMPLE_RESOURCE_ID,
                     location=LOCATION)
-            # Verify
-            assert len(w) == 1
-            assert issubclass(w[-1].category, DeprecationWarning)
-            assert "Consider passing \"workspace\" argument explicitly" in str(w[-1].message)
+                # Verify
+                assert len(w) == 1
+                assert issubclass(w[-1].category, DeprecationWarning)
+                assert "Consider passing \"workspace\" argument explicitly" in str(w[-1].message)
+
+            # Validate rising deprecation warning even if workspace is passed, but other parameters are also passed
+            with warnings.catch_warnings(record=True) as w:
+                # Cause all warnings to always be triggered.
+                warnings.simplefilter("always")
+                # Try to trigger a warning.
+                workspace = Workspace(
+                    resource_id=SIMPLE_RESOURCE_ID,
+                    location=LOCATION,
+                    _mgmt_client=mock_mgmt_client)
+
+                AzureQuantumService(
+                        workspace=workspace,
+                        resource_id=SIMPLE_RESOURCE_ID,
+                        location=LOCATION)
+                # Verify
+                assert len(w) == 1
+                assert issubclass(w[-1].category, DeprecationWarning)
+                assert "Consider passing \"workspace\" argument explicitly" in str(w[-1].message)
 
     @pytest.mark.quantinuum
     @pytest.mark.ionq
