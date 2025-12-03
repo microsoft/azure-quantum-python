@@ -590,7 +590,7 @@ class TestQiskit(QuantumTestBase):
         with warnings.catch_warnings(record=True) as w:
             # Cause all warnings to always be triggered.
             warnings.simplefilter("always")
-            # Try to trigger a warning.            
+            # Try to trigger a warning.
             workspace = self.create_workspace_with_params(resource_id=SIMPLE_RESOURCE_ID, location=LOCATION)
             AzureQuantumProvider(workspace)
 
@@ -618,16 +618,16 @@ class TestQiskit(QuantumTestBase):
                 # Try to trigger a warning.
                 AzureQuantumProvider(resource_id=SIMPLE_RESOURCE_ID, location=LOCATION)
 
-            warns = [
-                warn
-                for warn in w
-                if 'Consider passing "workspace" argument explicitly.'
-                in warn.message.args[0]
-            ]
+                warns = [
+                    warn
+                    for warn in w
+                    if 'Consider passing "workspace" argument explicitly.'
+                    in warn.message.args[0]
+                ]
 
-            # Verify
-            assert len(warns) == 1
-            assert issubclass(warns[0].category, DeprecationWarning)
+                # Verify
+                assert len(warns) == 1
+                assert issubclass(warns[0].category, DeprecationWarning)
 
             # Validate rising deprecation warning even if workspace is passed, but other parameters are also passed
             with warnings.catch_warnings(record=True) as w:
@@ -639,20 +639,20 @@ class TestQiskit(QuantumTestBase):
                     location=LOCATION,
                     _mgmt_client=mock_mgmt_client)
 
-            AzureQuantumProvider(
-                workspace=workspace, resource_id=SIMPLE_RESOURCE_ID, location=LOCATION
-            )
+                AzureQuantumProvider(
+                    workspace=workspace, resource_id=SIMPLE_RESOURCE_ID, location=LOCATION
+                )
 
-            warns = [
-                warn
-                for warn in w
-                if 'Consider passing "workspace" argument explicitly.'
-                in warn.message.args[0]
-            ]
+                warns = [
+                    warn
+                    for warn in w
+                    if 'Consider passing "workspace" argument explicitly.'
+                    in warn.message.args[0]
+                ]
 
-            # Verify
-            assert len(warns) == 1
-            assert issubclass(warns[0].category, DeprecationWarning)
+                # Verify
+                assert len(warns) == 1
+                assert issubclass(warns[0].category, DeprecationWarning)
 
     @pytest.mark.ionq
     @pytest.mark.live_test

@@ -155,19 +155,8 @@ class WorkspaceConnectionParams:
     def quantum_endpoint(self):
         """
         The Azure Quantum data plane endpoint.
-        Defaults to well-known endpoint based on the environment.
         """
-        if self._quantum_endpoint:
-            return self._quantum_endpoint
-        if not self.location:
-            raise ValueError("Location not specified")
-        if self.environment is EnvironmentKind.PRODUCTION:
-            return ConnectionConstants.GET_QUANTUM_PRODUCTION_ENDPOINT(self.location)
-        if self.environment is EnvironmentKind.CANARY:
-            return ConnectionConstants.GET_QUANTUM_CANARY_ENDPOINT(self.location)
-        if self.environment is EnvironmentKind.DOGFOOD:
-            return ConnectionConstants.GET_QUANTUM_DOGFOOD_ENDPOINT(self.location)
-        raise ValueError(f"Unknown environment `{self.environment}`.")
+        return self._quantum_endpoint
 
     @quantum_endpoint.setter
     def quantum_endpoint(self, value: str):

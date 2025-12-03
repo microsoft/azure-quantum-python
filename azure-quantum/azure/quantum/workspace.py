@@ -119,6 +119,7 @@ class Workspace:
     
     # Internal parameter names
     _FROM_CONNECTION_STRING_PARAM = '_from_connection_string'
+    _QUANTUM_ENDPOINT_PARAM = '_quantum_endpoint'
     _MGMT_CLIENT_PARAM = '_mgmt_client'
     _RG_CLIENT_PARAM = '_rg_client'
     
@@ -137,6 +138,8 @@ class Workspace:
         # Extract internal params before passing kwargs to WorkspaceConnectionParams
         # Param to track whether the workspace was created from a connection string
         from_connection_string = kwargs.pop(Workspace._FROM_CONNECTION_STRING_PARAM, False)
+        # In case from connection string, quantum_endpoint must be passed
+        quantum_endpoint = kwargs.pop(Workspace._QUANTUM_ENDPOINT_PARAM, None)
         # Params to pass a mock in tests
         mgmt_client = kwargs.pop(Workspace._MGMT_CLIENT_PARAM, None)
         rg_client = kwargs.pop(Workspace._RG_CLIENT_PARAM, None)
@@ -148,6 +151,7 @@ class Workspace:
             workspace_name=name,
             credential=credential,
             resource_id=resource_id,
+            quantum_endpoint=quantum_endpoint,
             user_agent=user_agent,
             **kwargs
         ).default_from_env_vars()
@@ -165,7 +169,7 @@ class Workspace:
         self._workspace_name = connection_params.workspace_name
 
         # Populate workspace details from ARG if name is provided but missing subscription and/or resource group
-        if connection_params.workspace_name \
+        if not from_connection_string \
            and not connection_params.can_build_resource_id():
             arg_client = self._create_arg_client(connection_params, rg_client)
             self._load_workspace_from_arg(arg_client)
@@ -226,13 +230,16 @@ class Workspace:
         if connection_params.location:
             location = self._escape_kql_string(connection_params.location)
             query += f"\n                | where location =~ '{location}'"
-        
+
         query += """
             | extend endpointUri = tostring(properties.endpointUri)
             | project name, subscriptionId, resourceGroup, location, endpointUri
         """
+
+        subscriptions = None
+        if connection_params.subscription_id:
+            subscriptions = [self._escape_kql_string(connection_params.subscription_id)]
         
-        subscriptions = [connection_params.subscription_id] if connection_params.subscription_id else None
         query_request = QueryRequest(query=query, subscriptions=subscriptions)
 
         try:
@@ -482,6 +489,7 @@ class Workspace:
         """
         connection_params = WorkspaceConnectionParams(connection_string=connection_string)
         kwargs[cls._FROM_CONNECTION_STRING_PARAM] = True
+        kwargs[cls._QUANTUM_ENDPOINT_PARAM] = connection_params.quantum_endpoint
         return cls(
             subscription_id=connection_params.subscription_id,
             resource_group=connection_params.resource_group,
