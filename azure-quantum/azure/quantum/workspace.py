@@ -49,10 +49,7 @@ from azure.quantum.storage import (
     get_container_uri,
     ContainerClient
 )
-from azure.core.exceptions import ResourceNotFoundError
-from azure.mgmt.quantum import AzureQuantumMgmtClient
-from azure.mgmt.resourcegraph import ResourceGraphClient
-from azure.mgmt.resourcegraph.models import QueryRequest
+from azure.quantum.mgmt_client import WorkspaceMgmtClient
 if TYPE_CHECKING:
     from azure.quantum.target import Target
 
@@ -121,7 +118,6 @@ class Workspace:
     _FROM_CONNECTION_STRING_PARAM = '_from_connection_string'
     _QUANTUM_ENDPOINT_PARAM = '_quantum_endpoint'
     _MGMT_CLIENT_PARAM = '_mgmt_client'
-    _RG_CLIENT_PARAM = '_rg_client'
     
     def __init__(
         self,
@@ -142,7 +138,6 @@ class Workspace:
         quantum_endpoint = kwargs.pop(Workspace._QUANTUM_ENDPOINT_PARAM, None)
         # Params to pass a mock in tests
         mgmt_client = kwargs.pop(Workspace._MGMT_CLIENT_PARAM, None)
-        rg_client = kwargs.pop(Workspace._RG_CLIENT_PARAM, None)
         
         connection_params = WorkspaceConnectionParams(
             location=location,
@@ -168,11 +163,14 @@ class Workspace:
         self._resource_group = connection_params.resource_group
         self._workspace_name = connection_params.workspace_name
 
+        if not mgmt_client:
+            credential = connection_params.get_credential_or_default()
+            mgmt_client = WorkspaceMgmtClient(credential=credential, base_url=connection_params.arm_endpoint)
+
         # Populate workspace details from ARG if name is provided but missing subscription and/or resource group
         if not from_connection_string \
            and not connection_params.can_build_resource_id():
-            arg_client = self._create_arg_client(connection_params, rg_client)
-            self._load_workspace_from_arg(arg_client)
+            mgmt_client.load_workspace_from_arg(connection_params)
 
         # pylint: disable=protected-access
         using_connection_string = (
@@ -182,182 +180,12 @@ class Workspace:
 
         # Populate workspace from ARM if not using connection string (API key) and not loaded from ARG
         if not using_connection_string and not connection_params.is_complete():
-            mgmt_client = self._create_mgmt_client(connection_params, mgmt_client)
-            self._load_workspace_from_arm(mgmt_client)
+            mgmt_client.load_workspace_from_arm(connection_params)
         
         connection_params.assert_complete()
 
         # Create QuantumClient
         self._client = self._create_client()
-    
-    def _create_arg_client(
-        self,
-        connection_params: WorkspaceConnectionParams,
-        arg_client: Optional[ResourceGraphClient] = None
-    ) -> ResourceGraphClient:
-        if arg_client is not None:
-            return arg_client
-        
-        credential = connection_params.get_credential_or_default()
-        return ResourceGraphClient(
-            credential=credential,
-            base_url=connection_params.arm_endpoint
-        )
-
-    def _load_workspace_from_arg(self, arg_client: ResourceGraphClient) -> None:
-        """
-        Queries Azure Resource Graph to find a workspace by name.
-        Populates subscription_id, resource_group, location, and quantum_endpoint params if found.
-        """
-        connection_params = self._connection_params
-
-        if not connection_params.workspace_name:
-            raise ValueError("Workspace name must be specified.")
-
-        # Escape single quotes in parameters to prevent KQL injection
-        workspace_name = self._escape_kql_string(connection_params.workspace_name)
-        
-        query = f"""
-            Resources
-            | where type =~ 'microsoft.quantum/workspaces'
-            | where name =~ '{workspace_name}'
-        """
-        
-        if connection_params.resource_group:
-            resource_group = self._escape_kql_string(connection_params.resource_group)
-            query += f"\n                | where resourceGroup =~ '{resource_group}'"
-        
-        if connection_params.location:
-            location = self._escape_kql_string(connection_params.location)
-            query += f"\n                | where location =~ '{location}'"
-
-        query += """
-            | extend endpointUri = tostring(properties.endpointUri)
-            | project name, subscriptionId, resourceGroup, location, endpointUri
-        """
-
-        subscriptions = None
-        if connection_params.subscription_id:
-            subscriptions = [self._escape_kql_string(connection_params.subscription_id)]
-        
-        query_request = QueryRequest(query=query, subscriptions=subscriptions)
-
-        try:
-            response = arg_client.resources(query_request)
-        except Exception as e:
-            raise RuntimeError(
-                f"Failed to query workspace using ARG: {str(e)}.\n"
-                "Please retry later or try to specify subscription id and resource group."
-            ) from e
-        
-        if not response.data or len(response.data) == 0:
-            raise ValueError(f"No matching workspace found with name '{connection_params.workspace_name}'.\n"
-                             "Please specify correct workspace name.")
-        
-        if len(response.data) > 1:
-            if not connection_params.location:
-                raise ValueError(
-                    f"Multiple Azure Quantum workspaces found with name '{connection_params.workspace_name}'.\n"
-                    "Please specify location."
-                )
-            # not expected to reach here, so ask user to use all params
-            raise RuntimeError(
-                f"Multiple Azure Quantum workspaces found with name '{connection_params.workspace_name}' in location '{connection_params.location}'.\n"
-                "Please specify subscription id and resource group."
-            )
-        
-        workspace_data = response.data[0]
-        
-        connection_params.subscription_id = workspace_data.get('subscriptionId')
-        connection_params.resource_group = workspace_data.get('resourceGroup')
-        connection_params.location = workspace_data.get('location')
-        connection_params.quantum_endpoint = workspace_data.get('endpointUri')
-
-        logger.debug(
-            "Found workspace '%s' in subscription '%s', resource group '%s', location '%s', endpoint '%s'",
-            connection_params.workspace_name,
-            connection_params.subscription_id,
-            connection_params.resource_group,
-            connection_params.location,
-            connection_params.quantum_endpoint
-        )
-
-        # If one of the required parameters is missing, probably workspace in failed provisioning state
-        if not connection_params.is_complete():
-            raise ValueError(
-                f"Failed to retrieve complete workspace details for workspace '{connection_params.workspace_name}'.\n"
-                "Please check that workspace is in valid state."
-            )
-    
-    @staticmethod
-    def _escape_kql_string(value: str) -> str:
-        """Escape a string value for use in KQL queries."""
-        if not value:
-            return value
-        # Escape backslashes first, then single quotes
-        return value.replace('\\', '\\\\').replace("'", "\\'")
-    
-    def _create_mgmt_client(
-        self,
-        connection_params: WorkspaceConnectionParams,
-        mgmt_client: Optional[AzureQuantumMgmtClient] = None
-    ) -> AzureQuantumMgmtClient:
-        if mgmt_client is not None:
-            return mgmt_client
-        
-        credential = connection_params.get_credential_or_default()
-        return AzureQuantumMgmtClient(
-            credential=credential,
-            subscription_id=connection_params.subscription_id,
-            base_url=connection_params.arm_endpoint
-        )
-
-    def _load_workspace_from_arm(self, mgmt_client: AzureQuantumMgmtClient) -> None:
-        """
-        Fetches the workspace resource from ARM and sets location and endpoint URI params.
-        """
-        connection_params = self._connection_params
-
-        try:
-            workspace_resource = mgmt_client.workspaces.get(
-                resource_group_name=connection_params.resource_group,
-                workspace_name=connection_params.workspace_name
-            )
-        except ResourceNotFoundError as e:
-            raise ValueError(
-                f"Azure Quantum workspace '{connection_params.workspace_name}' "
-                f"not found in resource group '{connection_params.resource_group}' "
-                f"and subscription '{connection_params.subscription_id}'."
-            ) from e
-        except Exception as e:
-            raise RuntimeError(
-                f"Failed to fetch workspace from ARM: {str(e)}.\n Please retry later."
-            ) from e
-
-        # Extract and apply location
-        if workspace_resource.location:
-            connection_params.location = workspace_resource.location
-            logger.debug(
-                "Updated workspace location from ARM: %s",
-                workspace_resource.location
-            )
-        else:
-            raise ValueError(
-                f"Failed to retrieve location for workspace '{connection_params.workspace_name}'.\n"
-                f"Please check that workspace is in valid state."
-            )
-
-        # Extract and apply endpoint URI from properties
-        if workspace_resource.properties and workspace_resource.properties.endpoint_uri:
-            connection_params.quantum_endpoint = workspace_resource.properties.endpoint_uri
-            logger.debug(
-                "Updated workspace endpoint from ARM: %s", connection_params.quantum_endpoint
-            )
-        else:
-            raise ValueError(
-                f"Failed to retrieve endpoint uri for workspace '{connection_params.workspace_name}'.\n"
-                f"Please check that workspace is in valid state."
-            )
 
     def _on_new_client_request(self) -> None:
         """

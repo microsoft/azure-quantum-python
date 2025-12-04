@@ -289,17 +289,38 @@ class QuantumTestBase(ReplayableTest):
 
     def create_mock_mgmt_client(self, location: str = None) -> MagicMock:
         """
-        Create a mock Azure Quantum Management Client to avoid ARM calls during tests.
+        Create a mock WorkspaceMgmtClient to avoid ARM/ARG calls during tests.
         
         :param location:
             The location to use for the workspace resource.
         """
         mock_mgmt_client = MagicMock()
-        mock_workspace_resource = MagicMock()
-        mock_workspace_resource.location = location
-        mock_workspace_resource.properties = MagicMock()
-        mock_workspace_resource.properties.endpoint_uri = ConnectionConstants.GET_QUANTUM_PRODUCTION_ENDPOINT(location)
-        mock_mgmt_client.workspaces.get.return_value = mock_workspace_resource
+        
+        def mock_load_workspace_from_arm(connection_params):
+            """Mock implementation of load_workspace_from_arm."""
+            if not connection_params.location and location:
+                connection_params.location = location
+            if not connection_params.quantum_endpoint:
+                connection_params.quantum_endpoint = ConnectionConstants.GET_QUANTUM_PRODUCTION_ENDPOINT(
+                    connection_params.location or location
+                )
+        
+        def mock_load_workspace_from_arg(connection_params):
+            """Mock implementation of load_workspace_from_arg."""
+            # Populate with default test values if not set
+            if not connection_params.subscription_id:
+                connection_params.subscription_id = SUBSCRIPTION_ID
+            if not connection_params.resource_group:
+                connection_params.resource_group = RESOURCE_GROUP
+            if not connection_params.location:
+                connection_params.location = location or LOCATION
+            if not connection_params.quantum_endpoint:
+                connection_params.quantum_endpoint = ConnectionConstants.GET_QUANTUM_PRODUCTION_ENDPOINT(
+                    connection_params.location
+                )
+        
+        mock_mgmt_client.load_workspace_from_arm = mock_load_workspace_from_arm
+        mock_mgmt_client.load_workspace_from_arg = mock_load_workspace_from_arg
         
         return mock_mgmt_client
 
