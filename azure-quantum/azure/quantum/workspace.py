@@ -137,7 +137,7 @@ class Workspace:
         # In case from connection string, quantum_endpoint must be passed
         quantum_endpoint = kwargs.pop(Workspace._QUANTUM_ENDPOINT_PARAM, None)
         # Params to pass a mock in tests
-        mgmt_client = kwargs.pop(Workspace._MGMT_CLIENT_PARAM, None)
+        self._mgmt_client = kwargs.pop(Workspace._MGMT_CLIENT_PARAM, None)
         
         connection_params = WorkspaceConnectionParams(
             location=location,
@@ -163,14 +163,14 @@ class Workspace:
         self._resource_group = connection_params.resource_group
         self._workspace_name = connection_params.workspace_name
 
-        if not mgmt_client:
+        if not self._mgmt_client:
             credential = connection_params.get_credential_or_default()
-            mgmt_client = WorkspaceMgmtClient(credential=credential, base_url=connection_params.arm_endpoint)
+            self._mgmt_client = WorkspaceMgmtClient(credential=credential, base_url=connection_params.arm_endpoint, user_agent=connection_params.get_full_user_agent())
 
         # Populate workspace details from ARG if name is provided but missing subscription and/or resource group
         if not from_connection_string \
            and not connection_params.can_build_resource_id():
-            mgmt_client.load_workspace_from_arg(connection_params)
+            self._mgmt_client.load_workspace_from_arg(connection_params)
 
         # pylint: disable=protected-access
         using_connection_string = (
@@ -180,7 +180,7 @@ class Workspace:
 
         # Populate workspace from ARM if not using connection string (API key) and not loaded from ARG
         if not using_connection_string and not connection_params.is_complete():
-            mgmt_client.load_workspace_from_arm(connection_params)
+            self._mgmt_client.load_workspace_from_arm(connection_params)
         
         connection_params.assert_complete()
 
@@ -1065,3 +1065,6 @@ class Workspace:
         else:
             return None
     
+    def close(self) -> None:
+        self._mgmt_client.close()
+        self._client.close()

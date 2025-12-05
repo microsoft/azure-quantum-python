@@ -7,22 +7,16 @@ Module providing the WorkspaceMgmtClient class for managing workspace operations
 """
 
 import logging
-from typing import Optional
+from typing import Any, Optional, cast
 from azure.core.exceptions import ClientAuthenticationError
 from azure.quantum._workspace_connection_params import WorkspaceConnectionParams
 from azure.core import PipelineClient
-from azure.core.pipeline.policies import (
-    BearerTokenCredentialPolicy,
-    RetryPolicy,
-    HeadersPolicy,
-    UserAgentPolicy,
-    NetworkTraceLoggingPolicy,
-)
+from azure.core.credentials import TokenProvider
+from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest
 from azure.core.exceptions import (
     ClientAuthenticationError,
     ResourceNotFoundError,
-    HttpResponseError,
 )
 
 logger = logging.getLogger(__name__)
@@ -30,9 +24,9 @@ logger = logging.getLogger(__name__)
 __all__ = ["WorkspaceMgmtClient"]
 
 
-class WorkspaceMgmtClient:
+class WorkspaceMgmtClient():
     """
-    Wrapper client for Azure Resource Graph operations related to Azure Quantum workspaces.
+    Client for ARM/ARG operations related to Azure Quantum workspaces.
     
     :param credential:
         The credential to use to connect to Azure services.
@@ -41,11 +35,17 @@ class WorkspaceMgmtClient:
         The base URL for the ARM endpoint.
     
     :param user_agent:
-        Add the specified value as a prefix to the HTTP User-Agent header
-        when communicating to the ARG/ARM.
+        Add the specified value as a prefix to the HTTP User-Agent header.
     """
+
+    # Constants
+    DEFAULT_ARG_API_VERSION = "2021-03-01"
+    DEFAULT_WORKSPACE_API_VERSION = "2025-11-01-preview"
+    ARM_SCOPE = "https://management.azure.com/.default" # for Azure Public Cloud
+    CONTENT_TYPE_JSON = "application/json"
+    RETRY_TOTAL = 3
     
-    def __init__(self, credential, base_url: str, user_agent: Optional[str] = None):
+    def __init__(self, credential: TokenProvider, base_url: str, user_agent: Optional[str] = None):
         """
         Initialize the WorkspaceMgmtClient.
         
@@ -57,15 +57,29 @@ class WorkspaceMgmtClient:
         """
         self._credential = credential
         self._base_url = base_url
-        # Configure pipeline policies
+        # Configure policies
         self._policies = [
-            HeadersPolicy(),
-            UserAgentPolicy(user_agent),
-            BearerTokenCredentialPolicy(self._credential, "https://management.azure.com/.default"),
-            RetryPolicy(retry_total=3),
-            NetworkTraceLoggingPolicy(),
+            policies.RequestIdPolicy(),
+            policies.HeadersPolicy({
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+            }),
+            policies.UserAgentPolicy(user_agent),
+            policies.RetryPolicy(retry_total=self.RETRY_TOTAL),
+            policies.BearerTokenCredentialPolicy(self._credential, self.ARM_SCOPE),
         ]
+        self._client: PipelineClient = PipelineClient(base_url=cast(str, base_url), policies=self._policies)
     
+    def close(self) -> None:
+        self._client.close()
+
+    def __enter__(self) -> 'WorkspaceMgmtClient':
+        self._client.__enter__()
+        return self
+
+    def __exit__(self, *exc_details: Any) -> None:
+        self._client.__exit__(*exc_details)
+
     def load_workspace_from_arg(self, connection_params: WorkspaceConnectionParams) -> None:
         """
         Queries Azure Resource Graph to find a workspace by name.
@@ -109,25 +123,17 @@ class WorkspaceMgmtClient:
         }
         if subscriptions:
             request_body["subscriptions"] = subscriptions
-        
-        # Create pipeline client
-        client = PipelineClient(base_url=self._base_url, policies=self._policies)
+
+        # Create request to Azure Resource Graph API
+        request = HttpRequest(
+            method="POST",
+            url=self._client.format_url("/providers/Microsoft.ResourceGraph/resources"),
+            params={"api-version": self.DEFAULT_ARG_API_VERSION},
+            json=request_body
+        )
         
         try:
-            # Create request to Azure Resource Graph API
-            request = HttpRequest(
-                method="POST",
-                url=f"{self._base_url}/providers/Microsoft.ResourceGraph/resources",
-                params={"api-version": "2021-03-01"},
-                headers={
-                    "Content-Type": "application/json",
-                    "Accept": "application/json",
-                },
-                json=request_body
-            )
-            
-            # Send request through pipeline
-            response = client.send_request(request)
+            response = self._client.send_request(request)
             response.raise_for_status()
             result = response.json()
             
@@ -136,21 +142,11 @@ class WorkspaceMgmtClient:
                 f"Authentication failed when querying workspace '{connection_params.workspace_name}'. "
                 f"Please check your credentials and permissions."
             ) from e
-        except HttpResponseError as e:
-            error_message = f"Failed to query workspace using ARG (HTTP {e.status_code})"
-            if e.error and hasattr(e.error, 'message'):
-                error_message = f"{error_message}: {e.error.message}"
-            raise RuntimeError(
-                f"{error_message}.\n"
-                "Please retry later or try to specify subscription id and resource group."
-            ) from e
         except Exception as e:
             raise RuntimeError(
                 f"Failed to query workspace using ARG: {str(e)}.\n"
                 "Please retry later or try to specify subscription id and resource group."
             ) from e
-        finally:
-            client.close()
         
         # Extract data from response
         data = result.get('data', [])
@@ -211,32 +207,24 @@ class WorkspaceMgmtClient:
         if not all([connection_params.subscription_id, connection_params.resource_group, connection_params.workspace_name]):
             raise ValueError("Missing required connection parameters for ARM request.")
         
-        api_version = connection_params.api_version or "2023-11-13-preview"
+        api_version = connection_params.api_version or self.DEFAULT_WORKSPACE_API_VERSION
         
         # Build resource URL
         url = (
-            f"{connection_params.arm_endpoint}/subscriptions/{connection_params.subscription_id}"
+            f"/subscriptions/{connection_params.subscription_id}"
             f"/resourceGroups/{connection_params.resource_group}"
             f"/providers/Microsoft.Quantum/workspaces/{connection_params.workspace_name}"
         )
-        
-        # Create pipeline client
-        client = PipelineClient(base_url=self._base_url, policies=self._policies)
+
+        # Create request
+        request = HttpRequest(
+            method="GET",
+            url=self._client.format_url(url),
+            params={"api-version": api_version},
+        )
         
         try:
-            # Create request
-            request = HttpRequest(
-                method="GET",
-                url=url,
-                params={"api-version": api_version},
-                headers={
-                    "Content-Type": "application/json",
-                    "Accept": "application/json",
-                }
-            )
-            
-            # Send request through pipeline
-            response = client.send_request(request)
+            response = self._client.send_request(request)
             response.raise_for_status()
             workspace_data = response.json()
             
@@ -251,17 +239,10 @@ class WorkspaceMgmtClient:
                 f"Authentication failed when accessing workspace '{connection_params.workspace_name}'. "
                 f"Please check your credentials and permissions."
             ) from e
-        except HttpResponseError as e:
-            error_message = f"Failed to fetch workspace from ARM (HTTP {e.status_code})"
-            if e.error and hasattr(e.error, 'message'):
-                error_message = f"{error_message}: {e.error.message}"
-            raise RuntimeError(f"{error_message}.\nPlease retry later.") from e
         except Exception as e:
             raise RuntimeError(
                 f"Failed to fetch workspace from ARM: {str(e)}.\nPlease retry later."
             ) from e
-        finally:
-            client.close()
 
         # Extract and apply location
         location = workspace_data.get("location")
