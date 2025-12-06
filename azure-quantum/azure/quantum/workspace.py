@@ -49,7 +49,7 @@ from azure.quantum.storage import (
     get_container_uri,
     ContainerClient
 )
-from azure.quantum.mgmt_client import WorkspaceMgmtClient
+from azure.quantum._mgmt_client import WorkspaceMgmtClient
 if TYPE_CHECKING:
     from azure.quantum.target import Target
 

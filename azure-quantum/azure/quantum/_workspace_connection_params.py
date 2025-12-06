@@ -20,6 +20,8 @@ from azure.quantum._constants import (
     EnvironmentVariables,
     ConnectionConstants,
     GUID_REGEX_PATTERN,
+    VALID_WORKSPACE_NAME_PATTERN,
+    VALID_AZURE_REGIONS,
 )
 
 class WorkspaceConnectionParams:
@@ -121,6 +123,91 @@ class WorkspaceConnectionParams:
             workspace_name=workspace_name,
         )
         self.apply_resource_id(resource_id=resource_id)
+        # Validate connection parameters if they are set
+        self._validate_connection_params()
+
+    def _validate_connection_params(self):
+        self._validate_subscription_id()
+        self._validate_resource_group()
+        self._validate_workspace_name()
+        self._validate_location()
+        self._validate_user_agent()
+    
+    def _validate_subscription_id(self):
+        # Validate that subscription id is a valid GUID
+        if self.subscription_id is not None:
+            if not isinstance(self.subscription_id, str):
+                raise ValueError("Subscription ID must be a string.")
+            if not re.match(f"^{GUID_REGEX_PATTERN}$", self.subscription_id, re.IGNORECASE):
+                raise ValueError("Subscription ID must be a valid GUID.")
+    
+    def _validate_resource_group(self):
+        # Validate resource group, see https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/resource-name-rules#microsoftresources
+        # Length 1-90, valid characters: alphanumeric, underscore, parentheses, hyphen, period (except at end), and Unicode characters:
+        # Uppercase Letter - Signified by the Unicode designation "Lu" (letter, uppercase);
+        # Lowercase Letter - Signified by the Unicode designation "Ll" (letter, lowercase);
+        # Titlecase Letter - Signified by the Unicode designation "Lt" (letter, titlecase);
+        # Modifier Letter - Signified by the Unicode designation "Lm" (letter, modifier);
+        # Other Letter - Signified by the Unicode designation "Lo" (letter, other);
+        # Decimal Digit Number - Signified by the Unicode designation "Nd" (number, decimal digit).
+        if self.resource_group is not None:
+            if not isinstance(self.resource_group, str):
+                raise ValueError("Resource group name must be a string.")
+            
+            if len(self.resource_group) < 1 or len(self.resource_group) > 90:
+                raise ValueError(
+                    "Resource group name must be between 1 and 90 characters long."
+                )
+            
+            err_msg =  "Resource group name can only include alphanumeric, underscore, parentheses, hyphen, period (except at end), and Unicode characters that match the allowed characters."
+            if self.resource_group.endswith('.'):
+                raise ValueError(err_msg)
+            
+            import unicodedata
+            for i, char in enumerate(self.resource_group):
+                category = unicodedata.category(char)
+                if not (
+                    char in ('_', '(', ')', '-', '.') or
+                    category in ('Lu', 'Ll', 'Lt', 'Lm', 'Lo', 'Nd')
+                ):
+                    raise ValueError(err_msg)
+    
+    def _validate_workspace_name(self):
+        # Validate workspace name, see https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/resource-name-rules#microsoftquantum
+        # Length 2-54, valid characters: alphanumerics (a-zA-Z0-9) and hyphens, can't start or end with hyphen
+        if self.workspace_name is not None:
+            if not isinstance(self.workspace_name, str):
+                raise ValueError("Workspace name must be a string.")
+            
+            if len(self.workspace_name) < 2 or len(self.workspace_name) > 54:
+                raise ValueError(
+                    "Workspace name must be between 2 and 54 characters long."
+                )
+            
+            err_msg = "Workspace name can only include alphanumerics (a-zA-Z0-9) and hyphens, and cannot start or end with hyphen."
+
+            if self.workspace_name.startswith('-') or self.workspace_name.endswith('-'):
+                raise ValueError(err_msg)
+            
+            if not re.match(VALID_WORKSPACE_NAME_PATTERN, self.workspace_name):
+                raise ValueError(err_msg)
+    
+    def _validate_location(self):
+        # Validate that location is one of the Azure regions https://learn.microsoft.com/en-us/azure/reliability/regions-list
+        if self.location is not None:
+            if not isinstance(self.location, str):
+                raise ValueError("Location must be a string.")
+            if self.location not in VALID_AZURE_REGIONS:
+                raise ValueError(f"Location must be one of the Azure regions listed in https://learn.microsoft.com/en-us/azure/reliability/regions-list.")
+    
+    def _validate_user_agent(self):
+        # Validate user agent format (non-empty string)
+        if self.user_agent is not None:
+            if not isinstance(self.user_agent, str):
+                raise ValueError("User agent must be a string.")
+            stripped = self.user_agent.strip()
+            if not stripped:
+                raise ValueError("User agent cannot be empty or whitespace.")
 
     @property
     def location(self):

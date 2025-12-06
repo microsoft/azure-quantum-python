@@ -18,6 +18,7 @@ from azure.core.exceptions import (
     ClientAuthenticationError,
     ResourceNotFoundError,
 )
+from azure.quantum._constants import ConnectionConstants
 
 logger = logging.getLogger(__name__)
 
@@ -41,7 +42,6 @@ class WorkspaceMgmtClient():
     # Constants
     DEFAULT_ARG_API_VERSION = "2021-03-01"
     DEFAULT_WORKSPACE_API_VERSION = "2025-11-01-preview"
-    ARM_SCOPE = "https://management.azure.com/.default" # for Azure Public Cloud
     CONTENT_TYPE_JSON = "application/json"
     RETRY_TOTAL = 3
     
@@ -61,12 +61,12 @@ class WorkspaceMgmtClient():
         self._policies = [
             policies.RequestIdPolicy(),
             policies.HeadersPolicy({
-                "Content-Type": "application/json",
-                "Accept": "application/json",
+                "Content-Type": self.CONTENT_TYPE_JSON,
+                "Accept": self.CONTENT_TYPE_JSON,
             }),
             policies.UserAgentPolicy(user_agent),
             policies.RetryPolicy(retry_total=self.RETRY_TOTAL),
-            policies.BearerTokenCredentialPolicy(self._credential, self.ARM_SCOPE),
+            policies.BearerTokenCredentialPolicy(self._credential, ConnectionConstants.ARM_CREDENTIAL_SCOPE),
         ]
         self._client: PipelineClient = PipelineClient(base_url=cast(str, base_url), policies=self._policies)
     

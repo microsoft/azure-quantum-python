@@ -190,7 +190,7 @@ class TestWorkspace(QuantumTestBase):
             wrong_subscription_id = "00000000-2BAD-2BAD-2BAD-000000000000"
             wrong_resource_group = "wrongrg"
             wrong_workspace = "wrong-workspace"
-            wrong_location = "wrong-location"
+            wrong_location = "westus"
 
             # make sure the values above are really different from the default values
             self.assertNotEqual(wrong_subscription_id, SUBSCRIPTION_ID)
