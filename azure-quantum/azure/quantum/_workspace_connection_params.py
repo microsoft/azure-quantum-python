@@ -131,7 +131,6 @@ class WorkspaceConnectionParams:
         self._validate_resource_group()
         self._validate_workspace_name()
         self._validate_location()
-        self._validate_user_agent()
     
     def _validate_subscription_id(self):
         # Validate that subscription id is a valid GUID
@@ -199,15 +198,6 @@ class WorkspaceConnectionParams:
                 raise ValueError("Location must be a string.")
             if self.location not in VALID_AZURE_REGIONS:
                 raise ValueError(f"Location must be one of the Azure regions listed in https://learn.microsoft.com/en-us/azure/reliability/regions-list.")
-    
-    def _validate_user_agent(self):
-        # Validate user agent format (non-empty string)
-        if self.user_agent is not None:
-            if not isinstance(self.user_agent, str):
-                raise ValueError("User agent must be a string.")
-            stripped = self.user_agent.strip()
-            if not stripped:
-                raise ValueError("User agent cannot be empty or whitespace.")
 
     @property
     def location(self):

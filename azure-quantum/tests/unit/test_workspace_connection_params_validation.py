@@ -256,35 +256,6 @@ class TestWorkspaceConnectionParamsValidation(unittest.TestCase):
         params = WorkspaceConnectionParams(location=None)
         self.assertIsNone(params.location)
 
-    def test_valid_user_agents(self):
-        """Test that valid user_agents are accepted."""
-        valid_agents = [
-            "my-app/1.0",
-            "CustomAgent",
-            "agent-123",
-            "Mozilla/5.0",
-        ]
-        for user_agent in valid_agents:
-            params = WorkspaceConnectionParams(user_agent=user_agent)
-            self.assertEqual(params.user_agent, user_agent)
-
-    def test_invalid_user_agents(self):
-        """Test that invalid user_agents raise ValueError."""
-        invalid_agents = [
-            ("   ", "cannot be empty or whitespace"),
-            (12345, "User agent must be a string."),
-        ]
-        for user_agent, expected_message in invalid_agents:
-            with self.assertRaises(ValueError) as context:
-                WorkspaceConnectionParams(user_agent=user_agent)
-            self.assertIn(expected_message, str(context.exception))
-
-    def test_empty_user_agent(self):
-        """Test that empty user_agent is treated as None (not set)."""
-        # Empty strings are treated as falsy in the merge logic and not set
-        params = WorkspaceConnectionParams(user_agent="")
-        self.assertIsNone(params.user_agent)
-
     def test_none_values_are_allowed(self):
         """Test that None values for optional fields are allowed."""
         # This should not raise any exceptions

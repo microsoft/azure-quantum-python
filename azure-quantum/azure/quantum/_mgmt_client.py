@@ -7,18 +7,16 @@ Module providing the WorkspaceMgmtClient class for managing workspace operations
 """
 
 import logging
+from http import HTTPStatus
 from typing import Any, Optional, cast
-from azure.core.exceptions import ClientAuthenticationError
-from azure.quantum._workspace_connection_params import WorkspaceConnectionParams
 from azure.core import PipelineClient
 from azure.core.credentials import TokenProvider
 from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest
-from azure.core.exceptions import (
-    ClientAuthenticationError,
-    ResourceNotFoundError,
-)
+from azure.core.exceptions import HttpResponseError
+from azure.quantum._workspace_connection_params import WorkspaceConnectionParams
 from azure.quantum._constants import ConnectionConstants
+from azure.quantum._client._configuration import VERSION
 
 logger = logging.getLogger(__name__)
 
@@ -40,12 +38,12 @@ class WorkspaceMgmtClient():
     """
 
     # Constants
-    DEFAULT_ARG_API_VERSION = "2021-03-01"
-    DEFAULT_WORKSPACE_API_VERSION = "2025-11-01-preview"
+    DEFAULT_RETRY_TOTAL = 3
     CONTENT_TYPE_JSON = "application/json"
-    RETRY_TOTAL = 3
+    CONNECT_DOC_LINK = "https://learn.microsoft.com/en-us/azure/quantum/how-to-connect-workspace"
+    CONNECT_DOC_MESSAGE = f"To find details on how to connect to your workspace, please see {CONNECT_DOC_LINK}."
     
-    def __init__(self, credential: TokenProvider, base_url: str, user_agent: Optional[str] = None):
+    def __init__(self, credential: TokenProvider, base_url: str, user_agent: Optional[str] = None) -> None:
         """
         Initialize the WorkspaceMgmtClient.
         
@@ -57,15 +55,14 @@ class WorkspaceMgmtClient():
         """
         self._credential = credential
         self._base_url = base_url
-        # Configure policies
         self._policies = [
             policies.RequestIdPolicy(),
             policies.HeadersPolicy({
                 "Content-Type": self.CONTENT_TYPE_JSON,
                 "Accept": self.CONTENT_TYPE_JSON,
             }),
-            policies.UserAgentPolicy(user_agent),
-            policies.RetryPolicy(retry_total=self.RETRY_TOTAL),
+            policies.UserAgentPolicy(user_agent=user_agent, sdk_moniker="quantum/{}".format(VERSION)),
+            policies.RetryPolicy(retry_total=self.DEFAULT_RETRY_TOTAL),
             policies.BearerTokenCredentialPolicy(self._credential, ConnectionConstants.ARM_CREDENTIAL_SCOPE),
         ]
         self._client: PipelineClient = PipelineClient(base_url=cast(str, base_url), policies=self._policies)
@@ -82,53 +79,44 @@ class WorkspaceMgmtClient():
 
     def load_workspace_from_arg(self, connection_params: WorkspaceConnectionParams) -> None:
         """
-        Queries Azure Resource Graph to find a workspace by name.
-        Populates subscription_id, resource_group, location, and quantum_endpoint params if found.
+        Queries Azure Resource Graph to find a workspace by name and optionally location, resource group, subscription.
+        Provided workspace name, location, resource group, and subscription in connection params must be validated beforehand.
         
         :param connection_params:
-            The workspace connection parameters to populate.
+            The workspace connection parameters to use and update.
         """
         if not connection_params.workspace_name:
-            raise ValueError("Workspace name must be specified.")
+            raise ValueError("Workspace name must be specified to try to load workspace details from ARG.")
 
-        # Escape single quotes in parameters to prevent KQL injection
-        workspace_name = self._escape_kql_string(connection_params.workspace_name)
-        
         query = f"""
             Resources
             | where type =~ 'microsoft.quantum/workspaces'
-            | where name =~ '{workspace_name}'
+            | where name =~ '{connection_params.workspace_name}'
         """
         
         if connection_params.resource_group:
-            resource_group = self._escape_kql_string(connection_params.resource_group)
-            query += f"\n                | where resourceGroup =~ '{resource_group}'"
+            query += f"\n                | where resourceGroup =~ '{connection_params.resource_group}'"
         
         if connection_params.location:
-            location = self._escape_kql_string(connection_params.location)
-            query += f"\n                | where location =~ '{location}'"
+            query += f"\n                | where location =~ '{connection_params.location}'"
 
         query += """
             | extend endpointUri = tostring(properties.endpointUri)
             | project name, subscriptionId, resourceGroup, location, endpointUri
         """
 
-        subscriptions = None
-        if connection_params.subscription_id:
-            subscriptions = [self._escape_kql_string(connection_params.subscription_id)]
-        
-        # Build the request payload
         request_body = {
             "query": query
         }
-        if subscriptions:
-            request_body["subscriptions"] = subscriptions
+
+        if connection_params.subscription_id:
+            request_body["subscriptions"] = [connection_params.subscription_id]
 
         # Create request to Azure Resource Graph API
         request = HttpRequest(
             method="POST",
             url=self._client.format_url("/providers/Microsoft.ResourceGraph/resources"),
-            params={"api-version": self.DEFAULT_ARG_API_VERSION},
+            params={"api-version": ConnectionConstants.DEFAULT_ARG_API_VERSION},
             json=request_body
         )
         
@@ -136,35 +124,20 @@ class WorkspaceMgmtClient():
             response = self._client.send_request(request)
             response.raise_for_status()
             result = response.json()
-            
-        except ClientAuthenticationError as e:
-            raise ClientAuthenticationError(
-                f"Authentication failed when querying workspace '{connection_params.workspace_name}'. "
-                f"Please check your credentials and permissions."
-            ) from e
         except Exception as e:
             raise RuntimeError(
-                f"Failed to query workspace using ARG: {str(e)}.\n"
-                "Please retry later or try to specify subscription id and resource group."
+                f"Could not load workspace details from Azure Resource Graph: {str(e)}.\n{self.CONNECT_DOC_MESSAGE}"
             ) from e
         
-        # Extract data from response
         data = result.get('data', [])
         
-        if not data or len(data) == 0:
-            raise ValueError(f"No matching workspace found with name '{connection_params.workspace_name}'.\n"
-                             "Please specify correct workspace name.")
+        if not data:
+            raise ValueError(f"No matching workspace found with name '{connection_params.workspace_name}'. {self.CONNECT_DOC_MESSAGE}")
         
         if len(data) > 1:
-            if not connection_params.location:
-                raise ValueError(
-                    f"Multiple Azure Quantum workspaces found with name '{connection_params.workspace_name}'.\n"
-                    "Please specify location."
-                )
-            # not expected to reach here, so ask user to use all params
-            raise RuntimeError(
-                f"Multiple Azure Quantum workspaces found with name '{connection_params.workspace_name}' in location '{connection_params.location}'.\n"
-                "Please specify subscription id and resource group."
+            raise ValueError(
+                f"Multiple Azure Quantum workspaces found with name '{connection_params.workspace_name}'. "
+                f"Please specify additional connection parameters. {self.CONNECT_DOC_MESSAGE}"
             )
         
         workspace_data = data[0]
@@ -186,37 +159,29 @@ class WorkspaceMgmtClient():
         # If one of the required parameters is missing, probably workspace in failed provisioning state
         if not connection_params.is_complete():
             raise ValueError(
-                f"Failed to retrieve complete workspace details for workspace '{connection_params.workspace_name}'.\n"
+                f"Failed to retrieve complete workspace details for workspace '{connection_params.workspace_name}'. "
                 "Please check that workspace is in valid state."
             )
         
     def load_workspace_from_arm(self, connection_params: WorkspaceConnectionParams) -> None:
         """
-        Fetches the workspace resource from ARM using Azure SDK pipeline and sets 
-        location and endpoint URI params.
+        Fetches the workspace resource from ARM and sets location and endpoint URI params.
+        Provided workspace name, resource group, and subscription in connection params must be validated beforehand.
         
         :param connection_params:
-            The workspace connection parameters to populate.
-        
-        :raises ValueError:
-            If the workspace is not found or workspace details cannot be retrieved.
-        
-        :raises RuntimeError:
-            If the API call fails or authentication fails.
+            The workspace connection parameters to use and update.
         """
         if not all([connection_params.subscription_id, connection_params.resource_group, connection_params.workspace_name]):
-            raise ValueError("Missing required connection parameters for ARM request.")
+            raise ValueError("Missing required connection parameters to load workspace details from ARM.")
         
-        api_version = connection_params.api_version or self.DEFAULT_WORKSPACE_API_VERSION
+        api_version = connection_params.api_version or ConnectionConstants.DEFAULT_WORKSPACE_API_VERSION
         
-        # Build resource URL
         url = (
             f"/subscriptions/{connection_params.subscription_id}"
             f"/resourceGroups/{connection_params.resource_group}"
             f"/providers/Microsoft.Quantum/workspaces/{connection_params.workspace_name}"
         )
 
-        # Create request
         request = HttpRequest(
             method="GET",
             url=self._client.format_url(url),
@@ -227,21 +192,19 @@ class WorkspaceMgmtClient():
             response = self._client.send_request(request)
             response.raise_for_status()
             workspace_data = response.json()
-            
-        except ResourceNotFoundError as e:
-            raise ValueError(
-                f"Azure Quantum workspace '{connection_params.workspace_name}' "
-                f"not found in resource group '{connection_params.resource_group}' "
-                f"and subscription '{connection_params.subscription_id}'."
-            ) from e
-        except ClientAuthenticationError as e:
-            raise ClientAuthenticationError(
-                f"Authentication failed when accessing workspace '{connection_params.workspace_name}'. "
-                f"Please check your credentials and permissions."
-            ) from e
+        except HttpResponseError as e:
+            if e.status_code == HTTPStatus.NOT_FOUND:
+                raise ValueError(
+                    f"Azure Quantum workspace '{connection_params.workspace_name}' "
+                    f"not found in resource group '{connection_params.resource_group}' "
+                    f"and subscription '{connection_params.subscription_id}'. "
+                    f"{self.CONNECT_DOC_MESSAGE}"
+                ) from e
+            # Re-raise for other HTTP errors
+            raise
         except Exception as e:
             raise RuntimeError(
-                f"Failed to fetch workspace from ARM: {str(e)}.\nPlease retry later."
+                f"Could not load workspace details from ARM: {str(e)}.\n{self.CONNECT_DOC_MESSAGE}"
             ) from e
 
         # Extract and apply location
@@ -254,7 +217,7 @@ class WorkspaceMgmtClient():
             )
         else:
             raise ValueError(
-                f"Failed to retrieve location for workspace '{connection_params.workspace_name}'.\n"
+                f"Failed to retrieve location for workspace '{connection_params.workspace_name}'. "
                 f"Please check that workspace is in valid state."
             )
 
@@ -268,14 +231,6 @@ class WorkspaceMgmtClient():
             )
         else:
             raise ValueError(
-                f"Failed to retrieve endpoint uri for workspace '{connection_params.workspace_name}'.\n"
+                f"Failed to retrieve endpoint uri for workspace '{connection_params.workspace_name}'. "
                 f"Please check that workspace is in valid state."
             )
-    
-    @staticmethod
-    def _escape_kql_string(value: str) -> str:
-        """Escape a string value for use in KQL queries."""
-        if not value:
-            return value
-        # Escape backslashes first, then single quotes
-        return value.replace('\\', '\\\\').replace("'", "\\'")

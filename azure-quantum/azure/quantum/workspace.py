@@ -63,12 +63,11 @@ class Workspace:
     """
     Represents an Azure Quantum workspace.
 
-    When creating a Workspace object, callers have two options for
+    When creating a Workspace object, callers have several options for
     identifying the Azure Quantum workspace (in order of precedence):
     1. specify a valid resource ID; or
     2. specify a valid subscription ID, resource group, and workspace name; or
-    3. specify a valid workspace name and location; or
-    4. specify a valid workspace name.
+    3. specify a valid workspace name.
 
     You can also use a connection string to specify the connection parameters
     to an Azure Quantum Workspace by calling
@@ -165,20 +164,25 @@ class Workspace:
 
         if not self._mgmt_client:
             credential = connection_params.get_credential_or_default()
-            self._mgmt_client = WorkspaceMgmtClient(credential=credential, base_url=connection_params.arm_endpoint, user_agent=connection_params.get_full_user_agent())
-
-        # Populate workspace details from ARG if name is provided but missing subscription and/or resource group
-        if not from_connection_string \
-           and not connection_params.can_build_resource_id():
-            self._mgmt_client.load_workspace_from_arg(connection_params)
-
+            self._mgmt_client = WorkspaceMgmtClient(
+                credential=credential, 
+                base_url=connection_params.arm_endpoint, 
+                user_agent=connection_params.get_full_user_agent(),
+            )
+        
         # pylint: disable=protected-access
         using_connection_string = (
             from_connection_string
             or connection_params._used_connection_string
         )
 
-        # Populate workspace from ARM if not using connection string (API key) and not loaded from ARG
+        # Populate workspace details from ARG if not using connection string and 
+        # name is provided but missing subscription and/or resource group
+        if not using_connection_string \
+           and not connection_params.can_build_resource_id():
+            self._mgmt_client.load_workspace_from_arg(connection_params)
+
+        # Populate workspace details from ARM if not using connection string (API key) and not loaded from ARG
         if not using_connection_string and not connection_params.is_complete():
             self._mgmt_client.load_workspace_from_arm(connection_params)
         
