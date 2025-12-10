@@ -23,7 +23,6 @@ class TestWorkspacePagination(QuantumTestBase):
             subscription_id=SUBSCRIPTION_ID,
             resource_group=RESOURCE_GROUP,
             name=WORKSPACE,
-            location=LOCATION,
         )
 
         # pylint: disable=protected-access
@@ -46,7 +45,6 @@ class TestWorkspacePagination(QuantumTestBase):
             subscription_id=SUBSCRIPTION_ID,
             resource_group=RESOURCE_GROUP,
             name=WORKSPACE,
-            location=LOCATION,
         )
 
         for var_name in var_names:
@@ -68,7 +66,6 @@ class TestWorkspacePagination(QuantumTestBase):
             subscription_id=SUBSCRIPTION_ID,
             resource_group=RESOURCE_GROUP,
             name=WORKSPACE,
-            location=LOCATION,
         )
         # pylint: disable=protected-access
         self.assertRaises(ValueError, ws._create_orderby, "test", True)

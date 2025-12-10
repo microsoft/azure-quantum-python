@@ -59,10 +59,13 @@ class TestWorkspace(QuantumTestBase):
             self.assertEqual(ws.location, LOCATION)
             self.assertEqual(ws._connection_params.quantum_endpoint, ENDPOINT_URI)
         
+        mock_mgmt_client = self.create_mock_mgmt_client()
+        
         ws = Workspace(
             subscription_id=SUBSCRIPTION_ID,
             resource_group=RESOURCE_GROUP,
             name=WORKSPACE,
+            _mgmt_client=mock_mgmt_client,
         )
         assert_all_required_params(ws)
 
@@ -71,30 +74,35 @@ class TestWorkspace(QuantumTestBase):
             resource_group=RESOURCE_GROUP,
             name=WORKSPACE,
             storage=STORAGE,
+            _mgmt_client=mock_mgmt_client,
         )
         assert_all_required_params(ws)
         self.assertEqual(ws.storage, STORAGE)
 
         ws = Workspace(
             resource_id=SIMPLE_RESOURCE_ID,
+            _mgmt_client=mock_mgmt_client,
         )
         assert_all_required_params(ws)
 
         ws = Workspace(
             resource_id=SIMPLE_RESOURCE_ID,
             storage=STORAGE,
+            _mgmt_client=mock_mgmt_client,
         )
         assert_all_required_params(ws)
         self.assertEqual(ws.storage, STORAGE)
 
         ws = Workspace(
             name=WORKSPACE,
+            _mgmt_client=mock_mgmt_client,
         )
         assert_all_required_params(ws)
 
         ws = Workspace(
             name=WORKSPACE,
             storage=STORAGE,
+            _mgmt_client=mock_mgmt_client,
         )
         assert_all_required_params(ws)
         self.assertEqual(ws.storage, STORAGE)
@@ -102,12 +110,14 @@ class TestWorkspace(QuantumTestBase):
         ws = Workspace(
             name=WORKSPACE,
             location=LOCATION,
+            _mgmt_client=mock_mgmt_client,
         )
         assert_all_required_params(ws)
 
         ws = Workspace(
             name=WORKSPACE,
             subscription_id=SUBSCRIPTION_ID,
+            _mgmt_client=mock_mgmt_client,
         )
         assert_all_required_params(ws)
 
@@ -115,12 +125,14 @@ class TestWorkspace(QuantumTestBase):
             name=WORKSPACE,
             subscription_id=SUBSCRIPTION_ID,
             location=LOCATION,
+            _mgmt_client=mock_mgmt_client,
         )
         assert_all_required_params(ws)
 
         ws = Workspace(
             name=WORKSPACE,
             resource_group=RESOURCE_GROUP,
+            _mgmt_client=mock_mgmt_client,
         )
         assert_all_required_params(ws)
 
@@ -128,18 +140,26 @@ class TestWorkspace(QuantumTestBase):
             name=WORKSPACE,
             resource_group=RESOURCE_GROUP,
             location=LOCATION,
+            _mgmt_client=mock_mgmt_client,
         )
         assert_all_required_params(ws)
 
     def test_create_workspace_locations(self):
-        # User-provided location name should be normalized
+        # Location name should be normalized
         location = "East US"
+        mock_mgmt_client = mock.MagicMock()
+        def mock_load_workspace_from_arm(connection_params):
+            connection_params.location = location
+            connection_params.quantum_endpoint = ENDPOINT_URI
+        mock_mgmt_client.load_workspace_from_arm = mock_load_workspace_from_arm
+
         ws = Workspace(
+            name=WORKSPACE,
             subscription_id=SUBSCRIPTION_ID,
             resource_group=RESOURCE_GROUP,
-            name=WORKSPACE,
-            location=location,
+            _mgmt_client=mock_mgmt_client,
         )
+
         self.assertEqual(ws.location, "eastus")
 
     def test_env_connection_string(self):
@@ -164,6 +184,7 @@ class TestWorkspace(QuantumTestBase):
                              id(workspace.credential))
 
     def test_workspace_from_connection_string(self):
+        mock_mgmt_client = self.create_mock_mgmt_client()
         with mock.patch.dict(
             os.environ,
             clear=True
@@ -225,7 +246,7 @@ class TestWorkspace(QuantumTestBase):
             os.environ[EnvironmentVariables.AZURE_CLIENT_ID] = ZERO_UID
             os.environ[EnvironmentVariables.AZURE_TENANT_ID] = ZERO_UID
             os.environ[EnvironmentVariables.AZURE_CLIENT_SECRET] = PLACEHOLDER
-            workspace = Workspace(credential=EnvironmentCredential())
+            workspace = Workspace(credential=EnvironmentCredential(), _mgmt_client=mock_mgmt_client)
             self.assertIsInstance(workspace.credential, EnvironmentCredential)
 
             # the connection string passed as a parameter should override the

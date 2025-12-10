@@ -182,7 +182,7 @@ class Workspace:
            and not connection_params.can_build_resource_id():
             self._mgmt_client.load_workspace_from_arg(connection_params)
 
-        # Populate workspace details from ARM if not using connection string (API key) and not loaded from ARG
+        # Populate workspace details from ARM if not using connection string and not loaded from ARG
         if not using_connection_string and not connection_params.is_complete():
             self._mgmt_client.load_workspace_from_arm(connection_params)
         

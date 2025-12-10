@@ -41,7 +41,7 @@ RESOURCE_GROUP = "myresourcegroup"
 WORKSPACE = "myworkspace"
 LOCATION = "eastus"
 STORAGE = "mystorage"
-ENDPOINT_URI = "https://myworkspace.eastus.quantum.azure.com/"
+ENDPOINT_URI = f"https://{WORKSPACE}.{LOCATION}.quantum.azure.com/"
 API_KEY = "myapikey"
 APP_ID = "testapp"
 DEFAULT_TIMEOUT_SECS = 300
@@ -287,37 +287,21 @@ class QuantumTestBase(ReplayableTest):
             if env_var in os_environ:
                 del os_environ[env_var]
 
-    def create_mock_mgmt_client(self, location: str = None) -> MagicMock:
+    def create_mock_mgmt_client(self) -> MagicMock:
         """
         Create a mock WorkspaceMgmtClient to avoid ARM/ARG calls during tests.
-        
-        :param location:
-            The location to use for the workspace resource.
         """
         mock_mgmt_client = MagicMock()
         
         def mock_load_workspace_from_arm(connection_params):
-            """Mock implementation of load_workspace_from_arm."""
-            if not connection_params.location and location:
-                connection_params.location = location
-            if not connection_params.quantum_endpoint:
-                connection_params.quantum_endpoint = ConnectionConstants.GET_QUANTUM_PRODUCTION_ENDPOINT(
-                    connection_params.location or location
-                )
+            connection_params.location = LOCATION
+            connection_params.quantum_endpoint = ENDPOINT_URI
         
         def mock_load_workspace_from_arg(connection_params):
-            """Mock implementation of load_workspace_from_arg."""
-            # Populate with default test values if not set
-            if not connection_params.subscription_id:
-                connection_params.subscription_id = SUBSCRIPTION_ID
-            if not connection_params.resource_group:
-                connection_params.resource_group = RESOURCE_GROUP
-            if not connection_params.location:
-                connection_params.location = location or LOCATION
-            if not connection_params.quantum_endpoint:
-                connection_params.quantum_endpoint = ConnectionConstants.GET_QUANTUM_PRODUCTION_ENDPOINT(
-                    connection_params.location
-                )
+            connection_params.subscription_id = SUBSCRIPTION_ID
+            connection_params.resource_group = RESOURCE_GROUP
+            connection_params.location = LOCATION
+            connection_params.quantum_endpoint = ENDPOINT_URI
         
         mock_mgmt_client.load_workspace_from_arm = mock_load_workspace_from_arm
         mock_mgmt_client.load_workspace_from_arg = mock_load_workspace_from_arg
@@ -342,8 +326,10 @@ class QuantumTestBase(ReplayableTest):
                 client_id=ZERO_UID,
                 client_secret=PLACEHOLDER)
 
-        # Create mock mgmt_client to avoid ARM calls during tests
-        mock_mgmt_client = self.create_mock_mgmt_client(location=connection_params.location)
+        mock_mgmt_client = None
+        # When not in live mode use object mock instead of recording as we are going to get rid of the recordings anyway
+        if not self.is_live:
+            mock_mgmt_client = self.create_mock_mgmt_client()
 
         workspace = Workspace(
             credential=credential,
@@ -371,9 +357,12 @@ class QuantumTestBase(ReplayableTest):
             **kwargs: Any) -> Workspace:
         """
         Create workspace with explicit parameters, using a mock management client
-        to avoid ARM calls during tests.
+        when not in live mode.
         """
-        mock_mgmt_client = self.create_mock_mgmt_client(location=location)
+        mock_mgmt_client = None
+        # When not in live mode use object mock instead of recording as we are going to get rid of the recordings anyway
+        if not self.is_live:
+            mock_mgmt_client = self.create_mock_mgmt_client()
         
         workspace = Workspace(
             subscription_id=subscription_id,

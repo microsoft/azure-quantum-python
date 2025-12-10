@@ -591,7 +591,7 @@ class TestQiskit(QuantumTestBase):
             # Cause all warnings to always be triggered.
             warnings.simplefilter("always")
             # Try to trigger a warning.
-            workspace = self.create_workspace_with_params(resource_id=SIMPLE_RESOURCE_ID, location=LOCATION)
+            workspace = self.create_workspace_with_params(resource_id=SIMPLE_RESOURCE_ID)
             AzureQuantumProvider(workspace)
 
             warns = [
@@ -609,7 +609,7 @@ class TestQiskit(QuantumTestBase):
         from unittest.mock import patch
         
         # Create mock mgmt_client to avoid ARM calls
-        mock_mgmt_client = self.create_mock_mgmt_client(location=LOCATION)
+        mock_mgmt_client = self.create_mock_mgmt_client()
         
         with patch('azure.quantum.workspace.WorkspaceMgmtClient', return_value=mock_mgmt_client):
             with warnings.catch_warnings(record=True) as w:

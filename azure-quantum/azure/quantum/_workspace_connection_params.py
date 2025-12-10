@@ -53,15 +53,14 @@ class WorkspaceConnectionParams:
         re.VERBOSE | re.IGNORECASE)
     
     WORKSPACE_NOT_FULLY_SPECIFIED_MSG = """
-                    Azure Quantum workspace not fully specified.
-                    Please specify one of the following:
-                    1) A valid resource ID.
-                    2) A valid combination of subscription ID,
-                    resource group name, and workspace name.
-                    3) A valid combination of workspace name and location.
-                    4) A valid workspace name.
-                    5) A valid connection string (via Workspace.from_connection_string()).
-                """
+        Azure Quantum workspace not fully specified.
+        Please specify one of the following:
+        1) A valid resource ID.
+        2) A valid combination of subscription ID,
+        resource group name, and workspace name.
+        3) A valid connection string (via Workspace.from_connection_string()).
+        4) A valid workspace name.
+    """
 
     def __init__(
         self,
