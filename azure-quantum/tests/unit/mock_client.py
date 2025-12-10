@@ -54,7 +54,7 @@ def _apply_filter(items: List, filter_expr: Optional[str]) -> List:
         conds = [c.strip() for c in expr.split(" and ")]
 
         def eval_simple(condition: str) -> bool:
-            # startswith(Name, 'x')
+            # startswith(Name, 'x') (case-sensitive to match Workspace._create_filter)
             if condition.startswith("startswith("):
                 try:
                     inside = condition[len("startswith(") : -1]
@@ -89,9 +89,6 @@ def _apply_filter(items: List, filter_expr: Optional[str]) -> List:
                     if not attr:
                         return False
                     item_val = getattr(item, attr, None)
-                    if isinstance(item_val, str) and isinstance(val, str):
-                        # Case-insensitive compare; handle itemType normalization
-                        return item_val.lower() == val.lower()
                     return item_val == val
                 except Exception:
                     return False
@@ -129,8 +126,9 @@ class JobsOperations:
         job_id: str,
         job_details: JobDetails,
     ) -> JobDetails:
-        # Mark submitted
-        job_details.status = "Submitted"
+        # Preserve provided status; default only if missing
+        if getattr(job_details, "status", None) is None:
+            job_details.status = "Submitted"
         # Ensure creation_time present
         if not getattr(job_details, "creation_time", None):
             job_details.creation_time = datetime.now(UTC)

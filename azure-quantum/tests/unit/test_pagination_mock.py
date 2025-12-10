@@ -53,6 +53,16 @@ def seed_jobs(ws: WorkspaceMock):
             creation_time=base + timedelta(days=4),
             # explicit missing job_type
         ),
+        # Combined AND match: ionq provider + microsoft.estimator target + QuantumComputing job_type
+        JobDetails(
+            id="j-ionq-ms-qc",
+            name="ionqMsQC",
+            provider_id="ionq",
+            target="microsoft.estimator",
+            status="Succeeded",
+            creation_time=base + timedelta(days=5),
+            job_type="QuantumComputing",
+        ),
         # Rigetti-like shape: different target format, missing creation_time to test default handling
         JobDetails(
             id="j-rig-1",
@@ -128,6 +138,11 @@ def test_list_jobs_filters():
     # status
     jobs = list(ws.list_jobs(status=["Failed", "Cancelled"]))
     assert all(j.details.status in {"Failed", "Cancelled"} for j in jobs)
+    # status mix including succeeded
+    jobs_status_mix = list(ws.list_jobs(status=["Succeeded", "Failed"]))
+    assert jobs_status_mix and all(
+        j.details.status in {"Succeeded", "Failed"} for j in jobs_status_mix
+    )
     # job_type presence/absence
     jt = list(ws.list_jobs(job_type=["QuantumComputing", "QuantumChemistry"]))
     assert any(getattr(j.details, "job_type", None) == "QuantumComputing" for j in jt)
@@ -275,12 +290,22 @@ def test_list_top_level_items_basic_and_filters():
     assert all(it.details.name.startswith("ionq") for it in i1)
     i2 = list(ws.list_top_level_items(name_match="session"))
     assert all(it.details.name.startswith("session") for it in i2)
+    # exact-case only; mixed-case not supported per API
     # item type
-    jobs_only = list(ws.list_top_level_items(item_type=["job"]))
+    jobs_only = list(ws.list_top_level_items(item_type=["Job"]))
     assert jobs_only and all(it.item_type == "Job" for it in jobs_only)
-    sess_only = list(ws.list_top_level_items(item_type=["session"]))
+    sess_only = list(ws.list_top_level_items(item_type=["Session"]))
     assert sess_only and all(it.item_type == "Session" for it in sess_only)
     # provider
+    # combined provider AND status AND window
+    before = datetime.now(UTC) + timedelta(days=1)
+    combo = list(
+        ws.list_sessions(provider=["ionq"], status=["Succeeded"], created_before=before)
+    )
+    assert combo and all(
+        s._details.provider_id == "ionq" and s._details.status == "Succeeded"
+        for s in combo
+    )
     prov = list(ws.list_top_level_items(provider=["ionq"]))
     assert prov and all(it.details.provider_id == "ionq" for it in prov)
     # target
@@ -303,6 +328,67 @@ def test_list_top_level_items_basic_and_filters():
         getattr(it.details, "job_type", None) == "QuantumChemistry"
         for it in items_with_jt
     )
+    # combined filters: provider AND target; with seeded AND-match expect results
+    combo = list(
+        ws.list_top_level_items(provider=["ionq"], target=["microsoft.estimator"])
+    )
+    assert combo and all(
+        it.details.provider_id == "ionq" and it.details.target == "microsoft.estimator"
+        for it in combo
+    )
+
+    # case sensitivity: lower-case item_type should return empty
+    combo_case = list(ws.list_top_level_items(item_type=["job"]))
+    assert len(combo_case) == 0
+
+    # multi-value OR grouping for item_type should return both types
+    both_types = list(ws.list_top_level_items(item_type=["Job", "Session"]))
+    assert both_types and any(it.item_type == "Job" for it in both_types) and any(
+        it.item_type == "Session" for it in both_types
+    )
+
+    # multi-value OR grouping for job_type should include both QuantumComputing and QuantumChemistry
+    jt_multi = list(
+        ws.list_top_level_items(job_type=["QuantumComputing", "QuantumChemistry"])
+    )
+    assert jt_multi and any(
+        getattr(it.details, "job_type", None) == "QuantumComputing" for it in jt_multi
+    ) and any(
+        getattr(it.details, "job_type", None) == "QuantumChemistry" for it in jt_multi
+    )
+
+    # date boundary tests: created_after/on boundary includes items; created_before/on boundary includes items
+    # choose a boundary based on a known seeded item creation_time
+    boundary_date = next(
+        it.details.creation_time.date() for it in items if it.details.name == "msJobA"
+    )
+    after_inclusive = list(ws.list_top_level_items(created_after=datetime.combine(boundary_date, datetime.min.time(), tzinfo=UTC)))
+    assert any(it.details.creation_time.date() >= boundary_date for it in after_inclusive)
+    before_inclusive = list(ws.list_top_level_items(created_before=datetime.combine(boundary_date, datetime.min.time(), tzinfo=UTC)))
+    assert any(it.details.creation_time.date() <= boundary_date for it in before_inclusive)
+    # job_type + provider + target (AND semantics); with seeded combo expect non-empty
+    jt_combo = list(
+        ws.list_top_level_items(
+            job_type=["QuantumComputing"], provider=["ionq"], target=["quantinuum.sim"]
+        )
+    )
+    # Above combination doesn't match; now test the seeded AND combo
+    jt_combo2 = list(
+        ws.list_top_level_items(
+            job_type=["QuantumComputing"],
+            provider=["ionq"],
+            target=["microsoft.estimator"],
+        )
+    )
+    assert jt_combo2 and all(
+        getattr(it.details, "job_type", None) == "QuantumComputing"
+        and it.details.provider_id == "ionq"
+        and it.details.target == "microsoft.estimator"
+        for it in jt_combo2
+    )
+    # negative test: no match
+    none_items = list(ws.list_top_level_items(provider=["no-provider"]))
+    assert len(none_items) == 0
 
 
 def test_list_top_level_items_created_ordering():
