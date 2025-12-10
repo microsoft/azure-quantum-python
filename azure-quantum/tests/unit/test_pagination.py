@@ -14,7 +14,6 @@ from common import (
     SUBSCRIPTION_ID,
     RESOURCE_GROUP,
     WORKSPACE,
-    LOCATION,
 )
 
 class TestWorkspacePagination(QuantumTestBase):

@@ -14,7 +14,7 @@ from azure.quantum.job.job import Job
 from azure.quantum.cirq import AzureQuantumService
 from azure.quantum.cirq.targets.target import Target
 
-from common import QuantumTestBase, ONE_UID, LOCATION, DEFAULT_TIMEOUT_SECS
+from common import QuantumTestBase, ONE_UID, DEFAULT_TIMEOUT_SECS
 from test_workspace import SIMPLE_RESOURCE_ID
 
 class TestCirq(QuantumTestBase):
@@ -83,9 +83,7 @@ class TestCirq(QuantumTestBase):
                 # Cause all warnings to always be triggered.
                 warnings.simplefilter("always")
                 # Try to trigger a warning.
-                AzureQuantumService(
-                    resource_id=SIMPLE_RESOURCE_ID,
-                    location=LOCATION)
+                AzureQuantumService(resource_id=SIMPLE_RESOURCE_ID)
                 # Verify
                 assert len(w) == 1
                 assert issubclass(w[-1].category, DeprecationWarning)
@@ -98,13 +96,11 @@ class TestCirq(QuantumTestBase):
                 # Try to trigger a warning.
                 workspace = Workspace(
                     resource_id=SIMPLE_RESOURCE_ID,
-                    location=LOCATION,
                     _mgmt_client=mock_mgmt_client)
 
                 AzureQuantumService(
                         workspace=workspace,
-                        resource_id=SIMPLE_RESOURCE_ID,
-                        location=LOCATION)
+                        resource_id=SIMPLE_RESOURCE_ID)
                 # Verify
                 assert len(w) == 1
                 assert issubclass(w[-1].category, DeprecationWarning)

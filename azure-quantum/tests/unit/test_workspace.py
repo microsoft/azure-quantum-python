@@ -358,7 +358,6 @@ class TestWorkspace(QuantumTestBase):
             # missing workspace name
             with self.assertRaises(ValueError) as context:
                 Workspace(
-                    location=LOCATION,
                     subscription_id=SUBSCRIPTION_ID,
                     resource_group=RESOURCE_GROUP,
                     name=None
@@ -381,7 +380,6 @@ class TestWorkspace(QuantumTestBase):
             # invalid resource id
             with self.assertRaises(ValueError) as context:
                 Workspace(
-                    location=LOCATION,
                     resource_id="invalid/resource/id")
             self.assertIn("Invalid resource id",
                           context.exception.args[0])
@@ -472,7 +470,6 @@ class TestWorkspace(QuantumTestBase):
                 subscription_id=SUBSCRIPTION_ID,
                 resource_group=RESOURCE_GROUP,
                 name=WORKSPACE,
-                location=LOCATION
             )
             self.assertIsNone(ws.user_agent)
 
@@ -482,7 +479,6 @@ class TestWorkspace(QuantumTestBase):
                 subscription_id=SUBSCRIPTION_ID,
                 resource_group=RESOURCE_GROUP,
                 name=WORKSPACE,
-                location=LOCATION
             )
             self.assertEqual(ws.user_agent, app_id)
 
@@ -492,7 +488,6 @@ class TestWorkspace(QuantumTestBase):
                 subscription_id=SUBSCRIPTION_ID,
                 resource_group=RESOURCE_GROUP,
                 name=WORKSPACE,
-                location=LOCATION,
                 user_agent=user_agent
             )
             self.assertEqual(ws.user_agent, user_agent)
@@ -503,7 +498,6 @@ class TestWorkspace(QuantumTestBase):
                 subscription_id=SUBSCRIPTION_ID,
                 resource_group=RESOURCE_GROUP,
                 name=WORKSPACE,
-                location=LOCATION,
                 user_agent=user_agent
             )
             self.assertEqual(ws.user_agent,
@@ -515,7 +509,6 @@ class TestWorkspace(QuantumTestBase):
                 subscription_id=SUBSCRIPTION_ID,
                 resource_group=RESOURCE_GROUP,
                 name=WORKSPACE,
-                location=LOCATION,
                 user_agent=user_agent
             )
             ws.append_user_agent("featurex")
@@ -531,7 +524,6 @@ class TestWorkspace(QuantumTestBase):
                 subscription_id=SUBSCRIPTION_ID,
                 resource_group=RESOURCE_GROUP,
                 name=WORKSPACE,
-                location=LOCATION
             )
             ws.append_user_agent("featurex")
             self.assertEqual(ws.user_agent, "featurex")

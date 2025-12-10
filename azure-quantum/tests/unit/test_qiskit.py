@@ -16,7 +16,7 @@ from qiskit.providers import BackendV2 as Backend
 from qiskit.providers import Options
 from qiskit.providers.exceptions import QiskitBackendNotFoundError
 
-from common import QuantumTestBase, DEFAULT_TIMEOUT_SECS, LOCATION
+from common import QuantumTestBase, DEFAULT_TIMEOUT_SECS
 from test_workspace import SIMPLE_RESOURCE_ID
 
 from azure.quantum.workspace import Workspace
@@ -616,7 +616,7 @@ class TestQiskit(QuantumTestBase):
                 # Cause all warnings to always be triggered.
                 warnings.simplefilter("always")
                 # Try to trigger a warning.
-                AzureQuantumProvider(resource_id=SIMPLE_RESOURCE_ID, location=LOCATION)
+                AzureQuantumProvider(resource_id=SIMPLE_RESOURCE_ID)
 
                 warns = [
                     warn
@@ -636,11 +636,10 @@ class TestQiskit(QuantumTestBase):
                 # Try to trigger a warning.
                 workspace = Workspace(
                     resource_id=SIMPLE_RESOURCE_ID,
-                    location=LOCATION,
                     _mgmt_client=mock_mgmt_client)
 
                 AzureQuantumProvider(
-                    workspace=workspace, resource_id=SIMPLE_RESOURCE_ID, location=LOCATION
+                    workspace=workspace, resource_id=SIMPLE_RESOURCE_ID
                 )
 
                 warns = [
