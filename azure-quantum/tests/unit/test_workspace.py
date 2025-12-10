@@ -468,7 +468,7 @@ class TestWorkspace(QuantumTestBase):
 
             # no UserAgent parameter and no EnvVar AppId
             os.environ[EnvironmentVariables.USER_AGENT_APPID] = ""
-            ws = Workspace(
+            ws = self.create_workspace_with_params(
                 subscription_id=SUBSCRIPTION_ID,
                 resource_group=RESOURCE_GROUP,
                 name=WORKSPACE,
@@ -478,7 +478,7 @@ class TestWorkspace(QuantumTestBase):
 
             # no UserAgent parameter and with EnvVar AppId
             os.environ[EnvironmentVariables.USER_AGENT_APPID] = app_id
-            ws = Workspace(
+            ws = self.create_workspace_with_params(
                 subscription_id=SUBSCRIPTION_ID,
                 resource_group=RESOURCE_GROUP,
                 name=WORKSPACE,
@@ -488,7 +488,7 @@ class TestWorkspace(QuantumTestBase):
 
             # with UserAgent parameter and no EnvVar AppId
             os.environ[EnvironmentVariables.USER_AGENT_APPID] = ""
-            ws = Workspace(
+            ws = self.create_workspace_with_params(
                 subscription_id=SUBSCRIPTION_ID,
                 resource_group=RESOURCE_GROUP,
                 name=WORKSPACE,
@@ -499,7 +499,7 @@ class TestWorkspace(QuantumTestBase):
 
             # with UserAgent parameter and EnvVar AppId
             os.environ[EnvironmentVariables.USER_AGENT_APPID] = app_id
-            ws = Workspace(
+            ws = self.create_workspace_with_params(
                 subscription_id=SUBSCRIPTION_ID,
                 resource_group=RESOURCE_GROUP,
                 name=WORKSPACE,
@@ -511,7 +511,7 @@ class TestWorkspace(QuantumTestBase):
 
             # Append with UserAgent parameter and with EnvVar AppId
             os.environ[EnvironmentVariables.USER_AGENT_APPID] = app_id
-            ws = Workspace(
+            ws = self.create_workspace_with_params(
                 subscription_id=SUBSCRIPTION_ID,
                 resource_group=RESOURCE_GROUP,
                 name=WORKSPACE,
@@ -527,7 +527,7 @@ class TestWorkspace(QuantumTestBase):
 
             # Append with no UserAgent parameter and no EnvVar AppId
             os.environ[EnvironmentVariables.USER_AGENT_APPID] = ""
-            ws = Workspace(
+            ws = self.create_workspace_with_params(
                 subscription_id=SUBSCRIPTION_ID,
                 resource_group=RESOURCE_GROUP,
                 name=WORKSPACE,
