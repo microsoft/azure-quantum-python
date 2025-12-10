@@ -4,9 +4,10 @@ without making network calls. Returns real SDK models and ItemPaged.
 """
 
 from typing import Callable, Iterable, Iterator, List, Optional
-from datetime import datetime, UTC
+from datetime import datetime, UTC, timedelta
 
 from azure.core.paging import ItemPaged
+from azure.quantum.workspace import Workspace
 from azure.quantum._client import ServicesClient
 from azure.quantum._client.models import JobDetails, SessionDetails, ItemDetails
 
@@ -353,3 +354,110 @@ class MockServicesClient(ServicesClient):
         self.top_level_items = TopLevelItemsOperations(
             self._jobs_store, self._sessions_store
         )
+
+
+class WorkspaceMock(Workspace):
+    def _create_client(self) -> ServicesClient:  # type: ignore[override]
+        return MockServicesClient()
+
+
+def seed_jobs(ws: WorkspaceMock) -> None:
+    base = datetime.now(UTC) - timedelta(days=10)
+    samples = [
+        JobDetails(
+            id="j-ionq-1",
+            name="ionqJobA",
+            provider_id="ionq",
+            target="ionq.simulator",
+            status="Succeeded",
+            creation_time=base + timedelta(days=1),
+            session_id="s-ionq-1",
+            job_type="QuantumComputing",
+        ),
+        JobDetails(
+            id="j-ionq-2",
+            name="ionqJobB",
+            provider_id="ionq",
+            target="ionq.simulator",
+            status="Failed",
+            creation_time=base + timedelta(days=2),
+            session_id="s-ionq-1",
+        ),
+        JobDetails(
+            id="j-qh-1",
+            name="qhJobA",
+            provider_id="quantinuum",
+            target="quantinuum.sim",
+            status="Cancelled",
+            creation_time=base + timedelta(days=3),
+            session_id="s-ionq-2",
+            job_type="QuantumChemistry",
+        ),
+        JobDetails(
+            id="j-ms-1",
+            name="msJobA",
+            provider_id="microsoft",
+            target="microsoft.estimator",
+            status="Succeeded",
+            creation_time=base + timedelta(days=4),
+        ),
+        JobDetails(
+            id="j-ionq-ms-qc",
+            name="ionqMsQC",
+            provider_id="ionq",
+            target="microsoft.estimator",
+            status="Succeeded",
+            creation_time=base + timedelta(days=5),
+            job_type="QuantumComputing",
+        ),
+        JobDetails(
+            id="j-rig-1",
+            name="rigJobA",
+            provider_id="rigetti",
+            target="rigetti.qpu",
+            status="Succeeded",
+        ),
+    ]
+    for d in samples:
+        ws._client.jobs.create_or_replace(
+            ws.subscription_id, ws.resource_group, ws.name, job_id=d.id, job_details=d
+        )
+
+
+def seed_sessions(ws: WorkspaceMock) -> None:
+    base = datetime.now(UTC) - timedelta(days=5)
+    samples = [
+        SessionDetails(
+            id="s-ionq-1",
+            name="sessionA",
+            provider_id="ionq",
+            target="ionq.simulator",
+            status="Succeeded",
+            creation_time=base + timedelta(days=1),
+        ),
+        SessionDetails(
+            id="s-ionq-2",
+            name="sessionB",
+            provider_id="ionq",
+            target="ionq.test",
+            status="Succeeded",
+            creation_time=base + timedelta(days=2),
+        ),
+    ]
+    for s in samples:
+        ws._client.sessions.create_or_replace(
+            ws.subscription_id,
+            ws.resource_group,
+            ws.name,
+            session_id=s.id,
+            session_details=s,
+        )
+
+
+def create_default_workspace() -> WorkspaceMock:
+    ws = WorkspaceMock(
+        subscription_id="sub", resource_group="rg", name="ws", location="westus"
+    )
+    seed_jobs(ws)
+    seed_sessions(ws)
+    return ws
