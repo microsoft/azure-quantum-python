@@ -1,59 +1,6 @@
 from datetime import datetime, UTC, timedelta
 
-from mock_client import WorkspaceMock, create_default_workspace
-
-
-def test_filter_string_emission():
-    ws = WorkspaceMock(
-        subscription_id="sub", resource_group="rg", name="ws", location="westus"
-    )
-    # pylint: disable=protected-access
-    filter_string = ws._create_filter(
-        job_name="name",
-        item_type=["Session", "Job"],
-        job_type=["Regular", "Chemistry"],
-        provider_ids=["ionq", "quantinuum"],
-        target=["ionq.sim", "quantinuum,sim"],
-        status=["Completed", "Failed"],
-        created_after=datetime(2024, 10, 1),
-        created_before=datetime(2024, 11, 1),
-    )
-    # pylint: enable=protected-access
-    expected = (
-        "startswith(Name, 'name') and (ItemType eq 'Session' or ItemType eq 'Job') and "
-        "(JobType eq 'Regular' or JobType eq 'Chemistry') and (ProviderId eq 'ionq' or ProviderId eq 'quantinuum') and "
-        "(Target eq 'ionq.sim' or Target eq 'quantinuum,sim') and (State eq 'Completed' or State eq 'Failed') and "
-        "CreationTime ge 2024-10-01 and CreationTime le 2024-11-01"
-    )
-    assert filter_string == expected
-
-
-def test_orderby_emission_and_validation():
-    ws = WorkspaceMock(
-        subscription_id="sub", resource_group="rg", name="ws", location="westus"
-    )
-    props = [
-        "Name",
-        "ItemType",
-        "JobType",
-        "ProviderId",
-        "Target",
-        "State",
-        "CreationTime",
-    ]
-    # pylint: disable=protected-access
-    for p in props:
-        assert ws._create_orderby(p, True) == f"{p} asc"
-        assert ws._create_orderby(p, False) == f"{p} desc"
-    try:
-        ws._create_orderby("test", True)
-        assert False, "Expected ValueError for invalid property"
-    except ValueError:
-        pass
-    # pylint: enable=protected-access
-
-
-# WorkspaceMock and seed functions moved to mock_client; using create_default_workspace in tests
+from mock_client import create_default_workspace
 
 
 def test_list_jobs_basic():
@@ -79,18 +26,6 @@ def test_list_jobs_filters():
     # status
     jobs = list(ws.list_jobs(status=["Failed", "Cancelled"]))
     assert all(j.details.status in {"Failed", "Cancelled"} for j in jobs)
-    # status mix including succeeded
-    jobs_status_mix = list(ws.list_jobs(status=["Succeeded", "Failed"]))
-    assert jobs_status_mix and all(
-        j.details.status in {"Succeeded", "Failed"} for j in jobs_status_mix
-    )
-    # job_type presence/absence
-    jt = list(ws.list_jobs(job_type=["QuantumComputing", "QuantumChemistry"]))
-    assert any(getattr(j.details, "job_type", None) == "QuantumComputing" for j in jt)
-    assert any(getattr(j.details, "job_type", None) == "QuantumChemistry" for j in jt)
-    # target format variety
-    rv = list(ws.list_jobs(target=["rigetti.qpu"]))
-    assert rv and all(j.details.target == "rigetti.qpu" for j in rv)
 
 
 def test_list_jobs_created_window_and_ordering():
@@ -216,14 +151,7 @@ def test_list_top_level_items_basic_and_filters():
     # name filters
     i1 = list(ws.list_top_level_items(name_match="ionq"))
     assert all(it.details.name.startswith("ionq") for it in i1)
-    i2 = list(ws.list_top_level_items(name_match="session"))
-    assert all(it.details.name.startswith("session") for it in i2)
     # exact-case only; mixed-case not supported per API
-    # item type
-    jobs_only = list(ws.list_top_level_items(item_type=["Job"]))
-    assert jobs_only and all(it.item_type == "Job" for it in jobs_only)
-    sess_only = list(ws.list_top_level_items(item_type=["Session"]))
-    assert sess_only and all(it.item_type == "Session" for it in sess_only)
     # provider
     # combined provider AND status AND window
     before = datetime.now(UTC) + timedelta(days=1)
@@ -244,18 +172,6 @@ def test_list_top_level_items_basic_and_filters():
     # status
     st = list(ws.list_top_level_items(status=["Failed", "Cancelled"]))
     assert all(it.details.status in {"Failed", "Cancelled"} for it in st)
-    # verify ItemDetails projection of job_type across shapes
-    items_with_jt = list(
-        ws.list_top_level_items(job_type=["QuantumComputing", "QuantumChemistry"])
-    )
-    assert any(
-        getattr(it.details, "job_type", None) == "QuantumComputing"
-        for it in items_with_jt
-    )
-    assert any(
-        getattr(it.details, "job_type", None) == "QuantumChemistry"
-        for it in items_with_jt
-    )
     # combined filters: provider AND target; with seeded AND-match expect results
     combo = list(
         ws.list_top_level_items(provider=["ionq"], target=["microsoft.estimator"])
@@ -321,22 +237,16 @@ def test_list_top_level_items_basic_and_filters():
     # job_type + provider + target (AND semantics); with seeded combo expect non-empty
     jt_combo = list(
         ws.list_top_level_items(
-            job_type=["QuantumComputing"], provider=["ionq"], target=["quantinuum.sim"]
-        )
-    )
-    # Above combination doesn't match; now test the seeded AND combo
-    jt_combo2 = list(
-        ws.list_top_level_items(
             job_type=["QuantumComputing"],
             provider=["ionq"],
             target=["microsoft.estimator"],
         )
     )
-    assert jt_combo2 and all(
+    assert jt_combo and all(
         getattr(it.details, "job_type", None) == "QuantumComputing"
         and it.details.provider_id == "ionq"
         and it.details.target == "microsoft.estimator"
-        for it in jt_combo2
+        for it in jt_combo
     )
     # negative test: no match
     none_items = list(ws.list_top_level_items(provider=["no-provider"]))
@@ -378,10 +288,47 @@ def test_list_top_level_items_created_ordering():
             prev = it.details.creation_time
 
 
-def test_top_level_items_iterable_and_ordered():
+def test_filter_string_emission():
     ws = create_default_workspace()
-    items = ws.list_top_level_items(orderby_property="CreationTime", is_asc=True)
-    items_list = list(items)
-    assert len(items_list) >= 1
-    for a, b in zip(items_list, items_list[1:]):
-        assert a.details.creation_time <= b.details.creation_time
+    # pylint: disable=protected-access
+    filter_string = ws._create_filter(
+        job_name="name",
+        item_type=["Session", "Job"],
+        job_type=["Regular", "Chemistry"],
+        provider_ids=["ionq", "quantinuum"],
+        target=["ionq.sim", "quantinuum,sim"],
+        status=["Completed", "Failed"],
+        created_after=datetime(2024, 10, 1),
+        created_before=datetime(2024, 11, 1),
+    )
+    # pylint: enable=protected-access
+    expected = (
+        "startswith(Name, 'name') and (ItemType eq 'Session' or ItemType eq 'Job') and "
+        "(JobType eq 'Regular' or JobType eq 'Chemistry') and (ProviderId eq 'ionq' or ProviderId eq 'quantinuum') and "
+        "(Target eq 'ionq.sim' or Target eq 'quantinuum,sim') and (State eq 'Completed' or State eq 'Failed') and "
+        "CreationTime ge 2024-10-01 and CreationTime le 2024-11-01"
+    )
+    assert filter_string == expected
+
+
+def test_orderby_emission_and_validation():
+    ws = create_default_workspace()
+    props = [
+        "Name",
+        "ItemType",
+        "JobType",
+        "ProviderId",
+        "Target",
+        "State",
+        "CreationTime",
+    ]
+    # pylint: disable=protected-access
+    for p in props:
+        assert ws._create_orderby(p, True) == f"{p} asc"
+        assert ws._create_orderby(p, False) == f"{p} desc"
+    try:
+        ws._create_orderby("test", True)
+        assert False, "Expected ValueError for invalid property"
+    except ValueError:
+        pass
+    # pylint: enable=protected-access

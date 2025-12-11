@@ -8,6 +8,7 @@ from datetime import datetime, UTC, timedelta
 
 from azure.core.paging import ItemPaged
 from azure.quantum.workspace import Workspace
+from types import SimpleNamespace
 from azure.quantum._client import ServicesClient
 from azure.quantum._client.models import JobDetails, SessionDetails, ItemDetails
 
@@ -344,7 +345,7 @@ class TopLevelItemsOperations:
 
 
 class MockServicesClient(ServicesClient):
-    def __init__(self) -> None:
+    def __init__(self, authentication_policy: Optional[object] = None) -> None:
         # in-memory stores
         self._jobs_store: List[JobDetails] = []
         self._sessions_store: List[SessionDetails] = []
@@ -354,11 +355,15 @@ class MockServicesClient(ServicesClient):
         self.top_level_items = TopLevelItemsOperations(
             self._jobs_store, self._sessions_store
         )
+        # Mimic ServicesClient config shape for tests that inspect policy
+        self._config = SimpleNamespace(authentication_policy=authentication_policy)
 
 
 class WorkspaceMock(Workspace):
     def _create_client(self) -> ServicesClient:  # type: ignore[override]
-        return MockServicesClient()
+        # Pass through the Workspace's auth policy to the mock client
+        auth_policy = self._connection_params.get_auth_policy()
+        return MockServicesClient(authentication_policy=auth_policy)
 
 
 def seed_jobs(ws: WorkspaceMock) -> None:
