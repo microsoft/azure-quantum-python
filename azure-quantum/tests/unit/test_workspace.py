@@ -527,3 +527,54 @@ class TestWorkspace(QuantumTestBase):
             )
             ws.append_user_agent("featurex")
             self.assertEqual(ws.user_agent, "featurex")
+
+    def test_workspace_context_manager(self):
+        """Test that Workspace can be used as a context manager"""
+        mock_mgmt_client = self.create_mock_mgmt_client()
+        
+        # Test with statement
+        with Workspace(
+            subscription_id=SUBSCRIPTION_ID,
+            resource_group=RESOURCE_GROUP,
+            name=WORKSPACE,
+            _mgmt_client=mock_mgmt_client,
+        ) as ws:
+            # Verify workspace is properly initialized
+            self.assertEqual(ws.subscription_id, SUBSCRIPTION_ID)
+            self.assertEqual(ws.resource_group, RESOURCE_GROUP)
+            self.assertEqual(ws.name, WORKSPACE)
+            self.assertEqual(ws.location, LOCATION)
+            
+            # Verify internal clients are accessible
+            self.assertIsNotNone(ws._client)
+            self.assertIsNotNone(ws._mgmt_client)
+
+    def test_workspace_context_manager_calls_enter_exit(self):
+        """Test that __enter__ and __exit__ are called on internal clients"""
+        mock_mgmt_client = self.create_mock_mgmt_client()
+        
+        ws = Workspace(
+            subscription_id=SUBSCRIPTION_ID,
+            resource_group=RESOURCE_GROUP,
+            name=WORKSPACE,
+            _mgmt_client=mock_mgmt_client,
+        )
+        
+        # Mock the internal clients' __enter__ and __exit__ methods
+        ws._client.__enter__ = mock.MagicMock(return_value=ws._client)
+        ws._client.__exit__ = mock.MagicMock(return_value=None)
+        ws._mgmt_client.__enter__ = mock.MagicMock(return_value=ws._mgmt_client)
+        ws._mgmt_client.__exit__ = mock.MagicMock(return_value=None)
+        
+        # Use workspace as context manager
+        with ws as context_ws:
+            # Verify __enter__ was called on both clients
+            ws._client.__enter__.assert_called_once()
+            ws._mgmt_client.__enter__.assert_called_once()
+            
+            # Verify context manager returns the workspace instance
+            self.assertIs(context_ws, ws)
+        
+        # Verify __exit__ was called on both clients after exiting context
+        ws._client.__exit__.assert_called_once()
+        ws._mgmt_client.__exit__.assert_called_once()
