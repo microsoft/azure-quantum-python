@@ -21,6 +21,7 @@ from typing import (
     Tuple,
     Union,
 )
+from typing_extensions import Self
 from azure.core.paging import ItemPaged
 from azure.quantum._client import ServicesClient
 from azure.quantum._client.models import JobDetails, ItemDetails, SessionDetails
@@ -1072,3 +1073,12 @@ class Workspace:
     def close(self) -> None:
         self._mgmt_client.close()
         self._client.close()
+
+    def __enter__(self) -> Self:
+        self._client.__enter__()
+        self._mgmt_client.__enter__()
+        return self
+
+    def __exit__(self, *exc_details: Any) -> None:
+        self._mgmt_client.__exit__(*exc_details)
+        self._client.__exit__(*exc_details)
