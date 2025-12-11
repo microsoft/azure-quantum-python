@@ -54,7 +54,7 @@ class TestWorkspaceConnectionParamsValidation(unittest.TestCase):
             "rg_test(prod)-v1.2",
             "café",  # Unicode letters (Lo)
             "日本語",  # Unicode letters (Lo)
-            "Казань",  # Unicode letters (Lu, Ll)
+            "Казан",  # Unicode letters (Lu, Ll)
             "αβγ",  # Greek letters (Ll)
             "test-café-123",  # Mixed ASCII and Unicode
             "group_名前",  # Mixed ASCII and Unicode

@@ -4,6 +4,7 @@
 ##
 """
 Module providing the WorkspaceMgmtClient class for managing workspace operations.
+Created to do not add additional azure-mgmt-* dependencies that can conflict with existing ones.
 """
 
 import logging
@@ -25,7 +26,9 @@ __all__ = ["WorkspaceMgmtClient"]
 
 class WorkspaceMgmtClient():
     """
-    Client for ARM/ARG operations related to Azure Quantum workspaces.
+    Client for Azure Quantum Workspace related ARM/ARG operations.
+    Uses PipelineClient under the hood which is standard for all Azure SDK clients,
+    see https://learn.microsoft.com/en-us/azure/developer/python/sdk/fundamentals/http-pipeline-retries.
     
     :param credential:
         The credential to use to connect to Azure services.
