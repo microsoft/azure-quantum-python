@@ -8,7 +8,7 @@ Mock Azure Quantum REST client used to back a real Workspace
 without making network calls. Returns real SDK models and ItemPaged.
 """
 
-from typing import Callable, Iterable, Iterator, List, Optional
+from typing import List, Optional
 from datetime import datetime, UTC, timedelta
 
 from azure.core.paging import ItemPaged
