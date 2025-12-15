@@ -1,3 +1,8 @@
+##
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+##
+
 import os
 from unittest import mock
 from azure.quantum._constants import EnvironmentVariables, ConnectionConstants

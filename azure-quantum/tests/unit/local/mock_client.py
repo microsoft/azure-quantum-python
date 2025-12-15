@@ -1,3 +1,8 @@
+##
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+##
+
 """
 Mock Azure Quantum REST client used to back a real Workspace
 without making network calls. Returns real SDK models and ItemPaged.

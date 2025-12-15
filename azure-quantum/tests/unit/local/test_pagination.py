@@ -1,3 +1,8 @@
+##
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+##
+
 from datetime import datetime, UTC, timedelta
 
 from mock_client import create_default_workspace
