@@ -29,15 +29,14 @@ To get started, visit the following Quickstart guides:
 
 ## General usage ##
 
-To connect to your Azure Quantum Workspace, go to the [Azure Portal](https://portal.azure.com), navigate to your Workspace and copy-paste the resource ID and location into the code snippet below.
+To connect to your Azure Quantum Workspace, go to the [Azure Portal](https://portal.azure.com), navigate to your Workspace and copy-paste the resource ID into the code snippet below.
 
 ```python
 from azure.quantum import Workspace
 
-# Enter your Workspace details (resource ID and location) below
+# Enter your Workspace resource ID below
 workspace = Workspace(
-    resource_id="",
-    location=""
+    resource_id=""
 )
 ```
 

@@ -21,6 +21,7 @@ from typing import (
     Tuple,
     Union,
 )
+from typing_extensions import Self
 from azure.core.paging import ItemPaged
 from azure.quantum._client import ServicesClient
 from azure.quantum._client.models import JobDetails, ItemDetails, SessionDetails
@@ -49,6 +50,7 @@ from azure.quantum.storage import (
     get_container_uri,
     ContainerClient
 )
+from azure.quantum._mgmt_client import WorkspaceMgmtClient
 if TYPE_CHECKING:
     from azure.quantum.target import Target
 
@@ -62,10 +64,11 @@ class Workspace:
     """
     Represents an Azure Quantum workspace.
 
-    When creating a Workspace object, callers have two options for
+    When creating a Workspace object, callers have several options for
     identifying the Azure Quantum workspace (in order of precedence):
-    1. specify a valid location and resource ID; or
-    2. specify a valid location, subscription ID, resource group, and workspace name.
+    1. specify a valid resource ID; or
+    2. specify a valid subscription ID, resource group, and workspace name; or
+    3. specify a valid workspace name.
 
     You can also use a connection string to specify the connection parameters
     to an Azure Quantum Workspace by calling
@@ -110,6 +113,12 @@ class Workspace:
         Add the specified value as a prefix to the HTTP User-Agent header
         when communicating to the Azure Quantum service.
     """
+    
+    # Internal parameter names
+    _FROM_CONNECTION_STRING_PARAM = '_from_connection_string'
+    _QUANTUM_ENDPOINT_PARAM = '_quantum_endpoint'
+    _MGMT_CLIENT_PARAM = '_mgmt_client'
+    
     def __init__(
         self,
         subscription_id: Optional[str] = None,
@@ -122,6 +131,14 @@ class Workspace:
         user_agent: Optional[str] = None,
         **kwargs: Any,
     ) -> None:
+        # Extract internal params before passing kwargs to WorkspaceConnectionParams
+        # Param to track whether the workspace was created from a connection string
+        from_connection_string = kwargs.pop(Workspace._FROM_CONNECTION_STRING_PARAM, False)
+        # In case from connection string, quantum_endpoint must be passed
+        quantum_endpoint = kwargs.pop(Workspace._QUANTUM_ENDPOINT_PARAM, None)
+        # Params to pass a mock in tests
+        self._mgmt_client = kwargs.pop(Workspace._MGMT_CLIENT_PARAM, None)
+        
         connection_params = WorkspaceConnectionParams(
             location=location,
             subscription_id=subscription_id,
@@ -129,13 +146,14 @@ class Workspace:
             workspace_name=name,
             credential=credential,
             resource_id=resource_id,
+            quantum_endpoint=quantum_endpoint,
             user_agent=user_agent,
             **kwargs
         ).default_from_env_vars()
 
         logger.info("Using %s environment.", connection_params.environment)
 
-        connection_params.assert_complete()
+        connection_params.assert_have_enough_for_discovery()
 
         connection_params.on_new_client_request = self._on_new_client_request
 
@@ -144,6 +162,32 @@ class Workspace:
         self._subscription_id = connection_params.subscription_id
         self._resource_group = connection_params.resource_group
         self._workspace_name = connection_params.workspace_name
+
+        if not self._mgmt_client:
+            credential = connection_params.get_credential_or_default()
+            self._mgmt_client = WorkspaceMgmtClient(
+                credential=credential, 
+                base_url=connection_params.arm_endpoint, 
+                user_agent=connection_params.get_full_user_agent(),
+            )
+        
+        # pylint: disable=protected-access
+        using_connection_string = (
+            from_connection_string
+            or connection_params._used_connection_string
+        )
+
+        # Populate workspace details from ARG if not using connection string and 
+        # name is provided but missing subscription and/or resource group
+        if not using_connection_string \
+           and not connection_params.can_build_resource_id():
+            self._mgmt_client.load_workspace_from_arg(connection_params)
+
+        # Populate workspace details from ARM if not using connection string and not loaded from ARG
+        if not using_connection_string and not connection_params.is_complete():
+            self._mgmt_client.load_workspace_from_arm(connection_params)
+        
+        connection_params.assert_complete()
 
         # Create QuantumClient
         self._client = self._create_client()
@@ -277,6 +321,8 @@ class Workspace:
         :rtype: Workspace
         """
         connection_params = WorkspaceConnectionParams(connection_string=connection_string)
+        kwargs[cls._FROM_CONNECTION_STRING_PARAM] = True
+        kwargs[cls._QUANTUM_ENDPOINT_PARAM] = connection_params.quantum_endpoint
         return cls(
             subscription_id=connection_params.subscription_id,
             resource_group=connection_params.resource_group,
@@ -1024,3 +1070,15 @@ class Workspace:
         else:
             return None
     
+    def close(self) -> None:
+        self._mgmt_client.close()
+        self._client.close()
+
+    def __enter__(self) -> Self:
+        self._client.__enter__()
+        self._mgmt_client.__enter__()
+        return self
+
+    def __exit__(self, *exc_details: Any) -> None:
+        self._mgmt_client.__exit__(*exc_details)
+        self._client.__exit__(*exc_details)

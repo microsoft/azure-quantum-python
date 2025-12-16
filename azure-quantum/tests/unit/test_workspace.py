@@ -12,7 +12,10 @@ from common import (
     WORKSPACE,
     LOCATION,
     STORAGE,
+    ENDPOINT_URI,
     API_KEY,
+    ZERO_UID,
+    PLACEHOLDER,
 )
 from azure.quantum import Workspace
 from azure.quantum._constants import (
@@ -38,54 +41,125 @@ SIMPLE_CONNECTION_STRING = ConnectionConstants.VALID_CONNECTION_STRING(
     quantum_endpoint=ConnectionConstants.GET_QUANTUM_PRODUCTION_ENDPOINT(LOCATION)
 )
 
+SIMPLE_CONNECTION_STRING_V2 = ConnectionConstants.VALID_CONNECTION_STRING(
+    subscription_id=SUBSCRIPTION_ID,
+    resource_group=RESOURCE_GROUP,
+    workspace_name=WORKSPACE,
+    api_key=API_KEY,
+    quantum_endpoint=ConnectionConstants.GET_QUANTUM_PRODUCTION_ENDPOINT_v2(LOCATION)
+)
+
 
 class TestWorkspace(QuantumTestBase):
     def test_create_workspace_instance_valid(self):
+        def assert_all_required_params(ws: Workspace):
+            self.assertEqual(ws.subscription_id, SUBSCRIPTION_ID)
+            self.assertEqual(ws.resource_group, RESOURCE_GROUP)
+            self.assertEqual(ws.name, WORKSPACE)
+            self.assertEqual(ws.location, LOCATION)
+            self.assertEqual(ws._connection_params.quantum_endpoint, ENDPOINT_URI)
+        
+        mock_mgmt_client = self.create_mock_mgmt_client()
+        
         ws = Workspace(
             subscription_id=SUBSCRIPTION_ID,
             resource_group=RESOURCE_GROUP,
             name=WORKSPACE,
-            location=LOCATION,
+            _mgmt_client=mock_mgmt_client,
         )
-        self.assertEqual(ws.subscription_id, SUBSCRIPTION_ID)
-        self.assertEqual(ws.resource_group, RESOURCE_GROUP)
-        self.assertEqual(ws.name, WORKSPACE)
-        self.assertEqual(ws.location, LOCATION)
+        assert_all_required_params(ws)
 
         ws = Workspace(
             subscription_id=SUBSCRIPTION_ID,
             resource_group=RESOURCE_GROUP,
             name=WORKSPACE,
-            location=LOCATION,
             storage=STORAGE,
+            _mgmt_client=mock_mgmt_client,
         )
+        assert_all_required_params(ws)
         self.assertEqual(ws.storage, STORAGE)
 
         ws = Workspace(
             resource_id=SIMPLE_RESOURCE_ID,
-            location=LOCATION,
+            _mgmt_client=mock_mgmt_client,
         )
-        self.assertEqual(ws.subscription_id, SUBSCRIPTION_ID)
-        self.assertEqual(ws.resource_group, RESOURCE_GROUP)
-        self.assertEqual(ws.name, WORKSPACE)
-        self.assertEqual(ws.location, LOCATION)
+        assert_all_required_params(ws)
 
         ws = Workspace(
             resource_id=SIMPLE_RESOURCE_ID,
             storage=STORAGE,
-            location=LOCATION,
+            _mgmt_client=mock_mgmt_client,
         )
+        assert_all_required_params(ws)
         self.assertEqual(ws.storage, STORAGE)
+
+        ws = Workspace(
+            name=WORKSPACE,
+            _mgmt_client=mock_mgmt_client,
+        )
+        assert_all_required_params(ws)
+
+        ws = Workspace(
+            name=WORKSPACE,
+            storage=STORAGE,
+            _mgmt_client=mock_mgmt_client,
+        )
+        assert_all_required_params(ws)
+        self.assertEqual(ws.storage, STORAGE)
+
+        ws = Workspace(
+            name=WORKSPACE,
+            location=LOCATION,
+            _mgmt_client=mock_mgmt_client,
+        )
+        assert_all_required_params(ws)
+
+        ws = Workspace(
+            name=WORKSPACE,
+            subscription_id=SUBSCRIPTION_ID,
+            _mgmt_client=mock_mgmt_client,
+        )
+        assert_all_required_params(ws)
+
+        ws = Workspace(
+            name=WORKSPACE,
+            subscription_id=SUBSCRIPTION_ID,
+            location=LOCATION,
+            _mgmt_client=mock_mgmt_client,
+        )
+        assert_all_required_params(ws)
+
+        ws = Workspace(
+            name=WORKSPACE,
+            resource_group=RESOURCE_GROUP,
+            _mgmt_client=mock_mgmt_client,
+        )
+        assert_all_required_params(ws)
+
+        ws = Workspace(
+            name=WORKSPACE,
+            resource_group=RESOURCE_GROUP,
+            location=LOCATION,
+            _mgmt_client=mock_mgmt_client,
+        )
+        assert_all_required_params(ws)
 
     def test_create_workspace_locations(self):
-        # User-provided location name should be normalized
+        # Location name should be normalized
         location = "East US"
+        mock_mgmt_client = mock.MagicMock()
+        def mock_load_workspace_from_arm(connection_params):
+            connection_params.location = location
+            connection_params.quantum_endpoint = ENDPOINT_URI
+        mock_mgmt_client.load_workspace_from_arm = mock_load_workspace_from_arm
+
         ws = Workspace(
+            name=WORKSPACE,
             subscription_id=SUBSCRIPTION_ID,
             resource_group=RESOURCE_GROUP,
-            name=WORKSPACE,
-            location=location,
+            _mgmt_client=mock_mgmt_client,
         )
+
         self.assertEqual(ws.location, "eastus")
 
     def test_env_connection_string(self):
@@ -110,6 +184,7 @@ class TestWorkspace(QuantumTestBase):
                              id(workspace.credential))
 
     def test_workspace_from_connection_string(self):
+        mock_mgmt_client = self.create_mock_mgmt_client()
         with mock.patch.dict(
             os.environ,
             clear=True
@@ -136,7 +211,7 @@ class TestWorkspace(QuantumTestBase):
             wrong_subscription_id = "00000000-2BAD-2BAD-2BAD-000000000000"
             wrong_resource_group = "wrongrg"
             wrong_workspace = "wrong-workspace"
-            wrong_location = "wrong-location"
+            wrong_location = "westus"
 
             # make sure the values above are really different from the default values
             self.assertNotEqual(wrong_subscription_id, SUBSCRIPTION_ID)
@@ -168,7 +243,10 @@ class TestWorkspace(QuantumTestBase):
             self.assertIsInstance(workspace.credential, AzureKeyCredential)
 
             # if we pass a credential, then it should be used
-            workspace = Workspace(credential=EnvironmentCredential())
+            os.environ[EnvironmentVariables.AZURE_CLIENT_ID] = ZERO_UID
+            os.environ[EnvironmentVariables.AZURE_TENANT_ID] = ZERO_UID
+            os.environ[EnvironmentVariables.AZURE_CLIENT_SECRET] = PLACEHOLDER
+            workspace = Workspace(credential=EnvironmentCredential(), _mgmt_client=mock_mgmt_client)
             self.assertIsInstance(workspace.credential, EnvironmentCredential)
 
             # the connection string passed as a parameter should override the
@@ -204,6 +282,70 @@ class TestWorkspace(QuantumTestBase):
             self.assertEqual(workspace.subscription_id, SUBSCRIPTION_ID)
             self.assertEqual(workspace.resource_group, RESOURCE_GROUP)
             self.assertEqual(workspace.name, WORKSPACE)
+    
+    def test_workspace_from_connection_string_v2(self):
+        """Test that v2 QuantumEndpoint format is correctly parsed."""
+        with mock.patch.dict(
+            os.environ,
+            clear=True
+        ):
+            workspace = Workspace.from_connection_string(SIMPLE_CONNECTION_STRING_V2)
+            self.assertEqual(workspace.location, LOCATION)
+            self.assertEqual(workspace.subscription_id, SUBSCRIPTION_ID)
+            self.assertEqual(workspace.resource_group, RESOURCE_GROUP)
+            self.assertEqual(workspace.name, WORKSPACE)
+            self.assertIsInstance(workspace.credential, AzureKeyCredential)
+            self.assertEqual(workspace.credential.key, API_KEY)
+            # pylint: disable=protected-access
+            self.assertIsInstance(
+                workspace._client._config.authentication_policy,
+                AzureKeyCredentialPolicy)
+            auth_policy = workspace._client._config.authentication_policy
+            self.assertEqual(auth_policy._name, ConnectionConstants.QUANTUM_API_KEY_HEADER)
+            self.assertEqual(id(auth_policy._credential),
+                             id(workspace.credential))
+    
+    def test_workspace_from_connection_string_v2_dogfood(self):
+        """Test v2 QuantumEndpoint with dogfood environment."""
+        canary_location = "eastus2euap"
+        dogfood_connection_string_v2 = ConnectionConstants.VALID_CONNECTION_STRING(
+            subscription_id=SUBSCRIPTION_ID,
+            resource_group=RESOURCE_GROUP,
+            workspace_name=WORKSPACE,
+            api_key=API_KEY,
+            quantum_endpoint=ConnectionConstants.GET_QUANTUM_DOGFOOD_ENDPOINT_v2(canary_location)
+        )
+        
+        with mock.patch.dict(os.environ, clear=True):
+            workspace = Workspace.from_connection_string(dogfood_connection_string_v2)
+            self.assertEqual(workspace.location, canary_location)
+            self.assertEqual(workspace.subscription_id, SUBSCRIPTION_ID)
+            self.assertEqual(workspace.resource_group, RESOURCE_GROUP)
+            self.assertEqual(workspace.name, WORKSPACE)
+            self.assertIsInstance(workspace.credential, AzureKeyCredential)
+            self.assertEqual(workspace.credential.key, API_KEY)
+
+    def test_env_connection_string_v2(self):
+        """Test v2 QuantumEndpoint from environment variable."""
+        with mock.patch.dict(os.environ):
+            self.clear_env_vars(os.environ)
+            os.environ[EnvironmentVariables.CONNECTION_STRING] = SIMPLE_CONNECTION_STRING_V2
+
+            workspace = Workspace()
+            self.assertEqual(workspace.location, LOCATION)
+            self.assertEqual(workspace.subscription_id, SUBSCRIPTION_ID)
+            self.assertEqual(workspace.name, WORKSPACE)
+            self.assertEqual(workspace.resource_group, RESOURCE_GROUP)
+            self.assertIsInstance(workspace.credential, AzureKeyCredential)
+            self.assertEqual(workspace.credential.key, API_KEY)
+            # pylint: disable=protected-access
+            self.assertIsInstance(
+                workspace._client._config.authentication_policy,
+                AzureKeyCredentialPolicy)
+            auth_policy = workspace._client._config.authentication_policy
+            self.assertEqual(auth_policy._name, ConnectionConstants.QUANTUM_API_KEY_HEADER)
+            self.assertEqual(id(auth_policy._credential),
+                             id(workspace.credential))
 
     def test_create_workspace_instance_invalid(self):
         def assert_value_error(exception):
@@ -213,48 +355,20 @@ class TestWorkspace(QuantumTestBase):
         with mock.patch.dict(os.environ):
             self.clear_env_vars(os.environ)
 
-            # missing location
-            with self.assertRaises(ValueError) as context:
-                Workspace(
-                    location=None,
-                    subscription_id=SUBSCRIPTION_ID,
-                    resource_group=RESOURCE_GROUP,
-                    name=WORKSPACE,
-                )
-            assert_value_error(context.exception)
-
-            # missing location
-            with self.assertRaises(ValueError) as context:
-                Workspace(resource_id=SIMPLE_RESOURCE_ID)
-            assert_value_error(context.exception)
-
-            # missing subscription id
-            with self.assertRaises(ValueError) as context:
-                Workspace(
-                    location=LOCATION,
-                    subscription_id=None,
-                    resource_group=RESOURCE_GROUP,
-                    name=WORKSPACE
-                )
-            assert_value_error(context.exception)
-
-            # missing resource group
-            with self.assertRaises(ValueError) as context:
-                Workspace(
-                    location=LOCATION,
-                    subscription_id=SUBSCRIPTION_ID,
-                    resource_group=None,
-                    name=WORKSPACE
-                )
-            assert_value_error(context.exception)
-
             # missing workspace name
             with self.assertRaises(ValueError) as context:
                 Workspace(
-                    location=LOCATION,
                     subscription_id=SUBSCRIPTION_ID,
                     resource_group=RESOURCE_GROUP,
                     name=None
+                )
+            assert_value_error(context.exception)
+
+            # provide only subscription id and resource group
+            with self.assertRaises(ValueError) as context:
+                Workspace(
+                    subscription_id=SUBSCRIPTION_ID,
+                    resource_group=RESOURCE_GROUP,
                 )
             assert_value_error(context.exception)
 
@@ -266,7 +380,6 @@ class TestWorkspace(QuantumTestBase):
             # invalid resource id
             with self.assertRaises(ValueError) as context:
                 Workspace(
-                    location=LOCATION,
                     resource_id="invalid/resource/id")
             self.assertIn("Invalid resource id",
                           context.exception.args[0])
@@ -353,42 +466,38 @@ class TestWorkspace(QuantumTestBase):
 
             # no UserAgent parameter and no EnvVar AppId
             os.environ[EnvironmentVariables.USER_AGENT_APPID] = ""
-            ws = Workspace(
+            ws = self.create_workspace_with_params(
                 subscription_id=SUBSCRIPTION_ID,
                 resource_group=RESOURCE_GROUP,
                 name=WORKSPACE,
-                location=LOCATION
             )
             self.assertIsNone(ws.user_agent)
 
             # no UserAgent parameter and with EnvVar AppId
             os.environ[EnvironmentVariables.USER_AGENT_APPID] = app_id
-            ws = Workspace(
+            ws = self.create_workspace_with_params(
                 subscription_id=SUBSCRIPTION_ID,
                 resource_group=RESOURCE_GROUP,
                 name=WORKSPACE,
-                location=LOCATION
             )
             self.assertEqual(ws.user_agent, app_id)
 
             # with UserAgent parameter and no EnvVar AppId
             os.environ[EnvironmentVariables.USER_AGENT_APPID] = ""
-            ws = Workspace(
+            ws = self.create_workspace_with_params(
                 subscription_id=SUBSCRIPTION_ID,
                 resource_group=RESOURCE_GROUP,
                 name=WORKSPACE,
-                location=LOCATION,
                 user_agent=user_agent
             )
             self.assertEqual(ws.user_agent, user_agent)
 
             # with UserAgent parameter and EnvVar AppId
             os.environ[EnvironmentVariables.USER_AGENT_APPID] = app_id
-            ws = Workspace(
+            ws = self.create_workspace_with_params(
                 subscription_id=SUBSCRIPTION_ID,
                 resource_group=RESOURCE_GROUP,
                 name=WORKSPACE,
-                location=LOCATION,
                 user_agent=user_agent
             )
             self.assertEqual(ws.user_agent,
@@ -396,11 +505,10 @@ class TestWorkspace(QuantumTestBase):
 
             # Append with UserAgent parameter and with EnvVar AppId
             os.environ[EnvironmentVariables.USER_AGENT_APPID] = app_id
-            ws = Workspace(
+            ws = self.create_workspace_with_params(
                 subscription_id=SUBSCRIPTION_ID,
                 resource_group=RESOURCE_GROUP,
                 name=WORKSPACE,
-                location=LOCATION,
                 user_agent=user_agent
             )
             ws.append_user_agent("featurex")
@@ -412,11 +520,61 @@ class TestWorkspace(QuantumTestBase):
 
             # Append with no UserAgent parameter and no EnvVar AppId
             os.environ[EnvironmentVariables.USER_AGENT_APPID] = ""
-            ws = Workspace(
+            ws = self.create_workspace_with_params(
                 subscription_id=SUBSCRIPTION_ID,
                 resource_group=RESOURCE_GROUP,
                 name=WORKSPACE,
-                location=LOCATION
             )
             ws.append_user_agent("featurex")
             self.assertEqual(ws.user_agent, "featurex")
+
+    def test_workspace_context_manager(self):
+        """Test that Workspace can be used as a context manager"""
+        mock_mgmt_client = self.create_mock_mgmt_client()
+        
+        # Test with statement
+        with Workspace(
+            subscription_id=SUBSCRIPTION_ID,
+            resource_group=RESOURCE_GROUP,
+            name=WORKSPACE,
+            _mgmt_client=mock_mgmt_client,
+        ) as ws:
+            # Verify workspace is properly initialized
+            self.assertEqual(ws.subscription_id, SUBSCRIPTION_ID)
+            self.assertEqual(ws.resource_group, RESOURCE_GROUP)
+            self.assertEqual(ws.name, WORKSPACE)
+            self.assertEqual(ws.location, LOCATION)
+            
+            # Verify internal clients are accessible
+            self.assertIsNotNone(ws._client)
+            self.assertIsNotNone(ws._mgmt_client)
+
+    def test_workspace_context_manager_calls_enter_exit(self):
+        """Test that __enter__ and __exit__ are called on internal clients"""
+        mock_mgmt_client = self.create_mock_mgmt_client()
+        
+        ws = Workspace(
+            subscription_id=SUBSCRIPTION_ID,
+            resource_group=RESOURCE_GROUP,
+            name=WORKSPACE,
+            _mgmt_client=mock_mgmt_client,
+        )
+        
+        # Mock the internal clients' __enter__ and __exit__ methods
+        ws._client.__enter__ = mock.MagicMock(return_value=ws._client)
+        ws._client.__exit__ = mock.MagicMock(return_value=None)
+        ws._mgmt_client.__enter__ = mock.MagicMock(return_value=ws._mgmt_client)
+        ws._mgmt_client.__exit__ = mock.MagicMock(return_value=None)
+        
+        # Use workspace as context manager
+        with ws as context_ws:
+            # Verify __enter__ was called on both clients
+            ws._client.__enter__.assert_called_once()
+            ws._mgmt_client.__enter__.assert_called_once()
+            
+            # Verify context manager returns the workspace instance
+            self.assertIs(context_ws, ws)
+        
+        # Verify __exit__ was called on both clients after exiting context
+        ws._client.__exit__.assert_called_once()
+        ws._mgmt_client.__exit__.assert_called_once()
