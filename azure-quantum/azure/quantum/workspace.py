@@ -159,9 +159,6 @@ class Workspace:
 
         self._connection_params = connection_params
         self._storage = storage
-        self._subscription_id = connection_params.subscription_id
-        self._resource_group = connection_params.resource_group
-        self._workspace_name = connection_params.workspace_name
 
         if not self._mgmt_client:
             credential = connection_params.get_credential_or_default()
@@ -404,9 +401,9 @@ class Workspace:
             container_name=container_name, blob_name=blob_name
         )
         container_uri = client.get_sas_uri(
-            self._subscription_id,
-            self._resource_group,
-            self._workspace_name, 
+            self.subscription_id,
+            self.resource_group,
+            self.name, 
             blob_details=blob_details)
 
         logger.debug("Container URI from service: %s", container_uri)
@@ -424,9 +421,9 @@ class Workspace:
         """
         client = self._get_jobs_client()
         details = client.create_or_replace(
-            self._subscription_id,
-            self._resource_group,
-            self._workspace_name,
+            self.subscription_id,
+            self.resource_group,
+            self.name,
             job.details.id, 
             job.details
         )
@@ -445,14 +442,14 @@ class Workspace:
         """
         client = self._get_jobs_client()
         client.delete(
-            self._subscription_id,
-            self._resource_group,
-            self._workspace_name,
+            self.subscription_id,
+            self.resource_group,
+            self.name,
             job.details.id)
         details = client.get(
-            self._subscription_id,
-            self._resource_group,
-            self._workspace_name,
+            self.subscription_id,
+            self.resource_group,
+            self.name,
             job.id)
         return Job(self, details)
 
@@ -472,9 +469,9 @@ class Workspace:
 
         client = self._get_jobs_client()
         details = client.get(
-            self._subscription_id,
-            self._resource_group,
-            self._workspace_name,
+            self.subscription_id,
+            self.resource_group,
+            self.name,
             job_id)
         target_factory = TargetFactory(base_cls=Target, workspace=self)
         # pylint: disable=protected-access
@@ -557,7 +554,7 @@ class Workspace:
         )
         orderby = self._create_orderby(orderby_property, is_asc)
 
-        return client.list(subscription_id=self.subscription_id, resource_group_name=self.resource_group, workspace_name=self._workspace_name, filter=job_filter, orderby=orderby, top = top, skip = skip)
+        return client.list(subscription_id=self.subscription_id, resource_group_name=self.resource_group, workspace_name=self.name, filter=job_filter, orderby=orderby, top = top, skip = skip)
 
     def _get_target_status(
             self,
@@ -580,9 +577,9 @@ class Workspace:
         return [
             (provider.id, target)
             for provider in self._client.providers.list(
-                self._subscription_id,
-                self._resource_group,
-                self._workspace_name)
+                self.subscription_id,
+                self.resource_group,
+                self.name)
             for target in provider.targets
             if (provider_id is None or provider.id.lower() == provider_id.lower())
                 and (name is None or target.id.lower() == name.lower())
@@ -639,9 +636,9 @@ class Workspace:
         """
         client = self._get_quotas_client()
         return [q.as_dict() for q in client.list(
-            self._subscription_id,
-            self._resource_group,
-            self._workspace_name
+            self.subscription_id,
+            self.resource_group,
+            self.name
         )]
 
     def list_top_level_items(
@@ -712,7 +709,7 @@ class Workspace:
         )
         orderby = self._create_orderby(orderby_property, is_asc)
 
-        return client.list(subscription_id=self.subscription_id, resource_group_name=self.resource_group, workspace_name=self._workspace_name, filter=top_level_item_filter, orderby=orderby, top = top, skip = skip)
+        return client.list(subscription_id=self.subscription_id, resource_group_name=self.resource_group, workspace_name=self.name, filter=top_level_item_filter, orderby=orderby, top = top, skip = skip)
 
     def list_sessions(
         self,
@@ -773,7 +770,7 @@ class Workspace:
 
         orderby = self._create_orderby(orderby_property=orderby_property, is_asc=is_asc)
 
-        return client.list(subscription_id=self.subscription_id, resource_group_name=self.resource_group, workspace_name=self._workspace_name, filter = session_filter, orderby=orderby, skip=skip, top=top)
+        return client.list(subscription_id=self.subscription_id, resource_group_name=self.resource_group, workspace_name=self.name, filter = session_filter, orderby=orderby, skip=skip, top=top)
 
     def open_session(
         self,
@@ -790,9 +787,9 @@ class Workspace:
         """
         client = self._get_sessions_client()
         session.details = client.create_or_replace(
-            self._subscription_id,
-            self._resource_group,
-            self._workspace_name,
+            self.subscription_id,
+            self.resource_group,
+            self.name,
             session.id,
             session.details)
 
@@ -811,15 +808,15 @@ class Workspace:
         client = self._get_sessions_client()
         if not session.is_in_terminal_state():
             session.details = client.close(
-                self._subscription_id,
-                self._resource_group,
-                self._workspace_name,
+                self.subscription_id,
+                self.resource_group,
+                self.name,
                 session_id=session.id)
         else:
             session.details = client.get(
-                self._subscription_id,
-                self._resource_group,
-                self._workspace_name,
+                self.subscription_id,
+                self.resource_group,
+                self.name,
                 session_id=session.id)
 
         if session.target:
@@ -855,9 +852,9 @@ class Workspace:
         """
         client = self._get_sessions_client()
         session_details = client.get(
-            self._subscription_id,
-            self._resource_group,
-            self._workspace_name,
+            self.subscription_id,
+            self.resource_group,
+            self.name,
             session_id=session_id)
         result = Session(workspace=self, details=session_details)
         return result
@@ -919,7 +916,7 @@ class Workspace:
 
         orderby = self._create_orderby(orderby_property=orderby_property, is_asc=is_asc)
 
-        return client.jobs_list(subscription_id=self.subscription_id, resource_group_name=self.resource_group, workspace_name=self._workspace_name, session_id=session_id, filter = session_job_filter, orderby=orderby, skip=skip, top=top)
+        return client.jobs_list(subscription_id=self.subscription_id, resource_group_name=self.resource_group, workspace_name=self.name, session_id=session_id, filter = session_job_filter, orderby=orderby, skip=skip, top=top)
 
     def get_container_uri(
         self,
