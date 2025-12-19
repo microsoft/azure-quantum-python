@@ -86,13 +86,8 @@ class TestWorkspace(QuantumTestBase):
                 "Authorization": f"Bearer {token}"
             }
         )
-        self.assertEqual(response.status, 200,
-                         f"""
-                         {url} failed with error code {response.status}.
-                         Make sure the environment variables are correctly
-                         set with the workspace connection parameters.
-                         """)
-        workspace = json.loads(response.data.decode("utf-8"))
+        response_data = self._assert_arm_request_succeeded(response, url, 200, "Make sure the environment variables are correctly set with the workspace connection parameters.")
+        workspace = json.loads(response_data)
         return workspace
     
     def _enable_workspace_api_keys(self, token: str, workspace: dict, enable_api_keys: bool):
@@ -118,11 +113,7 @@ class TestWorkspace(QuantumTestBase):
             },
             body=workspace_json
         )
-        self.assertEqual(response.status, 201,
-                         f"""
-                         {url} failed with error code {response.status}.
-                         Failed to enable/disable api key.
-                         """)
+        self._assert_arm_request_succeeded(response, url, 201, "Failed to enable/disable api key")
         
     def _get_current_primary_connection_string(self, token: str):
         # list keys
@@ -142,13 +133,8 @@ class TestWorkspace(QuantumTestBase):
                 "Authorization": f"Bearer {token}"
             }
         )
-        self.assertEqual(response.status, 200,
-                         f"""
-                         {url} failed with error code {response.status}.
-                         Make sure the environment variables are correctly
-                         set with the workspace connection parameters.
-                         """)
-        connection_strings = json.loads(response.data.decode("utf-8"))
+        response_data = self._assert_arm_request_succeeded(response, url, 200, "Make sure the environment variables are correctly set with the workspace connection parameters.")
+        connection_strings = json.loads(response_data)
         self.assertTrue(connection_strings['apiKeyEnabled'],
                         f"""
                         API-Key is not enabled in workspace {resource_id}
@@ -209,3 +195,21 @@ class TestWorkspace(QuantumTestBase):
                 workspace.list_jobs_paginated().next()
 
             self.assertIn("Unauthorized", context.exception.message)
+    
+    def _assert_arm_request_succeeded(self, response: urllib3.response.BaseHTTPResponse, url: str, expected_status: int, msg: str) -> str:
+        """Checks that response has the expected status and returns the response data."""
+        response_data = response.data.decode("utf-8")
+        if response.status in (408, 429, 500, 502, 503, 504):
+            error_message = f"""
+                         Request to ARM failed, please try again later.
+                         {url} failed with code {response.status}.
+                         Message: {response_data}
+                         """
+        else:
+            error_message = f"""
+                         {url} failed with error {response.status}: {response_data}.
+                         {msg}
+                         """
+        
+        self.assertEqual(response.status, expected_status, error_message)
+        return response_data
