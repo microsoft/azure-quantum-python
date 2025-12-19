@@ -7,6 +7,7 @@ from unittest import mock
 import pytest
 from common import (
     QuantumTestBase,
+    TENANT_ID,
     SUBSCRIPTION_ID,
     RESOURCE_GROUP,
     WORKSPACE,
@@ -24,7 +25,7 @@ from azure.quantum._constants import (
 )
 from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy
-from azure.identity import EnvironmentCredential
+from azure.identity import EnvironmentCredential, ClientSecretCredential
 
 
 SIMPLE_RESOURCE_ID = ConnectionConstants.VALID_RESOURCE_ID(
@@ -457,6 +458,36 @@ class TestWorkspace(QuantumTestBase):
         ws = self.create_workspace()
         jobs = ws.list_jobs()
         self.assertIsInstance(jobs, list)
+    
+    @pytest.mark.live_test
+    def test_workspace_by_name(self):
+        workspace_name = os.environ.get(EnvironmentVariables.WORKSPACE_NAME)
+        if self.is_playback:
+            workspace_name = WORKSPACE
+
+        with mock.patch.dict(os.environ):
+            self.clear_env_vars(os.environ)
+            credential = None
+            if self.is_playback:
+                credential = ClientSecretCredential(
+                    tenant_id=TENANT_ID,
+                    client_id=ZERO_UID,
+                    client_secret=PLACEHOLDER)
+
+            workspace = Workspace(
+                name=workspace_name,
+                credential=credential,
+            )
+            targets = workspace.get_targets()
+            self.assertGreater(len(targets), 1)
+            jobs = workspace.list_jobs()
+            self.assertIsInstance(jobs, list)
+            quotas = workspace.get_quotas()
+            self.assertGreater(len(quotas), 0)
+            top_level_items = workspace.list_top_level_items()
+            self.assertIsInstance(top_level_items, list)
+            sessions = workspace.list_sessions()
+            self.assertIsInstance(sessions, list)
 
     def test_workspace_user_agent_appid(self):
         app_id = "MyEnvVarAppId"
