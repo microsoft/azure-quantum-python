@@ -258,8 +258,42 @@ class TestJobResults(QuantumTestBase):
         except:
             self.assertTrue(True)
 
+    def test_job_get_results_with_succeeded_status(self):
+        """Test that get_results works correctly when job status is 'Succeeded'"""
+        job_results = self._get_job_results_with_status("Succeeded", "microsoft.quantum-results.v1", "{\"Histogram\": [\"[0]\", 0.50, \"[1]\", 0.50]}")
+        self.assertTrue(len(job_results.keys()) == 2)
+        self.assertEqual(job_results["[0]"], 0.50)
+        self.assertEqual(job_results["[1]"], 0.50)
+
+    def test_job_get_results_with_completed_status(self):
+        """Test that get_results works correctly when job status is 'Completed'"""
+        job_results = self._get_job_results_with_status("Completed", "microsoft.quantum-results.v1", "{\"Histogram\": [\"[0]\", 0.50, \"[1]\", 0.50]}")
+        self.assertTrue(len(job_results.keys()) == 2)
+        self.assertEqual(job_results["[0]"], 0.50)
+        self.assertEqual(job_results["[1]"], 0.50)
+
+    def test_job_get_results_with_failed_status_raises_runtime_error(self):
+        """Test that get_results raises RuntimeError when job status is 'Failed'"""
+        with self.assertRaises(RuntimeError) as context:
+            self._get_job_results_with_status("Failed", "microsoft.quantum-results.v1", "{\"Histogram\": [\"[0]\", 0.50, \"[1]\", 0.50]}")
+        self.assertIn("Cannot retrieve results as job execution failed", str(context.exception))
+        self.assertIn("FAILED", str(context.exception))
+
+    def test_job_get_results_with_cancelled_status_raises_runtime_error(self):
+        """Test that get_results raises RuntimeError when job status is 'Cancelled'"""
+        with self.assertRaises(RuntimeError) as context:
+            self._get_job_results_with_status("Cancelled", "microsoft.quantum-results.v1", "{\"Histogram\": [\"[0]\", 0.50, \"[1]\", 0.50]}")
+        self.assertIn("Cannot retrieve results as job execution failed", str(context.exception))
+        self.assertIn("CANCELLED", str(context.exception))
+
     def _get_job_results(self, output_data_format, results_as_json_str):
         job = self._mock_job(output_data_format, results_as_json_str)
+        
+        return job.get_results()
+    
+    def _get_job_results_with_status(self, status, output_data_format, results_as_json_str):
+        job = self._mock_job(output_data_format, results_as_json_str)
+        job.details.status = status
         
         return job.get_results()
     
