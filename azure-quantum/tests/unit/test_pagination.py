@@ -14,16 +14,14 @@ from common import (
     SUBSCRIPTION_ID,
     RESOURCE_GROUP,
     WORKSPACE,
-    LOCATION,
 )
 
 class TestWorkspacePagination(QuantumTestBase):
     def test_filter_valid(self):
-        ws = Workspace(
+        ws = self.create_workspace_with_params(
             subscription_id=SUBSCRIPTION_ID,
             resource_group=RESOURCE_GROUP,
             name=WORKSPACE,
-            location=LOCATION,
         )
 
         # pylint: disable=protected-access
@@ -42,11 +40,10 @@ class TestWorkspacePagination(QuantumTestBase):
     def test_orderby_valid(self):
         var_names = ["Name", "ItemType", "JobType", "ProviderId", "Target", "State", "CreationTime"]
 
-        ws = Workspace(
+        ws = self.create_workspace_with_params(
             subscription_id=SUBSCRIPTION_ID,
             resource_group=RESOURCE_GROUP,
             name=WORKSPACE,
-            location=LOCATION,
         )
 
         for var_name in var_names:
@@ -64,11 +61,10 @@ class TestWorkspacePagination(QuantumTestBase):
             self.assertEqual(orderby, expected)
 
     def test_orderby_invalid(self):
-        ws = Workspace(
+        ws = self.create_workspace_with_params(
             subscription_id=SUBSCRIPTION_ID,
             resource_group=RESOURCE_GROUP,
             name=WORKSPACE,
-            location=LOCATION,
         )
         # pylint: disable=protected-access
         self.assertRaises(ValueError, ws._create_orderby, "test", True)

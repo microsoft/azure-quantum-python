@@ -7,7 +7,8 @@ import re
 import os
 import json
 import time
-from unittest.mock import patch
+from typing import Optional, Any
+from unittest.mock import patch, MagicMock
 from vcr.request import Request as VcrRequest
 
 from azure_devtools.scenario_tests.base import ReplayableTest
@@ -40,6 +41,7 @@ RESOURCE_GROUP = "myresourcegroup"
 WORKSPACE = "myworkspace"
 LOCATION = "eastus"
 STORAGE = "mystorage"
+ENDPOINT_URI = f"https://{LOCATION}.quantum.azure.com/"  # TODO change to f"https://{WORKSPACE}.{LOCATION}.quantum.azure.com/" when recordings are removed to follow format returned by ARM. Currently set to format which is used in connection string to avoid mass updates of recordings.
 API_KEY = "myapikey"
 APP_ID = "testapp"
 DEFAULT_TIMEOUT_SECS = 300
@@ -285,6 +287,27 @@ class QuantumTestBase(ReplayableTest):
             if env_var in os_environ:
                 del os_environ[env_var]
 
+    def create_mock_mgmt_client(self) -> MagicMock:
+        """
+        Create a mock WorkspaceMgmtClient to avoid ARM/ARG calls during tests.
+        """
+        mock_mgmt_client = MagicMock()
+        
+        def mock_load_workspace_from_arm(connection_params):
+            connection_params.location = LOCATION
+            connection_params.quantum_endpoint = ENDPOINT_URI
+        
+        def mock_load_workspace_from_arg(connection_params):
+            connection_params.subscription_id = SUBSCRIPTION_ID
+            connection_params.resource_group = RESOURCE_GROUP
+            connection_params.location = LOCATION
+            connection_params.quantum_endpoint = ENDPOINT_URI
+        
+        mock_mgmt_client.load_workspace_from_arm = mock_load_workspace_from_arm
+        mock_mgmt_client.load_workspace_from_arg = mock_load_workspace_from_arg
+        
+        return mock_mgmt_client
+
     def create_workspace(
             self,
             credential = None,
@@ -303,6 +326,11 @@ class QuantumTestBase(ReplayableTest):
                 client_id=ZERO_UID,
                 client_secret=PLACEHOLDER)
 
+        mock_mgmt_client = None
+        # When not in live mode use object mock instead of recording as we are going to get rid of the recordings anyway
+        if not self.is_live:
+            mock_mgmt_client = self.create_mock_mgmt_client()
+
         workspace = Workspace(
             credential=credential,
             subscription_id=connection_params.subscription_id,
@@ -310,9 +338,45 @@ class QuantumTestBase(ReplayableTest):
             name=connection_params.workspace_name,
             location=connection_params.location,
             user_agent=connection_params.user_agent_app_id,
+            _mgmt_client=mock_mgmt_client,
             **kwargs
         )
 
+        return workspace
+
+    def create_workspace_with_params(
+            self,
+            subscription_id: Optional[str] = None,
+            resource_group: Optional[str] = None,
+            name: Optional[str] = None,
+            storage: Optional[str] = None,
+            resource_id: Optional[str] = None,
+            location: Optional[str] = None,
+            credential: Optional[object] = None,
+            user_agent: Optional[str] = None,
+            **kwargs: Any) -> Workspace:
+        """
+        Create workspace with explicit parameters, using a mock management client
+        when not in live mode.
+        """
+        mock_mgmt_client = None
+        # When not in live mode use object mock instead of recording as we are going to get rid of the recordings anyway
+        if not self.is_live:
+            mock_mgmt_client = self.create_mock_mgmt_client()
+        
+        workspace = Workspace(
+            subscription_id=subscription_id,
+            resource_group=resource_group,
+            name=name,
+            storage=storage,
+            resource_id=resource_id,
+            location=location,
+            credential=credential,
+            user_agent=user_agent,
+            _mgmt_client=mock_mgmt_client,
+            **kwargs
+        )
+        
         return workspace
 
     def create_echo_target(
