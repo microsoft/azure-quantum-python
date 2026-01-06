@@ -22,6 +22,7 @@ from common import (
     RESOURCE_GROUP,
     LOCATION,
     ENDPOINT_URI,
+    WORKSPACE,
 )
 
 
@@ -514,7 +515,9 @@ def seed_sessions(ws: WorkspaceMock) -> None:
 
 def create_default_workspace() -> WorkspaceMock:
     ws = WorkspaceMock(
-        subscription_id="sub", resource_group="rg", name="ws", location="westus"
+        subscription_id=SUBSCRIPTION_ID,
+        resource_group=RESOURCE_GROUP,
+        name=WORKSPACE
     )
     seed_jobs(ws)
     seed_sessions(ws)
