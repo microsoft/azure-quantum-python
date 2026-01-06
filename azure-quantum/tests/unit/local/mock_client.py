@@ -16,6 +16,13 @@ from azure.quantum.workspace import Workspace
 from types import SimpleNamespace
 from azure.quantum._client import ServicesClient
 from azure.quantum._client.models import JobDetails, SessionDetails, ItemDetails
+from azure.quantum._workspace_connection_params import WorkspaceConnectionParams
+from common import (
+    SUBSCRIPTION_ID,
+    RESOURCE_GROUP,
+    LOCATION,
+    ENDPOINT_URI,
+)
 
 
 def _paged(items: List, page_size: int = 100) -> ItemPaged:
@@ -349,6 +356,35 @@ class TopLevelItemsOperations:
         return _paged(items[skip : skip + top], page_size=top)
 
 
+class MockWorkspaceMgmtClient:
+    """Mock management client that avoids network calls to ARM/ARG."""
+    
+    def __init__(self, credential: Optional[object] = None, base_url: Optional[str] = None, user_agent: Optional[str] = None) -> None:
+        self._credential = credential
+        self._base_url = base_url
+        self._user_agent = user_agent
+    
+    def close(self) -> None:
+        """No-op close for mock."""
+        pass
+
+    def __enter__(self) -> 'MockWorkspaceMgmtClient':
+        return self
+
+    def __exit__(self, *exc_details) -> None:
+        pass
+
+    def load_workspace_from_arg(self, connection_params: WorkspaceConnectionParams) -> None:
+        connection_params.subscription_id = SUBSCRIPTION_ID
+        connection_params.resource_group = RESOURCE_GROUP
+        connection_params.location = LOCATION
+        connection_params.quantum_endpoint = ENDPOINT_URI
+
+    def load_workspace_from_arm(self, connection_params: WorkspaceConnectionParams) -> None:
+        connection_params.location = LOCATION
+        connection_params.quantum_endpoint = ENDPOINT_URI
+
+
 class MockServicesClient(ServicesClient):
     def __init__(self, authentication_policy: Optional[object] = None) -> None:
         # in-memory stores
@@ -365,6 +401,12 @@ class MockServicesClient(ServicesClient):
 
 
 class WorkspaceMock(Workspace):
+    def __init__(self, **kwargs) -> None:
+        # Create and pass mock management client to prevent network calls
+        if '_mgmt_client' not in kwargs:
+            kwargs['_mgmt_client'] = MockWorkspaceMgmtClient()
+        super().__init__(**kwargs)
+    
     def _create_client(self) -> ServicesClient:  # type: ignore[override]
         # Pass through the Workspace's auth policy to the mock client
         auth_policy = self._connection_params.get_auth_policy()
