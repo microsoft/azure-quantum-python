@@ -399,6 +399,12 @@ class MockServicesClient(ServicesClient):
         # Mimic ServicesClient config shape for tests that inspect policy
         self._config = SimpleNamespace(authentication_policy=authentication_policy)
 
+    def __enter__(self) -> 'MockServicesClient':
+        return self
+
+    def __exit__(self, *exc_details) -> None:
+        pass
+
 
 class WorkspaceMock(Workspace):
     def __init__(self, **kwargs) -> None:
