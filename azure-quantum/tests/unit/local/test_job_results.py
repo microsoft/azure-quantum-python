@@ -3,12 +3,12 @@
 # Licensed under the MIT License.
 ##
 
+import pytest
 from unittest.mock import Mock
-
 from azure.quantum import Job, JobDetails
 
 
-def _mock_job(output_data_format: str, results_as_json_str: str) -> Job:
+def _mock_job(output_data_format: str, results_as_json_str: str, status: str = "Succeeded") -> Job:
     job_details = JobDetails(
         id="",
         name="",
@@ -18,7 +18,7 @@ def _mock_job(output_data_format: str, results_as_json_str: str) -> Job:
         input_data_format="",
         output_data_format=output_data_format,
     )
-    job_details.status = "Succeeded"
+    job_details.status = status
     job = Job(workspace=None, job_details=job_details)
 
     job.has_completed = Mock(return_value=True)
@@ -37,8 +37,8 @@ def _mock_job(output_data_format: str, results_as_json_str: str) -> Job:
     return job
 
 
-def _get_job_results(output_data_format: str, results_as_json_str: str):
-    job = _mock_job(output_data_format, results_as_json_str)
+def _get_job_results(output_data_format: str, results_as_json_str: str, status: str = "Succeeded"):
+    job = _mock_job(output_data_format, results_as_json_str, status)
     return job.get_results()
 
 
@@ -68,6 +68,35 @@ def test_job_for_microsoft_quantum_results_v1_success():
     assert len(job_results.keys()) == 2
     assert job_results["[0]"] == 0.50
     assert job_results["[1]"] == 0.50
+
+
+def test_job_get_results_with_completed_status():
+    job_results = _get_job_results(
+        "microsoft.quantum-results.v1",
+        '{"Histogram": ["[0]", 0.50, "[1]", 0.50]}',
+        "Completed",
+    )
+    assert len(job_results.keys()) == 2
+    assert job_results["[0]"] == 0.50
+    assert job_results["[1]"] == 0.50
+
+
+def test_job_get_results_with_failed_status_raises_runtime_error():
+    with pytest.raises(RuntimeError, match="Cannot retrieve results as job execution failed"):
+        _get_job_results(
+            "microsoft.quantum-results.v1",
+            '{"Histogram": ["[0]", 0.50, "[1]", 0.50]}',
+            "Failed",
+        )
+
+
+def test_job_get_results_with_cancelled_status_raises_runtime_error():
+    with pytest.raises(RuntimeError, match="Cannot retrieve results as job execution failed"):
+        _get_job_results(
+            "microsoft.quantum-results.v1",
+            '{"Histogram": ["[0]", 0.50, "[1]", 0.50]}',
+            "Cancelled",
+        )
 
 
 def test_job_for_microsoft_quantum_results_v1_no_histogram_returns_raw_result():
