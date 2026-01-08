@@ -9,7 +9,7 @@ Created to do not add additional azure-mgmt-* dependencies that can conflict wit
 
 import logging
 from http import HTTPStatus
-from typing import Any, Optional, cast
+from typing import Any, Dict, Optional, cast
 from azure.core import PipelineClient
 from azure.core.credentials import TokenProvider
 from azure.core.pipeline import policies
@@ -104,8 +104,8 @@ class WorkspaceMgmtClient():
             query += f"\n                | where location =~ '{connection_params.location}'"
 
         query += """
-            | extend endpointUri = tostring(properties.endpointUri)
-            | project name, subscriptionId, resourceGroup, location, endpointUri
+            | extend endpointUri = tostring(properties.endpointUri), workspaceKind = tostring(properties.workspaceKind)
+            | project name, subscriptionId, resourceGroup, location, endpointUri, workspaceKind
         """
 
         request_body = {
@@ -143,20 +143,22 @@ class WorkspaceMgmtClient():
                 f"Please specify additional connection parameters. {self.CONNECT_DOC_MESSAGE}"
             )
         
-        workspace_data = data[0]
+        workspace_data: Dict[str, Any] = data[0]
         
         connection_params.subscription_id = workspace_data.get('subscriptionId')
         connection_params.resource_group = workspace_data.get('resourceGroup')
         connection_params.location = workspace_data.get('location')
         connection_params.quantum_endpoint = workspace_data.get('endpointUri')
+        connection_params.workspace_kind = workspace_data.get('workspaceKind')
 
         logger.debug(
-            "Found workspace '%s' in subscription '%s', resource group '%s', location '%s', endpoint '%s'",
+            "Found workspace '%s' in subscription '%s', resource group '%s', location '%s', endpoint '%s', kind '%s'.",
             connection_params.workspace_name,
             connection_params.subscription_id,
             connection_params.resource_group,
             connection_params.location,
-            connection_params.quantum_endpoint
+            connection_params.quantum_endpoint,
+            connection_params.workspace_kind
         )
 
         # If one of the required parameters is missing, probably workspace in failed provisioning state
@@ -194,7 +196,7 @@ class WorkspaceMgmtClient():
         try:
             response = self._client.send_request(request)
             response.raise_for_status()
-            workspace_data = response.json()
+            workspace_data: Dict[str, Any] = response.json()
         except HttpResponseError as e:
             if e.status_code == HTTPStatus.NOT_FOUND:
                 raise ValueError(
@@ -225,7 +227,7 @@ class WorkspaceMgmtClient():
             )
 
         # Extract and apply endpoint URI from properties
-        properties = workspace_data.get("properties", {})
+        properties: Dict[str, Any] = workspace_data.get("properties", {})
         endpoint_uri = properties.get("endpointUri")
         if endpoint_uri:
             connection_params.quantum_endpoint = endpoint_uri
@@ -236,4 +238,12 @@ class WorkspaceMgmtClient():
             raise ValueError(
                 f"Failed to retrieve endpoint uri for workspace '{connection_params.workspace_name}'. "
                 f"Please check that workspace is in valid state."
+            )
+        
+        # Set workspaceKind if available
+        workspace_kind = properties.get("workspaceKind")
+        if workspace_kind:
+            connection_params.workspace_kind = workspace_kind
+            logger.debug(
+                "Updated workspace kind from ARM: %s", connection_params.workspace_kind
             )

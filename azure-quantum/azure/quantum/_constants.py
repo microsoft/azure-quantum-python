@@ -51,6 +51,11 @@ class EnvironmentKind(Enum):
     DOGFOOD = 3
 
 
+class WorkspaceKind(Enum):
+    V1 = "V1"
+    V2 = "V2"
+
+
 class ConnectionConstants:
     DATA_PLANE_CREDENTIAL_SCOPE = "https://quantum.microsoft.com/.default"
     ARM_CREDENTIAL_SCOPE = "https://management.azure.com/.default"
