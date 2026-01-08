@@ -17,6 +17,7 @@ from azure.core.pipeline.policies import AzureKeyCredentialPolicy
 from azure.identity import DefaultAzureCredential
 from azure.quantum._constants import (
     EnvironmentKind,
+    WorkspaceKind,
     EnvironmentVariables,
     ConnectionConstants,
     GUID_REGEX_PATTERN,
@@ -48,7 +49,7 @@ class WorkspaceConnectionParams:
             ResourceGroupName=(?P<resource_group>[^\s;]+);
             WorkspaceName=(?P<workspace_name>[^\s;]+);
             ApiKey=(?P<api_key>[^\s;]+);
-            QuantumEndpoint=(?P<quantum_endpoint>https://(?P<location>[a-zA-Z0-9]+)(?:-v2)?.quantum(?:-test)?.azure.com/);
+            QuantumEndpoint=(?P<quantum_endpoint>https://(?P<location>[a-zA-Z0-9]+)(?:-(?P<workspace_kind>v2))?.quantum(?:-test)?.azure.com/);
         """,
         re.VERBOSE | re.IGNORECASE)
     
@@ -80,6 +81,7 @@ class WorkspaceConnectionParams:
         api_version: Optional[str] = None,
         connection_string: Optional[str] = None,
         on_new_client_request: Optional[Callable] = None,
+        workspace_kind: Optional[str] = None,
     ):
         # fields are used for these properties since
         # they have special getters/setters
@@ -87,6 +89,7 @@ class WorkspaceConnectionParams:
         self._environment = None
         self._quantum_endpoint = None
         self._arm_endpoint = None
+        self._workspace_kind = None
         # regular connection properties
         self.subscription_id = None
         self.resource_group = None
@@ -120,6 +123,7 @@ class WorkspaceConnectionParams:
             user_agent=user_agent,
             user_agent_app_id=user_agent_app_id,
             workspace_name=workspace_name,
+            workspace_kind=workspace_kind,
         )
         self.apply_resource_id(resource_id=resource_id)
         # Validate connection parameters if they are set
@@ -272,6 +276,19 @@ class WorkspaceConnectionParams:
             self.credential = AzureKeyCredential(value)
         self._api_key = value
 
+    @property
+    def workspace_kind(self) -> WorkspaceKind:
+        """
+        The workspace kind, such as V1 or V2.
+        Defaults to WorkspaceKind.V1
+        """
+        return self._workspace_kind or WorkspaceKind.V1
+
+    @workspace_kind.setter
+    def workspace_kind(self, value: str):
+        if isinstance(value, str):
+            self._workspace_kind = WorkspaceKind[value.upper()]
+
     def __repr__(self):
         """
         Print all fields and properties.
@@ -331,6 +348,7 @@ class WorkspaceConnectionParams:
         client_id: Optional[str] = None,
         api_version: Optional[str] = None,
         api_key: Optional[str] = None,
+        workspace_kind: Optional[str] = None,
     ):
         """
         Set all fields/properties with `not None` values
@@ -352,6 +370,7 @@ class WorkspaceConnectionParams:
             user_agent_app_id=user_agent_app_id,
             workspace_name=workspace_name,
             api_key=api_key,
+            workspace_kind=workspace_kind,
             merge_default_mode=False,
         )
         return self
@@ -372,6 +391,7 @@ class WorkspaceConnectionParams:
         client_id: Optional[str] = None,
         api_version: Optional[str] = None,
         api_key: Optional[str] = None,
+        workspace_kind: Optional[str] = None,
     ) -> WorkspaceConnectionParams:
         """
         Set all fields/properties with `not None` values
@@ -394,6 +414,7 @@ class WorkspaceConnectionParams:
             user_agent_app_id=user_agent_app_id,
             workspace_name=workspace_name,
             api_key=api_key,
+            workspace_kind=workspace_kind,
             merge_default_mode=True,
         )
         return self
@@ -415,6 +436,7 @@ class WorkspaceConnectionParams:
         client_id: Optional[str] = None,
         api_version: Optional[str] = None,
         api_key: Optional[str] = None,
+        workspace_kind: Optional[str] = None,
     ):
         """
         Set all fields/properties with `not None` values
@@ -447,6 +469,7 @@ class WorkspaceConnectionParams:
         # the private field as the old_value
         self.quantum_endpoint = _get_value_or_default(self._quantum_endpoint, quantum_endpoint)
         self.arm_endpoint = _get_value_or_default(self._arm_endpoint, arm_endpoint)
+        self.workspace_kind = _get_value_or_default(self._workspace_kind, workspace_kind)
         return self
 
     def _merge_connection_params(
@@ -476,6 +499,7 @@ class WorkspaceConnectionParams:
             # pylint: disable=protected-access
             arm_endpoint=connection_params._arm_endpoint,
             quantum_endpoint=connection_params._quantum_endpoint,
+            workspace_kind=connection_params._workspace_kind,
         )
         return self
 
@@ -500,7 +524,7 @@ class WorkspaceConnectionParams:
     def append_user_agent(self, value: str):
         """
         Append a new value to the Workspace's UserAgent and re-initialize the
-        QuantumClient. The values are appended using a dash.
+        WorkspaceClient. The values are appended using a dash.
 
         :param value: UserAgent value to add, e.g. "azure-quantum-<plugin>"
         """
@@ -640,4 +664,5 @@ class WorkspaceConnectionParams:
             quantum_endpoint=get_value('quantum_endpoint'),
             api_key=get_value('api_key'),
             arm_endpoint=get_value('arm_endpoint'),
+            workspace_kind=get_value('workspace_kind'),
         )

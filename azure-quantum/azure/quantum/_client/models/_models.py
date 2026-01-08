@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -8,22 +9,19 @@
 # pylint: disable=useless-super-delegation
 
 import datetime
-from typing import Any, Dict, List, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
+from typing import Any, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
 
 from azure.core.exceptions import ODataV4Format
 
-from .. import _model_base
-from .._model_base import rest_discriminator, rest_field
+from .._utils.model_base import Model as _Model, rest_discriminator, rest_field
 from ._enums import ItemType
 
 if TYPE_CHECKING:
     from .. import models as _models
 
 
-class BlobDetails(_model_base.Model):
+class BlobDetails(_Model):
     """The details (name and container) of the blob to store or download data.
-
-    All required parameters must be populated in order to send to server.
 
     :ivar container_name: The container name. Required.
     :vartype container_name: str
@@ -55,10 +53,9 @@ class BlobDetails(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class CostEstimate(_model_base.Model):
+class CostEstimate(_Model):
     """The job cost billed by the provider. The final cost on your bill might be slightly different
     due to added taxes and currency conversion rates.
-
 
     :ivar currency_code: The currency code. Required.
     :vartype currency_code: str
@@ -68,11 +65,15 @@ class CostEstimate(_model_base.Model):
     :vartype estimated_total: float
     """
 
-    currency_code: str = rest_field(name="currencyCode")
+    currency_code: str = rest_field(name="currencyCode", visibility=["read", "create", "update", "delete", "query"])
     """The currency code. Required."""
-    events: Optional[List["_models.UsageEvent"]] = rest_field()
+    events: Optional[list["_models.UsageEvent"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """List of usage events."""
-    estimated_total: float = rest_field(name="estimatedTotal")
+    estimated_total: float = rest_field(
+        name="estimatedTotal", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The estimated total. Required."""
 
     @overload
@@ -81,7 +82,7 @@ class CostEstimate(_model_base.Model):
         *,
         currency_code: str,
         estimated_total: float,
-        events: Optional[List["_models.UsageEvent"]] = None,
+        events: Optional[list["_models.UsageEvent"]] = None,
     ) -> None: ...
 
     @overload
@@ -95,10 +96,10 @@ class CostEstimate(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class InnerError(_model_base.Model):
-    """An object containing more specific information about the error. As per Microsoft One API
-    guidelines -
-    https://github.com/Microsoft/api-guidelines/blob/vNext/Guidelines.md#7102-error-condition-responses.
+class InnerError(_Model):
+    """An object containing more specific information about the error. As per Azure REST API
+    guidelines - `https://aka.ms/AzureRestApiGuidelines#handling-errors
+    <https://aka.ms/AzureRestApiGuidelines#handling-errors>`_.
 
     :ivar code: One of a server-defined set of error codes.
     :vartype code: str
@@ -106,9 +107,9 @@ class InnerError(_model_base.Model):
     :vartype innererror: ~azure.quantum.models.InnerError
     """
 
-    code: Optional[str] = rest_field()
+    code: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """One of a server-defined set of error codes."""
-    innererror: Optional["_models.InnerError"] = rest_field()
+    innererror: Optional["_models.InnerError"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Inner error."""
 
     @overload
@@ -130,14 +131,11 @@ class InnerError(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ItemDetails(_model_base.Model):
+class ItemDetails(_Model):
     """A workspace item.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
     JobDetails, SessionDetails
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
 
     :ivar id: Id of the item. Required.
     :vartype id: str
@@ -153,6 +151,21 @@ class ItemDetails(_model_base.Model):
     :vartype item_type: str or ~azure.quantum.models.ItemType
     :ivar creation_time: The creation time of the item.
     :vartype creation_time: ~datetime.datetime
+    :ivar created_by: The identity that created the item.
+    :vartype created_by: str
+    :ivar created_by_type: The type of identity that created the item. Known values are: "User",
+     "Application", "ManagedIdentity", and "Key".
+    :vartype created_by_type: str or ~azure.quantum.models.CreatedByType
+    :ivar last_modified_time: The timestamp of the item last modification initiated by the
+     customer.
+    :vartype last_modified_time: ~datetime.datetime
+    :ivar last_modified_by: The identity that last modified the item.
+    :vartype last_modified_by: str
+    :ivar last_modified_by_type: The type of identity that last modified the item. Known values
+     are: "User", "Application", "ManagedIdentity", and "Key".
+    :vartype last_modified_by_type: str or ~azure.quantum.models.CreatedByType
+    :ivar last_updated_time: The last time the item was updated by the system.
+    :vartype last_updated_time: ~datetime.datetime
     :ivar begin_execution_time: The time when the item began execution.
     :vartype begin_execution_time: ~datetime.datetime
     :ivar end_execution_time: The time when the item finished execution.
@@ -161,9 +174,16 @@ class ItemDetails(_model_base.Model):
     :vartype cost_estimate: ~azure.quantum.models.CostEstimate
     :ivar error_data: Error information.
     :vartype error_data: ~azure.quantum.models.WorkspaceItemError
+    :ivar priority: Priority of job or session. Known values are: "Standard" and "High".
+    :vartype priority: str or ~azure.quantum.models.Priority
+    :ivar tags: List of user-supplied tags associated with the job.
+    :vartype tags: list[str]
+    :ivar usage: Resource consumption metrics containing provider-specific usage data such as
+     execution time, quantum shots consumed etc.
+    :vartype usage: ~azure.quantum.models.Usage
     """
 
-    __mapping__: Dict[str, _model_base.Model] = {}
+    __mapping__: dict[str, _Model] = {}
     id: str = rest_field(visibility=["read"])
     """Id of the item. Required."""
     name: str = rest_field(visibility=["read", "create", "update"])
@@ -177,6 +197,28 @@ class ItemDetails(_model_base.Model):
     """Type of the Quantum Workspace item. Required. Known values are: \"Job\" and \"Session\"."""
     creation_time: Optional[datetime.datetime] = rest_field(name="creationTime", visibility=["read"], format="rfc3339")
     """The creation time of the item."""
+    created_by: Optional[str] = rest_field(name="createdBy", visibility=["read"])
+    """The identity that created the item."""
+    created_by_type: Optional[Union[str, "_models.CreatedByType"]] = rest_field(
+        name="createdByType", visibility=["read"]
+    )
+    """The type of identity that created the item. Known values are: \"User\", \"Application\",
+     \"ManagedIdentity\", and \"Key\"."""
+    last_modified_time: Optional[datetime.datetime] = rest_field(
+        name="lastModifiedTime", visibility=["read"], format="rfc3339"
+    )
+    """The timestamp of the item last modification initiated by the customer."""
+    last_modified_by: Optional[str] = rest_field(name="lastModifiedBy", visibility=["read"])
+    """The identity that last modified the item."""
+    last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = rest_field(
+        name="lastModifiedByType", visibility=["read"]
+    )
+    """The type of identity that last modified the item. Known values are: \"User\", \"Application\",
+     \"ManagedIdentity\", and \"Key\"."""
+    last_updated_time: Optional[datetime.datetime] = rest_field(
+        name="lastUpdatedTime", visibility=["read"], format="rfc3339"
+    )
+    """The last time the item was updated by the system."""
     begin_execution_time: Optional[datetime.datetime] = rest_field(
         name="beginExecutionTime", visibility=["read"], format="rfc3339"
     )
@@ -189,6 +231,13 @@ class ItemDetails(_model_base.Model):
     """Cost estimate."""
     error_data: Optional["_models.WorkspaceItemError"] = rest_field(name="errorData", visibility=["read"])
     """Error information."""
+    priority: Optional[Union[str, "_models.Priority"]] = rest_field(visibility=["read", "create", "update"])
+    """Priority of job or session. Known values are: \"Standard\" and \"High\"."""
+    tags: Optional[list[str]] = rest_field(visibility=["read", "create", "update"])
+    """List of user-supplied tags associated with the job."""
+    usage: Optional["_models.Usage"] = rest_field(visibility=["read"])
+    """Resource consumption metrics containing provider-specific usage data such as execution time,
+     quantum shots consumed etc."""
 
     @overload
     def __init__(
@@ -198,6 +247,8 @@ class ItemDetails(_model_base.Model):
         provider_id: str,
         target: str,
         item_type: str,
+        priority: Optional[Union[str, "_models.Priority"]] = None,
+        tags: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -214,9 +265,6 @@ class ItemDetails(_model_base.Model):
 class JobDetails(ItemDetails, discriminator="Job"):
     """A job to be run in the workspace.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar name: The name of the item. It is not required for the name to be unique and it's only
      used for display purposes. Required.
     :vartype name: str
@@ -226,6 +274,21 @@ class JobDetails(ItemDetails, discriminator="Job"):
     :vartype target: str
     :ivar creation_time: The creation time of the item.
     :vartype creation_time: ~datetime.datetime
+    :ivar created_by: The identity that created the item.
+    :vartype created_by: str
+    :ivar created_by_type: The type of identity that created the item. Known values are: "User",
+     "Application", "ManagedIdentity", and "Key".
+    :vartype created_by_type: str or ~azure.quantum.models.CreatedByType
+    :ivar last_modified_time: The timestamp of the item last modification initiated by the
+     customer.
+    :vartype last_modified_time: ~datetime.datetime
+    :ivar last_modified_by: The identity that last modified the item.
+    :vartype last_modified_by: str
+    :ivar last_modified_by_type: The type of identity that last modified the item. Known values
+     are: "User", "Application", "ManagedIdentity", and "Key".
+    :vartype last_modified_by_type: str or ~azure.quantum.models.CreatedByType
+    :ivar last_updated_time: The last time the item was updated by the system.
+    :vartype last_updated_time: ~datetime.datetime
     :ivar begin_execution_time: The time when the item began execution.
     :vartype begin_execution_time: ~datetime.datetime
     :ivar end_execution_time: The time when the item finished execution.
@@ -234,6 +297,13 @@ class JobDetails(ItemDetails, discriminator="Job"):
     :vartype cost_estimate: ~azure.quantum.models.CostEstimate
     :ivar error_data: Error information.
     :vartype error_data: ~azure.quantum.models.WorkspaceItemError
+    :ivar priority: Priority of job or session. Known values are: "Standard" and "High".
+    :vartype priority: str or ~azure.quantum.models.Priority
+    :ivar tags: List of user-supplied tags associated with the job.
+    :vartype tags: list[str]
+    :ivar usage: Resource consumption metrics containing provider-specific usage data such as
+     execution time, quantum shots consumed etc.
+    :vartype usage: ~azure.quantum.models.Usage
     :ivar id: Id of the job. Required.
     :vartype id: str
     :ivar item_type: Type of the Quantum Workspace item is Job. Required. A program, problem, or
@@ -252,16 +322,15 @@ class JobDetails(ItemDetails, discriminator="Job"):
     :vartype input_data_uri: str
     :ivar input_data_format: The format of the input data.
     :vartype input_data_format: str
-    :ivar status: The status of the job. Known values are: "Waiting", "Queued", "Executing", "Finishing", "Completed",
-     "Succeeded", "Failed", "Cancelling", "CancellationRequested" and "Cancelled".
+    :ivar status: The status of the job. Known values are: "Queued", "Waiting", "Executing",
+     "CancellationRequested", "Cancelling", "Finishing", "Completed", "Succeeded", "Failed", and
+     "Cancelled".
     :vartype status: str or ~azure.quantum.models.JobStatus
     :ivar metadata: The job metadata. Metadata provides client the ability to store client-specific
      information.
     :vartype metadata: any
     :ivar cancellation_time: The time when a job was successfully cancelled.
     :vartype cancellation_time: ~datetime.datetime
-    :ivar tags: List of user-supplied tags associated with the job.
-    :vartype tags: list[str]
     :ivar quantum_computing_data: Quantum computing data.
     :vartype quantum_computing_data: ~azure.quantum.models.QuantumComputingData
     :ivar input_params: The input parameters for the job. JSON object used by the target solver. It
@@ -275,7 +344,7 @@ class JobDetails(ItemDetails, discriminator="Job"):
     :vartype output_data_format: str
     """
 
-    item_type: Literal[ItemType.JOB] = rest_discriminator(name="itemType", visibility=["read", "create"])  # type: ignore # pylint: disable=line-too-long
+    item_type: Literal[ItemType.JOB] = rest_discriminator(name="itemType", visibility=["read", "create"])  # type: ignore
     """Type of the Quantum Workspace item is Job. Required. A program, problem, or application
      submitted for processing."""
     job_type: Optional[Union[str, "_models.JobType"]] = rest_field(name="jobType", visibility=["read", "create"])
@@ -289,16 +358,15 @@ class JobDetails(ItemDetails, discriminator="Job"):
     input_data_format: Optional[str] = rest_field(name="inputDataFormat", visibility=["read", "create"])
     """The format of the input data."""
     status: Optional[Union[str, "_models.JobStatus"]] = rest_field(visibility=["read"])
-    """The status of the job. Known values are: \"Waiting\", \"Queued\", \"Executing\", \"Finishing\", \"Completed\",
-     \"Succeeded\", \"Failed\", \"Cancelling\", \"CancellationRequested\" and \"Cancelled\"."""
+    """The status of the job. Known values are: \"Queued\", \"Waiting\", \"Executing\",
+     \"CancellationRequested\", \"Cancelling\", \"Finishing\", \"Completed\", \"Succeeded\",
+     \"Failed\", and \"Cancelled\"."""
     metadata: Optional[Any] = rest_field(visibility=["read", "create", "update"])
     """The job metadata. Metadata provides client the ability to store client-specific information."""
     cancellation_time: Optional[datetime.datetime] = rest_field(
         name="cancellationTime", visibility=["read"], format="rfc3339"
     )
     """The time when a job was successfully cancelled."""
-    tags: Optional[List[str]] = rest_field(visibility=["read", "create", "update"])
-    """List of user-supplied tags associated with the job."""
     quantum_computing_data: Optional["_models.QuantumComputingData"] = rest_field(
         name="quantumComputingData", visibility=["read"]
     )
@@ -313,19 +381,20 @@ class JobDetails(ItemDetails, discriminator="Job"):
     """The format of the output data."""
 
     @overload
-    def __init__(
+    def __init__(  # pylint: disable=too-many-locals
         self,
         *,
         name: str,
         provider_id: str,
         target: str,
         container_uri: str,
+        priority: Optional[Union[str, "_models.Priority"]] = None,
+        tags: Optional[list[str]] = None,
         job_type: Optional[Union[str, "_models.JobType"]] = None,
         session_id: Optional[str] = None,
         input_data_uri: Optional[str] = None,
         input_data_format: Optional[str] = None,
         metadata: Optional[Any] = None,
-        tags: Optional[List[str]] = None,
         input_params: Optional[Any] = None,
         output_data_uri: Optional[str] = None,
         output_data_format: Optional[str] = None,
@@ -339,43 +408,39 @@ class JobDetails(ItemDetails, discriminator="Job"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, item_type=ItemType.JOB, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.item_type = ItemType.JOB  # type: ignore
 
 
-class JsonPatchObject(_model_base.Model):
-    """A JSONPatch object as defined by RFC 6902.
+class JobUpdateOptions(_Model):
+    """Options for updating a job.
 
-    All required parameters must be populated in order to send to server.
-
-    :ivar operation: The operation to be performed. Required. Known values are: "add", "remove",
-     "replace", "move", "copy", and "test".
-    :vartype operation: str or ~azure.quantum.models.JsonPatchOperation
-    :ivar path: A JSON-Pointer. Required.
-    :vartype path: str
-    :ivar value: A value to be used in the operation on the path.
-    :vartype value: any
-    :ivar from_property: Optional field used in copy and move operations.
-    :vartype from_property: str
+    :ivar id: Id of the job. Required.
+    :vartype id: str
+    :ivar priority: Priority of job. Known values are: "Standard" and "High".
+    :vartype priority: str or ~azure.quantum.models.Priority
+    :ivar name: The name of the job.
+    :vartype name: str
+    :ivar tags: List of user-supplied tags associated with the job.
+    :vartype tags: list[str]
     """
 
-    operation: Union[str, "_models.JsonPatchOperation"] = rest_field(name="op", visibility=["create"])
-    """The operation to be performed. Required. Known values are: \"add\", \"remove\", \"replace\",
-     \"move\", \"copy\", and \"test\"."""
-    path: str = rest_field(visibility=["create"])
-    """A JSON-Pointer. Required."""
-    value: Optional[Any] = rest_field(visibility=["create"])
-    """A value to be used in the operation on the path."""
-    from_property: Optional[str] = rest_field(name="from", visibility=["create"])
-    """Optional field used in copy and move operations."""
+    id: str = rest_field(visibility=["read"])
+    """Id of the job. Required."""
+    priority: Optional[Union[str, "_models.Priority"]] = rest_field(visibility=["update"])
+    """Priority of job. Known values are: \"Standard\" and \"High\"."""
+    name: Optional[str] = rest_field(visibility=["read", "update"])
+    """The name of the job."""
+    tags: Optional[list[str]] = rest_field(visibility=["read", "create", "update"])
+    """List of user-supplied tags associated with the job."""
 
     @overload
     def __init__(
         self,
         *,
-        operation: Union[str, "_models.JsonPatchOperation"],
-        path: str,
-        value: Optional[Any] = None,
-        from_property: Optional[str] = None,
+        priority: Optional[Union[str, "_models.Priority"]] = None,
+        name: Optional[str] = None,
+        tags: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -389,11 +454,8 @@ class JsonPatchObject(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class ProviderStatus(_model_base.Model):
+class ProviderStatus(_Model):
     """Provider status.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
 
     :ivar id: Provider id. Required.
     :vartype id: str
@@ -411,15 +473,12 @@ class ProviderStatus(_model_base.Model):
     )
     """Current provider availability. Required. Known values are: \"Available\", \"Degraded\", and
      \"Unavailable\"."""
-    targets: List["_models.TargetStatus"] = rest_field(visibility=["read"])
+    targets: list["_models.TargetStatus"] = rest_field(visibility=["read"])
     """Current target statuses. Required."""
 
 
-class QuantumComputingData(_model_base.Model):
+class QuantumComputingData(_Model):
     """Quantum computing data.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
 
     :ivar count: The number of quantum computing items in the job. Required.
     :vartype count: int
@@ -429,11 +488,8 @@ class QuantumComputingData(_model_base.Model):
     """The number of quantum computing items in the job. Required."""
 
 
-class Quota(_model_base.Model):
+class Quota(_Model):
     """Quota information.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
 
     :ivar dimension: The name of the dimension associated with the quota. Required.
     :vartype dimension: str
@@ -475,11 +531,8 @@ class Quota(_model_base.Model):
      'None' is used for concurrent quotas. Required. Known values are: \"None\" and \"Monthly\"."""
 
 
-class SasUriResponse(_model_base.Model):
+class SasUriResponse(_Model):
     """SAS URI operation response.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
 
     :ivar sas_uri: A URL with a SAS token to upload a blob for execution in the given workspace.
      Required.
@@ -493,9 +546,6 @@ class SasUriResponse(_model_base.Model):
 class SessionDetails(ItemDetails, discriminator="Session"):
     """Session, a logical grouping of jobs.
 
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-
     :ivar name: The name of the item. It is not required for the name to be unique and it's only
      used for display purposes. Required.
     :vartype name: str
@@ -505,6 +555,21 @@ class SessionDetails(ItemDetails, discriminator="Session"):
     :vartype target: str
     :ivar creation_time: The creation time of the item.
     :vartype creation_time: ~datetime.datetime
+    :ivar created_by: The identity that created the item.
+    :vartype created_by: str
+    :ivar created_by_type: The type of identity that created the item. Known values are: "User",
+     "Application", "ManagedIdentity", and "Key".
+    :vartype created_by_type: str or ~azure.quantum.models.CreatedByType
+    :ivar last_modified_time: The timestamp of the item last modification initiated by the
+     customer.
+    :vartype last_modified_time: ~datetime.datetime
+    :ivar last_modified_by: The identity that last modified the item.
+    :vartype last_modified_by: str
+    :ivar last_modified_by_type: The type of identity that last modified the item. Known values
+     are: "User", "Application", "ManagedIdentity", and "Key".
+    :vartype last_modified_by_type: str or ~azure.quantum.models.CreatedByType
+    :ivar last_updated_time: The last time the item was updated by the system.
+    :vartype last_updated_time: ~datetime.datetime
     :ivar begin_execution_time: The time when the item began execution.
     :vartype begin_execution_time: ~datetime.datetime
     :ivar end_execution_time: The time when the item finished execution.
@@ -513,6 +578,13 @@ class SessionDetails(ItemDetails, discriminator="Session"):
     :vartype cost_estimate: ~azure.quantum.models.CostEstimate
     :ivar error_data: Error information.
     :vartype error_data: ~azure.quantum.models.WorkspaceItemError
+    :ivar priority: Priority of job or session. Known values are: "Standard" and "High".
+    :vartype priority: str or ~azure.quantum.models.Priority
+    :ivar tags: List of user-supplied tags associated with the job.
+    :vartype tags: list[str]
+    :ivar usage: Resource consumption metrics containing provider-specific usage data such as
+     execution time, quantum shots consumed etc.
+    :vartype usage: ~azure.quantum.models.Usage
     :ivar id: Id of the session. Required.
     :vartype id: str
     :ivar item_type: Type of the Quantum Workspace item is Session. Required. A logical grouping of
@@ -526,7 +598,7 @@ class SessionDetails(ItemDetails, discriminator="Session"):
     :vartype status: str or ~azure.quantum.models.SessionStatus
     """
 
-    item_type: Literal[ItemType.SESSION] = rest_discriminator(name="itemType", visibility=["read", "create"])  # type: ignore # pylint: disable=line-too-long
+    item_type: Literal[ItemType.SESSION] = rest_discriminator(name="itemType", visibility=["read", "create"])  # type: ignore
     """Type of the Quantum Workspace item is Session. Required. A logical grouping of jobs."""
     job_failure_policy: Union[str, "_models.SessionJobFailurePolicy"] = rest_field(
         name="jobFailurePolicy", visibility=["read", "create"]
@@ -545,6 +617,8 @@ class SessionDetails(ItemDetails, discriminator="Session"):
         provider_id: str,
         target: str,
         job_failure_policy: Union[str, "_models.SessionJobFailurePolicy"],
+        priority: Optional[Union[str, "_models.Priority"]] = None,
+        tags: Optional[list[str]] = None,
     ) -> None: ...
 
     @overload
@@ -555,14 +629,12 @@ class SessionDetails(ItemDetails, discriminator="Session"):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, item_type=ItemType.SESSION, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.item_type = ItemType.SESSION  # type: ignore
 
 
-class TargetStatus(_model_base.Model):
+class TargetStatus(_Model):
     """Target status.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
 
     :ivar id: Target id. Required.
     :vartype id: str
@@ -573,6 +645,12 @@ class TargetStatus(_model_base.Model):
     :vartype average_queue_time: int
     :ivar status_page: A page with detailed status of the provider.
     :vartype status_page: str
+    :ivar num_qubits: The qubit number.
+    :vartype num_qubits: int
+    :ivar target_profile: Target QIR profile.
+    :vartype target_profile: str
+    :ivar metadata: The metadata of this target.
+    :vartype metadata: any
     """
 
     id: str = rest_field(visibility=["read"])
@@ -586,11 +664,24 @@ class TargetStatus(_model_base.Model):
     """Average queue time in seconds. Required."""
     status_page: Optional[str] = rest_field(name="statusPage", visibility=["read"])
     """A page with detailed status of the provider."""
+    num_qubits: Optional[int] = rest_field(name="numQubits", visibility=["read"])
+    """The qubit number."""
+    target_profile: Optional[str] = rest_field(name="targetProfile", visibility=["read"])
+    """Target QIR profile."""
+    metadata: Optional[Any] = rest_field(visibility=["read"])
+    """The metadata of this target."""
 
 
-class UsageEvent(_model_base.Model):
+class Usage(_Model):
+    """Resource usage metrics represented as key-value pairs. Keys are provider-defined metric names
+    (e.g. "standardMinutes", "shots") and values are the corresponding consumption amounts. The
+    specific metrics available depend on the quantum provider and target used.
+
+    """
+
+
+class UsageEvent(_Model):
     """Usage event details.
-
 
     :ivar dimension_id: The dimension id. Required.
     :vartype dimension_id: str
@@ -606,17 +697,19 @@ class UsageEvent(_model_base.Model):
     :vartype unit_price: float
     """
 
-    dimension_id: str = rest_field(name="dimensionId")
+    dimension_id: str = rest_field(name="dimensionId", visibility=["read", "create", "update", "delete", "query"])
     """The dimension id. Required."""
-    dimension_name: str = rest_field(name="dimensionName")
+    dimension_name: str = rest_field(name="dimensionName", visibility=["read", "create", "update", "delete", "query"])
     """The dimension name. Required."""
-    measure_unit: str = rest_field(name="measureUnit")
+    measure_unit: str = rest_field(name="measureUnit", visibility=["read", "create", "update", "delete", "query"])
     """The unit of measure. Required."""
-    amount_billed: float = rest_field(name="amountBilled")
+    amount_billed: float = rest_field(name="amountBilled", visibility=["read", "create", "update", "delete", "query"])
     """The amount billed. Required."""
-    amount_consumed: float = rest_field(name="amountConsumed")
+    amount_consumed: float = rest_field(
+        name="amountConsumed", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The amount consumed. Required."""
-    unit_price: float = rest_field(name="unitPrice")
+    unit_price: float = rest_field(name="unitPrice", visibility=["read", "create", "update", "delete", "query"])
     """The unit price. Required."""
 
     @overload
@@ -642,9 +735,8 @@ class UsageEvent(_model_base.Model):
         super().__init__(*args, **kwargs)
 
 
-class WorkspaceItemError(_model_base.Model):
+class WorkspaceItemError(_Model):
     """The error object.
-
 
     :ivar code: One of a server-defined set of error codes. Required.
     :vartype code: str
@@ -659,15 +751,15 @@ class WorkspaceItemError(_model_base.Model):
     :vartype innererror: ~azure.quantum.models.InnerError
     """
 
-    code: str = rest_field()
+    code: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """One of a server-defined set of error codes. Required."""
-    message: str = rest_field()
+    message: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A human-readable representation of the error. Required."""
-    target: Optional[str] = rest_field()
+    target: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The target of the error."""
-    details: Optional[List[ODataV4Format]] = rest_field()
+    details: Optional[list[ODataV4Format]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """An array of details about specific errors that led to this reported error."""
-    innererror: Optional["_models.InnerError"] = rest_field()
+    innererror: Optional["_models.InnerError"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """An object containing more specific information than the current object about the error."""
 
     @overload
@@ -677,7 +769,7 @@ class WorkspaceItemError(_model_base.Model):
         code: str,
         message: str,
         target: Optional[str] = None,
-        details: Optional[List[ODataV4Format]] = None,
+        details: Optional[list[ODataV4Format]] = None,
         innererror: Optional["_models.InnerError"] = None,
     ) -> None: ...
 

@@ -5,6 +5,7 @@
 import warnings
 from typing import Any, Dict, List, TYPE_CHECKING, Union, Type
 from azure.quantum.target import *
+from azure.quantum._constants import WorkspaceKind
 
 if TYPE_CHECKING:
     from azure.quantum import Workspace
@@ -134,10 +135,16 @@ class TargetFactory:
                 return result
 
         else:
-            # Don't return redundant targets
-            return [
-                self.from_target_status(_provider_id, status, **kwargs)
-                for _provider_id, status in target_statuses
-                if _provider_id.lower() in self._default_targets
-                    or status.id in self._all_targets
-            ]
+            if self._workspace._connection_params.workspace_kind == WorkspaceKind.V1:
+                # Filter only relevant targets for user's selected framework like Cirq, Qiskit, etc.
+                return [
+                    self.from_target_status(_provider_id, status, **kwargs)
+                    for _provider_id, status in target_statuses
+                    if _provider_id.lower() in self._default_targets
+                        or status.id in self._all_targets
+                ]
+            else:
+                return [
+                    self.from_target_status(_provider_id, status, **kwargs)
+                    for _provider_id, status in target_statuses
+                ]
