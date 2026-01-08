@@ -5,8 +5,10 @@
 
 import re
 import unittest
+from unittest.mock import Mock
 import pytest
 from common import QuantumTestBase, RegexScrubbingPatterns
+from azure.quantum import Job, JobDetails
 
 
 class TestJobResults(QuantumTestBase):
