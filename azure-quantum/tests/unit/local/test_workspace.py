@@ -465,3 +465,26 @@ def test_workspace_context_manager_calls_enter_exit():
     # Verify __exit__ was called on both clients after exiting context
     ws._client.__exit__.assert_called_once()
     ws._mgmt_client.__exit__.assert_called_once()
+
+
+def test_get_container_uri_uses_linked_storage_sas_when_storage_none():
+    """When storage is None, get_container_uri should use linked storage via service SAS."""
+    ws = WorkspaceMock(
+        subscription_id=SUBSCRIPTION_ID,
+        resource_group=RESOURCE_GROUP,
+        name=WORKSPACE,
+    )
+    assert ws.storage is None
+
+    with mock.patch(
+        "azure.quantum.storage.ContainerClient.from_container_url",
+        return_value=mock.MagicMock(),
+    ):
+        with mock.patch(
+            "azure.quantum.storage.create_container_using_client",
+            return_value=None,
+        ):
+            uri = ws.get_container_uri(job_id="job-123")
+            assert isinstance(uri, str)
+            assert "https://example.com/" in uri
+            assert "sas-token" in uri

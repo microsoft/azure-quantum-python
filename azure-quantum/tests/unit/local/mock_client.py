@@ -14,8 +14,9 @@ from datetime import datetime, UTC, timedelta
 from azure.core.paging import ItemPaged
 from azure.quantum.workspace import Workspace
 from types import SimpleNamespace
-from azure.quantum._client import ServicesClient
+from azure.quantum._client import WorkspaceClient
 from azure.quantum._client.models import JobDetails, SessionDetails, ItemDetails
+from azure.quantum._client.models import SasUriResponse
 from azure.quantum._workspace_connection_params import WorkspaceConnectionParams
 from common import (
     SUBSCRIPTION_ID,
@@ -156,6 +157,23 @@ class JobsOperations:
             self._store.append(job_details)
         return job_details
 
+    # New WorkspaceClient API: create
+    def create(
+        self,
+        subscription_id: str,
+        resource_group_name: str,
+        workspace_name: str,
+        job_id: str,
+        resource: JobDetails,
+    ) -> JobDetails:
+        return self.create_or_replace(
+            subscription_id,
+            resource_group_name,
+            workspace_name,
+            job_id,
+            resource,
+        )
+
     def get(
         self,
         subscription_id: str,
@@ -166,6 +184,20 @@ class JobsOperations:
         for jd in self._store:
             if jd.id == job_id:
                 return jd
+        raise KeyError(job_id)
+
+    # Cancel/delete for older API; mark job as cancelled
+    def delete(
+        self,
+        subscription_id: str,
+        resource_group_name: str,
+        workspace_name: str,
+        job_id: str,
+    ) -> None:
+        for jd in self._store:
+            if jd.id == job_id:
+                jd.status = "Cancelled"
+                return None
         raise KeyError(job_id)
 
     def list(
@@ -222,6 +254,23 @@ class SessionsOperations:
             self._store.append(session_details)
         return session_details
 
+    # New WorkspaceClient API: open
+    def open(
+        self,
+        subscription_id: str,
+        resource_group_name: str,
+        workspace_name: str,
+        session_id: str,
+        resource: SessionDetails,
+    ) -> SessionDetails:
+        return self.create_or_replace(
+            subscription_id,
+            resource_group_name,
+            workspace_name,
+            session_id,
+            resource,
+        )
+
     def close(
         self,
         subscription_id: str,
@@ -268,6 +317,27 @@ class SessionsOperations:
             except Exception:
                 pass
         return _paged(items[skip : skip + top], page_size=top)
+
+    # New WorkspaceClient API: listv2 (same behavior as list)
+    def listv2(
+        self,
+        subscription_id: str,
+        resource_group_name: str,
+        workspace_name: str,
+        filter: Optional[str] = None,
+        orderby: Optional[str] = None,
+        skip: int = 0,
+        top: int = 100,
+    ) -> ItemPaged[SessionDetails]:
+        return self.list(
+            subscription_id,
+            resource_group_name,
+            workspace_name,
+            filter,
+            orderby,
+            skip,
+            top,
+        )
 
     def jobs_list(
         self,
@@ -356,68 +426,141 @@ class TopLevelItemsOperations:
                 pass
         return _paged(items[skip : skip + top], page_size=top)
 
+    # New WorkspaceClient API: listv2
+    def listv2(
+        self,
+        subscription_id: str,
+        resource_group_name: str,
+        workspace_name: str,
+        filter: Optional[str] = None,
+        orderby: Optional[str] = None,
+        top: int = 100,
+        skip: int = 0,
+    ) -> ItemPaged[ItemDetails]:
+        return self.list(
+            subscription_id,
+            resource_group_name,
+            workspace_name,
+            filter,
+            orderby,
+            top,
+            skip,
+        )
+
+
+class ProvidersOperations:
+    def list(
+        self,
+        subscription_id: str,
+        resource_group_name: str,
+        workspace_name: str,
+    ) -> ItemPaged:
+        # Minimal stub: return empty provider list
+        return _paged([], page_size=100)
+
+
+class QuotasOperations:
+    def list(
+        self,
+        subscription_id: str,
+        resource_group_name: str,
+        workspace_name: str,
+    ) -> ItemPaged:
+        # Minimal stub: return empty quotas list
+        return _paged([], page_size=100)
+
+
+class StorageOperations:
+    def get_sas_uri(
+        self,
+        subscription_id: str,
+        resource_group_name: str,
+        workspace_name: str,
+        *,
+        blob_details: object,
+    ) -> SasUriResponse:
+        # Return a dummy SAS URI suitable for tests that might exercise storage
+        return SasUriResponse({"sasUri": "https://example.com/container?sas-token"})
+
 
 class MockWorkspaceMgmtClient:
     """Mock management client that avoids network calls to ARM/ARG."""
-    
-    def __init__(self, credential: Optional[object] = None, base_url: Optional[str] = None, user_agent: Optional[str] = None) -> None:
+
+    def __init__(
+        self,
+        credential: Optional[object] = None,
+        base_url: Optional[str] = None,
+        user_agent: Optional[str] = None,
+    ) -> None:
         self._credential = credential
         self._base_url = base_url
         self._user_agent = user_agent
-    
+
     def close(self) -> None:
         """No-op close for mock."""
         pass
 
-    def __enter__(self) -> 'MockWorkspaceMgmtClient':
+    def __enter__(self) -> "MockWorkspaceMgmtClient":
         return self
 
     def __exit__(self, *exc_details) -> None:
         pass
 
-    def load_workspace_from_arg(self, connection_params: WorkspaceConnectionParams) -> None:
+    def load_workspace_from_arg(
+        self, connection_params: WorkspaceConnectionParams
+    ) -> None:
         connection_params.subscription_id = SUBSCRIPTION_ID
         connection_params.resource_group = RESOURCE_GROUP
         connection_params.location = LOCATION
         connection_params.quantum_endpoint = ENDPOINT_URI
 
-    def load_workspace_from_arm(self, connection_params: WorkspaceConnectionParams) -> None:
+    def load_workspace_from_arm(
+        self, connection_params: WorkspaceConnectionParams
+    ) -> None:
         connection_params.location = LOCATION
         connection_params.quantum_endpoint = ENDPOINT_URI
 
 
-class MockServicesClient(ServicesClient):
+class MockWorkspaceClient:
     def __init__(self, authentication_policy: Optional[object] = None) -> None:
         # in-memory stores
         self._jobs_store: List[JobDetails] = []
         self._sessions_store: List[SessionDetails] = []
-        # operations
-        self.jobs = JobsOperations(self._jobs_store)
-        self.sessions = SessionsOperations(self._sessions_store, self._jobs_store)
-        self.top_level_items = TopLevelItemsOperations(
-            self._jobs_store, self._sessions_store
+        # operations grouped under .services to mirror WorkspaceClient
+        self.services = SimpleNamespace(
+            jobs=JobsOperations(self._jobs_store),
+            sessions=SessionsOperations(self._sessions_store, self._jobs_store),
+            top_level_items=TopLevelItemsOperations(
+                self._jobs_store, self._sessions_store
+            ),
+            providers=ProvidersOperations(),
+            quotas=QuotasOperations(),
+            storage=StorageOperations(),
         )
-        # Mimic ServicesClient config shape for tests that inspect policy
+        # Mimic WorkspaceClient config shape for tests that inspect policy
         self._config = SimpleNamespace(authentication_policy=authentication_policy)
 
-    def __enter__(self) -> 'MockServicesClient':
+    def __enter__(self) -> "MockWorkspaceClient":
         return self
 
     def __exit__(self, *exc_details) -> None:
+        pass
+
+    def close(self) -> None:
         pass
 
 
 class WorkspaceMock(Workspace):
     def __init__(self, **kwargs) -> None:
         # Create and pass mock management client to prevent network calls
-        if '_mgmt_client' not in kwargs:
-            kwargs['_mgmt_client'] = MockWorkspaceMgmtClient()
+        if "_mgmt_client" not in kwargs:
+            kwargs["_mgmt_client"] = MockWorkspaceMgmtClient()
         super().__init__(**kwargs)
-    
-    def _create_client(self) -> ServicesClient:  # type: ignore[override]
+
+    def _create_client(self) -> WorkspaceClient:  # type: ignore[override]
         # Pass through the Workspace's auth policy to the mock client
         auth_policy = self._connection_params.get_auth_policy()
-        return MockServicesClient(authentication_policy=auth_policy)
+        return MockWorkspaceClient(authentication_policy=auth_policy)
 
 
 def seed_jobs(ws: WorkspaceMock) -> None:
@@ -478,7 +621,7 @@ def seed_jobs(ws: WorkspaceMock) -> None:
         ),
     ]
     for d in samples:
-        ws._client.jobs.create_or_replace(
+        ws._client.services.jobs.create_or_replace(
             ws.subscription_id, ws.resource_group, ws.name, job_id=d.id, job_details=d
         )
 
@@ -504,7 +647,7 @@ def seed_sessions(ws: WorkspaceMock) -> None:
         ),
     ]
     for s in samples:
-        ws._client.sessions.create_or_replace(
+        ws._client.services.sessions.create_or_replace(
             ws.subscription_id,
             ws.resource_group,
             ws.name,
@@ -515,9 +658,7 @@ def seed_sessions(ws: WorkspaceMock) -> None:
 
 def create_default_workspace() -> WorkspaceMock:
     ws = WorkspaceMock(
-        subscription_id=SUBSCRIPTION_ID,
-        resource_group=RESOURCE_GROUP,
-        name=WORKSPACE
+        subscription_id=SUBSCRIPTION_ID, resource_group=RESOURCE_GROUP, name=WORKSPACE
     )
     seed_jobs(ws)
     seed_sessions(ws)
