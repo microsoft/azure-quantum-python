@@ -1,91 +1,91 @@
 trigger:
-- main
+  - main
 
 pr:
-- main
+  - main
 
 schedules:
-- cron: "0 9 * * Sat"
-  displayName: 'Build for Component Governance'
-  branches:
-    include:
-    - main
-  always: true
+  - cron: "0 9 * * Sat"
+    displayName: "Build for Component Governance"
+    branches:
+      include:
+        - main
+    always: true
 
 variables:
-- name: QSHARP_PYTHON_TELEMETRY
-  value: none # Disable usage telemetry for internal test pipelines
-- name: PYTEST_MAX_PARALLEL_TESTS
-  value: 'auto'
+  - name: QSHARP_PYTHON_TELEMETRY
+    value: none # Disable usage telemetry for internal test pipelines
+  - name: PYTEST_MAX_PARALLEL_TESTS
+    value: "auto"
 
 jobs:
-- job: "Build_Azure_Quantum_Python"
-  displayName: Build "azure-quantum" package
-  pool:
-    vmImage: 'windows-latest'
+  - job: "Build_Azure_Quantum_Python"
+    displayName: Build "azure-quantum" package
+    pool:
+      vmImage: "windows-latest"
 
-  steps:
-    - task: UsePythonVersion@0
-      inputs:
-        versionSpec: '3.11'
-      displayName: Set Python version
+    steps:
+      - task: UsePythonVersion@0
+        inputs:
+          versionSpec: "3.11"
+        displayName: Set Python version
 
-    - script: |
-        pip install wheel
-      displayName: Install wheel
+      - script: |
+          pip install wheel
+        displayName: Install wheel
 
-    - script: |
-        pip freeze
-      displayName: List installed packages
+      - script: |
+          pip freeze
+        displayName: List installed packages
 
-    - script: |
-        cd $(Build.SourcesDirectory)/azure-quantum
-        python setup.py sdist --dist-dir=target/wheels
-        python setup.py bdist_wheel --dist-dir=target/wheels
-      displayName: Build azure-quantum package
+      - script: |
+          cd $(Build.SourcesDirectory)/azure-quantum
+          python setup.py sdist --dist-dir=target/wheels
+          python setup.py bdist_wheel --dist-dir=target/wheels
+        displayName: Build azure-quantum package
 
-    - publish: $(Build.SourcesDirectory)/azure-quantum/target/wheels/
-      artifact: azure-quantum-wheels
-      displayName: Upload azure-quantum artifacts
+      - publish: $(Build.SourcesDirectory)/azure-quantum/target/wheels/
+        artifact: azure-quantum-wheels
+        displayName: Upload azure-quantum artifacts
 
-- job: "Test_Azure_Quantum_Python"
-  displayName: Test "azure-quantum" package
-  pool:
-    vmImage: 'windows-latest'
-  
-  steps:
-    - task: UsePythonVersion@0
-      inputs:
-        versionSpec: '3.11'
-      displayName: Set Python version
+  - job: "Test_Azure_Quantum_Python"
+    displayName: Test "azure-quantum" package
+    pool:
+      vmImage: "windows-latest"
 
-    - script: |
-        python -m pip install --upgrade pip
-        pip install pytest pytest-azurepipelines pytest-cov pytest-xdist tox
-      displayName: Install test dependencies
+    steps:
+      - task: UsePythonVersion@0
+        inputs:
+          versionSpec: "3.11"
+        displayName: Set Python version
 
-    - script: |
-        pip freeze
-      displayName: List installed packages
-    
-    - script: |
-        cd $(Build.SourcesDirectory)/azure-quantum
-        pip install ".[cirq,qsharp,dev]"
-        pytest --numprocesses $(PYTEST_MAX_PARALLEL_TESTS) --cov-report term --cov=azure.quantum --junitxml test-output-azure-quantum.xml --ignore tests/unit/test_qiskit.py --ignore tests/unit/test_session_qiskit.py $(Build.SourcesDirectory)/azure-quantum
-      displayName: Run azure-quantum unit tests
+      - script: |
+          python -m pip install --upgrade pip
+          pip install pytest pytest-azurepipelines pytest-cov pytest-xdist tox
+        displayName: Install test dependencies
 
-    - script: |
-        cd $(Build.SourcesDirectory)/azure-quantum
-        tox -e py311-qiskit1,py311-qiskit2
-      displayName: Run Qiskit matrix tests
-    
-    - task: PublishTestResults@2
-      displayName: 'Publish tests results (python)'
-      condition: succeededOrFailed()
-      inputs:
-        testResultsFormat: 'JUnit'
-        testResultsFiles: '**/test-*.xml'
-        testRunTitle: 'Azure Quantum Python Tests'
+      - script: |
+          pip freeze
+        displayName: List installed packages
 
-    - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
-      displayName: 'Component detection'
+      - script: |
+          cd $(Build.SourcesDirectory)/azure-quantum
+          pip install ".[cirq,qsharp,dev]"
+          pytest --numprocesses $(PYTEST_MAX_PARALLEL_TESTS) --cov-report term --cov=azure.quantum --junitxml test-output-azure-quantum.xml --ignore tests/unit/test_qiskit.py --ignore tests/unit/test_session_qiskit.py $(Build.SourcesDirectory)/azure-quantum
+        displayName: Run azure-quantum unit tests
+
+      - script: |
+          cd $(Build.SourcesDirectory)/azure-quantum
+          tox -e py311-qiskit1,py311-qiskit2
+        displayName: Run Qiskit matrix tests
+
+      - task: PublishTestResults@2
+        displayName: "Publish tests results (python)"
+        condition: succeededOrFailed()
+        inputs:
+          testResultsFormat: "JUnit"
+          testResultsFiles: "**/test-*.xml"
+          testRunTitle: "Azure Quantum Python Tests"
+
+      - task: ms.vss-governance-buildtask.governance-build-task-component-detection.ComponentGovernanceComponentDetection@0
+        displayName: "Component detection"
