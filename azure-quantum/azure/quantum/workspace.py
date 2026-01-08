@@ -23,14 +23,14 @@ from typing import (
 )
 from typing_extensions import Self
 from azure.core.paging import ItemPaged
-from azure.quantum._client import ServicesClient
+from azure.quantum._client import WorkspaceClient
 from azure.quantum._client.models import JobDetails, ItemDetails, SessionDetails
-from azure.quantum._client.operations import (
-    JobsOperations,
-    StorageOperations,
-    QuotasOperations,
-    SessionsOperations,
-    TopLevelItemsOperations
+from azure.quantum._client.operations._operations import (
+    ServicesJobsOperations,
+    ServicesStorageOperations,
+    ServicesQuotasOperations,
+    ServicesSessionsOperations,
+    ServicesTopLevelItemsOperations
 )
 from azure.quantum._client.models import (
     BlobDetails,
@@ -189,7 +189,7 @@ class Workspace:
         
         connection_params.assert_complete()
 
-        # Create QuantumClient
+        # Create WorkspaceClient
         self._client = self._create_client()
 
     def _on_new_client_request(self) -> None:
@@ -262,18 +262,18 @@ class Workspace:
         """
         return self._storage
 
-    def _create_client(self) -> ServicesClient:
+    def _create_client(self) -> WorkspaceClient:
         """"
         An internal method to (re)create the underlying Azure SDK REST API client.
 
         :return: Azure SDK REST API client for Azure Quantum.
-        :rtype: QuantumClient
+        :rtype: WorkspaceClient
         """
         connection_params = self._connection_params
         kwargs = {}
         if connection_params.api_version:
             kwargs["api_version"] = connection_params.api_version
-        client = ServicesClient(
+        client = WorkspaceClient(
             region=connection_params.location,
             credential=connection_params.get_credential_or_default(),
             subscription_id=connection_params.subscription_id,
@@ -332,55 +332,55 @@ class Workspace:
             credential=connection_params.get_credential_or_default(),
             **kwargs)
 
-    def _get_top_level_items_client(self) -> TopLevelItemsOperations:
+    def _get_top_level_items_client(self) -> ServicesTopLevelItemsOperations:
         """
         Returns the internal Azure SDK REST API client
         for the `{workspace}/topLevelItems` API.
 
         :return: REST API client for the `topLevelItems` API.
-        :rtype: TopLevelItemsOperations
+        :rtype: ServicesTopLevelItemsOperations
         """
-        return self._client.top_level_items
+        return self._client.services.top_level_items
 
-    def _get_sessions_client(self) -> SessionsOperations:
+    def _get_sessions_client(self) -> ServicesSessionsOperations:
         """
         Returns the internal Azure SDK REST API client
         for the `{workspace}/sessions` API.
 
         :return: REST API client for the `sessions` API.
-        :rtype: SessionsOperations
+        :rtype: ServicesSessionsOperations
         """
-        return self._client.sessions
+        return self._client.services.sessions
 
-    def _get_jobs_client(self) -> JobsOperations:
+    def _get_jobs_client(self) -> ServicesJobsOperations:
         """
         Returns the internal Azure SDK REST API client
         for the `{workspace}/jobs` API.
 
         :return: REST API client for the `jobs` API.
-        :rtype: JobsOperations
+        :rtype: ServicesJobsOperations
         """
-        return self._client.jobs
+        return self._client.services.jobs
 
-    def _get_workspace_storage_client(self) -> StorageOperations:
+    def _get_workspace_storage_client(self) -> ServicesStorageOperations:
         """
         Returns the internal Azure SDK REST API client
         for the `{workspace}/storage` API.
 
         :return: REST API client for the `storage` API.
-        :rtype: StorageOperations
+        :rtype: ServicesStorageOperations
         """
-        return self._client.storage
+        return self._client.services.storage
 
-    def _get_quotas_client(self) -> QuotasOperations:
+    def _get_quotas_client(self) -> ServicesQuotasOperations:
         """
         Returns the internal Azure SDK REST API client
         for the `{workspace}/quotas` API.
 
         :return: REST API client for the `quotas` API.
-        :rtype: QuotasOperations
+        :rtype: ServicesQuotasOperations
         """
-        return self._client.quotas
+        return self._client.services.quotas
 
     def _get_linked_storage_sas_uri(
         self,
@@ -424,7 +424,7 @@ class Workspace:
         :rtype: Job
         """
         client = self._get_jobs_client()
-        details = client.create_or_replace(
+        details = client.create(
             self.subscription_id,
             self.resource_group,
             self.name,
@@ -580,7 +580,7 @@ class Workspace:
         """
         return [
             (provider.id, target)
-            for provider in self._client.providers.list(
+            for provider in self._client.services.providers.list(
                 self.subscription_id,
                 self.resource_group,
                 self.name)
@@ -713,7 +713,7 @@ class Workspace:
         )
         orderby = self._create_orderby(orderby_property, is_asc)
 
-        return client.list(subscription_id=self.subscription_id, resource_group_name=self.resource_group, workspace_name=self.name, filter=top_level_item_filter, orderby=orderby, top = top, skip = skip)
+        return client.listv2(subscription_id=self.subscription_id, resource_group_name=self.resource_group, workspace_name=self.name, filter=top_level_item_filter, orderby=orderby, top = top, skip = skip)
 
     def list_sessions(
         self,
@@ -774,7 +774,7 @@ class Workspace:
 
         orderby = self._create_orderby(orderby_property=orderby_property, is_asc=is_asc)
 
-        return client.list(subscription_id=self.subscription_id, resource_group_name=self.resource_group, workspace_name=self.name, filter = session_filter, orderby=orderby, skip=skip, top=top)
+        return client.listv2(subscription_id=self.subscription_id, resource_group_name=self.resource_group, workspace_name=self.name, filter = session_filter, orderby=orderby, skip=skip, top=top)
 
     def open_session(
         self,
@@ -790,7 +790,7 @@ class Workspace:
         :rtype: Session
         """
         client = self._get_sessions_client()
-        session.details = client.create_or_replace(
+        session.details = client.open(
             self.subscription_id,
             self.resource_group,
             self.name,

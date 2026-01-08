@@ -10,6 +10,19 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
+class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of identity that created the item."""
+
+    USER = "User"
+    """The item is created by user"""
+    APPLICATION = "Application"
+    """The item is created by application"""
+    MANAGED_IDENTITY = "ManagedIdentity"
+    """The item is created using managed identity"""
+    KEY = "Key"
+    """The item is created using key"""
+
+
 class DimensionScope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The scope at which the quota is applied to."""
 
@@ -31,20 +44,20 @@ class ItemType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class JobStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The status of the job."""
 
+    QUEUED = "Queued"
+    """The job has been queued."""
     WAITING = "Waiting"
     """The job is waiting in the queue to be executed."""
-    QUEUED = "Queued"
-    """The job is queued for execution."""
     EXECUTING = "Executing"
     """The job is being executed."""
-    FINISHING = "Finishing"
-    """The job is in the process of finishing."""
     CANCELLATION_REQUESTED = "CancellationRequested"
-    """Cancellation for the job has been requested."""
+    """Cancellation of the job has been requested."""
     CANCELLING = "Cancelling"
     """The job is in the process of being cancelled."""
+    FINISHING = "Finishing"
+    """The job is in the process of being finished."""
     COMPLETED = "Completed"
-    """The job has completed execution."""
+    """The job completed."""
     SUCCEEDED = "Succeeded"
     """The job completed with success."""
     FAILED = "Failed"
@@ -64,23 +77,6 @@ class JobType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Optimization job type."""
 
 
-class JsonPatchOperation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The operation to be performed."""
-
-    ADD = "add"
-    """Add value operation."""
-    REMOVE = "remove"
-    """Remove value operation."""
-    REPLACE = "replace"
-    """Replace value operation."""
-    MOVE = "move"
-    """Move value operation."""
-    COPY = "copy"
-    """Copy value operation."""
-    TEST = "test"
-    """Test value operation."""
-
-
 class MeterPeriod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The time period in which the quota's underlying meter is accumulated. Based on calendar year.
     'None' is used for concurrent quotas.
@@ -90,6 +86,15 @@ class MeterPeriod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The meter period is instantaneous. Used for concurrent quotas."""
     MONTHLY = "Monthly"
     """The meter period is per month."""
+
+
+class Priority(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Job priority levels."""
+
+    STANDARD = "Standard"
+    """The job's base priority."""
+    HIGH = "High"
+    """The job's priority is elevated."""
 
 
 class ProviderAvailability(str, Enum, metaclass=CaseInsensitiveEnumMeta):

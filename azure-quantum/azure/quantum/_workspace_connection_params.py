@@ -524,7 +524,7 @@ class WorkspaceConnectionParams:
     def append_user_agent(self, value: str):
         """
         Append a new value to the Workspace's UserAgent and re-initialize the
-        QuantumClient. The values are appended using a dash.
+        WorkspaceClient. The values are appended using a dash.
 
         :param value: UserAgent value to add, e.g. "azure-quantum-<plugin>"
         """

@@ -15,67 +15,36 @@ from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest, HttpResponse
 
-from ._configuration import ServicesClientConfiguration
-from ._serialization import Deserializer, Serializer
-from .operations import (
-    JobsOperations,
-    ProvidersOperations,
-    QuotasOperations,
-    SessionsOperations,
-    StorageOperations,
-    TopLevelItemsOperations,
-)
+from ._configuration import WorkspaceClientConfiguration
+from ._utils.serialization import Deserializer, Serializer
+from .operations import ServicesOperations
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class ServicesClient:
+class WorkspaceClient:
     """Azure Quantum Workspace Services.
 
-    :ivar jobs: JobsOperations operations
-    :vartype jobs: azure.quantum.operations.JobsOperations
-    :ivar sessions: SessionsOperations operations
-    :vartype sessions: azure.quantum.operations.SessionsOperations
-    :ivar providers: ProvidersOperations operations
-    :vartype providers: azure.quantum.operations.ProvidersOperations
-    :ivar storage: StorageOperations operations
-    :vartype storage: azure.quantum.operations.StorageOperations
-    :ivar quotas: QuotasOperations operations
-    :vartype quotas: azure.quantum.operations.QuotasOperations
-    :ivar top_level_items: TopLevelItemsOperations operations
-    :vartype top_level_items: azure.quantum.operations.TopLevelItemsOperations
-    :param region: The Azure region where the Azure Quantum Workspace is located. Required.
-    :type region: str
-    :param credential: Credential used to authenticate requests to the service. Is either a
-     TokenCredential type or a AzureKeyCredential type. Required.
+    :ivar services: ServicesOperations operations
+    :vartype services: azure.quantum.operations.ServicesOperations
+    :param endpoint: The endpoint of the Azure Quantum service. For example,
+     https://{region}.quantum.azure.com. Required.
+    :type endpoint: str
+    :param credential: Credential used to authenticate requests to the service. Is either a token
+     credential type or a key credential type. Required.
     :type credential: ~azure.core.credentials.TokenCredential or
      ~azure.core.credentials.AzureKeyCredential
-    :keyword service_base_url: The Azure Quantum service base url. Default value is
-     "quantum.azure.com".
-    :paramtype service_base_url: str
     :keyword api_version: The API version to use for this operation. Default value is
-     "2024-10-01-preview". Note that overriding this default value may result in unsupported
+     "2025-12-01-preview". Note that overriding this default value may result in unsupported
      behavior.
     :paramtype api_version: str
     """
 
-    def __init__(
-        self,
-        region: str,
-        credential: Union["TokenCredential", AzureKeyCredential],
-        *,
-        service_base_url: str = "quantum.azure.com",
-        endpoint: str = None,
-        **kwargs: Any
-    ) -> None:
-        if endpoint is not None:
-            _endpoint = endpoint
-        else:
-            _endpoint = "https://{region}.{serviceBaseUrl}"
-        self._config = ServicesClientConfiguration(
-            region=region, credential=credential, service_base_url=service_base_url, **kwargs
-        )
+    def __init__(self, endpoint: str, credential: Union["TokenCredential", AzureKeyCredential], **kwargs: Any) -> None:
+        _endpoint = "{endpoint}"
+        self._config = WorkspaceClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
+
         _policies = kwargs.pop("policies", None)
         if _policies is None:
             _policies = [
@@ -98,12 +67,7 @@ class ServicesClient:
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
-        self.jobs = JobsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.sessions = SessionsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.providers = ProvidersOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.storage = StorageOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.quotas = QuotasOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.top_level_items = TopLevelItemsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.services = ServicesOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
@@ -125,10 +89,7 @@ class ServicesClient:
 
         request_copy = deepcopy(request)
         path_format_arguments = {
-            "region": self._serialize.url("self._config.region", self._config.region, "str"),
-            "serviceBaseUrl": self._serialize.url(
-                "self._config.service_base_url", self._config.service_base_url, "str"
-            ),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
