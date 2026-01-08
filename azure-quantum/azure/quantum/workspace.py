@@ -117,6 +117,7 @@ class Workspace:
     # Internal parameter names
     _FROM_CONNECTION_STRING_PARAM = '_from_connection_string'
     _QUANTUM_ENDPOINT_PARAM = '_quantum_endpoint'
+    _WORKSPACE_KIND_PARAM = '_workspace_kind'
     _MGMT_CLIENT_PARAM = '_mgmt_client'
     
     def __init__(
@@ -136,6 +137,7 @@ class Workspace:
         from_connection_string = kwargs.pop(Workspace._FROM_CONNECTION_STRING_PARAM, False)
         # In case from connection string, quantum_endpoint must be passed
         quantum_endpoint = kwargs.pop(Workspace._QUANTUM_ENDPOINT_PARAM, None)
+        workspace_kind = kwargs.pop(Workspace._WORKSPACE_KIND_PARAM, None)
         # Params to pass a mock in tests
         self._mgmt_client = kwargs.pop(Workspace._MGMT_CLIENT_PARAM, None)
         
@@ -148,6 +150,7 @@ class Workspace:
             resource_id=resource_id,
             quantum_endpoint=quantum_endpoint,
             user_agent=user_agent,
+            workspace_kind=workspace_kind,
             **kwargs
         ).default_from_env_vars()
 
@@ -320,6 +323,7 @@ class Workspace:
         connection_params = WorkspaceConnectionParams(connection_string=connection_string)
         kwargs[cls._FROM_CONNECTION_STRING_PARAM] = True
         kwargs[cls._QUANTUM_ENDPOINT_PARAM] = connection_params.quantum_endpoint
+        kwargs[cls._WORKSPACE_KIND_PARAM] = connection_params.workspace_kind.value if connection_params.workspace_kind else None
         return cls(
             subscription_id=connection_params.subscription_id,
             resource_group=connection_params.resource_group,
