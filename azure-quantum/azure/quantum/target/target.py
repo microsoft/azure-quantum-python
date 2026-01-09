@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 ##
-from typing import TYPE_CHECKING, Any, Dict, Union, Type,  Protocol, runtime_checkable
+from typing import TYPE_CHECKING, Any, Dict, Union, Type, Optional, Protocol, runtime_checkable
 from dataclasses import dataclass
 import io
 import json
@@ -210,6 +210,7 @@ target '{self.name}' of provider '{self.provider_id}' not found."
         name: str = "azure-quantum-job",
         shots: int = None,
         input_params: Union[Dict[str, Any], InputParams, None] = None,
+        priority: Optional[str] = None,
         **kwargs
     ) -> Job:
         """Submit input data and return Job.
@@ -225,6 +226,8 @@ target '{self.name}' of provider '{self.provider_id}' not found."
         :type shots: int
         :param input_params: Input parameters
         :type input_params: Dict[str, Any]
+        :param priority: Priority of job.
+        :type priority: str
         :return: Azure Quantum job
         :rtype: azure.quantum.job.Job
         """
@@ -320,6 +323,7 @@ target '{self.name}' of provider '{self.provider_id}' not found."
             output_data_format=output_data_format,
             input_params=input_params,
             session_id=self.get_latest_session_id(),
+            priority=priority,
             **kwargs
         )
 

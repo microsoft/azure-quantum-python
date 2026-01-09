@@ -48,6 +48,9 @@ class Session(WorkspaceItem):
                                close and not accept further jobs.
     :type job_failure_policy: Union[str, SessionJobFailurePolicy, None]
 
+    :param priority: Priority of the session.
+    :type priority: Optional[str]
+
     :raises ValueError: if details is passed along individual parameters,
                         or if required parameters are missing.
     """
@@ -61,6 +64,7 @@ class Session(WorkspaceItem):
             id: Optional[str] = None,
             name: Optional[str] = None,
             job_failure_policy: Union[str, SessionJobFailurePolicy, None] = None,
+            priority: Optional[str] = None,
             **kwargs):
         from azure.quantum.target import Target
         target_name = target.name if isinstance(target, Target) else target
@@ -92,6 +96,7 @@ class Session(WorkspaceItem):
                                      provider_id=provider_id,
                                      target=target_name,
                                      job_failure_policy=job_failure_policy,
+                                     priority=priority,
                                      **kwargs)
 
         super().__init__(
@@ -259,6 +264,7 @@ class SessionHost(Protocol):
         id: Optional[str] = None,
         name: Optional[str] = None,
         job_failure_policy: Union[str, SessionJobFailurePolicy, None] = None,
+        priority: Optional[str] = None,
         **kwargs
     ) -> Session:
         """Opens a session and associates all future job submissions to that
@@ -295,6 +301,10 @@ class SessionHost(Protocol):
 
         :param job_failure_policy: The policy that determines when a session would fail,
                                 close and not accept further jobs.
+        :type job_failure_policy: Union[str, SessionJobFailurePolicy, None]
+
+        :param priority: Priority of the session.
+        :type priority: Optional[str]
 
         :return: The session object with updated details after its opening.
         :rtype: Session
@@ -309,6 +319,7 @@ class SessionHost(Protocol):
                           workspace=self._get_azure_workspace(),
                           target=self._get_azure_target_id(),
                           provider_id=self._get_azure_provider_id(),
+                          priority=priority,
                           **kwargs)
         self.latest_session = session
         return session.open()
