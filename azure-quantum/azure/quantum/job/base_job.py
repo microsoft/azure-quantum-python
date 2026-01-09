@@ -85,6 +85,7 @@ class BaseJob(WorkspaceItem):
         output_data_format: str = None,
         input_params: Dict[str, Any] = None,
         session_id: Optional[str] = None,
+        priority: Optional[str] = None,
         **kwargs
     ) -> "BaseJob":
         """Create a new Azure Quantum job based on a raw input_data payload.
@@ -117,6 +118,8 @@ class BaseJob(WorkspaceItem):
         :type input_params: Dict[str, Any]
         :param input_params: Input params for job
         :type input_params: Dict[str, Any]
+        :param priority: Priority of job.
+        :type priority: str
         :return: Azure Quantum Job
         :rtype: Job
         """
@@ -153,6 +156,7 @@ class BaseJob(WorkspaceItem):
             provider_id=provider_id,
             input_params=input_params,
             session_id=session_id,
+            priority=priority,
             **kwargs
         )
 
@@ -171,6 +175,7 @@ class BaseJob(WorkspaceItem):
         input_params: Dict[str, Any] = None,
         submit_job: bool = True,
         session_id: Optional[str] = None,
+        priority: Optional[str] = None,
         **kwargs
     ) -> "BaseJob":
         """Create new Job from URI if input data is already uploaded
@@ -198,6 +203,8 @@ class BaseJob(WorkspaceItem):
         :type input_params: Dict[str, Any]
         :param submit_job: If job should be submitted to the service, defaults to True
         :type submit_job: bool
+        :param priority: Priority of job.
+        :type priority: str
         :return: Job instance
         :rtype: Job
         """
@@ -223,6 +230,7 @@ class BaseJob(WorkspaceItem):
             target=target,
             input_params=input_params,
             session_id=session_id,
+            priority=priority,
             **kwargs
         )
         job = cls(workspace, details, **kwargs)
