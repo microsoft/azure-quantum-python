@@ -453,6 +453,75 @@ def test_job_for_microsoft_quantum_results_shots_v2_error_in_shots():
     assert job_results[4] == [10]
 
 
+def test_job_for_microsoft_quantum_results_histogram_v2_error_in_histogram():
+    output = """
+    {
+        "DataFormat": "microsoft.quantum-results.v2",
+        "Results": [
+            {
+            "Histogram": [
+                {
+                "Outcome": [10],
+                "Display": "[10]",
+                "Count": 3
+                },
+                {
+                "Outcome": {
+                    "Error": {
+                    "Code": "0x20",
+                    "Name": "TestErrorThirtyTwo"
+                    }
+                },
+                "Display": "Error 0x20: TestErrorThirtyTwo",
+                "Count": 1
+                },
+                {
+                "Outcome": {
+                    "Error": {
+                    "Code": "0x40",
+                    "Name": "TestErrorSixtyFour"
+                    }
+                },
+                "Display": "Error 0x40: TestErrorSixtyFour",
+                "Count": 1
+                }
+            ],
+            "Shots": [
+                [10],
+                {
+                "Error": {
+                    "Code": "0x20",
+                    "Name": "TestErrorThirtyTwo",
+                    "Foo": "42",
+                    "Bar": "baz"
+                }
+                },
+                [10],
+                {
+                "Error": {
+                    "Code": "0x40",
+                    "Name": "TestErrorSixtyFour",
+                    "Arg0": "99",
+                    "Arg1": "33"
+                }
+                },
+                [10]
+            ]
+            }
+        ]
+    }
+    """
+    
+    job_results = _get_job_results_histogram("microsoft.quantum-results.v2", output)
+    assert len(job_results.keys()) == 3
+    assert job_results["[10]"]["count"] == 3
+    assert job_results["Error 0x20: TestErrorThirtyTwo"]["count"] == 1
+    assert job_results["Error 0x40: TestErrorSixtyFour"]["count"] == 1
+    assert job_results["[10]"]["outcome"] == [10]
+    assert job_results["Error 0x20: TestErrorThirtyTwo"]["outcome"] == {"Error": {"Code": "0x20", "Name": "TestErrorThirtyTwo"}}
+    assert job_results["Error 0x40: TestErrorSixtyFour"]["outcome"] == {"Error": {"Code": "0x40", "Name": "TestErrorSixtyFour"}}
+
+
 def test_job_for_microsoft_quantum_results_shots_v2_wrong_type_raises_exception():
     try:
         _get_job_results_shots(
