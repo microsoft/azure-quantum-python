@@ -349,8 +349,10 @@ class Job(BaseJob, FilteredJob):
 
     def _convert_tuples(self, data):
         if isinstance(data, dict):
+            if "Error" in data:
+                return data
             # Check if the dictionary represents a tuple
-            if all(isinstance(k, str) and k.startswith("Item") for k in data.keys()):
+            elif all(isinstance(k, str) and k.startswith("Item") for k in data.keys()):
                 # Convert the dictionary to a tuple
                 return tuple(self._convert_tuples(data[f"Item{i+1}"]) for i in range(len(data)))
             else:

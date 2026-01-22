@@ -325,6 +325,74 @@ def test_job_for_microsoft_quantum_results_shots_v2_tuple_success():
     assert job_results[2] == [1]
 
 
+def test_job_for_microsoft_quantum_results_shots_v2_error_in_shots():
+    output = """
+    {
+        "DataFormat": "microsoft.quantum-results.v2",
+        "Results": [
+            {
+            "Histogram": [
+                {
+                "Outcome": [10],
+                "Display": "[10]",
+                "Count": 3
+                },
+                {
+                "Outcome": {
+                    "Error": {
+                    "Code": "0x20",
+                    "Name": "TestErrorThirtyTwo"
+                    }
+                },
+                "Display": "Error 0x20: TestErrorThirtyTwo",
+                "Count": 1
+                },
+                {
+                "Outcome": {
+                    "Error": {
+                    "Code": "0x40",
+                    "Name": "TestErrorSixtyFour"
+                    }
+                },
+                "Display": "Error 0x40: TestErrorSixtyFour",
+                "Count": 1
+                }
+            ],
+            "Shots": [
+                [10],
+                {
+                "Error": {
+                    "Code": "0x20",
+                    "Name": "TestErrorThirtyTwo",
+                    "Foo": "42",
+                    "Bar": "baz"
+                }
+                },
+                [10],
+                {
+                "Error": {
+                    "Code": "0x40",
+                    "Name": "TestErrorSixtyFour",
+                    "Arg0": "99",
+                    "Arg1": "33"
+                }
+                },
+                [10]
+            ]
+            }
+        ]
+    }
+    """
+    
+    job_results = _get_job_results_shots("microsoft.quantum-results.v2", output)
+    assert len(job_results) == 5
+    assert job_results[0] == [10]
+    assert job_results[1] == {"Error": {"Code": "0x20", "Name": "TestErrorThirtyTwo", "Foo": "42", "Bar": "baz"}}
+    assert job_results[2] == [10]
+    assert job_results[3] == {"Error": {"Code": "0x40", "Name": "TestErrorSixtyFour", "Arg0": "99", "Arg1": "33"}}
+    assert job_results[4] == [10]
+
+
 def test_job_for_microsoft_quantum_results_shots_v2_wrong_type_raises_exception():
     try:
         _get_job_results_shots(
