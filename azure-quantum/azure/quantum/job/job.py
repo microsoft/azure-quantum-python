@@ -64,6 +64,13 @@ class Job(BaseJob, FilteredJob):
             or self.details.status == "Failed"
             or self.details.status == "Cancelled"
         )
+    
+    def has_succeeded(self) -> bool:
+        """Check if the job has succeeded."""
+        return (
+            self.details.status == "Completed"
+            or self.details.status == "Succeeded"
+        )
 
     def wait_until_completed(
         self,
@@ -125,7 +132,7 @@ class Job(BaseJob, FilteredJob):
         if not self.has_completed():
             self.wait_until_completed(timeout_secs=timeout_secs)
 
-        if not self.details.status == "Succeeded" and not self.details.status == "Completed":
+        if not self.has_succeeded():
             if self.details.status == "Failed" and self._allow_failure_results():
                 job_blob_properties = self.download_blob_properties(self.details.output_data_uri)
                 if job_blob_properties.size > 0:
@@ -205,7 +212,7 @@ class Job(BaseJob, FilteredJob):
         if not self.has_completed():
             self.wait_until_completed(timeout_secs=timeout_secs)
 
-        if not self.details.status == "Succeeded" or self.details.status == "Completed":
+        if not self.has_succeeded():
             if self.details.status == "Failed" and self._allow_failure_results():
                 job_blob_properties = self.download_blob_properties(self.details.output_data_uri)
                 if job_blob_properties.size > 0:
@@ -288,7 +295,7 @@ class Job(BaseJob, FilteredJob):
         if not self.has_completed():
             self.wait_until_completed(timeout_secs=timeout_secs)
 
-        if not self.details.status == "Succeeded" or self.details.status == "Completed":
+        if not self.has_succeeded():
             if self.details.status == "Failed" and self._allow_failure_results():
                 job_blob_properties = self.download_blob_properties(self.details.output_data_uri)
                 if job_blob_properties.size > 0:
@@ -342,8 +349,10 @@ class Job(BaseJob, FilteredJob):
 
     def _convert_tuples(self, data):
         if isinstance(data, dict):
+            if "Error" in data:
+                return data
             # Check if the dictionary represents a tuple
-            if all(isinstance(k, str) and k.startswith("Item") for k in data.keys()):
+            elif all(isinstance(k, str) and k.startswith("Item") for k in data.keys()):
                 # Convert the dictionary to a tuple
                 return tuple(self._convert_tuples(data[f"Item{i+1}"]) for i in range(len(data)))
             else:

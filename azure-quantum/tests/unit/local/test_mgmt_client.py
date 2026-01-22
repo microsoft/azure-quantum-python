@@ -588,7 +588,7 @@ def test_load_workspace_from_arm_uses_default_api_version():
         
         call_args = mock_send.call_args
         request = call_args[0][0]
-        assert ConnectionConstants.DEFAULT_WORKSPACE_API_VERSION in request.url
+        assert ConnectionConstants.DEFAULT_ARM_WORKSPACE_API_VERSION in request.url
 
 
 def test_load_workspace_from_arg_constructs_correct_url():
