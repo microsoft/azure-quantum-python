@@ -4,16 +4,19 @@
 ##
 
 from typing import Dict
+import unittest
 import pytest
+import qiskit
 
-from common import QuantumTestBase, DEFAULT_TIMEOUT_SECS
-from test_job_payload_factory import JobPayloadFactory
+# from common import QuantumTestBase, DEFAULT_TIMEOUT_SECS
+# from test_job_payload_factory import JobPayloadFactory
 from azure.quantum.qiskit.backends.quantinuum import QuantinuumQPUQirBackend
 from azure.quantum.qiskit.provider import AzureQuantumProvider
 from azure.quantum import SessionStatus
 
 
 ECHO_PROVIDER_NAME = "Microsoft.Test.FirstParty"
+DEFAULT_TIMEOUT_SECS = 300
 
 
 class EchoQuantinuumQPUQirBackend(QuantinuumQPUQirBackend):
@@ -33,7 +36,7 @@ class EchoQuantinuumQPUQirBackend(QuantinuumQPUQirBackend):
         self._provider_name = ECHO_PROVIDER_NAME
 
 
-class QiskitTestSession(QuantumTestBase):
+class QiskitTestSession(unittest.TestCase):
     def _get_qiskit_backend(self, target_name):
         from azure.quantum.qiskit import AzureQuantumProvider
 
@@ -44,11 +47,20 @@ class QiskitTestSession(QuantumTestBase):
         backend = provider.get_backend(target_name)
         self.assertIsNotNone(backend)
         return backend
+    
+    def _get_qiskit_circuit_bell_state() -> qiskit.QuantumCircuit:
+        from qiskit import QuantumCircuit
+        circuit = QuantumCircuit(2, 2)
+        circuit.name = "BellState"
+        circuit.h(0)
+        circuit.cx(0, 1)
+        circuit.measure([0, 1], [0, 1])
+        return circuit
 
     def _test_session_job_qiskit_circuit(self, target_name):
         workspace = self.create_workspace()
         backend = self._get_qiskit_backend(target_name)
-        circuit = JobPayloadFactory.get_qiskit_circuit_bell_state()
+        circuit = self._get_qiskit_circuit_bell_state()
 
         with backend.open_session() as session:
             self.assertEqual(session.details.status, SessionStatus.WAITING)

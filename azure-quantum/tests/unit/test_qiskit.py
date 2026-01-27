@@ -16,8 +16,13 @@ from qiskit.providers import BackendV2 as Backend
 from qiskit.providers import Options
 from qiskit.providers.exceptions import QiskitBackendNotFoundError
 
-from common import QuantumTestBase, DEFAULT_TIMEOUT_SECS
-from test_workspace import SIMPLE_RESOURCE_ID
+# from common import QuantumTestBase, DEFAULT_TIMEOUT_SECS
+# from test_workspace import SIMPLE_RESOURCE_ID
+from local.common import (
+    SUBSCRIPTION_ID,
+    RESOURCE_GROUP,
+    WORKSPACE,
+)
 
 from azure.quantum.workspace import Workspace
 from azure.quantum.qiskit import AzureQuantumProvider
@@ -51,9 +56,16 @@ from azure.quantum.qiskit.backends._qiskit_ionq import (
 from azure.quantum.qiskit.backends.qci import QCISimulatorBackend
 from azure.quantum.qiskit.backends.rigetti import RigettiSimulatorBackend
 from azure.quantum.target.rigetti import RigettiTarget
+from azure.quantum._constants import ConnectionConstants
 
 
 _HEADER_MISSING = object()
+DEFAULT_TIMEOUT_SECS = 300
+SIMPLE_RESOURCE_ID = ConnectionConstants.VALID_RESOURCE_ID(
+    subscription_id=SUBSCRIPTION_ID,
+    resource_group=RESOURCE_GROUP,
+    workspace_name=WORKSPACE,
+)
 
 
 def _get_header_field(header: Any, key: str, default: Any = _HEADER_MISSING) -> Any:
@@ -215,7 +227,7 @@ class NoopPassThruBackend(AzureBackend):
         return None
 
 
-class TestQiskit(QuantumTestBase):
+class TestQiskit(unittest.TestCase):
     """TestIonq
 
     Tests the azure.quantum.target.ionq module.
