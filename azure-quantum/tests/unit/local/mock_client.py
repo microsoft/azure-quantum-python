@@ -479,8 +479,12 @@ class StorageOperations:
         *,
         blob_details: object,
     ) -> SasUriResponse:
-        # Return a dummy SAS URI suitable for tests that might exercise storage
-        return SasUriResponse({"sasUri": "https://example.com/container?sas-token"})
+        # Return a dummy SAS URI suitable for tests that might exercise storage.
+        # Include container/blob names (when provided) to make debugging easier.
+        container_name = getattr(blob_details, "container_name", None) or "container"
+        blob_name = getattr(blob_details, "blob_name", None)
+        path = container_name if not blob_name else f"{container_name}/{blob_name}"
+        return SasUriResponse({"sasUri": f"https://example.com/{path}?sas-token"})
 
 
 class MockWorkspaceMgmtClient:
@@ -561,6 +565,27 @@ class WorkspaceMock(Workspace):
         # Pass through the Workspace's auth policy to the mock client
         auth_policy = self._connection_params.get_auth_policy()
         return MockWorkspaceClient(authentication_policy=auth_policy)
+
+    def get_container_uri(
+        self,
+        job_id: Optional[str] = None,
+        container_name: Optional[str] = None,
+        container_name_format: Optional[str] = "job-{job_id}",
+    ) -> str:
+        """Return a stable, offline container SAS URI.
+
+        The real Workspace implementation may attempt to create/check containers
+        via azure-storage-blob. For local/offline unit tests we avoid any network
+        calls and just return a mock SAS URI from the mocked `{workspace}/storage`
+        operation.
+        """
+        if container_name is None:
+            if job_id is not None:
+                container_name = container_name_format.format(job_id=job_id)
+            else:
+                container_name = f"{self.name}-data"
+
+        return self._get_linked_storage_sas_uri(container_name)
 
 
 def seed_jobs(ws: WorkspaceMock) -> None:
