@@ -35,10 +35,28 @@ from azure.quantum.qiskit.backends.quantinuum import (
     QuantinuumEmulatorBackend,
     QuantinuumEmulatorQirBackend,
 )
-from azure.quantum.qiskit.backends.rigetti import RigettiSimulatorBackend
-from azure.quantum.target.rigetti import RigettiTarget
 
 from mock_client import create_default_workspace
+
+
+def _patch_upload_input_data(monkeypatch: pytest.MonkeyPatch) -> None:
+    def _fake_upload_input_data(
+        *,
+        container_uri: str,
+        input_data: bytes,
+        content_type=None,
+        blob_name: str = "inputData",
+        encoding: str = "",
+        return_sas_token: bool = False,
+    ) -> str:
+        assert container_uri.startswith("https://example.com/")
+        assert blob_name == "inputData"
+        assert isinstance(input_data, (bytes, bytearray))
+        return "https://example.com/inputData"
+
+    monkeypatch.setattr(
+        BaseJob, "upload_input_data", staticmethod(_fake_upload_input_data)
+    )
 
 
 def _target_op_names(backend) -> Set[str]:
@@ -154,6 +172,10 @@ def test_quantinuum_transpile_supports_native_instructions():
 
 
 def test_rigetti_transpile_supports_standard_gates():
+    pytest.importorskip("qsharp")
+    from azure.quantum.qiskit.backends.rigetti import RigettiSimulatorBackend
+    from azure.quantum.target.rigetti import RigettiTarget
+
     backend = RigettiSimulatorBackend(name=RigettiTarget.QVM.value, provider=None)
 
     circuit = QuantumCircuit(2)
@@ -165,23 +187,7 @@ def test_rigetti_transpile_supports_standard_gates():
 
 
 def test_ionq_backend_run_submits_job_details_offline(monkeypatch: pytest.MonkeyPatch):
-    def _fake_upload_input_data(
-        *,
-        container_uri: str,
-        input_data: bytes,
-        content_type=None,
-        blob_name: str = "inputData",
-        encoding: str = "",
-        return_sas_token: bool = False,
-    ) -> str:
-        assert container_uri.startswith("https://example.com/")
-        assert blob_name == "inputData"
-        assert isinstance(input_data, (bytes, bytearray))
-        return "https://example.com/inputData"
-
-    monkeypatch.setattr(
-        BaseJob, "upload_input_data", staticmethod(_fake_upload_input_data)
-    )
+    _patch_upload_input_data(monkeypatch)
 
     ws = create_default_workspace()
     provider = AzureQuantumProvider(workspace=ws)
@@ -215,3 +221,167 @@ def test_ionq_backend_run_submits_job_details_offline(monkeypatch: pytest.Monkey
 
     # IonQ backend enriches metadata with a measurement map.
     assert "meas_map" in details.metadata
+
+
+def test_backend_run_includes_latest_session_id(monkeypatch: pytest.MonkeyPatch):
+    _patch_upload_input_data(monkeypatch)
+
+    ws = create_default_workspace()
+    provider = AzureQuantumProvider(workspace=ws)
+    backend = IonQSimulatorBackend(name="ionq.simulator", provider=provider)
+
+    # Ensure `AzureQuantumJob` passes the latest session id through.
+    monkeypatch.setattr(backend, "get_latest_session_id", lambda: "s-ionq-1")
+
+    circuit = QuantumCircuit(1, 1)
+    circuit.h(0)
+    circuit.measure(0, 0)
+
+    job = backend.run(circuit, shots=1)
+    details = ws._client.services.jobs.get(
+        ws.subscription_id,
+        ws.resource_group,
+        ws.name,
+        job.id(),
+    )
+    assert details.session_id == "s-ionq-1"
+
+
+def test_quantinuum_request_construction_offline(monkeypatch: pytest.MonkeyPatch):
+    _patch_upload_input_data(monkeypatch)
+
+    ws = create_default_workspace()
+    provider = AzureQuantumProvider(workspace=ws)
+    backend = QuantinuumEmulatorBackend(name="quantinuum.sim.h2-1e", provider=provider)
+
+    # Quantinuum uses `count` as the provider-specific shots input param.
+    with pytest.warns(UserWarning, match="conflicts"):
+        input_params = backend._get_input_params({"count": 999}, shots=123)
+
+    job = backend._run(
+        job_name="offline-quantinuum",
+        input_data=b"OPENQASM 2.0;",
+        input_params=input_params,
+        metadata={"meta": "value"},
+        foo="bar",
+    )
+
+    details = ws._client.services.jobs.get(
+        ws.subscription_id,
+        ws.resource_group,
+        ws.name,
+        job.id(),
+    )
+
+    assert details.provider_id == "quantinuum"
+    assert details.target == "quantinuum.sim.h2-1e"
+    assert details.input_data_format == "honeywell.openqasm.v1"
+    assert details.output_data_format == "honeywell.quantum-results.v1"
+    assert details.input_params["count"] == 123
+    assert details.input_params["shots"] == 123
+    assert details.metadata.get("foo") == "bar"
+    assert details.metadata.get("meta") == "value"
+
+
+def test_rigetti_request_construction_offline(monkeypatch: pytest.MonkeyPatch):
+    pytest.importorskip("qsharp")
+    from azure.quantum.qiskit.backends.rigetti import RigettiSimulatorBackend
+    from azure.quantum.target.rigetti import RigettiTarget
+
+    _patch_upload_input_data(monkeypatch)
+
+    ws = create_default_workspace()
+    provider = AzureQuantumProvider(workspace=ws)
+    backend = RigettiSimulatorBackend(name=RigettiTarget.QVM.value, provider=provider)
+
+    with pytest.warns(UserWarning, match="subject to change"):
+        input_params = backend._get_input_params({"count": 10}, shots=None)
+
+    job = backend._run(
+        job_name="offline-rigetti",
+        input_data=b"; QIR placeholder",
+        input_params=input_params,
+        metadata={},
+        foo="bar",
+    )
+
+    details = ws._client.services.jobs.get(
+        ws.subscription_id,
+        ws.resource_group,
+        ws.name,
+        job.id(),
+    )
+
+    assert details.provider_id == "rigetti"
+    assert details.input_data_format == "qir.v1"
+    assert details.output_data_format == "microsoft.quantum-results.v2"
+    assert details.input_params["count"] == 10
+    assert details.input_params["shots"] == 10
+    assert details.metadata.get("foo") == "bar"
+
+
+def test_ionq_qir_request_construction_offline(monkeypatch: pytest.MonkeyPatch):
+    _patch_upload_input_data(monkeypatch)
+
+    ws = create_default_workspace()
+    provider = AzureQuantumProvider(workspace=ws)
+    backend = IonQSimulatorQirBackend(name="ionq.simulator", provider=provider)
+
+    input_params = backend._get_input_params({}, shots=7)
+
+    job = backend._run(
+        job_name="offline-ionq-qir",
+        input_data=b"; QIR placeholder",
+        input_params=input_params,
+        metadata={},
+        foo="bar",
+    )
+
+    details = ws._client.services.jobs.get(
+        ws.subscription_id,
+        ws.resource_group,
+        ws.name,
+        job.id(),
+    )
+
+    assert details.provider_id == "ionq"
+    assert details.target == "ionq.simulator"
+    assert details.input_data_format == "qir.v1"
+    assert details.output_data_format == "microsoft.quantum-results.v2"
+    assert details.input_params["shots"] == 7
+    assert details.metadata.get("foo") == "bar"
+
+
+def test_non_qir_target_capability_raises(monkeypatch: pytest.MonkeyPatch):
+    _patch_upload_input_data(monkeypatch)
+
+    ws = create_default_workspace()
+    provider = AzureQuantumProvider(workspace=ws)
+    backend = IonQSimulatorBackend(name="ionq.simulator", provider=provider)
+
+    with pytest.raises(ValueError, match="targetCapability"):
+        backend._run(
+            job_name="offline-ionq-invalid",
+            input_data=b"{}",
+            input_params={"targetCapability": "AdaptiveExecution"},
+            metadata={},
+        )
+
+
+def test_qir_target_profile_from_deprecated_target_capability():
+    pytest.importorskip("qsharp")
+    from qsharp import TargetProfile
+
+    backend = IonQSimulatorQirBackend(name="ionq.simulator", provider=None)
+
+    with pytest.warns(DeprecationWarning):
+        input_params = {"targetCapability": "AdaptiveExecution"}
+        profile = backend._get_target_profile(input_params)
+
+    assert profile == TargetProfile.Adaptive_RI
+    assert "targetCapability" not in input_params
+
+    input_params = {"target_profile": TargetProfile.Base}
+    profile = backend._get_target_profile(input_params)
+    assert profile == TargetProfile.Base
+    assert "target_profile" not in input_params
