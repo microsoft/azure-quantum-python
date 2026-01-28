@@ -2,7 +2,6 @@ $env:AZURE_QUANTUM_ENV = $null
 $env:AZURE_CLIENT_ID = $null
 $env:AZURE_CLIENT_SECRET = $null
 $env:AZURE_TENANT_ID = $null
-$env:AZURE_TEST_RUN_LIVE = $null
 $env:AZURE_QUANTUM_WORKSPACE_RG = $null
 $env:SUBSCRIPTION_ID = $null
 $env:AZURE_QUANTUM_WORKSPACE_NAME = $null

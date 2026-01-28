@@ -28,7 +28,7 @@ To run a specific test class, run `pytest [test_file.py]`.
 Example:
 
 ```bash
-pytest ./tests/unit/test_job.py
+pytest ./tests/unit/local/test_job_results.py
 ```
 
 To run a specific test case, run `pytest -k [test_method_name]`.
@@ -40,11 +40,11 @@ pytest -k test_job_refresh
 
 ### Qiskit multi-version matrix
 
-To replay the recorded Qiskit tests against both supported majors, run the tox environments from the `azure-quantum` directory using `tox -e py{310,311,312,313}-qiskit{1,2}`, for example:
+To run Qiskit tests against both supported majors, run the tox environments from the `azure-quantum` directory using `tox -e py{310,311,312,313}-qiskit{1,2}`, for example:
 
 ```bash
 tox -e py311-qiskit1
 tox -e py311-qiskit2
 ```
 
-Each command provisions an isolated virtual environment with the correct Qiskit version and executes `tests/unit/test_qiskit.py`.
+Each command provisions an isolated virtual environment with the correct Qiskit version and executes `tests/unit/local/test_qiskit_offline.py`.
