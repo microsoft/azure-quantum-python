@@ -121,7 +121,7 @@ extends:
               - script: |
                   cd $(Build.SourcesDirectory)/azure-quantum
                   pip install ".[cirq,qsharp,dev]"
-                  pytest --numprocesses $(PYTEST_MAX_PARALLEL_TESTS) --cov=azure.quantum --cov-append --junitxml test-output-azure-quantum-local.xml tests
+                  pytest --numprocesses $(PYTEST_MAX_PARALLEL_TESTS) --cov=azure.quantum --cov-append --junitxml test-output-azure-quantum.xml tests
                 displayName: Run azure-quantum tests
 
               - script: |
