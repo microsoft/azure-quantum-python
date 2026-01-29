@@ -71,9 +71,8 @@ jobs:
       - script: |
           cd $(Build.SourcesDirectory)/azure-quantum
           pip install ".[cirq,qsharp,dev]"
-          # Run local-only tests explicitly to include nested path under unit/local
-          pytest --numprocesses $(PYTEST_MAX_PARALLEL_TESTS) --cov=azure.quantum --cov-append --junitxml test-output-azure-quantum-local.xml tests/unit/local
-        displayName: Run azure-quantum local unit tests
+          pytest --numprocesses $(PYTEST_MAX_PARALLEL_TESTS) --cov=azure.quantum --cov-append --junitxml test-output-azure-quantum-local.xml tests
+        displayName: Run azure-quantum tests
 
       - script: |
           cd $(Build.SourcesDirectory)/azure-quantum

@@ -45,7 +45,7 @@ pytest
 To run the a specific unit test class, run:
 
 ```bash
-pytest ./tests/unit/test_job.py
+pytest ./tests/test_job_results.py
 ```
 
 To run the a specific unit test case, run:

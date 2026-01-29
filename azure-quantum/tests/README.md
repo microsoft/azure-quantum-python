@@ -28,7 +28,7 @@ To run a specific test class, run `pytest [test_file.py]`.
 Example:
 
 ```bash
-pytest ./tests/unit/local/test_job_results.py
+pytest ./tests/test_job_results.py
 ```
 
 To run a specific test case, run `pytest -k [test_method_name]`.
@@ -47,4 +47,4 @@ tox -e py311-qiskit1
 tox -e py311-qiskit2
 ```
 
-Each command provisions an isolated virtual environment with the correct Qiskit version and executes `tests/unit/local/test_qiskit_offline.py`.
+Each command provisions an isolated virtual environment with the correct Qiskit version and executes `tests/test_qiskit.py`.
