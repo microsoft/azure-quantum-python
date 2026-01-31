@@ -45,7 +45,7 @@ pytest
 To run the a specific unit test class, run:
 
 ```bash
-pytest ./tests/unit/test_job.py
+pytest ./tests/test_job_results.py
 ```
 
 To run the a specific unit test case, run:
@@ -53,12 +53,6 @@ To run the a specific unit test case, run:
 ```bash
 pytest -k test_job_refresh
 ```
-
-### Recordings
-
-To read more about how to create and update recordings for testing code that interacts with a live API, see the [README](./azure-quantum/tests/README.md).
-
-Before merging your code contribution to `main`, make sure that all new code is covered by unit tests and that the unit tests have up-to-date recordings. If you recorded your tests and then updated or refactored the code, remember to re-record the tests.
 
 ## Building the `azure-quantum` Package wheel
 
@@ -155,9 +149,9 @@ The `tox run -e generate` call will look for a `tsp-location.yaml` file in your 
 
 ### After re-generating the client make sure to:
 
-1. Re-run/Re-record all unit tests against the live-service (you can run [Record-Tests.ps1](./azure-quantum/eng/Record-Tests.ps1))
 1. If necessary, adjust the convenience layer for breaking-changes or to expose new features
-1. Add new unit-tests for new features and record them too
+1. Add new unit-tests for new features
+1. Update/add e2e tests in separate repo if necessary 
 
 ## Environment Variables ###
 
