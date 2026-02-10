@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 ##
-from typing import Any, Dict, Union
+from typing import Any, Dict, Union, Optional
 from warnings import warn
 
 from azure.quantum.job.job import Job
@@ -20,6 +20,9 @@ class Quantinuum(Target):
         "quantinuum.qpu.h2-2",
         "quantinuum.sim.h2-2sc",
         "quantinuum.sim.h2-2e",
+        "quantinuum.qpu.helios-1",
+        "quantinuum.sim.helios-1sc",
+        "quantinuum.sim.helios-1e",
     )
 
     _SHOTS_PARAM_NAME = "shots"
@@ -34,12 +37,17 @@ class Quantinuum(Target):
         provider_id: str = "quantinuum",
         content_type: str = "application/qasm",
         encoding: str = "",
-        target_profile: Union[str, "TargetProfile"] = "Adaptive_RI",
+        target_profile: Optional[Union[str, "TargetProfile"]] = None,
         **kwargs
     ):
         if capability:
             msg = "The 'capability' parameter is not used for the Quantinuum target."
             warn(msg, DeprecationWarning)
+        if target_profile is None:
+            if ".h2-" in name:
+                target_profile = "Adaptive_RI"
+            else:
+                target_profile = "Adaptive_RIF"
         super().__init__(
             workspace=workspace,
             name=name,
