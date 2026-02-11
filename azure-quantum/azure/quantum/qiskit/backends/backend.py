@@ -290,7 +290,7 @@ class AzureBackendBase(Backend, SessionHost):
 
     # Name of the provider's input parameter which specifies number of shots for a submitted job.
     # If None, backend will not pass this input parameter. 
-    _SHOTS_PARAM_NAME = None
+    _SHOTS_PARAM_NAME = "shots"
 
     @abstractmethod
     def __init__(
@@ -450,12 +450,6 @@ class AzureBackendBase(Backend, SessionHost):
             # If nothing is found, try to get from default values.
             if final_shots is None:
                 final_shots = input_params.get(self.__class__._SHOTS_PARAM_NAME)
-
-            # Also add all possible shots options into input_params to make sure 
-            # that all backends covered. 
-            # TODO: Double check all backends for shots options in order to remove this extra check.
-            input_params["shots"] = final_shots
-            input_params["count"] = final_shots
 
             # Safely removing "shots" and "count" from options as they will be passed in input_params now.
             _ = options.pop("shots", None)

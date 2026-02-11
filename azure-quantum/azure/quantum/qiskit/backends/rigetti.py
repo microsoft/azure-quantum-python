@@ -26,7 +26,7 @@ _DEFAULT_SHOTS_COUNT = 500
 class RigettiBackend(AzureQirBackend):
     """Base class for interfacing with a Rigetti backend in Azure Quantum"""
 
-    _SHOTS_PARAM_NAME = "count"
+    _SHOTS_PARAM_NAME = "shots"
 
     @abstractmethod
     def __init__(
