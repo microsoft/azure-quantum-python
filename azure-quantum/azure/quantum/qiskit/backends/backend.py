@@ -209,7 +209,7 @@ class AzureBackendConfig:
         try:
             return self.__dict__[name]
         except KeyError as exc:
-            if name in self.metadata:
+            if "metadata" in self.__dict__ and name in self.metadata:
                 return self.metadata[name]
             raise AttributeError(
                 f"'{type(self).__name__}' object has no attribute '{name}'"
