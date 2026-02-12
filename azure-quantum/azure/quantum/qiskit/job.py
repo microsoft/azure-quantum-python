@@ -115,14 +115,14 @@ class AzureQuantumJob(JobV1):
         return None
 
     def _shots_count(self):
-        # Some providers use 'count', some other 'shots', give preference to 'count':
+        # Some providers use 'count', some other 'shots', give preference to 'shots':
         input_params = self._azure_job.details.input_params
         options = self.backend().options
         shots = \
-            input_params["count"] if "count" in input_params else \
             input_params["shots"] if "shots" in input_params else \
-            options.get("count") if "count" in vars(options) else \
-            options.get("shots")
+            input_params["count"] if "count" in input_params else \
+            options.get("shots") if "shots" in vars(options) else \
+            options.get("count")
 
         return shots
 

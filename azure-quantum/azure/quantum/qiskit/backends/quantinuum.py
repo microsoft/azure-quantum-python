@@ -67,7 +67,7 @@ def _get_n_qubits(name):
         UserWarning(f"Number of qubits not known for target {name}. Defaulting to 20."))
     return 20
 
-_QUANTINUUM_COUNT_INPUT_PARAM_NAME = "count"
+_QUANTINUUM_COUNT_INPUT_PARAM_NAME = "shots"
 _DEFAULT_SHOTS_COUNT = 500
 
 class QuantinuumQirBackendBase(AzureQirBackend):
