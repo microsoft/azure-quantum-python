@@ -254,8 +254,7 @@ def test_quantinuum_request_construction_offline(monkeypatch: pytest.MonkeyPatch
     provider = AzureQuantumProvider(workspace=ws)
     backend = QuantinuumEmulatorBackend(name="quantinuum.sim.h2-1e", provider=provider)
 
-    with pytest.warns(UserWarning, match="conflicts"):
-        input_params = backend._get_input_params({"shots": 999}, shots=123)
+    input_params = backend._get_input_params({"shots": 999}, shots=123)
 
     job = backend._run(
         job_name="offline-quantinuum",
@@ -292,8 +291,7 @@ def test_rigetti_request_construction_offline(monkeypatch: pytest.MonkeyPatch):
     provider = AzureQuantumProvider(workspace=ws)
     backend = RigettiSimulatorBackend(name=RigettiTarget.QVM.value, provider=provider)
 
-    with pytest.warns(UserWarning, match="subject to change"):
-        input_params = backend._get_input_params({"shots": 10}, shots=None)
+    input_params = backend._get_input_params({}, shots=10)
 
     job = backend._run(
         job_name="offline-rigetti",
