@@ -824,29 +824,3 @@ class AzureBackend(AzureBackendBase):
         logger.info(input_data)
 
         return job
-
-def _get_shots_or_deprecated_count_input_param(
-        param_name: str,
-        shots: int = None, 
-        count: int = None,
-    ) -> Optional[int]:
-    """
-    This helper function checks if the deprecated 'count' option is specified.
-    In earlier versions it was possible to pass this option to specify shots number for a job,
-    but now we only check for it for compatibility reasons.  
-    """
-
-    final_shots = None
-
-    if shots is not None:
-        final_shots = shots
-    
-    elif count is not None:
-        final_shots = count
-        warnings.warn(
-            "The 'count' parameter will be deprecated. "
-            f"Please, use '{param_name}' parameter instead.",
-            category=DeprecationWarning,
-        )
-    
-    return final_shots
