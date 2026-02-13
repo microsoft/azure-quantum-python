@@ -25,6 +25,7 @@ from qiskit import QuantumCircuit, transpile
 
 from azure.quantum.qiskit.job import AzureQuantumJob
 from azure.quantum.qiskit.backends.backend import QIR_BASIS_GATES
+from azure.quantum.qiskit.backends.generic import AzureGenericQirBackend
 from azure.quantum.qiskit.backends.ionq import (
     IonQSimulatorBackend,
     IonQSimulatorQirBackend,
@@ -35,8 +36,49 @@ from azure.quantum.qiskit.backends.quantinuum import (
     QuantinuumEmulatorBackend,
     QuantinuumEmulatorQirBackend,
 )
+from azure.quantum._client.models import TargetStatus
 
-from mock_client import create_default_workspace
+from mock_client import create_default_workspace, _paged
+
+from types import SimpleNamespace
+
+
+def _seed_workspace_target(
+    monkeypatch: pytest.MonkeyPatch,
+    ws,
+    *,
+    provider_id: str,
+    target_id: str,
+    num_qubits: int | None = None,
+) -> None:
+    """Inject a provider+target into the offline Workspace mock.
+
+    The Qiskit provider discovers targets via `Workspace._get_target_status()`,
+    which iterates `ws._client.services.providers.list()`.
+    """
+
+    # `AzureQuantumProvider.__init__` appends a user agent to the Workspace, which
+    # recreates the underlying client (and would wipe our patched providers.list).
+    # For this offline-only test, keep the existing mock client.
+    if hasattr(ws, "_connection_params") and hasattr(
+        ws._connection_params, "on_new_client_request"
+    ):
+        ws._connection_params.on_new_client_request = None
+
+    target_status = TargetStatus(
+        {
+            "id": target_id,
+            "currentAvailability": "Available",
+            "averageQueueTime": 0,
+            "numQubits": num_qubits,
+        }
+    )
+    provider = SimpleNamespace(id=provider_id, targets=[target_status])
+    monkeypatch.setattr(
+        ws._client.services.providers,
+        "list",
+        lambda *args, **kwargs: _paged([provider]),
+    )
 
 
 def _patch_upload_input_data(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -385,3 +427,45 @@ def test_qir_target_profile_from_deprecated_target_capability():
     profile = backend._get_target_profile(input_params)
     assert profile == TargetProfile.Base
     assert "target_profile" not in input_params
+
+
+def test_generic_qir_backend_created_for_unknown_workspace_target(
+    monkeypatch: pytest.MonkeyPatch,
+):
+    _patch_upload_input_data(monkeypatch)
+
+    ws = create_default_workspace()
+    _seed_workspace_target(
+        monkeypatch,
+        ws,
+        provider_id="acme",
+        target_id="acme.qpu",
+        num_qubits=5,
+    )
+
+    provider = AzureQuantumProvider(workspace=ws)
+    backend = provider.get_backend("acme.qpu")
+
+    assert isinstance(backend, AzureGenericQirBackend)
+
+    # Avoid calling `backend.run()` (requires qsharp for QIR generation).
+    input_params = backend._get_input_params({}, shots=11)
+    job = backend._run(
+        job_name="offline-generic",
+        input_data=b"; QIR placeholder",
+        input_params=input_params,
+        metadata={},
+    )
+
+    details = ws._client.services.jobs.get(
+        ws.subscription_id,
+        ws.resource_group,
+        ws.name,
+        job.id(),
+    )
+
+    assert details.provider_id == "acme"
+    assert details.target == "acme.qpu"
+    assert details.input_data_format == "qir.v1"
+    assert details.output_data_format == "microsoft.quantum-results.v2"
+    assert details.input_params["shots"] == 11
