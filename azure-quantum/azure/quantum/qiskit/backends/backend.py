@@ -46,6 +46,7 @@ To install run: pip install azure-quantum[qiskit]"
 
 try:  # Qiskit 1.x legacy support
     from qiskit.providers.models import BackendConfiguration  # type: ignore
+
     BackendConfigurationType = BackendConfiguration
 
     from qiskit.qobj import QasmQobj, PulseQobj  # type: ignore
@@ -263,15 +264,11 @@ class AzureBackendConfig:
         )
 
     @classmethod
-    def from_backend_configuration(
-        cls, configuration: Any
-    ) -> "AzureBackendConfig":
+    def from_backend_configuration(cls, configuration: Any) -> "AzureBackendConfig":
         return cls.from_dict(configuration.to_dict())
 
 
-def _ensure_backend_config(
-    configuration: Any
-) -> AzureBackendConfig:
+def _ensure_backend_config(configuration: Any) -> AzureBackendConfig:
     if isinstance(configuration, AzureBackendConfig):
         return configuration
 
@@ -289,15 +286,12 @@ def _ensure_backend_config(
 class AzureBackendBase(Backend, SessionHost):
 
     # Name of the provider's input parameter which specifies number of shots for a submitted job.
-    # If None, backend will not pass this input parameter. 
+    # If None, backend will not pass this input parameter.
     _SHOTS_PARAM_NAME = None
 
     @abstractmethod
     def __init__(
-        self,
-        configuration: Any,
-        provider: "AzureQuantumProvider" = None,
-        **fields
+        self, configuration: Any, provider: "AzureQuantumProvider" = None, **fields
     ):
         if configuration is None:
             raise ValueError("Backend configuration is required for Azure backends")
@@ -339,19 +333,19 @@ class AzureBackendBase(Backend, SessionHost):
             target.add_instruction(instruction)
 
         return target
-    
+
     @abstractmethod
     def run(
         self,
         run_input: Union[QuantumCircuit, List[QuantumCircuit]] = [],
-        shots: int = None, 
+        shots: int = None,
         **options,
     ) -> AzureQuantumJob:
         """Run on the backend.
 
         This method returns a
         :class:`~azure.quantum.qiskit.job.AzureQuantumJob` object
-        that runs circuits. 
+        that runs circuits.
 
         Args:
             run_input (QuantumCircuit or List[QuantumCircuit]): An individual or a
@@ -399,6 +393,7 @@ class AzureBackendBase(Backend, SessionHost):
     @property
     def max_circuits(self) -> Optional[int]:
         return 1
+
     def retrieve_job(self, job_id) -> AzureQuantumJob:
         """Returns the Job instance associated with the given id."""
         return self.provider.get_job(job_id)
@@ -415,8 +410,10 @@ class AzureBackendBase(Backend, SessionHost):
         output_data_format = options.pop("output_data_format", azure_defined_override)
 
         return output_data_format
-    
-    def _get_input_params(self, options: Dict[str, Any], shots: int = None) -> Dict[str, Any]:
+
+    def _get_input_params(
+        self, options: Dict[str, Any], shots: int = None
+    ) -> Dict[str, Any]:
         # Backend options are mapped to input_params.
         input_params: Dict[str, Any] = vars(self.options).copy()
 
@@ -426,7 +423,7 @@ class AzureBackendBase(Backend, SessionHost):
 
             final_shots = None
             # First we check for the explicitly specified 'shots' parameter, then for a provider-specific
-            # field in options, then for a backend's default value. 
+            # field in options, then for a backend's default value.
 
             # Warn about options conflict, default to 'shots'.
             if shots is not None and options_shots is not None:
@@ -436,7 +433,7 @@ class AzureBackendBase(Backend, SessionHost):
                     stacklevel=3,
                 )
                 final_shots = shots
-            
+
             elif shots is not None:
                 final_shots = shots
             elif options_shots is not None:
@@ -446,13 +443,13 @@ class AzureBackendBase(Backend, SessionHost):
                     stacklevel=3,
                 )
                 final_shots = options_shots
-            
+
             # If nothing is found, try to get from default values.
             if final_shots is None:
                 final_shots = input_params.get(self.__class__._SHOTS_PARAM_NAME)
 
-            # Also add all possible shots options into input_params to make sure 
-            # that all backends covered. 
+            # Also add all possible shots options into input_params to make sure
+            # that all backends covered.
             # TODO: Double check all backends for shots options in order to remove this extra check.
             input_params["shots"] = final_shots
             input_params["count"] = final_shots
@@ -462,7 +459,6 @@ class AzureBackendBase(Backend, SessionHost):
             _ = options.pop("count", None)
 
             input_params[self.__class__._SHOTS_PARAM_NAME] = final_shots
-            
 
         if "items" in options:
             input_params["items"] = options.pop("items")
@@ -493,10 +489,7 @@ class AzureBackendBase(Backend, SessionHost):
         # Anything left here is an invalid parameter with the user attempting to use
         # deprecated parameters.
         targetCapability = input_params.get("targetCapability", None)
-        if (
-            targetCapability not in [None, "qasm"]
-            and input_data_format != "qir.v1"
-        ):
+        if targetCapability not in [None, "qasm"] and input_data_format != "qir.v1":
             message = "The targetCapability parameter has been deprecated and is only supported for QIR backends."
             message += os.linesep
             message += "To find a QIR capable backend, use the following code:"
@@ -506,7 +499,6 @@ class AzureBackendBase(Backend, SessionHost):
             )
             raise ValueError(message)
 
-        
         # Update metadata with all remaining options values, then clear options
         # JobDetails model will error if unknown keys are passed down which
         # can happen with estiamtor and backend wrappers
@@ -592,14 +584,14 @@ class AzureQirBackend(AzureBackendBase):
             "output_data_format": "microsoft.quantum-results.v2",
             "is_default": True,
         }
-    
+
     def _basis_gates(self) -> List[str]:
         return QIR_BASIS_GATES
 
     def run(
         self,
         run_input: Union[QuantumCircuit, List[QuantumCircuit]] = [],
-        shots: int = None, 
+        shots: int = None,
         **options,
     ) -> AzureQuantumJob:
         """Run on the backend.
@@ -638,7 +630,7 @@ class AzureQirBackend(AzureBackendBase):
 
         # config normalization
         input_params = self._get_input_params(options, shots=shots)
-        
+
         shots_count = None
 
         if self._can_send_shots_input_param():
@@ -664,10 +656,9 @@ class AzureQirBackend(AzureBackendBase):
         return {
             "qiskit": str(True),
             "name": circuit.name,
-            "num_qubits": circuit.num_qubits,
+            "num_qubits": str(circuit.num_qubits),
             "metadata": json.dumps(circuit.metadata),
         }
-
 
     def _get_qir_str(
         self, circuit: QuantumCircuit, target_profile: TargetProfile, **kwargs
@@ -685,9 +676,8 @@ class AzureQirBackend(AzureBackendBase):
         )
 
         qir_str = backend.qir(circuit)
-        
-        return qir_str
 
+        return qir_str
 
     def _translate_input(
         self, circuit: QuantumCircuit, input_params: Dict[str, Any]
@@ -709,7 +699,7 @@ class AzureQirBackend(AzureBackendBase):
                 category=DeprecationWarning,
                 stacklevel=3,
             )
-    
+
         qir_str = self._get_qir_str(
             circuit, target_profile, skip_transpilation=skip_transpilation
         )
@@ -769,9 +759,9 @@ class AzureBackend(AzureBackendBase):
     def _prepare_job_metadata(self, circuit):
         """Returns the metadata relative to the given circuit that will be attached to the Job"""
         return {
-            "qiskit": True,
+            "qiskit": str(True),
             "name": circuit.name,
-            "num_qubits": circuit.num_qubits,
+            "num_qubits": str(circuit.num_qubits),
             "metadata": json.dumps(circuit.metadata),
         }
 
@@ -780,12 +770,12 @@ class AzureBackend(AzureBackendBase):
         pass
 
     def run(
-            self, 
-            run_input: Union[QuantumCircuit, List[QuantumCircuit]] = [],
-            shots: int = None,
-            **options,
-        ):
-        """Submits the given circuit to run on an Azure Quantum backend.""" 
+        self,
+        run_input: Union[QuantumCircuit, List[QuantumCircuit]] = [],
+        shots: int = None,
+        **options,
+    ):
+        """Submits the given circuit to run on an Azure Quantum backend."""
         circuit = self._normalize_run_input_params(run_input, **options)
         options.pop("run_input", None)
         options.pop("circuit", None)
@@ -831,22 +821,23 @@ class AzureBackend(AzureBackendBase):
 
         return job
 
+
 def _get_shots_or_deprecated_count_input_param(
-        param_name: str,
-        shots: int = None, 
-        count: int = None,
-    ) -> Optional[int]:
+    param_name: str,
+    shots: int = None,
+    count: int = None,
+) -> Optional[int]:
     """
     This helper function checks if the deprecated 'count' option is specified.
     In earlier versions it was possible to pass this option to specify shots number for a job,
-    but now we only check for it for compatibility reasons.  
+    but now we only check for it for compatibility reasons.
     """
 
     final_shots = None
 
     if shots is not None:
         final_shots = shots
-    
+
     elif count is not None:
         final_shots = count
         warnings.warn(
@@ -854,5 +845,5 @@ def _get_shots_or_deprecated_count_input_param(
             f"Please, use '{param_name}' parameter instead.",
             category=DeprecationWarning,
         )
-    
+
     return final_shots
