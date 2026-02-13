@@ -171,6 +171,11 @@ def test_qir_to_qiskit_bitstring_roundtrip():
     assert AzureQuantumJob._qir_to_qiskit_bitstring(bits) == bits
 
 
+def test_qir_to_qiskit_bitstring_maps_lost_qubits_to_zero():
+    assert AzureQuantumJob._qir_to_qiskit_bitstring([0, 1, 2, "-"]) == "0100"
+    assert AzureQuantumJob._qir_to_qiskit_bitstring('[0, 1, 2, "-"]') == "0100"
+
+
 def test_ionq_qir_transpile_decomposes_non_qir_gates():
     backend = IonQSimulatorQirBackend(name="ionq.simulator", provider=None)
     circuit, non_qir_ops = _build_non_qir_test_circuit()

@@ -252,8 +252,21 @@ class AzureQuantumJob(JobV1):
     @staticmethod
     def _qir_to_qiskit_bitstring(obj):
         """Convert the data structure from Azure into the "schema" used by Qiskit"""
-        if isinstance(obj, str) and not re.match(r"[\d\s]+$", obj):
-            obj = ast.literal_eval(obj)
+
+        def _normalize_lost_qubits(bitstring: str) -> str:
+            # Some targets may represent lost qubits using non-binary markers.
+            # Map those to '0' so callers get a valid Qiskit bitstring.
+            return bitstring.replace("-", "0").replace("2", "0")
+
+        if isinstance(obj, str):
+            if not re.match(r"[\d\s]+$", obj):
+                try:
+                    obj = ast.literal_eval(obj)
+                except Exception:
+                    # Fall back to treating it as a raw bitstring-like key.
+                    return _normalize_lost_qubits(obj)
+            else:
+                return _normalize_lost_qubits(obj)
 
         if isinstance(obj, tuple):
             # the outermost implied container is a tuple, and each item is
@@ -263,9 +276,9 @@ class AzureQuantumJob(JobV1):
             )
         elif isinstance(obj, list):
             # a list is for an individual classical register
-            return "".join([str(bit) for bit in obj])
+            return _normalize_lost_qubits("".join([str(bit) for bit in obj]))
         else:
-            return str(obj)
+            return _normalize_lost_qubits(str(obj))
 
     def _format_microsoft_results(self, sampler_seed=None):
         """Translate Microsoft's job results histogram into a format that can be consumed by qiskit libraries."""
