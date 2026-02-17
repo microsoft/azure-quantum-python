@@ -176,6 +176,64 @@ def test_qir_to_qiskit_bitstring_maps_lost_qubits_to_zero():
     assert AzureQuantumJob._qir_to_qiskit_bitstring('[0, 1, 2, "-"]') == "0100"
 
 
+def test_microsoft_v1_results_merge_colliding_bitstrings():
+    ws = create_default_workspace()
+    provider = AzureQuantumProvider(workspace=ws)
+    backend = SimpleNamespace(
+        name="dummy",
+        version="0.0",
+        provider=provider,
+        options=SimpleNamespace(shots=100),
+        configuration=lambda: SimpleNamespace(simulator=False),
+    )
+    azure_job = SimpleNamespace(
+        id="job-1",
+        details=SimpleNamespace(input_params={"shots": 100}),
+        get_results=lambda: {
+            # These two different raw outcomes collide once we map lost qubits.
+            "[0, 1, 2, 0]": 0.30,
+            "[0, 1, 0, 0]": 0.20,
+            "[1, 1, 0, 0]": 0.50,
+        },
+    )
+
+    job = AzureQuantumJob(backend, azure_job=azure_job)
+    formatted = job._format_microsoft_results()
+
+    assert formatted["probabilities"]["0100"] == pytest.approx(0.50)
+    assert formatted["counts"]["0100"] == 50
+
+
+def test_microsoft_v2_results_merge_colliding_bitstrings():
+    ws = create_default_workspace()
+    provider = AzureQuantumProvider(workspace=ws)
+    backend = SimpleNamespace(
+        name="dummy",
+        version="0.0",
+        provider=provider,
+        options=SimpleNamespace(shots=50),
+        configuration=lambda: SimpleNamespace(simulator=False),
+    )
+    azure_job = SimpleNamespace(
+        id="job-2",
+        details=SimpleNamespace(input_params={"shots": 50}),
+        get_results_histogram=lambda: {
+            "[0, 1, 2, 0]": {"count": 30},
+            "[0, 1, 0, 0]": {"count": 20},
+        },
+        get_results_shots=lambda: ["[0, 1, 2, 0]"] * 30 + ["[0, 1, 0, 0]"] * 20,
+    )
+
+    job = AzureQuantumJob(backend, azure_job=azure_job)
+    results = job._translate_microsoft_v2_results()
+
+    assert len(results) == 1
+    total_count, formatted = results[0]
+    assert total_count == 50
+    assert formatted["probabilities"]["0100"] == pytest.approx(1.0)
+    assert formatted["counts"]["0100"] == 50
+
+
 def test_ionq_qir_transpile_decomposes_non_qir_gates():
     backend = IonQSimulatorQirBackend(name="ionq.simulator", provider=None)
     circuit, non_qir_ops = _build_non_qir_test_circuit()

@@ -288,11 +288,12 @@ class AzureQuantumJob(JobV1):
         counts = {}
         probabilities = {}
 
-        for key in histogram.keys():
+        for key, value in histogram.items():
             bitstring = AzureQuantumJob._qir_to_qiskit_bitstring(key)
-
-            value = histogram[key]
-            probabilities[bitstring] = value
+            # When normalizing lost qubits (e.g. mapping '-'/'2' -> '0'), multiple
+            # raw outcomes can map to the same Qiskit bitstring. Accumulate to avoid
+            # dropping probability mass.
+            probabilities[bitstring] = probabilities.get(bitstring, 0) + value
 
         if self.backend().configuration().simulator:
             counts = self._draw_random_sample(sampler_seed, probabilities, shots)
@@ -343,17 +344,19 @@ class AzureQuantumJob(JobV1):
         histograms = []
 
         for histogram, shots in zip(az_result_histogram, az_result_shots):
-            counts = {}
-            probabilities = {}
+            counts = defaultdict(int)
 
             total_count = len(shots)
 
             for display, result in histogram.items():
                 bitstring = AzureQuantumJob._qir_to_qiskit_bitstring(display)
                 count = result["count"]
-                probability = count / total_count
-                counts[bitstring] = count
-                probabilities[bitstring] = probability
+                # Normalize collisions from lost-qubit markers (e.g. '-'/'2').
+                counts[bitstring] += count
+
+            probabilities = {
+                bitstring: count / total_count for bitstring, count in counts.items()
+            }
 
             formatted_shots = [
                 AzureQuantumJob._qir_to_qiskit_bitstring(shot) for shot in shots
@@ -363,7 +366,7 @@ class AzureQuantumJob(JobV1):
                 (
                     total_count,
                     {
-                        "counts": counts,
+                        "counts": dict(counts),
                         "probabilities": probabilities,
                         "memory": formatted_shots,
                     },
