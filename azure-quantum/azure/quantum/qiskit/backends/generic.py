@@ -50,9 +50,6 @@ class AzureGenericQirBackend(AzureQirBackend):
     ):
         self._provider_id = provider_id
 
-        azure_config: Dict[str, Any] = self._azure_config()
-        azure_config.update({"provider_id": provider_id, "is_default": False})
-
         config = AzureBackendConfig.from_dict(
             {
                 "backend_name": name,
@@ -69,7 +66,7 @@ class AzureGenericQirBackend(AzureQirBackend):
                 "max_shots": None,
                 "open_pulse": False,
                 "gates": [{"name": "TODO", "parameters": [], "qasm_def": "TODO"}],
-                "azure": azure_config,
+                "azure": self._azure_config(),
             }
         )
 
@@ -83,3 +80,8 @@ class AzureGenericQirBackend(AzureQirBackend):
             **{cls._SHOTS_PARAM_NAME: _DEFAULT_SHOTS_COUNT},
             target_profile=TargetProfile.Base,
         )
+
+    def _azure_config(self) -> Dict[str, str]:
+        config = super()._azure_config()
+        config.update({"provider_id": self._provider_id, "is_default": False})
+        return config
