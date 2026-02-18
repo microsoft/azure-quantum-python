@@ -296,9 +296,8 @@ def test_quantinuum_request_construction_offline(monkeypatch: pytest.MonkeyPatch
     provider = AzureQuantumProvider(workspace=ws)
     backend = QuantinuumEmulatorBackend(name="quantinuum.sim.h2-1e", provider=provider)
 
-    # Quantinuum uses `count` as the provider-specific shots input param.
     with pytest.warns(UserWarning, match="conflicts"):
-        input_params = backend._get_input_params({"count": 999}, shots=123)
+        input_params = backend._get_input_params({"shots": 999}, shots=123)
 
     job = backend._run(
         job_name="offline-quantinuum",
@@ -319,7 +318,6 @@ def test_quantinuum_request_construction_offline(monkeypatch: pytest.MonkeyPatch
     assert details.target == "quantinuum.sim.h2-1e"
     assert details.input_data_format == "honeywell.openqasm.v1"
     assert details.output_data_format == "honeywell.quantum-results.v1"
-    assert details.input_params["count"] == 123
     assert details.input_params["shots"] == 123
     assert details.metadata.get("foo") == "bar"
     assert details.metadata.get("meta") == "value"
@@ -337,7 +335,7 @@ def test_rigetti_request_construction_offline(monkeypatch: pytest.MonkeyPatch):
     backend = RigettiSimulatorBackend(name=RigettiTarget.QVM.value, provider=provider)
 
     with pytest.warns(UserWarning, match="subject to change"):
-        input_params = backend._get_input_params({"count": 10}, shots=None)
+        input_params = backend._get_input_params({"shots": 10}, shots=None)
 
     job = backend._run(
         job_name="offline-rigetti",
@@ -357,7 +355,6 @@ def test_rigetti_request_construction_offline(monkeypatch: pytest.MonkeyPatch):
     assert details.provider_id == "rigetti"
     assert details.input_data_format == "qir.v1"
     assert details.output_data_format == "microsoft.quantum-results.v2"
-    assert details.input_params["count"] == 10
     assert details.input_params["shots"] == 10
     assert details.metadata.get("foo") == "bar"
 

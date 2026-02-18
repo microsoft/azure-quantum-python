@@ -15,7 +15,6 @@ from .backend import (
     AzureBackendConfig,
     AzureQirBackend,
     _ensure_backend_config,
-    _get_shots_or_deprecated_count_input_param,
 )
 from qiskit.providers import Options
 
@@ -84,18 +83,7 @@ class IonQQirBackendBase(AzureQirBackend):
         shots: int = None,
         **options,
     ) -> AzureQuantumJob:
-        
-        # In earlier versions, backends for all providers accepted the 'count' option,
-        # but now we accept it only for a compatibility reasons and do not recommend using it.
-        count = options.pop("count", None)
-
-        final_shots = _get_shots_or_deprecated_count_input_param(
-            param_name=self.__class__._SHOTS_PARAM_NAME,
-            shots=shots,
-            count=count,
-        )
-        
-        return super().run(run_input, shots=final_shots, **options)
+        return super().run(run_input, shots=shots, **options)
 
 
 class IonQSimulatorQirBackend(IonQQirBackendBase):
@@ -207,18 +195,7 @@ class IonQBackend(AzureBackend):
         shots: int = None,
         **options,
     ) -> AzureQuantumJob:
-        
-        # In earlier versions, backends for all providers accepted the 'count' option,
-        # but now we accept it only for a compatibility reasons and do not recommend using it.
-        count = options.pop("count", None)
-
-        final_shots = _get_shots_or_deprecated_count_input_param(
-            param_name=self.__class__._SHOTS_PARAM_NAME,
-            shots=shots,
-            count=count,
-        )
-        
-        return super().run(run_input, shots=final_shots, **options)
+        return super().run(run_input, shots=shots, **options)
 
     @classmethod
     def _default_options(cls):
