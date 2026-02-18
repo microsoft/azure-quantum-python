@@ -46,9 +46,7 @@ from azure.quantum._constants import (
     ConnectionConstants,
 )
 from azure.quantum.storage import (
-    create_container_using_client,
     get_container_uri,
-    ContainerClient
 )
 from azure.quantum._mgmt_client import WorkspaceMgmtClient
 if TYPE_CHECKING:
