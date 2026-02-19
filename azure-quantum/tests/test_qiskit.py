@@ -175,6 +175,20 @@ def test_qir_to_qiskit_bitstring_maps_lost_qubits_to_zero():
     assert AzureQuantumJob._qir_to_qiskit_bitstring([0, 1, 2, "-"]) == "0100"
     assert AzureQuantumJob._qir_to_qiskit_bitstring('[0, 1, 2, "-"]') == "0100"
 
+    # Callers can also opt out of normalization to detect qubit loss.
+    assert (
+        AzureQuantumJob._qir_to_qiskit_bitstring(
+            [0, 1, 2, "-"], normalize_lost_qubits=False
+        )
+        == "012-"
+    )
+    assert (
+        AzureQuantumJob._qir_to_qiskit_bitstring(
+            '[0, 1, 2, "-"]', normalize_lost_qubits=False
+        )
+        == "012-"
+    )
+
 
 def test_microsoft_v1_results_merge_colliding_bitstrings():
     ws = create_default_workspace()
@@ -202,6 +216,13 @@ def test_microsoft_v1_results_merge_colliding_bitstrings():
 
     assert formatted["probabilities"]["0100"] == pytest.approx(0.50)
     assert formatted["counts"]["0100"] == 50
+
+    # Raw probabilities preserve lost-qubit markers and avoid collisions.
+    assert formatted["raw_probabilities"]["0120"] == pytest.approx(0.30)
+    assert formatted["raw_probabilities"]["0100"] == pytest.approx(0.20)
+    assert formatted["raw_probabilities"]["1100"] == pytest.approx(0.50)
+    assert formatted["raw_counts"]["0120"] == 30
+    assert formatted["raw_counts"]["0100"] == 20
 
 
 def test_microsoft_v2_results_merge_colliding_bitstrings():
@@ -232,6 +253,12 @@ def test_microsoft_v2_results_merge_colliding_bitstrings():
     assert total_count == 50
     assert formatted["probabilities"]["0100"] == pytest.approx(1.0)
     assert formatted["counts"]["0100"] == 50
+
+    # Raw counts keep the original distinct outcomes.
+    assert formatted["raw_counts"]["0120"] == 30
+    assert formatted["raw_counts"]["0100"] == 20
+    assert formatted["raw_probabilities"]["0120"] == pytest.approx(0.60)
+    assert formatted["raw_probabilities"]["0100"] == pytest.approx(0.40)
 
 
 def test_ionq_qir_transpile_decomposes_non_qir_gates():
