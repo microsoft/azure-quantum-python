@@ -122,11 +122,19 @@ class AzureQuantumJob(JobV1):
         # Some providers use 'count', some other 'shots', give preference to 'shots':
         input_params = self._azure_job.details.input_params
         options = self.backend().options
-        shots = \
-            input_params["shots"] if "shots" in input_params else \
-            input_params["count"] if "count" in input_params else \
-            options.get("shots") if "shots" in vars(options) else \
-            options.get("count")
+        shots = (
+            input_params["shots"]
+            if "shots" in input_params
+            else (
+                input_params["count"]
+                if "count" in input_params
+                else (
+                    options.get("shots")
+                    if "shots" in vars(options)
+                    else options.get("count")
+                )
+            )
+        )
 
         return shots
 
