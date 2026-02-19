@@ -211,6 +211,7 @@ target '{self.name}' of provider '{self.provider_id}' not found."
         shots: int = None,
         input_params: Union[Dict[str, Any], InputParams, None] = None,
         priority: Optional[str] = None,
+        tags: Optional[list[str]] = None,
         **kwargs
     ) -> Job:
         """Submit input data and return Job.
@@ -228,6 +229,8 @@ target '{self.name}' of provider '{self.provider_id}' not found."
         :type input_params: Dict[str, Any]
         :param priority: Priority of job.
         :type priority: str
+        :param tags: Tags for the job.
+        :type tags: list[str]
         :return: Azure Quantum job
         :rtype: azure.quantum.job.Job
         """
@@ -324,6 +327,7 @@ target '{self.name}' of provider '{self.provider_id}' not found."
             input_params=input_params,
             session_id=self.get_latest_session_id(),
             priority=priority,
+            tags=tags,
             **kwargs
         )
 
