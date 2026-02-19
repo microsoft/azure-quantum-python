@@ -134,6 +134,15 @@ see https://aka.ms/AQ/Docs/AddProvider"
         status_by_target = self._get_workspace_target_status_map(name, provider_id)
         allowed_targets: List[Tuple[str, str]] = list(status_by_target.keys())
 
+        # If a user asks for a specific backend name and it isn't installed,
+        # raise a clear error. With generic backends, a name can still be valid
+        # even if it isn't installed, as long as the target exists in the workspace.
+        if name and name not in self._backends and not allowed_targets:
+            provider_clause = f" for provider_id '{provider_id}'" if provider_id else ""
+            raise QiskitBackendNotFoundError(
+                f"The '{name}' backend is not installed in your system, nor is it a valid target{provider_clause} in your Azure Quantum workspace."
+            )
+
         workspace_allowed = lambda backend: self._is_available_in_ws(
             allowed_targets, backend
         )
