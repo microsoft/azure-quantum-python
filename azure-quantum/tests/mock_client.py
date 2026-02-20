@@ -11,6 +11,7 @@ without making network calls. Returns real SDK models and ItemPaged.
 from typing import List, Optional
 from datetime import datetime, UTC, timedelta
 
+from azure.core.exceptions import HttpResponseError
 from azure.core.paging import ItemPaged
 from azure.quantum.workspace import Workspace
 from types import SimpleNamespace
@@ -198,6 +199,21 @@ class JobsOperations:
             if jd.id == job_id:
                 jd.status = "Cancelled"
                 return None
+        raise KeyError(job_id)
+
+    def cancel(
+        self,
+        subscription_id: str,
+        resource_group_name: str,
+        workspace_name: str,
+        job_id: str,
+    ) -> None:
+        for jd in self._store:
+            if jd.id == job_id:
+                jd.status = "Cancelled"
+                error = HttpResponseError("204 No Content")
+                error.status_code = 204
+                raise error
         raise KeyError(job_id)
 
     def list(

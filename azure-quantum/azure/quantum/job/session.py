@@ -51,6 +51,9 @@ class Session(WorkspaceItem):
     :param priority: Priority of the session.
     :type priority: Optional[str]
 
+    :param tags: Tags for the session.
+    :type tags: Optional[list[str]]
+
     :raises ValueError: if details is passed along individual parameters,
                         or if required parameters are missing.
     """
@@ -65,6 +68,7 @@ class Session(WorkspaceItem):
             name: Optional[str] = None,
             job_failure_policy: Union[str, SessionJobFailurePolicy, None] = None,
             priority: Optional[str] = None,
+            tags: Optional[list[str]] = None,
             **kwargs):
         from azure.quantum.target import Target
         target_name = target.name if isinstance(target, Target) else target
@@ -97,6 +101,7 @@ class Session(WorkspaceItem):
                                      target=target_name,
                                      job_failure_policy=job_failure_policy,
                                      priority=priority,
+                                     tags=tags,
                                      **kwargs)
 
         super().__init__(
@@ -265,6 +270,7 @@ class SessionHost(Protocol):
         name: Optional[str] = None,
         job_failure_policy: Union[str, SessionJobFailurePolicy, None] = None,
         priority: Optional[str] = None,
+        tags: Optional[list[str]] = None,
         **kwargs
     ) -> Session:
         """Opens a session and associates all future job submissions to that
@@ -306,6 +312,9 @@ class SessionHost(Protocol):
         :param priority: Priority of the session.
         :type priority: Optional[str]
 
+        :param tags: Tags for the session.
+        :type tags: Optional[list[str]]
+
         :return: The session object with updated details after its opening.
         :rtype: Session
         """
@@ -320,6 +329,7 @@ class SessionHost(Protocol):
                           target=self._get_azure_target_id(),
                           provider_id=self._get_azure_provider_id(),
                           priority=priority,
+                          tags=tags,
                           **kwargs)
         self.latest_session = session
         return session.open()
