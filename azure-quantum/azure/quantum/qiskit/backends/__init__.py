@@ -37,8 +37,10 @@ from azure.quantum.qiskit.backends.qci import (
     QCIQPUBackend,
 )
 
+from azure.quantum.qiskit.backends.generic import (
+    AzureGenericQirBackend,
+)
+
 from .backend import AzureBackendBase
 
-__all__ = [
-    "AzureBackendBase"
-]
+__all__ = ["AzureBackendBase"]
