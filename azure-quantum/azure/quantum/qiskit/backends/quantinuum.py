@@ -84,12 +84,19 @@ class QuantinuumQirBackendBase(AzureQirBackend):
 
     @classmethod
     def _default_options(cls) -> Options:
-        return Options(
+        opt = Options(
             **{
                 cls._SHOTS_PARAM_NAME: _DEFAULT_SHOTS_COUNT
             },
             target_profile=TargetProfile.Adaptive_RI,
         )
+        # Duplicate the options into a dict under "data" for compatibility with Qiskit 1.0, which expects this field
+        opt.__setattr__("data", {})
+        for key in opt:
+            opt.data[key] = getattr(opt, key)
+        # Likewise, map "update_config" to "update_options" for compatibility with Qiskit 1.0
+        opt.__setattr__("update_config", lambda **kwargs: opt.update_options(**kwargs))
+        return opt
 
     def _azure_config(self) -> Dict[str, str]:
         config = super()._azure_config()
