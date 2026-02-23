@@ -22,7 +22,7 @@ class Quantinuum(Target):
         "quantinuum.sim.h2-2e",
     )
 
-    _SHOTS_PARAM_NAME = "count"
+    _SHOTS_PARAM_NAME = "shots"
 
     def __init__(
         self,

@@ -290,7 +290,7 @@ class AzureBackendBase(Backend, SessionHost):
 
     # Name of the provider's input parameter which specifies number of shots for a submitted job.
     # If None, backend will not pass this input parameter. 
-    _SHOTS_PARAM_NAME = None
+    _SHOTS_PARAM_NAME = "shots"
 
     @abstractmethod
     def __init__(
@@ -450,12 +450,6 @@ class AzureBackendBase(Backend, SessionHost):
             # If nothing is found, try to get from default values.
             if final_shots is None:
                 final_shots = input_params.get(self.__class__._SHOTS_PARAM_NAME)
-
-            # Also add all possible shots options into input_params to make sure 
-            # that all backends covered. 
-            # TODO: Double check all backends for shots options in order to remove this extra check.
-            input_params["shots"] = final_shots
-            input_params["count"] = final_shots
 
             # Safely removing "shots" and "count" from options as they will be passed in input_params now.
             _ = options.pop("shots", None)
@@ -830,29 +824,3 @@ class AzureBackend(AzureBackendBase):
         logger.info(input_data)
 
         return job
-
-def _get_shots_or_deprecated_count_input_param(
-        param_name: str,
-        shots: int = None, 
-        count: int = None,
-    ) -> Optional[int]:
-    """
-    This helper function checks if the deprecated 'count' option is specified.
-    In earlier versions it was possible to pass this option to specify shots number for a job,
-    but now we only check for it for compatibility reasons.  
-    """
-
-    final_shots = None
-
-    if shots is not None:
-        final_shots = shots
-    
-    elif count is not None:
-        final_shots = count
-        warnings.warn(
-            "The 'count' parameter will be deprecated. "
-            f"Please, use '{param_name}' parameter instead.",
-            category=DeprecationWarning,
-        )
-    
-    return final_shots
