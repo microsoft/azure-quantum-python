@@ -22,6 +22,7 @@ from typing import (
     Union,
 )
 from typing_extensions import Self
+from azure.core.exceptions import HttpResponseError
 from azure.core.paging import ItemPaged
 from azure.quantum._client import WorkspaceClient
 from azure.quantum._client.models import JobDetails, ItemDetails, SessionDetails
@@ -46,9 +47,7 @@ from azure.quantum._constants import (
     ConnectionConstants,
 )
 from azure.quantum.storage import (
-    create_container_using_client,
     get_container_uri,
-    ContainerClient
 )
 from azure.quantum._mgmt_client import WorkspaceMgmtClient
 if TYPE_CHECKING:
@@ -445,11 +444,19 @@ class Workspace:
         :rtype: Job
         """
         client = self._get_jobs_client()
-        client.delete(
-            self.subscription_id,
-            self.resource_group,
-            self.name,
-            job.details.id)
+
+        try:
+            client.cancel(
+                self.subscription_id,
+                self.resource_group,
+                self.name,
+                job.details.id)
+        except HttpResponseError as e:
+            # because of historical behavior of the service, the 204 No Content response is returned when cancellation request is succeeded.
+            # while backend is not updated to return 200 according to a guideline, let's handle that here to align with typespecs
+            if e.status_code != 204:
+                raise
+
         details = client.get(
             self.subscription_id,
             self.resource_group,
@@ -951,15 +958,11 @@ class Workspace:
                 container_name = f"{self.name}-data"
         # Create container URI and get container client
         if self.storage is None:
-            # Get linked storage account from the service, create
-            # a new container if it does not yet exist
+            # Get linked storage account from the service, a new container
+            # is created by the service if it does not yet exist
             container_uri = self._get_linked_storage_sas_uri(
                 container_name
             )
-            container_client = ContainerClient.from_container_url(
-                container_uri
-            )
-            create_container_using_client(container_client)
         else:
             # Use the storage acount specified to generate container URI,
             # create a new container if it does not yet exist
