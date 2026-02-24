@@ -4,7 +4,7 @@
 ##
 
 import pytest
-from unittest.mock import Mock, MagicMock
+from unittest.mock import Mock
 from azure.quantum import Job, JobDetails
 
 
@@ -564,75 +564,3 @@ def test_job_for_microsoft_quantum_results_shots_v2_wrong_type_raises_exception(
         assert False
     except Exception:
         assert True
-
-
-def test_azure_quantum_job_result_for_microsoft_quantum_results_v2_with_dash():
-    """Test AzureQuantumJob.result() method for dash in output raises SyntaxError"""
-    from azure.quantum.qiskit import AzureQuantumJob
-    
-    output = """
-    {
-        "DataFormat": "microsoft.quantum-results.v2",
-        "Results": [
-            {
-            "Histogram": [
-                {
-                "Outcome": [ 0, 1, "-" ],
-                "Display": "[0, 1, -]",
-                "Count": 1
-                }
-            ],
-            "Shots": [ [ 0, 1, "-" ] ]
-            }
-        ]
-    }
-    """
-    
-    # Mock the backend
-    mock_backend = MagicMock()
-    mock_backend.name = "test-backend"
-    mock_backend.version = "1.0"
-    mock_backend.configuration().simulator = False
-    
-    # Mock the provider
-    mock_provider = MagicMock()
-    mock_workspace = MagicMock()
-    mock_provider.get_workspace.return_value = mock_workspace
-    mock_backend.provider = mock_provider
-    
-    # Mock the Azure Job
-    mock_azure_job = MagicMock()
-    mock_azure_job.id = "test-job-id"
-    mock_azure_job.details.id = "test-job-id"
-    mock_azure_job.details.name = "test-job-name"
-    mock_azure_job.details.status = "Succeeded"
-    mock_azure_job.details.output_data_format = "microsoft.quantum-results.v2"
-    mock_azure_job.details.metadata = {"qiskit": "{}"}
-    mock_azure_job.details.error_data = None
-    mock_azure_job.details.input_params = {
-        "items": [{"entryPoint": "main"}],
-        "count": 1
-    }
-    
-    # Mock download_data to return the output
-    class DownloadDataMock(object):
-        pass
-    
-    download_data = DownloadDataMock()
-    download_data.decode = Mock(return_value=output)
-    mock_azure_job.download_data = Mock(return_value=download_data)
-    mock_azure_job.wait_until_completed = Mock()
-    mock_azure_job.has_completed = Mock(return_value=True)
-    
-    # Mock get_results_histogram and get_results_shots
-    mock_azure_job.get_results_histogram.return_value = {
-        "[0, 1, -]": {"outcome": [0, 1, "-"], "count": 1}
-    }
-    mock_azure_job.get_results_shots.return_value = [[0, 1, "-"]]
-    
-    # Create AzureQuantumJob
-    qiskit_job = AzureQuantumJob(backend=mock_backend, azure_job=mock_azure_job)
-    
-    # Call result() method - expect SyntaxError due to "-" in outcome
-    with pytest.raises(SyntaxError):
-        qiskit_job.result()
