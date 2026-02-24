@@ -258,50 +258,33 @@ class AzureQuantumJob(JobV1):
         return {"counts": counts, "probabilities": probabilities}
 
     @staticmethod
-    def _qir_to_qiskit_bitstring(obj, *, normalize_lost_qubits: bool = True):
-        """Convert an Azure Quantum measurement key into the bitstring schema used by Qiskit.
-
-        By default, this normalizes non-binary lost-qubit markers (e.g. '-', '2') to '0'
-        so the returned value is always a valid Qiskit bitstring.
-
-        Set `normalize_lost_qubits=False` to preserve lost-qubit markers so callers can
-        detect qubit loss in raw results.
-        """
-
-        def _maybe_normalize(bitstring: str) -> str:
-            if not normalize_lost_qubits:
-                return bitstring
-
-            # Some targets may represent lost qubits using non-binary markers.
-            # Map those to '0' so callers get a valid Qiskit bitstring.
-            return bitstring.replace("-", "0").replace("2", "0")
-
-        if isinstance(obj, str):
-            if not re.match(r"[\d\s]+$", obj):
-                try:
-                    obj = ast.literal_eval(obj)
-                except Exception:
-                    # Fall back to treating it as a raw bitstring-like key.
-                    return _maybe_normalize(obj)
-            else:
-                return _maybe_normalize(obj)
+    def _qir_to_qiskit_bitstring(obj):
+        """Convert the data structure from Azure into the "schema" used by Qiskit"""
+        if isinstance(obj, str) and not re.match(r"[\d\s]+$", obj):
+            try:
+                obj = ast.literal_eval(obj)
+            except Exception:
+                # If it's not a Python-literal encoding (e.g. already a raw
+                # bitstring like '01-0'), treat it as-is.
+                pass
 
         if isinstance(obj, tuple):
             # the outermost implied container is a tuple, and each item is
             # associated with a classical register.
             return " ".join(
-                [
-                    AzureQuantumJob._qir_to_qiskit_bitstring(
-                        term, normalize_lost_qubits=normalize_lost_qubits
-                    )
-                    for term in obj
-                ]
+                [AzureQuantumJob._qir_to_qiskit_bitstring(term) for term in obj]
             )
         elif isinstance(obj, list):
             # a list is for an individual classical register
-            return _maybe_normalize("".join([str(bit) for bit in obj]))
+            return "".join([str(bit) for bit in obj])
         else:
-            return _maybe_normalize(str(obj))
+            return str(obj)
+
+    @staticmethod
+    def _bitstring_has_qubit_loss(bitstring: str) -> bool:
+        # Lost qubits may be represented using non-binary markers (e.g. '-', '2').
+        # We treat any shot containing those markers as lost-qubit affected.
+        return "-" in bitstring or "2" in bitstring
 
     def _format_microsoft_results(self, sampler_seed=None):
         """Translate Microsoft's job results histogram into a format that can be consumed by qiskit libraries."""
@@ -312,27 +295,42 @@ class AzureQuantumJob(JobV1):
         probabilities: Dict[str, Any] = {}
 
         for key, value in histogram.items():
-            raw_bitstring = AzureQuantumJob._qir_to_qiskit_bitstring(
-                key, normalize_lost_qubits=False
-            )
+            raw_bitstring = AzureQuantumJob._qir_to_qiskit_bitstring(key)
             raw_probabilities[raw_bitstring] = (
                 raw_probabilities.get(raw_bitstring, 0) + value
             )
 
-            bitstring = AzureQuantumJob._qir_to_qiskit_bitstring(key)
-            # When normalizing lost qubits (e.g. mapping '-'/'2' -> '0'), multiple
-            # raw outcomes can map to the same Qiskit bitstring. Accumulate to avoid
-            # dropping probability mass.
+            # For Qiskit-compatible results, drop any outcomes that include
+            # lost-qubit markers.
+            if AzureQuantumJob._bitstring_has_qubit_loss(raw_bitstring):
+                continue
+
+            bitstring = raw_bitstring
             probabilities[bitstring] = probabilities.get(bitstring, 0) + value
 
+        accepted_probability_mass = sum(probabilities.values())
+        if accepted_probability_mass:
+            probabilities = {
+                bitstring: value / accepted_probability_mass
+                for bitstring, value in probabilities.items()
+            }
+
+        effective_shots = int(round(shots * accepted_probability_mass))
+
         if self.backend().configuration().simulator:
-            counts = self._draw_random_sample(sampler_seed, probabilities, shots)
+            counts = (
+                {}
+                if effective_shots == 0
+                else self._draw_random_sample(
+                    sampler_seed, probabilities, effective_shots
+                )
+            )
             raw_counts = self._draw_random_sample(
                 sampler_seed, raw_probabilities, shots
             )
         else:
             counts = {
-                bitstring: np.round(shots * value)
+                bitstring: np.round(effective_shots * value)
                 for bitstring, value in probabilities.items()
             }
             raw_counts = {
@@ -386,51 +384,59 @@ class AzureQuantumJob(JobV1):
         histograms = []
 
         for histogram, shots in zip(az_result_histogram, az_result_shots):
-            counts = defaultdict(int)
-            raw_counts = defaultdict(int)
-
-            total_count = len(shots)
-
-            for display, result in histogram.items():
-                raw_bitstring = AzureQuantumJob._qir_to_qiskit_bitstring(
-                    display, normalize_lost_qubits=False
-                )
-                raw_counts[raw_bitstring] += result["count"]
-
-                bitstring = AzureQuantumJob._qir_to_qiskit_bitstring(display)
-                # Normalize collisions from lost-qubit markers (e.g. '-'/'2').
-                counts[bitstring] += result["count"]
-
-            probabilities = {
-                bitstring: count / total_count for bitstring, count in counts.items()
-            }
-
-            raw_probabilities = {
-                bitstring: count / total_count
-                for bitstring, count in raw_counts.items()
-            }
-
-            formatted_shots = [
+            raw_memory = [
                 AzureQuantumJob._qir_to_qiskit_bitstring(shot) for shot in shots
             ]
+            raw_total_count = len(raw_memory)
 
-            raw_formatted_shots = [
-                AzureQuantumJob._qir_to_qiskit_bitstring(
-                    shot, normalize_lost_qubits=False
-                )
-                for shot in shots
+            # Qiskit-compatible fields drop any shots with lost-qubit markers.
+            memory = [
+                shot
+                for shot in raw_memory
+                if not AzureQuantumJob._bitstring_has_qubit_loss(shot)
             ]
+            accepted_total_count = len(memory)
+
+            raw_counts: Dict[str, int] = {}
+            counts: Dict[str, int] = {}
+
+            for display, result in histogram.items():
+                raw_bitstring = AzureQuantumJob._qir_to_qiskit_bitstring(display)
+                count = result["count"]
+
+                raw_counts[raw_bitstring] = raw_counts.get(raw_bitstring, 0) + count
+
+                if AzureQuantumJob._bitstring_has_qubit_loss(raw_bitstring):
+                    continue
+                counts[raw_bitstring] = counts.get(raw_bitstring, 0) + count
+
+            raw_probabilities = (
+                {}
+                if raw_total_count == 0
+                else {
+                    bitstring: count / raw_total_count
+                    for bitstring, count in raw_counts.items()
+                }
+            )
+            probabilities = (
+                {}
+                if accepted_total_count == 0
+                else {
+                    bitstring: count / accepted_total_count
+                    for bitstring, count in counts.items()
+                }
+            )
 
             histograms.append(
                 (
-                    total_count,
+                    accepted_total_count,
                     {
-                        "counts": dict(counts),
+                        "counts": counts,
                         "probabilities": probabilities,
-                        "raw_counts": dict(raw_counts),
+                        "memory": memory,
+                        "raw_counts": raw_counts,
                         "raw_probabilities": raw_probabilities,
-                        "memory": formatted_shots,
-                        "raw_memory": raw_formatted_shots,
+                        "raw_memory": raw_memory,
                     },
                 )
             )

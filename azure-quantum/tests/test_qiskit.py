@@ -173,26 +173,12 @@ def test_qir_to_qiskit_bitstring_roundtrip():
     assert AzureQuantumJob._qir_to_qiskit_bitstring(bits) == bits
 
 
-def test_qir_to_qiskit_bitstring_maps_lost_qubits_to_zero():
-    assert AzureQuantumJob._qir_to_qiskit_bitstring([0, 1, 2, "-"]) == "0100"
-    assert AzureQuantumJob._qir_to_qiskit_bitstring('[0, 1, 2, "-"]') == "0100"
-
-    # Callers can also opt out of normalization to detect qubit loss.
-    assert (
-        AzureQuantumJob._qir_to_qiskit_bitstring(
-            [0, 1, 2, "-"], normalize_lost_qubits=False
-        )
-        == "012-"
-    )
-    assert (
-        AzureQuantumJob._qir_to_qiskit_bitstring(
-            '[0, 1, 2, "-"]', normalize_lost_qubits=False
-        )
-        == "012-"
-    )
+def test_qir_to_qiskit_bitstring_preserves_lost_qubit_markers():
+    assert AzureQuantumJob._qir_to_qiskit_bitstring([0, 1, 2, "-"]) == "012-"
+    assert AzureQuantumJob._qir_to_qiskit_bitstring('[0, 1, 2, "-"]') == "012-"
 
 
-def test_microsoft_v1_results_merge_colliding_bitstrings():
+def test_microsoft_v1_results_raw_and_filtered_fields_handle_qubit_loss():
     ws = create_default_workspace()
     provider = AzureQuantumProvider(workspace=ws)
     backend = SimpleNamespace(
@@ -206,7 +192,8 @@ def test_microsoft_v1_results_merge_colliding_bitstrings():
         id="job-1",
         details=SimpleNamespace(input_params={"shots": 100}),
         get_results=lambda: {
-            # These two different raw outcomes collide once we map lost qubits.
+            # This outcome includes a lost-qubit marker and should be dropped from
+            # Qiskit-compatible fields.
             "[0, 1, 2, 0]": 0.30,
             "[0, 1, 0, 0]": 0.20,
             "[1, 1, 0, 0]": 0.50,
@@ -216,10 +203,18 @@ def test_microsoft_v1_results_merge_colliding_bitstrings():
     job = AzureQuantumJob(backend, azure_job=azure_job)
     formatted = job._format_microsoft_results()
 
-    assert formatted["probabilities"]["0100"] == pytest.approx(0.50)
-    assert formatted["counts"]["0100"] == 50
+    # Qiskit-compatible results drop any outcomes with lost-qubit markers.
+    assert "0120" not in formatted["probabilities"]
 
-    # Raw probabilities preserve lost-qubit markers and avoid collisions.
+    # Remaining probabilities are renormalized over the non-loss mass (0.20 + 0.50).
+    assert formatted["probabilities"]["0100"] == pytest.approx(0.20 / 0.70)
+    assert formatted["probabilities"]["1100"] == pytest.approx(0.50 / 0.70)
+
+    # Counts are computed over the effective number of non-loss shots (100 * 0.70 = 70).
+    assert formatted["counts"]["0100"] == 20
+    assert formatted["counts"]["1100"] == 50
+
+    # Raw probabilities preserve lost-qubit markers.
     assert formatted["raw_probabilities"]["0120"] == pytest.approx(0.30)
     assert formatted["raw_probabilities"]["0100"] == pytest.approx(0.20)
     assert formatted["raw_probabilities"]["1100"] == pytest.approx(0.50)
@@ -227,7 +222,7 @@ def test_microsoft_v1_results_merge_colliding_bitstrings():
     assert formatted["raw_counts"]["0100"] == 20
 
 
-def test_microsoft_v2_results_merge_colliding_bitstrings():
+def test_microsoft_v2_results_raw_and_filtered_fields_handle_qubit_loss():
     ws = create_default_workspace()
     provider = AzureQuantumProvider(workspace=ws)
     backend = SimpleNamespace(
@@ -252,15 +247,21 @@ def test_microsoft_v2_results_merge_colliding_bitstrings():
 
     assert len(results) == 1
     total_count, formatted = results[0]
-    assert total_count == 50
+    # Qiskit-compatible results drop lost-qubit shots.
+    assert total_count == 20
     assert formatted["probabilities"]["0100"] == pytest.approx(1.0)
-    assert formatted["counts"]["0100"] == 50
+    assert formatted["counts"]["0100"] == 20
+    assert formatted["memory"].count("0100") == 20
 
-    # Raw counts keep the original distinct outcomes.
+    # Raw histogram preserves lost-qubit markers.
     assert formatted["raw_counts"]["0120"] == 30
     assert formatted["raw_counts"]["0100"] == 20
     assert formatted["raw_probabilities"]["0120"] == pytest.approx(0.60)
     assert formatted["raw_probabilities"]["0100"] == pytest.approx(0.40)
+
+    # Raw per-shot memory keeps the original distinct outcomes.
+    assert formatted["raw_memory"].count("0120") == 30
+    assert formatted["raw_memory"].count("0100") == 20
 
 
 def test_ionq_qir_transpile_decomposes_non_qir_gates():
@@ -537,7 +538,6 @@ def test_generic_qir_backend_created_for_unknown_workspace_target(
     backend = provider.get_backend("acme.qpu")
 
     assert isinstance(backend, AzureGenericQirBackend)
-
 
     from qsharp import TargetProfile
 
