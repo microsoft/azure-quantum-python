@@ -63,6 +63,8 @@ def _get_n_qubits(name):
     name = name.lower()
     if ".h2-" in name:
         return 56
+    if ".helios-" in name:
+        return 98
     warnings.warn(
         UserWarning(f"Number of qubits not known for target {name}. Defaulting to 20."))
     return 20
@@ -82,12 +84,19 @@ class QuantinuumQirBackendBase(AzureQirBackend):
 
     @classmethod
     def _default_options(cls) -> Options:
-        return Options(
+        opt = Options(
             **{
                 cls._SHOTS_PARAM_NAME: _DEFAULT_SHOTS_COUNT
             },
             target_profile=TargetProfile.Adaptive_RI,
         )
+        # Duplicate the options into a dict under "data" for compatibility with Qiskit 1.0, which expects this field
+        opt.__setattr__("data", {})
+        for key in opt:
+            opt.data[key] = getattr(opt, key)
+        # Likewise, map "update_config" to "update_options" for compatibility with Qiskit 1.0
+        opt.__setattr__("update_config", lambda **kwargs: opt.update_options(**kwargs))
+        return opt
 
     def _azure_config(self) -> Dict[str, str]:
         config = super()._azure_config()
@@ -101,12 +110,18 @@ class QuantinuumQirBackendBase(AzureQirBackend):
     def _get_n_qubits(self, name):
         return _get_n_qubits(name)
     
+    def _get_default_target_profile(self, name):
+        if ".h2-" in name:
+            return TargetProfile.Adaptive_RI
+        else:
+            return TargetProfile.Adaptive_RIF
 
 class QuantinuumSyntaxCheckerQirBackend(QuantinuumQirBackendBase):
     backend_names = (
         # Note: Target names on the same line are equivalent.
         "quantinuum.sim.h2-1sc",
-        "quantinuum.sim.h2-2sc"
+        "quantinuum.sim.h2-2sc",
+        "quantinuum.sim.helios-1sc",
     )
 
     def __init__(self, name: str, provider: "AzureQuantumProvider", **kwargs):
@@ -137,6 +152,8 @@ class QuantinuumSyntaxCheckerQirBackend(QuantinuumQirBackendBase):
         logger.info(
             "Initializing %sSyntaxCheckerQirBackend", self._provider_name
         )
+        if "target_profile" not in kwargs:
+            kwargs["target_profile"] = self._get_default_target_profile(name)
         super().__init__(configuration=configuration, provider=provider, **kwargs)
 
 
@@ -144,7 +161,8 @@ class QuantinuumEmulatorQirBackend(QuantinuumQirBackendBase):
     backend_names = (
         # Note: Target names on the same line are equivalent.
         "quantinuum.sim.h2-1e",
-        "quantinuum.sim.h2-2e"
+        "quantinuum.sim.h2-2e",
+        "quantinuum.sim.helios-1e",
     )
 
     def __init__(self, name: str, provider: "AzureQuantumProvider", **kwargs):
@@ -175,6 +193,8 @@ class QuantinuumEmulatorQirBackend(QuantinuumQirBackendBase):
         logger.info(
             "Initializing %sEmulatorQirBackend", self._provider_name
         )
+        if "target_profile" not in kwargs:
+            kwargs["target_profile"] = self._get_default_target_profile(name)
         super().__init__(configuration=configuration, provider=provider, **kwargs)
 
 
@@ -182,7 +202,8 @@ class QuantinuumQPUQirBackend(QuantinuumQirBackendBase):
     backend_names = (
         # Note: Target names on the same line are equivalent.
         "quantinuum.qpu.h2-1",
-        "quantinuum.qpu.h2-2"
+        "quantinuum.qpu.h2-2",
+        "quantinuum.qpu.helios-1",
     )
 
     def __init__(self, name: str, provider: "AzureQuantumProvider", **kwargs):
@@ -211,6 +232,8 @@ class QuantinuumQPUQirBackend(QuantinuumQirBackendBase):
             kwargs.pop("configuration", default_config)
         )
         logger.info("Initializing %sQPUQirBackend", self._provider_name)
+        if "target_profile" not in kwargs:
+            kwargs["target_profile"] = self._get_default_target_profile(name)
         super().__init__(configuration=configuration, provider=provider, **kwargs)
 
 
