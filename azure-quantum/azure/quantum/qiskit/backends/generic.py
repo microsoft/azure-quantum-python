@@ -44,6 +44,7 @@ class AzureGenericQirBackend(AzureQirBackend):
         provider: "AzureQuantumProvider",
         *,
         provider_id: str,
+        target_profile: Optional[TargetProfile | str] = None,
         num_qubits: Optional[int] = None,
         description: Optional[str] = None,
         **kwargs: Any,
@@ -71,6 +72,40 @@ class AzureGenericQirBackend(AzureQirBackend):
         )
 
         super().__init__(config, provider, **kwargs)
+
+        # Prefer an instance-specific target profile discovered from the workspace target metadata.
+        default_target_profile = self._coerce_target_profile(target_profile)
+        if default_target_profile is not None:
+            self.set_options(target_profile=default_target_profile)
+
+    @staticmethod
+    def _coerce_target_profile(
+        value: Optional[TargetProfile | str],
+    ) -> Optional[TargetProfile]:
+        if value is None:
+            return None
+        if isinstance(value, TargetProfile):
+            return value
+        if not isinstance(value, str):
+            return None
+
+        raw = value.strip()
+        if not raw:
+            return None
+
+        # Prefer the qsharp helper when available.
+        from_str = getattr(TargetProfile, "from_str", None)
+        if callable(from_str):
+            try:
+                parsed = from_str(raw)
+                if isinstance(parsed, TargetProfile):
+                    return parsed
+            except Exception:
+                pass
+
+        # Best-effort: try enum attribute lookup.
+        normalized = raw.replace("-", "_")
+        return getattr(TargetProfile, normalized, None)
 
     @classmethod
     def _default_options(cls) -> Options:

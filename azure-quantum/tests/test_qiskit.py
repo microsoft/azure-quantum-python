@@ -50,6 +50,7 @@ def _seed_workspace_target(
     provider_id: str,
     target_id: str,
     num_qubits: int | None = None,
+    target_profile: str | None = None,
 ) -> None:
     """Inject a provider+target into the offline Workspace mock.
 
@@ -71,6 +72,7 @@ def _seed_workspace_target(
             "currentAvailability": "Available",
             "averageQueueTime": 0,
             "numQubits": num_qubits,
+            "targetProfile": target_profile,
         }
     )
     provider = SimpleNamespace(id=provider_id, targets=[target_status])
@@ -528,12 +530,18 @@ def test_generic_qir_backend_created_for_unknown_workspace_target(
         provider_id="acme",
         target_id="acme.qpu",
         num_qubits=5,
+        target_profile="Adaptive_RI",
     )
 
     provider = AzureQuantumProvider(workspace=ws)
     backend = provider.get_backend("acme.qpu")
 
     assert isinstance(backend, AzureGenericQirBackend)
+
+
+    from qsharp import TargetProfile
+
+    assert backend.options.get("target_profile") == TargetProfile.Adaptive_RI
 
     # Avoid calling `backend.run()` (requires qsharp for QIR generation).
     input_params = backend._get_input_params({}, shots=11)

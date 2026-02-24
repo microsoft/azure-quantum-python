@@ -30,29 +30,6 @@ QISKIT_USER_AGENT = "azure-quantum-qiskit"
 
 
 class AzureQuantumProvider(ABC):
-
-    @staticmethod
-    def _target_status_num_qubits(target_status: TargetStatus) -> Optional[int]:
-        try:
-            value = getattr(target_status, "num_qubits")
-            if isinstance(value, int):
-                return value
-        except Exception:
-            pass
-
-        get_method = getattr(target_status, "get", None)
-        if callable(get_method):
-            value = get_method("numQubits", get_method("num_qubits"))
-            if isinstance(value, int):
-                return value
-
-        if isinstance(target_status, Mapping):
-            value = target_status.get("numQubits", target_status.get("num_qubits"))
-            if isinstance(value, int):
-                return value
-
-        return None
-
     def __init__(self, workspace: Optional[Workspace] = None, **kwargs):
         """Class for interfacing with the Azure Quantum service
         using Qiskit quantum circuits.
@@ -134,6 +111,15 @@ see https://aka.ms/AQ/Docs/AddProvider"
         status_by_target = self._get_workspace_target_status_map(name, provider_id)
         allowed_targets: List[Tuple[str, str]] = list(status_by_target.keys())
 
+        # If a user asks for a specific backend name and it isn't installed,
+        # raise a clear error. With generic backends, a name can still be valid
+        # even if it isn't installed, as long as the target exists in the workspace.
+        if name and name not in self._backends and not allowed_targets:
+            provider_clause = f" for provider_id '{provider_id}'" if provider_id else ""
+            raise QiskitBackendNotFoundError(
+                f"The '{name}' backend is not installed in your system, nor is it a valid target{provider_clause} in your Azure Quantum workspace."
+            )
+
         workspace_allowed = lambda backend: self._is_available_in_ws(
             allowed_targets, backend
         )
@@ -161,7 +147,10 @@ see https://aka.ms/AQ/Docs/AddProvider"
                     name=target_id,
                     provider=self,
                     provider_id=pid,
-                    num_qubits=self._target_status_num_qubits(status),
+                    target_profile=(
+                        status.target_profile if status is not None else None
+                    ),
+                    num_qubits=status.num_qubits if status is not None else None,
                 )
             )
 

@@ -385,6 +385,39 @@ def test_job_for_microsoft_quantum_results_shots_v2_tuple_success():
     assert job_results[2] == [1]
 
 
+def test_job_for_microsoft_quantum_results_v2_with_dash():
+    output = """
+    {
+        "DataFormat": "microsoft.quantum-results.v2",
+        "Results": [
+            {
+            "Histogram": [
+                {
+                "Outcome": [ 0, 1, "-" ],
+                "Display": "[0, 1, -]",
+                "Count": 1
+                }
+            ],
+            "Shots": [ [ 0, 1, "-" ] ]
+            }
+        ]
+    }
+    """
+    job_results = _get_job_results("microsoft.quantum-results.v2", output)
+    assert len(job_results.keys()) == 1
+    assert job_results["[0, 1, -]"] == 1.0
+
+    job_results = _get_job_results_histogram("microsoft.quantum-results.v2", output)
+    # expecting dict with key: [0, 1, -] and value: {'outcome': [0, 1, '-'], 'count': 1}
+    assert len(job_results.keys()) == 1
+    assert job_results["[0, 1, -]"]["count"] == 1
+    assert job_results["[0, 1, -]"]["outcome"] == [0, 1, '-']
+
+    job_results = _get_job_results_shots("microsoft.quantum-results.v2", output)
+    assert len(job_results) == 1
+    assert job_results[0] == [0, 1, '-']
+
+
 def test_job_for_microsoft_quantum_results_shots_v2_error_in_shots():
     output = """
     {
