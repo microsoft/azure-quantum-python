@@ -30,6 +30,7 @@ QISKIT_USER_AGENT = "azure-quantum-qiskit"
 
 
 class AzureQuantumProvider(ABC):
+
     def __init__(self, workspace: Optional[Workspace] = None, **kwargs):
         """Class for interfacing with the Azure Quantum service
         using Qiskit quantum circuits.
