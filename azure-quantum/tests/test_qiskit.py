@@ -173,6 +173,97 @@ def test_qir_to_qiskit_bitstring_roundtrip():
     assert AzureQuantumJob._qir_to_qiskit_bitstring(bits) == bits
 
 
+def test_qir_to_qiskit_bitstring_preserves_lost_qubit_markers():
+    assert AzureQuantumJob._qir_to_qiskit_bitstring([0, 1, 2, "-"]) == "012-"
+    assert AzureQuantumJob._qir_to_qiskit_bitstring('[0, 1, 2, "-"]') == "012-"
+
+
+def test_microsoft_v1_results_raw_and_filtered_fields_handle_qubit_loss():
+    ws = create_default_workspace()
+    provider = AzureQuantumProvider(workspace=ws)
+    backend = SimpleNamespace(
+        name="dummy",
+        version="0.0",
+        provider=provider,
+        options=SimpleNamespace(shots=100),
+        configuration=lambda: SimpleNamespace(simulator=False),
+    )
+    azure_job = SimpleNamespace(
+        id="job-1",
+        details=SimpleNamespace(input_params={"shots": 100}),
+        get_results=lambda: {
+            # This outcome includes a lost-qubit marker and should be dropped from
+            # Qiskit-compatible fields.
+            "[0, 1, 2, 0]": 0.30,
+            "[0, 1, 0, 0]": 0.20,
+            "[1, 1, 0, 0]": 0.50,
+        },
+    )
+
+    job = AzureQuantumJob(backend, azure_job=azure_job)
+    formatted = job._format_microsoft_results()
+
+    # Qiskit-compatible results drop any outcomes with lost-qubit markers.
+    assert "0120" not in formatted["probabilities"]
+
+    # Remaining probabilities are renormalized over the non-loss mass (0.20 + 0.50).
+    assert formatted["probabilities"]["0100"] == pytest.approx(0.20 / 0.70)
+    assert formatted["probabilities"]["1100"] == pytest.approx(0.50 / 0.70)
+
+    # Counts are computed over the effective number of non-loss shots (100 * 0.70 = 70).
+    assert formatted["counts"]["0100"] == 20
+    assert formatted["counts"]["1100"] == 50
+
+    # Raw probabilities preserve lost-qubit markers.
+    assert formatted["raw_probabilities"]["0120"] == pytest.approx(0.30)
+    assert formatted["raw_probabilities"]["0100"] == pytest.approx(0.20)
+    assert formatted["raw_probabilities"]["1100"] == pytest.approx(0.50)
+    assert formatted["raw_counts"]["0120"] == 30
+    assert formatted["raw_counts"]["0100"] == 20
+
+
+def test_microsoft_v2_results_raw_and_filtered_fields_handle_qubit_loss():
+    ws = create_default_workspace()
+    provider = AzureQuantumProvider(workspace=ws)
+    backend = SimpleNamespace(
+        name="dummy",
+        version="0.0",
+        provider=provider,
+        options=SimpleNamespace(shots=50),
+        configuration=lambda: SimpleNamespace(simulator=False),
+    )
+    azure_job = SimpleNamespace(
+        id="job-2",
+        details=SimpleNamespace(input_params={"shots": 50}),
+        get_results_histogram=lambda: {
+            "[0, 1, 2, 0]": {"count": 30},
+            "[0, 1, 0, 0]": {"count": 20},
+        },
+        get_results_shots=lambda: ["[0, 1, 2, 0]"] * 30 + ["[0, 1, 0, 0]"] * 20,
+    )
+
+    job = AzureQuantumJob(backend, azure_job=azure_job)
+    results = job._translate_microsoft_v2_results()
+
+    assert len(results) == 1
+    total_count, formatted = results[0]
+    # Qiskit-compatible results drop lost-qubit shots.
+    assert total_count == 20
+    assert formatted["probabilities"]["0100"] == pytest.approx(1.0)
+    assert formatted["counts"]["0100"] == 20
+    assert formatted["memory"].count("0100") == 20
+
+    # Raw histogram preserves lost-qubit markers.
+    assert formatted["raw_counts"]["0120"] == 30
+    assert formatted["raw_counts"]["0100"] == 20
+    assert formatted["raw_probabilities"]["0120"] == pytest.approx(0.60)
+    assert formatted["raw_probabilities"]["0100"] == pytest.approx(0.40)
+
+    # Raw per-shot memory keeps the original distinct outcomes.
+    assert formatted["raw_memory"].count("0120") == 30
+    assert formatted["raw_memory"].count("0100") == 20
+
+
 def test_ionq_qir_transpile_decomposes_non_qir_gates():
     backend = IonQSimulatorQirBackend(name="ionq.simulator", provider=None)
     circuit, non_qir_ops = _build_non_qir_test_circuit()
