@@ -315,7 +315,7 @@ class AzureQuantumJob(JobV1):
                 for bitstring, value in probabilities.items()
             }
 
-        effective_shots = int(round(shots * accepted_probability_mass))
+        effective_shots = int(np.round(shots * accepted_probability_mass))
 
         if self.backend().configuration().simulator:
             counts = (
