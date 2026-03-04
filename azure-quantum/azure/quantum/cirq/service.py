@@ -85,9 +85,7 @@ class AzureQuantumService:
         :return: Target instance or list thereof
         :rtype: typing.Union[Target, typing.List[Target]]
         """
-        # We cannot rely solely on TargetFactory here because for WorkspaceKind V2
-        # it will return plain `azure.quantum.target.Target` instances for unknown
-        # providers, which are not Cirq-submittable.
+
         target_statuses = self._workspace._get_target_status(name, provider_id)
 
         cirq_targets: List["CirqTarget"] = []
@@ -97,10 +95,6 @@ class AzureQuantumService:
             if isinstance(target, CirqTargetBase):
                 cirq_targets.append(target)
                 continue
-
-            # Fallback: only synthesize a generic Cirq target for QIR-capable targets.
-            # if getattr(status, "target_profile", None) is None:
-            #     continue
 
             cirq_targets.append(
                 AzureGenericQirCirqTarget.from_target_status(
@@ -142,25 +136,33 @@ class AzureQuantumService:
         target = self.targets(
             name=job.details.target, provider_id=job.details.provider_id
         )
-        if target is None:
-            # As a last resort, attempt a generic QIR Cirq wrapper. This may still
-            # fail if QIR metadata isn't available.
-            statuses = self._workspace._get_target_status(
-                job.details.target, job.details.provider_id
-            )
-            if statuses:
-                pid, status = statuses[0]
-                if getattr(status, "target_profile", None) is not None:
-                    target = AzureGenericQirCirqTarget.from_target_status(
-                        self._workspace, pid, status
-                    )
 
         if target is None:
             raise RuntimeError(
-                f"Could not create a Cirq target wrapper for job target '{job.details.target}' (provider '{job.details.provider_id}')."
+                f"Job '{job_id}' exists, but no Cirq target wrapper could be created for target '{job.details.target}' (provider '{job.details.provider_id}'). "
+                "AzureQuantumService.get_job only supports jobs submitted to Cirq-capable targets (provider-specific Cirq targets or the generic Cirq-to-QIR wrapper). "
+                "For non-Cirq jobs, use Workspace.get_job(job_id)."
             )
 
-        return target._to_cirq_job(azure_job=job, *args, **kwargs)
+        # Avoid misrepresenting arbitrary workspace jobs as Cirq jobs when using the
+        # generic Cirq-to-QIR wrapper. The workspace target status APIs generally do
+        # not expose supported input formats, so we rely on Cirq-stamped metadata.
+        if isinstance(target, AzureGenericQirCirqTarget):
+            metadata = job.details.metadata or {}
+            cirq_flag = str(metadata.get("cirq", "")).strip().lower() == "true"
+            if not cirq_flag:
+                raise RuntimeError(
+                    f"Job '{job_id}' targets '{job.details.target}' but does not appear to be a Cirq job. "
+                    "Use Workspace.get_job(job_id) to work with this job."
+                )
+
+        try:
+            return target._to_cirq_job(azure_job=job, *args, **kwargs)
+        except Exception as exc:
+            raise RuntimeError(
+                f"Job '{job_id}' exists but could not be represented as a Cirq job for target '{job.details.target}' (provider '{job.details.provider_id}'). "
+                "Use Workspace.get_job(job_id) to work with the raw job."
+            ) from exc
 
     def create_job(
         self,
@@ -186,21 +188,16 @@ class AzureQuantumService:
         :rtype: azure.quantum.cirq.Job
         """
         # Get target
-        target_name = target or self._default_target
         _target = self.get_target(name=target)
         if not _target:
             # If the target exists in the workspace but was filtered out, provide
             # a more actionable error message.
+            target_name = target or self._default_target
             ws_statuses = self._workspace._get_target_status(target_name)
             if ws_statuses:
                 pid, status = ws_statuses[0]
-                if getattr(status, "target_profile", None) is None:
-                    raise RuntimeError(
-                        f"Target '{target_name}' exists in your workspace (provider '{pid}') but is not Cirq-submittable via this SDK. "
-                        "Cirq submission currently requires a provider-specific Cirq target implementation or a QIR-capable target."
-                    )
                 raise RuntimeError(
-                    f"Target '{target_name}' exists in your workspace (provider '{pid}') and appears QIR-capable, but no Cirq backend could be created. "
+                    f"Target '{target_name}' exists in your workspace (provider '{pid}') and appears QIR-capable, but no Cirq-capable target could be created. "
                     "If you're using the generic Cirq-to-QIR path, ensure `qsharp` is installed: pip install azure-quantum[cirq,qsharp]."
                 )
 

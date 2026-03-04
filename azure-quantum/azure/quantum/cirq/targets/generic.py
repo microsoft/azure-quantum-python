@@ -23,17 +23,6 @@ if TYPE_CHECKING:
     from azure.quantum._client.models import TargetStatus
 
 
-# @dataclass
-# class _QirProgram:
-#     """Minimal QIR payload wrapper compatible with `azure.quantum.target.Target.submit`."""
-
-#     qir: bytes
-#     _name: str = "main"
-
-#     def _repr_qir_(self, **_: Any) -> bytes:
-#         return self.qir
-
-
 class AzureGenericQirCirqTarget(AzureTarget, CirqTarget):
     """Fallback Cirq target that submits Cirq circuits via QIR.
 
@@ -89,13 +78,6 @@ class AzureGenericQirCirqTarget(AzureTarget, CirqTarget):
         )
 
     @staticmethod
-    def _coerce_target_profile(value: Optional[str]):
-        # NOTE: Intentionally unused.
-        # We previously attempted to coerce target profiles to qsharp.TargetProfile,
-        # but those enum values are not JSON serializable when passed via input_params.
-        return None
-
-    @staticmethod
     def _translate_cirq_circuit(circuit: "cirq.Circuit") -> QirRepresentable:
         try:
             from qsharp.openqasm import compile  # type: ignore
@@ -108,30 +90,6 @@ class AzureGenericQirCirqTarget(AzureTarget, CirqTarget):
         qasm = circuit.to_qasm()
 
         return compile(qasm)
-
-        # # Be defensive about return type across qsharp versions.
-        # if isinstance(compiled, (bytes, bytearray)):
-        #     qir_bytes = bytes(compiled)
-        # elif isinstance(compiled, str):
-        #     # Some implementations may return textual IR; Azure submission expects bytes.
-        #     qir_bytes = compiled.encode("utf-8")
-        # elif hasattr(compiled, "bitcode"):
-        #     qir_bytes = getattr(compiled, "bitcode")
-        # elif hasattr(compiled, "qir"):
-        #     qir_bytes = getattr(compiled, "qir")
-        # elif hasattr(compiled, "qir_bytes"):
-        #     qir_bytes = getattr(compiled, "qir_bytes")
-        # else:
-        #     raise ValueError(
-        #         f"Unexpected return type from qsharp.openqasm.compile: {type(compiled)}"
-        #     )
-
-        # if not isinstance(qir_bytes, (bytes, bytearray)):
-        #     raise ValueError(
-        #         f"qsharp.openqasm.compile did not return QIR bytes (got {type(qir_bytes)})."
-        #     )
-
-        # return _QirProgram(qir=bytes(qir_bytes), _name="main")
 
     @staticmethod
     def _measurement_dict(program: "cirq.Circuit") -> Dict[str, Sequence[int]]:
