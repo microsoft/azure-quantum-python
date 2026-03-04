@@ -68,6 +68,23 @@ class TestCirqGenericQirTarget(unittest.TestCase):
             ["01", "1"],
         )
 
+    def test_shots_to_rows_multi_register(self):
+        from azure.quantum.cirq.targets.generic import AzureGenericQirCirqTarget
+
+        # Two measurement keys: a has 2 bits, b has 1 bit.
+        measurement_dict = {"a": [0, 1], "b": [2]}
+
+        # Two shots encoded as (reg_a_bits, reg_b_bits).
+        shots = [([0, 1], [1]), ([1, 0], [0])]
+
+        rows = AzureGenericQirCirqTarget._shots_to_rows(
+            shots=shots,
+            measurement_dict=measurement_dict,
+        )
+
+        self.assertEqual(rows["a"], [[0, 1], [1, 0]])
+        self.assertEqual(rows["b"], [[1], [0]])
+
 
 if __name__ == "__main__":
     unittest.main()

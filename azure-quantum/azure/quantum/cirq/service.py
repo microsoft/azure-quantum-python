@@ -249,9 +249,20 @@ class AzureQuantumService:
             target=target,
             param_resolver=param_resolver,
         )
+        target_obj = self.get_target(name=target)
+
         # Get raw job results
         try:
-            result = job.results(timeout_seconds=timeout_seconds)
+            if isinstance(target_obj, AzureGenericQirCirqTarget):
+                # Use real per-shot data.
+                if timeout_seconds is None:
+                    result = job.azure_job.get_results_shots()
+                else:
+                    result = job.azure_job.get_results_shots(
+                        timeout_secs=timeout_seconds
+                    )
+            else:
+                result = job.results(timeout_seconds=timeout_seconds)
         except RuntimeError as e:
             # Catch errors from cirq_ionq.Job.results
             if "Job was not completed successful. Instead had status: " in str(e):
@@ -261,9 +272,6 @@ Job status: '{job.status()}'."
                 )
             else:
                 raise e
-
-        # Convert to Cirq Result
-        target_obj = self.get_target(name=target)
 
         extra_kwargs = {}
         if isinstance(target_obj, AzureGenericQirCirqTarget):

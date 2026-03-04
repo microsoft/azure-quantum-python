@@ -14,14 +14,15 @@ class Job:
     Thin wrapper around an Azure Quantum Job that supports
     returning results in Cirq format.
     """
+
     def __init__(
         self,
         azure_job: "AzureJob",
         program: "cirq.Circuit",
-        measurement_dict: dict = None
+        measurement_dict: dict = None,
     ):
         """Construct a Job.
-        
+
         :param azure_job: Job
         :type azure_job: azure.quantum.job.Job
         :param program: Cirq program
@@ -36,6 +37,11 @@ class Job:
     def job_id(self) -> str:
         """Returns the job id (UID) for the job."""
         return self._azure_job.id
+
+    @property
+    def azure_job(self) -> "AzureJob":
+        """Returns the underlying Azure Quantum job."""
+        return self._azure_job
 
     def status(self) -> str:
         """Gets the current status of the job."""
@@ -66,7 +72,12 @@ class Job:
         """Returns a dictionary of measurement keys to target qubit index."""
         if self._measurement_dict is None:
             from cirq import MeasurementGate
-            measurements = [op for op in self._program.all_operations() if isinstance(op.gate, MeasurementGate)]
+
+            measurements = [
+                op
+                for op in self._program.all_operations()
+                if isinstance(op.gate, MeasurementGate)
+            ]
             self._measurement_dict = {
                 meas.gate.key: [q.x for q in meas.qubits] for meas in measurements
             }
@@ -85,4 +96,4 @@ class Job:
         self._azure_job.workspace.cancel_job(self._azure_job)
 
     def __str__(self) -> str:
-        return f'azure.quantum.cirq.Job(job_id={self.job_id()})'
+        return f"azure.quantum.cirq.Job(job_id={self.job_id()})"

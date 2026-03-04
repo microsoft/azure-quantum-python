@@ -6,6 +6,7 @@
 from __future__ import annotations
 
 import ast
+import cirq
 import json
 import re
 
@@ -18,7 +19,6 @@ from azure.quantum.target.target import QirRepresentable, Target as AzureTarget
 
 
 if TYPE_CHECKING:
-    import cirq
     from azure.quantum import Workspace
     from azure.quantum._client.models import TargetStatus
 
@@ -189,41 +189,20 @@ class AzureGenericQirCirqTarget(AzureTarget, CirqTarget):
         return [raw]
 
     @staticmethod
-    def _to_cirq_result(
-        result: Any,
-        param_resolver,
-        seed: Any = None,
+    def _shots_to_rows(
+        shots: Sequence[Any],
         measurement_dict: Optional[Dict[str, Sequence[int]]] = None,
-        repetitions: Optional[int] = None,
-        **_: Any,
-    ):
-        import numpy as np
-        import cirq
-
-        if not isinstance(result, dict):
-            raise ValueError(
-                f"Unsupported result type for generic QIR Cirq target: {type(result)}"
-            )
-
-        histogram: Dict[str, float] = {str(k): float(v) for k, v in result.items()}
-
+    ) -> Dict[str, List[List[int]]]:
         if measurement_dict is None:
             measurement_dict = {"m": []}
 
         measurement_keys = list(measurement_dict.keys())
         key_lengths = [len(measurement_dict[k]) for k in measurement_keys]
 
-        if repetitions is None:
-            repetitions = 1
-
-        sampled_displays = AzureGenericQirCirqTarget._sample_histogram(
-            histogram, repetitions=repetitions, seed=seed
-        )
-
         shots_by_key: Dict[str, List[List[int]]] = {k: [] for k in measurement_keys}
 
-        for display in sampled_displays:
-            bitstring = AzureGenericQirCirqTarget._qir_display_to_bitstring(display)
+        for shot in shots:
+            bitstring = AzureGenericQirCirqTarget._qir_display_to_bitstring(shot)
             registers = AzureGenericQirCirqTarget._split_registers(
                 bitstring, key_lengths
             )
@@ -239,6 +218,29 @@ class AzureGenericQirCirqTarget(AzureTarget, CirqTarget):
             for key, bits in zip(measurement_keys, parts):
                 row = [1 if ch == "1" else 0 for ch in str(bits).strip()]
                 shots_by_key[key].append(row)
+
+        return shots_by_key
+
+    @staticmethod
+    def _to_cirq_result(
+        result: Any,
+        param_resolver,
+        measurement_dict: Optional[Dict[str, Sequence[int]]] = None,
+        **_: Any,
+    ):
+        if not isinstance(result, list):
+            raise ValueError(
+                f"Unsupported result type for generic QIR Cirq target: {type(result)}"
+            )
+
+        import numpy as np
+
+        shots_by_key = AzureGenericQirCirqTarget._shots_to_rows(
+            shots=result,
+            measurement_dict=measurement_dict,
+        )
+
+        measurement_keys = list((measurement_dict or {"m": []}).keys())
 
         measurements: Dict[str, "np.ndarray"] = {}
         for key in measurement_keys:
