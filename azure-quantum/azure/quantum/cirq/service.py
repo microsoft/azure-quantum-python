@@ -251,18 +251,22 @@ class AzureQuantumService:
         )
         target_obj = self.get_target(name=target)
 
-        # Get raw job results
+        # For SDK Cirq job wrappers, Job.results() already returns a Cirq result.
         try:
-            if isinstance(target_obj, AzureGenericQirCirqTarget):
-                # Use real per-shot data.
-                if timeout_seconds is None:
-                    result = job.azure_job.get_results_shots()
-                else:
-                    result = job.azure_job.get_results_shots(
-                        timeout_secs=timeout_seconds
-                    )
-            else:
-                result = job.results(timeout_seconds=timeout_seconds)
+            from azure.quantum.cirq.job import Job as CirqJob
+
+            if isinstance(job, CirqJob):
+                return job.results(
+                    timeout_seconds=timeout_seconds,
+                    param_resolver=param_resolver,
+                    seed=seed,
+                )
+        except Exception:
+            pass
+
+        # Otherwise, preserve provider-specific behavior (e.g., cirq_ionq.Job).
+        try:
+            result = job.results(timeout_seconds=timeout_seconds)
         except RuntimeError as e:
             # Catch errors from cirq_ionq.Job.results
             if "Job was not completed successful. Instead had status: " in str(e):
@@ -273,16 +277,8 @@ Job status: '{job.status()}'."
             else:
                 raise e
 
-        extra_kwargs = {}
-        if isinstance(target_obj, AzureGenericQirCirqTarget):
-            extra_kwargs = {
-                "measurement_dict": job.measurement_dict(),
-                "repetitions": repetitions,
-            }
-
         return target_obj._to_cirq_result(
             result=result,
             param_resolver=param_resolver,
             seed=seed,
-            **extra_kwargs,
         )

@@ -125,6 +125,7 @@ class AzureGenericQirCirqTarget(AzureTarget, CirqTarget):
             azure_job=azure_job,
             program=program,
             measurement_dict=measurement_dict,
+            target=self,
         )
 
     @staticmethod

@@ -325,3 +325,44 @@ def test_cirq_service_get_job_returns_cirq_job_wrapper_for_generic_target(
     assert fetched.job_id() == submitted.job_id()
     assert fetched.azure_job.details.target == "microsoft.estimator"
     assert str(fetched.azure_job.details.metadata.get("cirq")).lower() == "true"
+
+
+def test_cirq_job_results_converts_generic_target_shots(
+    monkeypatch: pytest.MonkeyPatch,
+):
+    np = pytest.importorskip("numpy")
+    cirq = pytest.importorskip("cirq")
+    pytest.importorskip("cirq_ionq")
+
+    from azure.quantum.cirq.service import AzureQuantumService
+
+    from mock_client import create_default_workspace
+
+    ws = create_default_workspace()
+    _freeze_workspace_client_recreation(ws)
+    service = AzureQuantumService(workspace=ws)
+
+    q0, q1 = cirq.LineQubit.range(2)
+    circuit = cirq.Circuit(
+        cirq.H(q0),
+        cirq.CNOT(q0, q1),
+        cirq.measure(q0, q1, key="m"),
+    )
+
+    _patch_offline_submission(monkeypatch)
+    job = service.create_job(
+        program=circuit,
+        repetitions=3,
+        name="generic-cirq-job",
+        target="microsoft.estimator",
+    )
+
+    # Avoid any blob downloads; provide per-shot results directly.
+    monkeypatch.setattr(job.azure_job, "get_results_shots", lambda *a, **k: ["01", "10", "00"])
+
+    result = job.results()
+    assert isinstance(result, cirq.ResultDict)
+    np.testing.assert_array_equal(
+        result.measurements["m"],
+        np.asarray([[0, 1], [1, 0], [0, 0]], dtype=np.int8),
+    )
