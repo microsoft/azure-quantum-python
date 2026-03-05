@@ -144,31 +144,6 @@ class AzureGenericQirCirqTarget(AzureTarget, CirqTarget):
         return str(obj)
 
     @staticmethod
-    def _sample_histogram(
-        histogram: Dict[str, float],
-        repetitions: int,
-        seed: Any = None,
-    ) -> List[str]:
-        import numpy as np
-
-        if repetitions <= 0:
-            return []
-
-        items = list(histogram.items())
-        keys = [k for k, _ in items]
-        probs = np.array([float(p) for _, p in items], dtype=float)
-        total = float(probs.sum())
-        if total <= 0:
-            raise ValueError("Result histogram has no probability mass.")
-        probs = probs / total
-
-        rng = (
-            np.random.RandomState(seed) if seed is not None else np.random.RandomState()
-        )
-        draws = rng.choice(len(keys), size=repetitions, p=probs)
-        return [keys[int(i)] for i in draws]
-
-    @staticmethod
     def _split_registers(bitstring: str, key_lengths: List[int]) -> List[str]:
         raw = str(bitstring).strip()
         if " " in raw:
