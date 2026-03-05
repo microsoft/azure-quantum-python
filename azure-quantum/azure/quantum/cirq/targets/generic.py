@@ -23,6 +23,87 @@ if TYPE_CHECKING:
     from azure.quantum._client.models import TargetStatus
 
 
+class _AzureCirqResultDict(cirq.ResultDict):
+    __slots__ = ("raw_shots", "_measurement_dict", "_raw_measurements_cache")
+
+    def __init__(
+        self,
+        *,
+        params: "cirq.ParamResolver",
+        measurements: Dict[str, "Any"],
+        raw_shots: List[Any],
+        measurement_dict: Dict[str, Sequence[int]],
+    ) -> None:
+        super().__init__(params=params, measurements=measurements)
+        self.raw_shots = raw_shots
+        self._measurement_dict = measurement_dict
+        self._raw_measurements_cache = None
+
+    def raw_measurements(self) -> Dict[str, Any]:
+        """Return unfiltered per-shot measurement symbols.
+
+        This is parsed from `raw_shots` using the same register splitting logic
+        as the binary `measurements` field, but preserves non-binary markers
+        (e.g. qubit loss symbols).
+
+        The returned structure mirrors Cirq's `measurements` mapping:
+        `{key: 2D array-like (shots x bits)}`.
+
+        Note: These values are not guaranteed to be integer-convertible, so they
+        should not be fed into Cirq tooling that assumes `{0,1}` bit data.
+        """
+
+        if self._raw_measurements_cache is not None:
+            return self._raw_measurements_cache
+
+        measurement_dict = self._measurement_dict or {"m": []}
+        measurement_keys = list(measurement_dict.keys())
+        key_lengths = [len(measurement_dict[k]) for k in measurement_keys]
+
+        rows_by_key: Dict[str, List[List[str]]] = {k: [] for k in measurement_keys}
+        for shot in self.raw_shots:
+            bitstring = AzureGenericQirCirqTarget._qir_display_to_bitstring(shot)
+            registers = AzureGenericQirCirqTarget._split_registers(
+                bitstring, key_lengths
+            )
+
+            if len(registers) == len(measurement_keys):
+                parts = registers
+            else:
+                flattened = "".join(registers)
+                parts = AzureGenericQirCirqTarget._split_registers(
+                    flattened, key_lengths
+                )
+
+            # Ensure a fixed-width row per key.
+            for key_index, key in enumerate(measurement_keys):
+                width = key_lengths[key_index]
+                if width == 0:
+                    rows_by_key[key].append([])
+                    continue
+
+                bits = parts[key_index] if key_index < len(parts) else ""
+                chars = list(str(bits).strip())
+                if len(chars) < width:
+                    chars = chars + ([""] * (width - len(chars)))
+                elif len(chars) > width:
+                    chars = chars[:width]
+                rows_by_key[key].append(chars)
+
+        try:
+            import numpy as np
+
+            raw_meas = {
+                k: np.asarray(v, dtype="<U1") if v else np.zeros((0, 0), dtype="<U1")
+                for k, v in rows_by_key.items()
+            }
+        except Exception:
+            raw_meas = rows_by_key
+
+        self._raw_measurements_cache = raw_meas
+        return raw_meas
+
+
 class AzureGenericQirCirqTarget(AzureTarget, CirqTarget):
     """Fallback Cirq target that submits Cirq circuits via QIR.
 
@@ -168,17 +249,16 @@ class AzureGenericQirCirqTarget(AzureTarget, CirqTarget):
     def _shots_to_rows(
         shots: Sequence[Any],
         measurement_dict: Optional[Dict[str, Sequence[int]]] = None,
-    ) -> Dict[str, List[List[Any]]]:
+    ) -> Dict[str, List[List[int]]]:
         if measurement_dict is None:
             measurement_dict = {"m": []}
 
         measurement_keys = list(measurement_dict.keys())
         key_lengths = [len(measurement_dict[k]) for k in measurement_keys]
 
-        shots_by_key: Dict[str, List[List[Any]]] = {k: [] for k in measurement_keys}
-        key_is_binary: Dict[str, bool] = {k: True for k in measurement_keys}
+        shots_by_key: Dict[str, List[List[int]]] = {k: [] for k in measurement_keys}
 
-        for shot in shots:
+        for shot_index, shot in enumerate(shots):
             bitstring = AzureGenericQirCirqTarget._qir_display_to_bitstring(shot)
             registers = AzureGenericQirCirqTarget._split_registers(
                 bitstring, key_lengths
@@ -192,24 +272,21 @@ class AzureGenericQirCirqTarget(AzureTarget, CirqTarget):
                     flattened, key_lengths
                 )
 
+            per_key_rows: Dict[str, List[int]] = {}
+            is_valid_shot = True
+
             for key, bits in zip(measurement_keys, parts):
                 bit_chars = list(str(bits).strip())
+                if not all(ch in "01" for ch in bit_chars):
+                    is_valid_shot = False
+                    break
+                per_key_rows[key] = [1 if ch == "1" else 0 for ch in bit_chars]
 
-                # Cirq can represent non-binary measurement outcomes (e.g., qubit
-                # loss markers) as string arrays.
-                if key_is_binary[key] and all(ch in "01" for ch in bit_chars):
-                    row: List[Any] = [1 if ch == "1" else 0 for ch in bit_chars]
-                else:
-                    if key_is_binary[key]:
-                        # Convert previously collected binary rows to strings.
-                        shots_by_key[key] = [
-                            ["1" if int(v) == 1 else "0" for v in prev]
-                            for prev in shots_by_key[key]
-                        ]
-                        key_is_binary[key] = False
-                    row = bit_chars
+            if not is_valid_shot:
+                continue
 
-                shots_by_key[key].append(row)
+            for key in measurement_keys:
+                shots_by_key[key].append(per_key_rows.get(key, []))
 
         return shots_by_key
 
@@ -227,12 +304,14 @@ class AzureGenericQirCirqTarget(AzureTarget, CirqTarget):
 
         import numpy as np
 
+        normalized_measurement_dict = measurement_dict or {"m": []}
+
         shots_by_key = AzureGenericQirCirqTarget._shots_to_rows(
             shots=result,
-            measurement_dict=measurement_dict,
+            measurement_dict=normalized_measurement_dict,
         )
 
-        measurement_keys = list((measurement_dict or {"m": []}).keys())
+        measurement_keys = list(normalized_measurement_dict.keys())
 
         measurements: Dict[str, "np.ndarray"] = {}
         for key in measurement_keys:
@@ -240,18 +319,14 @@ class AzureGenericQirCirqTarget(AzureTarget, CirqTarget):
             if not rows:
                 measurements[key] = np.zeros((0, 0), dtype=np.int8)
             else:
-                sample = None
-                for r in rows:
-                    if r:
-                        sample = r[0]
-                        break
+                measurements[key] = np.asarray(rows, dtype=np.int8)
 
-                if isinstance(sample, str):
-                    measurements[key] = np.asarray(rows, dtype="<U1")
-                else:
-                    measurements[key] = np.asarray(rows, dtype=np.int8)
-
-        return cirq.ResultDict(params=param_resolver, measurements=measurements)
+        return _AzureCirqResultDict(
+            params=param_resolver,
+            measurements=measurements,
+            raw_shots=list(result),
+            measurement_dict=normalized_measurement_dict,
+        )
 
     def submit(
         self,

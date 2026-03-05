@@ -200,7 +200,7 @@ def test_cirq_generic_to_cirq_result_default_measurement_key():
     )
 
 
-def test_cirq_generic_to_cirq_result_preserves_non_binary_symbols():
+def test_cirq_generic_to_cirq_result_drops_non_binary_shots_and_exposes_raw():
     np = pytest.importorskip("numpy")
     cirq = pytest.importorskip("cirq")
 
@@ -216,8 +216,19 @@ def test_cirq_generic_to_cirq_result_preserves_non_binary_symbols():
         measurement_dict=measurement_dict,
     )
 
+    # Only binary outcomes are kept in the Cirq measurements.
     np.testing.assert_array_equal(
         result.measurements["m"],
+        np.asarray([[1], [0]], dtype=np.int8),
+    )
+
+    # Raw shots remain available for loss/invalid inspection.
+    assert result.raw_shots == shots
+
+    raw_meas = result.raw_measurements()
+    assert set(raw_meas.keys()) == {"m"}
+    np.testing.assert_array_equal(
+        raw_meas["m"],
         np.asarray([["."], ["1"], ["0"], ["2"], ["-"]], dtype="<U1"),
     )
 
@@ -358,7 +369,9 @@ def test_cirq_job_results_converts_generic_target_shots(
     )
 
     # Avoid any blob downloads; provide per-shot results directly.
-    monkeypatch.setattr(job.azure_job, "get_results_shots", lambda *a, **k: ["01", "10", "00"])
+    monkeypatch.setattr(
+        job.azure_job, "get_results_shots", lambda *a, **k: ["01", "10", "00"]
+    )
 
     result = job.results()
     assert isinstance(result, cirq.ResultDict)
