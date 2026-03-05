@@ -167,14 +167,15 @@ class AzureGenericQirCirqTarget(AzureTarget, CirqTarget):
     def _shots_to_rows(
         shots: Sequence[Any],
         measurement_dict: Optional[Dict[str, Sequence[int]]] = None,
-    ) -> Dict[str, List[List[int]]]:
+    ) -> Dict[str, List[List[Any]]]:
         if measurement_dict is None:
             measurement_dict = {"m": []}
 
         measurement_keys = list(measurement_dict.keys())
         key_lengths = [len(measurement_dict[k]) for k in measurement_keys]
 
-        shots_by_key: Dict[str, List[List[int]]] = {k: [] for k in measurement_keys}
+        shots_by_key: Dict[str, List[List[Any]]] = {k: [] for k in measurement_keys}
+        key_is_binary: Dict[str, bool] = {k: True for k in measurement_keys}
 
         for shot in shots:
             bitstring = AzureGenericQirCirqTarget._qir_display_to_bitstring(shot)
@@ -191,7 +192,22 @@ class AzureGenericQirCirqTarget(AzureTarget, CirqTarget):
                 )
 
             for key, bits in zip(measurement_keys, parts):
-                row = [1 if ch == "1" else 0 for ch in str(bits).strip()]
+                bit_chars = list(str(bits).strip())
+
+                # Cirq can represent non-binary measurement outcomes (e.g., qubit
+                # loss markers) as string arrays.
+                if key_is_binary[key] and all(ch in "01" for ch in bit_chars):
+                    row: List[Any] = [1 if ch == "1" else 0 for ch in bit_chars]
+                else:
+                    if key_is_binary[key]:
+                        # Convert previously collected binary rows to strings.
+                        shots_by_key[key] = [
+                            ["1" if int(v) == 1 else "0" for v in prev]
+                            for prev in shots_by_key[key]
+                        ]
+                        key_is_binary[key] = False
+                    row = bit_chars
+
                 shots_by_key[key].append(row)
 
         return shots_by_key
@@ -223,7 +239,16 @@ class AzureGenericQirCirqTarget(AzureTarget, CirqTarget):
             if not rows:
                 measurements[key] = np.zeros((0, 0), dtype=np.int8)
             else:
-                measurements[key] = np.asarray(rows, dtype=np.int8)
+                sample = None
+                for r in rows:
+                    if r:
+                        sample = r[0]
+                        break
+
+                if isinstance(sample, str):
+                    measurements[key] = np.asarray(rows, dtype="<U1")
+                else:
+                    measurements[key] = np.asarray(rows, dtype=np.int8)
 
         return cirq.ResultDict(params=param_resolver, measurements=measurements)
 

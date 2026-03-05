@@ -200,6 +200,28 @@ def test_cirq_generic_to_cirq_result_default_measurement_key():
     )
 
 
+def test_cirq_generic_to_cirq_result_preserves_non_binary_symbols():
+    np = pytest.importorskip("numpy")
+    cirq = pytest.importorskip("cirq")
+
+    from azure.quantum.cirq.targets.generic import AzureGenericQirCirqTarget
+
+    # Some targets may return non-binary outcomes (e.g., qubit loss markers).
+    measurement_dict = {"m": [0]}
+    shots = [".", "1", "0", "2", "-"]
+
+    result = AzureGenericQirCirqTarget._to_cirq_result(
+        result=shots,
+        param_resolver=cirq.ParamResolver({}),
+        measurement_dict=measurement_dict,
+    )
+
+    np.testing.assert_array_equal(
+        result.measurements["m"],
+        np.asarray([["."], ["1"], ["0"], ["2"], ["-"]], dtype="<U1"),
+    )
+
+
 def test_cirq_service_targets_discovers_provider_specific_and_generic_wrappers(
     monkeypatch: pytest.MonkeyPatch,
 ):
