@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 ##
-from typing import TYPE_CHECKING, Dict, Sequence
+from typing import TYPE_CHECKING, Dict, Optional, Sequence
 
 if TYPE_CHECKING:
     import cirq
@@ -14,14 +14,16 @@ class Job:
     Thin wrapper around an Azure Quantum Job that supports
     returning results in Cirq format.
     """
+
     def __init__(
         self,
         azure_job: "AzureJob",
         program: "cirq.Circuit",
-        measurement_dict: dict = None
+        measurement_dict: dict = None,
+        target: Optional[object] = None,
     ):
         """Construct a Job.
-        
+
         :param azure_job: Job
         :type azure_job: azure.quantum.job.Job
         :param program: Cirq program
@@ -32,10 +34,16 @@ class Job:
         self._azure_job = azure_job
         self._program = program
         self._measurement_dict = measurement_dict
+        self._target = target
 
     def job_id(self) -> str:
         """Returns the job id (UID) for the job."""
         return self._azure_job.id
+
+    @property
+    def azure_job(self) -> "AzureJob":
+        """Returns the underlying Azure Quantum job."""
+        return self._azure_job
 
     def status(self) -> str:
         """Gets the current status of the job."""
@@ -66,15 +74,75 @@ class Job:
         """Returns a dictionary of measurement keys to target qubit index."""
         if self._measurement_dict is None:
             from cirq import MeasurementGate
-            measurements = [op for op in self._program.all_operations() if isinstance(op.gate, MeasurementGate)]
+
+            measurements = [
+                op
+                for op in self._program.all_operations()
+                if isinstance(op.gate, MeasurementGate)
+            ]
             self._measurement_dict = {
                 meas.gate.key: [q.x for q in meas.qubits] for meas in measurements
             }
         return self._measurement_dict
 
-    def results(self, timeout_seconds: int = 7200) -> "cirq.Result":
-        """Poll the Azure Quantum API for results."""
-        return self._azure_job.get_results(timeout_secs=timeout_seconds)
+    def results(
+        self,
+        timeout_seconds: int = 7200,
+        *,
+        param_resolver=None,
+        seed=None,
+    ) -> "cirq.Result":
+        """Poll the Azure Quantum API for results and return a Cirq result.
+
+        Provider targets may return different result payload shapes. This method
+        normalizes those payloads into a `cirq.Result` using the target-specific
+        `_to_cirq_result` implementation.
+        """
+
+        import cirq
+
+        if param_resolver is None:
+            param_resolver = cirq.ParamResolver({})
+        else:
+            param_resolver = cirq.ParamResolver(param_resolver)
+
+        target = self._target
+        if target is None:
+            # Best-effort reconstruction for jobs created via `Workspace.get_job`.
+            try:
+                from azure.quantum.cirq.service import AzureQuantumService
+
+                service = AzureQuantumService(workspace=self._azure_job.workspace)
+                target = service.get_target(name=self._azure_job.details.target)
+            except Exception:
+                target = None
+
+        if target is None:
+            raise RuntimeError(
+                "Cirq Job is missing its target wrapper; use `azure_job.get_results()` for raw results."
+            )
+
+        # Generic QIR wrapper must use per-shot data.
+        try:
+            from azure.quantum.cirq.targets.generic import AzureGenericQirCirqTarget
+
+            is_generic_qir = isinstance(target, AzureGenericQirCirqTarget)
+        except Exception:
+            is_generic_qir = False
+
+        if is_generic_qir:
+            raw = self._azure_job.get_results_shots(timeout_secs=timeout_seconds)
+            extra_kwargs = {"measurement_dict": self.measurement_dict()}
+        else:
+            raw = self._azure_job.get_results(timeout_secs=timeout_seconds)
+            extra_kwargs = {}
+
+        return target._to_cirq_result(
+            result=raw,
+            param_resolver=param_resolver,
+            seed=seed,
+            **extra_kwargs,
+        )
 
     def cancel(self):
         """Cancel the given job."""
@@ -85,4 +153,4 @@ class Job:
         self._azure_job.workspace.cancel_job(self._azure_job)
 
     def __str__(self) -> str:
-        return f'azure.quantum.cirq.Job(job_id={self.job_id()})'
+        return f"azure.quantum.cirq.Job(job_id={self.job_id()})"
