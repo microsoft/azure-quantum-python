@@ -258,7 +258,7 @@ class AzureGenericQirCirqTarget(AzureTarget, CirqTarget):
 
         shots_by_key: Dict[str, List[List[int]]] = {k: [] for k in measurement_keys}
 
-        for shot_index, shot in enumerate(shots):
+        for shot in enumerate(shots):
             bitstring = AzureGenericQirCirqTarget._qir_display_to_bitstring(shot)
             registers = AzureGenericQirCirqTarget._split_registers(
                 bitstring, key_lengths
