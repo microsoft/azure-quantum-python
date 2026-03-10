@@ -90,12 +90,14 @@ class QuantinuumQirBackendBase(AzureQirBackend):
             },
             target_profile=TargetProfile.Adaptive_RI,
         )
-        # Duplicate the options into a dict under "data" for compatibility with Qiskit 1.0, which expects this field
-        opt.__setattr__("data", {})
-        for key in opt:
-            opt.data[key] = getattr(opt, key)
-        # Likewise, map "update_config" to "update_options" for compatibility with Qiskit 1.0
-        opt.__setattr__("update_config", lambda **kwargs: opt.update_options(**kwargs))
+        # Ensure compatibility with Qiskit 1.0 where some code expected `Options` class to behave like a backend config,
+        # by explicitly adding the `.data` attribute and `.update_config` method. We do this at the class level to avoid
+        # the hacked override of `__setattr__` used inside of the `Options` class itself.
+        # This is only needed here as Quantinuum QIR backends override the default target profile by passing in kwargs
+        # later in initialization which are applied to the default options in different ways depending on the Qiskit version.
+        if not hasattr(Options, "data"):
+            Options.data = Options._fields
+            Options.update_config = Options.update_options
         return opt
 
     def _azure_config(self) -> Dict[str, str]:
