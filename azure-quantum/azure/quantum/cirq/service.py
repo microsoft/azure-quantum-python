@@ -6,13 +6,15 @@ try:
     import cirq
 except ImportError:
     raise ImportError(
-    "Missing optional 'cirq' dependencies. \
+        "Missing optional 'cirq' dependencies. \
 To install run: pip install azure-quantum[cirq]"
-)
+    )
 
 from azure.quantum import Workspace
 from azure.quantum.job.base_job import DEFAULT_TIMEOUT
-from azure.quantum.cirq.targets import * 
+from azure.quantum.cirq.targets import *
+from azure.quantum.cirq.targets.generic import AzureGenericQirCirqTarget
+from azure.quantum.cirq.targets.target import Target as CirqTargetBase
 
 from typing import Optional, Union, List, TYPE_CHECKING
 
@@ -30,25 +32,29 @@ class AzureQuantumService:
     Class for interfacing with the Azure Quantum service
     using Cirq quantum circuits
     """
+
     def __init__(
         self,
         workspace: Workspace = None,
         default_target: Optional[str] = None,
-        **kwargs
+        **kwargs,
     ):
         """AzureQuantumService class
 
-        :param workspace: Azure Quantum workspace. If missing it will create a new Workspace passing `kwargs` to the constructor. Defaults to None. 
+        :param workspace: Azure Quantum workspace. If missing it will create a new Workspace passing `kwargs` to the constructor. Defaults to None.
         :type workspace: Workspace
         :param default_target: Default target name, defaults to None
         :type default_target: Optional[str]
         """
         if kwargs is not None and len(kwargs) > 0:
             from warnings import warn
-            warn(f"""Consider passing \"workspace\" argument explicitly. 
-                 The ability to initialize AzureQuantumService with arguments {', '.join(f'"{argName}"' for argName in kwargs)} is going to be deprecated in future versions.""", 
-                 DeprecationWarning, 
-                 stacklevel=2)
+
+            warn(
+                f"""Consider passing \"workspace\" argument explicitly. 
+                 The ability to initialize AzureQuantumService with arguments {', '.join(f'"{argName}"' for argName in kwargs)} is going to be deprecated in future versions.""",
+                DeprecationWarning,
+                stacklevel=2,
+            )
 
         if workspace is None:
             workspace = Workspace(**kwargs)
@@ -64,18 +70,13 @@ class AzureQuantumService:
         from azure.quantum.cirq.targets import Target, DEFAULT_TARGETS
 
         target_factory = TargetFactory(
-            base_cls=Target,
-            workspace=self._workspace,
-            default_targets=DEFAULT_TARGETS
+            base_cls=Target, workspace=self._workspace, default_targets=DEFAULT_TARGETS
         )
 
         return target_factory
 
     def targets(
-        self,
-        name: str = None,
-        provider_id: str = None,
-        **kwargs
+        self, name: str = None, provider_id: str = None, **kwargs
     ) -> Union["CirqTarget", List["CirqTarget"]]:
         """Get all quantum computing targets available in the Azure Quantum Workspace.
 
@@ -84,10 +85,27 @@ class AzureQuantumService:
         :return: Target instance or list thereof
         :rtype: typing.Union[Target, typing.List[Target]]
         """
-        return self._target_factory.get_targets(
-            name=name,
-            provider_id=provider_id
-        )
+
+        target_statuses = self._workspace._get_target_status(name, provider_id)
+
+        cirq_targets: List["CirqTarget"] = []
+        for pid, status in target_statuses:
+            target = self._target_factory.from_target_status(pid, status, **kwargs)
+
+            if isinstance(target, CirqTargetBase):
+                cirq_targets.append(target)
+                continue
+
+            cirq_targets.append(
+                AzureGenericQirCirqTarget.from_target_status(
+                    self._workspace, pid, status, **kwargs
+                )
+            )
+
+        # Back-compat with TargetFactory.get_targets return type.
+        if name is not None:
+            return cirq_targets[0] if cirq_targets else None
+        return cirq_targets
 
     def get_target(self, name: str = None, **kwargs) -> "CirqTarget":
         """Get target with the specified name
@@ -114,11 +132,37 @@ class AzureQuantumService:
         :rtype: azure.quantum.cirq.Job
         """
         job = self._workspace.get_job(job_id=job_id)
-        target : CirqTarget = self._target_factory.create_target(
-            provider_id=job.details.provider_id,
-            name=job.details.target
+        # Recreate a Cirq-capable target wrapper for this job's target.
+        target = self.targets(
+            name=job.details.target, provider_id=job.details.provider_id
         )
-        return target._to_cirq_job(azure_job=job, *args, **kwargs)
+
+        if target is None:
+            raise RuntimeError(
+                f"Job '{job_id}' exists, but no Cirq target wrapper could be created for target '{job.details.target}' (provider '{job.details.provider_id}'). "
+                "AzureQuantumService.get_job only supports jobs submitted to Cirq-capable targets (provider-specific Cirq targets or the generic Cirq-to-QIR wrapper). "
+                "For non-Cirq jobs, use Workspace.get_job(job_id)."
+            )
+
+        # Avoid misrepresenting arbitrary workspace jobs as Cirq jobs when using the
+        # generic Cirq-to-QIR wrapper. The workspace target status APIs generally do
+        # not expose supported input formats, so we rely on Cirq-stamped metadata.
+        if isinstance(target, AzureGenericQirCirqTarget):
+            metadata = job.details.metadata or {}
+            cirq_flag = str(metadata.get("cirq", "")).strip().lower() == "true"
+            if not cirq_flag:
+                raise RuntimeError(
+                    f"Job '{job_id}' targets '{job.details.target}' but does not appear to be a Cirq job. "
+                    "Use Workspace.get_job(job_id) to work with this job."
+                )
+
+        try:
+            return target._to_cirq_job(azure_job=job, *args, **kwargs)
+        except Exception as exc:
+            raise RuntimeError(
+                f"Job '{job_id}' exists but could not be represented as a Cirq job for target '{job.details.target}' (provider '{job.details.provider_id}'). "
+                "Use Workspace.get_job(job_id) to work with the raw job."
+            ) from exc
 
     def create_job(
         self,
@@ -126,13 +170,13 @@ class AzureQuantumService:
         repetitions: int,
         name: str = DEFAULT_JOB_NAME,
         target: str = None,
-        param_resolver: cirq.ParamResolverOrSimilarType = cirq.ParamResolver({})
+        param_resolver: cirq.ParamResolverOrSimilarType = cirq.ParamResolver({}),
     ) -> Union["CirqJob", "CirqIonqJob"]:
         """Create job to run the given `cirq` program in Azure Quantum
 
         :param program: Cirq program or circuit
         :type program: cirq.Circuit
-        :param repetitions: Number of measurements 
+        :param repetitions: Number of measurements
         :type repetitions: int
         :param name: Program name
         :type name: str
@@ -146,18 +190,27 @@ class AzureQuantumService:
         # Get target
         _target = self.get_target(name=target)
         if not _target:
+            # If the target exists in the workspace but was filtered out, provide
+            # a more actionable error message.
             target_name = target or self._default_target
-            raise RuntimeError(f"Could not find target '{target_name}'. \
-Please make sure the target name is valid and that the associated provider is added to your Workspace. \
-To add a provider to your quantum workspace on the Azure Portal, \
-see https://aka.ms/AQ/Docs/AddProvider")
+            ws_statuses = self._workspace._get_target_status(target_name)
+            if ws_statuses:
+                pid, status = ws_statuses[0]
+                raise RuntimeError(
+                    f"Target '{target_name}' exists in your workspace (provider '{pid}') and appears QIR-capable, but no Cirq-capable target could be created. "
+                    "If you're using the generic Cirq-to-QIR path, ensure `qsharp` is installed: pip install azure-quantum[cirq,qsharp]."
+                )
+
+            raise RuntimeError(
+                f"Could not find target '{target_name}'. "
+                "Please make sure the target name is valid and that the associated provider is added to your Workspace. "
+                "To add a provider to your quantum workspace on the Azure Portal, see https://aka.ms/AQ/Docs/AddProvider"
+            )
         # Resolve parameters
         resolved_circuit = cirq.resolve_parameters(program, param_resolver)
         # Submit job to Azure
         return _target.submit(
-            program=resolved_circuit,
-            repetitions=repetitions,
-            name=name
+            program=resolved_circuit, repetitions=repetitions, name=name
         )
 
     def run(
@@ -194,23 +247,38 @@ see https://aka.ms/AQ/Docs/AddProvider")
             repetitions=repetitions,
             name=name,
             target=target,
-            param_resolver=param_resolver
+            param_resolver=param_resolver,
         )
-        # Get raw job results
+        target_obj = self.get_target(name=target)
+
+        # For SDK Cirq job wrappers, Job.results() already returns a Cirq result.
+        try:
+            from azure.quantum.cirq.job import Job as CirqJob
+
+            if isinstance(job, CirqJob):
+                return job.results(
+                    timeout_seconds=timeout_seconds,
+                    param_resolver=param_resolver,
+                    seed=seed,
+                )
+        except Exception:
+            pass
+
+        # Otherwise, preserve provider-specific behavior (e.g., cirq_ionq.Job).
         try:
             result = job.results(timeout_seconds=timeout_seconds)
         except RuntimeError as e:
             # Catch errors from cirq_ionq.Job.results
             if "Job was not completed successful. Instead had status: " in str(e):
-                raise TimeoutError(f"The wait time has exceeded {timeout_seconds} seconds. \
-Job status: '{job.status()}'.")
+                raise TimeoutError(
+                    f"The wait time has exceeded {timeout_seconds} seconds. \
+Job status: '{job.status()}'."
+                )
             else:
                 raise e
 
-        # Convert to Cirq Result
-        target = self.get_target(name=target)
-        return target._to_cirq_result(
+        return target_obj._to_cirq_result(
             result=result,
             param_resolver=param_resolver,
-            seed=seed
+            seed=seed,
         )

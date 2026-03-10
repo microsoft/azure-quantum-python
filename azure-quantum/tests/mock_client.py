@@ -16,7 +16,13 @@ from azure.core.paging import ItemPaged
 from azure.quantum.workspace import Workspace
 from types import SimpleNamespace
 from azure.quantum._client import WorkspaceClient
-from azure.quantum._client.models import JobDetails, SessionDetails, ItemDetails
+from azure.quantum._client.models import (
+    ItemDetails,
+    JobDetails,
+    ProviderStatus,
+    SessionDetails,
+    TargetStatus,
+)
 from azure.quantum._client.models import SasUriResponse
 from azure.quantum._workspace_connection_params import WorkspaceConnectionParams
 from common import (
@@ -465,14 +471,16 @@ class TopLevelItemsOperations:
 
 
 class ProvidersOperations:
+    def __init__(self, store: List[ProviderStatus]) -> None:
+        self._store = store
+
     def list(
         self,
         subscription_id: str,
         resource_group_name: str,
         workspace_name: str,
-    ) -> ItemPaged:
-        # Minimal stub: return empty provider list
-        return _paged([], page_size=100)
+    ) -> ItemPaged[ProviderStatus]:
+        return _paged(list(self._store), page_size=100)
 
 
 class QuotasOperations:
@@ -546,6 +554,7 @@ class MockWorkspaceClient:
         # in-memory stores
         self._jobs_store: List[JobDetails] = []
         self._sessions_store: List[SessionDetails] = []
+        self._providers_store: List[ProviderStatus] = []
         # operations grouped under .services to mirror WorkspaceClient
         self.services = SimpleNamespace(
             jobs=JobsOperations(self._jobs_store),
@@ -553,7 +562,7 @@ class MockWorkspaceClient:
             top_level_items=TopLevelItemsOperations(
                 self._jobs_store, self._sessions_store
             ),
-            providers=ProvidersOperations(),
+            providers=ProvidersOperations(self._providers_store),
             quotas=QuotasOperations(),
             storage=StorageOperations(),
         )
@@ -697,10 +706,76 @@ def seed_sessions(ws: WorkspaceMock) -> None:
         )
 
 
+def seed_providers(ws: WorkspaceMock) -> None:
+    """Seed a small set of provider+target status objects.
+
+    This enables offline target discovery via `Workspace._get_target_status()`,
+    which iterates `ws._client.services.providers.list()`.
+    """
+
+    def _target(
+        *,
+        target_id: str,
+        num_qubits: int | None = None,
+        target_profile: str | None = None,
+    ) -> TargetStatus:
+        return TargetStatus(
+            {
+                "id": target_id,
+                "currentAvailability": "Available",
+                "averageQueueTime": 0,
+                "numQubits": num_qubits,
+                "targetProfile": target_profile,
+            }
+        )
+
+    providers: List[ProviderStatus] = [
+        ProviderStatus(
+            {
+                "id": "quantinuum",
+                "currentAvailability": "Available",
+                "targets": [
+                    _target(
+                        target_id="quantinuum.sim", num_qubits=20, target_profile="Base"
+                    )
+                ],
+            }
+        ),
+        ProviderStatus(
+            {
+                "id": "ionq",
+                "currentAvailability": "Available",
+                "targets": [
+                    _target(
+                        target_id="ionq.simulator", num_qubits=29, target_profile="Base"
+                    )
+                ],
+            }
+        ),
+        # A provider/target that does not have a dedicated Cirq target class;
+        ProviderStatus(
+            {
+                "id": "microsoft",
+                "currentAvailability": "Available",
+                "targets": [
+                    _target(
+                        target_id="microsoft.estimator",
+                        num_qubits=None,
+                        target_profile="Base",
+                    )
+                ],
+            }
+        ),
+    ]
+
+    ws._client.services.providers._store[:] = providers
+
+
 def create_default_workspace() -> WorkspaceMock:
     ws = WorkspaceMock(
         subscription_id=SUBSCRIPTION_ID, resource_group=RESOURCE_GROUP, name=WORKSPACE
     )
     seed_jobs(ws)
     seed_sessions(ws)
+    seed_providers(ws)
     return ws

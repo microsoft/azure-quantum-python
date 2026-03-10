@@ -62,7 +62,12 @@ class QuantinuumTarget(Quantinuum, CirqTarget):
         if "measurement_dict" not in azure_job.details.metadata and program is None:
             raise ValueError("Parameter 'measurement_dict' not found in job metadata.")
         measurement_dict = azure_job.details.metadata.get("measurement_dict")
-        return CirqJob(azure_job=azure_job, program=program, measurement_dict=measurement_dict)
+        return CirqJob(
+            azure_job=azure_job,
+            program=program,
+            measurement_dict=measurement_dict,
+            target=self,
+        )
 
     @staticmethod
     def _measurement_dict(program) -> Dict[str, Sequence[int]]:
