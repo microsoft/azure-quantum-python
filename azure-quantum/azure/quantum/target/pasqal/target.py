@@ -72,7 +72,7 @@ class Pasqal(Target):
 
     target_names = tuple(target.value for target in PasqalTarget)
 
-    _SHOTS_PARAM_NAME = "count"
+    _SHOTS_PARAM_NAME = "shots"
 
     def __init__(
         self,
