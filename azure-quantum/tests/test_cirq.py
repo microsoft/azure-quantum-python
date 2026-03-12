@@ -233,6 +233,38 @@ def test_cirq_generic_to_cirq_result_drops_non_binary_shots_and_exposes_raw():
     )
 
 
+def test_cirq_service_targets_excludes_non_qir_target():
+    """Targets without a target_profile (e.g. Pasqal) must not be wrapped as
+    AzureGenericQirCirqTarget — they use pulse-level input formats incompatible
+    with QIR submission.
+    """
+    pytest.importorskip("cirq")
+    pytest.importorskip("cirq_ionq")
+
+    from azure.quantum.cirq.service import AzureQuantumService
+    from azure.quantum.cirq.targets.generic import AzureGenericQirCirqTarget
+
+    from mock_client import create_default_workspace
+
+    ws = create_default_workspace()
+    _freeze_workspace_client_recreation(ws)
+    service = AzureQuantumService(workspace=ws)
+
+    targets = service.targets()
+    target_names = [t.name for t in targets]
+
+    # The Pasqal target (target_profile=None) should be completely absent.
+    assert not any(
+        "pasqal" in name for name in target_names
+    ), f"Non-QIR Pasqal target unexpectedly appeared in service.targets(): {target_names}"
+    # Specifically, no AzureGenericQirCirqTarget should have been created for it.
+    assert not any(
+        isinstance(t, AzureGenericQirCirqTarget) and "pasqal" in t.name for t in targets
+    )
+    # QIR-capable targets should still be present.
+    assert any("microsoft.estimator" in name for name in target_names)
+
+
 def test_cirq_service_targets_discovers_provider_specific_and_generic_wrappers(
     monkeypatch: pytest.MonkeyPatch,
 ):
