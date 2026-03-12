@@ -50,8 +50,9 @@ class QuantinuumTarget(Quantinuum, CirqTarget):
     @staticmethod
     def _to_cirq_result(result: Dict[str, Any], param_resolver, **kwargs):
         from cirq import ResultDict
+
         measurements = {
-            key.lstrip("m_"): np.array([[int(_v)] for _v in value])
+            key.removeprefix("m_"): np.array([[int(bit) for bit in _v] for _v in value])
             for key, value in result.items()
             if key.startswith("m_")
         }
@@ -73,12 +74,13 @@ class QuantinuumTarget(Quantinuum, CirqTarget):
     def _measurement_dict(program) -> Dict[str, Sequence[int]]:
         """Returns a dictionary of measurement keys to target qubit index."""
         from cirq import MeasurementGate
+
         measurements = [
-            op for op in program.all_operations() if isinstance(op.gate, MeasurementGate)
+            op
+            for op in program.all_operations()
+            if isinstance(op.gate, MeasurementGate)
         ]
-        return {
-            meas.gate.key: [q.x for q in meas.qubits] for meas in measurements
-        }
+        return {meas.gate.key: [q.x for q in meas.qubits] for meas in measurements}
 
     def submit(
         self,
@@ -103,7 +105,7 @@ class QuantinuumTarget(Quantinuum, CirqTarget):
         metadata = {
             "qubits": len(program.all_qubits()),
             "repetitions": repetitions,
-            "measurement_dict": json.dumps(self._measurement_dict(program))
+            "measurement_dict": json.dumps(self._measurement_dict(program)),
         }
         # Override metadata with value from kwargs
         metadata.update(kwargs.get("metadata", {}))
