@@ -766,6 +766,21 @@ def seed_providers(ws: WorkspaceMock) -> None:
                 ],
             }
         ),
+        # A non-QIR provider (no target_profile) that should never get a generic
+        # QIR backend/target wrapper — mirrors real-world Pasqal behavior.
+        ProviderStatus(
+            {
+                "id": "pasqal",
+                "currentAvailability": "Available",
+                "targets": [
+                    _target(
+                        target_id="pasqal.sim.emu-tn",
+                        num_qubits=100,
+                        target_profile=None,
+                    )
+                ],
+            }
+        ),
     ]
 
     ws._client.services.providers._store[:] = providers

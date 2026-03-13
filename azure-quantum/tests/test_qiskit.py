@@ -519,6 +519,23 @@ def test_qir_target_profile_from_deprecated_target_capability():
     assert "target_profile" not in input_params
 
 
+def test_generic_qir_backend_not_created_for_non_qir_target():
+    """Targets without a target_profile (e.g. Pasqal) must not receive an
+    AzureGenericQirBackend — they use pulse-level input formats incompatible
+    with QIR submission.
+
+    The default mock workspace already includes pasqal.sim.emu-tn with
+    target_profile=None via seed_providers in mock_client.py.
+    """
+    from qiskit.providers.exceptions import QiskitBackendNotFoundError
+
+    ws = create_default_workspace()
+    provider = AzureQuantumProvider(workspace=ws)
+
+    with pytest.raises(QiskitBackendNotFoundError):
+        provider.get_backend("pasqal.sim.emu-tn")
+
+
 def test_generic_qir_backend_created_for_unknown_workspace_target(
     monkeypatch: pytest.MonkeyPatch,
 ):

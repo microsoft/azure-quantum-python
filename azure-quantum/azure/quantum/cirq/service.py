@@ -96,6 +96,13 @@ class AzureQuantumService:
                 cirq_targets.append(target)
                 continue
 
+            # Only apply the generic QIR fallback to targets that advertise a QIR
+            # target profile. Providers like Pasqal use pulse-level input formats
+            # (e.g. pasqal.pulser.v1) that are incompatible with QIR submission.
+            # target_profile is None for non-QIR targets.
+            if not status.target_profile:
+                continue
+
             cirq_targets.append(
                 AzureGenericQirCirqTarget.from_target_status(
                     self._workspace, pid, status, **kwargs
