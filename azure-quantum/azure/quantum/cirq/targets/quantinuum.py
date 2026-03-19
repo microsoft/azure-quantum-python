@@ -44,8 +44,21 @@ class QuantinuumTarget(Quantinuum, CirqTarget):
 
     @staticmethod
     def _translate_cirq_circuit(circuit) -> str:
-        """Translate `cirq` circuit to OpenQASM 2.0."""
-        return circuit.to_qasm()
+        """Translate `cirq` circuit to OpenQASM 2.0.
+
+        Note: The Quantinuum targets in this SDK default to
+        `input_data_format="honeywell.openqasm.v1"`, which corresponds to
+        OpenQASM 2.0.
+        """
+        import cirq
+
+        if cirq.is_parameterized(circuit):
+            raise ValueError(
+                "Cannot serialize a parameterized Cirq circuit to OpenQASM 2.0. "
+                "Resolve parameters first (e.g. via cirq.resolve_parameters)."
+            )
+
+        return circuit.to_qasm(version="2.0")
 
     @staticmethod
     def _to_cirq_result(result: Dict[str, Any], param_resolver, **kwargs):

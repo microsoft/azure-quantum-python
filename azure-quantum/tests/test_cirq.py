@@ -411,3 +411,61 @@ def test_cirq_job_results_converts_generic_target_shots(
         result.measurements["m"],
         np.asarray([[0, 1], [1, 0], [0, 0]], dtype=np.int8),
     )
+
+
+def test_cirq_to_qasm_supports_openqasm3_program():
+    cirq = pytest.importorskip("cirq")
+
+    q0, q1 = cirq.LineQubit.range(2)
+    circuit = cirq.Circuit(
+        cirq.H(q0),
+        cirq.CNOT(q0, q1),
+        cirq.measure(q0, q1, key="m"),
+    )
+
+    qasm = circuit.to_qasm(version="3.0")
+
+    # Cirq's exporter may include a leading comment header.
+    assert "OPENQASM 3.0;" in qasm
+    assert 'include "stdgates.inc";' in qasm
+    assert "qubit[2] q;" in qasm
+    assert "h q[0];" in qasm
+    assert "cx q[0],q[1];" in qasm
+    assert "measure q[0];" in qasm
+    assert "measure q[1];" in qasm
+
+
+def test_cirq_ionq_serializer_api_compatibility():
+    cirq = pytest.importorskip("cirq")
+    pytest.importorskip("cirq_ionq")
+
+    from azure.quantum.cirq.targets.ionq import IonQTarget
+
+    q0 = cirq.LineQubit(0)
+    circuit = cirq.Circuit(cirq.X(q0), cirq.measure(q0, key="m"))
+
+    serialized = IonQTarget._translate_cirq_circuit(circuit)
+
+    assert hasattr(serialized, "body")
+    assert isinstance(serialized.body, dict)
+    assert "qubits" in serialized.body
+
+
+def test_cirq_ionq_to_cirq_result_accepts_singleton_list():
+    cirq = pytest.importorskip("cirq")
+    pytest.importorskip("cirq_ionq")
+
+    from cirq_ionq.results import SimulatorResult
+    from azure.quantum.cirq.targets.ionq import IonQTarget
+
+    sim_result = SimulatorResult(
+        probabilities={0: 0.5, 1: 0.5},
+        num_qubits=1,
+        measurement_dict={"m": [0]},
+        repetitions=10,
+    )
+
+    cirq_result = IonQTarget._to_cirq_result(
+        [sim_result], param_resolver=cirq.ParamResolver({})
+    )
+    assert hasattr(cirq_result, "measurements")

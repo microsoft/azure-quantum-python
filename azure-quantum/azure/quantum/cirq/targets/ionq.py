@@ -2,7 +2,9 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 ##
-from typing import TYPE_CHECKING, Any, Dict, Union, Optional
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any, Dict, Optional, Sequence, Union
 
 try:
     import cirq
@@ -117,7 +119,13 @@ class IonQTarget(IonQ, CirqTarget):
         """Translate Cirq circuit to IonQ JSON. If dependencies \
 are not installed, throw error with installation instructions."""
         from cirq_ionq import Serializer
-        return Serializer().serialize(circuit)
+
+        serializer = Serializer()
+        if hasattr(serializer, "serialize_single_circuit"):
+            return serializer.serialize_single_circuit(circuit)
+
+        # Backward-compat for older cirq_ionq.
+        return serializer.serialize(circuit)
 
     def _to_cirq_job(self, azure_job: "AzureJob") -> "CirqIonqJob":
         """Convert Azure job to Cirq job"""
@@ -160,10 +168,18 @@ are not installed, throw error with installation instructions."""
     
     @staticmethod
     def _to_cirq_result(
-        result: Union[QPUResult, SimulatorResult],
+        result: "IonQResultLike",
         param_resolver: cirq.ParamResolverOrSimilarType = cirq.ParamResolver({}),
         seed: cirq.RANDOM_STATE_OR_SEED_LIKE = None,
     ) -> "cirq.Result":
+        # cirq_ionq>=1.6 returns a list of results even for a single circuit.
+        if isinstance(result, (list, tuple)):
+            if len(result) != 1:
+                raise ValueError(
+                    f"Expected a single IonQ result for a single circuit, got {len(result)} results."
+                )
+            result = result[0]
+
         if isinstance(result, QPUResult):
             return result.to_cirq_result(params=cirq.ParamResolver(param_resolver))
         elif isinstance(result, SimulatorResult):
@@ -172,4 +188,8 @@ are not installed, throw error with installation instructions."""
         raise ValueError("Result {result} not supported. \
             Expecting either a cirq_ionq.results.QPUResult \
                 or cirq_ionq.results.SimulatorResult.")
+
+
+IonQSingleResult = Union[QPUResult, SimulatorResult]
+IonQResultLike = Union[IonQSingleResult, Sequence[IonQSingleResult]]
  

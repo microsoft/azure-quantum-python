@@ -111,7 +111,7 @@ class AzureGenericQirCirqTarget(AzureTarget, CirqTarget):
     that do not have dedicated Cirq target classes.
 
     Translation pipeline:
-    - Cirq circuit -> OpenQASM (via `cirq.Circuit.to_qasm()`)
+    - Cirq circuit -> OpenQASM 3 (via `cirq.Circuit.to_qasm(version="3.0")`)
     - OpenQASM -> QIR (via `qsharp.openqasm.compile`)
 
     Dependencies: requires `qsharp` to be installed.
@@ -168,7 +168,13 @@ class AzureGenericQirCirqTarget(AzureTarget, CirqTarget):
                 "Install with: pip install azure-quantum[cirq,qsharp]"
             ) from exc
 
-        qasm = circuit.to_qasm()
+        if cirq.is_parameterized(circuit):
+            raise ValueError(
+                "Cannot serialize a parameterized Cirq circuit to OpenQASM 3. "
+                "Resolve parameters first (e.g. via cirq.resolve_parameters)."
+            )
+
+        qasm = circuit.to_qasm(version="3.0")
 
         return compile(qasm)
 
