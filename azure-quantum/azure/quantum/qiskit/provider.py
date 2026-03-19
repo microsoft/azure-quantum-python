@@ -143,11 +143,11 @@ see https://aka.ms/AQ/Docs/AddProvider"
             if (target_id, pid) in existing_pairs:
                 continue
             status = status_by_target.get((target_id, pid))
-            # Only create a generic QIR backend for targets that advertise a QIR
-            # target profile. Providers like Pasqal use pulse-level input formats
-            # (e.g. pasqal.pulser.v1) that are incompatible with QIR submission.
-            # target_profile is None for non-QIR targets.
-            if status is not None and not status.target_profile:
+            # Pasqal uses a pulse-level input format (pasqal.pulser.v1) that is
+            # incompatible with QIR submission. All other public Azure Quantum
+            # targets are assumed to be QIR-compatible.
+            _NON_QIR_PROVIDERS = {"pasqal"}
+            if str(pid).strip().lower() in _NON_QIR_PROVIDERS:
                 continue
             backend_list.append(
                 AzureGenericQirBackend(
