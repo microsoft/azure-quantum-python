@@ -237,7 +237,7 @@ class AzureQuantumJob(JobV1):
         num_qubits = int(self._azure_job.details.metadata.get("num_qubits"))
 
         if not "histogram" in az_result:
-            raise "Histogram missing from IonQ Job results"
+            raise ValueError("Histogram missing from IonQ Job results")
 
         counts = defaultdict(int)
         probabilities = defaultdict(int)
