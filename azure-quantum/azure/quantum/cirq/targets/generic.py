@@ -215,8 +215,24 @@ class AzureGenericQirCirqTarget(AzureTarget, CirqTarget):
             target=self,
         )
 
+    # Some backends emit verbose strings for individual qubit outcomes instead of
+    # single-character values.  Map the known ones explicitly so they don't corrupt
+    # the per-qubit register split.
+    _SHOT_STRING_MAP: Dict[str, str] = {
+        "Zero": "0",
+        "False": "0",
+        "One": "1",
+        "True": "1",
+        "Loss": "-",
+    }
+
     @staticmethod
     def _qir_display_to_bitstring(obj: Any) -> str:
+        if isinstance(obj, str):
+            mapped = AzureGenericQirCirqTarget._SHOT_STRING_MAP.get(obj)
+            if mapped is not None:
+                return mapped
+
         if isinstance(obj, str) and not re.match(r"[\d\s]+$", obj):
             try:
                 obj = ast.literal_eval(obj)
@@ -228,7 +244,9 @@ class AzureGenericQirCirqTarget(AzureTarget, CirqTarget):
                 AzureGenericQirCirqTarget._qir_display_to_bitstring(t) for t in obj
             )
         if isinstance(obj, list):
-            return "".join(str(bit) for bit in obj)
+            return "".join(
+                AzureGenericQirCirqTarget._qir_display_to_bitstring(bit) for bit in obj
+            )
         return str(obj)
 
     @staticmethod

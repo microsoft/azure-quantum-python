@@ -233,6 +233,84 @@ def test_cirq_generic_to_cirq_result_drops_non_binary_shots_and_exposes_raw():
     )
 
 
+def test_cirq_generic_to_cirq_result_non_binary_shots_filtered_and_raw_preserved():
+    """Non-binary shots are excluded from measurements[] but kept in raw_shots.
+
+    Known backend-specific outcome strings ("Loss", "True", "False", "One", "Zero")
+    are mapped to their single-character equivalents before register splitting.
+    Single-char non-binary markers like "." pass through unchanged.
+    """
+    np = pytest.importorskip("numpy")
+    cirq = pytest.importorskip("cirq")
+
+    from azure.quantum.cirq.targets.generic import AzureGenericQirCirqTarget
+
+    measurement_dict = {"m": [0]}
+    # "Loss" -> mapped to "-"
+    # "."    -> preserved as "."
+    # "1"/"0" -> binary, appear in measurements
+    shots = ["Loss", ".", "1", "0"]
+
+    result = AzureGenericQirCirqTarget._to_cirq_result(
+        result=shots,
+        param_resolver=cirq.ParamResolver({}),
+        measurement_dict=measurement_dict,
+    )
+
+    # Only binary outcomes in measurements.
+    np.testing.assert_array_equal(
+        result.measurements["m"],
+        np.asarray([[1], [0]], dtype=np.int8),
+    )
+
+    # Original shot objects kept verbatim in raw_shots.
+    assert result.raw_shots == shots
+
+    # raw_measurements: "Loss" -> "-", "." -> ".", binary values unchanged.
+    raw_meas = result.raw_measurements()
+    np.testing.assert_array_equal(
+        raw_meas["m"],
+        np.asarray([["-"], ["."], ["1"], ["0"]], dtype="<U1"),
+    )
+
+
+def test_cirq_generic_qir_display_to_bitstring_unexpected_scalar_becomes_loss_marker():
+    """Only the literal string 'Loss' gets special-cased to the loss marker.
+    All other strings follow normal procedure: digit strings bypass
+    ast.literal_eval; non-digit strings are evaled or returned verbatim.
+    """
+    pytest.importorskip("cirq")
+
+    from azure.quantum.cirq.targets.generic import AzureGenericQirCirqTarget
+
+    fn = AzureGenericQirCirqTarget._qir_display_to_bitstring
+
+    # Digit strings bypass ast.literal_eval entirely.
+    assert fn("0") == "0"
+    assert fn("1") == "1"
+    assert fn("011") == "011"
+
+    # Non-digit strings that fail literal_eval are returned verbatim.
+    assert fn(".") == "."
+    assert fn("-") == "-"
+    assert fn("1.1") == "1.1"  # evaluated to float 1.1, str() -> "1.1"
+    assert fn(".1.0.1") == ".1.0.1"  # fails eval, returned as-is
+    assert fn("-10") == "-10"  # evals to int -10, str() -> "-10"
+    assert fn("1-0-1") == "1-0-1"  # fails eval, returned as-is
+
+    # Known multi-character per-qubit outcome strings are mapped explicitly.
+    assert fn("Zero") == "0"
+    assert fn("False") == "0"
+    assert fn("One") == "1"
+    assert fn("True") == "1"
+    assert fn("Loss") == "-"
+
+    # List elements are processed recursively, so special-case strings inside
+    # a list are also mapped correctly.
+    assert fn(["Zero", "Loss", "Loss"]) == "0--"
+    assert fn(["One", "Zero", "One"]) == "101"
+
+
 def test_cirq_service_targets_excludes_non_qir_target():
     """Targets without a target_profile (e.g. Pasqal) must not be wrapped as
     AzureGenericQirCirqTarget — they use pulse-level input formats incompatible
