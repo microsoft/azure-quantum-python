@@ -356,7 +356,7 @@ class Job(BaseJob, FilteredJob):
                 # Convert the dictionary to a tuple
                 return tuple(self._convert_tuples(data[f"Item{i+1}"]) for i in range(len(data)))
             else:
-                raise "Malformed tuple output"
+                raise ValueError("Malformed tuple output")
         elif isinstance(data, list):
             # Recursively process list elements
             return [self._convert_tuples(item) for item in data]
