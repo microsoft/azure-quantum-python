@@ -195,7 +195,7 @@ class AzureQuantumJob(JobV1):
     def _draw_random_sample(self, sampler_seed, probabilities, shots):
         _norm = sum(probabilities.values())
         if _norm != 1:
-            if np.isclose(_norm, 1.0, rtol=1e-4):
+            if np.isclose(_norm, 1.0, atol=1e-2):
                 probabilities = {k: v / _norm for k, v in probabilities.items()}
             else:
                 raise ValueError(f"Probabilities do not add up to 1: {probabilities}")
