@@ -280,12 +280,6 @@ Job status: '{job.status()}'."
             else:
                 raise e
 
-        # If results() already returned a Cirq result (e.g. because job is a CirqJob
-        # whose fast-path raised and was swallowed above), return it directly rather
-        # than passing it to _to_cirq_result(), which expects a raw backend payload.
-        # if isinstance(result, cirq.Result):
-        #     return result
-
         return target_obj._to_cirq_result(
             result=result,
             param_resolver=param_resolver,
