@@ -259,17 +259,13 @@ class AzureQuantumService:
         target_obj = self.get_target(name=target)
 
         # For SDK Cirq job wrappers, Job.results() already returns a Cirq result.
-        try:
-            from azure.quantum.cirq.job import Job as CirqJob
-
-            if isinstance(job, CirqJob):
-                return job.results(
-                    timeout_seconds=timeout_seconds,
-                    param_resolver=param_resolver,
-                    seed=seed,
-                )
-        except Exception:
-            pass
+        from azure.quantum.cirq.job import Job as CirqJob
+        if isinstance(job, CirqJob):
+            return job.results(
+                timeout_seconds=timeout_seconds,
+                param_resolver=param_resolver,
+                seed=seed,
+            )
 
         # Otherwise, preserve provider-specific behavior (e.g., cirq_ionq.Job).
         try:
