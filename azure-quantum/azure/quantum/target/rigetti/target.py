@@ -32,6 +32,8 @@ class RigettiTarget(str, Enum):
 
     ANKAA_3 = "rigetti.qpu.ankaa-3"
 
+    CEPHEUS_1_108Q = "rigetti.qpu.cepheus-1-108q"
+
     def simulators() -> List[str]:
         """Returns a list of simulator targets"""
         return [
@@ -41,7 +43,8 @@ class RigettiTarget(str, Enum):
     def qpus() -> List[str]:
         """Returns a list of QPU targets"""
         return [
-            RigettiTarget.ANKAA_3.value
+            RigettiTarget.ANKAA_3.value,
+            RigettiTarget.CEPHEUS_1_108Q.value,
         ]
 
     def num_qubits(target_name) -> int:
@@ -51,6 +54,8 @@ class RigettiTarget(str, Enum):
             return 20
         elif target_name == RigettiTarget.ANKAA_3.value:
             return 84
+        elif target_name == RigettiTarget.CEPHEUS_1_108Q.value:
+            return 108
         else:
             raise ValueError(f"Unknown target {target_name}")
 
