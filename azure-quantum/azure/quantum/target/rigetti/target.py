@@ -30,8 +30,6 @@ class RigettiTarget(str, Enum):
     QVM = "rigetti.sim.qvm"
     """A simulator target for Quil. See https://github.com/quil-lang/qvm for more info."""
 
-    ANKAA_3 = "rigetti.qpu.ankaa-3"
-
     CEPHEUS_1_108Q = "rigetti.qpu.cepheus-1-108q"
     """A multi-chip QPU comprising twelve 9-qubit chips tiled together."""
 
@@ -44,7 +42,6 @@ class RigettiTarget(str, Enum):
     def qpus() -> List[str]:
         """Returns a list of QPU targets"""
         return [
-            RigettiTarget.ANKAA_3.value,
             RigettiTarget.CEPHEUS_1_108Q.value,
         ]
 
@@ -53,8 +50,6 @@ class RigettiTarget(str, Enum):
 
         if target_name == RigettiTarget.QVM.value:
             return 20
-        elif target_name == RigettiTarget.ANKAA_3.value:
-            return 84
         elif target_name == RigettiTarget.CEPHEUS_1_108Q.value:
             return 108
         else:
