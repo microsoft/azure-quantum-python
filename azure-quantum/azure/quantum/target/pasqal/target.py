@@ -26,28 +26,52 @@ class PasqalTarget(str, Enum):
 
     SIM_EMU_TN = "pasqal.sim.emu-tn"
     """pasqal.sim.emu-tn target"""
+    
+    SIM_EMU_SV = "pasqal.sim.emu-sv"
+    """pasqal.sim.emu-sv target"""
+    
+    SIM_EMU_MPS = "pasqal.sim.emu-mps"
+    """pasqal.sim.emu-mps target"""
+    
+    SIM_EMU_FREE = "pasqal.sim.emu-free"
+    """pasqal.sim.emu-free target"""
 
     QPU_FRESNEL = "pasqal.qpu.fresnel"
-    """A simulator target for Quil. See https://github.com/quil-lang/qvm for more info."""
+    """pasqal.qpu.fresnel target"""
+    
+    QPU_FRESNEL_CAN1 = "pasqal.qpu.fresnel-can1"
+    """pasqal.qpu.fresnel-can1 target"""
 
     def simulators() -> List[str]:
         """Returns a list of simulator targets"""
         return [
             PasqalTarget.SIM_EMU_TN.value
+            PasqalTarget.SIM_EMU_SV.value
+            PasqalTarget.SIM_EMU_MPS.value
+            PasqalTarget.SIM_EMU_FREE.value
         ]
 
     def qpus() -> List[str]:
         """Returns a list of QPU targets"""
         return [
             PasqalTarget.QPU_FRESNEL.value
+            PasqalTarget.QPU_FRESNEL_CAN1.value
         ]
 
     def num_qubits(target_name) -> int:
         """Returns the number of qubits supported by the given target"""
         if target_name == PasqalTarget.SIM_EMU_TN.value:
             return 100
+        if target_name == PasqalTarget.SIM_EMU_SV.value:
+            return 25
+        if target_name == PasqalTarget.SIM_EMU_MPS.value:
+            return 80
+        if target_name == PasqalTarget.SIM_EMU_FREE.value:
+            return 12
         elif target_name == PasqalTarget.QPU_FRESNEL.value:
-            return 20
+            return 100
+        elif target_name == PasqalTarget.QPU_FRESNEL_CAN1.value:
+            return 100
         else:
             raise ValueError(f"Unknown target {target_name}")
 
