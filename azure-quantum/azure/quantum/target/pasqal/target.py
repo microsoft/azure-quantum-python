@@ -45,17 +45,17 @@ class PasqalTarget(str, Enum):
     def simulators() -> List[str]:
         """Returns a list of simulator targets"""
         return [
-            PasqalTarget.SIM_EMU_TN.value
-            PasqalTarget.SIM_EMU_SV.value
-            PasqalTarget.SIM_EMU_MPS.value
-            PasqalTarget.SIM_EMU_FREE.value
+            PasqalTarget.SIM_EMU_TN.value,
+            PasqalTarget.SIM_EMU_SV.value,
+            PasqalTarget.SIM_EMU_MPS.value,
+            PasqalTarget.SIM_EMU_FREE.value,
         ]
 
     def qpus() -> List[str]:
         """Returns a list of QPU targets"""
         return [
-            PasqalTarget.QPU_FRESNEL.value
-            PasqalTarget.QPU_FRESNEL_CAN1.value
+            PasqalTarget.QPU_FRESNEL.value,
+            PasqalTarget.QPU_FRESNEL_CAN1.value,
         ]
 
     def num_qubits(target_name) -> int:
