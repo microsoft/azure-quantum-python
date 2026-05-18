@@ -238,7 +238,7 @@ target '{self.name}' of provider '{self.provider_id}' not found."
         if isinstance(input_params, InputParams):
             input_params = input_params.as_dict()
         else:
-            input_params = input_params or {}
+            input_params = dict(input_params) if input_params is not None else {}
         input_data_format = None
         output_data_format = None
         content_type = None
