@@ -3,9 +3,11 @@
 # Licensed under the MIT License.
 ##
 
+import copy
 import os
 from unittest import mock
 from azure.quantum.job.job import Job
+from azure.quantum.target.target import Target
 from azure.quantum._client.models import JobDetails
 from azure.quantum._constants import EnvironmentVariables, ConnectionConstants
 from azure.core.credentials import AzureKeyCredential
@@ -383,6 +385,37 @@ def test_workspace_cancel_job_success():
 
     assert result.details.status == "Cancelled"
     assert result.id == job_id
+
+
+def test_target_submit_does_not_mutate_input_params():
+    ws = WorkspaceMock(
+        subscription_id=SUBSCRIPTION_ID,
+        resource_group=RESOURCE_GROUP,
+        name=WORKSPACE,
+    )
+    target = Target(
+        workspace=ws,
+        name="fake.target",
+        provider_id="fake-provider",
+        input_data_format="fake-input-format",
+        output_data_format="fake-output-format",
+    )
+    input_params = {"someOption": "someValue"}
+    original = copy.deepcopy(input_params)
+
+    with mock.patch(
+        "azure.quantum.job.base_job.BaseJob.upload_input_data",
+        return_value="https://example.com/blob",
+    ):
+        target.submit(
+            name="test-job",
+            shots=10,
+            input_data=b"fake-ir",
+            input_params=input_params,
+        )
+
+    assert input_params == original
+    assert "shots" not in input_params
 
 
 def test_workspace_user_agent_appid():
