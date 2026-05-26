@@ -400,7 +400,13 @@ def test_target_submit_does_not_mutate_input_params():
         input_data_format="fake-input-format",
         output_data_format="fake-output-format",
     )
-    input_params = {"someOption": "someValue"}
+    input_params = {
+        "someOption": "someValue",
+        "nested": {
+            "innerOption": "innerValue",
+            "list": [1, 2, 3],
+        },
+    }
     original = copy.deepcopy(input_params)
 
     with mock.patch(
@@ -416,6 +422,8 @@ def test_target_submit_does_not_mutate_input_params():
 
     assert input_params == original
     assert "shots" not in input_params
+    assert input_params["nested"]["innerOption"] == "innerValue"
+    assert input_params["nested"]["list"] == [1, 2, 3]
 
 
 def test_workspace_user_agent_appid():
