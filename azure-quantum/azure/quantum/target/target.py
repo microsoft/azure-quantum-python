@@ -8,6 +8,7 @@ import io
 import json
 import abc
 import warnings
+import copy
 
 from azure.quantum._client.models import TargetStatus
 from azure.quantum.job.job import Job
@@ -238,7 +239,7 @@ target '{self.name}' of provider '{self.provider_id}' not found."
         if isinstance(input_params, InputParams):
             input_params = input_params.as_dict()
         else:
-            input_params = input_params or {}
+            input_params = copy.deepcopy(input_params or {})
         input_data_format = None
         output_data_format = None
         content_type = None
