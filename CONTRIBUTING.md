@@ -4,7 +4,7 @@ For developers who want to contribute to this package or run tests locally, foll
 
 ## Prerequisites
 
-- Python 3.9 or later
+- Python 3.10 or later
 - Git
 - Powershell
 
@@ -71,7 +71,7 @@ To provide a more useful version number, set the `PYTHON_VERSION` environment va
 The internal Azure Quantum Python SDK client (`azure/quantum/_client`) needs to be re-generated every time there is a change in the [Azure Quantum Service API definition](https://github.com/Azure/azure-rest-api-specs/tree/main/specification/quantum/data-plane) (aka Swagger).
 
 ### Prerequisites
-- Python 3.8 (or later)
+- Python 3.10 (or later)
 - NodeJS 18.3 LTS (or later)
 
 ### Setup your repo
