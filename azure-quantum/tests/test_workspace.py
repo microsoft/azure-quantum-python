@@ -384,6 +384,34 @@ def test_workspace_cancel_job_success():
     assert result.details.status == "Cancelled"
     assert result.id == job_id
 
+def test_workspace_delete_job_success():
+    ws = WorkspaceMock(
+        subscription_id=SUBSCRIPTION_ID,
+        resource_group=RESOURCE_GROUP,
+        name=WORKSPACE
+    )
+
+    job_id = "test-delete-success"
+
+    details = JobDetails(
+        id=job_id,
+        name=job_id,
+        container_uri="http://example.com/container",
+        input_data_format="microsoft.resource-estimates.v2",
+        provider_id="ionq",
+        target="ionq.simulator",
+        status="Executing"
+    )
+
+    ws._client.services.jobs._store.append(details)
+
+    job = Job(ws, details)
+
+    ws.delete_job(job)
+
+    stored_job = ws.get_job(job_id)
+
+    assert stored_job.details.status == "Cancelled"
 
 def test_workspace_user_agent_appid():
     app_id = "MyEnvVarAppId"

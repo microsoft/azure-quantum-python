@@ -464,6 +464,20 @@ class Workspace:
             job.id)
         return Job(self, details)
 
+    def delete_job(self, job: Job) -> None:
+        """
+        Deletes a job.
+
+        :param job:
+            Job to delete.
+            """
+        client = self._get_jobs_client()
+        client.delete(
+            self.subscription_id,
+            self.resource_group,
+            self.name,
+            job.details.id)
+
     def get_job(self, job_id: str) -> Job:
         """
         Returns the job corresponding to the given id.
