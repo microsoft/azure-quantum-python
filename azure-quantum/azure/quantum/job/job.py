@@ -55,6 +55,10 @@ class Job(BaseJob, FilteredJob):
     def refresh(self):
         """Refreshes the Job's details by querying the workspace."""
         self.details = self.workspace.get_job(self.id).details
+    
+    def delete(self):
+        """Delete the given job."""
+        self.workspace.delete_job(self)
 
     def has_completed(self) -> bool:
         """Check if the job has completed."""
