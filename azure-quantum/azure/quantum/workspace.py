@@ -466,10 +466,6 @@ class Workspace:
 
     def delete_job(self, job: Job) -> None:
         """Deletes a job.
-
-        Note: For service API versions before 2025-12-01-preview, the underlying
-        `jobs.delete` operation acts as a cancellation request rather than a hard delete.
-
         :param job:
             Job to delete.
         """
