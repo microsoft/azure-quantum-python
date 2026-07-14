@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 ##
 
+import pytest
 import os
 from unittest import mock
 from azure.quantum.job.job import Job
@@ -409,9 +410,8 @@ def test_workspace_delete_job_success():
 
     ws.delete_job(job)
 
-    stored_job = ws.get_job(job_id)
-
-    assert stored_job.details.status == "Cancelled"
+    with pytest.raises(KeyError):
+        ws.get_job(job_id)
 
 def test_job_delete_success():
     ws = WorkspaceMock(
@@ -435,8 +435,8 @@ def test_job_delete_success():
     job = Job(ws, details)
     job.delete()
 
-    stored_job = ws.get_job(job_id)
-    assert stored_job.details.status == "Cancelled"
+    with pytest.raises(KeyError):
+        ws.get_job(job_id)
 
 
 def test_workspace_user_agent_appid():
