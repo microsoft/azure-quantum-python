@@ -397,7 +397,7 @@ def test_workspace_delete_job_success():
     details = JobDetails(
         id=job_id,
         name=job_id,
-        container_uri="http://example.com/container",
+        container_uri="https://example.com/container",
         input_data_format="microsoft.resource-estimate.v2",
         provider_id="ionq",
         target="ionq.simulator",
