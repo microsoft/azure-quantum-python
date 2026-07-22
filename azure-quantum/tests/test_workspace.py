@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 ##
 
+import pytest
 import os
 from unittest import mock
 from azure.quantum.job.job import Job
@@ -383,6 +384,59 @@ def test_workspace_cancel_job_success():
 
     assert result.details.status == "Cancelled"
     assert result.id == job_id
+
+def test_workspace_delete_job_success():
+    ws = WorkspaceMock(
+        subscription_id=SUBSCRIPTION_ID,
+        resource_group=RESOURCE_GROUP,
+        name=WORKSPACE
+    )
+
+    job_id = "test-delete-success"
+
+    details = JobDetails(
+        id=job_id,
+        name=job_id,
+        container_uri="https://example.com/container",
+        input_data_format="microsoft.resource-estimate.v2",
+        provider_id="ionq",
+        target="ionq.simulator",
+        status="Executing"
+    )
+
+    ws._client.services.jobs._store.append(details)
+
+    job = Job(ws, details)
+
+    ws.delete_job(job)
+
+    with pytest.raises(KeyError):
+        ws.get_job(job_id)
+
+def test_job_delete_success():
+    ws = WorkspaceMock(
+        subscription_id=SUBSCRIPTION_ID,
+        resource_group=RESOURCE_GROUP,
+        name=WORKSPACE,
+    )
+
+    job_id = "test-job-delete-success"
+    details = JobDetails(
+        id=job_id,
+        name=f"job-{job_id}",
+        container_uri="https://example.com/container",
+        input_data_format="microsoft.resource-estimates.v2",
+        provider_id="ionq",
+        target="ionq.simulator",
+        status="Executing",
+    )
+    ws._client.services.jobs._store.append(details)
+
+    job = Job(ws, details)
+    job.delete()
+
+    with pytest.raises(KeyError):
+        ws.get_job(job_id)
 
 
 def test_workspace_user_agent_appid():
