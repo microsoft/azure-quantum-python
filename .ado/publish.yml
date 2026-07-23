@@ -144,8 +144,8 @@ extends:
 
               - script: |
                   cd $(Build.SourcesDirectory)/azure-quantum
-                  if defined PIP_INDEX_URL (echo PIP_INDEX_URL is set) else (echo PIP_INDEX_URL is NOT set)
-                  tox -e py311-qiskit1,py311-qiskit2 -v
+                  python -c "import os, urllib.parse as u; h = u.urlsplit(os.environ.get('PIP_INDEX_URL', '')).hostname or '(unset -> default pypi.org)'; print('pip index host:', h)"
+                  tox -e py311-qiskit1,py311-qiskit2
                 displayName: Run Qiskit matrix tests
 
               - task: PublishTestResults@2
