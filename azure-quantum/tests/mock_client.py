@@ -203,7 +203,7 @@ class JobsOperations:
     ) -> None:
         for jd in self._store:
             if jd.id == job_id:
-                jd.status = "Cancelled"
+                self._store.remove(jd)
                 return None
         raise KeyError(job_id)
 

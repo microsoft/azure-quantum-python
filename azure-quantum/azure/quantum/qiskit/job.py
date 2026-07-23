@@ -108,6 +108,10 @@ class AzureQuantumJob(JobV1):
         """Attempt to cancel the job."""
         self._workspace.cancel_job(self._azure_job)
 
+    def delete(self):
+        """Delete the job."""
+        self._workspace.delete_job(self._azure_job)
+
     def status(self):
         """Return the status of the job, among the values of ``JobStatus``."""
         self._azure_job.refresh()
