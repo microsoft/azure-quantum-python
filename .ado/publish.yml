@@ -44,6 +44,10 @@ variables:
     value: "auto"
   - name: PipFeed
     value: "AzureQuantum/azure-quantum"
+  # Stop pip from contacting pypi.org for its "is there a newer pip?" self-check.
+  # This version check ignores PIP_INDEX_URL and is a common lingering CFS offender.
+  - name: PIP_DISABLE_PIP_VERSION_CHECK
+    value: "1"
 
 resources:
   repositories:
@@ -140,6 +144,7 @@ extends:
 
               - script: |
                   cd $(Build.SourcesDirectory)/azure-quantum
+                  python -c "import os, urllib.parse as u; h = u.urlsplit(os.environ.get('PIP_INDEX_URL', '')).hostname or '(unset -> default pypi.org)'; print('pip index host:', h)"
                   tox -e py311-qiskit1,py311-qiskit2
                 displayName: Run Qiskit matrix tests
 

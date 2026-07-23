@@ -17,6 +17,14 @@ variables:
     value: none # Disable usage telemetry for internal test pipelines
   - name: PYTEST_MAX_PARALLEL_TESTS
     value: "auto"
+  # Azure Artifacts feed (with a PyPI upstream source) that pip restores from, so the
+  # build does not connect directly to public pypi.org / files.pythonhosted.org (CFS).
+  # Project-scoped: "<Project>/<FeedName>".
+  - name: PipFeed
+    value: "AzureQuantum/azure-quantum"
+  # Stop pip from contacting pypi.org for its "is there a newer pip?" self-check.
+  - name: PIP_DISABLE_PIP_VERSION_CHECK
+    value: "1"
 
 jobs:
   - job: "Build_Azure_Quantum_Python"
@@ -29,6 +37,12 @@ jobs:
         inputs:
           versionSpec: "3.11"
         displayName: Set Python version
+
+      - task: PipAuthenticate@1
+        displayName: Authenticate pip to Azure Artifacts feed
+        inputs:
+          artifactFeeds: $(PipFeed)
+          onlyAddExtraIndex: false
 
       - script: |
           pip install wheel
@@ -58,6 +72,12 @@ jobs:
         inputs:
           versionSpec: "3.11"
         displayName: Set Python version
+
+      - task: PipAuthenticate@1
+        displayName: Authenticate pip to Azure Artifacts feed
+        inputs:
+          artifactFeeds: $(PipFeed)
+          onlyAddExtraIndex: false
 
       - script: |
           python -m pip install --upgrade pip
