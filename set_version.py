@@ -88,7 +88,11 @@ def _version_sort_key(version: str):
         # A final release sorts after any pre-release of the same number.
         phase, suffix_num = 2, 0
     else:
-        match = re.match(r"(dev|rc)(\d+)", parts[3])
+        match = re.fullmatch(r"(dev|rc)(\d+)", parts[3])
+        if not match:
+            raise ValueError(
+                f"Unsupported pre-release segment in version '{version}'. Expected '.devN' or '.rcN'."
+            )
         phase = 0 if match.group(1) == "dev" else 1
         suffix_num = int(match.group(2))
     return (major, minor, patch, phase, suffix_num)
