@@ -5,13 +5,30 @@
 
 import os
 from typing import List
-from urllib.request import urlopen
+from urllib.request import urlopen, Request
+from urllib.error import HTTPError, URLError
 import json
 
 ALLOWED_RELEASE_TYPES = ["major", "minor", "patch"]
 ALLOWED_BUILD_TYPES = ["stable", "rc", "dev"]
 PACKAGE_NAME = "azure-quantum"
-PYPI_URL = f"https://pypi.python.org/pypi/{PACKAGE_NAME}/json"
+
+# Published versions are read from the Azure Artifacts feed's Packaging REST API
+# rather than directly from PyPI, so the build complies with the CFS network-isolation
+# policy (only Azure DevOps hosts are reachable from the agent). The feed mirrors the
+# full azure-quantum version history from its PyPI upstream. The request is authorized
+# with the build identity's OAuth token, provided via the SYSTEM_ACCESSTOKEN env var
+# (the pipeline maps $(System.AccessToken) into the step). The org/project/feed can be
+# overridden via env vars for other environments.
+FEED_ORG = os.environ.get("AZURE_ARTIFACTS_ORG") or "ms-azurequantum"
+FEED_PROJECT = os.environ.get("AZURE_ARTIFACTS_PROJECT") or "AzureQuantum"
+FEED_NAME = os.environ.get("AZURE_ARTIFACTS_FEED") or "azure-quantum"
+FEED_PACKAGES_URL = (
+    f"https://feeds.dev.azure.com/{FEED_ORG}/{FEED_PROJECT}"
+    f"/_apis/packaging/Feeds/{FEED_NAME}/packages"
+    f"?protocolType=PyPi&packageNameQuery={PACKAGE_NAME}"
+    f"&includeAllVersions=true&api-version=7.1-preview.1"
+)
 
 
 RELEASE_TYPE = os.environ.get("RELEASE_TYPE") or "patch"
@@ -62,13 +79,66 @@ def _get_build_version(version_type: str, build_type: str, package_versions: Lis
     raise RuntimeError(f"Build version could not be determined for version type \"{version_type}\" and build type \"{build_type}\"")
 
 
+def _fetch_feed_versions() -> List[str]:
+    """Fetch all published versions of the package from the Azure Artifacts feed's
+    Packaging REST API, newest first.
+
+    The request is authorized with the build identity's OAuth token, read from the
+    SYSTEM_ACCESSTOKEN environment variable. The token is never printed.
+    """
+    token = os.environ.get("SYSTEM_ACCESSTOKEN")
+    if not token:
+        raise RuntimeError(
+            "The SYSTEM_ACCESSTOKEN environment variable is not set. The pipeline must "
+            "map the build identity's OAuth access token into this step's env so the "
+            "script can authenticate to the Azure Artifacts feed."
+        )
+
+    # The token is added via add_header (never interpolated into a URL, log line, or
+    # error message) so it cannot appear in output or tracebacks.
+    request = Request(FEED_PACKAGES_URL)
+    request.add_header("Authorization", "Bearer " + token)
+    try:
+        with urlopen(request) as response:
+            if response.status != 200:
+                raise RuntimeError(f"Request \"GET:{FEED_PACKAGES_URL}\" failed. Status code: \"{response.status}\"")
+            data = json.loads(response.read().decode("utf-8"))
+    except HTTPError as error:
+        # Only the status code is surfaced; the response body/headers are not echoed.
+        raise RuntimeError(f"Request \"GET:{FEED_PACKAGES_URL}\" failed. Status code: \"{error.code}\"") from None
+    except URLError as error:
+        raise RuntimeError(f"Request \"GET:{FEED_PACKAGES_URL}\" failed: {error.reason}") from None
+
+    versions: List[str] = []
+    for package in data.get("value", []):
+        # packageNameQuery is a substring match, so confirm we have the exact package.
+        if str(package.get("name", "")).lower() != PACKAGE_NAME.lower():
+            continue
+        # Sort by publish date (newest first) to match the previous PyPI ordering, so
+        # _get_build_version finds the most recently released stable version first.
+        package_versions_sorted = sorted(
+            package.get("versions", []),
+            key=lambda version: version.get("publishDate", ""),
+            reverse=True,
+        )
+        versions = [version["version"] for version in package_versions_sorted]
+        break
+
+    # Diagnostic output to confirm the feed returns the full published history. The
+    # OAuth token is never included. (Safe to remove once verified in the pipeline.)
+    print(f"Retrieved {len(versions)} version(s) of \"{PACKAGE_NAME}\" from feed \"{FEED_NAME}\".")
+    print(f"Versions (newest first): {versions}")
+
+    return versions
+
+
 def get_build_version(version_type: str, build_type: str) -> str:
-    """Get build version by analysing released versions in PyPi and figuring out the next version.
+    """Get build version by analyzing released versions in the Azure Artifacts feed and figuring out the next version.
     Example: 
-    - If the last stable version in PyPi was "1.1.0" and version_type = "major" and build_type = "stable", then returned version will be "2.0.0".
-    - If the last stable version in PyPi was "1.1.0" and the last dev version was "1.2.0.dev0" and version_type = "patch" and build_type = "dev", 
+    - If the last stable version was "1.1.0" and version_type = "major" and build_type = "stable", then returned version will be "2.0.0".
+    - If the last stable version was "1.1.0" and the last dev version was "1.2.0.dev0" and version_type = "patch" and build_type = "dev", 
     then returned version will be "1.1.1.dev0".
-    - If the last stable version in PyPi was "1.1.0" and the last dev version was "1.2.0.dev0" and version_type = "minor" and build_type = "dev", 
+    - If the last stable version was "1.1.0" and the last dev version was "1.2.0.dev0" and version_type = "minor" and build_type = "dev", 
     then returned version will be "1.2.0.dev1".
 
     :param version_type: SYMVER type ("major"/"minor"/"patch")
@@ -79,23 +149,29 @@ def get_build_version(version_type: str, build_type: str) -> str:
     :rtype: str
     """
 
-    # get all releases from PyPi
-    with urlopen(PYPI_URL) as response:
-        if response.status == 200:
-            response_content = response.read()
-            response = json.loads(response_content.decode("utf-8"))
-        else:
-            raise RuntimeError(f"Request \"GET:{PYPI_URL}\" failed. Status code: \"{response.status}\"")
-    
-    # Note: assuming versions are SYMVER (major.minor.patch[.dev0|.rc0]) and in chronological order:
+    # Note: assuming versions are SYMVER (major.minor.patch[.dev0|.rc0]).
     # "1.0.0", "1.0.1", "1.1.0", "1.1.0.dev0", "1.1.0.dev1", "1.1.0.rc0"
     # The next "rc" and "dev" version must follow the last "stable" version.
+    package_versions = _fetch_feed_versions()
 
-    # sorting by time in reverse order to find the last releases, so we could assume the next version of certain "build_type"
-    package_versions_sorted = sorted(response["releases"].items(), key=lambda k: k[1][0]["upload_time_iso_8601"], reverse=True)
-    package_versions = [version[0] for version in package_versions_sorted]
+    # Guard: refuse to compute a version from an empty list. That would silently
+    # produce a low version number that likely collides with an existing release.
+    if not package_versions:
+        raise RuntimeError(
+            f"No published versions of \"{PACKAGE_NAME}\" were returned by feed \"{FEED_NAME}\". "
+            f"Refusing to compute a version from an empty list."
+        )
 
-    return _get_build_version(version_type, build_type, package_versions)
+    build_version = _get_build_version(version_type, build_type, package_versions)
+
+    # Guard: never hand back a version that already exists in the published list.
+    if build_version in package_versions:
+        raise RuntimeError(
+            f"Computed version \"{build_version}\" already exists in feed \"{FEED_NAME}\". "
+            f"Aborting to avoid republishing an existing version."
+        )
+
+    return build_version
 
 
 if __name__ == "__main__":
