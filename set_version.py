@@ -8,6 +8,7 @@ import re
 import base64
 from typing import List
 from urllib.request import urlopen, Request
+from urllib.error import HTTPError, URLError
 from urllib.parse import urlsplit, urlunsplit, unquote
 
 ALLOWED_RELEASE_TYPES = ["major", "minor", "patch"]
@@ -126,10 +127,17 @@ def _fetch_versions(index_url: str) -> List[str]:
         encoded = base64.b64encode(credentials.encode("utf-8")).decode("ascii")
         request.add_header("Authorization", f"Basic {encoded}")
 
-    with urlopen(request) as response:
-        if response.status != 200:
-            raise RuntimeError(f"Request \"GET:{sanitized_url}\" failed. Status code: \"{response.status}\"")
-        html = response.read().decode("utf-8")
+    # urlopen raises HTTPError for non-2xx responses and URLError for connection
+    # problems, so failures surface as exceptions rather than a checkable status.
+    # Re-raise as a RuntimeError with the sanitized URL (never the credentialed one)
+    # and the status/reason for a clear, consistent message.
+    try:
+        with urlopen(request) as response:
+            html = response.read().decode("utf-8")
+    except HTTPError as error:
+        raise RuntimeError(f"Request \"GET:{sanitized_url}\" failed. Status code: \"{error.code}\"") from None
+    except URLError as error:
+        raise RuntimeError(f"Request \"GET:{sanitized_url}\" failed. Reason: \"{error.reason}\"") from None
 
     return list(set(VERSION_RE.findall(html)))
 
