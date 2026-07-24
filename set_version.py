@@ -149,7 +149,8 @@ def get_build_version(version_type: str, build_type: str) -> str:
 
     # Get all releases from the package index (the Azure Artifacts feed in CI, which
     # proxies the full version list from its PyPI upstream).
-    package_versions_all = _fetch_versions(_get_index_url())
+    index_url = _get_index_url()
+    package_versions_all = _fetch_versions(index_url)
 
     # Guard: refuse to compute a version from an empty list. That would silently
     # produce a low version number that likely collides with an existing release.
@@ -167,10 +168,11 @@ def get_build_version(version_type: str, build_type: str) -> str:
     # the ordering _get_build_version expects.
     package_versions = sorted(package_versions_all, key=_version_sort_key, reverse=True)
 
-    # Diagnostic output to confirm the index returns the full published history.
-    # (Safe to remove once verified in the pipeline.)
+    # Diagnostic output: the index host, the number of versions found, and the most
+    # recent one, to confirm the index returned a sane published history.
+    print(f"Package index host: {urlsplit(index_url).hostname}")
     print(f"Retrieved {len(package_versions)} version(s) of \"{PACKAGE_NAME}\" from the package index.")
-    print(f"Versions (newest first): {package_versions}")
+    print(f"Most recent version: {package_versions[0]}")
 
     build_version = _get_build_version(version_type, build_type, package_versions)
 
