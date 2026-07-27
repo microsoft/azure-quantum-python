@@ -4,14 +4,29 @@
 # Licensed under the MIT License.
 
 import os
+import re
+import base64
 from typing import List
-from urllib.request import urlopen
-import json
+from urllib.request import urlopen, Request
+from urllib.error import HTTPError, URLError
+from urllib.parse import urlsplit, urlunsplit, unquote
 
 ALLOWED_RELEASE_TYPES = ["major", "minor", "patch"]
 ALLOWED_BUILD_TYPES = ["stable", "rc", "dev"]
 PACKAGE_NAME = "azure-quantum"
-PYPI_URL = f"https://pypi.python.org/pypi/{PACKAGE_NAME}/json"
+# Public PyPI simple-index fallback, used only for local runs where PIP_INDEX_URL is
+# not set. In CI, PipAuthenticate@1 sets PIP_INDEX_URL to the Azure Artifacts feed so
+# this script never contacts pypi.org directly (network-isolation / CFS policy).
+DEFAULT_INDEX_URL = "https://pypi.org/simple"
+# Matches distribution filenames like "azure_quantum-1.2.3-..." or
+# "azure-quantum-1.2.3.dev0.tar.gz", so only this package's own versions are captured
+# and never a version-like token appearing elsewhere on the index page. The trailing
+# boundary (archive suffix or the wheel tag separator) ensures unexpected version
+# formats (e.g. legacy 4-part "0.11.2004.2825" or "...b1") are skipped, not truncated.
+VERSION_RE = re.compile(
+    r"azure[-_]quantum-(\d+\.\d+\.\d+(?:\.(?:dev|rc)\d+)?)(?:-|\.tar\.gz|\.zip)",
+    re.IGNORECASE,
+)
 
 
 RELEASE_TYPE = os.environ.get("RELEASE_TYPE") or "patch"
@@ -62,13 +77,78 @@ def _get_build_version(version_type: str, build_type: str, package_versions: Lis
     raise RuntimeError(f"Build version could not be determined for version type \"{version_type}\" and build type \"{build_type}\"")
 
 
+def _version_sort_key(version: str):
+    """Return a tuple that orders versions per PEP 440 for the subset used here
+    (major.minor.patch optionally followed by ".devN" or ".rcN").
+
+    Ordering within the same major.minor.patch is: dev < rc < final.
+    """
+    parts = version.split(".")
+    major, minor, patch = int(parts[0]), int(parts[1]), int(parts[2])
+    if len(parts) == 3:
+        # A final release sorts after any pre-release of the same number.
+        phase, suffix_num = 2, 0
+    else:
+        match = re.fullmatch(r"(dev|rc)(\d+)", parts[3])
+        if not match:
+            raise ValueError(
+                f"Unsupported pre-release segment in version '{version}'. Expected '.devN' or '.rcN'."
+            )
+        phase = 0 if match.group(1) == "dev" else 1
+        suffix_num = int(match.group(2))
+    return (major, minor, patch, phase, suffix_num)
+
+
+def _get_index_url() -> str:
+    """Build the PEP 503 simple-index URL for the package.
+
+    Uses PIP_INDEX_URL (set by PipAuthenticate@1 to the Azure Artifacts feed in CI)
+    and falls back to public PyPI for local runs where it is not set.
+    """
+    index = os.environ.get("PIP_INDEX_URL") or DEFAULT_INDEX_URL
+    return index.rstrip("/") + "/" + PACKAGE_NAME + "/"
+
+
+def _fetch_versions(index_url: str) -> List[str]:
+    """Fetch all published versions of the package from a PEP 503 simple index.
+
+    Credentials embedded in the index URL (as PipAuthenticate@1 provides) are moved
+    into an Authorization header, since urllib does not use URL userinfo directly.
+    """
+    parsed = urlsplit(index_url)
+    netloc = parsed.hostname or ""
+    if parsed.port:
+        netloc = f"{netloc}:{parsed.port}"
+    sanitized_url = urlunsplit((parsed.scheme, netloc, parsed.path, parsed.query, ""))
+
+    request = Request(sanitized_url)
+    if parsed.username:
+        credentials = f"{unquote(parsed.username)}:{unquote(parsed.password or '')}"
+        encoded = base64.b64encode(credentials.encode("utf-8")).decode("ascii")
+        request.add_header("Authorization", f"Basic {encoded}")
+
+    # urlopen raises HTTPError for non-2xx responses and URLError for connection
+    # problems, so failures surface as exceptions rather than a checkable status.
+    # Re-raise as a RuntimeError with the sanitized URL (never the credentialed one)
+    # and the status/reason for a clear, consistent message.
+    try:
+        with urlopen(request) as response:
+            html = response.read().decode("utf-8")
+    except HTTPError as error:
+        raise RuntimeError(f"Request \"GET:{sanitized_url}\" failed. Status code: \"{error.code}\"") from None
+    except URLError as error:
+        raise RuntimeError(f"Request \"GET:{sanitized_url}\" failed. Reason: \"{error.reason}\"") from None
+
+    return list(set(VERSION_RE.findall(html)))
+
+
 def get_build_version(version_type: str, build_type: str) -> str:
-    """Get build version by analysing released versions in PyPi and figuring out the next version.
+    """Get build version by analyzing released versions in the package index and figuring out the next version.
     Example: 
-    - If the last stable version in PyPi was "1.1.0" and version_type = "major" and build_type = "stable", then returned version will be "2.0.0".
-    - If the last stable version in PyPi was "1.1.0" and the last dev version was "1.2.0.dev0" and version_type = "patch" and build_type = "dev", 
+    - If the last stable version was "1.1.0" and version_type = "major" and build_type = "stable", then returned version will be "2.0.0".
+    - If the last stable version was "1.1.0" and the last dev version was "1.2.0.dev0" and version_type = "patch" and build_type = "dev", 
     then returned version will be "1.1.1.dev0".
-    - If the last stable version in PyPi was "1.1.0" and the last dev version was "1.2.0.dev0" and version_type = "minor" and build_type = "dev", 
+    - If the last stable version was "1.1.0" and the last dev version was "1.2.0.dev0" and version_type = "minor" and build_type = "dev", 
     then returned version will be "1.2.0.dev1".
 
     :param version_type: SYMVER type ("major"/"minor"/"patch")
@@ -79,23 +159,43 @@ def get_build_version(version_type: str, build_type: str) -> str:
     :rtype: str
     """
 
-    # get all releases from PyPi
-    with urlopen(PYPI_URL) as response:
-        if response.status == 200:
-            response_content = response.read()
-            response = json.loads(response_content.decode("utf-8"))
-        else:
-            raise RuntimeError(f"Request \"GET:{PYPI_URL}\" failed. Status code: \"{response.status}\"")
-    
-    # Note: assuming versions are SYMVER (major.minor.patch[.dev0|.rc0]) and in chronological order:
+    # Get all releases from the package index (the Azure Artifacts feed in CI, which
+    # proxies the full version list from its PyPI upstream).
+    index_url = _get_index_url()
+    package_versions_all = _fetch_versions(index_url)
+
+    # Guard: refuse to compute a version from an empty list. That would silently
+    # produce a low version number that likely collides with an existing release.
+    if not package_versions_all:
+        raise RuntimeError(
+            f"No published versions of \"{PACKAGE_NAME}\" were returned from the package "
+            f"index. Refusing to compute a version from an empty list."
+        )
+
+    # Note: assuming versions are SYMVER (major.minor.patch[.dev0|.rc0]).
     # "1.0.0", "1.0.1", "1.1.0", "1.1.0.dev0", "1.1.0.dev1", "1.1.0.rc0"
     # The next "rc" and "dev" version must follow the last "stable" version.
 
-    # sorting by time in reverse order to find the last releases, so we could assume the next version of certain "build_type"
-    package_versions_sorted = sorted(response["releases"].items(), key=lambda k: k[1][0]["upload_time_iso_8601"], reverse=True)
-    package_versions = [version[0] for version in package_versions_sorted]
+    # Sort by version (descending) so the most recent releases come first, which is
+    # the ordering _get_build_version expects.
+    package_versions = sorted(package_versions_all, key=_version_sort_key, reverse=True)
 
-    return _get_build_version(version_type, build_type, package_versions)
+    # Diagnostic output: the index host, the number of versions found, and the most
+    # recent one, to confirm the index returned a sane published history.
+    print(f"Package index host: {urlsplit(index_url).hostname}")
+    print(f"Retrieved {len(package_versions)} version(s) of \"{PACKAGE_NAME}\" from the package index.")
+    print(f"Most recent version: {package_versions[0]}")
+
+    build_version = _get_build_version(version_type, build_type, package_versions)
+
+    # Guard: never hand back a version that already exists in the published list.
+    if build_version in package_versions:
+        raise RuntimeError(
+            f"Computed version \"{build_version}\" already exists in the package index. "
+            f"Aborting to avoid republishing an existing version."
+        )
+
+    return build_version
 
 
 if __name__ == "__main__":
