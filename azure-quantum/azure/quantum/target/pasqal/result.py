@@ -10,7 +10,7 @@ __all__ = [
 ]
 
 import json
-from typing import Union, Dict, List, TypeVar, cast
+from typing import Any, Union, Dict, List, TypeVar, cast
 
 from ...job import Job
 
@@ -44,7 +44,10 @@ class Result:
                 f"(status: {job.details.status}."
                 f"error: {job.details.error_data})"
             )
-        self.data = cast(Dict[str, int], json.loads(job.download_data(job.details.output_data_uri)))
+        raw = cast(
+            Dict[str, Any], json.loads(job.download_data(job.details.output_data_uri))
+        )
+        self.data = cast(Dict[str, int], raw["counter"] if "counter" in raw else raw)
 
     def __getitem__(self, register_name: str) -> int:
         return self.data[register_name]
