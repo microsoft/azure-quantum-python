@@ -8,6 +8,7 @@ import os
 from unittest import mock
 from azure.quantum.job.job import Job
 from azure.quantum._client.models import JobDetails
+from azure.quantum._client.models import Priority
 from azure.quantum._constants import EnvironmentVariables, ConnectionConstants
 from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy
@@ -437,6 +438,149 @@ def test_job_delete_success():
 
     with pytest.raises(KeyError):
         ws.get_job(job_id)
+
+
+def test_workspace_update_job_success():
+    ws = WorkspaceMock(
+        subscription_id=SUBSCRIPTION_ID,
+        resource_group=RESOURCE_GROUP,
+        name=WORKSPACE,
+    )
+
+    job_id = "test-update-success"
+    details = JobDetails(
+        id=job_id,
+        name=f"job-{job_id}",
+        container_uri="https://example.com/container",
+        input_data_format="microsoft.resource-estimate.v2",
+        provider_id="ionq",
+        target="ionq.simulator",
+        status="Executing",
+        priority="Standard",
+        tags=["old-tag"],
+    )
+    ws._client.services.jobs._store.append(details)
+
+    job = Job(ws, details)
+    result = ws.update_job(
+        job,
+        name="new-name",
+        priority=Priority.HIGH,
+        tags=["tag-a", "tag-b"],
+    )
+
+    assert result.id == job_id
+    assert result.details.name == "new-name"
+    assert result.details.priority == "High"
+    assert result.details.tags == ["tag-a", "tag-b"]
+
+
+def test_workspace_update_job_partial_leaves_other_fields_unchanged():
+    ws = WorkspaceMock(
+        subscription_id=SUBSCRIPTION_ID,
+        resource_group=RESOURCE_GROUP,
+        name=WORKSPACE,
+    )
+
+    job_id = "test-update-partial"
+    details = JobDetails(
+        id=job_id,
+        name="original-name",
+        container_uri="https://example.com/container",
+        input_data_format="microsoft.resource-estimate.v2",
+        provider_id="ionq",
+        target="ionq.simulator",
+        status="Executing",
+        priority="Standard",
+        tags=["keep-me"],
+    )
+    ws._client.services.jobs._store.append(details)
+
+    job = Job(ws, details)
+    result = ws.update_job(job, name="renamed-only")
+
+    assert result.details.name == "renamed-only"
+    # untouched fields remain unchanged
+    assert result.details.priority == "Standard"
+    assert result.details.tags == ["keep-me"]
+
+
+def test_job_update_success():
+    ws = WorkspaceMock(
+        subscription_id=SUBSCRIPTION_ID,
+        resource_group=RESOURCE_GROUP,
+        name=WORKSPACE,
+    )
+
+    job_id = "test-job-update-success"
+    details = JobDetails(
+        id=job_id,
+        name=f"job-{job_id}",
+        container_uri="https://example.com/container",
+        input_data_format="microsoft.resource-estimate.v2",
+        provider_id="ionq",
+        target="ionq.simulator",
+        status="Executing",
+        priority="Standard",
+        tags=["old"],
+    )
+    ws._client.services.jobs._store.append(details)
+
+    job = Job(ws, details)
+    returned = job.update(name="updated", priority="High", tags=["new"])
+
+    # update mutates the job in place and returns itself
+    assert returned is job
+    assert job.details.name == "updated"
+    assert job.details.priority == "High"
+    assert job.details.tags == ["new"]
+
+
+def test_workspace_update_job_not_found_raises():
+    ws = WorkspaceMock(
+        subscription_id=SUBSCRIPTION_ID,
+        resource_group=RESOURCE_GROUP,
+        name=WORKSPACE,
+    )
+
+    details = JobDetails(
+        id="missing-job",
+        name="missing-job",
+        container_uri="https://example.com/container",
+        input_data_format="microsoft.resource-estimate.v2",
+        provider_id="ionq",
+        target="ionq.simulator",
+        status="Executing",
+    )
+    job = Job(ws, details)
+
+    with pytest.raises(KeyError):
+        ws.update_job(job, name="nope")
+
+
+def test_workspace_update_job_requires_at_least_one_field():
+    ws = WorkspaceMock(
+        subscription_id=SUBSCRIPTION_ID,
+        resource_group=RESOURCE_GROUP,
+        name=WORKSPACE,
+    )
+
+    job_id = "test-update-no-fields"
+    details = JobDetails(
+        id=job_id,
+        name=job_id,
+        container_uri="https://example.com/container",
+        input_data_format="microsoft.resource-estimate.v2",
+        provider_id="ionq",
+        target="ionq.simulator",
+        status="Executing",
+    )
+    ws._client.services.jobs._store.append(details)
+
+    job = Job(ws, details)
+
+    with pytest.raises(ValueError):
+        ws.update_job(job)
 
 
 def test_workspace_user_agent_appid():

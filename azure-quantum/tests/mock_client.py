@@ -193,6 +193,33 @@ class JobsOperations:
                 return jd
         raise KeyError(job_id)
 
+    def update(
+        self,
+        subscription_id: str,
+        resource_group_name: str,
+        workspace_name: str,
+        job_id: str,
+        resource,
+    ):
+        def _get(field):
+            if isinstance(resource, dict):
+                return resource.get(field)
+            return getattr(resource, field, None)
+
+        for jd in self._store:
+            if jd.id == job_id:
+                name = _get("name")
+                priority = _get("priority")
+                tags = _get("tags")
+                if name is not None:
+                    jd.name = name
+                if priority is not None:
+                    jd.priority = priority
+                if tags is not None:
+                    jd.tags = tags
+                return resource
+        raise KeyError(job_id)
+
     # Cancel/delete for older API; mark job as cancelled
     def delete(
         self,
