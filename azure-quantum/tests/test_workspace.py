@@ -8,7 +8,7 @@ import os
 from unittest import mock
 from azure.quantum.job.job import Job
 from azure.quantum._client.models import JobDetails
-from azure.quantum._client.models import Priority
+from azure.quantum import Priority
 from azure.quantum._constants import EnvironmentVariables, ConnectionConstants
 from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy

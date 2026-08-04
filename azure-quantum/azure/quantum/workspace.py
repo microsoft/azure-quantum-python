@@ -489,7 +489,7 @@ class Workspace:
 
         :param priority:
             The new priority of the job.
-            One of :class:`~azure.quantum.Priority` (``\"Standard\"`` or ``\"High\"``).
+            One of :class:`~azure.quantum.Priority` (``"Standard"`` or ``"High"``).
 
         :param tags:
             The new list of user-supplied tags associated with the job.
