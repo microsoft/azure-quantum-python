@@ -75,6 +75,9 @@ class AzureQuantumService:
 
         return target_factory
 
+
+    # This is a comment that is different!
+
     def targets(
         self, name: str = None, provider_id: str = None, **kwargs
     ) -> Union["CirqTarget", List["CirqTarget"]]:
