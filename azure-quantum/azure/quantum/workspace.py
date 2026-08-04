@@ -503,6 +503,7 @@ class Workspace:
                 "At least one of 'name', 'priority' or 'tags' must be specified.")
 
         client = self._get_jobs_client()
+        job_id = job.id
 
         update_options = JobUpdateOptions()
         if name is not None:
@@ -516,14 +517,14 @@ class Workspace:
             self.subscription_id,
             self.resource_group,
             self.name,
-            job.details.id,
+            job_id,
             update_options)
 
         details = client.get(
             self.subscription_id,
             self.resource_group,
             self.name,
-            job.id)
+            job_id)
         return Job(self, details)
 
     def delete_job(self, job: Job) -> None:

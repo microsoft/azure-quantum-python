@@ -19,6 +19,7 @@ from azure.quantum._client import WorkspaceClient
 from azure.quantum._client.models import (
     ItemDetails,
     JobDetails,
+    JobUpdateOptions,
     ProviderStatus,
     SessionDetails,
     TargetStatus,
@@ -217,7 +218,14 @@ class JobsOperations:
                     jd.priority = priority
                 if tags is not None:
                     jd.tags = tags
-                return resource
+                # Match the generated client's contract: the update response is a
+                # JobUpdateOptions that includes the required job id.
+                return JobUpdateOptions({
+                    "id": jd.id,
+                    "name": jd.name,
+                    "priority": jd.priority,
+                    "tags": jd.tags,
+                })
         raise KeyError(job_id)
 
     # Cancel/delete for older API; mark job as cancelled
