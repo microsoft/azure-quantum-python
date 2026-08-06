@@ -214,10 +214,14 @@ def resolve_build_version(version_type: str, build_type: str, version: str = "")
     automated computation that reads the package index. Otherwise the next version is
     computed from the published version history.
 
+    When a version is specified, it must agree with ``build_type``: a "dev" build must
+    supply a ".devN" version, an "rc" build a ".rcN" version, and a "stable" build a
+    plain "major.minor.patch" version (no pre-release suffix).
+
     :param version_type: SYMVER type ("major"/"minor"/"patch"); ignored when a version
         is specified.
-    :param build_type: Build type ("stable"/"dev"/"rc"); ignored when a version is
-        specified.
+    :param build_type: Build type ("stable"/"dev"/"rc"). Determines which pre-release
+        suffix a specified version must carry.
     :param version: Exact version to use, or "" to compute automatically.
     :return: The version to ship.
     :rtype: str
@@ -229,6 +233,25 @@ def resolve_build_version(version_type: str, build_type: str, version: str = "")
                 f"Version \"{specified_version}\" is not a valid version. Expected "
                 f"\"major.minor.patch\" optionally followed by \".devN\" or \".rcN\"."
             )
+
+        # The specified version must match the selected build type, so a build tagged
+        # "dev"/"rc" can't ship a version that lacks (or mismatches) the suffix.
+        if build_type == "dev" and ".dev" not in specified_version:
+            raise ValueError(
+                f"Build type \"dev\" requires a \".devN\" version, but got "
+                f"\"{specified_version}\"."
+            )
+        if build_type == "rc" and ".rc" not in specified_version:
+            raise ValueError(
+                f"Build type \"rc\" requires a \".rcN\" version, but got "
+                f"\"{specified_version}\"."
+            )
+        if build_type == "stable" and (".dev" in specified_version or ".rc" in specified_version):
+            raise ValueError(
+                f"Build type \"stable\" requires a \"major.minor.patch\" version "
+                f"without a pre-release suffix, but got \"{specified_version}\"."
+            )
+
         print(f"Using manually specified version: {specified_version}")
         return specified_version
 

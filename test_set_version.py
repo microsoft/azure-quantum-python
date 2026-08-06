@@ -146,7 +146,13 @@ def test_resolve_build_version_uses_specified_version(monkeypatch, version):
         raise AssertionError("get_build_version must not be called when a version is given")
 
     monkeypatch.setattr(set_version, "get_build_version", _should_not_be_called)
-    assert resolve_build_version("patch", "dev", version) == version
+    # Pick a build type that matches each version so the agreement check passes.
+    build_type = "stable"
+    if ".dev" in version:
+        build_type = "dev"
+    elif ".rc" in version:
+        build_type = "rc"
+    assert resolve_build_version("patch", build_type, version) == version
 
 
 @pytest.mark.parametrize(
@@ -172,3 +178,40 @@ def test_resolve_build_version_rejects_invalid_version(monkeypatch, version):
     )
     with pytest.raises(ValueError):
         resolve_build_version("patch", "dev", version)
+
+
+@pytest.mark.parametrize(
+    "build_type,version",
+    [
+        # Build type expects a suffix the version doesn't carry (or vice versa).
+        ("dev", "1.2.3"),
+        ("dev", "1.2.3.rc0"),
+        ("rc", "1.2.3"),
+        ("rc", "1.2.3.dev0"),
+        ("stable", "1.2.3.dev0"),
+        ("stable", "1.2.3.rc0"),
+    ],
+)
+def test_resolve_build_version_rejects_build_type_mismatch(monkeypatch, build_type, version):
+    # A specified version whose suffix disagrees with the build type fails loud.
+    monkeypatch.setattr(
+        set_version, "get_build_version", lambda *a, **k: "should-not-be-used"
+    )
+    with pytest.raises(ValueError):
+        resolve_build_version("patch", build_type, version)
+
+
+@pytest.mark.parametrize(
+    "build_type,version",
+    [
+        ("dev", "1.2.3.dev0"),
+        ("rc", "1.2.3.rc7"),
+        ("stable", "1.2.3"),
+    ],
+)
+def test_resolve_build_version_accepts_matching_build_type(monkeypatch, build_type, version):
+    # A specified version whose suffix matches the build type is accepted.
+    monkeypatch.setattr(
+        set_version, "get_build_version", lambda *a, **k: "should-not-be-used"
+    )
+    assert resolve_build_version("patch", build_type, version) == version
