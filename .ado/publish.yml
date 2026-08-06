@@ -20,6 +20,11 @@ parameters:
       - stable
     default: "dev"
 
+  - name: Version
+    displayName: Version (leave blank to compute automatically)
+    type: string
+    default: ""
+
   - name: Publish_Python_Package_To_Build_Artifacts
     displayName: Publish Python package to Build's Artifacts
     type: boolean
@@ -103,6 +108,7 @@ extends:
                 env:
                   BUILD_TYPE: ${{ parameters.Build_Type }}
                   RELEASE_TYPE: ${{ parameters.Release_Type }}
+                  VERSION: ${{ parameters.Version }}
                 displayName: Set "azure-quantum" package version
 
               - script: |
@@ -202,6 +208,7 @@ extends:
                 env:
                   BUILD_TYPE: ${{ parameters.Build_Type }}
                   RELEASE_TYPE: ${{ parameters.Release_Type }}
+                  VERSION: ${{ parameters.Version }}
                 displayName: Set "azure-quantum" package version
 
               - task: CopyFiles@2

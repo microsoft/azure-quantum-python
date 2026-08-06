@@ -8,6 +8,7 @@ from set_version import (
     _get_build_version,
     _version_sort_key,
     get_build_version,
+    resolve_build_version,
     VERSION_RE,
 )
 
@@ -132,3 +133,42 @@ def test_get_build_version_existing_version_raises(monkeypatch):
     monkeypatch.setattr(set_version, "_get_build_version", lambda *args: "1.0.0")
     with pytest.raises(RuntimeError):
         get_build_version("patch", "stable")
+
+
+@pytest.mark.parametrize(
+    "version",
+    ["1.2.3", "1.2.3.dev0", "10.20.30.rc5"],
+)
+def test_resolve_build_version_uses_specified_version(monkeypatch, version):
+    # A valid specified version is returned as-is and the automated computation is
+    # skipped entirely (so the package index is never contacted).
+    def _should_not_be_called(*args, **kwargs):
+        raise AssertionError("get_build_version must not be called when a version is given")
+
+    monkeypatch.setattr(set_version, "get_build_version", _should_not_be_called)
+    assert resolve_build_version("patch", "dev", version) == version
+
+
+@pytest.mark.parametrize(
+    "blank",
+    ["", "   ", None],
+)
+def test_resolve_build_version_falls_back_when_blank(monkeypatch, blank):
+    # A blank/whitespace/None version falls back to the automated computation.
+    monkeypatch.setattr(
+        set_version, "get_build_version", lambda vt, bt: f"computed-{vt}-{bt}"
+    )
+    assert resolve_build_version("minor", "rc", blank) == "computed-minor-rc"
+
+
+@pytest.mark.parametrize(
+    "version",
+    ["1.2", "1.2.3.4", "1.2.3.beta0", "1.2.3.dev", "v1.2.3"],
+)
+def test_resolve_build_version_rejects_invalid_version(monkeypatch, version):
+    # A malformed version fails loud rather than shipping a bad version.
+    monkeypatch.setattr(
+        set_version, "get_build_version", lambda *a, **k: "should-not-be-used"
+    )
+    with pytest.raises(ValueError):
+        resolve_build_version("patch", "dev", version)
