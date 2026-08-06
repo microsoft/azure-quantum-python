@@ -23,7 +23,11 @@ parameters:
   - name: Version
     displayName: Version (leave blank to compute automatically)
     type: string
-    default: ""
+    # Default is a single space, not "", because Azure DevOps renders a string
+    # parameter with an empty-string default as a *required* field in the Run panel.
+    # set_version.py strips the value, so a blank/whitespace entry takes the
+    # automatic-versioning path.
+    default: " "
 
   - name: Publish_Python_Package_To_Build_Artifacts
     displayName: Publish Python package to Build's Artifacts
