@@ -8,7 +8,7 @@ import logging
 import time
 import json
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, List, Optional, Union
 
 from azure.quantum._client.models import JobDetails
 from azure.quantum.job.job_failed_with_results_error import JobFailedWithResultsError
@@ -21,6 +21,7 @@ logger = logging.getLogger(__name__)
 
 if TYPE_CHECKING:
     from azure.quantum.workspace import Workspace
+    from azure.quantum._client.models import Priority
 
 
 _log = logging.getLogger(__name__)
@@ -59,6 +60,36 @@ class Job(BaseJob, FilteredJob):
     def delete(self):
         """Delete the given job."""
         self.workspace.delete_job(self)
+
+    def update(
+        self,
+        *,
+        name: Optional[str] = None,
+        priority: Optional[Union[str, "Priority"]] = None,
+        tags: Optional[List[str]] = None,
+    ) -> "Job":
+        """Update the job's name, priority and/or tags after submission.
+
+        Only the arguments that are explicitly provided are updated;
+        any argument left as ``None`` is left unchanged on the service.
+
+        :param name: The new name of the job.
+        :param priority: The new priority of the job
+            (one of :class:`~azure.quantum.Priority`, ``"Standard"`` or ``"High"``).
+        :param tags: The new list of user-supplied tags associated with the job.
+            This replaces the existing tags.
+
+        :return: This job, with refreshed details.
+        :rtype: Job
+        """
+        updated = self.workspace.update_job(
+            self,
+            name=name,
+            priority=priority,
+            tags=tags,
+        )
+        self.details = updated.details
+        return self
 
     def has_completed(self) -> bool:
         """Check if the job has completed."""

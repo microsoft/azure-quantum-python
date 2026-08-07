@@ -36,6 +36,8 @@ from azure.quantum._client.operations._operations import (
 from azure.quantum._client.models import (
     BlobDetails,
     JobStatus,
+    JobUpdateOptions,
+    Priority,
     TargetStatus,
 )
 from azure.quantum import Job, Session
@@ -462,6 +464,67 @@ class Workspace:
             self.resource_group,
             self.name,
             job.id)
+        return Job(self, details)
+
+    def update_job(
+        self,
+        job: Job,
+        *,
+        name: Optional[str] = None,
+        priority: Optional[Union[str, Priority]] = None,
+        tags: Optional[List[str]] = None,
+    ) -> Job:
+        """
+        Updates the name, priority and/or tags of a job after it has
+        been submitted.
+
+        Only the arguments that are explicitly provided are updated;
+        any argument left as ``None`` is left unchanged on the service.
+
+        :param job:
+            Job to update.
+
+        :param name:
+            The new name of the job.
+
+        :param priority:
+            The new priority of the job.
+            One of :class:`~azure.quantum.Priority` (``"Standard"`` or ``"High"``).
+
+        :param tags:
+            The new list of user-supplied tags associated with the job.
+            This replaces the existing tags.
+
+        :return: Azure Quantum Job with updated details.
+        :rtype: Job
+        """
+        if name is None and priority is None and tags is None:
+            raise ValueError(
+                "At least one of 'name', 'priority' or 'tags' must be specified.")
+
+        client = self._get_jobs_client()
+        job_id = job.id
+
+        update_options = JobUpdateOptions()
+        if name is not None:
+            update_options.name = name
+        if priority is not None:
+            update_options.priority = priority
+        if tags is not None:
+            update_options.tags = tags
+
+        client.update(
+            self.subscription_id,
+            self.resource_group,
+            self.name,
+            job_id,
+            update_options)
+
+        details = client.get(
+            self.subscription_id,
+            self.resource_group,
+            self.name,
+            job_id)
         return Job(self, details)
 
     def delete_job(self, job: Job) -> None:
