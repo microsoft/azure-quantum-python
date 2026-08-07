@@ -93,6 +93,13 @@ extends:
                   versionSpec: "3.11"
                 displayName: Set Python version
 
+              - script: |
+                  python set_version.py --validate-only
+                env:
+                  BUILD_TYPE: ${{ parameters.Build_Type }}
+                  VERSION: ${{ parameters.Version }}
+                displayName: Validate version input
+
               - task: PipAuthenticate@1
                 displayName: Authenticate pip to Azure Artifacts feed
                 inputs:

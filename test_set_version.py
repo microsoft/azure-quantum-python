@@ -9,6 +9,7 @@ from set_version import (
     _version_sort_key,
     get_build_version,
     resolve_build_version,
+    validate_specified_version,
     VERSION_RE,
 )
 
@@ -215,3 +216,40 @@ def test_resolve_build_version_accepts_matching_build_type(monkeypatch, build_ty
         set_version, "get_build_version", lambda *a, **k: "should-not-be-used"
     )
     assert resolve_build_version("patch", build_type, version) == version
+
+
+@pytest.mark.parametrize("blank", ["", "   ", None])
+def test_validate_specified_version_blank_returns_empty(blank):
+    # A blank/whitespace/None version returns "" (signalling automatic computation)
+    # and never touches the network.
+    assert validate_specified_version("dev", blank) == ""
+
+
+@pytest.mark.parametrize(
+    "build_type,version",
+    [
+        ("dev", "1.2.3.dev0"),
+        ("rc", "1.2.3.rc7"),
+        ("stable", "1.2.3"),
+        ("dev", "  1.2.3.dev0  "),
+    ],
+)
+def test_validate_specified_version_returns_stripped(build_type, version):
+    # A valid version is returned stripped of surrounding whitespace.
+    assert validate_specified_version(build_type, version) == version.strip()
+
+
+@pytest.mark.parametrize(
+    "build_type,version",
+    [
+        ("dev", "1.2"),
+        ("dev", "v1.2.3"),
+        ("dev", "1.2.3"),
+        ("rc", "1.2.3.dev0"),
+        ("stable", "1.2.3.rc0"),
+    ],
+)
+def test_validate_specified_version_rejects_invalid(build_type, version):
+    # Malformed or build-type-mismatched versions fail loud.
+    with pytest.raises(ValueError):
+        validate_specified_version(build_type, version)
