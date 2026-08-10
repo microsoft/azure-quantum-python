@@ -27,10 +27,19 @@ VERSION_RE = re.compile(
     r"azure[-_]quantum-(\d+\.\d+\.\d+(?:\.(?:dev|rc)\d+)?)(?:-|\.tar\.gz|\.zip)",
     re.IGNORECASE,
 )
+# Anchored full-string match used to validate a manually supplied version.
+# Accepts the same subset the automated path produces: "major.minor.patch" optionally
+# followed by ".devN" or ".rcN".
+VERSION_INPUT_RE = re.compile(r"^\d+\.\d+\.\d+(?:\.(?:dev|rc)\d+)?$")
 
 
 RELEASE_TYPE = os.environ.get("RELEASE_TYPE") or "patch"
 BUILD_TYPE = os.environ.get("BUILD_TYPE") or "dev"
+# Optional manually specified version. When set, this exact version is used and the
+# automated computation (which reads the package index) is skipped. Useful when the
+# Azure Artifacts feed cache is stale relative to PyPI, e.g. during releases in quick
+# succession.
+VERSION = (os.environ.get("VERSION") or "").strip()
 
 
 if RELEASE_TYPE not in ALLOWED_RELEASE_TYPES:
@@ -198,8 +207,91 @@ def get_build_version(version_type: str, build_type: str) -> str:
     return build_version
 
 
+def validate_specified_version(build_type: str, version: str) -> str:
+    """Validate a manually specified version and return it stripped.
+
+    Returns "" when no version is specified (blank/whitespace), signalling that the
+    version should be computed automatically. Raises ``ValueError`` when a version is
+    specified but is malformed or disagrees with ``build_type``.
+
+    This performs only local checks (no network), so it is safe to run as an early
+    fail-fast step before any package-index access.
+
+    :param build_type: Build type ("stable"/"dev"/"rc"). Determines which pre-release
+        suffix a specified version must carry.
+    :param version: Candidate version string, or "" to compute automatically.
+    :return: The stripped version, or "" if none was specified.
+    :rtype: str
+    """
+    specified_version = (version or "").strip()
+    if not specified_version:
+        return ""
+
+    if not VERSION_INPUT_RE.match(specified_version):
+        raise ValueError(
+            f"Version \"{specified_version}\" is not a valid version. Expected "
+            f"\"major.minor.patch\" optionally followed by \".devN\" or \".rcN\"."
+        )
+
+    # The specified version must match the selected build type, so a build tagged
+    # "dev"/"rc" can't ship a version that lacks (or mismatches) the suffix.
+    if build_type == "dev" and ".dev" not in specified_version:
+        raise ValueError(
+            f"Build type \"dev\" requires a \".devN\" version, but got "
+            f"\"{specified_version}\"."
+        )
+    if build_type == "rc" and ".rc" not in specified_version:
+        raise ValueError(
+            f"Build type \"rc\" requires a \".rcN\" version, but got "
+            f"\"{specified_version}\"."
+        )
+    if build_type == "stable" and (".dev" in specified_version or ".rc" in specified_version):
+        raise ValueError(
+            f"Build type \"stable\" requires a \"major.minor.patch\" version "
+            f"without a pre-release suffix, but got \"{specified_version}\"."
+        )
+
+    return specified_version
+
+
+def resolve_build_version(version_type: str, build_type: str, version: str = "") -> str:
+    """Resolve the version to ship for this run.
+
+    If ``version`` is a non-empty string, it is validated and used as-is, skipping the
+    automated computation that reads the package index. Otherwise the next version is
+    computed from the published version history.
+
+    When a version is specified, it must agree with ``build_type``: a "dev" build must
+    supply a ".devN" version, an "rc" build a ".rcN" version, and a "stable" build a
+    plain "major.minor.patch" version (no pre-release suffix).
+
+    :param version_type: SYMVER type ("major"/"minor"/"patch"); ignored when a version
+        is specified.
+    :param build_type: Build type ("stable"/"dev"/"rc"). Determines which pre-release
+        suffix a specified version must carry.
+    :param version: Exact version to use, or "" to compute automatically.
+    :return: The version to ship.
+    :rtype: str
+    """
+    specified_version = validate_specified_version(build_type, version)
+    if specified_version:
+        print(f"Using manually specified version: {specified_version}")
+        return specified_version
+
+    return get_build_version(version_type, build_type)
+
+
 if __name__ == "__main__":
-    build_version = get_build_version(RELEASE_TYPE, BUILD_TYPE)
+    import sys
+
+    # Early fail-fast mode: validate the manually specified version (if any) without
+    # touching the network, so a bad input stops the run before expensive setup.
+    if "--validate-only" in sys.argv:
+        validate_specified_version(BUILD_TYPE, VERSION)
+        print("Version input is valid.")
+        sys.exit(0)
+
+    build_version = resolve_build_version(RELEASE_TYPE, BUILD_TYPE, VERSION)
 
     print(f"Package version: {build_version}")
 

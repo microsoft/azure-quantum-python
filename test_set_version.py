@@ -8,6 +8,8 @@ from set_version import (
     _get_build_version,
     _version_sort_key,
     get_build_version,
+    resolve_build_version,
+    validate_specified_version,
     VERSION_RE,
 )
 
@@ -132,3 +134,62 @@ def test_get_build_version_existing_version_raises(monkeypatch):
     monkeypatch.setattr(set_version, "_get_build_version", lambda *args: "1.0.0")
     with pytest.raises(RuntimeError):
         get_build_version("patch", "stable")
+
+
+def test_resolve_build_version_uses_specified_version(monkeypatch):
+    # When a valid version is specified, it is returned as-is and the automated
+    # computation is skipped entirely (so the package index is never contacted).
+    def _should_not_be_called(*args, **kwargs):
+        raise AssertionError("get_build_version must not be called when a version is given")
+
+    monkeypatch.setattr(set_version, "get_build_version", _should_not_be_called)
+    assert resolve_build_version("patch", "dev", "1.2.3.dev0") == "1.2.3.dev0"
+
+
+def test_resolve_build_version_falls_back_when_blank(monkeypatch):
+    # A blank version falls back to the automated computation.
+    monkeypatch.setattr(
+        set_version, "get_build_version", lambda vt, bt: f"computed-{vt}-{bt}"
+    )
+    assert resolve_build_version("minor", "rc", "") == "computed-minor-rc"
+
+
+@pytest.mark.parametrize("blank", ["", "   ", None])
+def test_validate_specified_version_blank_returns_empty(blank):
+    # A blank/whitespace/None version returns "" (signalling automatic computation)
+    # and never touches the network.
+    assert validate_specified_version("dev", blank) == ""
+
+
+@pytest.mark.parametrize(
+    "build_type,version",
+    [
+        ("dev", "1.2.3.dev0"),
+        ("rc", "1.2.3.rc7"),
+        ("stable", "1.2.3"),
+        # Surrounding whitespace is stripped.
+        ("dev", "  1.2.3.dev0  "),
+    ],
+)
+def test_validate_specified_version_accepts_valid(build_type, version):
+    # A valid version that agrees with the build type is accepted and returned
+    # stripped of surrounding whitespace.
+    assert validate_specified_version(build_type, version) == version.strip()
+
+
+@pytest.mark.parametrize(
+    "build_type,version",
+    [
+        # Malformed versions.
+        ("dev", "1.2"),
+        ("dev", "v1.2.3"),
+        # Build type disagrees with the version's suffix (or lack of one).
+        ("dev", "1.2.3"),
+        ("rc", "1.2.3.dev0"),
+        ("stable", "1.2.3.rc0"),
+    ],
+)
+def test_validate_specified_version_rejects_invalid(build_type, version):
+    # Malformed or build-type-mismatched versions fail loud.
+    with pytest.raises(ValueError):
+        validate_specified_version(build_type, version)

@@ -20,6 +20,15 @@ parameters:
       - stable
     default: "dev"
 
+  - name: Version
+    displayName: Version (leave blank to compute automatically)
+    type: string
+    # Default is a single space, not "", because Azure DevOps renders a string
+    # parameter with an empty-string default as a *required* field in the Run panel.
+    # set_version.py strips the value, so a blank/whitespace entry takes the
+    # automatic-versioning path.
+    default: " "
+
   - name: Publish_Python_Package_To_Build_Artifacts
     displayName: Publish Python package to Build's Artifacts
     type: boolean
@@ -84,6 +93,13 @@ extends:
                   versionSpec: "3.11"
                 displayName: Set Python version
 
+              - script: |
+                  python set_version.py --validate-only
+                env:
+                  BUILD_TYPE: ${{ parameters.Build_Type }}
+                  VERSION: ${{ parameters.Version }}
+                displayName: Validate version input
+
               - task: PipAuthenticate@1
                 displayName: Authenticate pip to Azure Artifacts feed
                 inputs:
@@ -103,6 +119,7 @@ extends:
                 env:
                   BUILD_TYPE: ${{ parameters.Build_Type }}
                   RELEASE_TYPE: ${{ parameters.Release_Type }}
+                  VERSION: ${{ parameters.Version }}
                 displayName: Set "azure-quantum" package version
 
               - script: |
@@ -202,6 +219,7 @@ extends:
                 env:
                   BUILD_TYPE: ${{ parameters.Build_Type }}
                   RELEASE_TYPE: ${{ parameters.Release_Type }}
+                  VERSION: ${{ parameters.Version }}
                 displayName: Set "azure-quantum" package version
 
               - task: CopyFiles@2
