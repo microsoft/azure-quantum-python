@@ -10,7 +10,7 @@ from enum import Enum
 from datetime import datetime, timezone, timedelta
 from urllib.parse import urlparse, parse_qs
 from typing import Any, Dict, Optional, TYPE_CHECKING
-from azure.storage.blob import BlobClient
+from azure.storage.blob import BlobClient, BlobProperties
 
 from azure.quantum.storage import upload_blob, download_blob, download_blob_properties, ContainerClient
 from azure.quantum._client.models import JobDetails
@@ -388,6 +388,25 @@ class BaseJob(WorkspaceItem):
         blob_client = container_client.get_blob_client(name)
         response = blob_client.download_blob().readall()
         return response
+
+
+    def list_attachments(self) -> list[BlobProperties]:
+        """ Lists the attachments in the job's linked storage container. Attachments are blobs of
+            data created as part of the Job's execution, or they can be uploaded directly from Python
+            using the upload_attachment method.
+
+        :return: List of blobs in the job's linked storage container.
+        :rtype: list[~azure.storage.blob.BlobProperties]
+        """
+
+        # Use the job's linked storage container.
+        if self._details.container_uri is None:
+            container_uri = self.workspace.get_container_uri(job_id=self.id)
+        else:
+            container_uri = self._details.container_uri
+
+        container_client = ContainerClient.from_container_url(container_uri)
+        return list(container_client.list_blobs())
 
 
     def _get_blob_uri_with_sas_token(self, blob_uri: str) -> str:
