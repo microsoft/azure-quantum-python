@@ -150,7 +150,7 @@ class Job:
 
     def delete(self):
         """Delete the given job."""
-        self._azure_job.workspace.cancel_job(self._azure_job)
+        self._azure_job.workspace.delete_job(self._azure_job)
 
     def __str__(self) -> str:
         return f"azure.quantum.cirq.Job(job_id={self.job_id()})"

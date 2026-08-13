@@ -77,7 +77,7 @@ class _IonQClient:
 
     def delete_job(self, job_id: str):
         azure_job = self._workspace.get_job(job_id)
-        self._workspace.cancel_job(azure_job)
+        self._workspace.delete_job(azure_job)
     
     def get_results(
         self, job_id: str, sharpen: Optional[bool] = None, extra_query_params: Optional[dict] = None

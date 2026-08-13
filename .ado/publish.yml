@@ -20,6 +20,15 @@ parameters:
       - stable
     default: "dev"
 
+  - name: Version
+    displayName: Version (leave blank to compute automatically)
+    type: string
+    # Default is a single space, not "", because Azure DevOps renders a string
+    # parameter with an empty-string default as a *required* field in the Run panel.
+    # set_version.py strips the value, so a blank/whitespace entry takes the
+    # automatic-versioning path.
+    default: " "
+
   - name: Publish_Python_Package_To_Build_Artifacts
     displayName: Publish Python package to Build's Artifacts
     type: boolean
@@ -42,6 +51,12 @@ variables:
     value: none # Disable usage telemetry for internal test pipelines
   - name: PYTEST_MAX_PARALLEL_TESTS
     value: "auto"
+  - name: PipFeed
+    value: "AzureQuantum/azure-quantum"
+  # Stop pip from contacting pypi.org for its "is there a newer pip?" self-check.
+  # This version check ignores PIP_INDEX_URL and is a common lingering CFS offender.
+  - name: PIP_DISABLE_PIP_VERSION_CHECK
+    value: "1"
 
 resources:
   repositories:
@@ -53,6 +68,8 @@ resources:
 extends:
   template: v1/1ES.Official.PipelineTemplate.yml@1ESPipelineTemplates
   parameters:
+    settings:
+      networkIsolationPolicy: Permissive, CFSClean
     pool:
       name: "Azure-Pipelines-DevTools-EO"
       image: windows-latest
@@ -77,6 +94,19 @@ extends:
                 displayName: Set Python version
 
               - script: |
+                  python set_version.py --validate-only
+                env:
+                  BUILD_TYPE: ${{ parameters.Build_Type }}
+                  VERSION: ${{ parameters.Version }}
+                displayName: Validate version input
+
+              - task: PipAuthenticate@1
+                displayName: Authenticate pip to Azure Artifacts feed
+                inputs:
+                  artifactFeeds: $(PipFeed)
+                  onlyAddExtraIndex: false
+
+              - script: |
                   pip install wheel
                 displayName: Install wheel
 
@@ -89,6 +119,7 @@ extends:
                 env:
                   BUILD_TYPE: ${{ parameters.Build_Type }}
                   RELEASE_TYPE: ${{ parameters.Release_Type }}
+                  VERSION: ${{ parameters.Version }}
                 displayName: Set "azure-quantum" package version
 
               - script: |
@@ -109,6 +140,12 @@ extends:
                   versionSpec: "3.11"
                 displayName: Set Python version
 
+              - task: PipAuthenticate@1
+                displayName: Authenticate pip to Azure Artifacts feed
+                inputs:
+                  artifactFeeds: $(PipFeed)
+                  onlyAddExtraIndex: false
+
               - script: |
                   python -m pip install --upgrade pip
                   pip install pytest pytest-azurepipelines pytest-cov pytest-xdist tox
@@ -126,6 +163,7 @@ extends:
 
               - script: |
                   cd $(Build.SourcesDirectory)/azure-quantum
+                  python -c "import os, urllib.parse as u; h = u.urlsplit(os.environ.get('PIP_INDEX_URL', '')).hostname or '(unset -> default pypi.org)'; print('pip index host:', h)"
                   tox -e py311-qiskit1,py311-qiskit2
                 displayName: Run Qiskit matrix tests
 
@@ -170,11 +208,18 @@ extends:
                   versionSpec: "3.11"
                 displayName: Set Python version
 
+              - task: PipAuthenticate@1
+                displayName: Authenticate pip to Azure Artifacts feed
+                inputs:
+                  artifactFeeds: $(PipFeed)
+                  onlyAddExtraIndex: false
+
               - script: |
                   python $(Pipeline.Workspace)/azure-quantum-wheels/set_version.py
                 env:
                   BUILD_TYPE: ${{ parameters.Build_Type }}
                   RELEASE_TYPE: ${{ parameters.Release_Type }}
+                  VERSION: ${{ parameters.Version }}
                 displayName: Set "azure-quantum" package version
 
               - task: CopyFiles@2
