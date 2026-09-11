@@ -72,7 +72,7 @@ The internal Azure Quantum Python SDK client (`azure/quantum/_client`) needs to 
 
 ### Prerequisites
 - Python 3.10 (or later)
-- NodeJS 18.3 LTS (or later)
+- NodeJS 22 LTS (or later)
 
 ### Setup your repo
 - Fork and clone the [azure-sdk-for-python](https://github.com/Azure/azure-sdk-for-python) repo (we call it SDK repo and it's absolute path)
