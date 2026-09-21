@@ -344,13 +344,8 @@ class BaseJob(WorkspaceItem):
         :rtype: str
         """
 
-        # Use Job's default container if not specified. self._details.container_uri is
-        # unsigned, so always fetch a fresh SAS-signed URI instead of reusing it.
         if container_uri is None:
-            container_uri = self.workspace.get_container_uri(
-                job_id=self.id,
-                container_name=self.container_name,
-            )
+            container_uri = self._get_attachment_container_uri()
 
         uploaded_blob_uri = self.upload_input_data(
             container_uri = container_uri,
@@ -378,13 +373,8 @@ class BaseJob(WorkspaceItem):
         :rtype: bytes
         """
 
-        # Use Job's default container if not specified. self._details.container_uri is
-        # unsigned, so always fetch a fresh SAS-signed URI instead of reusing it.
         if container_uri is None:
-            container_uri = self.workspace.get_container_uri(
-                job_id=self.id,
-                container_name=self.container_name,
-            )
+            container_uri = self._get_attachment_container_uri()
 
         container_client = ContainerClient.from_container_url(container_uri)
         blob_client = container_client.get_blob_client(name)
@@ -401,15 +391,44 @@ class BaseJob(WorkspaceItem):
         :rtype: list[~azure.storage.blob.BlobProperties]
         """
 
-        # Use the job's linked storage container. self._details.container_uri is unsigned,
-        # so always fetch a fresh SAS-signed URI instead of reusing it.
-        container_uri = self.workspace.get_container_uri(
-            job_id=self.id,
-            container_name=self.container_name,
-        )
+        container_uri = self._get_attachment_container_uri()
 
         container_client = ContainerClient.from_container_url(container_uri)
         return list(container_client.list_blobs())
+
+
+    def _get_attachment_container_uri(self) -> str:
+        container_uri = self._details.container_uri
+        if container_uri is None:
+            return self.workspace.get_container_uri(job_id=self.id)
+
+        query_params = parse_qs(urlparse(container_uri).query)
+        token_expire_query_param = query_params.get("se")
+        if query_params.get("sig") and token_expire_query_param:
+            try:
+                token_expire_time = datetime.fromisoformat(
+                    token_expire_query_param[0].replace("Z", "+00:00")
+                )
+                if token_expire_time.tzinfo is None:
+                    token_expire_time = token_expire_time.replace(tzinfo=timezone.utc)
+                if datetime.now(tz=timezone.utc) < token_expire_time - timedelta(minutes=5):
+                    return container_uri
+            except ValueError:
+                pass
+
+        refreshed_container_uri = self.workspace.get_container_uri(
+            job_id=self.id,
+            container_name=self.container_name,
+        )
+        stored_hostname = urlparse(container_uri).hostname
+        refreshed_hostname = urlparse(refreshed_container_uri).hostname
+        if stored_hostname != refreshed_hostname:
+            raise ValueError(
+                "Refreshed attachment container hostname "
+                f"'{refreshed_hostname}' does not match job container hostname "
+                f"'{stored_hostname}'."
+            )
+        return refreshed_container_uri
 
 
     def _get_blob_uri_with_sas_token(self, blob_uri: str) -> str:

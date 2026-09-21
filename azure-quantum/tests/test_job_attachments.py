@@ -4,13 +4,17 @@
 ##
 
 from unittest.mock import Mock, call, patch
+
+import pytest
+
 from azure.quantum import Job, JobDetails
 
 
 JOB_ID = "job-id"
 DEFAULT_CONTAINER_NAME = f"job-{JOB_ID}"
 UNSIGNED_CONTAINER_URI = f"https://acct.blob.core.windows.net/{DEFAULT_CONTAINER_NAME}"
-SIGNED_CONTAINER_URI = f"{UNSIGNED_CONTAINER_URI}?sas"
+SIGNED_CONTAINER_URI = f"{UNSIGNED_CONTAINER_URI}?se=2099-01-01T00%3A00%3A00Z&sig=signature"
+EXPIRED_CONTAINER_URI = f"{UNSIGNED_CONTAINER_URI}?se=2000-01-01T00%3A00%3A00Z&sig=signature"
 
 
 def _job_with_container(container_uri=UNSIGNED_CONTAINER_URI, workspace=None) -> Job:
@@ -58,10 +62,7 @@ def test_list_attachments_uses_workspace_container_when_unset(mock_container_cli
 
     result = job.list_attachments()
 
-    workspace.get_container_uri.assert_called_once_with(
-        job_id=JOB_ID,
-        container_name=DEFAULT_CONTAINER_NAME,
-    )
+    workspace.get_container_uri.assert_called_once_with(job_id=JOB_ID)
     mock_container_client.from_container_url.assert_called_once_with(SIGNED_CONTAINER_URI)
     assert result == []
 
@@ -123,6 +124,63 @@ def test_attachment_methods_honor_explicit_container_uri(mock_container_client):
         input_data=b"data",
     )
     mock_container_client.from_container_url.assert_called_once_with(explicit_uri)
+
+
+@patch("azure.quantum.job.base_job.ContainerClient")
+def test_attachment_methods_reuse_valid_signed_job_uri(mock_container_client):
+    workspace = Mock()
+    job = _job_with_container(container_uri=SIGNED_CONTAINER_URI, workspace=workspace)
+    job.upload_input_data = Mock(return_value="uploaded-uri")
+    container_client = mock_container_client.from_container_url.return_value
+    container_client.list_blobs.return_value = []
+    container_client.get_blob_client.return_value.download_blob.return_value.readall.return_value = b"data"
+
+    job.upload_attachment("upload", b"data")
+    attachments = job.list_attachments()
+    downloaded = job.download_attachment("download")
+
+    workspace.get_container_uri.assert_not_called()
+    job.upload_input_data.assert_called_once_with(
+        container_uri=SIGNED_CONTAINER_URI,
+        blob_name="upload",
+        input_data=b"data",
+    )
+    assert mock_container_client.from_container_url.call_args_list == [
+        call(SIGNED_CONTAINER_URI),
+        call(SIGNED_CONTAINER_URI),
+    ]
+    assert attachments == []
+    assert downloaded == b"data"
+
+
+def test_upload_attachment_refreshes_expired_job_uri():
+    workspace = Mock()
+    workspace.get_container_uri.return_value = SIGNED_CONTAINER_URI
+    job = _job_with_container(container_uri=EXPIRED_CONTAINER_URI, workspace=workspace)
+    job.upload_input_data = Mock(return_value="uploaded-uri")
+
+    job.upload_attachment("attachment", b"data")
+
+    workspace.get_container_uri.assert_called_once_with(
+        job_id=JOB_ID,
+        container_name=DEFAULT_CONTAINER_NAME,
+    )
+    job.upload_input_data.assert_called_once_with(
+        container_uri=SIGNED_CONTAINER_URI,
+        blob_name="attachment",
+        input_data=b"data",
+    )
+
+
+def test_upload_attachment_rejects_refreshed_storage_hostname_mismatch():
+    workspace = Mock()
+    workspace.get_container_uri.return_value = (
+        f"https://other-acct.blob.core.windows.net/{DEFAULT_CONTAINER_NAME}?sas"
+    )
+    job = _job_with_container(workspace=workspace)
+
+    with pytest.raises(ValueError, match="does not match job container hostname"):
+        job.upload_attachment("attachment", b"data")
 
 
 @patch("azure.quantum.job.base_job.ContainerClient")
