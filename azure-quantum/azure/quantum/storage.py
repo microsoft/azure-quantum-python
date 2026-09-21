@@ -10,7 +10,6 @@ from azure.storage.blob import (
     ContainerClient,
     BlobClient,
     BlobSasPermissions,
-    ContainerSasPermissions,
     ContentSettings,
     generate_blob_sas,
     generate_container_sas,
@@ -69,8 +68,8 @@ def get_container_uri(connection_string: str, container_name: str) -> str:
         container.account_name,
         container.container_name,
         account_key=container.credential.account_key,
-        permission=ContainerSasPermissions(
-            read=True, add=True, write=True, create=True, list=True
+        permission=BlobSasPermissions(
+            read=True, add=True, write=True, create=True
         ),
         expiry=datetime.utcnow() + timedelta(days=14),
     )
