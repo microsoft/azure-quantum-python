@@ -345,7 +345,7 @@ class BaseJob(WorkspaceItem):
         """
 
         if container_uri is None:
-            container_uri = self._get_attachment_container_uri()
+            container_uri = self._get_attachment_container_uri(required_permission="w")
 
         uploaded_blob_uri = self.upload_input_data(
             container_uri = container_uri,
@@ -374,7 +374,7 @@ class BaseJob(WorkspaceItem):
         """
 
         if container_uri is None:
-            container_uri = self._get_attachment_container_uri()
+            container_uri = self._get_attachment_container_uri(required_permission="r")
 
         container_client = ContainerClient.from_container_url(container_uri)
         blob_client = container_client.get_blob_client(name)
@@ -391,20 +391,25 @@ class BaseJob(WorkspaceItem):
         :rtype: list[~azure.storage.blob.BlobProperties]
         """
 
-        container_uri = self._get_attachment_container_uri()
+        container_uri = self._get_attachment_container_uri(required_permission="l")
 
         container_client = ContainerClient.from_container_url(container_uri)
         return list(container_client.list_blobs())
 
 
-    def _get_attachment_container_uri(self) -> str:
+    def _get_attachment_container_uri(self, required_permission: str) -> str:
         container_uri = self._details.container_uri
         if container_uri is None:
             return self.workspace.get_container_uri(job_id=self.id)
 
         query_params = parse_qs(urlparse(container_uri).query)
         token_expire_query_param = query_params.get("se")
-        if query_params.get("sig") and token_expire_query_param:
+        token_permissions = query_params.get("sp", [""])[0]
+        if (
+            query_params.get("sig")
+            and token_expire_query_param
+            and required_permission in token_permissions
+        ):
             try:
                 token_expire_time = datetime.fromisoformat(
                     token_expire_query_param[0].replace("Z", "+00:00")

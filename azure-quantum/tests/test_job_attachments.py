@@ -13,8 +13,15 @@ from azure.quantum import Job, JobDetails
 JOB_ID = "job-id"
 DEFAULT_CONTAINER_NAME = f"job-{JOB_ID}"
 UNSIGNED_CONTAINER_URI = f"https://acct.blob.core.windows.net/{DEFAULT_CONTAINER_NAME}"
-SIGNED_CONTAINER_URI = f"{UNSIGNED_CONTAINER_URI}?se=2099-01-01T00%3A00%3A00Z&sig=signature"
-EXPIRED_CONTAINER_URI = f"{UNSIGNED_CONTAINER_URI}?se=2000-01-01T00%3A00%3A00Z&sig=signature"
+SIGNED_CONTAINER_URI = (
+    f"{UNSIGNED_CONTAINER_URI}?sp=racwdl&se=2099-01-01T00%3A00%3A00Z&sig=signature"
+)
+READ_ONLY_CONTAINER_URI = (
+    f"{UNSIGNED_CONTAINER_URI}?sp=rl&se=2099-01-01T00%3A00%3A00Z&sig=signature"
+)
+EXPIRED_CONTAINER_URI = (
+    f"{UNSIGNED_CONTAINER_URI}?sp=racwdl&se=2000-01-01T00%3A00%3A00Z&sig=signature"
+)
 
 
 def _job_with_container(container_uri=UNSIGNED_CONTAINER_URI, workspace=None) -> Job:
@@ -170,6 +177,45 @@ def test_upload_attachment_refreshes_expired_job_uri():
         blob_name="attachment",
         input_data=b"data",
     )
+
+
+def test_upload_attachment_refreshes_job_uri_without_write_permission():
+    workspace = Mock()
+    workspace.get_container_uri.return_value = SIGNED_CONTAINER_URI
+    job = _job_with_container(container_uri=READ_ONLY_CONTAINER_URI, workspace=workspace)
+    job.upload_input_data = Mock(return_value="uploaded-uri")
+
+    job.upload_attachment("attachment", b"data")
+
+    workspace.get_container_uri.assert_called_once_with(
+        job_id=JOB_ID,
+        container_name=DEFAULT_CONTAINER_NAME,
+    )
+    job.upload_input_data.assert_called_once_with(
+        container_uri=SIGNED_CONTAINER_URI,
+        blob_name="attachment",
+        input_data=b"data",
+    )
+
+
+@patch("azure.quantum.job.base_job.ContainerClient")
+def test_read_only_job_uri_is_reused_for_list_and_download(mock_container_client):
+    workspace = Mock()
+    job = _job_with_container(container_uri=READ_ONLY_CONTAINER_URI, workspace=workspace)
+    container_client = mock_container_client.from_container_url.return_value
+    container_client.list_blobs.return_value = []
+    container_client.get_blob_client.return_value.download_blob.return_value.readall.return_value = b"data"
+
+    attachments = job.list_attachments()
+    downloaded = job.download_attachment("download")
+
+    workspace.get_container_uri.assert_not_called()
+    assert mock_container_client.from_container_url.call_args_list == [
+        call(READ_ONLY_CONTAINER_URI),
+        call(READ_ONLY_CONTAINER_URI),
+    ]
+    assert attachments == []
+    assert downloaded == b"data"
 
 
 def test_upload_attachment_rejects_refreshed_storage_hostname_mismatch():
