@@ -24,6 +24,7 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 DEFAULT_TIMEOUT = 300  # Default timeout for waiting for job to complete
+# The workspace storage endpoint issues one container SAS for upload, download, and list operations.
 _ATTACHMENT_CONTAINER_SAS_PERMISSIONS = frozenset({"r", "w", "l"})
 
 class ContentType(str, Enum):
@@ -407,6 +408,11 @@ class BaseJob(WorkspaceItem):
 
 
     def _get_attachment_container_uri(self) -> str:
+        """Return a validated workspace-issued SAS URI for the job's attachment container.
+
+        The first call refreshes the unsigned URI stored in job details. Later calls reuse the
+        job-scoped cache while its container identity, validity period, and capabilities remain valid.
+        """
         container_uri = self._details.container_uri
         container_identity = self._get_attachment_container_identity(container_uri)
         cached_container_uri = self._attachment_container_uri_cache
@@ -458,6 +464,7 @@ class BaseJob(WorkspaceItem):
         self,
         container_uri: str,
     ) -> bool:
+        """Check whether a workspace-issued container SAS can serve all attachment operations."""
 
         parsed_uri = urlparse(container_uri)
         if (
