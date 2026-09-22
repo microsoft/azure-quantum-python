@@ -16,9 +16,6 @@ UNSIGNED_CONTAINER_URI = f"https://acct.blob.core.windows.net/{DEFAULT_CONTAINER
 SIGNED_CONTAINER_URI = (
     f"{UNSIGNED_CONTAINER_URI}?sp=racwdl&se=2099-01-01T00%3A00%3A00Z&sig=signature"
 )
-READ_ONLY_CONTAINER_URI = (
-    f"{UNSIGNED_CONTAINER_URI}?sp=rl&se=2099-01-01T00%3A00%3A00Z&sig=signature"
-)
 EXPIRED_CONTAINER_URI = (
     f"{UNSIGNED_CONTAINER_URI}?sp=racwdl&se=2000-01-01T00%3A00%3A00Z&sig=signature"
 )
@@ -28,6 +25,12 @@ FUTURE_START_CONTAINER_URI = (
 )
 MALFORMED_EXPIRY_CONTAINER_URI = (
     f"{UNSIGNED_CONTAINER_URI}?sp=racwdl&se=not-a-date&sig=signature"
+)
+MINIMUM_EXPIRY_CONTAINER_URI = (
+    f"{UNSIGNED_CONTAINER_URI}?sp=racwdl&se=0001-01-01T00%3A00%3A00Z&sig=signature"
+)
+NO_PERMISSIONS_CONTAINER_URI = (
+    f"{UNSIGNED_CONTAINER_URI}?se=2099-01-01T00%3A00%3A00Z&sig=signature"
 )
 HTTP_SIGNED_CONTAINER_URI = SIGNED_CONTAINER_URI.replace("https://", "http://")
 
@@ -142,8 +145,9 @@ def test_attachment_methods_honor_explicit_container_uri(mock_container_client):
 
 
 @patch("azure.quantum.job.base_job.ContainerClient")
-def test_attachment_methods_reuse_valid_signed_job_uri(mock_container_client):
+def test_attachment_methods_refresh_signed_job_uri_once(mock_container_client):
     workspace = Mock()
+    workspace.get_container_uri.return_value = SIGNED_CONTAINER_URI
     job = _job_with_container(container_uri=SIGNED_CONTAINER_URI, workspace=workspace)
     job.upload_input_data = Mock(return_value="uploaded-uri")
     container_client = mock_container_client.from_container_url.return_value
@@ -154,7 +158,10 @@ def test_attachment_methods_reuse_valid_signed_job_uri(mock_container_client):
     attachments = job.list_attachments()
     downloaded = job.download_attachment("download")
 
-    workspace.get_container_uri.assert_not_called()
+    workspace.get_container_uri.assert_called_once_with(
+        job_id=JOB_ID,
+        container_name=DEFAULT_CONTAINER_NAME,
+    )
     job.upload_input_data.assert_called_once_with(
         container_uri=SIGNED_CONTAINER_URI,
         blob_name="upload",
@@ -209,7 +216,11 @@ def test_upload_attachment_refreshes_job_uri_before_sas_start_time():
 def test_upload_attachment_logs_and_refreshes_malformed_sas_expiry(caplog):
     workspace = Mock()
     workspace.get_container_uri.return_value = SIGNED_CONTAINER_URI
-    job = _job_with_container(container_uri=MALFORMED_EXPIRY_CONTAINER_URI, workspace=workspace)
+    job = _job_with_container(workspace=workspace)
+    job._attachment_container_uri_cache = MALFORMED_EXPIRY_CONTAINER_URI
+    job._attachment_container_uri_cache_identity = job._get_attachment_container_identity(
+        job.details.container_uri
+    )
     job.upload_input_data = Mock(return_value="uploaded-uri")
 
     with caplog.at_level("DEBUG", logger="azure.quantum.job.base_job"):
@@ -241,53 +252,18 @@ def test_upload_attachment_refreshes_signed_http_job_uri():
     )
 
 
-def test_upload_attachment_refreshes_job_uri_without_write_permission():
-    workspace = Mock()
-    workspace.get_container_uri.return_value = SIGNED_CONTAINER_URI
-    job = _job_with_container(container_uri=READ_ONLY_CONTAINER_URI, workspace=workspace)
-    job.upload_input_data = Mock(return_value="uploaded-uri")
-
-    job.upload_attachment("attachment", b"data")
-
-    workspace.get_container_uri.assert_called_once_with(
-        job_id=JOB_ID,
-        container_name=DEFAULT_CONTAINER_NAME,
-    )
-    job.upload_input_data.assert_called_once_with(
-        container_uri=SIGNED_CONTAINER_URI,
-        blob_name="attachment",
-        input_data=b"data",
-    )
-
-
-@patch("azure.quantum.job.base_job.ContainerClient")
-def test_cached_read_only_uri_is_refreshed_before_upload(mock_container_client):
-    workspace = Mock()
-    workspace.get_container_uri.side_effect = [READ_ONLY_CONTAINER_URI, SIGNED_CONTAINER_URI]
-    job = _job_with_container(workspace=workspace)
-    job.upload_input_data = Mock(return_value="uploaded-uri")
-    mock_container_client.from_container_url.return_value.list_blobs.return_value = []
-
-    job.list_attachments()
-    job.upload_attachment("attachment", b"data")
-
-    assert workspace.get_container_uri.call_count == 2
-    job.upload_input_data.assert_called_once_with(
-        container_uri=SIGNED_CONTAINER_URI,
-        blob_name="attachment",
-        input_data=b"data",
-    )
-
-
 @pytest.mark.parametrize(
     "cached_container_uri",
-    [EXPIRED_CONTAINER_URI, FUTURE_START_CONTAINER_URI],
+    [EXPIRED_CONTAINER_URI, FUTURE_START_CONTAINER_URI, MINIMUM_EXPIRY_CONTAINER_URI],
 )
 def test_unusable_cached_uri_is_refreshed(cached_container_uri):
     workspace = Mock()
     workspace.get_container_uri.return_value = SIGNED_CONTAINER_URI
     job = _job_with_container(workspace=workspace)
     job._attachment_container_uri_cache = cached_container_uri
+    job._attachment_container_uri_cache_identity = job._get_attachment_container_identity(
+        job.details.container_uri
+    )
     job.upload_input_data = Mock(return_value="uploaded-uri")
 
     job.upload_attachment("attachment", b"data")
@@ -301,26 +277,6 @@ def test_unusable_cached_uri_is_refreshed(cached_container_uri):
         blob_name="attachment",
         input_data=b"data",
     )
-
-
-@patch("azure.quantum.job.base_job.ContainerClient")
-def test_read_only_job_uri_is_reused_for_list_and_download(mock_container_client):
-    workspace = Mock()
-    job = _job_with_container(container_uri=READ_ONLY_CONTAINER_URI, workspace=workspace)
-    container_client = mock_container_client.from_container_url.return_value
-    container_client.list_blobs.return_value = []
-    container_client.get_blob_client.return_value.download_blob.return_value.readall.return_value = b"data"
-
-    attachments = job.list_attachments()
-    downloaded = job.download_attachment("download")
-
-    workspace.get_container_uri.assert_not_called()
-    assert mock_container_client.from_container_url.call_args_list == [
-        call(READ_ONLY_CONTAINER_URI),
-        call(READ_ONLY_CONTAINER_URI),
-    ]
-    assert attachments == []
-    assert downloaded == b"data"
 
 
 def test_upload_attachment_rejects_refreshed_storage_hostname_mismatch():
@@ -346,7 +302,7 @@ def test_upload_attachment_rejects_refreshed_uri_without_usable_sas():
 def test_upload_attachment_rejects_job_uri_without_container_name():
     pathless_uri = (
         "https://acct.blob.core.windows.net"
-        "?sp=racwdl&se=2000-01-01T00%3A00%3A00Z&sig=signature"
+        "?sp=racwdl&se=2099-01-01T00%3A00%3A00Z&sig=signature"
     )
     workspace = Mock()
     job = _job_with_container(container_uri=pathless_uri, workspace=workspace)
@@ -360,6 +316,15 @@ def test_upload_attachment_rejects_job_uri_without_container_name():
 def test_upload_attachment_rejects_refreshed_signed_http_uri():
     workspace = Mock()
     workspace.get_container_uri.return_value = HTTP_SIGNED_CONTAINER_URI
+    job = _job_with_container(workspace=workspace)
+
+    with pytest.raises(ValueError, match="does not contain a usable SAS token"):
+        job.upload_attachment("attachment", b"data")
+
+
+def test_upload_attachment_rejects_refreshed_uri_without_permissions():
+    workspace = Mock()
+    workspace.get_container_uri.return_value = NO_PERMISSIONS_CONTAINER_URI
     job = _job_with_container(workspace=workspace)
 
     with pytest.raises(ValueError, match="does not contain a usable SAS token"):

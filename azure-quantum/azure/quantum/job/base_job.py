@@ -9,7 +9,7 @@ import uuid
 from enum import Enum
 from datetime import datetime, timezone, timedelta
 from urllib.parse import urlparse, parse_qs
-from typing import Any, Dict, Literal, Optional, TYPE_CHECKING
+from typing import Any, Dict, Optional, TYPE_CHECKING
 from azure.storage.blob import BlobClient, BlobProperties
 
 from azure.quantum.storage import upload_blob, download_blob, download_blob_properties, ContainerClient
@@ -353,7 +353,7 @@ class BaseJob(WorkspaceItem):
         """
 
         if container_uri is None:
-            container_uri = self._get_attachment_container_uri(required_permission="w")
+            container_uri = self._get_attachment_container_uri()
 
         uploaded_blob_uri = self.upload_input_data(
             container_uri = container_uri,
@@ -382,7 +382,7 @@ class BaseJob(WorkspaceItem):
         """
 
         if container_uri is None:
-            container_uri = self._get_attachment_container_uri(required_permission="r")
+            container_uri = self._get_attachment_container_uri()
 
         container_client = ContainerClient.from_container_url(container_uri)
         blob_client = container_client.get_blob_client(name)
@@ -399,16 +399,13 @@ class BaseJob(WorkspaceItem):
         :rtype: list[~azure.storage.blob.BlobProperties]
         """
 
-        container_uri = self._get_attachment_container_uri(required_permission="l")
+        container_uri = self._get_attachment_container_uri()
 
         container_client = ContainerClient.from_container_url(container_uri)
         return list(container_client.list_blobs())
 
 
-    def _get_attachment_container_uri(
-        self,
-        required_permission: Literal["r", "w", "l"],
-    ) -> str:
+    def _get_attachment_container_uri(self) -> str:
         container_uri = self._details.container_uri
         container_identity = self._get_attachment_container_identity(container_uri)
         cached_container_uri = self._attachment_container_uri_cache
@@ -416,21 +413,12 @@ class BaseJob(WorkspaceItem):
             if self._attachment_container_uri_cache_identity != container_identity:
                 self._attachment_container_uri_cache = None
                 self._attachment_container_uri_cache_identity = None
-            elif self._is_attachment_container_uri_usable(
-                cached_container_uri,
-                required_permission,
-            ):
+            elif self._is_attachment_container_uri_usable(cached_container_uri):
                 return cached_container_uri
 
         if container_uri is None:
             refreshed_container_uri = self.workspace.get_container_uri(job_id=self.id)
         else:
-            if self._is_attachment_container_uri_usable(
-                container_uri,
-                required_permission,
-            ):
-                return container_uri
-
             refreshed_container_uri = self.workspace.get_container_uri(
                 job_id=self.id,
                 container_name=self.container_name,
@@ -444,13 +432,9 @@ class BaseJob(WorkspaceItem):
                     f"'{stored_hostname}'."
                 )
 
-        if not self._is_attachment_container_uri_usable(
-            refreshed_container_uri,
-            required_permission,
-        ):
+        if not self._is_attachment_container_uri_usable(refreshed_container_uri):
             raise ValueError(
-                "Refreshed attachment container URI does not contain a usable SAS token "
-                f"with '{required_permission}' permission."
+                "Refreshed attachment container URI does not contain a usable SAS token."
             )
 
         self._attachment_container_uri_cache = refreshed_container_uri
@@ -472,21 +456,23 @@ class BaseJob(WorkspaceItem):
     def _is_attachment_container_uri_usable(
         self,
         container_uri: str,
-        required_permission: Literal["r", "w", "l"],
     ) -> bool:
 
         parsed_uri = urlparse(container_uri)
-        if parsed_uri.scheme.lower() != "https":
+        if (
+            parsed_uri.scheme.lower() != "https"
+            or parsed_uri.hostname is None
+            or not parsed_uri.path.strip("/")
+        ):
             return False
 
         query_params = parse_qs(parsed_uri.query)
         token_expire_query_param = query_params.get("se")
         token_start_query_param = query_params.get("st")
-        token_permissions = query_params.get("sp", [""])[0]
         if (
             not query_params.get("sig")
+            or not query_params.get("sp")
             or not token_expire_query_param
-            or required_permission not in token_permissions
         ):
             return False
 
@@ -507,7 +493,7 @@ class BaseJob(WorkspaceItem):
 
             current_utc_time = datetime.now(tz=timezone.utc)
             has_started = token_start_time is None or token_start_time <= current_utc_time
-            return has_started and current_utc_time < token_expire_time - timedelta(minutes=5)
+            return has_started and current_utc_time + timedelta(minutes=5) < token_expire_time
         except ValueError:
             logger.debug(
                 "Unable to parse attachment SAS start or expiry time; requesting a fresh URI."
