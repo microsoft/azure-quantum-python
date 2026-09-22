@@ -9,7 +9,7 @@ import uuid
 from enum import Enum
 from datetime import datetime, timezone, timedelta
 from urllib.parse import urlparse, parse_qs
-from typing import Any, Dict, Optional, TYPE_CHECKING
+from typing import Any, Dict, Literal, Optional, TYPE_CHECKING
 from azure.storage.blob import BlobClient, BlobProperties
 
 from azure.quantum.storage import upload_blob, download_blob, download_blob_properties, ContainerClient
@@ -42,6 +42,11 @@ class BaseJob(WorkspaceItem):
     :type details: ItemDetails
     """
 
+    def __init__(self, workspace: "Workspace", details: JobDetails, **kwargs):
+        self._attachment_container_uri_cache: Optional[str] = None
+        self._attachment_container_uri_cache_identity: Optional[tuple[Optional[str], str]] = None
+        super().__init__(workspace=workspace, details=details, **kwargs)
+
     @staticmethod
     def create_job_id() -> str:
         """Create a unique id for a new job."""
@@ -55,17 +60,20 @@ class BaseJob(WorkspaceItem):
     @details.setter
     def details(self, value: JobDetails):
         self._details = value
+        self._attachment_container_uri_cache = None
+        self._attachment_container_uri_cache_identity = None
 
     @property
-    def container_name(self):
+    def container_name(self) -> str:
         """Job input/output data container name"""
 
         if self._details.container_uri is None:
             return  f"job-{self.id}"
-        else:
-            container_uri = self._details.container_uri
-        path = urlparse(container_uri).path
-        container_name = path.split("/")[1]
+
+        path = urlparse(self._details.container_uri).path
+        container_name = path.lstrip("/").split("/", 1)[0]
+        if not container_name:
+            raise ValueError("Job container URI does not include a container name.")
         return container_name
 
     @classmethod
@@ -397,43 +405,114 @@ class BaseJob(WorkspaceItem):
         return list(container_client.list_blobs())
 
 
-    def _get_attachment_container_uri(self, required_permission: str) -> str:
+    def _get_attachment_container_uri(
+        self,
+        required_permission: Literal["r", "w", "l"],
+    ) -> str:
         container_uri = self._details.container_uri
-        if container_uri is None:
-            return self.workspace.get_container_uri(job_id=self.id)
+        container_identity = self._get_attachment_container_identity(container_uri)
+        cached_container_uri = self._attachment_container_uri_cache
+        if cached_container_uri:
+            if self._attachment_container_uri_cache_identity != container_identity:
+                self._attachment_container_uri_cache = None
+                self._attachment_container_uri_cache_identity = None
+            elif self._is_attachment_container_uri_usable(
+                cached_container_uri,
+                required_permission,
+            ):
+                return cached_container_uri
 
-        query_params = parse_qs(urlparse(container_uri).query)
+        if container_uri is None:
+            refreshed_container_uri = self.workspace.get_container_uri(job_id=self.id)
+        else:
+            if self._is_attachment_container_uri_usable(
+                container_uri,
+                required_permission,
+            ):
+                return container_uri
+
+            refreshed_container_uri = self.workspace.get_container_uri(
+                job_id=self.id,
+                container_name=self.container_name,
+            )
+            stored_hostname = urlparse(container_uri).hostname
+            refreshed_hostname = urlparse(refreshed_container_uri).hostname
+            if stored_hostname != refreshed_hostname:
+                raise ValueError(
+                    "Refreshed attachment container hostname "
+                    f"'{refreshed_hostname}' does not match job container hostname "
+                    f"'{stored_hostname}'."
+                )
+
+        if not self._is_attachment_container_uri_usable(
+            refreshed_container_uri,
+            required_permission,
+        ):
+            raise ValueError(
+                "Refreshed attachment container URI does not contain a usable SAS token "
+                f"with '{required_permission}' permission."
+            )
+
+        self._attachment_container_uri_cache = refreshed_container_uri
+        self._attachment_container_uri_cache_identity = container_identity
+        return refreshed_container_uri
+
+
+    def _get_attachment_container_identity(
+        self,
+        container_uri: Optional[str],
+    ) -> tuple[Optional[str], str]:
+        if container_uri is None:
+            return (None, f"/job-{self.id}")
+
+        parsed_uri = urlparse(container_uri)
+        return (parsed_uri.hostname, parsed_uri.path.rstrip("/"))
+
+
+    def _is_attachment_container_uri_usable(
+        self,
+        container_uri: str,
+        required_permission: Literal["r", "w", "l"],
+    ) -> bool:
+
+        parsed_uri = urlparse(container_uri)
+        if parsed_uri.scheme.lower() != "https":
+            return False
+
+        query_params = parse_qs(parsed_uri.query)
         token_expire_query_param = query_params.get("se")
+        token_start_query_param = query_params.get("st")
         token_permissions = query_params.get("sp", [""])[0]
         if (
-            query_params.get("sig")
-            and token_expire_query_param
-            and required_permission in token_permissions
+            not query_params.get("sig")
+            or not token_expire_query_param
+            or required_permission not in token_permissions
         ):
-            try:
-                token_expire_time = datetime.fromisoformat(
-                    token_expire_query_param[0].replace("Z", "+00:00")
-                )
-                if token_expire_time.tzinfo is None:
-                    token_expire_time = token_expire_time.replace(tzinfo=timezone.utc)
-                if datetime.now(tz=timezone.utc) < token_expire_time - timedelta(minutes=5):
-                    return container_uri
-            except ValueError:
-                pass
+            return False
 
-        refreshed_container_uri = self.workspace.get_container_uri(
-            job_id=self.id,
-            container_name=self.container_name,
-        )
-        stored_hostname = urlparse(container_uri).hostname
-        refreshed_hostname = urlparse(refreshed_container_uri).hostname
-        if stored_hostname != refreshed_hostname:
-            raise ValueError(
-                "Refreshed attachment container hostname "
-                f"'{refreshed_hostname}' does not match job container hostname "
-                f"'{stored_hostname}'."
+        try:
+            token_expire_time = datetime.fromisoformat(
+                token_expire_query_param[0].replace("Z", "+00:00")
             )
-        return refreshed_container_uri
+            if token_expire_time.tzinfo is None:
+                token_expire_time = token_expire_time.replace(tzinfo=timezone.utc)
+
+            token_start_time = None
+            if token_start_query_param:
+                token_start_time = datetime.fromisoformat(
+                    token_start_query_param[0].replace("Z", "+00:00")
+                )
+                if token_start_time.tzinfo is None:
+                    token_start_time = token_start_time.replace(tzinfo=timezone.utc)
+
+            current_utc_time = datetime.now(tz=timezone.utc)
+            has_started = token_start_time is None or token_start_time <= current_utc_time
+            return has_started and current_utc_time < token_expire_time - timedelta(minutes=5)
+        except ValueError:
+            logger.debug(
+                "Unable to parse attachment SAS start or expiry time; requesting a fresh URI."
+            )
+            return False
 
 
     def _get_blob_uri_with_sas_token(self, blob_uri: str) -> str:
