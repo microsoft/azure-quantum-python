@@ -32,6 +32,12 @@ MINIMUM_EXPIRY_CONTAINER_URI = (
 NO_PERMISSIONS_CONTAINER_URI = (
     f"{UNSIGNED_CONTAINER_URI}?se=2099-01-01T00%3A00%3A00Z&sig=signature"
 )
+WRITE_ONLY_CONTAINER_URI = (
+    f"{UNSIGNED_CONTAINER_URI}?sp=w&se=2099-01-01T00%3A00%3A00Z&sig=signature"
+)
+READ_LIST_CONTAINER_URI = (
+    f"{UNSIGNED_CONTAINER_URI}?sp=rl&se=2099-01-01T00%3A00%3A00Z&sig=signature"
+)
 HTTP_SIGNED_CONTAINER_URI = SIGNED_CONTAINER_URI.replace("https://", "http://")
 
 
@@ -279,6 +285,33 @@ def test_unusable_cached_uri_is_refreshed(cached_container_uri):
     )
 
 
+@pytest.mark.parametrize(
+    "cached_container_uri",
+    [WRITE_ONLY_CONTAINER_URI, READ_LIST_CONTAINER_URI],
+)
+def test_cached_uri_without_full_attachment_permissions_is_refreshed(cached_container_uri):
+    workspace = Mock()
+    workspace.get_container_uri.return_value = SIGNED_CONTAINER_URI
+    job = _job_with_container(workspace=workspace)
+    job._attachment_container_uri_cache = cached_container_uri
+    job._attachment_container_uri_cache_identity = job._get_attachment_container_identity(
+        job.details.container_uri
+    )
+    job.upload_input_data = Mock(return_value="uploaded-uri")
+
+    job.upload_attachment("attachment", b"data")
+
+    workspace.get_container_uri.assert_called_once_with(
+        job_id=JOB_ID,
+        container_name=DEFAULT_CONTAINER_NAME,
+    )
+    job.upload_input_data.assert_called_once_with(
+        container_uri=SIGNED_CONTAINER_URI,
+        blob_name="attachment",
+        input_data=b"data",
+    )
+
+
 def test_upload_attachment_rejects_refreshed_storage_hostname_mismatch():
     workspace = Mock()
     workspace.get_container_uri.return_value = (
@@ -325,6 +358,21 @@ def test_upload_attachment_rejects_refreshed_signed_http_uri():
 def test_upload_attachment_rejects_refreshed_uri_without_permissions():
     workspace = Mock()
     workspace.get_container_uri.return_value = NO_PERMISSIONS_CONTAINER_URI
+    job = _job_with_container(workspace=workspace)
+
+    with pytest.raises(ValueError, match="does not contain a usable SAS token"):
+        job.upload_attachment("attachment", b"data")
+
+
+@pytest.mark.parametrize(
+    "refreshed_container_uri",
+    [WRITE_ONLY_CONTAINER_URI, READ_LIST_CONTAINER_URI],
+)
+def test_upload_attachment_rejects_refreshed_uri_without_full_attachment_permissions(
+    refreshed_container_uri,
+):
+    workspace = Mock()
+    workspace.get_container_uri.return_value = refreshed_container_uri
     job = _job_with_container(workspace=workspace)
 
     with pytest.raises(ValueError, match="does not contain a usable SAS token"):

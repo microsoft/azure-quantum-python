@@ -24,6 +24,7 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 DEFAULT_TIMEOUT = 300  # Default timeout for waiting for job to complete
+_ATTACHMENT_CONTAINER_SAS_PERMISSIONS = frozenset({"r", "w", "l"})
 
 class ContentType(str, Enum):
     json = "application/json"
@@ -469,9 +470,10 @@ class BaseJob(WorkspaceItem):
         query_params = parse_qs(parsed_uri.query)
         token_expire_query_param = query_params.get("se")
         token_start_query_param = query_params.get("st")
+        token_permissions = set(query_params.get("sp", [""])[0])
         if (
             not query_params.get("sig")
-            or not query_params.get("sp")
+            or not _ATTACHMENT_CONTAINER_SAS_PERMISSIONS.issubset(token_permissions)
             or not token_expire_query_param
         ):
             return False
