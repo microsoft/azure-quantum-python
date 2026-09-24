@@ -24,8 +24,6 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 DEFAULT_TIMEOUT = 300  # Default timeout for waiting for job to complete
-# The workspace storage endpoint issues one container SAS for upload, download, and list operations.
-_ATTACHMENT_CONTAINER_SAS_PERMISSIONS = frozenset({"r", "w", "l"})
 
 class ContentType(str, Enum):
     json = "application/json"
@@ -46,7 +44,7 @@ class BaseJob(WorkspaceItem):
 
     def __init__(self, workspace: "Workspace", details: JobDetails, **kwargs):
         self._attachment_container_uri_cache: Optional[str] = None
-        self._attachment_container_uri_cache_identity: Optional[tuple[Optional[str], str]] = None
+        self._attachment_container_uri_cache_container_name: Optional[str] = None
         super().__init__(workspace=workspace, details=details, **kwargs)
 
     @staticmethod
@@ -63,7 +61,7 @@ class BaseJob(WorkspaceItem):
     def details(self, value: JobDetails):
         self._details = value
         self._attachment_container_uri_cache = None
-        self._attachment_container_uri_cache_identity = None
+        self._attachment_container_uri_cache_container_name = None
 
     @property
     def container_name(self) -> str:
@@ -408,19 +406,20 @@ class BaseJob(WorkspaceItem):
 
 
     def _get_attachment_container_uri(self) -> str:
-        """Return a validated workspace-issued SAS URI for the job's attachment container.
+        """Return a workspace-issued URI for the job's attachment container.
 
-        The first call refreshes the unsigned URI stored in job details. Later calls reuse the
-        job-scoped cache while its container identity, validity period, and capabilities remain valid.
+        Workspace-issued URIs are cached privately on the job and are never written back to job
+        details. A cached URI is reused while its container name is unchanged and its SAS expiry
+        remains outside the renewal window.
         """
         container_uri = self._details.container_uri
-        container_identity = self._get_attachment_container_identity(container_uri)
+        container_name = self.container_name
         cached_container_uri = self._attachment_container_uri_cache
         if cached_container_uri:
-            if self._attachment_container_uri_cache_identity != container_identity:
+            if self._attachment_container_uri_cache_container_name != container_name:
                 self._attachment_container_uri_cache = None
-                self._attachment_container_uri_cache_identity = None
-            elif self._is_attachment_container_uri_usable(cached_container_uri):
+                self._attachment_container_uri_cache_container_name = None
+            elif self._is_attachment_container_uri_unexpired(cached_container_uri):
                 return cached_container_uri
 
         if container_uri is None:
@@ -428,61 +427,23 @@ class BaseJob(WorkspaceItem):
         else:
             refreshed_container_uri = self.workspace.get_container_uri(
                 job_id=self.id,
-                container_name=self.container_name,
-            )
-            stored_hostname = urlparse(container_uri).hostname
-            refreshed_hostname = urlparse(refreshed_container_uri).hostname
-            if stored_hostname != refreshed_hostname:
-                raise ValueError(
-                    "Refreshed attachment container hostname "
-                    f"'{refreshed_hostname}' does not match job container hostname "
-                    f"'{stored_hostname}'."
-                )
-
-        if not self._is_attachment_container_uri_usable(refreshed_container_uri):
-            raise ValueError(
-                "Refreshed attachment container URI does not contain a usable SAS token."
+                container_name=container_name,
             )
 
         self._attachment_container_uri_cache = refreshed_container_uri
-        self._attachment_container_uri_cache_identity = container_identity
+        self._attachment_container_uri_cache_container_name = container_name
         return refreshed_container_uri
 
 
-    def _get_attachment_container_identity(
-        self,
-        container_uri: Optional[str],
-    ) -> tuple[Optional[str], str]:
-        if container_uri is None:
-            return (None, f"/job-{self.id}")
-
-        parsed_uri = urlparse(container_uri)
-        return (parsed_uri.hostname, parsed_uri.path.rstrip("/"))
-
-
-    def _is_attachment_container_uri_usable(
+    def _is_attachment_container_uri_unexpired(
         self,
         container_uri: str,
     ) -> bool:
-        """Check whether a workspace-issued container SAS can serve all attachment operations."""
+        """Check whether a cached container SAS remains outside the renewal window."""
 
-        parsed_uri = urlparse(container_uri)
-        if (
-            parsed_uri.scheme.lower() != "https"
-            or parsed_uri.hostname is None
-            or not parsed_uri.path.strip("/")
-        ):
-            return False
-
-        query_params = parse_qs(parsed_uri.query)
+        query_params = parse_qs(urlparse(container_uri).query)
         token_expire_query_param = query_params.get("se")
-        token_start_query_param = query_params.get("st")
-        token_permissions = set(query_params.get("sp", [""])[0])
-        if (
-            not query_params.get("sig")
-            or not _ATTACHMENT_CONTAINER_SAS_PERMISSIONS.issubset(token_permissions)
-            or not token_expire_query_param
-        ):
+        if not token_expire_query_param:
             return False
 
         try:
@@ -492,20 +453,11 @@ class BaseJob(WorkspaceItem):
             if token_expire_time.tzinfo is None:
                 token_expire_time = token_expire_time.replace(tzinfo=timezone.utc)
 
-            token_start_time = None
-            if token_start_query_param:
-                token_start_time = datetime.fromisoformat(
-                    token_start_query_param[0].replace("Z", "+00:00")
-                )
-                if token_start_time.tzinfo is None:
-                    token_start_time = token_start_time.replace(tzinfo=timezone.utc)
-
             current_utc_time = datetime.now(tz=timezone.utc)
-            has_started = token_start_time is None or token_start_time <= current_utc_time
-            return has_started and current_utc_time + timedelta(minutes=5) < token_expire_time
+            return current_utc_time + timedelta(minutes=5) < token_expire_time
         except ValueError:
             logger.debug(
-                "Unable to parse attachment SAS start or expiry time; requesting a fresh URI."
+                "Unable to parse attachment SAS expiry time; requesting a fresh URI."
             )
             return False
 
