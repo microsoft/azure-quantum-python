@@ -424,6 +424,30 @@ def test_replacing_job_details_invalidates_cached_container_uri(mock_container_c
 
 
 @patch("azure.quantum.job.base_job.ContainerClient")
+def test_cache_reuse_after_hostname_mutation_never_queries_by_hostname(mock_container_client):
+    other_account_same_name_uri = f"https://other-acct.blob.core.windows.net/{DEFAULT_CONTAINER_NAME}"
+    workspace = Mock()
+    workspace.get_container_uri.return_value = SIGNED_CONTAINER_URI
+    job = _job_with_container(workspace=workspace)
+    mock_container_client.from_container_url.return_value.list_blobs.return_value = []
+
+    job.list_attachments()
+    job.details.container_uri = other_account_same_name_uri
+    job.list_attachments()
+
+    # container_name-only cache key reuses the cache despite the hostname mutation.
+    workspace.get_container_uri.assert_called_once_with(
+        job_id=JOB_ID,
+        container_name=DEFAULT_CONTAINER_NAME,
+    )
+    # get_container_uri never received a hostname, so both calls used the same real account SAS.
+    assert mock_container_client.from_container_url.call_args_list == [
+        call(SIGNED_CONTAINER_URI),
+        call(SIGNED_CONTAINER_URI),
+    ]
+
+
+@patch("azure.quantum.job.base_job.ContainerClient")
 def test_mutating_job_container_uri_invalidates_cached_container_uri(mock_container_client):
     other_container_uri = "https://acct.blob.core.windows.net/other-container"
     other_signed_uri = (
