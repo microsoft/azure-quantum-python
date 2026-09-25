@@ -42,6 +42,11 @@ class BaseJob(WorkspaceItem):
     :type details: ItemDetails
     """
 
+    def __init__(self, workspace: "Workspace", details: JobDetails, **kwargs):
+        self._attachment_container_uri_cache: Optional[str] = None
+        self._attachment_container_uri_cache_container_name: Optional[str] = None
+        super().__init__(workspace=workspace, details=details, **kwargs)
+
     @staticmethod
     def create_job_id() -> str:
         """Create a unique id for a new job."""
@@ -55,17 +60,20 @@ class BaseJob(WorkspaceItem):
     @details.setter
     def details(self, value: JobDetails):
         self._details = value
+        self._attachment_container_uri_cache = None
+        self._attachment_container_uri_cache_container_name = None
 
     @property
-    def container_name(self):
+    def container_name(self) -> str:
         """Job input/output data container name"""
 
         if self._details.container_uri is None:
             return  f"job-{self.id}"
-        else:
-            container_uri = self._details.container_uri
-        path = urlparse(container_uri).path
-        container_name = path.split("/")[1]
+
+        path = urlparse(self._details.container_uri).path
+        container_name = path.lstrip("/").split("/", 1)[0]
+        if not container_name:
+            raise ValueError("Job container URI does not include a container name.")
         return container_name
 
     @classmethod
@@ -344,12 +352,8 @@ class BaseJob(WorkspaceItem):
         :rtype: str
         """
 
-        # Use Job's default container if not specified
         if container_uri is None:
-            if self._details.container_uri is None:
-                container_uri = self.workspace.get_container_uri(job_id=self.id)
-            else:
-                container_uri = self._details.container_uri
+            container_uri = self._get_attachment_container_uri()
 
         uploaded_blob_uri = self.upload_input_data(
             container_uri = container_uri,
@@ -377,13 +381,9 @@ class BaseJob(WorkspaceItem):
         :rtype: bytes
         """
 
-        # Use Job's default container if not specified
         if container_uri is None:
-            if self._details.container_uri is None:
-                container_uri = self.workspace.get_container_uri(job_id=self.id)
-            else:
-                container_uri = self._details.container_uri
-        
+            container_uri = self._get_attachment_container_uri()
+
         container_client = ContainerClient.from_container_url(container_uri)
         blob_client = container_client.get_blob_client(name)
         response = blob_client.download_blob().readall()
@@ -399,14 +399,81 @@ class BaseJob(WorkspaceItem):
         :rtype: list[~azure.storage.blob.BlobProperties]
         """
 
-        # Use the job's linked storage container.
-        if self._details.container_uri is None:
-            container_uri = self.workspace.get_container_uri(job_id=self.id)
-        else:
-            container_uri = self._details.container_uri
+        container_uri = self._get_attachment_container_uri()
 
         container_client = ContainerClient.from_container_url(container_uri)
         return list(container_client.list_blobs())
+
+
+    def _get_attachment_container_uri(self) -> str:
+        """Return a workspace-issued URI for the job's attachment container.
+
+        Workspace-issued URIs are cached privately on the job and are never written back to job
+        details. A cached URI is reused while its container name is unchanged and its SAS expiry
+        remains outside the renewal window.
+        """
+        container_uri = self._details.container_uri
+        container_name = self.container_name
+        cached_container_uri = self._attachment_container_uri_cache
+        if cached_container_uri:
+            if self._attachment_container_uri_cache_container_name != container_name:
+                self._attachment_container_uri_cache = None
+                self._attachment_container_uri_cache_container_name = None
+            elif self._is_attachment_container_uri_unexpired(cached_container_uri):
+                return cached_container_uri
+
+        if container_uri is None:
+            refreshed_container_uri = self.workspace.get_container_uri(job_id=self.id)
+        else:
+            refreshed_container_uri = self.workspace.get_container_uri(
+                job_id=self.id,
+                container_name=container_name,
+            )
+
+        self._attachment_container_uri_cache = refreshed_container_uri
+        self._attachment_container_uri_cache_container_name = container_name
+        return refreshed_container_uri
+
+
+    # Buffer so a SAS token is never used a few seconds before its actual expiry.
+    _SAS_RENEWAL_BUFFER = timedelta(minutes=5)
+
+    @staticmethod
+    def _get_sas_expiry_time(uri: str) -> Optional[datetime]:
+        """Parse the `se` (SAS expiry) query parameter from a URI. Returns None if missing or malformed."""
+
+        query_params = parse_qs(urlparse(uri).query)
+        token_expire_query_param = query_params.get("se")
+        if not token_expire_query_param:
+            return None
+
+        try:
+            # Since python < 3.11 can not easily parse Z suffixed UTC timestamp and
+            # assuming that the timestamp is always UTC, we replace that suffix with UTC offset.
+            token_expire_time = datetime.fromisoformat(
+                token_expire_query_param[0].replace("Z", "+00:00")
+            )
+        except ValueError:
+            logger.debug("Unable to parse SAS expiry time.")
+            return None
+
+        if token_expire_time.tzinfo is None:
+            token_expire_time = token_expire_time.replace(tzinfo=timezone.utc)
+        return token_expire_time
+
+
+    def _is_attachment_container_uri_unexpired(
+        self,
+        container_uri: str,
+    ) -> bool:
+        """Check whether a cached container SAS remains outside the renewal window."""
+
+        token_expire_time = self._get_sas_expiry_time(container_uri)
+        if token_expire_time is None:
+            return False
+
+        current_utc_time = datetime.now(tz=timezone.utc)
+        return current_utc_time + self._SAS_RENEWAL_BUFFER < token_expire_time
 
 
     def _get_blob_uri_with_sas_token(self, blob_uri: str) -> str:
@@ -416,27 +483,10 @@ class BaseJob(WorkspaceItem):
         :return: Blob URI with SAS-token
         :rtype: str
         """
-        url = urlparse(blob_uri)
-        query_params = parse_qs(url.query)
-        token_expire_query_param = query_params.get("se")
-
-        token_expire_time = None
-
-        if token_expire_query_param is not None:
-            token_expire_time_str = token_expire_query_param[0]
-
-            # Since python < 3.11 can not easily parse Z suffixed UTC timestamp and 
-            # assuming that the timestamp is always UTC, we replace that suffix with UTC offset.
-            token_expire_time = datetime.fromisoformat(
-                token_expire_time_str.replace('Z', '+00:00')
-            )
-            
-            # Make an expiration time a little earlier, so there's no case where token is
-            # used a second or so before of its expiration.
-            token_expire_time = token_expire_time - timedelta(minutes=5)
+        token_expire_time = self._get_sas_expiry_time(blob_uri)
 
         current_utc_time = datetime.now(tz=timezone.utc)
-        if token_expire_time is None or current_utc_time >= token_expire_time:
+        if token_expire_time is None or current_utc_time + self._SAS_RENEWAL_BUFFER >= token_expire_time:
             # blob_uri does not contains SAS token or it is expired,
             # get sas url from service
             blob_client = BlobClient.from_blob_url(
