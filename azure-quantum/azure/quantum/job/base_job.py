@@ -435,31 +435,45 @@ class BaseJob(WorkspaceItem):
         return refreshed_container_uri
 
 
+    # Buffer so a SAS token is never used a few seconds before its actual expiry.
+    _SAS_RENEWAL_BUFFER = timedelta(minutes=5)
+
+    @staticmethod
+    def _get_sas_expiry_time(uri: str) -> Optional[datetime]:
+        """Parse the `se` (SAS expiry) query parameter from a URI. Returns None if missing or malformed."""
+
+        query_params = parse_qs(urlparse(uri).query)
+        token_expire_query_param = query_params.get("se")
+        if not token_expire_query_param:
+            return None
+
+        try:
+            # Since python < 3.11 can not easily parse Z suffixed UTC timestamp and
+            # assuming that the timestamp is always UTC, we replace that suffix with UTC offset.
+            token_expire_time = datetime.fromisoformat(
+                token_expire_query_param[0].replace("Z", "+00:00")
+            )
+        except ValueError:
+            logger.debug("Unable to parse SAS expiry time.")
+            return None
+
+        if token_expire_time.tzinfo is None:
+            token_expire_time = token_expire_time.replace(tzinfo=timezone.utc)
+        return token_expire_time
+
+
     def _is_attachment_container_uri_unexpired(
         self,
         container_uri: str,
     ) -> bool:
         """Check whether a cached container SAS remains outside the renewal window."""
 
-        query_params = parse_qs(urlparse(container_uri).query)
-        token_expire_query_param = query_params.get("se")
-        if not token_expire_query_param:
+        token_expire_time = self._get_sas_expiry_time(container_uri)
+        if token_expire_time is None:
             return False
 
-        try:
-            token_expire_time = datetime.fromisoformat(
-                token_expire_query_param[0].replace("Z", "+00:00")
-            )
-            if token_expire_time.tzinfo is None:
-                token_expire_time = token_expire_time.replace(tzinfo=timezone.utc)
-
-            current_utc_time = datetime.now(tz=timezone.utc)
-            return current_utc_time + timedelta(minutes=5) < token_expire_time
-        except ValueError:
-            logger.debug(
-                "Unable to parse attachment SAS expiry time; requesting a fresh URI."
-            )
-            return False
+        current_utc_time = datetime.now(tz=timezone.utc)
+        return current_utc_time + self._SAS_RENEWAL_BUFFER < token_expire_time
 
 
     def _get_blob_uri_with_sas_token(self, blob_uri: str) -> str:
@@ -469,27 +483,10 @@ class BaseJob(WorkspaceItem):
         :return: Blob URI with SAS-token
         :rtype: str
         """
-        url = urlparse(blob_uri)
-        query_params = parse_qs(url.query)
-        token_expire_query_param = query_params.get("se")
-
-        token_expire_time = None
-
-        if token_expire_query_param is not None:
-            token_expire_time_str = token_expire_query_param[0]
-
-            # Since python < 3.11 can not easily parse Z suffixed UTC timestamp and 
-            # assuming that the timestamp is always UTC, we replace that suffix with UTC offset.
-            token_expire_time = datetime.fromisoformat(
-                token_expire_time_str.replace('Z', '+00:00')
-            )
-            
-            # Make an expiration time a little earlier, so there's no case where token is
-            # used a second or so before of its expiration.
-            token_expire_time = token_expire_time - timedelta(minutes=5)
+        token_expire_time = self._get_sas_expiry_time(blob_uri)
 
         current_utc_time = datetime.now(tz=timezone.utc)
-        if token_expire_time is None or current_utc_time >= token_expire_time:
+        if token_expire_time is None or current_utc_time + self._SAS_RENEWAL_BUFFER >= token_expire_time:
             # blob_uri does not contains SAS token or it is expired,
             # get sas url from service
             blob_client = BlobClient.from_blob_url(

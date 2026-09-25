@@ -232,7 +232,7 @@ def test_upload_attachment_logs_and_refreshes_malformed_sas_expiry(caplog):
     with caplog.at_level("DEBUG", logger="azure.quantum.job.base_job"):
         job.upload_attachment("attachment", b"data")
 
-    assert "Unable to parse attachment SAS expiry time" in caplog.text
+    assert "Unable to parse SAS expiry time" in caplog.text
     workspace.get_container_uri.assert_called_once_with(
         job_id=JOB_ID,
         container_name=DEFAULT_CONTAINER_NAME,
@@ -470,3 +470,55 @@ def test_mutating_job_container_uri_invalidates_cached_container_uri(mock_contai
         call(SIGNED_CONTAINER_URI),
         call(other_signed_uri),
     ]
+
+
+BLOB_NAME = "outputData"
+UNSIGNED_BLOB_URI = f"https://acct.blob.core.windows.net/{DEFAULT_CONTAINER_NAME}/{BLOB_NAME}"
+SIGNED_BLOB_URI = (
+    f"{UNSIGNED_BLOB_URI}?sp=r&se=2099-01-01T00%3A00%3A00Z&sig=signature"
+)
+EXPIRED_BLOB_URI = (
+    f"{UNSIGNED_BLOB_URI}?sp=r&se=2000-01-01T00%3A00%3A00Z&sig=signature"
+)
+MALFORMED_EXPIRY_BLOB_URI = (
+    f"{UNSIGNED_BLOB_URI}?sp=r&se=not-a-date&sig=signature"
+)
+
+
+def test_get_blob_uri_with_sas_token_reuses_unexpired_uri():
+    workspace = Mock()
+    job = _job_with_container(workspace=workspace)
+
+    result = job._get_blob_uri_with_sas_token(SIGNED_BLOB_URI)
+
+    assert result == SIGNED_BLOB_URI
+    workspace._get_linked_storage_sas_uri.assert_not_called()
+
+
+@pytest.mark.parametrize("blob_uri", [UNSIGNED_BLOB_URI, EXPIRED_BLOB_URI])
+def test_get_blob_uri_with_sas_token_refreshes_expired_or_unsigned_uri(blob_uri):
+    workspace = Mock()
+    workspace._get_linked_storage_sas_uri.return_value = SIGNED_BLOB_URI
+    job = _job_with_container(workspace=workspace)
+
+    result = job._get_blob_uri_with_sas_token(blob_uri)
+
+    assert result == SIGNED_BLOB_URI
+    workspace._get_linked_storage_sas_uri.assert_called_once_with(
+        DEFAULT_CONTAINER_NAME, BLOB_NAME
+    )
+
+
+def test_get_blob_uri_with_sas_token_logs_and_refreshes_malformed_expiry(caplog):
+    workspace = Mock()
+    workspace._get_linked_storage_sas_uri.return_value = SIGNED_BLOB_URI
+    job = _job_with_container(workspace=workspace)
+
+    with caplog.at_level("DEBUG", logger="azure.quantum.job.base_job"):
+        result = job._get_blob_uri_with_sas_token(MALFORMED_EXPIRY_BLOB_URI)
+
+    assert result == SIGNED_BLOB_URI
+    assert "Unable to parse SAS expiry time" in caplog.text
+    workspace._get_linked_storage_sas_uri.assert_called_once_with(
+        DEFAULT_CONTAINER_NAME, BLOB_NAME
+    )
