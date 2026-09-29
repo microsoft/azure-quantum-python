@@ -4,13 +4,13 @@
 ##
 
 import pytest
+import inspect
 import os
 import warnings
 from unittest import mock
 from azure.quantum.job.job import Job
 from azure.quantum._client.models import JobDetails
 from azure.quantum import Priority
-from azure.quantum import workspace as workspace_module
 from azure.quantum.workspace import Workspace
 from azure.quantum._constants import EnvironmentVariables, ConnectionConstants
 from azure.core.credentials import AzureKeyCredential
@@ -150,8 +150,13 @@ def test_workspace_storage_parameter_is_deprecated():
         )
 
     assert str(warning_info[0].message) == STORAGE_DEPRECATION_WARNING
-    # stacklevel=2 must attribute the warning to the caller, not to workspace.py itself.
-    assert warning_info[0].filename != workspace_module.__file__
+    source_lines, start_line = inspect.getsourcelines(WorkspaceMock.__init__)
+    caller_offset = next(
+        index for index, line in enumerate(source_lines)
+        if "super().__init__" in line
+    )
+    assert warning_info[0].filename == inspect.getsourcefile(WorkspaceMock.__init__)
+    assert warning_info[0].lineno == start_line + caller_offset
     assert workspace.storage == STORAGE
 
 
