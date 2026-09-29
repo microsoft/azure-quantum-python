@@ -50,7 +50,10 @@ SIMPLE_CONNECTION_STRING_V2 = ConnectionConstants.VALID_CONNECTION_STRING(
     quantum_endpoint=ConnectionConstants.GET_QUANTUM_PRODUCTION_ENDPOINT_v2(LOCATION)
 )
 
-STORAGE_DEPRECATION_WARNING = Workspace._STORAGE_DEPRECATION_MESSAGE
+STORAGE_DEPRECATION_WARNING = (
+    "Workspace(storage=...) is deprecated and will be removed in "
+    "azure-quantum 4.0.0. Configure workspace-linked storage instead."
+)
 
 
 def test_create_workspace_instance_valid():
