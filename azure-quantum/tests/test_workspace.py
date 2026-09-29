@@ -5,10 +5,13 @@
 
 import pytest
 import os
+import warnings
 from unittest import mock
 from azure.quantum.job.job import Job
 from azure.quantum._client.models import JobDetails
 from azure.quantum import Priority
+from azure.quantum import workspace as workspace_module
+from azure.quantum.workspace import Workspace
 from azure.quantum._constants import EnvironmentVariables, ConnectionConstants
 from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy
@@ -47,6 +50,8 @@ SIMPLE_CONNECTION_STRING_V2 = ConnectionConstants.VALID_CONNECTION_STRING(
     quantum_endpoint=ConnectionConstants.GET_QUANTUM_PRODUCTION_ENDPOINT_v2(LOCATION)
 )
 
+STORAGE_DEPRECATION_WARNING = Workspace._STORAGE_DEPRECATION_MESSAGE
+
 
 def test_create_workspace_instance_valid():
     def assert_all_required_params(ws: WorkspaceMock):
@@ -63,12 +68,13 @@ def test_create_workspace_instance_valid():
     )
     assert_all_required_params(ws)
 
-    ws = WorkspaceMock(
-        subscription_id=SUBSCRIPTION_ID,
-        resource_group=RESOURCE_GROUP,
-        name=WORKSPACE,
-        storage=STORAGE,
-    )
+    with pytest.warns(DeprecationWarning):
+        ws = WorkspaceMock(
+            subscription_id=SUBSCRIPTION_ID,
+            resource_group=RESOURCE_GROUP,
+            name=WORKSPACE,
+            storage=STORAGE,
+        )
     assert_all_required_params(ws)
     assert ws.storage == STORAGE
 
@@ -77,10 +83,11 @@ def test_create_workspace_instance_valid():
     )
     assert_all_required_params(ws)
 
-    ws = WorkspaceMock(
-        resource_id=SIMPLE_RESOURCE_ID,
-        storage=STORAGE,
-    )
+    with pytest.warns(DeprecationWarning):
+        ws = WorkspaceMock(
+            resource_id=SIMPLE_RESOURCE_ID,
+            storage=STORAGE,
+        )
     assert_all_required_params(ws)
     assert ws.storage == STORAGE
 
@@ -89,10 +96,11 @@ def test_create_workspace_instance_valid():
     )
     assert_all_required_params(ws)
 
-    ws = WorkspaceMock(
-        name=WORKSPACE,
-        storage=STORAGE,
-    )
+    with pytest.warns(DeprecationWarning):
+        ws = WorkspaceMock(
+            name=WORKSPACE,
+            storage=STORAGE,
+        )
     assert_all_required_params(ws)
     assert ws.storage == STORAGE
 
@@ -127,6 +135,43 @@ def test_create_workspace_instance_valid():
         location=LOCATION,
     )
     assert_all_required_params(ws)
+
+
+def test_workspace_storage_parameter_is_deprecated():
+    with pytest.warns(DeprecationWarning) as warning_info:
+        workspace = WorkspaceMock(
+            subscription_id=SUBSCRIPTION_ID,
+            resource_group=RESOURCE_GROUP,
+            name=WORKSPACE,
+            storage=STORAGE,
+        )
+
+    assert str(warning_info[0].message) == STORAGE_DEPRECATION_WARNING
+    # stacklevel=2 must attribute the warning to the caller, not to workspace.py itself.
+    assert warning_info[0].filename != workspace_module.__file__
+    assert workspace.storage == STORAGE
+
+
+@pytest.mark.parametrize("workspace_kwargs", [{}, {"storage": None}])
+def test_workspace_without_storage_does_not_warn(workspace_kwargs):
+    with warnings.catch_warnings():
+        warnings.simplefilter("error", DeprecationWarning)
+        workspace = WorkspaceMock(
+            subscription_id=SUBSCRIPTION_ID,
+            resource_group=RESOURCE_GROUP,
+            name=WORKSPACE,
+            **workspace_kwargs,
+        )
+
+    assert workspace.storage is None
+
+
+def test_workspace_from_connection_string_does_not_warn_about_storage():
+    with mock.patch.dict(os.environ, clear=True), warnings.catch_warnings():
+        warnings.simplefilter("error", DeprecationWarning)
+        workspace = WorkspaceMock.from_connection_string(SIMPLE_CONNECTION_STRING)
+
+    assert workspace.name == WORKSPACE
 
 
 def test_create_workspace_locations():
@@ -714,3 +759,23 @@ def test_get_container_uri_uses_linked_storage_sas_when_storage_none():
             assert isinstance(uri, str)
             assert "https://example.com/" in uri
             assert "sas-token" in uri
+
+
+def test_get_container_uri_uses_explicit_storage_connection_string():
+    with pytest.warns(DeprecationWarning):
+        ws = WorkspaceMock(
+            subscription_id=SUBSCRIPTION_ID,
+            resource_group=RESOURCE_GROUP,
+            name=WORKSPACE,
+            storage=STORAGE,
+        )
+
+    with mock.patch(
+        "azure.quantum.workspace.get_container_uri",
+        return_value="https://example.com/container?sas-token",
+    ) as mock_get_container_uri:
+        # WorkspaceMock overrides get_container_uri for offline tests; call the real implementation directly.
+        uri = Workspace.get_container_uri(ws, job_id="job-123")
+
+    mock_get_container_uri.assert_called_once_with(STORAGE, "job-job-123")
+    assert uri == "https://example.com/container?sas-token"
