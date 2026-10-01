@@ -10,6 +10,7 @@ an Azure Quantum Workspace.
 from __future__ import annotations
 from datetime import datetime
 import logging
+import warnings
 from urllib.parse import quote
 from typing import (
     Any,
@@ -71,12 +72,12 @@ class Workspace:
     2. specify a valid subscription ID, resource group, and workspace name; or
     3. specify a valid workspace name.
 
-    You can also use a connection string to specify the connection parameters
-    to an Azure Quantum Workspace by calling
+    You can also use an Azure Quantum workspace authentication connection
+    string to specify the connection parameters by calling
     :obj:`~ Workspace.from_connection_string() <Workspace.from_connection_string>`.
 
-    If the Azure Quantum workspace does not have linked storage, the caller
-    must also pass a valid Azure storage account connection string.
+    Azure Quantum workspaces require linked storage. Configure linked storage
+    on the workspace instead of passing a storage account connection string.
 
     :param subscription_id:
         The Azure subscription ID.
@@ -91,9 +92,9 @@ class Workspace:
         Ignored if resource_id is specified.
 
     :param storage:
-        The Azure storage account connection string.
-        Required only if the specified Azure Quantum
-        workspace does not have linked storage.
+        Deprecated. The Azure storage account connection string.
+        Configure workspace-linked storage instead. This parameter will be
+        removed in azure-quantum 4.0.0.
 
     :param resource_id:
         The resource ID of the Azure Quantum workspace.
@@ -120,6 +121,10 @@ class Workspace:
     _QUANTUM_ENDPOINT_PARAM = '_quantum_endpoint'
     _WORKSPACE_KIND_PARAM = '_workspace_kind'
     _MGMT_CLIENT_PARAM = '_mgmt_client'
+    _STORAGE_DEPRECATION_MESSAGE = (
+        "Workspace(storage=...) is deprecated and will be removed in "
+        "azure-quantum 4.0.0. Configure workspace-linked storage instead."
+    )
     
     def __init__(
         self,
@@ -133,6 +138,13 @@ class Workspace:
         user_agent: Optional[str] = None,
         **kwargs: Any,
     ) -> None:
+        if storage is not None:
+            warnings.warn(
+                Workspace._STORAGE_DEPRECATION_MESSAGE,
+                DeprecationWarning,
+                stacklevel=2,
+            )
+
         # Extract internal params before passing kwargs to WorkspaceConnectionParams
         # Param to track whether the workspace was created from a connection string
         from_connection_string = kwargs.pop(Workspace._FROM_CONNECTION_STRING_PARAM, False)
@@ -254,12 +266,16 @@ class Workspace:
         return self._connection_params.credential
 
     @property
-    def storage(self) -> str:
+    def storage(self) -> Optional[str]:
         """
-        Returns the Azure Storage account name associated with the Quantum Workspace.
+        Returns the explicitly configured Azure storage account connection string.
 
-        :return: Azure Storage account name.
-        :rtype: str
+        This property is retained for compatibility with the deprecated
+        ``Workspace(storage=...)`` parameter. Configure workspace-linked storage
+        instead.
+
+        :return: Azure storage account connection string, or ``None`` if one was not configured.
+        :rtype: typing.Optional[str]
         """
         return self._storage
 
@@ -312,10 +328,12 @@ class Workspace:
     @classmethod
     def from_connection_string(cls, connection_string: str, **kwargs) -> Workspace:
         """
-        Creates a new Azure Quantum Workspace client from a connection string.
+        Creates a new Azure Quantum Workspace client from an Azure Quantum
+        workspace authentication connection string.
 
         :param connection_string:
-            A valid connection string, usually obtained from the
+            A valid Azure Quantum workspace authentication connection string,
+            distinct from a storage account connection string and usually obtained from the
             `Quantum Workspace -> Operations -> Access Keys` blade in the Azure Portal.
 
         :return: New Azure Quantum Workspace client.
