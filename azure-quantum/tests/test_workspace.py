@@ -46,6 +46,7 @@ SIMPLE_CONNECTION_STRING_V2 = ConnectionConstants.VALID_CONNECTION_STRING(
     quantum_endpoint=ConnectionConstants.GET_QUANTUM_PRODUCTION_ENDPOINT_v2(LOCATION)
 )
 
+
 def test_create_workspace_instance_valid():
     def assert_all_required_params(ws: WorkspaceMock):
         assert ws.subscription_id == SUBSCRIPTION_ID
@@ -681,6 +682,7 @@ def test_get_container_uri_uses_linked_storage_sas():
         "_get_linked_storage_sas_uri",
         return_value="https://example.com/?sas-token",
     ) as get_sas:
+        # bypass WorkspaceMock's override to test the real linked-storage path
         uri = Workspace.get_container_uri(ws, job_id="job-123")
 
     get_sas.assert_called_once_with("job-job-123")
