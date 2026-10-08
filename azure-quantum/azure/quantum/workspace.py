@@ -10,7 +10,6 @@ an Azure Quantum Workspace.
 from __future__ import annotations
 from datetime import datetime
 import logging
-import warnings
 from urllib.parse import quote
 from typing import (
     Any,
@@ -48,9 +47,6 @@ from azure.quantum._workspace_connection_params import (
 )
 from azure.quantum._constants import (
     ConnectionConstants,
-)
-from azure.quantum.storage import (
-    get_container_uri,
 )
 from azure.quantum._mgmt_client import WorkspaceMgmtClient
 if TYPE_CHECKING:
@@ -91,11 +87,6 @@ class Workspace:
         The Azure Quantum workspace name.
         Ignored if resource_id is specified.
 
-    :param storage:
-        Deprecated. The Azure storage account connection string.
-        Configure workspace-linked storage instead. This parameter will be
-        removed in azure-quantum 4.0.0.
-
     :param resource_id:
         The resource ID of the Azure Quantum workspace.
 
@@ -121,30 +112,19 @@ class Workspace:
     _QUANTUM_ENDPOINT_PARAM = '_quantum_endpoint'
     _WORKSPACE_KIND_PARAM = '_workspace_kind'
     _MGMT_CLIENT_PARAM = '_mgmt_client'
-    _STORAGE_DEPRECATION_MESSAGE = (
-        "Workspace(storage=...) is deprecated and will be removed in "
-        "azure-quantum 4.0.0. Configure workspace-linked storage instead."
-    )
     
     def __init__(
         self,
         subscription_id: Optional[str] = None,
         resource_group: Optional[str] = None,
         name: Optional[str] = None,
-        storage: Optional[str] = None,
+        *,
         resource_id: Optional[str] = None,
         location: Optional[str] = None,
         credential: Optional[object] = None,
         user_agent: Optional[str] = None,
         **kwargs: Any,
     ) -> None:
-        if storage is not None:
-            warnings.warn(
-                Workspace._STORAGE_DEPRECATION_MESSAGE,
-                DeprecationWarning,
-                stacklevel=2,
-            )
-
         # Extract internal params before passing kwargs to WorkspaceConnectionParams
         # Param to track whether the workspace was created from a connection string
         from_connection_string = kwargs.pop(Workspace._FROM_CONNECTION_STRING_PARAM, False)
@@ -174,7 +154,6 @@ class Workspace:
         connection_params.on_new_client_request = self._on_new_client_request
 
         self._connection_params = connection_params
-        self._storage = storage
 
         if not self._mgmt_client:
             credential = connection_params.get_credential_or_default()
@@ -264,20 +243,6 @@ class Workspace:
         :rtype: typing.Any
         """
         return self._connection_params.credential
-
-    @property
-    def storage(self) -> Optional[str]:
-        """
-        Returns the explicitly configured Azure storage account connection string.
-
-        This property is retained for compatibility with the deprecated
-        ``Workspace(storage=...)`` parameter. Configure workspace-linked storage
-        instead.
-
-        :return: Azure storage account connection string, or ``None`` if one was not configured.
-        :rtype: typing.Optional[str]
-        """
-        return self._storage
 
     def _create_client(self) -> WorkspaceClient:
         """"
@@ -1044,25 +1009,14 @@ class Workspace:
         :return: Container URI.
         :rtype: str
         """
+        # Create container URI and get container client
         if container_name is None:
             if job_id is not None:
                 container_name = container_name_format.format(job_id=job_id)
-            elif job_id is None:
+            else:
                 container_name = f"{self.name}-data"
-        # Create container URI and get container client
-        if self.storage is None:
-            # Get linked storage account from the service, a new container
-            # is created by the service if it does not yet exist
-            container_uri = self._get_linked_storage_sas_uri(
-                container_name
-            )
-        else:
-            # Use the storage acount specified to generate container URI,
-            # create a new container if it does not yet exist
-            container_uri = get_container_uri(
-                self.storage, container_name
-            )
-        return container_uri
+
+        return self._get_linked_storage_sas_uri(container_name)
 
     def _create_filter(self,
             job_name: Optional[str] = None,
