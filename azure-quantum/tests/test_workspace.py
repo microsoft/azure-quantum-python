@@ -8,7 +8,7 @@ import os
 from unittest import mock
 from azure.quantum.job.job import Job
 from azure.quantum._client.models import JobDetails
-from azure.quantum import Priority
+from azure.quantum import Priority, Workspace
 from azure.quantum._constants import EnvironmentVariables, ConnectionConstants
 from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy
@@ -20,7 +20,6 @@ from common import (
     RESOURCE_GROUP,
     WORKSPACE,
     LOCATION,
-    STORAGE,
     API_KEY,
     ENDPOINT_URI,
 )
@@ -64,37 +63,14 @@ def test_create_workspace_instance_valid():
     assert_all_required_params(ws)
 
     ws = WorkspaceMock(
-        subscription_id=SUBSCRIPTION_ID,
-        resource_group=RESOURCE_GROUP,
-        name=WORKSPACE,
-        storage=STORAGE,
-    )
-    assert_all_required_params(ws)
-    assert ws.storage == STORAGE
-
-    ws = WorkspaceMock(
         resource_id=SIMPLE_RESOURCE_ID,
     )
     assert_all_required_params(ws)
 
     ws = WorkspaceMock(
-        resource_id=SIMPLE_RESOURCE_ID,
-        storage=STORAGE,
-    )
-    assert_all_required_params(ws)
-    assert ws.storage == STORAGE
-
-    ws = WorkspaceMock(
         name=WORKSPACE,
     )
     assert_all_required_params(ws)
-
-    ws = WorkspaceMock(
-        name=WORKSPACE,
-        storage=STORAGE,
-    )
-    assert_all_required_params(ws)
-    assert ws.storage == STORAGE
 
     ws = WorkspaceMock(
         name=WORKSPACE,
@@ -693,24 +669,36 @@ def test_workspace_context_manager_calls_enter_exit():
     ws._mgmt_client.__exit__.assert_called_once()
 
 
-def test_get_container_uri_uses_linked_storage_sas_when_storage_none():
-    """When storage is None, get_container_uri should use linked storage via service SAS."""
+def test_get_container_uri_uses_linked_storage_sas():
+    """Use workspace-linked storage to obtain the container SAS URI."""
     ws = WorkspaceMock(
         subscription_id=SUBSCRIPTION_ID,
         resource_group=RESOURCE_GROUP,
         name=WORKSPACE,
     )
-    assert ws.storage is None
 
-    with mock.patch(
-        "azure.quantum.storage.ContainerClient.from_container_url",
-        return_value=mock.MagicMock(),
-    ):
-        with mock.patch(
-            "azure.quantum.storage.create_container_using_client",
-            return_value=None,
-        ):
-            uri = ws.get_container_uri(job_id="job-123")
-            assert isinstance(uri, str)
-            assert "https://example.com/" in uri
-            assert "sas-token" in uri
+    with mock.patch.object(
+        ws,
+        "_get_linked_storage_sas_uri",
+        return_value="https://example.com/?sas-token",
+    ) as get_sas:
+        # bypass WorkspaceMock's override to test the real linked-storage path
+        uri = Workspace.get_container_uri(ws, job_id="job-123")
+
+    get_sas.assert_called_once_with("job-job-123")
+    assert uri == "https://example.com/?sas-token"
+
+
+def test_workspace_rejects_fourth_positional_argument():
+    with pytest.raises(TypeError):
+        Workspace(SUBSCRIPTION_ID, RESOURCE_GROUP, WORKSPACE, "legacy-storage")
+
+
+def test_workspace_rejects_storage_keyword():
+    with pytest.raises(TypeError, match="storage"):
+        Workspace(
+            subscription_id=SUBSCRIPTION_ID,
+            resource_group=RESOURCE_GROUP,
+            name=WORKSPACE,
+            storage="legacy-storage",
+        )

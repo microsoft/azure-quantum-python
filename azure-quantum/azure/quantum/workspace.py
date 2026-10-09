@@ -48,9 +48,6 @@ from azure.quantum._workspace_connection_params import (
 from azure.quantum._constants import (
     ConnectionConstants,
 )
-from azure.quantum.storage import (
-    get_container_uri,
-)
 from azure.quantum._mgmt_client import WorkspaceMgmtClient
 if TYPE_CHECKING:
     from azure.quantum.target import Target
@@ -71,12 +68,12 @@ class Workspace:
     2. specify a valid subscription ID, resource group, and workspace name; or
     3. specify a valid workspace name.
 
-    You can also use a connection string to specify the connection parameters
-    to an Azure Quantum Workspace by calling
+    You can also use an Azure Quantum workspace authentication connection
+    string to specify the connection parameters by calling
     :obj:`~ Workspace.from_connection_string() <Workspace.from_connection_string>`.
 
-    If the Azure Quantum workspace does not have linked storage, the caller
-    must also pass a valid Azure storage account connection string.
+    Azure Quantum workspaces require linked storage. Configure linked storage
+    on the workspace instead of passing a storage account connection string.
 
     :param subscription_id:
         The Azure subscription ID.
@@ -89,11 +86,6 @@ class Workspace:
     :param name:
         The Azure Quantum workspace name.
         Ignored if resource_id is specified.
-
-    :param storage:
-        The Azure storage account connection string.
-        Required only if the specified Azure Quantum
-        workspace does not have linked storage.
 
     :param resource_id:
         The resource ID of the Azure Quantum workspace.
@@ -126,7 +118,7 @@ class Workspace:
         subscription_id: Optional[str] = None,
         resource_group: Optional[str] = None,
         name: Optional[str] = None,
-        storage: Optional[str] = None,
+        *,
         resource_id: Optional[str] = None,
         location: Optional[str] = None,
         credential: Optional[object] = None,
@@ -162,7 +154,6 @@ class Workspace:
         connection_params.on_new_client_request = self._on_new_client_request
 
         self._connection_params = connection_params
-        self._storage = storage
 
         if not self._mgmt_client:
             credential = connection_params.get_credential_or_default()
@@ -253,16 +244,6 @@ class Workspace:
         """
         return self._connection_params.credential
 
-    @property
-    def storage(self) -> str:
-        """
-        Returns the Azure Storage account name associated with the Quantum Workspace.
-
-        :return: Azure Storage account name.
-        :rtype: str
-        """
-        return self._storage
-
     def _create_client(self) -> WorkspaceClient:
         """"
         An internal method to (re)create the underlying Azure SDK REST API client.
@@ -312,10 +293,12 @@ class Workspace:
     @classmethod
     def from_connection_string(cls, connection_string: str, **kwargs) -> Workspace:
         """
-        Creates a new Azure Quantum Workspace client from a connection string.
+        Creates a new Azure Quantum Workspace client from an Azure Quantum
+        workspace authentication connection string.
 
         :param connection_string:
-            A valid connection string, usually obtained from the
+            A valid Azure Quantum workspace authentication connection string,
+            distinct from a storage account connection string and usually obtained from the
             `Quantum Workspace -> Operations -> Access Keys` blade in the Azure Portal.
 
         :return: New Azure Quantum Workspace client.
@@ -1026,25 +1009,14 @@ class Workspace:
         :return: Container URI.
         :rtype: str
         """
+        # Create container URI and get container client
         if container_name is None:
             if job_id is not None:
                 container_name = container_name_format.format(job_id=job_id)
-            elif job_id is None:
+            else:
                 container_name = f"{self.name}-data"
-        # Create container URI and get container client
-        if self.storage is None:
-            # Get linked storage account from the service, a new container
-            # is created by the service if it does not yet exist
-            container_uri = self._get_linked_storage_sas_uri(
-                container_name
-            )
-        else:
-            # Use the storage acount specified to generate container URI,
-            # create a new container if it does not yet exist
-            container_uri = get_container_uri(
-                self.storage, container_name
-            )
-        return container_uri
+
+        return self._get_linked_storage_sas_uri(container_name)
 
     def _create_filter(self,
             job_name: Optional[str] = None,
