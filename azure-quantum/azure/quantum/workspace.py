@@ -68,8 +68,8 @@ class Workspace:
     2. specify a valid subscription ID, resource group, and workspace name; or
     3. specify a valid workspace name.
 
-    You can also use an Azure Quantum workspace authentication connection
-    string to specify the connection parameters by calling
+    You can also use a connection string to specify the connection parameters
+    to an Azure Quantum Workspace by calling
     :obj:`~ Workspace.from_connection_string() <Workspace.from_connection_string>`.
 
     An Azure Quantum workspace only supports its linked storage.
