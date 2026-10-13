@@ -677,16 +677,23 @@ def test_get_container_uri_uses_linked_storage_sas():
         name=WORKSPACE,
     )
 
+    storage = ws._client.services.storage
+
     with mock.patch.object(
-        ws,
-        "_get_linked_storage_sas_uri",
-        return_value="https://example.com/?sas-token",
-    ) as get_sas:
-        # bypass WorkspaceMock's override to test the real linked-storage path
+        storage,
+        "get_sas_uri",
+        return_value=mock.MagicMock(
+            sas_uri="https://example.com/job-job-123?sas-token"
+        ),
+    ) as get_sas_uri:
         uri = Workspace.get_container_uri(ws, job_id="job-123")
 
-    get_sas.assert_called_once_with("job-job-123")
-    assert uri == "https://example.com/?sas-token"
+    get_sas_uri.assert_called_once()
+    args, kwargs = get_sas_uri.call_args
+    assert args == (SUBSCRIPTION_ID, RESOURCE_GROUP, WORKSPACE)
+    assert kwargs["blob_details"].container_name == "job-job-123"
+    assert kwargs["blob_details"].blob_name is None
+    assert uri == "https://example.com/job-job-123?sas-token"
 
 
 def test_workspace_rejects_fourth_positional_argument():

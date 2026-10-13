@@ -72,8 +72,7 @@ class Workspace:
     string to specify the connection parameters by calling
     :obj:`~ Workspace.from_connection_string() <Workspace.from_connection_string>`.
 
-    Azure Quantum workspaces require linked storage. Configure linked storage
-    on the workspace instead of passing a storage account connection string.
+    An Azure Quantum workspace only supports its linked storage.
 
     :param subscription_id:
         The Azure subscription ID.
@@ -293,12 +292,10 @@ class Workspace:
     @classmethod
     def from_connection_string(cls, connection_string: str, **kwargs) -> Workspace:
         """
-        Creates a new Azure Quantum Workspace client from an Azure Quantum
-        workspace authentication connection string.
+        Creates a new Azure Quantum Workspace client from a connection string.
 
         :param connection_string:
-            A valid Azure Quantum workspace authentication connection string,
-            distinct from a storage account connection string and usually obtained from the
+            A valid connection string, usually obtained from the
             `Quantum Workspace -> Operations -> Access Keys` blade in the Azure Portal.
 
         :return: New Azure Quantum Workspace client.
@@ -1009,7 +1006,6 @@ class Workspace:
         :return: Container URI.
         :rtype: str
         """
-        # Create container URI and get container client
         if container_name is None:
             if job_id is not None:
                 container_name = container_name_format.format(job_id=job_id)
